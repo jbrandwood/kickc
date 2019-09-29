@@ -263,45 +263,45 @@ Target platform is c64basic / MOS6502X
 // A slightly more complex call
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .const STACK_BASE = $103
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _2 = 5
+    .label __2 = 5
     .label v = 3
     .label w = 4
     .label a = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::a#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z a
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte) main::v#0 ← (byte) main::a#2 + (byte) 1 -- vbuz1=vbuz2_plus_1 
     ldy.z a
     iny
@@ -326,19 +326,19 @@ main: {
     lda.z w
     clc
     adc.z a
-    sta.z _2
+    sta.z __2
     // [11] *((const byte*) SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
-    lda.z _2
+    lda.z __2
     sta SCREEN
     // [12] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
     inc.z a
     // [13] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #2
     cmp.z a
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -364,9 +364,9 @@ plus: {
     clc
     adc.z b
     sta.z return
-    jmp breturn
+    jmp __breturn
     // plus::@return
-  breturn:
+  __breturn:
     // [18] return (byte) plus::return#0
     // [18] return (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuz1 
     lda.z return
@@ -422,40 +422,40 @@ ASSEMBLER BEFORE OPTIMIZATION
 // A slightly more complex call
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .const STACK_BASE = $103
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::a#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte) main::v#0 ← (byte) main::a#2 + (byte) 1 -- vbuxx=vbuyy_plus_1 
     tya
     tax
@@ -485,10 +485,10 @@ main: {
     iny
     // [13] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #2
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -509,9 +509,9 @@ plus: {
     // [17] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
     clc
     adc.z a
-    jmp breturn
+    jmp __breturn
     // plus::@return
-  breturn:
+  __breturn:
     // [18] return (byte) plus::return#0
     // [18] return (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
@@ -521,30 +521,31 @@ plus: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -614,7 +615,7 @@ main: {
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [5] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // v = a+1
     // [6] (byte) main::v#0 ← (byte) main::a#2 + (byte) 1 -- vbuxx=vbuyy_plus_1 
     tya
@@ -649,7 +650,7 @@ main: {
     iny
     // [13] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #2
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [14] return 

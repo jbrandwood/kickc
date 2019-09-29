@@ -250,7 +250,7 @@ Target platform is c64basic / MOS6502X
 // Has a bunch of comments that will be moved into the generated ASM
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // The C64 screen
@@ -258,44 +258,44 @@ Target platform is c64basic / MOS6502X
   // One of the bytes used for addition
   .const a = 'a'
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 // The program entry point
 main: {
-    .label _0 = 6
+    .label __0 = 6
     .label i = 3
     .label b = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z b
-    jmp b1
+    jmp __b1
   // Do some sums
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     // [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@2->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte) sum::b#0 ← (byte) main::b#2 -- vbuz1=vbuz2 
     lda.z b
     sta.z sum.b
@@ -304,15 +304,15 @@ main: {
     // [8] (byte) sum::return#0 ← (byte) sum::return#1 -- vbuz1=vbuz2 
     lda.z sum.return_1
     sta.z sum.return
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (byte~) main::$0 ← (byte) sum::return#0 -- vbuz1=vbuz2 
     lda.z sum.return
-    sta.z _0
+    sta.z __0
     // [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     // Output the result on the screen
-    lda.z _0
+    lda.z __0
     ldy.z i
     sta SCREEN,y
     // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
@@ -322,10 +322,10 @@ main: {
     // [13] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp.z b
-    bne b1_from_b2
-    jmp breturn
+    bne __b1_from___b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -343,9 +343,9 @@ sum: {
     lax.z b
     axs #-[a]
     stx.z return_1
-    jmp breturn
+    jmp __breturn
     // sum::@return
-  breturn:
+  __breturn:
     // [16] return 
     rts
 }
@@ -376,7 +376,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Has a bunch of comments that will be moved into the generated ASM
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // The C64 screen
@@ -384,47 +384,47 @@ ASSEMBLER BEFORE OPTIMIZATION
   // One of the bytes used for addition
   .const a = 'a'
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 // The program entry point
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
     // [5] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
   // Do some sums
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     // [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@2->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte) sum::b#0 ← (byte) main::b#2 -- vbuaa=vbuxx 
     txa
     // [7] call sum 
     jsr sum
     // [8] (byte) sum::return#0 ← (byte) sum::return#1
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (byte~) main::$0 ← (byte) sum::return#0
     // [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuyy=vbuaa 
     // Output the result on the screen
@@ -435,10 +435,10 @@ main: {
     inx
     // [13] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
-    bne b1_from_b2
-    jmp breturn
+    bne __b1_from___b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -452,41 +452,42 @@ sum: {
     // [15] (byte) sum::return#1 ← (const byte) a + (byte) sum::b#0 -- vbuaa=vbuc1_plus_vbuaa 
     clc
     adc #a
-    jmp breturn
+    jmp __breturn
     // sum::@return
-  breturn:
+  __breturn:
     // [16] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b2 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -559,7 +560,7 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     // [5] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@2->main::@1#1] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // sum(a, b)
     // [6] (byte) sum::b#0 ← (byte) main::b#2 -- vbuaa=vbuxx 
     txa
@@ -580,7 +581,7 @@ main: {
     inx
     // [13] if((byte) main::b#1!=(byte) $b) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [14] return 

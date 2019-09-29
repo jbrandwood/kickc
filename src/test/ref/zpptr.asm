@@ -9,12 +9,12 @@ main: {
     .label j = 2
     lda #0
     sta.z j
-  b1:
+  __b1:
     lda #0
     sta.z i
-  b2:
+  __b2:
     ldx #0
-  b3:
+  __b3:
     lda.z i
     clc
     adc #<zpptr
@@ -38,13 +38,13 @@ main: {
     sta (zpptr2),y
     inx
     cpx #$b
-    bne b3
+    bne __b3
     inc.z i
     lda #$b
     cmp.z i
-    bne b2
+    bne __b2
     inc.z j
     cmp.z j
-    bne b1
+    bne __b1
     rts
 }

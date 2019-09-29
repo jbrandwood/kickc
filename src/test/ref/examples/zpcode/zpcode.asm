@@ -18,43 +18,43 @@ main: {
     .label zpCode = zpLoop
     sei
     ldx #0
-  b1:
+  __b1:
     cpx #$14
-    bcc b2
-  b3:
+    bcc __b2
+  __b3:
     lda #$ff
     cmp RASTER
-    bne b3
+    bne __b3
     jsr loop
     jsr zpLoop
     lda #0
     sta BGCOL
-    jmp b3
-  b2:
+    jmp __b3
+  __b2:
     lda zpCodeData,x
     sta zpCode,x
     inx
-    jmp b1
+    jmp __b1
 }
 .segment ZpCode
 zpLoop: {
     ldx #0
-  b1:
+  __b1:
     inc BGCOL
     inx
     cpx #$65
-    bne b1
+    bne __b1
     rts
 }
 .segment Code
 // Code in "normal" memory
 loop: {
     ldx #0
-  b1:
+  __b1:
     dec BGCOL
     inx
     cpx #$65
-    bne b1
+    bne __b1
     rts
 }
 .segment Data

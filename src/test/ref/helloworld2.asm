@@ -22,16 +22,16 @@ print2: {
     .label at = 2
     ldy #0
     ldx #0
-  b1:
+  __b1:
     lda main.hello,x
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda main.hello,x
     sta (at),y
     iny
     iny
     inx
-    jmp b1
+    jmp __b1
 }

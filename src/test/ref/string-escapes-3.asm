@@ -19,18 +19,18 @@ main: {
     sta.z msg
     lda #>MESSAGE
     sta.z msg+1
-  b1:
+  __b1:
     ldy #0
     lda (msg),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
   .encoding "petscii_mixed"
     lda #'\n'
     ldy #0
     cmp (msg),y
-    beq b3
+    beq __b3
     lda #$3f
     and (msg),y
     sta (cursor),y
@@ -38,13 +38,13 @@ main: {
     bne !+
     inc.z cursor+1
   !:
-  b5:
+  __b5:
     inc.z msg
     bne !+
     inc.z msg+1
   !:
-    jmp b1
-  b3:
+    jmp __b1
+  __b3:
     lda #$28
     clc
     adc.z line
@@ -56,7 +56,7 @@ main: {
     sta.z line
     lda.z cursor+1
     sta.z line+1
-    jmp b5
+    jmp __b5
 }
   MESSAGE: .text @"hello\nworld"
   .byte 0

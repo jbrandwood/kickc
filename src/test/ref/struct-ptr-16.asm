@@ -8,49 +8,49 @@
   .label p1 = $b000
   .label p2 = $e000
 main: {
-    .label _1_x = 2
-    .label _1_y = 3
+    .label __1_x = 2
+    .label __1_y = 3
     lda #0
     jsr get
     lda.z get.return_y
     stx SCREEN
     sta SCREEN+OFFSET_STRUCT_POINT_Y
     ldy #1
-  b1:
+  __b1:
     tya
     jsr get
     lda.z get.return_y
-    stx.z _1_x
-    sta.z _1_y
+    stx.z __1_x
+    sta.z __1_y
     tya
     asl
     tax
-    lda.z _1_x
+    lda.z __1_x
     sta SCREEN,x
-    lda.z _1_y
+    lda.z __1_y
     sta SCREEN+OFFSET_STRUCT_POINT_Y,x
     iny
     cpy #3
-    bne b1
+    bne __b1
     rts
 }
 // get(byte register(A) i)
 get: {
     .label return_y = 2
     cmp #0
-    beq b1
+    beq __b1
     cmp #1
-    beq b2
+    beq __b2
     ldx p2
     lda p2+OFFSET_STRUCT_POINT_Y
     sta.z return_y
     rts
-  b2:
+  __b2:
     ldx p1
     lda p1+OFFSET_STRUCT_POINT_Y
     sta.z return_y
     rts
-  b1:
+  __b1:
     ldx p0
     lda p0+OFFSET_STRUCT_POINT_Y
     sta.z return_y

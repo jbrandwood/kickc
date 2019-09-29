@@ -10,7 +10,7 @@ main: {
     lda #>$1234
     sta.z sw+1
     ldx #0
-  b1:
+  __b1:
     txa
     sta.z $fe
     ora #$7f
@@ -34,6 +34,6 @@ main: {
     sta screen+1,y
     inx
     cpx #$b
-    bne b1
+    bne __b1
     rts
 }

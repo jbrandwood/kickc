@@ -377,27 +377,27 @@ Target platform is c64basic / MOS6502X
 // Test address-of by assigning the affected variable in multiple ways
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label val = 2
   // @begin
-bbegin:
+__bbegin:
   // [0] (byte) val#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z val
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN1 = $400
@@ -441,9 +441,9 @@ main: {
     sta SCREEN2+3
     // [15] call setv 
     jsr setv
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [16] *((const byte*) main::SCREEN1+(byte) 4) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+4
@@ -452,18 +452,18 @@ main: {
     sta SCREEN2+4
     // [18] call setp 
     jsr setp
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [19] *((const byte*) main::SCREEN1+(byte) 5) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+5
     // [20] *((const byte*) main::SCREEN2+(byte) 5) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+5
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
 }
@@ -473,9 +473,9 @@ setp: {
     // [22] *((const byte*) main::ptr#0) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
     lda #v
     sta.z main.ptr
-    jmp breturn
+    jmp __breturn
     // setp::@return
-  breturn:
+  __breturn:
     // [23] return 
     rts
 }
@@ -485,9 +485,9 @@ setv: {
     // [24] (byte) val#12 ← (const byte) setv::v#0 -- vbuz1=vbuc1 
     lda #v
     sta.z val
-    jmp breturn
+    jmp __breturn
     // setv::@return
-  breturn:
+  __breturn:
     // [25] return 
     rts
 }
@@ -532,27 +532,27 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test address-of by assigning the affected variable in multiple ways
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label val = 2
   // @begin
-bbegin:
+__bbegin:
   // [0] (byte) val#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z val
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN1 = $400
@@ -596,9 +596,9 @@ main: {
     sta SCREEN2+3
     // [15] call setv 
     jsr setv
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [16] *((const byte*) main::SCREEN1+(byte) 4) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+4
@@ -607,18 +607,18 @@ main: {
     sta SCREEN2+4
     // [18] call setp 
     jsr setp
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [19] *((const byte*) main::SCREEN1+(byte) 5) ← (byte) val#12 -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+5
     // [20] *((const byte*) main::SCREEN2+(byte) 5) ← *((const byte*) main::ptr#0) -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+5
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
 }
@@ -628,9 +628,9 @@ setp: {
     // [22] *((const byte*) main::ptr#0) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
     lda #v
     sta.z main.ptr
-    jmp breturn
+    jmp __breturn
     // setp::@return
-  breturn:
+  __breturn:
     // [23] return 
     rts
 }
@@ -640,36 +640,36 @@ setv: {
     // [24] (byte) val#12 ← (const byte) setv::v#0 -- vbuz1=vbuc1 
     lda #v
     sta.z val
-    jmp breturn
+    jmp __breturn
     // setv::@return
-  breturn:
+  __breturn:
     // [25] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda.z val
 Removing instruction lda.z val
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b1_from_bbegin:
-Removing instruction bend_from_b1:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b1:
-Removing instruction bend:
-Removing instruction b1:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __bend:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
@@ -712,12 +712,12 @@ Score: 148
 // Test address-of by assigning the affected variable in multiple ways
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label val = 2
   // @begin
-bbegin:
+__bbegin:
   // val = 0
   // [0] (byte) val#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0

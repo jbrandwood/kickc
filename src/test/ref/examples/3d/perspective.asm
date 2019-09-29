@@ -95,7 +95,7 @@ print_ln: {
     sta.z print_line_cursor
     lda #>$400
     sta.z print_line_cursor+1
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -105,11 +105,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -117,13 +117,13 @@ print_ln: {
 // print_str(byte* zeropage(2) str)
 print_str: {
     .label str = 2
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -135,7 +135,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Print a byte as HEX
 // print_byte(byte register(X) b)
@@ -198,13 +198,13 @@ perspective: {
 // print_sbyte(signed byte register(X) b)
 print_sbyte: {
     cpx #0
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_byte
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     txa
@@ -212,7 +212,7 @@ print_sbyte: {
     clc
     adc #1
     tax
-    jmp b2
+    jmp __b2
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -230,15 +230,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -246,7 +246,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
@@ -260,7 +260,7 @@ mulf_init: {
     tay
     sta.z sqr
     sta.z sqr+1
-  b1:
+  __b1:
     lda.z sqr+1
     sta.z val
     sta mulf_sqr1,y
@@ -302,7 +302,7 @@ mulf_init: {
   !:
     iny
     cpy #$81
-    bne b1
+    bne __b1
     rts
 }
   print_hextab: .text "0123456789abcdef"

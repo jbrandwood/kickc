@@ -21,7 +21,7 @@ test_16s: {
     .label i = $d
     lda #0
     sta.z i
-  b1:
+  __b1:
     lda.z i
     asl
     tax
@@ -73,14 +73,14 @@ test_16s: {
     inc.z i
     lda #6
     cmp.z i
-    bne b1
+    bne __b1
     rts
     dividends: .word $7fff, $7fff, -$7fff, -$7fff, $7fff, -$7fff
     divisors: .word 5, -7, $b, -$d, -$11, $13
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -90,11 +90,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -103,13 +103,13 @@ print_ln: {
 print_sword: {
     .label w = 3
     lda.z w+1
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_word
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     sec
@@ -119,7 +119,7 @@ print_sword: {
     lda #0
     sbc.z w+1
     sta.z w+1
-    jmp b2
+    jmp __b2
 }
 // Print a single char
 // print_char(byte register(A) ch)
@@ -167,13 +167,13 @@ print_byte: {
 // print_str(byte* zeropage(3) str)
 print_str: {
     .label str = 3
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -185,7 +185,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Perform division on two signed 16-bit numbers
 // Returns dividend/divisor.
@@ -216,7 +216,7 @@ div16s: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // divr16s(signed word zeropage(5) dividend, signed word zeropage(7) divisor)
 divr16s: {
-    .label _16 = $b
+    .label __16 = $b
     .label dividendu = 5
     .label divisoru = 7
     .label resultu = 9
@@ -224,15 +224,15 @@ divr16s: {
     .label dividend = 5
     .label divisor = 7
     lda.z dividend+1
-    bmi b1
+    bmi __b1
     ldy #0
-  b2:
+  __b2:
     lda.z divisor+1
-    bmi b3
-  b4:
+    bmi __b3
+  __b4:
     jsr divr16u
     cpy #0
-    beq breturn
+    beq __breturn
     sec
     lda #0
     sbc.z rem16s
@@ -247,9 +247,9 @@ divr16s: {
     lda #0
     sbc.z return+1
     sta.z return+1
-  breturn:
+  __breturn:
     rts
-  b3:
+  __b3:
     sec
     lda #0
     sbc.z divisoru
@@ -260,8 +260,8 @@ divr16s: {
     tya
     eor #1
     tay
-    jmp b4
-  b1:
+    jmp __b4
+  __b1:
     sec
     lda #0
     sbc.z dividendu
@@ -270,7 +270,7 @@ divr16s: {
     sbc.z dividendu+1
     sta.z dividendu+1
     ldy #1
-    jmp b2
+    jmp __b2
 }
 // Performs division on two 16 bit unsigned words and an initial remainder
 // Returns the quotient dividend/divisor.
@@ -289,28 +289,28 @@ divr16u: {
     sta.z quotient+1
     sta.z rem
     sta.z rem+1
-  b1:
+  __b1:
     asl.z rem
     rol.z rem+1
     lda.z dividend+1
     and #$80
     cmp #0
-    beq b2
+    beq __b2
     lda #1
     ora.z rem
     sta.z rem
-  b2:
+  __b2:
     asl.z dividend
     rol.z dividend+1
     asl.z quotient
     rol.z quotient+1
     lda.z rem+1
     cmp.z divisor+1
-    bcc b3
+    bcc __b3
     bne !+
     lda.z rem
     cmp.z divisor
-    bcc b3
+    bcc __b3
   !:
     inc.z quotient
     bne !+
@@ -323,10 +323,10 @@ divr16u: {
     lda.z rem+1
     sbc.z divisor+1
     sta.z rem+1
-  b3:
+  __b3:
     inx
     cpx #$10
-    bne b1
+    bne __b1
     rts
 }
 test_8s: {
@@ -336,7 +336,7 @@ test_8s: {
     .label i = $d
     lda #0
     sta.z i
-  b1:
+  __b1:
     ldy.z i
     lda dividends,y
     sta.z dividend
@@ -378,7 +378,7 @@ test_8s: {
     inc.z i
     lda #6
     cmp.z i
-    bne b1
+    bne __b1
     rts
     dividends: .byte $7f, -$7f, -$7f, $7f, $7f, $7f
     divisors: .byte 5, 7, -$b, -$d, $11, $13
@@ -388,13 +388,13 @@ test_8s: {
 print_sbyte: {
     .label b = 2
     lda.z b
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_byte
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     lda.z b
@@ -402,7 +402,7 @@ print_sbyte: {
     clc
     adc #1
     sta.z b
-    jmp b2
+    jmp __b2
 }
 // Perform division on two signed 8-bit numbers
 // Returns dividend/divisor.
@@ -414,19 +414,19 @@ print_sbyte: {
 div8s: {
     .label neg = $e
     cpy #0
-    bmi b1
+    bmi __b1
     lda #0
     sta.z neg
-  b2:
+  __b2:
     cpx #0
-    bmi b3
-  b4:
+    bmi __b3
+  __b4:
     tya
     jsr div8u
     tay
     lda.z neg
     cmp #0
-    beq b5
+    beq __b5
     txa
     eor #$ff
     clc
@@ -437,10 +437,10 @@ div8s: {
     clc
     adc #1
     rts
-  b5:
+  __b5:
     tya
     rts
-  b3:
+  __b3:
     txa
     eor #$ff
     clc
@@ -449,8 +449,8 @@ div8s: {
     lda #1
     eor.z neg
     sta.z neg
-    jmp b4
-  b1:
+    jmp __b4
+  __b1:
     tya
     eor #$ff
     clc
@@ -458,7 +458,7 @@ div8s: {
     tay
     lda #1
     sta.z neg
-    jmp b2
+    jmp __b2
 }
 // Performs division on two 8 bit unsigned bytes
 // Returns dividend/divisor.
@@ -486,31 +486,31 @@ divr8u: {
     txa
     sta.z quotient
     tay
-  b1:
+  __b1:
     tya
     asl
     tay
     lda #$80
     and.z dividend
     cmp #0
-    beq b2
+    beq __b2
     tya
     ora #1
     tay
-  b2:
+  __b2:
     asl.z dividend
     asl.z quotient
     cpy.z divisor
-    bcc b3
+    bcc __b3
     inc.z quotient
     tya
     sec
     sbc.z divisor
     tay
-  b3:
+  __b3:
     inx
     cpx #8
-    bne b1
+    bne __b1
     tya
     tax
     rts
@@ -522,7 +522,7 @@ test_16u: {
     .label i = $e
     lda #0
     sta.z i
-  b1:
+  __b1:
     lda.z i
     asl
     tax
@@ -574,7 +574,7 @@ test_16u: {
     inc.z i
     lda #6
     cmp.z i
-    bne b1
+    bne __b1
     rts
     dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
     divisors: .word 5, 7, $b, $d, $11, $13
@@ -610,7 +610,7 @@ test_8u: {
     sta.z print_char_cursor+1
     lda #0
     sta.z i
-  b1:
+  __b1:
     ldy.z i
     lda dividends,y
     sta.z dividend
@@ -648,14 +648,14 @@ test_8u: {
     inc.z i
     lda #6
     cmp.z i
-    bne b11
+    bne __b11
     rts
-  b11:
+  __b11:
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    jmp b1
+    jmp __b1
     dividends: .byte $ff, $ff, $ff, $ff, $ff, $ff
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
@@ -675,15 +675,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -691,7 +691,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"
   str: .text " / "

@@ -8,25 +8,25 @@ main: {
     .label k = 2
     lda #0
     sta.z k
-  b1:
+  __b1:
     lda #0
     sta.z l
-  b2:
+  __b2:
     ldy #0
-  b3:
+  __b3:
     lda #0
                     ldx #0
                     sta SCREEN,x
                 
     iny
     cpy #$b
-    bne b3
+    bne __b3
     inc.z l
     lda #$b
     cmp.z l
-    bne b2
+    bne __b2
     inc.z k
     cmp.z k
-    bne b1
+    bne __b1
     rts
 }

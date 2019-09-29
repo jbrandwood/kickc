@@ -9,14 +9,14 @@
   .label print_line_cursor_37 = 6
   .label print_line_cursor_38 = 6
 main: {
-    .label _3 = 8
-    .label _6 = $e
-    .label _16 = $10
-    .label _20 = $12
-    .label _24 = $14
-    .label _28 = $16
-    .label _32 = 8
-    .label _33 = $e
+    .label __3 = 8
+    .label __6 = $e
+    .label __16 = $10
+    .label __20 = $12
+    .label __24 = $14
+    .label __28 = $16
+    .label __32 = 8
+    .label __33 = $e
     .label dw2 = $a
     .label dw = 2
     jsr print_cls
@@ -36,54 +36,54 @@ main: {
     sta.z dw+2
     lda #>$12345678>>$10
     sta.z dw+3
-  b1:
+  __b1:
     lda.z dw+3
     cmp #>$12345690>>$10
-    bne b2
+    bne __b2
     lda.z dw+2
     cmp #<$12345690>>$10
-    bne b2
+    bne __b2
     lda.z dw+1
     cmp #>$12345690
-    bne b2
+    bne __b2
     lda.z dw
     cmp #<$12345690
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda.z dw+2
-    sta.z _3
+    sta.z __3
     lda.z dw+3
-    sta.z _3+1
+    sta.z __3+1
     clc
-    lda.z _32
+    lda.z __32
     adc #<$1111
-    sta.z _32
-    lda.z _32+1
+    sta.z __32
+    lda.z __32+1
     adc #>$1111
-    sta.z _32+1
+    sta.z __32+1
     lda.z dw
     sta.z dw2
     lda.z dw+1
     sta.z dw2+1
-    lda.z _32
+    lda.z __32
     sta.z dw2+2
-    lda.z _32+1
+    lda.z __32+1
     sta.z dw2+3
     lda.z dw
-    sta.z _6
+    sta.z __6
     lda.z dw+1
-    sta.z _6+1
+    sta.z __6+1
     clc
-    lda.z _33
+    lda.z __33
     adc #<$1111
-    sta.z _33
-    lda.z _33+1
+    sta.z __33
+    lda.z __33+1
     adc #>$1111
-    sta.z _33+1
-    lda.z _33
+    sta.z __33+1
+    lda.z __33
     sta.z dw2
-    lda.z _33+1
+    lda.z __33+1
     sta.z dw2+1
     jsr print_dword
     lda #' '
@@ -103,35 +103,35 @@ main: {
     lda #' '
     jsr print_char
     lda.z dw2+2
-    sta.z _16
+    sta.z __16
     lda.z dw2+3
-    sta.z _16+1
+    sta.z __16+1
     tax
     jsr print_byte
     lda #' '
     jsr print_char
     lda.z dw2+2
-    sta.z _20
+    sta.z __20
     lda.z dw2+3
-    sta.z _20+1
-    lda.z _20
+    sta.z __20+1
+    lda.z __20
     tax
     jsr print_byte
     lda #' '
     jsr print_char
     lda.z dw2
-    sta.z _24
+    sta.z __24
     lda.z dw2+1
-    sta.z _24+1
+    sta.z __24+1
     tax
     jsr print_byte
     lda #' '
     jsr print_char
     lda.z dw2
-    sta.z _28
+    sta.z __28
     lda.z dw2+1
-    sta.z _28+1
-    lda.z _28
+    sta.z __28+1
+    lda.z __28
     tax
     jsr print_byte
     jsr print_ln
@@ -147,11 +147,11 @@ main: {
     sta.z print_line_cursor_38
     lda.z print_line_cursor+1
     sta.z print_line_cursor_38+1
-    jmp b1
+    jmp __b1
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor_9
@@ -160,19 +160,19 @@ print_ln: {
     adc.z print_line_cursor_9+1
     sta.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b2
+    bcc __b2
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda.z print_line_cursor
     sta.z print_line_cursor_37
     lda.z print_line_cursor+1
     sta.z print_line_cursor_37+1
-    jmp b1
+    jmp __b1
 }
 // Print a byte as HEX
 // print_byte(byte register(X) b)
@@ -250,15 +250,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -266,6 +266,6 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"

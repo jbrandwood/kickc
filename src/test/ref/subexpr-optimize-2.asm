@@ -11,7 +11,7 @@ main: {
     sta.z screen+1
     lda #0
     sta.z i
-  b1:
+  __b1:
     lda.z i
     clc
     adc #1
@@ -35,6 +35,6 @@ main: {
     inc.z i
     lda #3
     cmp.z i
-    bne b1
+    bne __b1
     rts
 }

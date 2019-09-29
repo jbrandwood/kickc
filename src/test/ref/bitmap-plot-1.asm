@@ -1,7 +1,7 @@
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
 // Plots a fullscreen elipsis
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   .const SIZEOF_SIGNED_WORD = 2
   // Processor port data direction register
@@ -45,7 +45,7 @@
   .label SCREEN = $400
   .label rem16u = $10
   .label frame_cnt = $16
-bbegin:
+__b1:
   // Counts frames - updated by the IRQ
   lda #1
   sta.z frame_cnt
@@ -53,10 +53,10 @@ bbegin:
   rts
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label _9 = $c
-    .label _14 = $c
-    .label _25 = $24
-    .label _26 = $24
+    .label __9 = $c
+    .label __14 = $c
+    .label __25 = $24
+    .label __26 = $24
     .label cos_x = $24
     .label xpos = $c
     .label x = $20
@@ -65,8 +65,8 @@ main: {
     .label y = $17
     .label idx_x = 2
     .label idx_y = $12
-    .label _27 = $24
-    .label _28 = $24
+    .label __27 = $24
+    .label __28 = $24
     jsr sin16s_gen2
     jsr bitmap_init
     jsr bitmap_clear
@@ -82,20 +82,20 @@ main: {
     lda #<0
     sta.z idx_x
     sta.z idx_x+1
-  b2:
+  __b2:
     lda.z idx_x
     asl
-    sta.z _25
+    sta.z __25
     lda.z idx_x+1
     rol
-    sta.z _25+1
+    sta.z __25+1
     clc
-    lda.z _27
+    lda.z __27
     adc #<SINUS
-    sta.z _27
-    lda.z _27+1
+    sta.z __27
+    lda.z __27+1
     adc #>SINUS
-    sta.z _27+1
+    sta.z __27+1
     ldy #0
     lda (cos_x),y
     tax
@@ -108,42 +108,42 @@ main: {
     lda #>$a0
     sta.z mul16s.a+1
     jsr mul16s
-    asl.z _9
-    rol.z _9+1
-    rol.z _9+2
-    rol.z _9+3
-    asl.z _9
-    rol.z _9+1
-    rol.z _9+2
-    rol.z _9+3
-    asl.z _9
-    rol.z _9+1
-    rol.z _9+2
-    rol.z _9+3
-    asl.z _9
-    rol.z _9+1
-    rol.z _9+2
-    rol.z _9+3
+    asl.z __9
+    rol.z __9+1
+    rol.z __9+2
+    rol.z __9+3
+    asl.z __9
+    rol.z __9+1
+    rol.z __9+2
+    rol.z __9+3
+    asl.z __9
+    rol.z __9+1
+    rol.z __9+2
+    rol.z __9+3
+    asl.z __9
+    rol.z __9+1
+    rol.z __9+2
+    rol.z __9+3
     clc
     lda #<$a0
-    adc.z _9+2
+    adc.z __9+2
     sta.z x
     lda #>$a0
-    adc.z _9+3
+    adc.z __9+3
     sta.z x+1
     lda.z idx_y
     asl
-    sta.z _26
+    sta.z __26
     lda.z idx_y+1
     rol
-    sta.z _26+1
+    sta.z __26+1
     clc
-    lda.z _28
+    lda.z __28
     adc #<SINUS
-    sta.z _28
-    lda.z _28+1
+    sta.z __28
+    lda.z __28+1
     adc #>SINUS
-    sta.z _28+1
+    sta.z __28+1
     ldy #0
     lda (sin_y),y
     tax
@@ -156,28 +156,28 @@ main: {
     lda #>$64
     sta.z mul16s.a+1
     jsr mul16s
-    asl.z _14
-    rol.z _14+1
-    rol.z _14+2
-    rol.z _14+3
-    asl.z _14
-    rol.z _14+1
-    rol.z _14+2
-    rol.z _14+3
-    asl.z _14
-    rol.z _14+1
-    rol.z _14+2
-    rol.z _14+3
-    asl.z _14
-    rol.z _14+1
-    rol.z _14+2
-    rol.z _14+3
+    asl.z __14
+    rol.z __14+1
+    rol.z __14+2
+    rol.z __14+3
+    asl.z __14
+    rol.z __14+1
+    rol.z __14+2
+    rol.z __14+3
+    asl.z __14
+    rol.z __14+1
+    rol.z __14+2
+    rol.z __14+3
+    asl.z __14
+    rol.z __14+1
+    rol.z __14+2
+    rol.z __14+3
     clc
     lda #<$64
-    adc.z _14+2
+    adc.z __14+2
     sta.z y
     lda #>$64
-    adc.z _14+3
+    adc.z __14+3
     sta.z y+1
     lda.z y
     tax
@@ -188,36 +188,36 @@ main: {
   !:
     lda.z idx_x+1
     cmp #>$200
-    bne b3
+    bne __b3
     lda.z idx_x
     cmp #<$200
-    bne b3
+    bne __b3
     lda #<0
     sta.z idx_x
     sta.z idx_x+1
-  b3:
+  __b3:
     inc.z idx_y
     bne !+
     inc.z idx_y+1
   !:
     lda.z idx_y+1
     cmp #>$200
-    bne b4
+    bne __b4
     lda.z idx_y
     cmp #<$200
-    bne b4
+    bne __b4
     lda #<0
     sta.z idx_y
     sta.z idx_y+1
-  b4:
+  __b4:
     ldx.z frame_cnt
     inc plots_per_frame,x
-    jmp b2
+    jmp __b2
 }
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage($20) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $19
+    .label __1 = $19
     .label plotter = $17
     .label x = $20
     lda bitmap_plot_yhi,x
@@ -226,16 +226,16 @@ bitmap_plot: {
     sta.z plotter
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter+1
     lda.z x
     tay
@@ -249,10 +249,10 @@ bitmap_plot: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage($17) a, signed word zeropage($24) b)
 mul16s: {
-    .label _9 = $19
-    .label _13 = $22
-    .label _16 = $19
-    .label _17 = $17
+    .label __9 = $19
+    .label __13 = $22
+    .label __16 = $19
+    .label __17 = $17
     .label m = $c
     .label return = $c
     .label a = $17
@@ -274,41 +274,41 @@ mul16s: {
     sta.z mul16u.mb+3
     jsr mul16u
     lda.z a+1
-    bpl b1
+    bpl __b1
     lda.z m+2
-    sta.z _9
+    sta.z __9
     lda.z m+3
-    sta.z _9+1
-    lda.z _16
+    sta.z __9+1
+    lda.z __16
     sec
     sbc.z b
-    sta.z _16
-    lda.z _16+1
+    sta.z __16
+    lda.z __16+1
     sbc.z b+1
-    sta.z _16+1
-    lda.z _16
+    sta.z __16+1
+    lda.z __16
     sta.z m+2
-    lda.z _16+1
+    lda.z __16+1
     sta.z m+3
-  b1:
+  __b1:
     lda.z b+1
-    bpl b2
+    bpl __b2
     lda.z m+2
-    sta.z _13
+    sta.z __13
     lda.z m+3
-    sta.z _13+1
-    lda.z _13
+    sta.z __13+1
+    lda.z __13
     sec
-    sbc.z _17
-    sta.z _17
-    lda.z _13+1
-    sbc.z _17+1
-    sta.z _17+1
-    lda.z _17
+    sbc.z __17
+    sta.z __17
+    lda.z __13+1
+    sbc.z __17+1
+    sta.z __17+1
+    lda.z __17
     sta.z m+2
-    lda.z _17+1
+    lda.z __17+1
     sta.z m+3
-  b2:
+  __b2:
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
@@ -325,17 +325,17 @@ mul16u: {
     sta.z res+1
     sta.z res+2
     sta.z res+3
-  b1:
+  __b1:
     lda.z a
-    bne b2
+    bne __b2
     lda.z a+1
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #1
     and.z a
     cmp #0
-    beq b3
+    beq __b3
     lda.z res
     clc
     adc.z mb
@@ -349,14 +349,14 @@ mul16u: {
     lda.z res+3
     adc.z mb+3
     sta.z res+3
-  b3:
+  __b3:
     lsr.z a+1
     ror.z a
     asl.z mb
     rol.z mb+1
     rol.z mb+2
     rol.z mb+3
-    jmp b1
+    jmp __b1
 }
 // Setup the IRQ
 init_irq: {
@@ -423,7 +423,7 @@ memset: {
     lda.z num
     bne !+
     lda.z num+1
-    beq breturn
+    beq __breturn
   !:
     lda.z end
     clc
@@ -432,16 +432,16 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-  b2:
+  __b2:
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
-  breturn:
+    bne __b3
+  __breturn:
     rts
-  b3:
+  __b3:
     txa
     ldy #0
     sta (dst),y
@@ -449,40 +449,40 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2
+    jmp __b2
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _7 = $1b
+    .label __7 = $1b
     .label yoffs = $24
     ldx #0
     lda #$80
-  b1:
+  __b1:
     sta bitmap_plot_bit,x
     lsr
     cmp #0
-    bne b2
+    bne __b2
     lda #$80
-  b2:
+  __b2:
     inx
     cpx #0
-    bne b1
+    bne __b1
     lda #<BITMAP
     sta.z yoffs
     lda #>BITMAP
     sta.z yoffs+1
     ldx #0
-  b3:
+  __b3:
     lda #7
-    sax.z _7
+    sax.z __7
     lda.z yoffs
-    ora.z _7
+    ora.z __7
     sta bitmap_plot_ylo,x
     lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp.z _7
-    bne b4
+    cmp.z __7
+    bne __b4
     clc
     lda.z yoffs
     adc #<$28*8
@@ -490,10 +490,10 @@ bitmap_init: {
     lda.z yoffs+1
     adc #>$28*8
     sta.z yoffs+1
-  b4:
+  __b4:
     inx
     cpx #0
-    bne b3
+    bne __b3
     rts
 }
 // Generate signed word sinus table - with values in the range min-max.
@@ -505,8 +505,8 @@ sin16s_gen2: {
     .const min = -$1001
     .const max = $1001
     .const ampl = max-min
-    .label _6 = $c
-    .label _9 = $20
+    .label __6 = $c
+    .label __9 = $20
     .label step = $1c
     .label sintab = $14
     .label x = 8
@@ -524,17 +524,17 @@ sin16s_gen2: {
     sta.z i
     sta.z i+1
   // u[4.28]
-  b1:
+  __b1:
     lda.z i+1
     cmp #>wavelength
-    bcc b2
+    bcc __b2
     bne !+
     lda.z i
     cmp #<wavelength
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda.z x
     sta.z sin16s.x
     lda.z x+1
@@ -549,15 +549,15 @@ sin16s_gen2: {
     lda #>ampl
     sta.z mul16s.b+1
     jsr mul16s
-    lda.z _6+2
-    sta.z _9
-    lda.z _6+3
-    sta.z _9+1
+    lda.z __6+2
+    sta.z __9
+    lda.z __6+3
+    sta.z __9+1
     ldy #0
-    lda.z _9
+    lda.z __9
     sta (sintab),y
     iny
-    lda.z _9+1
+    lda.z __9+1
     sta (sintab),y
     lda #SIZEOF_SIGNED_WORD
     clc
@@ -583,14 +583,14 @@ sin16s_gen2: {
     bne !+
     inc.z i+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zeropage($c) x)
 sin16s: {
-    .label _4 = $c
+    .label __4 = $c
     .label x = $c
     .label return = $17
     .label x1 = $22
@@ -605,19 +605,19 @@ sin16s: {
     .label isUpper = $1b
     lda.z x+3
     cmp #>PI_u4f28>>$10
-    bcc b4
+    bcc b1
     bne !+
     lda.z x+2
     cmp #<PI_u4f28>>$10
-    bcc b4
+    bcc b1
     bne !+
     lda.z x+1
     cmp #>PI_u4f28
-    bcc b4
+    bcc b1
     bne !+
     lda.z x
     cmp #<PI_u4f28
-    bcc b4
+    bcc b1
   !:
     lda.z x
     sec
@@ -634,26 +634,26 @@ sin16s: {
     sta.z x+3
     lda #1
     sta.z isUpper
-    jmp b1
-  b4:
+    jmp __b1
+  b1:
     lda #0
     sta.z isUpper
-  b1:
+  __b1:
     lda.z x+3
     cmp #>PI_HALF_u4f28>>$10
-    bcc b2
+    bcc __b2
     bne !+
     lda.z x+2
     cmp #<PI_HALF_u4f28>>$10
-    bcc b2
+    bcc __b2
     bne !+
     lda.z x+1
     cmp #>PI_HALF_u4f28
-    bcc b2
+    bcc __b2
     bne !+
     lda.z x
     cmp #<PI_HALF_u4f28
-    bcc b2
+    bcc __b2
   !:
     lda #<PI_u4f28
     sec
@@ -668,18 +668,18 @@ sin16s: {
     lda #>PI_u4f28>>$10
     sbc.z x+3
     sta.z x+3
-  b2:
+  __b2:
     ldy #3
   !:
-    asl.z _4
-    rol.z _4+1
-    rol.z _4+2
-    rol.z _4+3
+    asl.z __4
+    rol.z __4+1
+    rol.z __4+2
+    rol.z __4+3
     dey
     bne !-
-    lda.z _4+2
+    lda.z __4+2
     sta.z x1
-    lda.z _4+3
+    lda.z __4+3
     sta.z x1+1
     lda.z x1
     sta.z mulu16_sel.v1
@@ -751,7 +751,7 @@ sin16s: {
     sta.z usinx+1
     lda.z isUpper
     cmp #0
-    beq b3
+    beq __b3
     sec
     lda #0
     sbc.z sinx
@@ -759,15 +759,15 @@ sin16s: {
     lda #0
     sbc.z sinx+1
     sta.z sinx+1
-  b3:
+  __b3:
     rts
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
 // mulu16_sel(word zeropage($19) v1, word zeropage(2) v2, byte register(X) select)
 mulu16_sel: {
-    .label _0 = $c
-    .label _1 = $c
+    .label __0 = $c
+    .label __1 = $c
     .label v1 = $19
     .label v2 = 2
     .label return = $24
@@ -788,16 +788,16 @@ mulu16_sel: {
     cpx #0
     beq !e+
   !:
-    asl.z _1
-    rol.z _1+1
-    rol.z _1+2
-    rol.z _1+3
+    asl.z __1
+    rol.z __1+1
+    rol.z __1+2
+    rol.z __1+3
     dex
     bne !-
   !e:
-    lda.z _1+2
+    lda.z __1+2
     sta.z return
-    lda.z _1+3
+    lda.z __1+3
     sta.z return+1
     rts
 }
@@ -848,28 +848,28 @@ divr16u: {
     txa
     sta.z quotient
     sta.z quotient+1
-  b1:
+  __b1:
     asl.z rem
     rol.z rem+1
     lda.z dividend+1
     and #$80
     cmp #0
-    beq b2
+    beq __b2
     lda #1
     ora.z rem
     sta.z rem
-  b2:
+  __b2:
     asl.z dividend
     rol.z dividend+1
     asl.z quotient
     rol.z quotient+1
     lda.z rem+1
     cmp #>sin16s_gen2.wavelength
-    bcc b3
+    bcc __b3
     bne !+
     lda.z rem
     cmp #<sin16s_gen2.wavelength
-    bcc b3
+    bcc __b3
   !:
     inc.z quotient
     bne !+
@@ -882,10 +882,10 @@ divr16u: {
     lda.z rem+1
     sbc #>sin16s_gen2.wavelength
     sta.z rem+1
-  b3:
+  __b3:
     inx
     cpx #$10
-    bne b1
+    bne __b1
     rts
 }
 // Interrupt Routine counting frames
@@ -895,9 +895,9 @@ irq: {
     sta BGCOL
     lda #0
     cmp.z frame_cnt
-    beq b1
+    beq __b1
     inc.z frame_cnt
-  b1:
+  __b1:
     lda #BLACK
     sta BGCOL
     // Acknowledge the IRQ

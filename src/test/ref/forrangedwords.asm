@@ -8,7 +8,7 @@ main: {
     lda #<0
     sta.z w
     sta.z w+1
-  b1:
+  __b1:
     lda.z w
     sta SCREEN
     lda.z w+1
@@ -18,14 +18,14 @@ main: {
     inc.z w+1
   !:
     lda.z w
-    bne b1
+    bne __b1
     lda.z w+1
-    bne b1
+    bne __b1
     lda #<-$7fff
     sta.z sw
     lda #>-$7fff
     sta.z sw+1
-  b2:
+  __b2:
     lda.z sw
     sta SCREEN+3
     lda.z sw+1
@@ -36,9 +36,9 @@ main: {
   !:
     lda.z sw+1
     cmp #>$7fff
-    bne b2
+    bne __b2
     lda.z sw
     cmp #<$7fff
-    bne b2
+    bne __b2
     rts
 }

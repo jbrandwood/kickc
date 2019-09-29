@@ -5,31 +5,31 @@
 main: {
     .label screen = $400
     .label i = 2
-    .label _1 = 4
+    .label __1 = 4
     lda #<0
     sta.z i
     sta.z i+1
-  b1:
+  __b1:
     lda.z i+1
     cmp #>$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z i
     cmp #<$3e8
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda.z i
     clc
     adc #<screen
-    sta.z _1
+    sta.z __1
     lda.z i+1
     adc #>screen
-    sta.z _1+1
+    sta.z __1+1
     lda #'a'
     ldy #0
-    sta (_1),y
+    sta (__1),y
     lda #$28
     clc
     adc.z i
@@ -37,5 +37,5 @@ main: {
     bcc !+
     inc.z i+1
   !:
-    jmp b1
+    jmp __b1
 }

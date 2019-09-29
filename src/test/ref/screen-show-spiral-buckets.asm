@@ -1,7 +1,7 @@
 // Fill screen using a spiral based on distance-to-center / angle-to-center
 // Utilizes a bucket sort for identifying the minimum angle/distance
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
   .const SIZEOF_BYTE = 1
@@ -35,7 +35,7 @@
   .label BUCKET_IDX = $18
   .label heap_head = 2
   .label SQUARES = 5
-bbegin:
+__b1:
   lda #<$3e8
   sta.z malloc.size
   lda #>$3e8
@@ -114,10 +114,10 @@ main: {
     jsr init_buckets
     lda #0
     sta.z bucket_idx
-  b2:
+  __b2:
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     inc BORDERCOL
     lda.z bucket_idx
     asl
@@ -131,7 +131,7 @@ main: {
     lda (BUCKET_SIZES),y
     sta.z bucket_size
     cmp #0
-    beq b4
+    beq __b4
     lda #$ff
     sta.z min_angle
     lda #<$ffff
@@ -139,15 +139,15 @@ main: {
     lda #>$ffff
     sta.z min_offset+1
     ldx #0
-  b5:
+  __b5:
     cpx.z bucket_size
-    bcc b6
+    bcc __b6
     lda.z min_offset
     cmp #<$ffff
     bne !+
     lda.z min_offset+1
     cmp #>$ffff
-    beq b4
+    beq __b4
   !:
     clc
     lda.z fill1
@@ -160,20 +160,20 @@ main: {
     ldy #0
     sta (fill1),y
     dec BORDERCOL
-    jmp b2
-  b4:
+    jmp __b2
+  __b4:
     inc.z bucket_idx
     lda #NUM_BUCKETS
     cmp.z bucket_idx
-    bne b12
+    bne __b12
     dec BORDERCOL
-  b14:
+  __b14:
     inc COLS+$3e7
-    jmp b14
-  b12:
+    jmp __b14
+  __b12:
     dec BORDERCOL
-    jmp b2
-  b6:
+    jmp __b2
+  __b6:
     txa
     asl
     tay
@@ -192,7 +192,7 @@ main: {
     lda #FILL_CHAR
     ldy #0
     cmp (fill),y
-    beq b18
+    beq __b18
     lda.z SCREEN_ANGLE
     clc
     adc.z offset
@@ -203,39 +203,39 @@ main: {
     lda (angle),y
     cmp.z min_angle
     beq !+
-    bcs b17
+    bcs __b17
   !:
     ldy #0
     lda (angle),y
     sta.z min_angle
-  b8:
+  __b8:
     inx
     lda.z min_offset_5
     sta.z min_offset
     lda.z min_offset_5+1
     sta.z min_offset+1
-    jmp b5
-  b17:
+    jmp __b5
+  __b17:
     lda.z min_offset
     sta.z min_offset_9
     lda.z min_offset+1
     sta.z min_offset_9+1
-    jmp b8
-  b18:
+    jmp __b8
+  __b18:
     lda.z min_offset
     sta.z min_offset_11
     lda.z min_offset+1
     sta.z min_offset_11+1
-    jmp b8
+    jmp __b8
 }
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
 // init_buckets(byte* zeropage($16) screen)
 init_buckets: {
-    .label _6 = 5
-    .label _10 = $22
-    .label _11 = $1c
-    .label _15 = $20
-    .label _16 = $22
+    .label __6 = 5
+    .label __10 = $22
+    .label __11 = $1c
+    .label __15 = $20
+    .label __16 = $22
     .label screen = $16
     .label dist = 8
     .label i1 = $a
@@ -245,18 +245,18 @@ init_buckets: {
     .label dist_3 = 2
     .label i4 = $1e
     .label dist_5 = 2
-    .label _18 = 5
-    .label _19 = $20
-    .label _20 = $22
+    .label __18 = 5
+    .label __19 = $20
+    .label __20 = $22
     .label dist_8 = 2
     ldy #0
   // Init bucket sizes to 0
-  b1:
+  __b1:
     lda #0
     sta (BUCKET_SIZES),y
     iny
     cpy #NUM_BUCKETS-1+1
-    bne b1
+    bne __b1
     lda.z screen
     sta.z dist
     lda.z screen+1
@@ -264,7 +264,7 @@ init_buckets: {
     lda #<0
     sta.z i1
     sta.z i1+1
-  b3:
+  __b3:
     ldy #0
     lda (dist),y
     tay
@@ -282,22 +282,22 @@ init_buckets: {
   !:
     lda.z i1+1
     cmp #>$3e8
-    bne b3
+    bne __b3
     lda.z i1
     cmp #<$3e8
-    bne b3
+    bne __b3
     lda #<0
     sta.z i2
     sta.z i2+1
   // Allocate the buckets
-  b4:
+  __b4:
     lda.z BUCKET_SIZES
     clc
     adc.z i2
-    sta.z _18
+    sta.z __18
     lda.z BUCKET_SIZES+1
     adc.z i2+1
-    sta.z _18+1
+    sta.z __18+1
     ldy #0
     lda (malloc.size),y
     asl
@@ -308,41 +308,41 @@ init_buckets: {
     jsr malloc
     lda.z i2
     asl
-    sta.z _15
+    sta.z __15
     lda.z i2+1
     rol
-    sta.z _15+1
-    lda.z _19
+    sta.z __15+1
+    lda.z __19
     clc
     adc.z BUCKETS
-    sta.z _19
-    lda.z _19+1
+    sta.z __19
+    lda.z __19+1
     adc.z BUCKETS+1
-    sta.z _19+1
+    sta.z __19+1
     ldy #0
-    lda.z _6
-    sta (_19),y
+    lda.z __6
+    sta (__19),y
     iny
-    lda.z _6+1
-    sta (_19),y
+    lda.z __6+1
+    sta (__19),y
     inc.z i2
     bne !+
     inc.z i2+1
   !:
     lda.z i2+1
     cmp #>NUM_BUCKETS-1+1
-    bne b4
+    bne __b4
     lda.z i2
     cmp #<NUM_BUCKETS-1+1
-    bne b4
+    bne __b4
     ldy #0
   // Iterate all distances and fill the buckets with indices into the screens
-  b5:
+  __b5:
     lda #0
     sta (BUCKET_IDX),y
     iny
     cpy #NUM_BUCKETS-1+1
-    bne b5
+    bne __b5
     lda.z screen
     sta.z dist_8
     lda.z screen+1
@@ -350,22 +350,22 @@ init_buckets: {
     lda #<0
     sta.z i4
     sta.z i4+1
-  b7:
+  __b7:
     ldy #0
     lda (dist_5),y
     sta.z distance
-    sta.z _10
+    sta.z __10
     tya
-    sta.z _10+1
-    asl.z _16
-    rol.z _16+1
-    lda.z _20
+    sta.z __10+1
+    asl.z __16
+    rol.z __16+1
+    lda.z __20
     clc
     adc.z BUCKETS
-    sta.z _20
-    lda.z _20+1
+    sta.z __20
+    lda.z __20+1
     adc.z BUCKETS+1
-    sta.z _20+1
+    sta.z __20+1
     lda (bucket),y
     pha
     iny
@@ -376,18 +376,18 @@ init_buckets: {
     lda.z dist_5
     sec
     sbc.z screen
-    sta.z _11
+    sta.z __11
     lda.z dist_5+1
     sbc.z screen+1
-    sta.z _11+1
+    sta.z __11+1
     ldy.z distance
     lda (BUCKET_IDX),y
     asl
     tay
-    lda.z _11
+    lda.z __11
     sta (bucket),y
     iny
-    lda.z _11+1
+    lda.z __11+1
     sta (bucket),y
     ldy.z distance
     lda (BUCKET_IDX),y
@@ -404,10 +404,10 @@ init_buckets: {
   !:
     lda.z i4+1
     cmp #>$3e8
-    bne b7
+    bne __b7
     lda.z i4
     cmp #<$3e8
-    bne b7
+    bne __b7
     rts
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
@@ -433,7 +433,7 @@ malloc: {
 // Utilizes symmetry around the center
 // init_angle_screen(byte* zeropage($1e) screen)
 init_angle_screen: {
-    .label _11 = $a
+    .label __11 = $a
     .label screen = $1e
     .label screen_topline = $14
     .label screen_bottomline = $1e
@@ -460,15 +460,15 @@ init_angle_screen: {
     sta.z screen_bottomline+1
     lda #0
     sta.z y
-  b1:
+  __b1:
     lda #$27
     sta.z xb
     lda #0
     sta.z x
-  b2:
+  __b2:
     lda.z x
     cmp #$13+1
-    bcc b3
+    bcc __b3
     lda.z screen_topline
     sec
     sbc #<$28
@@ -486,9 +486,9 @@ init_angle_screen: {
     inc.z y
     lda #$d
     cmp.z y
-    bne b1
+    bne __b1
     rts
-  b3:
+  __b3:
     lda.z x
     asl
     eor #$ff
@@ -504,12 +504,12 @@ init_angle_screen: {
     jsr atan2_16
     lda #$80
     clc
-    adc.z _11
-    sta.z _11
+    adc.z __11
+    sta.z __11
     bcc !+
-    inc.z _11+1
+    inc.z __11+1
   !:
-    lda.z _11+1
+    lda.z __11+1
     sta.z ang_w
     ldy.z xb
     sta (screen_bottomline),y
@@ -528,15 +528,15 @@ init_angle_screen: {
     sta (screen_bottomline),y
     inc.z x
     dec.z xb
-    jmp b2
+    jmp __b2
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
 // atan2_16(signed word zeropage($20) x, signed word zeropage($22) y)
 atan2_16: {
-    .label _2 = 5
-    .label _7 = 8
+    .label __2 = 5
+    .label __7 = 8
     .label yi = 5
     .label xi = 8
     .label angle = $a
@@ -546,43 +546,43 @@ atan2_16: {
     .label x = $20
     .label y = $22
     lda.z y+1
-    bmi !b1+
-    jmp b1
-  !b1:
+    bmi !__b1+
+    jmp __b1
+  !__b1:
     sec
     lda #0
     sbc.z y
-    sta.z _2
+    sta.z __2
     lda #0
     sbc.z y+1
-    sta.z _2+1
-  b3:
+    sta.z __2+1
+  __b3:
     lda.z x+1
-    bmi !b4+
-    jmp b4
-  !b4:
+    bmi !__b4+
+    jmp __b4
+  !__b4:
     sec
     lda #0
     sbc.z x
-    sta.z _7
+    sta.z __7
     lda #0
     sbc.z x+1
-    sta.z _7+1
-  b6:
+    sta.z __7+1
+  __b6:
     lda #<0
     sta.z angle
     sta.z angle+1
     tax
-  b10:
+  __b10:
     lda.z yi+1
-    bne b11
+    bne __b11
     lda.z yi
-    bne b11
-  b12:
+    bne __b11
+  __b12:
     lsr.z angle+1
     ror.z angle
     lda.z x+1
-    bpl b7
+    bpl __b7
     sec
     lda #<$8000
     sbc.z angle
@@ -590,9 +590,9 @@ atan2_16: {
     lda #>$8000
     sbc.z angle+1
     sta.z angle+1
-  b7:
+  __b7:
     lda.z y+1
-    bpl b8
+    bpl __b8
     sec
     lda #0
     sbc.z angle
@@ -600,9 +600,9 @@ atan2_16: {
     lda #0
     sbc.z angle+1
     sta.z angle+1
-  b8:
+  __b8:
     rts
-  b11:
+  __b11:
     txa
     tay
     lda.z xi
@@ -613,11 +613,11 @@ atan2_16: {
     sta.z yd
     lda.z yi+1
     sta.z yd+1
-  b13:
+  __b13:
     cpy #2
-    bcs b14
+    bcs __b14
     cpy #0
-    beq b17
+    beq __b17
     lda.z xd+1
     cmp #$80
     ror.z xd+1
@@ -626,9 +626,9 @@ atan2_16: {
     cmp #$80
     ror.z yd+1
     ror.z yd
-  b17:
+  __b17:
     lda.z yi+1
-    bpl b18
+    bpl __b18
     lda.z xi
     sec
     sbc.z yd
@@ -653,14 +653,14 @@ atan2_16: {
     lda.z angle+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
-  b19:
+  __b19:
     inx
     cpx #CORDIC_ITERATIONS_16-1+1
-    bne !b12+
-    jmp b12
-  !b12:
-    jmp b10
-  b18:
+    bne !__b12+
+    jmp __b12
+  !__b12:
+    jmp __b10
+  __b18:
     lda.z xi
     clc
     adc.z yd
@@ -685,8 +685,8 @@ atan2_16: {
     lda.z angle+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
-    jmp b19
-  b14:
+    jmp __b19
+  __b14:
     lda.z xd+1
     cmp #$80
     ror.z xd+1
@@ -705,19 +705,19 @@ atan2_16: {
     ror.z yd
     dey
     dey
-    jmp b13
-  b4:
+    jmp __b13
+  __b4:
     lda.z x
     sta.z xi
     lda.z x+1
     sta.z xi+1
-    jmp b6
-  b1:
+    jmp __b6
+  __b1:
     lda.z y
     sta.z yi
     lda.z y+1
     sta.z yi+1
-    jmp b3
+    jmp __b3
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
@@ -743,15 +743,15 @@ init_dist_screen: {
     sta.z screen_bottomline+1
     lda #0
     sta.z y
-  b1:
+  __b1:
     lda.z y
     asl
     cmp #$18
-    bcs b2
+    bcs __b2
     eor #$ff
     clc
     adc #$18+1
-  b4:
+  __b4:
     jsr sqr
     lda.z sqr.return
     sta.z sqr.return_2
@@ -761,10 +761,10 @@ init_dist_screen: {
     sta.z xb
     lda #0
     sta.z x
-  b5:
+  __b5:
     lda.z x
     cmp #$13+1
-    bcc b6
+    bcc __b6
     lda #$28
     clc
     adc.z screen_topline
@@ -782,17 +782,17 @@ init_dist_screen: {
     inc.z y
     lda #$d
     cmp.z y
-    bne b1
+    bne __b1
     rts
-  b6:
+  __b6:
     lda.z x
     asl
     cmp #$27
-    bcs b8
+    bcs __b8
     eor #$ff
     clc
     adc #$27+1
-  b10:
+  __b10:
     jsr sqr
     lda.z ds
     clc
@@ -810,23 +810,23 @@ init_dist_screen: {
     sta (screen_bottomline),y
     inc.z x
     dec.z xb
-    jmp b5
-  b8:
+    jmp __b5
+  __b8:
     sec
     sbc #$27
-    jmp b10
-  b2:
+    jmp __b10
+  __b2:
     sec
     sbc #$18
-    jmp b4
+    jmp __b4
 }
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zeropage($1e) val)
 sqrt: {
-    .label _1 = $c
-    .label _3 = $c
+    .label __1 = $c
+    .label __3 = $c
     .label found = $c
     .label val = $1e
     lda.z SQUARES
@@ -834,16 +834,16 @@ sqrt: {
     lda.z SQUARES+1
     sta.z bsearch16u.items+1
     jsr bsearch16u
-    lda.z _3
+    lda.z __3
     sec
     sbc.z SQUARES
-    sta.z _3
-    lda.z _3+1
+    sta.z __3
+    lda.z __3+1
     sbc.z SQUARES+1
-    sta.z _3+1
-    lsr.z _1+1
-    ror.z _1
-    lda.z _1
+    sta.z __3+1
+    lsr.z __1+1
+    ror.z __1
+    lda.z __1
     rts
 }
 // Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
@@ -853,16 +853,16 @@ sqrt: {
 // Returns pointer to an entry in the array that matches the search key
 // bsearch16u(word zeropage($1e) key, word* zeropage($c) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = $c
+    .label __2 = $c
     .label pivot = $20
     .label result = $22
     .label return = $c
     .label items = $c
     .label key = $1e
     ldx #NUM_SQUARES
-  b3:
+  __b3:
     cpx #0
-    bne b4
+    bne __b4
     ldy #1
     lda (items),y
     cmp.z key+1
@@ -870,19 +870,19 @@ bsearch16u: {
     dey
     lda (items),y
     cmp.z key
-    beq b2
+    beq __b2
   !:
-    bcc b2
-    lda.z _2
+    bcc __b2
+    lda.z __2
     sec
     sbc #<1*SIZEOF_WORD
-    sta.z _2
-    lda.z _2+1
+    sta.z __2
+    lda.z __2+1
     sbc #>1*SIZEOF_WORD
-    sta.z _2+1
-  b2:
+    sta.z __2+1
+  __b2:
     rts
-  b4:
+  __b4:
     txa
     lsr
     asl
@@ -901,20 +901,20 @@ bsearch16u: {
     iny
     sbc (pivot),y
     sta.z result+1
-    bne b6
+    bne __b6
     lda.z result
-    bne b6
+    bne __b6
     lda.z pivot
     sta.z return
     lda.z pivot+1
     sta.z return+1
     rts
-  b6:
+  __b6:
     lda.z result+1
-    bmi b7
+    bmi __b7
     bne !+
     lda.z result
-    beq b7
+    beq __b7
   !:
     lda #1*SIZEOF_WORD
     clc
@@ -924,11 +924,11 @@ bsearch16u: {
     adc.z pivot+1
     sta.z items+1
     dex
-  b7:
+  __b7:
     txa
     lsr
     tax
-    jmp b3
+    jmp __b3
 }
 // Find the square of a byte value
 // Uses a table of squares that must be initialized by calling init_squares()
@@ -963,7 +963,7 @@ init_squares: {
     txa
     sta.z sqr
     sta.z sqr+1
-  b1:
+  __b1:
     ldy #0
     lda.z sqr
     sta (squares),y
@@ -989,7 +989,7 @@ init_squares: {
   !:
     inx
     cpx #NUM_SQUARES-1+1
-    bne b1
+    bne __b1
     rts
 }
 // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...

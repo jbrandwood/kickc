@@ -4,40 +4,40 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    .label _0 = 3
-    .label _1 = 3
+    .label __0 = 3
+    .label __1 = 3
     .label line = 3
     .label y = 2
-    .label _6 = 5
-    .label _7 = 3
+    .label __6 = 5
+    .label __7 = 3
     lda #5
     sta.z y
-  b1:
+  __b1:
     lda.z y
-    sta.z _0
+    sta.z __0
     lda #0
-    sta.z _0+1
-    lda.z _0
+    sta.z __0+1
+    lda.z __0
     asl
-    sta.z _6
-    lda.z _0+1
+    sta.z __6
+    lda.z __0+1
     rol
-    sta.z _6+1
-    asl.z _6
-    rol.z _6+1
-    lda.z _7
+    sta.z __6+1
+    asl.z __6
+    rol.z __6+1
+    lda.z __7
     clc
-    adc.z _6
-    sta.z _7
-    lda.z _7+1
-    adc.z _6+1
-    sta.z _7+1
-    asl.z _1
-    rol.z _1+1
-    asl.z _1
-    rol.z _1+1
-    asl.z _1
-    rol.z _1+1
+    adc.z __6
+    sta.z __7
+    lda.z __7+1
+    adc.z __6+1
+    sta.z __7+1
+    asl.z __1
+    rol.z __1+1
+    asl.z __1
+    rol.z __1+1
+    asl.z __1
+    rol.z __1+1
     clc
     lda.z line
     adc #<SCREEN
@@ -46,17 +46,17 @@ main: {
     adc #>SCREEN
     sta.z line+1
     ldy #5
-  b2:
+  __b2:
     tya
     clc
     adc.z y
     sta (line),y
     iny
     cpy #$10
-    bne b2
+    bne __b2
     inc.z y
     lda #$10
     cmp.z y
-    bne b1
+    bne __b1
     rts
 }

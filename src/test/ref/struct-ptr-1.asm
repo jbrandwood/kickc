@@ -6,7 +6,7 @@
 main: {
     .label SCREEN = $400
     ldx #0
-  b1:
+  __b1:
     txa
     asl
     tay
@@ -19,9 +19,9 @@ main: {
     sta points+OFFS_Y,y
     inx
     cpx #4
-    bne b1
+    bne __b1
     ldy #0
-  b2:
+  __b2:
     tya
     asl
     tax
@@ -32,7 +32,7 @@ main: {
     sta SCREEN+$28,y
     iny
     cpy #4
-    bne b2
+    bne __b2
     rts
 }
   points: .fill 2*4, 0

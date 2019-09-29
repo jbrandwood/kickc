@@ -149,53 +149,53 @@ Target platform is c64basic / MOS6502X
 // Illustrates a problem where volatiles with initializers are initialized outside the main()-routine
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label x = 2
   // @begin
-bbegin:
+__bbegin:
   // [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
   sta.z x
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-  b1_from_main:
-  b1_from_b1:
+  __b1_from_main:
+  __b1_from___b1:
     // [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
     inc.z x
     // [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$32
-    bcc b1_from_b1
-    jmp b2
+    bcc __b1_from___b1
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z x
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
@@ -221,76 +221,76 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Illustrates a problem where volatiles with initializers are initialized outside the main()-routine
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label x = 2
   // @begin
-bbegin:
+__bbegin:
   // [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
   sta.z x
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-  b1_from_main:
-  b1_from_b1:
+  __b1_from_main:
+  __b1_from___b1:
     // [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
     inc.z x
     // [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$32
-    bcc b1_from_b1
-    jmp b2
+    bcc __b1_from___b1
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z x
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction b1_from_b1:
+Replacing label __b1_from___b1 with __b1
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b1:
-Removing instruction bend:
-Removing instruction b2:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __bend:
+Removing instruction __b2:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
@@ -319,12 +319,12 @@ Score: 153
 // Illustrates a problem where volatiles with initializers are initialized outside the main()-routine
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label x = 2
   // @begin
-bbegin:
+__bbegin:
   // x = 12
   // [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
@@ -342,14 +342,14 @@ main: {
     // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
     // [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // while(++x<50)
     // [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
     inc.z x
     // [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$32
-    bcc b1
+    bcc __b1
     // main::@2
     // x = 0
     // [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 

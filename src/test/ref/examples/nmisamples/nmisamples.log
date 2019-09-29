@@ -347,7 +347,7 @@ Target platform is c64basic / MOS6502X
 // Sample from ART OF NOISE: MOMENTS IN LOVE
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label BORDERCOL = $d020
@@ -366,27 +366,27 @@ Target platform is c64basic / MOS6502X
   .const SAMPLE_SIZE = $6100
   .label sample = 2
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [1] (byte*) sample#0 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
   lda #<SAMPLE
   sta.z sample
   lda #>SAMPLE
   sta.z sample+1
   // [2] phi from @1 to @2 [phi:@1->@2]
-b2_from_b1:
-  jmp b2
+__b2_from___b1:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [3] call main 
   jsr main
   // [4] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
@@ -424,16 +424,16 @@ main: {
     sta CIA2_TIMER_A_CONTROL
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
   // nmi2
 nmi2: {
-    .label _1 = 4
-    .label _2 = 5
+    .label __1 = 4
+    .label __2 = 5
     // entry interrupt(HARDWARE_ALL)
     sta rega+1
     stx regx+1
@@ -449,9 +449,9 @@ nmi2: {
     lsr
     lsr
     lsr
-    sta.z _1
+    sta.z __1
     // [17] *((const byte*) SID_VOLUME) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuz1 
-    lda.z _1
+    lda.z __1
     sta SID_VOLUME
     // [18] (byte*) sample#1 ← ++ (byte*) sample#0 -- pbuz1=_inc_pbuz1 
     inc.z sample
@@ -460,26 +460,26 @@ nmi2: {
   !:
     // [19] (byte~) nmi2::$2 ← > (byte*) sample#1 -- vbuz1=_hi_pbuz2 
     lda.z sample+1
-    sta.z _2
+    sta.z __2
     // [20] if((byte~) nmi2::$2!=>(const byte[SAMPLE_SIZE]) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #>SAMPLE+$6100
-    cmp.z _2
-    bne b1_from_nmi2
-    jmp b2
+    cmp.z __2
+    bne __b1_from_nmi2
+    jmp __b2
     // nmi2::@2
-  b2:
+  __b2:
     // [21] (byte*) sample#2 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE
     sta.z sample+1
     // [22] phi from nmi2 nmi2::@2 to nmi2::@1 [phi:nmi2/nmi2::@2->nmi2::@1]
-  b1_from_nmi2:
-  b1_from_b2:
+  __b1_from_nmi2:
+  __b1_from___b2:
     // [22] phi (byte*) sample#3 = (byte*) sample#1 [phi:nmi2/nmi2::@2->nmi2::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // nmi2::@1
-  b1:
+  __b1:
     // [23] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_pptc1=pprc2 
     lda #<nmi
     sta KERNEL_NMI
@@ -487,9 +487,9 @@ nmi2: {
     sta KERNEL_NMI+1
     // [24] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
-    jmp breturn
+    jmp __breturn
     // nmi2::@return
-  breturn:
+  __breturn:
     // [25] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
@@ -501,7 +501,7 @@ nmi2: {
 }
   // nmi
 nmi: {
-    .label _1 = 6
+    .label __1 = 6
     // entry interrupt(HARDWARE_ALL)
     sta rega+1
     stx regx+1
@@ -514,9 +514,9 @@ nmi: {
     lda #$f
     ldy #0
     and (sample),y
-    sta.z _1
+    sta.z __1
     // [29] *((const byte*) SID_VOLUME) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuz1 
-    lda.z _1
+    lda.z __1
     sta SID_VOLUME
     // [30] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_pptc1=pprc2 
     lda #<nmi2
@@ -525,9 +525,9 @@ nmi: {
     sta KERNEL_NMI+1
     // [31] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
-    jmp breturn
+    jmp __breturn
     // nmi::@return
-  breturn:
+  __breturn:
     // [32] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
@@ -581,7 +581,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Sample from ART OF NOISE: MOMENTS IN LOVE
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label BORDERCOL = $d020
@@ -600,27 +600,27 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const SAMPLE_SIZE = $6100
   .label sample = 2
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [1] (byte*) sample#0 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
   lda #<SAMPLE
   sta.z sample
   lda #>SAMPLE
   sta.z sample+1
   // [2] phi from @1 to @2 [phi:@1->@2]
-b2_from_b1:
-  jmp b2
+__b2_from___b1:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [3] call main 
   jsr main
   // [4] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
@@ -658,9 +658,9 @@ main: {
     sta CIA2_TIMER_A_CONTROL
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -692,22 +692,22 @@ nmi2: {
     lda.z sample+1
     // [20] if((byte~) nmi2::$2!=>(const byte[SAMPLE_SIZE]) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #>SAMPLE+$6100
-    bne b1_from_nmi2
-    jmp b2
+    bne __b1_from_nmi2
+    jmp __b2
     // nmi2::@2
-  b2:
+  __b2:
     // [21] (byte*) sample#2 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE
     sta.z sample+1
     // [22] phi from nmi2 nmi2::@2 to nmi2::@1 [phi:nmi2/nmi2::@2->nmi2::@1]
-  b1_from_nmi2:
-  b1_from_b2:
+  __b1_from_nmi2:
+  __b1_from___b2:
     // [22] phi (byte*) sample#3 = (byte*) sample#1 [phi:nmi2/nmi2::@2->nmi2::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // nmi2::@1
-  b1:
+  __b1:
     // [23] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_pptc1=pprc2 
     lda #<nmi
     sta KERNEL_NMI
@@ -715,9 +715,9 @@ nmi2: {
     sta KERNEL_NMI+1
     // [24] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
-    jmp breturn
+    jmp __breturn
     // nmi2::@return
-  breturn:
+  __breturn:
     // [25] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
@@ -750,9 +750,9 @@ nmi: {
     sta KERNEL_NMI+1
     // [31] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
-    jmp breturn
+    jmp __breturn
     // nmi::@return
-  breturn:
+  __breturn:
     // [32] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
@@ -767,28 +767,29 @@ SAMPLE:
 .import binary "moments_sample.bin" 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp b2
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_nmi2 with b1
-Removing instruction b1:
-Removing instruction b2_from_b1:
-Removing instruction bend_from_b2:
-Removing instruction b1_from_nmi2:
-Removing instruction b1_from_b2:
-Removing instruction breturn:
-Removing instruction breturn:
+Replacing label __bbegin with __b1
+Replacing label __b1_from_nmi2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b2_from___b1:
+Removing instruction __bend_from___b2:
+Removing instruction __b1_from_nmi2:
+Removing instruction __b1_from___b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
-Removing instruction bend:
-Removing instruction breturn:
-Removing instruction b2:
+Removing instruction __b2:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
@@ -839,7 +840,7 @@ Score: 483
 // Sample from ART OF NOISE: MOMENTS IN LOVE
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   // Global Constants & labels
   .label BORDERCOL = $d020
@@ -858,8 +859,8 @@ Score: 483
   .const SAMPLE_SIZE = $6100
   .label sample = 2
   // @begin
-bbegin:
   // @1
+__b1:
   // sample = SAMPLE
   // [1] (byte*) sample#0 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
   lda #<SAMPLE
@@ -957,7 +958,7 @@ nmi2: {
     // if (>sample == >(SAMPLE+$6100))
     // [20] if((byte~) nmi2::$2!=>(const byte[SAMPLE_SIZE]) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #>SAMPLE+$6100
-    bne b1
+    bne __b1
     // nmi2::@2
     // sample = SAMPLE
     // [21] (byte*) sample#2 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
@@ -968,7 +969,7 @@ nmi2: {
     // [22] phi from nmi2 nmi2::@2 to nmi2::@1 [phi:nmi2/nmi2::@2->nmi2::@1]
     // [22] phi (byte*) sample#3 = (byte*) sample#1 [phi:nmi2/nmi2::@2->nmi2::@1#0] -- register_copy 
     // nmi2::@1
-  b1:
+  __b1:
     // *KERNEL_NMI = &nmi
     // [23] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_pptc1=pprc2 
     lda #<nmi

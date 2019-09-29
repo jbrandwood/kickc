@@ -9,17 +9,17 @@ main: {
     rts
 }
 mode_ctrl: {
-  b1:
+  __b1:
     lda BORDERCOL
     cmp #$ff
-    beq b2
+    beq __b2
     lda #3
     sta BORDERCOL
-    jmp b1
-  b2:
+    jmp __b1
+  __b2:
     lda #2
     sta BORDERCOL
-    jmp b1
+    jmp __b1
 }
 print_cls: {
     .label sc = 2
@@ -27,15 +27,15 @@ print_cls: {
     sta.z sc
     lda #>SCREEN
     sta.z sc+1
-  b1:
+  __b1:
     lda.z sc+1
     cmp #>SCREEN+$3e8
-    bne b2
+    bne __b2
     lda.z sc
     cmp #<SCREEN+$3e8
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #' '
     ldy #0
     sta (sc),y
@@ -43,5 +43,5 @@ print_cls: {
     bne !+
     inc.z sc+1
   !:
-    jmp b1
+    jmp __b1
 }

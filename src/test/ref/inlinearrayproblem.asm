@@ -7,14 +7,14 @@
   .label SCREEN2 = $400+$28
 main: {
     ldx #0
-  b1:
+  __b1:
     lda txt,x
     sta SCREEN,x
     lda data,x
     sta SCREEN2,x
     inx
     cpx #4
-    bne b1
+    bne __b1
     rts
     txt: .text "qwe"
     data: .byte 1, 2, 3

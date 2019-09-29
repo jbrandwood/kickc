@@ -109,13 +109,13 @@ main: {
     sta VIC_MEMORY
     ldx #0
   // DTV Palette - Grey Tones
-  b1:
+  __b1:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b1
-  b2:
+    bne __b1
+  __b2:
     // Stabilize Raster
     ldx #$ff
   rff:
@@ -157,10 +157,10 @@ main: {
     sta VIC_CONTROL
     lda #0
     sta BORDERCOL
-  b3:
+  __b3:
     lda #$42
     cmp RASTER
-    bne b3
+    bne __b3
     nop
     nop
     nop
@@ -179,7 +179,7 @@ main: {
     nop
     nop
     nop
-  b5:
+  __b5:
     ldx RASTER
     txa
     and #7
@@ -207,8 +207,8 @@ main: {
     nop
     nop
     cpx #$f2
-    bne b5
-    jmp b2
+    bne __b5
+    jmp __b2
 }
 // Initialize the different graphics in the memory
 gfx_init: {
@@ -240,10 +240,10 @@ gfx_init_plane_charset8: {
     sta.z chargen
     lda #>CHARGEN+1
     sta.z chargen+1
-  b1:
+  __b1:
     lda #0
     sta.z cr
-  b2:
+  __b2:
     ldy #0
     lda (chargen),y
     sta.z bits
@@ -252,16 +252,16 @@ gfx_init_plane_charset8: {
     inc.z chargen+1
   !:
     ldx #0
-  b3:
+  __b3:
     lda #$80
     and.z bits
     cmp #0
-    beq b5
+    beq b1
     lda.z col
-    jmp b4
-  b5:
+    jmp __b4
+  b1:
     lda #0
-  b4:
+  __b4:
     ldy #0
     sta (gfxa),y
     inc.z gfxa
@@ -272,15 +272,15 @@ gfx_init_plane_charset8: {
     inc.z col
     inx
     cpx #8
-    bne b3
+    bne __b3
     inc.z cr
     lda #8
     cmp.z cr
-    bne b2
+    bne __b2
     inc.z ch
     lda.z ch
     cmp #0
-    bne b1
+    bne __b1
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     lda #$4000/$4000
@@ -302,7 +302,7 @@ dtvSetCpuBankSegment1: {
 }
 // Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
-    .label _1 = 9
+    .label __1 = 9
     .label ch = 7
     .label cy = 6
     lda #<SCREEN
@@ -311,19 +311,19 @@ gfx_init_screen0: {
     sta.z ch+1
     lda #0
     sta.z cy
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda #$f
     and.z cy
     asl
     asl
     asl
     asl
-    sta.z _1
+    sta.z __1
     txa
     and #$f
-    ora.z _1
+    ora.z __1
     ldy #0
     sta (ch),y
     inc.z ch
@@ -332,10 +332,10 @@ gfx_init_screen0: {
   !:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z cy
     lda #$19
     cmp.z cy
-    bne b1
+    bne __b1
     rts
 }

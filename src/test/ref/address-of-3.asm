@@ -21,7 +21,7 @@ main: {
     jsr print
     lda #2
     sta.z i
-  b1:
+  __b1:
     lda.z i
     asl
     clc
@@ -34,7 +34,7 @@ main: {
     inc.z i
     lda #4
     cmp.z i
-    bne b1
+    bne __b1
     rts
 }
 // print(signed word* zeropage(4) p)

@@ -9,7 +9,7 @@ main: {
     lda #0
     sta.z idx
     tax
-  b1:
+  __b1:
     txa
     asl
     tay
@@ -30,7 +30,7 @@ main: {
     sta.z idx
     inx
     cpx #4
-    bne b1
+    bne __b1
     rts
     // Clever word array that represents C64 numbers 0-7
     words: .word $3130, $3332, $3534, $3736

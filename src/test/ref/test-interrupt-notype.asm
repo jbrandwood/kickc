@@ -9,9 +9,9 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  b1:
+  __b1:
     inc FGCOL
-    jmp b1
+    jmp __b1
 }
 irq: {
     inc BGCOL

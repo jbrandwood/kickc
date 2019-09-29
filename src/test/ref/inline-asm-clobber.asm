@@ -7,23 +7,23 @@ main: {
     .label l = 2
     ldx #0
   // First loop with no clobber
-  b1:
+  __b1:
     lda #0
-  b2:
+  __b2:
     sta SCREEN,x
     clc
     adc #1
     cmp #$65
-    bne b2
+    bne __b2
     inx
     cpx #$65
-    bne b1
+    bne __b1
     ldy #0
   // Then loop with clobbering A&X
-  b4:
+  __b4:
     lda #0
     sta.z l
-  b5:
+  __b5:
     eor #$55
     tax
     lda.z l
@@ -31,9 +31,9 @@ main: {
     inc.z l
     lda #$65
     cmp.z l
-    bne b5
+    bne __b5
     iny
     cpy #$65
-    bne b4
+    bne __b4
     rts
 }

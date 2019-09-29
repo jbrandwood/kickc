@@ -218,31 +218,31 @@ Target platform is c64basic / MOS6502X
 // Tests simple word pointer math
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
-    .label _1 = 7
-    .label _2 = 9
-    .label _4 = 4
+    .label __1 = 7
+    .label __2 = 9
+    .label __4 = 4
     .label w = 5
     .label idx = 8
     .label idx_2 = $a
@@ -250,36 +250,36 @@ main: {
     .label i = 2
     .label idx_4 = 3
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::idx#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z idx_4
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::idx#4 = (byte) main::idx#3 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z _4
+    sta.z __4
     // [7] (word) main::w#0 ← *((const word[]) main::words + (byte~) main::$4) -- vwuz1=pwuc1_derefidx_vbuz2 
-    ldy.z _4
+    ldy.z __4
     lda words,y
     sta.z w
     lda words+1,y
     sta.z w+1
     // [8] (byte~) main::$1 ← < (word) main::w#0 -- vbuz1=_lo_vwuz2 
     lda.z w
-    sta.z _1
+    sta.z __1
     // [9] *((const byte*) main::SCREEN + (byte) main::idx#4) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _1
+    lda.z __1
     ldy.z idx_4
     sta SCREEN,y
     // [10] (byte) main::idx#1 ← ++ (byte) main::idx#4 -- vbuz1=_inc_vbuz2 
@@ -288,9 +288,9 @@ main: {
     sty.z idx
     // [11] (byte~) main::$2 ← > (word) main::w#0 -- vbuz1=_hi_vwuz2 
     lda.z w+1
-    sta.z _2
+    sta.z __2
     // [12] *((const byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _2
+    lda.z __2
     ldy.z idx
     sta SCREEN,y
     // [13] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuz1=_inc_vbuz2 
@@ -306,10 +306,10 @@ main: {
     // [16] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
     // Clever word array that represents C64 numbers 0-7
@@ -359,45 +359,45 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests simple word pointer math
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
     .label w = 3
     .label idx = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::idx#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z idx
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::idx#4 = (byte) main::idx#3 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
@@ -430,10 +430,10 @@ main: {
     inx
     // [16] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
     // Clever word array that represents C64 numbers 0-7
@@ -442,31 +442,32 @@ main: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldx #0 with TAX
 Removing instruction ldy.z idx
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -534,7 +535,7 @@ main: {
     // [5] phi (byte) main::idx#4 = (byte) main::idx#3 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // words+i
     // [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
@@ -576,7 +577,7 @@ main: {
     inx
     // [16] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [17] return 

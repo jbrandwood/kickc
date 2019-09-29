@@ -57,25 +57,25 @@ anim: {
     sta.z sx
   //signed byte xmin = 0;
   //signed byte xmax = 0;
-  b2:
+  __b2:
     lda #$ff
     cmp RASTER
-    bne b2
-  b3:
+    bne __b2
+  __b3:
     lda #$fe
     cmp RASTER
-    bne b3
-  b4:
+    bne __b3
+  __b4:
     lda #$fd
     cmp RASTER
-    bne b4
+    bne __b4
     inc BORDERCOL
     ldx.z sx
     jsr calculate_matrix
     jsr store_matrix
     lda #0
     sta.z i
-  b6:
+  __b6:
     inc BORDERCOL
     ldy.z i
     ldx xs,y
@@ -113,7 +113,7 @@ anim: {
     inc.z i
     lda #8
     cmp.z i
-    bne b6
+    bne __b6
     lda #LIGHT_GREY
     sta BORDERCOL
     jsr debug_print
@@ -125,7 +125,7 @@ anim: {
     lax.z sy
     axs #3
     stx.z sy
-    jmp b2
+    jmp __b2
 }
 debug_print: {
     .const print_sbyte_pos1_col = $25
@@ -230,7 +230,7 @@ debug_print: {
     sta.z i
     lda #4
     sta.z c
-  b1:
+  __b1:
     lda.z c
     clc
     adc #<at_line
@@ -297,9 +297,9 @@ debug_print: {
     inc.z i
     lda #8
     cmp.z i
-    beq !b1+
-    jmp b1
-  !b1:
+    beq !__b1+
+    jmp __b1
+  !__b1:
     rts
 }
 // Print a signed byte as hex at a specific screen position
@@ -307,17 +307,17 @@ debug_print: {
 print_sbyte_at: {
     .label at = $d
     cpx #0
-    bmi b1
+    bmi __b1
     ldy #' '
     jsr print_char_at
-  b2:
+  __b2:
     inc.z print_byte_at.at
     bne !+
     inc.z print_byte_at.at+1
   !:
     jsr print_byte_at
     rts
-  b1:
+  __b1:
     ldy #'-'
     jsr print_char_at
     txa
@@ -325,7 +325,7 @@ print_sbyte_at: {
     clc
     adc #1
     tax
-    jmp b2
+    jmp __b2
 }
 // Print a single char
 // print_char_at(byte register(Y) ch, byte* zeropage($d) at)
@@ -655,15 +655,15 @@ debug_print_init: {
     .label COLS = $d800
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
-    .label _41 = $d
-    .label _44 = $f
-    .label _47 = $11
-    .label _50 = $13
-    .label _53 = $15
-    .label _56 = $17
-    .label _59 = $19
-    .label _62 = $1b
-    .label _65 = $1d
+    .label __41 = $d
+    .label __44 = $f
+    .label __47 = $11
+    .label __50 = $13
+    .label __53 = $15
+    .label __56 = $17
+    .label __59 = $19
+    .label __62 = $1b
+    .label __65 = $1d
     .label c = 2
     .label i = 3
     jsr print_cls
@@ -779,7 +779,7 @@ debug_print_init: {
     sta.z i
     lda #4
     sta.z c
-  b1:
+  __b1:
     lda.z c
     clc
     adc #<at_line
@@ -811,104 +811,104 @@ debug_print_init: {
     ldx zs,y
     jsr print_sbyte_at
     ldy #0
-  b2:
+  __b2:
     lax.z i
     axs #-[8]
     lda.z c
     clc
     adc #<at_cols
-    sta.z _41
+    sta.z __41
     lda #>at_cols
     adc #0
-    sta.z _41+1
+    sta.z __41+1
     txa
-    sta (_41),y
+    sta (__41),y
     lda.z c
     clc
     adc #<at_cols+$28*1
-    sta.z _44
+    sta.z __44
     lda #>at_cols+$28*1
     adc #0
-    sta.z _44+1
+    sta.z __44+1
     txa
-    sta (_44),y
+    sta (__44),y
     lda.z c
     clc
     adc #<at_cols+$28*2
-    sta.z _47
+    sta.z __47
     lda #>at_cols+$28*2
     adc #0
-    sta.z _47+1
+    sta.z __47+1
     txa
-    sta (_47),y
+    sta (__47),y
     lda.z c
     clc
     adc #<at_cols+$28*3
-    sta.z _50
+    sta.z __50
     lda #>at_cols+$28*3
     adc #0
-    sta.z _50+1
+    sta.z __50+1
     txa
-    sta (_50),y
+    sta (__50),y
     lda.z c
     clc
     adc #<at_cols+$28*4
-    sta.z _53
+    sta.z __53
     lda #>at_cols+$28*4
     adc #0
-    sta.z _53+1
+    sta.z __53+1
     txa
-    sta (_53),y
+    sta (__53),y
     lda.z c
     clc
     adc #<at_cols+$28*5
-    sta.z _56
+    sta.z __56
     lda #>at_cols+$28*5
     adc #0
-    sta.z _56+1
+    sta.z __56+1
     txa
-    sta (_56),y
+    sta (__56),y
     lda.z c
     clc
     adc #<at_cols+$28*6
-    sta.z _59
+    sta.z __59
     lda #>at_cols+$28*6
     adc #0
-    sta.z _59+1
+    sta.z __59+1
     txa
-    sta (_59),y
+    sta (__59),y
     lda.z c
     clc
     adc #<at_cols+$28*7
-    sta.z _62
+    sta.z __62
     lda #>at_cols+$28*7
     adc #0
-    sta.z _62+1
+    sta.z __62+1
     txa
-    sta (_62),y
+    sta (__62),y
     lda.z c
     clc
     adc #<at_cols+$28*8
-    sta.z _65
+    sta.z __65
     lda #>at_cols+$28*8
     adc #0
-    sta.z _65+1
+    sta.z __65+1
     txa
-    sta (_65),y
+    sta (__65),y
     iny
     cpy #4
-    beq !b2+
-    jmp b2
-  !b2:
+    beq !__b2+
+    jmp __b2
+  !__b2:
     lax.z c
     axs #-[4]
     stx.z c
     inc.z i
     lda #8
     cmp.z i
-    beq !b1+
-    jmp b1
-  !b1:
+    beq !__b1+
+    jmp __b1
+  !__b1:
     rts
     str: .text "sx"
     .byte 0
@@ -940,13 +940,13 @@ debug_print_init: {
 print_str_at: {
     .label at = $f
     .label str = $d
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (at),y
@@ -958,7 +958,7 @@ print_str_at: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -976,15 +976,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -992,7 +992,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Initialize sprites
 sprites_init: {
@@ -1001,14 +1001,14 @@ sprites_init: {
     lda #$ff
     sta SPRITES_ENABLE
     ldx #0
-  b1:
+  __b1:
     lda #SPRITE/$40
     sta sprites_ptr,x
     lda #GREEN
     sta SPRITES_COLS,x
     inx
     cpx #8
-    bne b1
+    bne __b1
     rts
 }
   print_hextab: .text "0123456789abcdef"

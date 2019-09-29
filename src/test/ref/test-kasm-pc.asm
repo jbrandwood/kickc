@@ -6,11 +6,11 @@
 main: {
     .label BORDERCOL = $d020
     ldx #0
-  b2:
+  __b2:
     lda TABLE,x
     sta BORDERCOL
     inx
-    jmp b2
+    jmp __b2
 }
 .pc = TABLE "TABLE"
   .byte 1, 2, 3

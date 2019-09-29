@@ -84,16 +84,16 @@ assert_sbyte: {
     sta.z print_str.str+1
     jsr print_str
     cpx.z c
-    bne b1
+    bne __b1
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-  b2:
+  __b2:
     jsr print_ln
     rts
-  b1:
+  __b1:
     lda #RED
     sta BGCOL
     lda #<str1
@@ -101,19 +101,19 @@ assert_sbyte: {
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    jmp b2
+    jmp __b2
 }
 // Print a zero-terminated string
 // print_str(byte* zeropage(7) str)
 print_str: {
     .label str = 7
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -125,11 +125,11 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -139,11 +139,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -207,16 +207,16 @@ assert_byte: {
     sta.z print_str.str+1
     jsr print_str
     cpx.z c
-    bne b1
+    bne __b1
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-  b2:
+  __b2:
     jsr print_ln
     rts
-  b1:
+  __b1:
     lda #RED
     sta BGCOL
     lda #<str1
@@ -224,7 +224,7 @@ assert_byte: {
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    jmp b2
+    jmp __b2
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -242,15 +242,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -258,7 +258,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   msg: .text "0=0"
   .byte 0

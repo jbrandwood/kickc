@@ -447,32 +447,32 @@ Target platform is c64basic / MOS6502X
 // Experiments with malloc()
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label heap_head = 3
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
-    .label _4 = 9
+    .label __4 = 9
     .label buf1 = 5
     .label buf2 = 7
     .label i = 2
@@ -485,9 +485,9 @@ main: {
     lda #>HEAP_TOP
     sta.z heap_head+1
     jsr malloc
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
     lda.z malloc.mem
     sta.z buf1
@@ -495,29 +495,29 @@ main: {
     sta.z buf1+1
     // [7] call malloc 
     // [24] phi from main::@3 to malloc [phi:main::@3->malloc]
-  malloc_from_b3:
+  malloc_from___b3:
     // [24] phi (byte*) heap_head#7 = (byte*) heap_head#1 [phi:main::@3->malloc#0] -- register_copy 
     jsr malloc
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [8] (void*) main::buf2#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
     lda.z malloc.mem
     sta.z buf2
     lda.z malloc.mem+1
     sta.z buf2+1
     // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [9] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [10] *((byte*)(void*) main::buf1#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuz1_derefidx_vbuz2=vbuz2 
     lda.z i
     tay
@@ -526,9 +526,9 @@ main: {
     lda #$ff
     sec
     sbc.z i
-    sta.z _4
+    sta.z __4
     // [12] *((byte*)(void*) main::buf2#0 + (byte) main::i#2) ← (byte~) main::$4 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda.z _4
+    lda.z __4
     ldy.z i
     sta (buf2),y
     // [13] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
@@ -536,28 +536,28 @@ main: {
     // [14] if((byte) main::i#1!=(byte) $64) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$64
     cmp.z i
-    bne b1_from_b1
+    bne __b1_from___b1
     // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [16] call free 
     // [22] phi from main::@2 to free [phi:main::@2->free]
-  free_from_b2:
+  free_from___b2:
     jsr free
     // [17] phi from main::@2 to main::@5 [phi:main::@2->main::@5]
-  b5_from_b2:
-    jmp b5
+  __b5_from___b2:
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [18] call free 
     // [22] phi from main::@5 to free [phi:main::@5->free]
-  free_from_b5:
+  free_from___b5:
     jsr free
-    jmp b6
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [19] *((const byte*) main::screen) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf1),y
@@ -566,9 +566,9 @@ main: {
     ldy #0
     lda (buf2),y
     sta screen+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
 }
@@ -576,9 +576,9 @@ main: {
 // A block of memory previously allocated by a call to malloc is deallocated, making it available again for further allocations.
 // If ptr is a null pointer, the function does nothing.
 free: {
-    jmp breturn
+    jmp __breturn
     // free::@return
-  breturn:
+  __breturn:
     // [23] return 
     rts
 }
@@ -600,9 +600,9 @@ malloc: {
     sta.z heap_head
     lda.z mem+1
     sta.z heap_head+1
-    jmp breturn
+    jmp __breturn
     // malloc::@return
-  breturn:
+  __breturn:
     // [27] return 
     rts
 }
@@ -654,28 +654,28 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Experiments with malloc()
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label heap_head = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
@@ -690,9 +690,9 @@ main: {
     lda #>HEAP_TOP
     sta.z heap_head+1
     jsr malloc
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [6] (void*) main::buf1#0 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
     lda.z malloc.mem
     sta.z buf1
@@ -700,24 +700,24 @@ main: {
     sta.z buf1+1
     // [7] call malloc 
     // [24] phi from main::@3 to malloc [phi:main::@3->malloc]
-  malloc_from_b3:
+  malloc_from___b3:
     // [24] phi (byte*) heap_head#7 = (byte*) heap_head#1 [phi:main::@3->malloc#0] -- register_copy 
     jsr malloc
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [8] (void*) main::buf2#0 ← (void*)(byte*) malloc::mem#0
     // [9] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [9] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-    jmp b1
+    jmp __b1
     // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [10] *((byte*)(void*) main::buf1#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuz1_derefidx_vbuyy=vbuyy 
     tya
     sta (buf1),y
@@ -732,28 +732,28 @@ main: {
     iny
     // [14] if((byte) main::i#1!=(byte) $64) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$64
-    bne b1_from_b1
+    bne __b1_from___b1
     // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [16] call free 
     // [22] phi from main::@2 to free [phi:main::@2->free]
-  free_from_b2:
+  free_from___b2:
     jsr free
     // [17] phi from main::@2 to main::@5 [phi:main::@2->main::@5]
-  b5_from_b2:
-    jmp b5
+  __b5_from___b2:
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [18] call free 
     // [22] phi from main::@5 to free [phi:main::@5->free]
-  free_from_b5:
+  free_from___b5:
     jsr free
-    jmp b6
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [19] *((const byte*) main::screen) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf1),y
@@ -762,9 +762,9 @@ main: {
     ldy #0
     lda (buf2),y
     sta screen+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
 }
@@ -772,9 +772,9 @@ main: {
 // A block of memory previously allocated by a call to malloc is deallocated, making it available again for further allocations.
 // If ptr is a null pointer, the function does nothing.
 free: {
-    jmp breturn
+    jmp __breturn
     // free::@return
-  breturn:
+  __breturn:
     // [23] return 
     rts
 }
@@ -796,59 +796,60 @@ malloc: {
     sta.z heap_head
     lda.z mem+1
     sta.z heap_head+1
-    jmp breturn
+    jmp __breturn
     // malloc::@return
-  breturn:
+  __breturn:
     // [27] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b4:
-Removing instruction b1_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction free_from_b2:
-Removing instruction b5_from_b2:
-Removing instruction free_from_b5:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b4:
+Removing instruction __b1_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction free_from___b2:
+Removing instruction __b5_from___b2:
+Removing instruction free_from___b5:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction malloc_from_main:
-Removing instruction b3:
-Removing instruction malloc_from_b3:
-Removing instruction b4:
-Removing instruction b2:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b3:
+Removing instruction malloc_from___b3:
+Removing instruction __b4:
+Removing instruction __b2:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -951,7 +952,7 @@ main: {
     // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // buf1[i] = i
     // [10] *((byte*)(void*) main::buf1#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuz1_derefidx_vbuyy=vbuyy 
     tya
@@ -970,7 +971,7 @@ main: {
     iny
     // [14] if((byte) main::i#1!=(byte) $64) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$64
-    bne b1
+    bne __b1
     // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // free(buf1)

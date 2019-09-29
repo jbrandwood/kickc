@@ -5,18 +5,18 @@
   .label SCREEN = $400
 main: {
     ldx #0
-  b1:
+  __b1:
     lda str,x
     cmp #0
-    bne b2
+    bne __b2
     txa
     axs #-['0']
     // Empty body
     stx SCREEN
     rts
-  b2:
+  __b2:
     inx
-    jmp b1
+    jmp __b1
 }
   str: .text "Hello!"
   .byte 0

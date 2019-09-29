@@ -4,11 +4,11 @@
 .pc = $80d "Program"
 main: {
     ldx #0
-  b2:
+  __b2:
     inx
     jsr getfn
     jsr fn1
-    jmp b2
+    jmp __b2
 }
 fn1: {
     .label BORDERCOL = $d020

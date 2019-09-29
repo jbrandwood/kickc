@@ -1528,7 +1528,7 @@ Target platform is c64basic / MOS6502X
 // Example of a struct containing an array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const jesper_id = $1b244
@@ -1536,21 +1536,21 @@ Target platform is c64basic / MOS6502X
   .label print_char_cursor = $c
   .label print_line_cursor = 8
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call print_person 
@@ -1581,9 +1581,9 @@ main: {
     lda #>jesper_id>>$10
     sta.z print_person.person_id+3
     jsr print_person
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -1591,7 +1591,7 @@ main: {
     sta.z print_char_cursor+1
     // [7] call print_person 
     // [9] phi from main::@1 to print_person [phi:main::@1->print_person]
-  print_person_from_b1:
+  print_person_from___b1:
     // [9] phi (byte*) print_line_cursor#20 = (byte*) print_line_cursor#1 [phi:main::@1->print_person#0] -- register_copy 
     // [9] phi (byte[3]) print_person::person_initials#2 = (const byte[3]) henry_initials [phi:main::@1->print_person#1] -- pbuz1=pbuc1 
     lda #<henry_initials
@@ -1609,9 +1609,9 @@ main: {
     lda #>henry_id>>$10
     sta.z print_person.person_id+3
     jsr print_person
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -1632,15 +1632,15 @@ print_person: {
     // [11] call print_dword_decimal 
     jsr print_dword_decimal
     // [12] phi from print_person to print_person::@1 [phi:print_person->print_person::@1]
-  b1_from_print_person:
-    jmp b1
+  __b1_from_print_person:
+    jmp __b1
     // print_person::@1
-  b1:
+  __b1:
     // [13] call print_char 
     jsr print_char
-    jmp b2
+    jmp __b2
     // print_person::@2
-  b2:
+  __b2:
     // [14] (byte*) print_str::str#2 ← (byte[3]) print_person::person_initials#2 -- pbuz1=pbuz2 
     lda.z person_initials
     sta.z print_str.str
@@ -1648,22 +1648,22 @@ print_person: {
     sta.z print_str.str+1
     // [15] call print_str 
     // [24] phi from print_person::@2 to print_str [phi:print_person::@2->print_str]
-  print_str_from_b2:
+  print_str_from___b2:
     // [24] phi (byte*) print_char_cursor#41 = (byte*) print_char_cursor#25 [phi:print_person::@2->print_str#0] -- register_copy 
     // [24] phi (byte*) print_str::str#5 = (byte*) print_str::str#2 [phi:print_person::@2->print_str#1] -- register_copy 
     jsr print_str
     // [16] phi from print_person::@2 to print_person::@3 [phi:print_person::@2->print_person::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // print_person::@3
-  b3:
+  __b3:
     // [17] call print_ln 
     // [19] phi from print_person::@3 to print_ln [phi:print_person::@3->print_ln]
-  print_ln_from_b3:
+  print_ln_from___b3:
     jsr print_ln
-    jmp breturn
+    jmp __breturn
     // print_person::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
@@ -1671,12 +1671,12 @@ print_person: {
 // Print a newline
 print_ln: {
     // [20] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  b1_from_print_ln:
-  b1_from_b1:
+  __b1_from_print_ln:
+  __b1_from___b1:
     // [20] phi (byte*) print_line_cursor#9 = (byte*) print_line_cursor#20 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_ln::@1
-  b1:
+  __b1:
     // [21] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
@@ -1688,15 +1688,15 @@ print_ln: {
     // [22] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#18) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1_from_b1
+    bcc __b1_from___b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1_from_b1
+    bcc __b1_from___b1
   !:
-    jmp breturn
+    jmp __breturn
     // print_ln::@return
-  breturn:
+  __breturn:
     // [23] return 
     rts
 }
@@ -1706,25 +1706,25 @@ print_ln: {
 print_str: {
     .label str = $a
     // [25] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
-  b1_from_print_str:
-  b1_from_b2:
+  __b1_from_print_str:
+  __b1_from___b2:
     // [25] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#41 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [25] phi (byte*) print_str::str#3 = (byte*) print_str::str#5 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_str::@1
-  b1:
+  __b1:
     // [26] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print_str::@return
-  breturn:
+  __breturn:
     // [27] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // [28] *((byte*) print_char_cursor#18) ← *((byte*) print_str::str#3) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
@@ -1740,7 +1740,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // print_char
 // Print a single char
@@ -1755,9 +1755,9 @@ print_char: {
     bne !+
     inc.z print_char_cursor+1
   !:
-    jmp breturn
+    jmp __breturn
     // print_char::@return
-  breturn:
+  __breturn:
     // [33] return 
     rts
 }
@@ -1780,13 +1780,13 @@ print_dword_decimal: {
   ultoa_from_print_dword_decimal:
     jsr ultoa
     // [36] phi from print_dword_decimal to print_dword_decimal::@1 [phi:print_dword_decimal->print_dword_decimal::@1]
-  b1_from_print_dword_decimal:
-    jmp b1
+  __b1_from_print_dword_decimal:
+    jmp __b1
     // print_dword_decimal::@1
-  b1:
+  __b1:
     // [37] call print_str 
     // [24] phi from print_dword_decimal::@1 to print_str [phi:print_dword_decimal::@1->print_str]
-  print_str_from_b1:
+  print_str_from___b1:
     // [24] phi (byte*) print_char_cursor#41 = (byte*) print_char_cursor#39 [phi:print_dword_decimal::@1->print_str#0] -- register_copy 
     // [24] phi (byte*) print_str::str#5 = (const byte[$b]) decimal_digits_long [phi:print_dword_decimal::@1->print_str#1] -- pbuz1=pbuc1 
     lda #<decimal_digits_long
@@ -1794,9 +1794,9 @@ print_dword_decimal: {
     lda #>decimal_digits_long
     sta.z print_str.str+1
     jsr print_str
-    jmp breturn
+    jmp __breturn
     // print_dword_decimal::@return
-  breturn:
+  __breturn:
     // [38] return 
     rts
 }
@@ -1809,8 +1809,8 @@ print_dword_decimal: {
 // ultoa(dword zeropage($f) value, byte* zeropage($20) buffer)
 ultoa: {
     .const max_digits = $a
-    .label _4 = $1f
-    .label _11 = $22
+    .label __4 = $1f
+    .label __11 = $22
     .label digit_value = $23
     .label buffer = $20
     .label digit = $e
@@ -1820,7 +1820,7 @@ ultoa: {
     .label buffer_11 = $14
     .label buffer_14 = $14
     // [40] phi from ultoa to ultoa::@1 [phi:ultoa->ultoa::@1]
-  b1_from_ultoa:
+  __b1_from_ultoa:
     // [40] phi (byte*) ultoa::buffer#11 = (const byte[$b]) decimal_digits_long [phi:ultoa->ultoa::@1#0] -- pbuz1=pbuc1 
     lda #<decimal_digits_long
     sta.z buffer_11
@@ -1833,21 +1833,21 @@ ultoa: {
     // [40] phi (byte) ultoa::digit#2 = (byte) 0 [phi:ultoa->ultoa::@1#3] -- vbuz1=vbuc1 
     lda #0
     sta.z digit
-    jmp b1
+    jmp __b1
     // ultoa::@1
-  b1:
+  __b1:
     // [41] if((byte) ultoa::digit#2<(const byte) ultoa::max_digits#1-(byte) 1) goto ultoa::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z digit
     cmp #max_digits-1
-    bcc b2
-    jmp b3
+    bcc __b2
+    jmp __b3
     // ultoa::@3
-  b3:
+  __b3:
     // [42] (byte~) ultoa::$4 ← (byte)(dword) ultoa::value#2 -- vbuz1=_byte_vduz2 
     lda.z value
-    sta.z _4
+    sta.z __4
     // [43] *((byte*) ultoa::buffer#11) ← *((const byte[]) DIGITS + (byte~) ultoa::$4) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z _4
+    ldy.z __4
     lda DIGITS,y
     ldy #0
     sta (buffer_11),y
@@ -1863,20 +1863,20 @@ ultoa: {
     lda #0
     ldy #0
     sta (buffer),y
-    jmp breturn
+    jmp __breturn
     // ultoa::@return
-  breturn:
+  __breturn:
     // [46] return 
     rts
     // ultoa::@2
-  b2:
+  __b2:
     // [47] (byte~) ultoa::$11 ← (byte) ultoa::digit#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
     lda.z digit
     asl
     asl
-    sta.z _11
+    sta.z __11
     // [48] (dword) ultoa::digit_value#0 ← *((const dword[]) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$11) -- vduz1=pduc1_derefidx_vbuz2 
-    ldy.z _11
+    ldy.z __11
     lda RADIX_DECIMAL_VALUES_LONG,y
     sta.z digit_value
     lda RADIX_DECIMAL_VALUES_LONG+1,y
@@ -1888,46 +1888,46 @@ ultoa: {
     // [49] if((byte) 0!=(byte) ultoa::started#2) goto ultoa::@5 -- vbuc1_neq_vbuz1_then_la1 
     lda #0
     cmp.z started
-    bne b5
-    jmp b7
+    bne __b5
+    jmp __b7
     // ultoa::@7
-  b7:
+  __b7:
     // [50] if((dword) ultoa::value#2>=(dword) ultoa::digit_value#0) goto ultoa::@5 -- vduz1_ge_vduz2_then_la1 
     lda.z value+3
     cmp.z digit_value+3
     bcc !+
-    bne b5
+    bne __b5
     lda.z value+2
     cmp.z digit_value+2
     bcc !+
-    bne b5
+    bne __b5
     lda.z value+1
     cmp.z digit_value+1
     bcc !+
-    bne b5
+    bne __b5
     lda.z value
     cmp.z digit_value
-    bcs b5
+    bcs __b5
   !:
     // [51] phi from ultoa::@7 to ultoa::@4 [phi:ultoa::@7->ultoa::@4]
-  b4_from_b7:
+  __b4_from___b7:
     // [51] phi (byte*) ultoa::buffer#14 = (byte*) ultoa::buffer#11 [phi:ultoa::@7->ultoa::@4#0] -- register_copy 
     // [51] phi (byte) ultoa::started#4 = (byte) ultoa::started#2 [phi:ultoa::@7->ultoa::@4#1] -- register_copy 
     // [51] phi (dword) ultoa::value#6 = (dword) ultoa::value#2 [phi:ultoa::@7->ultoa::@4#2] -- register_copy 
-    jmp b4
+    jmp __b4
     // ultoa::@4
-  b4:
+  __b4:
     // [52] (byte) ultoa::digit#1 ← ++ (byte) ultoa::digit#2 -- vbuz1=_inc_vbuz1 
     inc.z digit
     // [40] phi from ultoa::@4 to ultoa::@1 [phi:ultoa::@4->ultoa::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [40] phi (byte*) ultoa::buffer#11 = (byte*) ultoa::buffer#14 [phi:ultoa::@4->ultoa::@1#0] -- register_copy 
     // [40] phi (byte) ultoa::started#2 = (byte) ultoa::started#4 [phi:ultoa::@4->ultoa::@1#1] -- register_copy 
     // [40] phi (dword) ultoa::value#2 = (dword) ultoa::value#6 [phi:ultoa::@4->ultoa::@1#2] -- register_copy 
     // [40] phi (byte) ultoa::digit#2 = (byte) ultoa::digit#1 [phi:ultoa::@4->ultoa::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // ultoa::@5
-  b5:
+  __b5:
     // [53] (byte*) ultoa_append::buffer#0 ← (byte*) ultoa::buffer#11 -- pbuz1=pbuz2 
     lda.z buffer_11
     sta.z ultoa_append.buffer
@@ -1953,7 +1953,7 @@ ultoa: {
     sta.z ultoa_append.sub+3
     // [56] call ultoa_append 
     // [60] phi from ultoa::@5 to ultoa_append [phi:ultoa::@5->ultoa_append]
-  ultoa_append_from_b5:
+  ultoa_append_from___b5:
     jsr ultoa_append
     // [57] (dword) ultoa_append::return#0 ← (dword) ultoa_append::value#2 -- vduz1=vduz2 
     lda.z ultoa_append.value
@@ -1964,9 +1964,9 @@ ultoa: {
     sta.z ultoa_append.return+2
     lda.z ultoa_append.value+3
     sta.z ultoa_append.return+3
-    jmp b6
+    jmp __b6
     // ultoa::@6
-  b6:
+  __b6:
     // [58] (dword) ultoa::value#0 ← (dword) ultoa_append::return#0 -- vduz1=vduz2 
     lda.z ultoa_append.return
     sta.z value
@@ -1982,13 +1982,13 @@ ultoa: {
     inc.z buffer_4+1
   !:
     // [51] phi from ultoa::@6 to ultoa::@4 [phi:ultoa::@6->ultoa::@4]
-  b4_from_b6:
+  __b4_from___b6:
     // [51] phi (byte*) ultoa::buffer#14 = (byte*) ultoa::buffer#4 [phi:ultoa::@6->ultoa::@4#0] -- register_copy 
     // [51] phi (byte) ultoa::started#4 = (byte) 1 [phi:ultoa::@6->ultoa::@4#1] -- vbuz1=vbuc1 
     lda #1
     sta.z started
     // [51] phi (dword) ultoa::value#6 = (dword) ultoa::value#0 [phi:ultoa::@6->ultoa::@4#2] -- register_copy 
-    jmp b4
+    jmp __b4
 }
   // ultoa_append
 // Used to convert a single digit of an unsigned number value to a string representation
@@ -2007,46 +2007,46 @@ ultoa_append: {
     .label return = $2d
     .label digit = $1a
     // [61] phi from ultoa_append to ultoa_append::@1 [phi:ultoa_append->ultoa_append::@1]
-  b1_from_ultoa_append:
+  __b1_from_ultoa_append:
     // [61] phi (byte) ultoa_append::digit#2 = (byte) 0 [phi:ultoa_append->ultoa_append::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z digit
     // [61] phi (dword) ultoa_append::value#2 = (dword) ultoa_append::value#0 [phi:ultoa_append->ultoa_append::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // ultoa_append::@1
-  b1:
+  __b1:
     // [62] if((dword) ultoa_append::value#2>=(dword) ultoa_append::sub#0) goto ultoa_append::@2 -- vduz1_ge_vduz2_then_la1 
     lda.z value+3
     cmp.z sub+3
     bcc !+
-    bne b2
+    bne __b2
     lda.z value+2
     cmp.z sub+2
     bcc !+
-    bne b2
+    bne __b2
     lda.z value+1
     cmp.z sub+1
     bcc !+
-    bne b2
+    bne __b2
     lda.z value
     cmp.z sub
-    bcs b2
+    bcs __b2
   !:
-    jmp b3
+    jmp __b3
     // ultoa_append::@3
-  b3:
+  __b3:
     // [63] *((byte*) ultoa_append::buffer#0) ← *((const byte[]) DIGITS + (byte) ultoa_append::digit#2) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z digit
     lda DIGITS,y
     ldy #0
     sta (buffer),y
-    jmp breturn
+    jmp __breturn
     // ultoa_append::@return
-  breturn:
+  __breturn:
     // [64] return 
     rts
     // ultoa_append::@2
-  b2:
+  __b2:
     // [65] (byte) ultoa_append::digit#1 ← ++ (byte) ultoa_append::digit#2 -- vbuz1=_inc_vbuz1 
     inc.z digit
     // [66] (dword) ultoa_append::value#1 ← (dword) ultoa_append::value#2 - (dword) ultoa_append::sub#0 -- vduz1=vduz1_minus_vduz2 
@@ -2064,10 +2064,10 @@ ultoa_append: {
     sbc.z sub+3
     sta.z value+3
     // [61] phi from ultoa_append::@2 to ultoa_append::@1 [phi:ultoa_append::@2->ultoa_append::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [61] phi (byte) ultoa_append::digit#2 = (byte) ultoa_append::digit#1 [phi:ultoa_append::@2->ultoa_append::@1#0] -- register_copy 
     // [61] phi (dword) ultoa_append::value#2 = (dword) ultoa_append::value#1 [phi:ultoa_append::@2->ultoa_append::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   // The digits used for numbers
@@ -2198,7 +2198,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Example of a struct containing an array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const jesper_id = $1b244
@@ -2206,21 +2206,21 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_char_cursor = $a
   .label print_line_cursor = 8
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call print_person 
@@ -2251,9 +2251,9 @@ main: {
     lda #>jesper_id>>$10
     sta.z print_person.person_id+3
     jsr print_person
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -2261,7 +2261,7 @@ main: {
     sta.z print_char_cursor+1
     // [7] call print_person 
     // [9] phi from main::@1 to print_person [phi:main::@1->print_person]
-  print_person_from_b1:
+  print_person_from___b1:
     // [9] phi (byte*) print_line_cursor#20 = (byte*) print_line_cursor#1 [phi:main::@1->print_person#0] -- register_copy 
     // [9] phi (byte[3]) print_person::person_initials#2 = (const byte[3]) henry_initials [phi:main::@1->print_person#1] -- pbuz1=pbuc1 
     lda #<henry_initials
@@ -2279,9 +2279,9 @@ main: {
     lda #>henry_id>>$10
     sta.z print_person.person_id+3
     jsr print_person
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -2294,15 +2294,15 @@ print_person: {
     // [11] call print_dword_decimal 
     jsr print_dword_decimal
     // [12] phi from print_person to print_person::@1 [phi:print_person->print_person::@1]
-  b1_from_print_person:
-    jmp b1
+  __b1_from_print_person:
+    jmp __b1
     // print_person::@1
-  b1:
+  __b1:
     // [13] call print_char 
     jsr print_char
-    jmp b2
+    jmp __b2
     // print_person::@2
-  b2:
+  __b2:
     // [14] (byte*) print_str::str#2 ← (byte[3]) print_person::person_initials#2 -- pbuz1=pbuz2 
     lda.z person_initials
     sta.z print_str.str
@@ -2310,22 +2310,22 @@ print_person: {
     sta.z print_str.str+1
     // [15] call print_str 
     // [24] phi from print_person::@2 to print_str [phi:print_person::@2->print_str]
-  print_str_from_b2:
+  print_str_from___b2:
     // [24] phi (byte*) print_char_cursor#41 = (byte*) print_char_cursor#25 [phi:print_person::@2->print_str#0] -- register_copy 
     // [24] phi (byte*) print_str::str#5 = (byte*) print_str::str#2 [phi:print_person::@2->print_str#1] -- register_copy 
     jsr print_str
     // [16] phi from print_person::@2 to print_person::@3 [phi:print_person::@2->print_person::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // print_person::@3
-  b3:
+  __b3:
     // [17] call print_ln 
     // [19] phi from print_person::@3 to print_ln [phi:print_person::@3->print_ln]
-  print_ln_from_b3:
+  print_ln_from___b3:
     jsr print_ln
-    jmp breturn
+    jmp __breturn
     // print_person::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
@@ -2333,12 +2333,12 @@ print_person: {
 // Print a newline
 print_ln: {
     // [20] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  b1_from_print_ln:
-  b1_from_b1:
+  __b1_from_print_ln:
+  __b1_from___b1:
     // [20] phi (byte*) print_line_cursor#9 = (byte*) print_line_cursor#20 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_ln::@1
-  b1:
+  __b1:
     // [21] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
@@ -2350,15 +2350,15 @@ print_ln: {
     // [22] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#18) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1_from_b1
+    bcc __b1_from___b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1_from_b1
+    bcc __b1_from___b1
   !:
-    jmp breturn
+    jmp __breturn
     // print_ln::@return
-  breturn:
+  __breturn:
     // [23] return 
     rts
 }
@@ -2368,25 +2368,25 @@ print_ln: {
 print_str: {
     .label str = $d
     // [25] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
-  b1_from_print_str:
-  b1_from_b2:
+  __b1_from_print_str:
+  __b1_from___b2:
     // [25] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#41 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [25] phi (byte*) print_str::str#3 = (byte*) print_str::str#5 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_str::@1
-  b1:
+  __b1:
     // [26] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print_str::@return
-  breturn:
+  __breturn:
     // [27] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // [28] *((byte*) print_char_cursor#18) ← *((byte*) print_str::str#3) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
@@ -2402,7 +2402,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // print_char
 // Print a single char
@@ -2417,9 +2417,9 @@ print_char: {
     bne !+
     inc.z print_char_cursor+1
   !:
-    jmp breturn
+    jmp __breturn
     // print_char::@return
-  breturn:
+  __breturn:
     // [33] return 
     rts
 }
@@ -2434,13 +2434,13 @@ print_dword_decimal: {
   ultoa_from_print_dword_decimal:
     jsr ultoa
     // [36] phi from print_dword_decimal to print_dword_decimal::@1 [phi:print_dword_decimal->print_dword_decimal::@1]
-  b1_from_print_dword_decimal:
-    jmp b1
+  __b1_from_print_dword_decimal:
+    jmp __b1
     // print_dword_decimal::@1
-  b1:
+  __b1:
     // [37] call print_str 
     // [24] phi from print_dword_decimal::@1 to print_str [phi:print_dword_decimal::@1->print_str]
-  print_str_from_b1:
+  print_str_from___b1:
     // [24] phi (byte*) print_char_cursor#41 = (byte*) print_char_cursor#39 [phi:print_dword_decimal::@1->print_str#0] -- register_copy 
     // [24] phi (byte*) print_str::str#5 = (const byte[$b]) decimal_digits_long [phi:print_dword_decimal::@1->print_str#1] -- pbuz1=pbuc1 
     lda #<decimal_digits_long
@@ -2448,9 +2448,9 @@ print_dword_decimal: {
     lda #>decimal_digits_long
     sta.z print_str.str+1
     jsr print_str
-    jmp breturn
+    jmp __breturn
     // print_dword_decimal::@return
-  breturn:
+  __breturn:
     // [38] return 
     rts
 }
@@ -2468,7 +2468,7 @@ ultoa: {
     .label digit = $c
     .label value = 2
     // [40] phi from ultoa to ultoa::@1 [phi:ultoa->ultoa::@1]
-  b1_from_ultoa:
+  __b1_from_ultoa:
     // [40] phi (byte*) ultoa::buffer#11 = (const byte[$b]) decimal_digits_long [phi:ultoa->ultoa::@1#0] -- pbuz1=pbuc1 
     lda #<decimal_digits_long
     sta.z buffer
@@ -2480,16 +2480,16 @@ ultoa: {
     // [40] phi (byte) ultoa::digit#2 = (byte) 0 [phi:ultoa->ultoa::@1#3] -- vbuz1=vbuc1 
     lda #0
     sta.z digit
-    jmp b1
+    jmp __b1
     // ultoa::@1
-  b1:
+  __b1:
     // [41] if((byte) ultoa::digit#2<(const byte) ultoa::max_digits#1-(byte) 1) goto ultoa::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z digit
     cmp #max_digits-1
-    bcc b2
-    jmp b3
+    bcc __b2
+    jmp __b3
     // ultoa::@3
-  b3:
+  __b3:
     // [42] (byte~) ultoa::$4 ← (byte)(dword) ultoa::value#2 -- vbuaa=_byte_vduz1 
     lda.z value
     // [43] *((byte*) ultoa::buffer#11) ← *((const byte[]) DIGITS + (byte~) ultoa::$4) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
@@ -2506,13 +2506,13 @@ ultoa: {
     lda #0
     ldy #0
     sta (buffer),y
-    jmp breturn
+    jmp __breturn
     // ultoa::@return
-  breturn:
+  __breturn:
     // [46] return 
     rts
     // ultoa::@2
-  b2:
+  __b2:
     // [47] (byte~) ultoa::$11 ← (byte) ultoa::digit#2 << (byte) 2 -- vbuaa=vbuz1_rol_2 
     lda.z digit
     asl
@@ -2529,57 +2529,57 @@ ultoa: {
     sta.z digit_value+3
     // [49] if((byte) 0!=(byte) ultoa::started#2) goto ultoa::@5 -- vbuc1_neq_vbuxx_then_la1 
     cpx #0
-    bne b5
-    jmp b7
+    bne __b5
+    jmp __b7
     // ultoa::@7
-  b7:
+  __b7:
     // [50] if((dword) ultoa::value#2>=(dword) ultoa::digit_value#0) goto ultoa::@5 -- vduz1_ge_vduz2_then_la1 
     lda.z value+3
     cmp.z digit_value+3
     bcc !+
-    bne b5
+    bne __b5
     lda.z value+2
     cmp.z digit_value+2
     bcc !+
-    bne b5
+    bne __b5
     lda.z value+1
     cmp.z digit_value+1
     bcc !+
-    bne b5
+    bne __b5
     lda.z value
     cmp.z digit_value
-    bcs b5
+    bcs __b5
   !:
     // [51] phi from ultoa::@7 to ultoa::@4 [phi:ultoa::@7->ultoa::@4]
-  b4_from_b7:
+  __b4_from___b7:
     // [51] phi (byte*) ultoa::buffer#14 = (byte*) ultoa::buffer#11 [phi:ultoa::@7->ultoa::@4#0] -- register_copy 
     // [51] phi (byte) ultoa::started#4 = (byte) ultoa::started#2 [phi:ultoa::@7->ultoa::@4#1] -- register_copy 
     // [51] phi (dword) ultoa::value#6 = (dword) ultoa::value#2 [phi:ultoa::@7->ultoa::@4#2] -- register_copy 
-    jmp b4
+    jmp __b4
     // ultoa::@4
-  b4:
+  __b4:
     // [52] (byte) ultoa::digit#1 ← ++ (byte) ultoa::digit#2 -- vbuz1=_inc_vbuz1 
     inc.z digit
     // [40] phi from ultoa::@4 to ultoa::@1 [phi:ultoa::@4->ultoa::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [40] phi (byte*) ultoa::buffer#11 = (byte*) ultoa::buffer#14 [phi:ultoa::@4->ultoa::@1#0] -- register_copy 
     // [40] phi (byte) ultoa::started#2 = (byte) ultoa::started#4 [phi:ultoa::@4->ultoa::@1#1] -- register_copy 
     // [40] phi (dword) ultoa::value#2 = (dword) ultoa::value#6 [phi:ultoa::@4->ultoa::@1#2] -- register_copy 
     // [40] phi (byte) ultoa::digit#2 = (byte) ultoa::digit#1 [phi:ultoa::@4->ultoa::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // ultoa::@5
-  b5:
+  __b5:
     // [53] (byte*) ultoa_append::buffer#0 ← (byte*) ultoa::buffer#11
     // [54] (dword) ultoa_append::value#0 ← (dword) ultoa::value#2
     // [55] (dword) ultoa_append::sub#0 ← (dword) ultoa::digit_value#0
     // [56] call ultoa_append 
     // [60] phi from ultoa::@5 to ultoa_append [phi:ultoa::@5->ultoa_append]
-  ultoa_append_from_b5:
+  ultoa_append_from___b5:
     jsr ultoa_append
     // [57] (dword) ultoa_append::return#0 ← (dword) ultoa_append::value#2
-    jmp b6
+    jmp __b6
     // ultoa::@6
-  b6:
+  __b6:
     // [58] (dword) ultoa::value#0 ← (dword) ultoa_append::return#0
     // [59] (byte*) ultoa::buffer#4 ← ++ (byte*) ultoa::buffer#11 -- pbuz1=_inc_pbuz1 
     inc.z buffer
@@ -2587,12 +2587,12 @@ ultoa: {
     inc.z buffer+1
   !:
     // [51] phi from ultoa::@6 to ultoa::@4 [phi:ultoa::@6->ultoa::@4]
-  b4_from_b6:
+  __b4_from___b6:
     // [51] phi (byte*) ultoa::buffer#14 = (byte*) ultoa::buffer#4 [phi:ultoa::@6->ultoa::@4#0] -- register_copy 
     // [51] phi (byte) ultoa::started#4 = (byte) 1 [phi:ultoa::@6->ultoa::@4#1] -- vbuxx=vbuc1 
     ldx #1
     // [51] phi (dword) ultoa::value#6 = (dword) ultoa::value#0 [phi:ultoa::@6->ultoa::@4#2] -- register_copy 
-    jmp b4
+    jmp __b4
 }
   // ultoa_append
 // Used to convert a single digit of an unsigned number value to a string representation
@@ -2610,44 +2610,44 @@ ultoa_append: {
     .label sub = $f
     .label return = 2
     // [61] phi from ultoa_append to ultoa_append::@1 [phi:ultoa_append->ultoa_append::@1]
-  b1_from_ultoa_append:
+  __b1_from_ultoa_append:
     // [61] phi (byte) ultoa_append::digit#2 = (byte) 0 [phi:ultoa_append->ultoa_append::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [61] phi (dword) ultoa_append::value#2 = (dword) ultoa_append::value#0 [phi:ultoa_append->ultoa_append::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // ultoa_append::@1
-  b1:
+  __b1:
     // [62] if((dword) ultoa_append::value#2>=(dword) ultoa_append::sub#0) goto ultoa_append::@2 -- vduz1_ge_vduz2_then_la1 
     lda.z value+3
     cmp.z sub+3
     bcc !+
-    bne b2
+    bne __b2
     lda.z value+2
     cmp.z sub+2
     bcc !+
-    bne b2
+    bne __b2
     lda.z value+1
     cmp.z sub+1
     bcc !+
-    bne b2
+    bne __b2
     lda.z value
     cmp.z sub
-    bcs b2
+    bcs __b2
   !:
-    jmp b3
+    jmp __b3
     // ultoa_append::@3
-  b3:
+  __b3:
     // [63] *((byte*) ultoa_append::buffer#0) ← *((const byte[]) DIGITS + (byte) ultoa_append::digit#2) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda DIGITS,x
     ldy #0
     sta (buffer),y
-    jmp breturn
+    jmp __breturn
     // ultoa_append::@return
-  breturn:
+  __breturn:
     // [64] return 
     rts
     // ultoa_append::@2
-  b2:
+  __b2:
     // [65] (byte) ultoa_append::digit#1 ← ++ (byte) ultoa_append::digit#2 -- vbuxx=_inc_vbuxx 
     inx
     // [66] (dword) ultoa_append::value#1 ← (dword) ultoa_append::value#2 - (dword) ultoa_append::sub#0 -- vduz1=vduz1_minus_vduz2 
@@ -2665,10 +2665,10 @@ ultoa_append: {
     sbc.z sub+3
     sta.z value+3
     // [61] phi from ultoa_append::@2 to ultoa_append::@1 [phi:ultoa_append::@2->ultoa_append::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [61] phi (byte) ultoa_append::digit#2 = (byte) ultoa_append::digit#1 [phi:ultoa_append::@2->ultoa_append::@1#0] -- register_copy 
     // [61] phi (dword) ultoa_append::value#2 = (dword) ultoa_append::value#1 [phi:ultoa_append::@2->ultoa_append::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   // The digits used for numbers
@@ -2683,86 +2683,87 @@ ultoa_append: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b7
-Removing instruction jmp b4
-Removing instruction jmp b6
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b7
+Removing instruction jmp __b4
+Removing instruction jmp __b6
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Replacing instruction lda #0 with TXA
 Replacing instruction ldy #0 with TAY
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b2 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_print_person:
-Removing instruction b3_from_b2:
-Removing instruction print_ln_from_b3:
-Removing instruction b1_from_print_ln:
-Removing instruction b1_from_b1:
-Removing instruction b1_from_print_str:
-Removing instruction b1_from_b2:
-Removing instruction b1_from_print_dword_decimal:
-Removing instruction print_str_from_b1:
-Removing instruction b4_from_b7:
-Removing instruction ultoa_append_from_b5:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from___b2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_print_person:
+Removing instruction __b3_from___b2:
+Removing instruction print_ln_from___b3:
+Removing instruction __b1_from_print_ln:
+Removing instruction __b1_from___b1:
+Removing instruction __b1_from_print_str:
+Removing instruction __b1_from___b2:
+Removing instruction __b1_from_print_dword_decimal:
+Removing instruction print_str_from___b1:
+Removing instruction __b4_from___b7:
+Removing instruction ultoa_append_from___b5:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction print_person_from_main:
-Removing instruction b1:
-Removing instruction print_person_from_b1:
-Removing instruction breturn:
-Removing instruction b1:
-Removing instruction b2:
-Removing instruction print_str_from_b2:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction print_person_from___b1:
+Removing instruction __breturn:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction print_str_from___b2:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction ultoa_from_print_dword_decimal:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction b1_from_ultoa:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction b7:
-Removing instruction b1_from_b4:
-Removing instruction b6:
-Removing instruction b4_from_b6:
-Removing instruction b1_from_ultoa_append:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b1_from_ultoa:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b7:
+Removing instruction __b1_from___b4:
+Removing instruction __b6:
+Removing instruction __b4_from___b6:
+Removing instruction __b1_from_ultoa_append:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -3018,7 +3019,7 @@ print_ln: {
     // [20] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
     // [20] phi (byte*) print_line_cursor#9 = (byte*) print_line_cursor#20 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
     // print_ln::@1
-  b1:
+  __b1:
     // print_line_cursor + $28
     // [21] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
@@ -3032,11 +3033,11 @@ print_ln: {
     // [22] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#18) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     // print_ln::@return
     // }
@@ -3052,19 +3053,19 @@ print_str: {
     // [25] phi (byte*) print_char_cursor#18 = (byte*) print_char_cursor#41 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [25] phi (byte*) print_str::str#3 = (byte*) print_str::str#5 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
     // print_str::@1
-  b1:
+  __b1:
     // while(*str)
     // [26] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     // print_str::@return
     // }
     // [27] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // *(print_char_cursor++) = *(str++)
     // [28] *((byte*) print_char_cursor#18) ← *((byte*) print_str::str#3) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -3081,7 +3082,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
   // print_char
 // Print a single char
@@ -3156,12 +3157,12 @@ ultoa: {
     txa
     sta.z digit
     // ultoa::@1
-  b1:
+  __b1:
     // for( char digit=0; digit<max_digits-1; digit++ )
     // [41] if((byte) ultoa::digit#2<(const byte) ultoa::max_digits#1-(byte) 1) goto ultoa::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z digit
     cmp #max_digits-1
-    bcc b2
+    bcc __b2
     // ultoa::@3
     // (char)value
     // [42] (byte~) ultoa::$4 ← (byte)(dword) ultoa::value#2 -- vbuaa=_byte_vduz1 
@@ -3188,7 +3189,7 @@ ultoa: {
     // [46] return 
     rts
     // ultoa::@2
-  b2:
+  __b2:
     // digit_value = digit_values[digit]
     // [47] (byte~) ultoa::$11 ← (byte) ultoa::digit#2 << (byte) 2 -- vbuaa=vbuz1_rol_2 
     lda.z digit
@@ -3207,31 +3208,31 @@ ultoa: {
     // if (started || value >= digit_value)
     // [49] if((byte) 0!=(byte) ultoa::started#2) goto ultoa::@5 -- vbuc1_neq_vbuxx_then_la1 
     cpx #0
-    bne b5
+    bne __b5
     // ultoa::@7
     // [50] if((dword) ultoa::value#2>=(dword) ultoa::digit_value#0) goto ultoa::@5 -- vduz1_ge_vduz2_then_la1 
     lda.z value+3
     cmp.z digit_value+3
     bcc !+
-    bne b5
+    bne __b5
     lda.z value+2
     cmp.z digit_value+2
     bcc !+
-    bne b5
+    bne __b5
     lda.z value+1
     cmp.z digit_value+1
     bcc !+
-    bne b5
+    bne __b5
     lda.z value
     cmp.z digit_value
-    bcs b5
+    bcs __b5
   !:
     // [51] phi from ultoa::@7 to ultoa::@4 [phi:ultoa::@7->ultoa::@4]
     // [51] phi (byte*) ultoa::buffer#14 = (byte*) ultoa::buffer#11 [phi:ultoa::@7->ultoa::@4#0] -- register_copy 
     // [51] phi (byte) ultoa::started#4 = (byte) ultoa::started#2 [phi:ultoa::@7->ultoa::@4#1] -- register_copy 
     // [51] phi (dword) ultoa::value#6 = (dword) ultoa::value#2 [phi:ultoa::@7->ultoa::@4#2] -- register_copy 
     // ultoa::@4
-  b4:
+  __b4:
     // for( char digit=0; digit<max_digits-1; digit++ )
     // [52] (byte) ultoa::digit#1 ← ++ (byte) ultoa::digit#2 -- vbuz1=_inc_vbuz1 
     inc.z digit
@@ -3240,9 +3241,9 @@ ultoa: {
     // [40] phi (byte) ultoa::started#2 = (byte) ultoa::started#4 [phi:ultoa::@4->ultoa::@1#1] -- register_copy 
     // [40] phi (dword) ultoa::value#2 = (dword) ultoa::value#6 [phi:ultoa::@4->ultoa::@1#2] -- register_copy 
     // [40] phi (byte) ultoa::digit#2 = (byte) ultoa::digit#1 [phi:ultoa::@4->ultoa::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // ultoa::@5
-  b5:
+  __b5:
     // ultoa_append(buffer++, value, digit_value)
     // [53] (byte*) ultoa_append::buffer#0 ← (byte*) ultoa::buffer#11
     // [54] (dword) ultoa_append::value#0 ← (dword) ultoa::value#2
@@ -3266,7 +3267,7 @@ ultoa: {
     // [51] phi (byte) ultoa::started#4 = (byte) 1 [phi:ultoa::@6->ultoa::@4#1] -- vbuxx=vbuc1 
     ldx #1
     // [51] phi (dword) ultoa::value#6 = (dword) ultoa::value#0 [phi:ultoa::@6->ultoa::@4#2] -- register_copy 
-    jmp b4
+    jmp __b4
 }
   // ultoa_append
 // Used to convert a single digit of an unsigned number value to a string representation
@@ -3288,24 +3289,24 @@ ultoa_append: {
     ldx #0
     // [61] phi (dword) ultoa_append::value#2 = (dword) ultoa_append::value#0 [phi:ultoa_append->ultoa_append::@1#1] -- register_copy 
     // ultoa_append::@1
-  b1:
+  __b1:
     // while (value >= sub)
     // [62] if((dword) ultoa_append::value#2>=(dword) ultoa_append::sub#0) goto ultoa_append::@2 -- vduz1_ge_vduz2_then_la1 
     lda.z value+3
     cmp.z sub+3
     bcc !+
-    bne b2
+    bne __b2
     lda.z value+2
     cmp.z sub+2
     bcc !+
-    bne b2
+    bne __b2
     lda.z value+1
     cmp.z sub+1
     bcc !+
-    bne b2
+    bne __b2
     lda.z value
     cmp.z sub
-    bcs b2
+    bcs __b2
   !:
     // ultoa_append::@3
     // *buffer = DIGITS[digit]
@@ -3318,7 +3319,7 @@ ultoa_append: {
     // [64] return 
     rts
     // ultoa_append::@2
-  b2:
+  __b2:
     // digit++;
     // [65] (byte) ultoa_append::digit#1 ← ++ (byte) ultoa_append::digit#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -3340,7 +3341,7 @@ ultoa_append: {
     // [61] phi from ultoa_append::@2 to ultoa_append::@1 [phi:ultoa_append::@2->ultoa_append::@1]
     // [61] phi (byte) ultoa_append::digit#2 = (byte) ultoa_append::digit#1 [phi:ultoa_append::@2->ultoa_append::@1#0] -- register_copy 
     // [61] phi (dword) ultoa_append::value#2 = (dword) ultoa_append::value#1 [phi:ultoa_append::@2->ultoa_append::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   // The digits used for numbers

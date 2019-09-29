@@ -88,13 +88,13 @@ main: {
     sta VIC_MEMORY
     tax
   // DTV Palette - Grey Tones
-  b1:
+  __b1:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b1
-  b2:
+    bne __b1
+  __b2:
     // Stabilize Raster
     ldx #$ff
   rff:
@@ -136,10 +136,10 @@ main: {
     sta VIC_CONTROL
     lda #0
     sta BORDERCOL
-  b3:
+  __b3:
     lda #$42
     cmp RASTER
-    bne b3
+    bne __b3
     nop
     nop
     nop
@@ -158,7 +158,7 @@ main: {
     nop
     nop
     nop
-  b5:
+  __b5:
     ldx RASTER
     txa
     and #7
@@ -186,12 +186,12 @@ main: {
     nop
     nop
     cpx #$f2
-    bne b5
-    jmp b2
+    bne __b5
+    jmp __b2
 }
 // Initialize Plane with 8bpp chunky
 gfx_init_chunky: {
-    .label _8 = 7
+    .label __8 = 7
     .label gfxb = 5
     .label x = 3
     .label y = 2
@@ -204,17 +204,17 @@ gfx_init_chunky: {
     sta.z gfxb
     lda #>$4000
     sta.z gfxb+1
-  b1:
+  __b1:
     lda #<0
     sta.z x
     sta.z x+1
-  b2:
+  __b2:
     lda.z gfxb+1
     cmp #>$8000
-    bne b3
+    bne __b3
     lda.z gfxb
     cmp #<$8000
-    bne b3
+    bne __b3
     txa
     jsr dtvSetCpuBankSegment1
     inx
@@ -222,15 +222,15 @@ gfx_init_chunky: {
     sta.z gfxb
     lda #>$4000
     sta.z gfxb+1
-  b3:
+  __b3:
     lda.z y
     clc
     adc.z x
-    sta.z _8
+    sta.z __8
     lda #0
     adc.z x+1
-    sta.z _8+1
-    lda.z _8
+    sta.z __8+1
+    lda.z __8
     ldy #0
     sta (gfxb),y
     inc.z gfxb
@@ -243,14 +243,14 @@ gfx_init_chunky: {
   !:
     lda.z x+1
     cmp #>$140
-    bne b2
+    bne __b2
     lda.z x
     cmp #<$140
-    bne b2
+    bne __b2
     inc.z y
     lda #$33
     cmp.z y
-    bne b1
+    bne __b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     rts

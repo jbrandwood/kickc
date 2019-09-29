@@ -9,25 +9,25 @@ main: {
     ldx #2
     lda #$80
     sta.z a
-  b1:
+  __b1:
     cpx.z a
-    bne b2
+    bne __b2
     lda.z a
     sta SCREEN
     rts
-  b2:
+  __b2:
     cpx.z a
-    bcc b4
+    bcc __b4
     txa
     sec
     sbc.z a
     tax
-    jmp b1
-  b4:
+    jmp __b1
+  __b4:
     txa
     eor #$ff
     sec
     adc.z a
     sta.z a
-    jmp b1
+    jmp __b1
 }

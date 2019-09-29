@@ -71,24 +71,24 @@ main: {
     lda #>$400
     sta.z sc+1
   // Clear screen
-  b1:
+  __b1:
     lda.z sc+1
     cmp #>$400+$3e8
-    bcs !b2+
-    jmp b2
-  !b2:
+    bcs !__b2+
+    jmp __b2
+  !__b2:
     bne !+
     lda.z sc
     cmp #<$400+$3e8
-    bcs !b2+
-    jmp b2
-  !b2:
+    bcs !__b2+
+    jmp __b2
+  !__b2:
   !:
     jsr keyboard_init
-  b4:
+  __b4:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne __b4
     lda #<$400
     sta.z screen
     lda #>$400
@@ -96,25 +96,25 @@ main: {
     lda #0
     sta.z row
   // Read & print keyboard matrix
-  b5:
+  __b5:
     ldy.z row
     jsr keyboard_matrix_read
     tax
     ldy #0
-  b6:
+  __b6:
     txa
     and #$80
     cmp #0
-    bne b7
+    bne __b7
     lda #'0'
     sta (screen),y
-  b8:
+  __b8:
     txa
     asl
     tax
     iny
     cpy #8
-    bne b6
+    bne __b6
     lda #$28
     clc
     adc.z screen
@@ -125,7 +125,7 @@ main: {
     inc.z row
     lda #8
     cmp.z row
-    bne b5
+    bne __b5
     lda #$28
     clc
     adc.z screen
@@ -136,26 +136,26 @@ main: {
     ldx #0
     txa
     sta.z ch
-  b12:
+  __b12:
     ldy.z ch
     jsr keyboard_get_keycode
     cmp #$3f
-    beq b13
+    beq __b13
     tay
     jsr keyboard_key_pressed
     cmp #0
-    beq b13
+    beq __b13
     txa
     tay
     lda.z ch
     sta (screen),y
     inx
-  b13:
+  __b13:
     inc.z ch
     lda #$40
     cmp.z ch
-    bne b12
-  b3:
+    bne __b12
+  b1:
   // Add some spaces
     txa
     tay
@@ -163,13 +163,13 @@ main: {
     sta (screen),y
     inx
     cpx #5
-    bcc b3
-    jmp b4
-  b7:
+    bcc b1
+    jmp __b4
+  __b7:
     lda #'1'
     sta (screen),y
-    jmp b8
-  b2:
+    jmp __b8
+  __b2:
     lda #' '
     ldy #0
     sta (sc),y
@@ -177,7 +177,7 @@ main: {
     bne !+
     inc.z sc+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)

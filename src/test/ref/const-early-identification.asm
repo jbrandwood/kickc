@@ -1,10 +1,10 @@
 // Tests that constants are identified early
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label A = 2
-bbegin:
+__bbegin:
   // Not an early constant (address-of is used)
   lda #'a'
   sta.z A

@@ -6,7 +6,7 @@
   .label print_char_cursor = 6
   .label print_line_cursor = 4
 main: {
-    .label _0 = 6
+    .label __0 = 6
     lda #<$4000
     sta files
     lda #>$4000
@@ -19,13 +19,13 @@ main: {
     stx.z $ff
     sta ($fe),y
     lda files
-    sta.z _0
+    sta.z __0
     lda files+1
-    sta.z _0+1
+    sta.z __0+1
     // writes address 0x0000 (wrong!)
     lda #$cc
     ldy #4
-    sta (_0),y
+    sta (__0),y
     jsr print_cls
     lda #<$400
     sta.z print_char_cursor
@@ -63,7 +63,7 @@ main: {
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -73,11 +73,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -113,13 +113,13 @@ print_char: {
 // print_str(byte* zeropage(2) str)
 print_str: {
     .label str = 2
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -131,7 +131,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -149,15 +149,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -165,7 +165,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"
   files: .fill 2*$a, 0

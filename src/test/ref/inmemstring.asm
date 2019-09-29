@@ -9,26 +9,26 @@ main: {
     lda #>SCREEN
     sta.z cursor+1
     ldx #0
-  b1:
+  __b1:
     lda TEXT,x
     ldy #0
     sta (cursor),y
     inx
     cpx #8
-    bne b2
+    bne __b2
     ldx #0
-  b2:
+  __b2:
     inc.z cursor
     bne !+
     inc.z cursor+1
   !:
     lda.z cursor+1
     cmp #>SCREEN+$3e8
-    bcc b1
+    bcc __b1
     bne !+
     lda.z cursor
     cmp #<SCREEN+$3e8
-    bcc b1
+    bcc __b1
   !:
     rts
 }

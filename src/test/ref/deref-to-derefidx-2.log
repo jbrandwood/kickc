@@ -239,27 +239,27 @@ Target platform is c64basic / MOS6502X
 // Tests optimizing derefs of *(ptr+b) to ptr[b - even when a noop-cast is needed
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label screen_idx = 4
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call print 
@@ -275,13 +275,13 @@ main: {
     sta.z print.m+1
     jsr print
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call print 
     // [9] phi from main::@1 to print [phi:main::@1->print]
-  print_from_b1:
+  print_from___b1:
     // [9] phi (byte) screen_idx#10 = (byte) screen_idx#11 [phi:main::@1->print#0] -- register_copy 
     // [9] phi (byte*) print::m#2 = (const byte[]) msg2 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
@@ -289,23 +289,23 @@ main: {
     lda #>msg2
     sta.z print.m+1
     jsr print
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
   // print
 // print(byte* zeropage(2) m)
 print: {
-    .label _2 = 5
+    .label __2 = 5
     .label m = 2
     // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z screen_idx
     asl
-    sta.z _2
+    sta.z __2
     // [11] *((const word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuz1=pwuz2_derefidx_vbuc2 
-    ldx.z _2
+    ldx.z __2
     ldy #2
     lda (m),y
     sta SCREEN,x
@@ -314,9 +314,9 @@ print: {
     sta SCREEN+1,x
     // [12] (byte) screen_idx#11 ← ++ (byte) screen_idx#10 -- vbuz1=_inc_vbuz1 
     inc.z screen_idx
-    jmp breturn
+    jmp __breturn
     // print::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -351,27 +351,27 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests optimizing derefs of *(ptr+b) to ptr[b - even when a noop-cast is needed
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label screen_idx = 4
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call print 
@@ -387,13 +387,13 @@ main: {
     sta.z print.m+1
     jsr print
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call print 
     // [9] phi from main::@1 to print [phi:main::@1->print]
-  print_from_b1:
+  print_from___b1:
     // [9] phi (byte) screen_idx#10 = (byte) screen_idx#11 [phi:main::@1->print#0] -- register_copy 
     // [9] phi (byte*) print::m#2 = (const byte[]) msg2 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg2
@@ -401,9 +401,9 @@ main: {
     lda #>msg2
     sta.z print.m+1
     jsr print
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -424,9 +424,9 @@ print: {
     sta SCREEN+1,x
     // [12] (byte) screen_idx#11 ← ++ (byte) screen_idx#10 -- vbuz1=_inc_vbuz1 
     inc.z screen_idx
-    jmp breturn
+    jmp __breturn
     // print::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -435,29 +435,30 @@ print: {
   msg2: .byte '1', '2', '3', '4'
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction print_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction print_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction print_from_main:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

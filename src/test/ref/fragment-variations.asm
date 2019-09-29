@@ -6,8 +6,8 @@
   .const SIZEOF_DWORD = 4
 main: {
     .label screen = $400
-    .label _0 = 2
-    .label _1 = 2
+    .label __0 = 2
+    .label __1 = 2
     lda #<$a
     sta.z mul16u.a
     lda #>$a
@@ -19,13 +19,13 @@ main: {
     sta.z mul16u.mb+2
     sta.z mul16u.mb+3
     jsr mul16u
-    lda.z _0
+    lda.z __0
     sta screen
-    lda.z _0+1
+    lda.z __0+1
     sta screen+1
-    lda.z _0+2
+    lda.z __0+2
     sta screen+2
-    lda.z _0+3
+    lda.z __0+3
     sta screen+3
     lda #<$3e8
     sta.z mul16u.a
@@ -40,13 +40,13 @@ main: {
     lda #>$3e8>>$10
     sta.z mul16u.mb+3
     jsr mul16u
-    lda.z _1
+    lda.z __1
     sta screen+1*SIZEOF_DWORD
-    lda.z _1+1
+    lda.z __1+1
     sta screen+1*SIZEOF_DWORD+1
-    lda.z _1+2
+    lda.z __1+2
     sta screen+1*SIZEOF_DWORD+2
-    lda.z _1+3
+    lda.z __1+3
     sta screen+1*SIZEOF_DWORD+3
     rts
 }

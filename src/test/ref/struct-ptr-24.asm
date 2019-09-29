@@ -9,15 +9,15 @@ main: {
     lda #<0
     sta.z file
     sta.z file+1
-  b1:
+  __b1:
     lda.z file+1
     cmp #>filesEnd
-    bne b2
+    bne __b2
     lda.z file
     cmp #<filesEnd
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     jsr PrintName
     lda #SIZEOF_STRUCT_FILEENTRY
     clc
@@ -26,19 +26,19 @@ main: {
     bcc !+
     inc.z file+1
   !:
-    jmp b1
+    jmp __b1
 }
 // PrintName(struct fileentry* zeropage(2) file)
 PrintName: {
     .label file = 2
     lda.z file+1
     cmp #>dir
-    bne breturn
+    bne __breturn
     lda.z file
     cmp #<dir
-    bne breturn
+    bne __breturn
     lda #1
     sta $c7
-  breturn:
+  __breturn:
     rts
 }

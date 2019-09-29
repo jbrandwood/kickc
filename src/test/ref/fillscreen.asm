@@ -13,13 +13,13 @@ fillscreen: {
     .label SCREEN3 = SCREEN+$200
     .label SCREEN4 = SCREEN+$3e8
     ldx #0
-  b1:
+  __b1:
     sta SCREEN,x
     sta SCREEN2,x
     sta SCREEN3,x
     sta SCREEN4,x
     inx
     cpx #0
-    bne b1
+    bne __b1
     rts
 }

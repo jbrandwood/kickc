@@ -10,7 +10,7 @@ main: {
     sta.z b
     lda #>BITMAP+$1fff
     sta.z b+1
-  b1:
+  __b1:
     lda #$5a
     ldy #0
     sta (b),y
@@ -21,9 +21,9 @@ main: {
     dec.z b
     lda.z b+1
     cmp #>BITMAP-1
-    bne b1
+    bne __b1
     lda.z b
     cmp #<BITMAP-1
-    bne b1
+    bne __b1
     rts
 }

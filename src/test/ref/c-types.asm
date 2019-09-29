@@ -63,7 +63,7 @@ testLong: {
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -73,11 +73,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -86,13 +86,13 @@ print_ln: {
 print_sdword: {
     .label dw = 2
     lda.z dw+3
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_dword
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     sec
@@ -112,7 +112,7 @@ print_sdword: {
     eor #$ff
     adc #0
     sta.z dw+3
-    jmp b2
+    jmp __b2
 }
 // Print a single char
 // print_char(byte register(A) ch)
@@ -174,13 +174,13 @@ print_byte: {
 // print_str(byte* zeropage(8) str)
 print_str: {
     .label str = 8
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -192,7 +192,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 testInt: {
     .const u = $578
@@ -236,13 +236,13 @@ testInt: {
 print_sword: {
     .label w = 8
     lda.z w+1
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_word
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     sec
@@ -252,7 +252,7 @@ print_sword: {
     lda #0
     sbc.z w+1
     sta.z w+1
-    jmp b2
+    jmp __b2
 }
 testShort: {
     .const u = $578
@@ -347,15 +347,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -363,6 +363,6 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"

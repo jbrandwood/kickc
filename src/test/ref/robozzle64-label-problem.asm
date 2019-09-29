@@ -13,7 +13,7 @@ main: {
     sta.z screen+1
     lda #0
     sta.z y
-  b1:
+  __b1:
     ldx.z y
     lda #<mul8u.b
     sta.z mul8u.mb
@@ -48,7 +48,7 @@ main: {
     inc.z y
     lda #6
     cmp.z y
-    bne b1
+    bne __b1
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
@@ -61,15 +61,15 @@ mul8u: {
     lda #<0
     sta.z res
     sta.z res+1
-  b1:
+  __b1:
     cpx #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     txa
     and #1
     cmp #0
-    beq b3
+    beq __b3
     lda.z res
     clc
     adc.z mb
@@ -77,11 +77,11 @@ mul8u: {
     lda.z res+1
     adc.z mb+1
     sta.z res+1
-  b3:
+  __b3:
     txa
     lsr
     tax
     asl.z mb
     rol.z mb+1
-    jmp b1
+    jmp __b1
 }

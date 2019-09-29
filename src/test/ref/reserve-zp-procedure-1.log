@@ -199,38 +199,38 @@ Target platform is c64basic / MOS6502X
 // Demonstrates a procedure reserving addresses on zeropage
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
-    .label _0 = 8
+    .label __0 = 8
     .label i = 5
     // [4] (byte) main::i#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
-  b1_from_main:
-  b1_from_b2:
+  __b1_from_main:
+  __b1_from___b2:
     // [5] phi (byte) main::i#2 = (byte) main::i#0 [phi:main/main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
     lda.z i
     sta.z sub1.i
@@ -239,14 +239,14 @@ main: {
     // [8] (byte) sub1::return#0 ← (byte) sub1::return#1 -- vbuz1=vbuz2 
     lda.z sub1.return_1
     sta.z sub1.return
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (byte~) main::$0 ← (byte) sub1::return#0 -- vbuz1=vbuz2 
     lda.z sub1.return
-    sta.z _0
+    sta.z __0
     // [10] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _0
+    lda.z __0
     ldy.z i
     sta SCREEN,y
     // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
@@ -254,10 +254,10 @@ main: {
     // [12] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp.z i
-    bne b1_from_b2
-    jmp breturn
+    bne __b1_from___b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -271,9 +271,9 @@ sub1: {
     lda.z i
     asl
     sta.z return_1
-    jmp breturn
+    jmp __breturn
     // sub1::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
 }
@@ -306,23 +306,23 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Demonstrates a procedure reserving addresses on zeropage
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
@@ -331,20 +331,20 @@ main: {
     lda #0
     sta.z i
     // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
-  b1_from_main:
-  b1_from_b2:
+  __b1_from_main:
+  __b1_from___b2:
     // [5] phi (byte) main::i#2 = (byte) main::i#0 [phi:main/main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuaa=vbuz1 
     lda.z i
     // [7] call sub1 
     jsr sub1
     // [8] (byte) sub1::return#0 ← (byte) sub1::return#1
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (byte~) main::$0 ← (byte) sub1::return#0
     // [10] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z i
@@ -354,10 +354,10 @@ main: {
     // [12] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp.z i
-    bne b1_from_b2
-    jmp breturn
+    bne __b1_from___b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -366,38 +366,39 @@ main: {
 sub1: {
     // [14] (byte) sub1::return#1 ← (byte) sub1::i#0 + (byte) sub1::i#0 -- vbuaa=vbuaa_plus_vbuaa 
     asl
-    jmp breturn
+    jmp __breturn
     // sub1::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b2 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction b1_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -456,7 +457,7 @@ main: {
     // [5] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#0 [phi:main/main::@2->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // sub1(i)
     // [6] (byte) sub1::i#0 ← (byte) main::i#2 -- vbuaa=vbuz1 
     lda.z i
@@ -475,7 +476,7 @@ main: {
     // [12] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp.z i
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [13] return 

@@ -63,7 +63,7 @@ print_person: {
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -73,11 +73,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -85,13 +85,13 @@ print_ln: {
 // print_str(byte* zeropage($d) str)
 print_str: {
     .label str = $d
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -103,7 +103,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Print a single char
 print_char: {
@@ -148,10 +148,10 @@ ultoa: {
     ldx #0
     txa
     sta.z digit
-  b1:
+  __b1:
     lda.z digit
     cmp #max_digits-1
-    bcc b2
+    bcc __b2
     lda.z value
     tay
     lda DIGITS,y
@@ -165,7 +165,7 @@ ultoa: {
     tay
     sta (buffer),y
     rts
-  b2:
+  __b2:
     lda.z digit
     asl
     asl
@@ -179,34 +179,34 @@ ultoa: {
     lda RADIX_DECIMAL_VALUES_LONG+3,y
     sta.z digit_value+3
     cpx #0
-    bne b5
+    bne __b5
     lda.z value+3
     cmp.z digit_value+3
     bcc !+
-    bne b5
+    bne __b5
     lda.z value+2
     cmp.z digit_value+2
     bcc !+
-    bne b5
+    bne __b5
     lda.z value+1
     cmp.z digit_value+1
     bcc !+
-    bne b5
+    bne __b5
     lda.z value
     cmp.z digit_value
-    bcs b5
+    bcs __b5
   !:
-  b4:
+  __b4:
     inc.z digit
-    jmp b1
-  b5:
+    jmp __b1
+  __b5:
     jsr ultoa_append
     inc.z buffer
     bne !+
     inc.z buffer+1
   !:
     ldx #1
-    jmp b4
+    jmp __b4
 }
 // Used to convert a single digit of an unsigned number value to a string representation
 // Counts a single digit up from '0' as long as the value is larger than sub.
@@ -223,28 +223,28 @@ ultoa_append: {
     .label sub = $f
     .label return = 2
     ldx #0
-  b1:
+  __b1:
     lda.z value+3
     cmp.z sub+3
     bcc !+
-    bne b2
+    bne __b2
     lda.z value+2
     cmp.z sub+2
     bcc !+
-    bne b2
+    bne __b2
     lda.z value+1
     cmp.z sub+1
     bcc !+
-    bne b2
+    bne __b2
     lda.z value
     cmp.z sub
-    bcs b2
+    bcs __b2
   !:
     lda DIGITS,x
     ldy #0
     sta (buffer),y
     rts
-  b2:
+  __b2:
     inx
     lda.z value
     sec
@@ -259,7 +259,7 @@ ultoa_append: {
     lda.z value+3
     sbc.z sub+3
     sta.z value+3
-    jmp b1
+    jmp __b1
 }
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"

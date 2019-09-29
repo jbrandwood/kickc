@@ -35,23 +35,23 @@ main: {
 // euclid(byte zeropage(2) a, byte register(X) b)
 euclid: {
     .label a = 2
-  b1:
+  __b1:
     cpx.z a
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     cpx.z a
-    bcc b3
+    bcc __b3
     txa
     sec
     sbc.z a
     tax
-    jmp b1
-  b3:
+    jmp __b1
+  __b3:
     txa
     eor #$ff
     sec
     adc.z a
     sta.z a
-    jmp b1
+    jmp __b1
 }

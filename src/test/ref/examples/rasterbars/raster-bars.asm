@@ -6,16 +6,16 @@
   .label BGCOL = $d021
 main: {
     sei
-  b1:
+  __b1:
     lda #$a
     cmp RASTER
-    bne b1
-  b2:
+    bne __b1
+  __b2:
     lda #$b
     cmp RASTER
-    bne b2
+    bne __b2
     jsr raster
-    jmp b1
+    jmp __b1
 }
 raster: {
     nop
@@ -39,7 +39,7 @@ raster: {
     nop
     lda rastercols
     ldx #0
-  b1:
+  __b1:
     sta BGCOL
     sta BORDERCOL
     inx
@@ -67,7 +67,7 @@ raster: {
     nop
     nop
     cmp #$ff
-    bne b1
+    bne __b1
     rts
 }
   rastercols: .byte $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff

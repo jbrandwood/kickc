@@ -7,7 +7,7 @@
   .const STACK_BASE = $103
 main: {
     ldy #0
-  b1:
+  __b1:
     tya
     tax
     inx
@@ -24,7 +24,7 @@ main: {
     sta SCREEN
     iny
     cpy #2
-    bne b1
+    bne __b1
     rts
 }
 // plus(byte zeropage(2) a, byte register(A) b)

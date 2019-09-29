@@ -30,7 +30,7 @@ main: {
     sta.z print_char_cursor+1
     lda #1
     sta.z i
-  b1:
+  __b1:
     lda.z i
     sta.z setFAC.w
     lda #0
@@ -65,20 +65,20 @@ main: {
     inc.z i
     lda #$1a
     cmp.z i
-    bne b15
+    bne __b15
     rts
-  b15:
+  __b15:
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    jmp b1
+    jmp __b1
     f_i: .byte 0, 0, 0, 0, 0
     f_127: .byte 0, 0, 0, 0, 0
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -88,11 +88,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }

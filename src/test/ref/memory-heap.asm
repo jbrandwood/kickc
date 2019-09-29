@@ -20,7 +20,7 @@ main: {
     sta.z buf1+1
     jsr malloc
     ldy #0
-  b1:
+  __b1:
     tya
     sta (buf1),y
     tya
@@ -30,7 +30,7 @@ main: {
     sta (buf2),y
     iny
     cpy #$64
-    bne b1
+    bne __b1
     jsr free
     jsr free
     ldy #0

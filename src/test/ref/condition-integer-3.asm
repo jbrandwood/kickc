@@ -7,18 +7,18 @@
 main: {
     ldx #0
     ldy #-2
-  b1:
+  __b1:
     cpy #0
-    bne b2
+    bne __b2
     lda #'0'
-    jmp b3
-  b2:
+    jmp __b3
+  __b2:
     lda #'+'
-  b3:
+  __b3:
     sta SCREEN,x
     inx
     iny
     cpy #3
-    bne b1
+    bne __b1
     rts
 }

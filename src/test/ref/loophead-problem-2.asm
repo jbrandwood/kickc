@@ -27,11 +27,11 @@ scan_for_lowest: {
     lda #>$258
     sta.z height+1
     ldx #0
-  b1:
+  __b1:
     cpx #8
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     txa
     asl
     tay
@@ -42,7 +42,7 @@ scan_for_lowest: {
     bvc !+
     eor #$80
   !:
-    bpl b3
+    bpl __b3
     txa
     asl
     tay
@@ -51,8 +51,8 @@ scan_for_lowest: {
     lda ball_y+1,y
     sta.z height+1
     stx.z lowest
-  b3:
+  __b3:
     inx
-    jmp b1
+    jmp __b1
 }
   ball_y: .word $32, $64, -$c8, $c, -$64, $4b, 0, -$79

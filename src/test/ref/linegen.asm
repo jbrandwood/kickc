@@ -86,9 +86,9 @@ main: {
     sta.z print_line_cursor+1
     jsr print_ln
     ldx #0
-  b1:
+  __b1:
     cpx #$14
-    bcc b2
+    bcc __b2
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -125,7 +125,7 @@ main: {
     jsr print_word
     jsr print_ln
     rts
-  b2:
+  __b2:
     stx.z print_byte.b
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -173,7 +173,7 @@ main: {
     jsr print_word
     jsr print_ln
     inx
-    jmp b1
+    jmp __b1
     str: .text "   "
     .byte 0
     str1: .text " "
@@ -184,7 +184,7 @@ main: {
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -194,11 +194,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -248,13 +248,13 @@ print_char: {
 // print_str(byte* zeropage(5) str)
 print_str: {
     .label str = 5
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -266,7 +266,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -284,15 +284,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -300,14 +300,14 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Generate word linear table
 // lintab - the table to generate into
 // length - the number of points in a total sinus wavelength (the size of the table)
 // lin16u_gen(word zeropage(5) min, word zeropage(3) max, word* zeropage($b) lintab)
 lin16u_gen: {
-    .label _6 = $17
+    .label __6 = $17
     .label ampl = 3
     .label stepi = $11
     .label stepf = $f
@@ -362,26 +362,26 @@ lin16u_gen: {
     lda #<0
     sta.z i
     sta.z i+1
-  b1:
+  __b1:
     lda.z i+1
     cmp #>$14
-    bcc b2
+    bcc __b2
     bne !+
     lda.z i
     cmp #<$14
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda.z val+2
-    sta.z _6
+    sta.z __6
     lda.z val+3
-    sta.z _6+1
+    sta.z __6+1
     ldy #0
-    lda.z _6
+    lda.z __6
     sta (lintab),y
     iny
-    lda.z _6+1
+    lda.z __6+1
     sta (lintab),y
     lda.z val
     clc
@@ -407,7 +407,7 @@ lin16u_gen: {
     bne !+
     inc.z i+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Performs division on two 16 bit unsigned words and an initial remainder
 // Returns the quotient dividend/divisor.
@@ -424,28 +424,28 @@ divr16u: {
     txa
     sta.z quotient
     sta.z quotient+1
-  b1:
+  __b1:
     asl.z rem
     rol.z rem+1
     lda.z dividend+1
     and #$80
     cmp #0
-    beq b2
+    beq __b2
     lda #1
     ora.z rem
     sta.z rem
-  b2:
+  __b2:
     asl.z dividend
     rol.z dividend+1
     asl.z quotient
     rol.z quotient+1
     lda.z rem+1
     cmp.z divisor+1
-    bcc b3
+    bcc __b3
     bne !+
     lda.z rem
     cmp.z divisor
-    bcc b3
+    bcc __b3
   !:
     inc.z quotient
     bne !+
@@ -458,10 +458,10 @@ divr16u: {
     lda.z rem+1
     sbc.z divisor+1
     sta.z rem+1
-  b3:
+  __b3:
     inx
     cpx #$10
-    bne b1
+    bne __b1
     rts
 }
   print_hextab: .text "0123456789abcdef"

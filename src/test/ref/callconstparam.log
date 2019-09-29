@@ -280,26 +280,26 @@ Target platform is c64basic / MOS6502X
 // Reason: Multiple versioned parameter constants x0#0, x0#1 are only output as a single constant in the ASM .const x0 = 0
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = 3
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call line 
@@ -318,13 +318,13 @@ main: {
     sta.z line.x
     jsr line
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call line 
     // [9] phi from main::@1 to line [phi:main::@1->line]
-  line_from_b1:
+  line_from___b1:
     // [9] phi (byte*) screen#16 = (byte*) screen#10 [phi:main::@1->line#0] -- register_copy 
     // [9] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#1] -- vbuz1=vbuc1 
     lda #5
@@ -333,9 +333,9 @@ main: {
     lda #3
     sta.z line.x
     jsr line
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -345,24 +345,24 @@ line: {
     .label x = 5
     .label x1 = 2
     // [10] phi from line line::@2 to line::@1 [phi:line/line::@2->line::@1]
-  b1_from_line:
-  b1_from_b2:
+  __b1_from_line:
+  __b1_from___b2:
     // [10] phi (byte*) screen#10 = (byte*) screen#16 [phi:line/line::@2->line::@1#0] -- register_copy 
     // [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@2->line::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // line::@1
-  b1:
+  __b1:
     // [11] if((byte) line::x#2<(byte) line::x1#3) goto line::@2 -- vbuz1_lt_vbuz2_then_la1 
     lda.z x
     cmp.z x1
-    bcc b2
-    jmp breturn
+    bcc __b2
+    jmp __breturn
     // line::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
     // line::@2
-  b2:
+  __b2:
     // [13] *((byte*) screen#10) ← (byte) line::x#2 -- _deref_pbuz1=vbuz2 
     lda.z x
     ldy #0
@@ -374,7 +374,7 @@ line: {
   !:
     // [15] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuz1=_inc_vbuz1 
     inc.z x
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
 
@@ -405,26 +405,26 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Reason: Multiple versioned parameter constants x0#0, x0#1 are only output as a single constant in the ASM .const x0 = 0
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = 3
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call line 
@@ -442,13 +442,13 @@ main: {
     ldx #1
     jsr line
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call line 
     // [9] phi from main::@1 to line [phi:main::@1->line]
-  line_from_b1:
+  line_from___b1:
     // [9] phi (byte*) screen#16 = (byte*) screen#10 [phi:main::@1->line#0] -- register_copy 
     // [9] phi (byte) line::x1#3 = (byte) 5 [phi:main::@1->line#1] -- vbuz1=vbuc1 
     lda #5
@@ -456,9 +456,9 @@ main: {
     // [9] phi (byte) line::x#0 = (byte) 3 [phi:main::@1->line#2] -- vbuxx=vbuc1 
     ldx #3
     jsr line
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -467,23 +467,23 @@ main: {
 line: {
     .label x1 = 2
     // [10] phi from line line::@2 to line::@1 [phi:line/line::@2->line::@1]
-  b1_from_line:
-  b1_from_b2:
+  __b1_from_line:
+  __b1_from___b2:
     // [10] phi (byte*) screen#10 = (byte*) screen#16 [phi:line/line::@2->line::@1#0] -- register_copy 
     // [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@2->line::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // line::@1
-  b1:
+  __b1:
     // [11] if((byte) line::x#2<(byte) line::x1#3) goto line::@2 -- vbuxx_lt_vbuz1_then_la1 
     cpx.z x1
-    bcc b2
-    jmp breturn
+    bcc __b2
+    jmp __breturn
     // line::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
     // line::@2
-  b2:
+  __b2:
     // [13] *((byte*) screen#10) ← (byte) line::x#2 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
@@ -495,38 +495,39 @@ line: {
   !:
     // [15] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuxx=_inc_vbuxx 
     inx
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b2 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction line_from_b1:
-Removing instruction b1_from_line:
-Removing instruction b1_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction line_from___b1:
+Removing instruction __b1_from_line:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction line_from_main:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -618,17 +619,17 @@ line: {
     // [10] phi (byte*) screen#10 = (byte*) screen#16 [phi:line/line::@2->line::@1#0] -- register_copy 
     // [10] phi (byte) line::x#2 = (byte) line::x#0 [phi:line/line::@2->line::@1#1] -- register_copy 
     // line::@1
-  b1:
+  __b1:
     // for(byte x  = x0; x<x1; x++)
     // [11] if((byte) line::x#2<(byte) line::x1#3) goto line::@2 -- vbuxx_lt_vbuz1_then_la1 
     cpx.z x1
-    bcc b2
+    bcc __b2
     // line::@return
     // }
     // [12] return 
     rts
     // line::@2
-  b2:
+  __b2:
     // *screen = x
     // [13] *((byte*) screen#10) ← (byte) line::x#2 -- _deref_pbuz1=vbuxx 
     txa
@@ -643,7 +644,7 @@ line: {
     // for(byte x  = x0; x<x1; x++)
     // [15] (byte) line::x#1 ← ++ (byte) line::x#2 -- vbuxx=_inc_vbuxx 
     inx
-    jmp b1
+    jmp __b1
 }
   // File Data
 

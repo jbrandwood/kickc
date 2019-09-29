@@ -148,42 +148,42 @@ Target platform is c64basic / MOS6502X
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label a = 2
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::a#1 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z a
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::a#1 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const byte*) SCREEN + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z a
     tya
@@ -197,10 +197,10 @@ main: {
     // [9] if((byte) main::i#1!=(byte) $28) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [10] return 
     rts
 }
@@ -220,39 +220,39 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::a#1 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::a#1 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const byte*) SCREEN + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
@@ -263,38 +263,39 @@ main: {
     inx
     // [9] if((byte) main::i#1!=(byte) $28) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [10] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -338,7 +339,7 @@ main: {
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [5] phi (byte) main::a#1 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // SCREEN[i] = a = i
     // [6] *((const byte*) SCREEN + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
@@ -352,7 +353,7 @@ main: {
     inx
     // [9] if((byte) main::i#1!=(byte) $28) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [10] return 

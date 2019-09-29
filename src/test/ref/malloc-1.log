@@ -305,7 +305,7 @@ Target platform is c64basic / MOS6502X
 // Experiments with malloc() - a word array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
@@ -313,36 +313,36 @@ Target platform is c64basic / MOS6502X
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call malloc 
   // [13] phi from @1 to malloc [phi:@1->malloc]
-malloc_from_b1:
+malloc_from___b1:
   jsr malloc
   // [3] phi from @1 to @2 [phi:@1->@2]
-b2_from_b1:
-  jmp b2
+__b2_from___b1:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [4] call main 
   // [6] phi from @2 to main [phi:@2->main]
-main_from_b2:
+main_from___b2:
   jsr main
   // [5] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label w = 3
     .label i = 2
     // [7] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [7] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
     lda #<WORDS
     sta.z w
@@ -351,14 +351,14 @@ main: {
     // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuz2 
     lda.z i
     ldy #0
@@ -379,10 +379,10 @@ main: {
     // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
     lda.z i
     cmp #0
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
@@ -393,9 +393,9 @@ malloc: {
     .const size = $200
     .label mem = HEAP_TOP-size
     .label return = mem
-    jmp breturn
+    jmp __breturn
     // malloc::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -428,7 +428,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Experiments with malloc() - a word array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
@@ -436,35 +436,35 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call malloc 
   // [13] phi from @1 to malloc [phi:@1->malloc]
-malloc_from_b1:
+malloc_from___b1:
   jsr malloc
   // [3] phi from @1 to @2 [phi:@1->@2]
-b2_from_b1:
-  jmp b2
+__b2_from___b1:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [4] call main 
   // [6] phi from @2 to main [phi:@2->main]
-main_from_b2:
+main_from___b2:
   jsr main
   // [5] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label w = 2
     // [7] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [7] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
     lda #<WORDS
     sta.z w
@@ -472,14 +472,14 @@ main: {
     sta.z w+1
     // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuxx 
     txa
     ldy #0
@@ -499,10 +499,10 @@ main: {
     inx
     // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
@@ -513,40 +513,41 @@ malloc: {
     .const size = $200
     .label mem = HEAP_TOP-size
     .label return = mem
-    jmp breturn
+    jmp __breturn
     // malloc::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction malloc_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction main_from_b2:
-Removing instruction bend_from_b2:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction malloc_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction main_from___b2:
+Removing instruction __bend_from___b2:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b2:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
@@ -592,7 +593,7 @@ Score: 590
 // Experiments with malloc() - a word array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
@@ -600,9 +601,9 @@ Score: 590
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
   // @begin
-bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
+__b1:
   // malloc(0x200)
   // [2] call malloc 
   // [13] phi from @1 to malloc [phi:@1->malloc]
@@ -630,7 +631,7 @@ main: {
     // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // *w++ = i
     // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuxx 
     txa
@@ -653,7 +654,7 @@ main: {
     inx
     // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [12] return 

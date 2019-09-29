@@ -11,30 +11,30 @@ main: {
     sta.z sc
     lda #>screen
     sta.z sc+1
-  b1:
+  __b1:
     lda.z sc+1
     cmp #>screen+$3e7
     bne !+
     lda.z sc
     cmp #<screen+$3e7
   !:
-    bcc b2
-    beq b2
+    bcc __b2
+    beq __b2
     lda #<cols+$3e7
     sta.z cc
     lda #>cols+$3e7
     sta.z cc+1
-  b3:
+  __b3:
     lda #>cols-1
     cmp.z cc+1
-    bcc b4
+    bcc __b4
     bne !+
     lda #<cols-1
     cmp.z cc
-    bcc b4
+    bcc __b4
   !:
     rts
-  b4:
+  __b4:
     lda #2
     ldy #0
     sta (cc),y
@@ -43,8 +43,8 @@ main: {
     dec.z cc+1
   !:
     dec.z cc
-    jmp b3
-  b2:
+    jmp __b3
+  __b2:
     lda #'a'
     ldy #0
     sta (sc),y
@@ -52,5 +52,5 @@ main: {
     bne !+
     inc.z sc+1
   !:
-    jmp b1
+    jmp __b1
 }

@@ -8,7 +8,7 @@ main: {
     txa
     sta.z b
     sta.z b+1
-  b1:
+  __b1:
     clc
     lda.z b
     adc #<$28*8
@@ -18,6 +18,6 @@ main: {
     sta.z b+1
     inx
     cpx #$b
-    bne b1
+    bne __b1
     rts
 }

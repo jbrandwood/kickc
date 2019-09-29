@@ -32,15 +32,15 @@ main: {
     lda #0
     sta.z sin_idx_y
     sta.z sin_idx_x
-  b1:
+  __b1:
     lda #$ff
     cmp RASTER
-    bne b1
+    bne __b1
     jsr anim
-    jmp b1
+    jmp __b1
 }
 anim: {
-    .label _8 = $a
+    .label __8 = $a
     .label xidx = 9
     .label yidx = 4
     .label x = $f
@@ -58,7 +58,7 @@ anim: {
     sta.z j2
     lda #0
     sta.z x_msb
-  b3:
+  __b3:
     ldy.z xidx
     lda sintab_x,y
     clc
@@ -67,7 +67,7 @@ anim: {
     lda #>$1e
     adc #0
     sta.z x+1
-    asl.z _8
+    asl.z __8
     ora.z x_msb
     sta.z x_msb
     lda.z x
@@ -82,57 +82,57 @@ anim: {
     stx.z xidx
     txa
     cmp #sinlen_x
-    bcc b4
+    bcc __b4
     lax.z xidx
     axs #sinlen_x
     stx.z xidx
-  b4:
+  __b4:
     lax.z yidx
     axs #-[8]
     stx.z yidx
     txa
     cmp #sinlen_y
-    bcc b5
+    bcc __b5
     lax.z yidx
     axs #sinlen_y
     stx.z yidx
-  b5:
+  __b5:
     dec.z j2
     dec.z j2
     inc.z j
     lda #7
     cmp.z j
-    bne b3
+    bne __b3
     lda.z x_msb
     sta SPRITES_XMSB
     inc.z sin_idx_x
     lda.z sin_idx_x
     cmp #sinlen_x
-    bcc b1
+    bcc __b1
     lda #0
     sta.z sin_idx_x
-  b1:
+  __b1:
     inc.z sin_idx_y
     lda.z sin_idx_y
     cmp #sinlen_y
-    bcc b2
+    bcc __b2
     lda #0
     sta.z sin_idx_y
-  b2:
+  __b2:
     dec BORDERCOL
     rts
 }
 init: {
     jsr clear_screen
     ldx #0
-  b1:
+  __b1:
     lda #0
     sta COLS,x
     lda #$b
     sta COLS+$28,x
     inx
     cpx #$28
-    bne b1
+    bne __b1
     jsr place_sprites
     jsr gen_sprites
     lda #<SCREEN
@@ -174,17 +174,17 @@ clear_screen: {
     sta.z sc
     lda #>SCREEN
     sta.z sc+1
-  b1:
+  __b1:
     lda.z sc+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z sc
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda #' '
     ldy #0
     sta (sc),y
@@ -192,7 +192,7 @@ clear_screen: {
     bne !+
     inc.z sc+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Generate a sinus table using BASIC floats
 // - sintab is a pointer to the table to fill
@@ -203,7 +203,7 @@ clear_screen: {
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
-    .label _24 = $13
+    .label __24 = $13
     .label i = 9
     .label min = 6
     .label length = 8
@@ -255,12 +255,12 @@ gen_sintab: {
     sta.z progress_idx
     sta.z i
   // f_min = min + (max - min) / 2
-  b1:
+  __b1:
     lda.z i
     cmp.z length
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     lda.z i
     sta.z setFAC.w
     lda #0
@@ -294,13 +294,13 @@ gen_sintab: {
     jsr mulFACbyMEM
     jsr addMEMtoFAC
     jsr getFAC
-    lda.z _24
+    lda.z __24
     // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     ldy.z i
     sta (sintab),y
     jsr progress_inc
     inc.z i
-    jmp b1
+    jmp __b1
     f_i: .byte 0, 0, 0, 0, 0
     // i * 2 * PI
     f_min: .byte 0, 0, 0, 0, 0
@@ -313,7 +313,7 @@ progress_inc: {
     inc.z progress_idx
     lda #8
     cmp.z progress_idx
-    bne b1
+    bne __b1
     lda progress_chars+8
     ldy #0
     sta (progress_cursor),y
@@ -323,7 +323,7 @@ progress_inc: {
   !:
     lda #0
     sta.z progress_idx
-  b1:
+  __b1:
     ldy.z progress_idx
     lda progress_chars,y
     ldy #0
@@ -454,7 +454,7 @@ gen_sprites: {
     sta.z spr+1
     lda #0
     sta.z i
-  b1:
+  __b1:
     ldy.z i
     ldx cml,y
     lda.z spr
@@ -472,7 +472,7 @@ gen_sprites: {
     inc.z i
     lda #7
     cmp.z i
-    bne b1
+    bne __b1
     rts
     cml: .text "camelot"
 }
@@ -481,8 +481,8 @@ gen_sprites: {
 // - sprite is a pointer to the position of the sprite to generate
 // gen_chargen_sprite(byte register(X) ch, byte* zeropage($f) sprite)
 gen_chargen_sprite: {
-    .label _0 = $13
-    .label _1 = $13
+    .label __0 = $13
+    .label __1 = $13
     .label sprite = $f
     .label chargen = $13
     .label bits = 5
@@ -491,15 +491,15 @@ gen_chargen_sprite: {
     .label y = 4
     .label c = 8
     txa
-    sta.z _0
+    sta.z __0
     lda #0
-    sta.z _0+1
-    asl.z _1
-    rol.z _1+1
-    asl.z _1
-    rol.z _1+1
-    asl.z _1
-    rol.z _1+1
+    sta.z __0+1
+    asl.z __1
+    rol.z __1+1
+    asl.z __1
+    rol.z __1+1
+    asl.z __1
+    rol.z __1+1
     clc
     lda.z chargen
     adc #<CHARGEN
@@ -512,7 +512,7 @@ gen_chargen_sprite: {
     sta PROCPORT
     lda #0
     sta.z y
-  b1:
+  __b1:
     // current chargen line
     ldy.z y
     lda (chargen),y
@@ -521,28 +521,28 @@ gen_chargen_sprite: {
     sta.z x
     tay
     sta.z s_gen
-  b2:
+  __b2:
     lda #$80
     and.z bits
     cmp #0
-    beq b6
+    beq b1
     lda #1
     sta.z c
-    jmp b3
-  b6:
+    jmp __b3
+  b1:
     lda #0
     sta.z c
-  b3:
+  __b3:
     ldx #0
   // generate 3 pixels in the sprite byte (s_gen)
-  b4:
+  __b4:
     lda.z s_gen
     asl
     ora.z c
     sta.z s_gen
     iny
     cpy #8
-    bne b5
+    bne __b5
     // sprite byte filled - store and move to next byte
     ldy #0
     sta (sprite),y
@@ -557,15 +557,15 @@ gen_chargen_sprite: {
     ldy #0
     tya
     sta.z s_gen
-  b5:
+  __b5:
     inx
     cpx #3
-    bne b4
+    bne __b4
     asl.z bits
     inc.z x
     lda #8
     cmp.z x
-    bne b2
+    bne __b2
     lda #6
     clc
     adc.z sprite
@@ -576,7 +576,7 @@ gen_chargen_sprite: {
     inc.z y
     lda #8
     cmp.z y
-    bne b1
+    bne __b1
     lda #$37
     sta PROCPORT
     cli
@@ -603,7 +603,7 @@ place_sprites: {
     sta.z j
     lda #sprites/$40
     sta.z spr_id
-  b1:
+  __b1:
     lda.z spr_id
     ldy.z j
     sta sprites_ptr,y
@@ -629,7 +629,7 @@ place_sprites: {
     inc.z j
     lda #7
     cmp.z j
-    bne b1
+    bne __b1
     rts
 }
   sintab_x: .fill $dd, 0

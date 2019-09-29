@@ -22,8 +22,8 @@ main: {
 }
 // print_person(struct Person* zeropage(2) person)
 print_person: {
-    .label _3 = 4
-    .label _4 = 2
+    .label __3 = 4
+    .label __4 = 2
     .label person = 2
     lda #'0'
     clc
@@ -41,23 +41,23 @@ print_person: {
     tya
     clc
     adc.z person
-    sta.z _3
+    sta.z __3
     lda #0
     adc.z person+1
-    sta.z _3+1
+    sta.z __3+1
     ldy #1
-    lda (_3),y
+    lda (__3),y
     sta SCREEN,x
     inx
     lda #OFFSET_STRUCT_PERSON_INITIALS
     clc
-    adc.z _4
-    sta.z _4
+    adc.z __4
+    sta.z __4
     bcc !+
-    inc.z _4+1
+    inc.z __4+1
   !:
     ldy #2
-    lda (_4),y
+    lda (__4),y
     sta SCREEN,x
     inx
     lda #' '

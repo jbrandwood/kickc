@@ -456,7 +456,7 @@ Target platform is c64basic / MOS6502X
 // Test keyboard input - test the space bar
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label RASTER = $d012
@@ -473,68 +473,68 @@ Target platform is c64basic / MOS6502X
   .const BLUE = 6
   .const KEY_SPACE = $3c
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _2 = 3
+    .label __2 = 3
     // [5] call keyboard_init 
     jsr keyboard_init
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b1
+    bne __b1
     // [7] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] call keyboard_key_pressed 
     // [14] phi from main::@2 to keyboard_key_pressed [phi:main::@2->keyboard_key_pressed]
-  keyboard_key_pressed_from_b2:
+  keyboard_key_pressed_from___b2:
     jsr keyboard_key_pressed
     // [9] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
     sta.z keyboard_key_pressed.return_2
-    jmp b5
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return_2
-    sta.z _2
+    sta.z __2
     // [11] if((byte~) main::$2!=(byte) 0) goto main::@4 -- vbuz1_neq_0_then_la1 
-    lda.z _2
+    lda.z __2
     cmp #0
-    bne b4
-    jmp b3
+    bne __b4
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [12] *((const byte*) BGCOL) ← (const byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL
-    jmp b1
+    jmp __b1
     // main::@4
-  b4:
+  __b4:
     // [13] *((const byte*) BGCOL) ← (const byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL
-    jmp b1
+    jmp __b1
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
@@ -544,7 +544,7 @@ main: {
 keyboard_key_pressed: {
     .const colidx = KEY_SPACE&7
     .label rowidx = KEY_SPACE>>3
-    .label _2 = 5
+    .label __2 = 5
     .label return = 6
     .label return_2 = 2
     // [15] call keyboard_matrix_read 
@@ -552,19 +552,19 @@ keyboard_key_pressed: {
     // [16] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_matrix_read.return
     sta.z keyboard_matrix_read.return_2
-    jmp b1
+    jmp __b1
     // keyboard_key_pressed::@1
-  b1:
+  __b1:
     // [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
     lda.z keyboard_matrix_read.return_2
-    sta.z _2
+    sta.z __2
     // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band__deref_pbuc1 
     lda keyboard_matrix_col_bitmask+colidx
-    and.z _2
+    and.z __2
     sta.z return
-    jmp breturn
+    jmp __breturn
     // keyboard_key_pressed::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
 }
@@ -584,9 +584,9 @@ keyboard_matrix_read: {
     lda CIA1_PORT_B
     eor #$ff
     sta.z return
-    jmp breturn
+    jmp __breturn
     // keyboard_matrix_read::@return
-  breturn:
+  __breturn:
     // [22] return 
     rts
 }
@@ -601,9 +601,9 @@ keyboard_init: {
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
-    jmp breturn
+    jmp __breturn
     // keyboard_init::@return
-  breturn:
+  __breturn:
     // [25] return 
     rts
 }
@@ -646,7 +646,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test keyboard input - test the space bar
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label RASTER = $d012
@@ -663,62 +663,62 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const BLUE = 6
   .const KEY_SPACE = $3c
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call keyboard_init 
     jsr keyboard_init
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b1
+    bne __b1
     // [7] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] call keyboard_key_pressed 
     // [14] phi from main::@2 to keyboard_key_pressed [phi:main::@2->keyboard_key_pressed]
-  keyboard_key_pressed_from_b2:
+  keyboard_key_pressed_from___b2:
     jsr keyboard_key_pressed
     // [9] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
-    jmp b5
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2
     // [11] if((byte~) main::$2!=(byte) 0) goto main::@4 -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne b4
-    jmp b3
+    bne __b4
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [12] *((const byte*) BGCOL) ← (const byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL
-    jmp b1
+    jmp __b1
     // main::@4
-  b4:
+  __b4:
     // [13] *((const byte*) BGCOL) ← (const byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL
-    jmp b1
+    jmp __b1
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
@@ -731,15 +731,15 @@ keyboard_key_pressed: {
     // [15] call keyboard_matrix_read 
     jsr keyboard_matrix_read
     // [16] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-    jmp b1
+    jmp __b1
     // keyboard_key_pressed::@1
-  b1:
+  __b1:
     // [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
     // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
     and keyboard_matrix_col_bitmask+colidx
-    jmp breturn
+    jmp __breturn
     // keyboard_key_pressed::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
 }
@@ -756,9 +756,9 @@ keyboard_matrix_read: {
     // [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
-    jmp breturn
+    jmp __breturn
     // keyboard_matrix_read::@return
-  breturn:
+  __breturn:
     // [22] return 
     rts
 }
@@ -773,9 +773,9 @@ keyboard_init: {
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
-    jmp breturn
+    jmp __breturn
     // keyboard_init::@return
-  breturn:
+  __breturn:
     // [25] return 
     rts
 }
@@ -786,37 +786,38 @@ keyboard_init: {
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b5
-Removing instruction jmp b3
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b5
+Removing instruction jmp __b3
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction keyboard_key_pressed_from_b2:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction keyboard_key_pressed_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b2:
-Removing instruction b5:
-Removing instruction b3:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b2:
+Removing instruction __b5:
+Removing instruction __b3:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -907,12 +908,12 @@ main: {
     // [5] call keyboard_init 
     jsr keyboard_init
     // main::@1
-  b1:
+  __b1:
     // while (*RASTER!=$ff)
     // [6] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b1
+    bne __b1
     // [7] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // keyboard_key_pressed(KEY_SPACE)
@@ -926,20 +927,20 @@ main: {
     // if(keyboard_key_pressed(KEY_SPACE)!=0)
     // [11] if((byte~) main::$2!=(byte) 0) goto main::@4 -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne b4
+    bne __b4
     // main::@3
     // *BGCOL = BLUE
     // [12] *((const byte*) BGCOL) ← (const byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BGCOL
-    jmp b1
+    jmp __b1
     // main::@4
-  b4:
+  __b4:
     // *BGCOL = GREEN
     // [13] *((const byte*) BGCOL) ← (const byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BGCOL
-    jmp b1
+    jmp __b1
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly

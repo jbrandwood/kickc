@@ -10,9 +10,9 @@ main: {
     lda #1
     sta $400+2
     cmp #0
-    bne b1
+    bne __b1
     rts
-  b1:
+  __b1:
     lda #1
     sta $400+3
     rts

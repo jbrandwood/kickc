@@ -2677,7 +2677,7 @@ Target platform is c64basic / MOS6502X
 // 2D rotattion of 8 sprites 
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SPRITES_XPOS = $d000
@@ -2709,18 +2709,18 @@ Target platform is c64basic / MOS6502X
   .label SPRITE = $3000
   .label COS = SIN+$40
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm(location (const byte*) SPRITE) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 // sin(x) = cos(x+PI/2)
 main: {
@@ -2731,33 +2731,33 @@ main: {
   init_from_main:
     jsr init
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call anim 
     // [9] phi from main::@1 to anim [phi:main::@1->anim]
-  anim_from_b1:
+  anim_from___b1:
     jsr anim
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
   // anim
 anim: {
-    .label _6 = $24
-    .label _8 = $28
-    .label _11 = $2c
-    .label _12 = $2e
-    .label _13 = $32
-    .label _14 = $34
-    .label _17 = $38
-    .label _20 = $3b
-    .label _24 = $3c
-    .label _27 = $3f
-    .label _29 = $44
+    .label __6 = $24
+    .label __8 = $28
+    .label __11 = $2c
+    .label __12 = $2e
+    .label __13 = $32
+    .label __14 = $34
+    .label __17 = $38
+    .label __20 = $3b
+    .label __24 = $3c
+    .label __27 = $3f
+    .label __29 = $44
     .label x = $22
     .label y = $23
     .label xr = $26
@@ -2772,43 +2772,43 @@ anim: {
     .label angle = 2
     .label cyclecount = $48
     // [10] phi from anim to anim::@1 [phi:anim->anim::@1]
-  b1_from_anim:
+  __b1_from_anim:
     // [10] phi (byte) anim::angle#9 = (byte) 0 [phi:anim->anim::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z angle
-    jmp b1
+    jmp __b1
     // anim::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // anim::@2
-  b2:
+  __b2:
     // [11] if(*((const byte*) RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // anim::@3
-  b3:
+  __b3:
     // [12] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // [13] call clock_start 
     jsr clock_start
     // [14] phi from anim::@3 to anim::@4 [phi:anim::@3->anim::@4]
-  b4_from_b3:
+  __b4_from___b3:
     // [14] phi (byte) anim::sprite_msb#10 = (byte) 0 [phi:anim::@3->anim::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta.z sprite_msb
     // [14] phi (byte) anim::i#10 = (byte) 0 [phi:anim::@3->anim::@4#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b4
+    jmp __b4
     // [14] phi from anim::@5 to anim::@4 [phi:anim::@5->anim::@4]
-  b4_from_b5:
+  __b4_from___b5:
     // [14] phi (byte) anim::sprite_msb#10 = (byte) anim::sprite_msb#5 [phi:anim::@5->anim::@4#0] -- register_copy 
     // [14] phi (byte) anim::i#10 = (byte) anim::i#1 [phi:anim::@5->anim::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // anim::@4
-  b4:
+  __b4:
     // [15] (signed byte) anim::x#0 ← *((const signed byte[8]) xs + (byte) anim::i#10) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z i
     lda xs,y
@@ -2830,30 +2830,30 @@ anim: {
   mulf8u_prepare_from_mulf8s_prepare1:
     // [111] phi (byte) mulf8u_prepare::a#2 = (byte~) mulf8u_prepare::a#3 [phi:anim::mulf8s_prepare1->mulf8u_prepare#0] -- register_copy 
     jsr mulf8u_prepare
-    jmp b8
+    jmp __b8
     // anim::@8
-  b8:
+  __b8:
     // [19] (signed byte) mulf8s_prepared::b#0 ← (signed byte) anim::x#0 -- vbsz1=vbsz2 
     lda.z x
     sta.z mulf8s_prepared.b
     // [20] call mulf8s_prepared 
     // [91] phi from anim::@8 to mulf8s_prepared [phi:anim::@8->mulf8s_prepared]
-  mulf8s_prepared_from_b8:
+  mulf8s_prepared_from___b8:
     // [91] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#0 [phi:anim::@8->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
-    jmp b10
+    jmp __b10
     // anim::@10
-  b10:
+  __b10:
     // [21] (signed word~) anim::$6 ← (signed word)(word) mulf8s_prepared::m#4 -- vwsz1=vwsz2 
     lda.z mulf8s_prepared.m
-    sta.z _6
+    sta.z __6
     lda.z mulf8s_prepared.m+1
-    sta.z _6+1
+    sta.z __6+1
     // [22] (signed word) anim::xr#0 ← (signed word~) anim::$6 << (byte) 1 -- vwsz1=vwsz2_rol_1 
-    lda.z _6
+    lda.z __6
     asl
     sta.z xr
-    lda.z _6+1
+    lda.z __6+1
     rol
     sta.z xr+1
     // [23] (signed byte) mulf8s_prepared::b#1 ← (signed byte) anim::y#0 -- vbsz1=vbsz2 
@@ -2861,22 +2861,22 @@ anim: {
     sta.z mulf8s_prepared.b
     // [24] call mulf8s_prepared 
     // [91] phi from anim::@10 to mulf8s_prepared [phi:anim::@10->mulf8s_prepared]
-  mulf8s_prepared_from_b10:
+  mulf8s_prepared_from___b10:
     // [91] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#1 [phi:anim::@10->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
-    jmp b11
+    jmp __b11
     // anim::@11
-  b11:
+  __b11:
     // [25] (signed word~) anim::$8 ← (signed word)(word) mulf8s_prepared::m#4 -- vwsz1=vwsz2 
     lda.z mulf8s_prepared.m
-    sta.z _8
+    sta.z __8
     lda.z mulf8s_prepared.m+1
-    sta.z _8+1
+    sta.z __8+1
     // [26] (signed word) anim::yr#0 ← (signed word~) anim::$8 << (byte) 1 -- vwsz1=vwsz2_rol_1 
-    lda.z _8
+    lda.z __8
     asl
     sta.z yr
-    lda.z _8+1
+    lda.z __8+1
     rol
     sta.z yr+1
     jmp mulf8s_prepare2
@@ -2891,77 +2891,77 @@ anim: {
   mulf8u_prepare_from_mulf8s_prepare2:
     // [111] phi (byte) mulf8u_prepare::a#2 = (byte~) mulf8u_prepare::a#4 [phi:anim::mulf8s_prepare2->mulf8u_prepare#0] -- register_copy 
     jsr mulf8u_prepare
-    jmp b9
+    jmp __b9
     // anim::@9
-  b9:
+  __b9:
     // [29] (signed byte) mulf8s_prepared::b#2 ← (signed byte) anim::y#0 -- vbsz1=vbsz2 
     lda.z y
     sta.z mulf8s_prepared.b
     // [30] call mulf8s_prepared 
     // [91] phi from anim::@9 to mulf8s_prepared [phi:anim::@9->mulf8s_prepared]
-  mulf8s_prepared_from_b9:
+  mulf8s_prepared_from___b9:
     // [91] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#2 [phi:anim::@9->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
-    jmp b12
+    jmp __b12
     // anim::@12
-  b12:
+  __b12:
     // [31] (signed word~) anim::$11 ← (signed word)(word) mulf8s_prepared::m#4 -- vwsz1=vwsz2 
     lda.z mulf8s_prepared.m
-    sta.z _11
+    sta.z __11
     lda.z mulf8s_prepared.m+1
-    sta.z _11+1
+    sta.z __11+1
     // [32] (signed word~) anim::$12 ← (signed word~) anim::$11 << (byte) 1 -- vwsz1=vwsz2_rol_1 
-    lda.z _11
+    lda.z __11
     asl
-    sta.z _12
-    lda.z _11+1
+    sta.z __12
+    lda.z __11+1
     rol
-    sta.z _12+1
+    sta.z __12+1
     // [33] (signed word) anim::xr#1 ← (signed word) anim::xr#0 - (signed word~) anim::$12 -- vwsz1=vwsz2_minus_vwsz3 
     lda.z xr
     sec
-    sbc.z _12
+    sbc.z __12
     sta.z xr_1
     lda.z xr+1
-    sbc.z _12+1
+    sbc.z __12+1
     sta.z xr_1+1
     // [34] (signed byte) mulf8s_prepared::b#3 ← (signed byte) anim::x#0 -- vbsz1=vbsz2 
     lda.z x
     sta.z mulf8s_prepared.b
     // [35] call mulf8s_prepared 
     // [91] phi from anim::@12 to mulf8s_prepared [phi:anim::@12->mulf8s_prepared]
-  mulf8s_prepared_from_b12:
+  mulf8s_prepared_from___b12:
     // [91] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#3 [phi:anim::@12->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
-    jmp b13
+    jmp __b13
     // anim::@13
-  b13:
+  __b13:
     // [36] (signed word~) anim::$13 ← (signed word)(word) mulf8s_prepared::m#4 -- vwsz1=vwsz2 
     lda.z mulf8s_prepared.m
-    sta.z _13
+    sta.z __13
     lda.z mulf8s_prepared.m+1
-    sta.z _13+1
+    sta.z __13+1
     // [37] (signed word~) anim::$14 ← (signed word~) anim::$13 << (byte) 1 -- vwsz1=vwsz2_rol_1 
-    lda.z _13
+    lda.z __13
     asl
-    sta.z _14
-    lda.z _13+1
+    sta.z __14
+    lda.z __13+1
     rol
-    sta.z _14+1
+    sta.z __14+1
     // [38] (signed word) anim::yr#1 ← (signed word) anim::yr#0 + (signed word~) anim::$14 -- vwsz1=vwsz2_plus_vwsz3 
     // signed fixed[8.8]
     lda.z yr
     clc
-    adc.z _14
+    adc.z __14
     sta.z yr_1
     lda.z yr+1
-    adc.z _14+1
+    adc.z __14+1
     sta.z yr_1+1
     // [39] (byte~) anim::$17 ← > (signed word) anim::xr#1 -- vbuz1=_hi_vwsz2 
     lda.z xr_1+1
-    sta.z _17
+    sta.z __17
     // [40] (signed word) anim::xpos#0 ← (signed byte)(byte~) anim::$17 + (signed byte) $18+(signed word) $95 -- vwsz1=vbsz2_plus_vwsc1 
-    lda.z _17
+    lda.z __17
     tax
     clc
     adc #<$18+$95
@@ -2977,30 +2977,30 @@ anim: {
     lsr.z sprite_msb
     // [42] (byte~) anim::$20 ← > (signed word) anim::xpos#0 -- vbuz1=_hi_vwsz2 
     lda.z xpos+1
-    sta.z _20
+    sta.z __20
     // [43] if((byte~) anim::$20==(byte) 0) goto anim::@5 -- vbuz1_eq_0_then_la1 
-    lda.z _20
+    lda.z __20
     cmp #0
-    beq b5_from_b13
-    jmp b6
+    beq __b5_from___b13
+    jmp __b6
     // anim::@6
-  b6:
+  __b6:
     // [44] (byte) anim::sprite_msb#2 ← (byte) anim::sprite_msb#1 | (byte) $80 -- vbuz1=vbuz1_bor_vbuc1 
     lda #$80
     ora.z sprite_msb
     sta.z sprite_msb
     // [45] phi from anim::@13 anim::@6 to anim::@5 [phi:anim::@13/anim::@6->anim::@5]
-  b5_from_b13:
-  b5_from_b6:
+  __b5_from___b13:
+  __b5_from___b6:
     // [45] phi (byte) anim::sprite_msb#5 = (byte) anim::sprite_msb#1 [phi:anim::@13/anim::@6->anim::@5#0] -- register_copy 
-    jmp b5
+    jmp __b5
     // anim::@5
-  b5:
+  __b5:
     // [46] (byte~) anim::$24 ← > (signed word) anim::yr#1 -- vbuz1=_hi_vwsz2 
     lda.z yr_1+1
-    sta.z _24
+    sta.z __24
     // [47] (byte) anim::ypos#0 ← (byte~) anim::$24 + (byte) $59+(byte) $33 -- vbuz1=vbuz2_plus_vbuc1 
-    lax.z _24
+    lax.z __24
     axs #-[$59+$33]
     stx.z ypos
     // [48] (byte) anim::i2#0 ← (byte) anim::i#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
@@ -3009,9 +3009,9 @@ anim: {
     sta.z i2
     // [49] (byte~) anim::$27 ← < (signed word) anim::xpos#0 -- vbuz1=_lo_vwsz2 
     lda.z xpos
-    sta.z _27
+    sta.z __27
     // [50] *((const byte*) SPRITES_XPOS + (byte) anim::i2#0) ← (byte~) anim::$27 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _27
+    lda.z __27
     ldy.z i2
     sta SPRITES_XPOS,y
     // [51] *((const byte*) SPRITES_YPOS + (byte) anim::i2#0) ← (byte) anim::ypos#0 -- pbuc1_derefidx_vbuz1=vbuz2 
@@ -3023,10 +3023,10 @@ anim: {
     // [53] if((byte) anim::i#1!=(byte) 8) goto anim::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b4_from_b5
-    jmp b7
+    bne __b4_from___b5
+    jmp __b7
     // anim::@7
-  b7:
+  __b7:
     // [54] *((const byte*) SPRITES_XMSB) ← (byte) anim::sprite_msb#5 -- _deref_pbuc1=vbuz1 
     lda.z sprite_msb
     sta SPRITES_XMSB
@@ -3043,30 +3043,30 @@ anim: {
     sta.z clock.return_2+2
     lda.z clock.return+3
     sta.z clock.return_2+3
-    jmp b14
+    jmp __b14
     // anim::@14
-  b14:
+  __b14:
     // [58] (dword~) anim::$29 ← (dword) clock::return#2 -- vduz1=vduz2 
     lda.z clock.return_2
-    sta.z _29
+    sta.z __29
     lda.z clock.return_2+1
-    sta.z _29+1
+    sta.z __29+1
     lda.z clock.return_2+2
-    sta.z _29+2
+    sta.z __29+2
     lda.z clock.return_2+3
-    sta.z _29+3
+    sta.z __29+3
     // [59] (dword) anim::cyclecount#0 ← (dword~) anim::$29 - (const dword) CLOCKS_PER_INIT -- vduz1=vduz2_minus_vduc1 
-    lda.z _29
+    lda.z __29
     sec
     sbc #<CLOCKS_PER_INIT
     sta.z cyclecount
-    lda.z _29+1
+    lda.z __29+1
     sbc #>CLOCKS_PER_INIT
     sta.z cyclecount+1
-    lda.z _29+2
+    lda.z __29+2
     sbc #<CLOCKS_PER_INIT>>$10
     sta.z cyclecount+2
-    lda.z _29+3
+    lda.z __29+3
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
     // [60] (dword) print_dword_at::dw#0 ← (dword) anim::cyclecount#0 -- vduz1=vduz2 
@@ -3080,16 +3080,16 @@ anim: {
     sta.z print_dword_at.dw+3
     // [61] call print_dword_at 
     jsr print_dword_at
-    jmp b15
+    jmp __b15
     // anim::@15
-  b15:
+  __b15:
     // [62] *((const byte*) BORDERCOL) ← (const byte) LIGHT_BLUE -- _deref_pbuc1=vbuc2 
     lda #LIGHT_BLUE
     sta BORDERCOL
     // [10] phi from anim::@15 to anim::@1 [phi:anim::@15->anim::@1]
-  b1_from_b15:
+  __b1_from___b15:
     // [10] phi (byte) anim::angle#9 = (byte) anim::angle#1 [phi:anim::@15->anim::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // print_dword_at
 // Print a dword as HEX at a specific position
@@ -3111,9 +3111,9 @@ print_dword_at: {
     sta.z print_word_at.at+1
     // [68] phi (word) print_word_at::w#2 = (word) print_word_at::w#0 [phi:print_dword_at->print_word_at#1] -- register_copy 
     jsr print_word_at
-    jmp b1
+    jmp __b1
     // print_dword_at::@1
-  b1:
+  __b1:
     // [65] (word) print_word_at::w#1 ← < (dword) print_dword_at::dw#0 -- vwuz1=_lo_vduz2 
     lda.z dw
     sta.z print_word_at.w
@@ -3121,7 +3121,7 @@ print_dword_at: {
     sta.z print_word_at.w+1
     // [66] call print_word_at 
     // [68] phi from print_dword_at::@1 to print_word_at [phi:print_dword_at::@1->print_word_at]
-  print_word_at_from_b1:
+  print_word_at_from___b1:
     // [68] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN+(byte) 4 [phi:print_dword_at::@1->print_word_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+4
     sta.z print_word_at.at
@@ -3129,9 +3129,9 @@ print_dword_at: {
     sta.z print_word_at.at+1
     // [68] phi (word) print_word_at::w#2 = (word) print_word_at::w#1 [phi:print_dword_at::@1->print_word_at#1] -- register_copy 
     jsr print_word_at
-    jmp breturn
+    jmp __breturn
     // print_dword_at::@return
-  breturn:
+  __breturn:
     // [67] return 
     rts
 }
@@ -3155,9 +3155,9 @@ print_word_at: {
     // [76] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#0 [phi:print_word_at->print_byte_at#0] -- register_copy 
     // [76] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#0 [phi:print_word_at->print_byte_at#1] -- register_copy 
     jsr print_byte_at
-    jmp b1
+    jmp __b1
     // print_word_at::@1
-  b1:
+  __b1:
     // [72] (byte) print_byte_at::b#1 ← < (word) print_word_at::w#2 -- vbuz1=_lo_vwuz2 
     lda.z w
     sta.z print_byte_at.b
@@ -3171,13 +3171,13 @@ print_word_at: {
     sta.z print_byte_at.at+1
     // [74] call print_byte_at 
     // [76] phi from print_word_at::@1 to print_byte_at [phi:print_word_at::@1->print_byte_at]
-  print_byte_at_from_b1:
+  print_byte_at_from___b1:
     // [76] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#1 [phi:print_word_at::@1->print_byte_at#0] -- register_copy 
     // [76] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#1 [phi:print_word_at::@1->print_byte_at#1] -- register_copy 
     jsr print_byte_at
-    jmp breturn
+    jmp __breturn
     // print_word_at::@return
-  breturn:
+  __breturn:
     // [75] return 
     rts
 }
@@ -3185,8 +3185,8 @@ print_word_at: {
 // Print a byte as HEX at a specific position
 // print_byte_at(byte zeropage(9) b, byte* zeropage($a) at)
 print_byte_at: {
-    .label _0 = $50
-    .label _2 = $51
+    .label __0 = $50
+    .label __2 = $51
     .label b = 9
     .label at = $a
     // [77] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
@@ -3195,9 +3195,9 @@ print_byte_at: {
     lsr
     lsr
     lsr
-    sta.z _0
+    sta.z __0
     // [78] (byte) print_char_at::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z _0
+    ldy.z __0
     lda print_hextab,y
     sta.z print_char_at.ch
     // [79] (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2 -- pbuz1=pbuz2 
@@ -3211,13 +3211,13 @@ print_byte_at: {
     // [86] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_byte_at->print_char_at#0] -- register_copy 
     // [86] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_byte_at->print_char_at#1] -- register_copy 
     jsr print_char_at
-    jmp b1
+    jmp __b1
     // print_byte_at::@1
-  b1:
+  __b1:
     // [81] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and.z b
-    sta.z _2
+    sta.z __2
     // [82] (byte*) print_char_at::at#1 ← (byte*) print_byte_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda.z at
     clc
@@ -3227,18 +3227,18 @@ print_byte_at: {
     adc #0
     sta.z print_char_at.at+1
     // [83] (byte) print_char_at::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z _2
+    ldy.z __2
     lda print_hextab,y
     sta.z print_char_at.ch
     // [84] call print_char_at 
     // [86] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
-  print_char_at_from_b1:
+  print_char_at_from___b1:
     // [86] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
     // [86] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
-    jmp breturn
+    jmp __breturn
     // print_byte_at::@return
-  breturn:
+  __breturn:
     // [85] return 
     rts
 }
@@ -3252,9 +3252,9 @@ print_char_at: {
     lda.z ch
     ldy #0
     sta (at),y
-    jmp breturn
+    jmp __breturn
     // print_char_at::@return
-  breturn:
+  __breturn:
     // [88] return 
     rts
 }
@@ -3278,9 +3278,9 @@ clock: {
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
     sta.z return+3
-    jmp breturn
+    jmp __breturn
     // clock::@return
-  breturn:
+  __breturn:
     // [90] return 
     rts
 }
@@ -3290,10 +3290,10 @@ clock: {
 // mulf8s_prepared(signed byte zeropage($f) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label _8 = $59
-    .label _12 = $5b
-    .label _15 = $5a
-    .label _16 = $5c
+    .label __8 = $59
+    .label __12 = $5b
+    .label __15 = $5a
+    .label __16 = $5c
     .label m = $10
     .label b = $f
     // [92] (byte) mulf8u_prepared::b#0 ← (byte)(signed byte) mulf8s_prepared::b#4 -- vbuz1=vbuz2 
@@ -3306,9 +3306,9 @@ mulf8s_prepared: {
     sta.z mulf8u_prepared.return_2
     lda.z mulf8u_prepared.return+1
     sta.z mulf8u_prepared.return_2+1
-    jmp b5
+    jmp __b5
     // mulf8s_prepared::@5
-  b5:
+  __b5:
     // [95] (word) mulf8s_prepared::m#0 ← (word) mulf8u_prepared::return#2 -- vwuz1=vwuz2 
     lda.z mulf8u_prepared.return_2
     sta.z m
@@ -3317,56 +3317,56 @@ mulf8s_prepared: {
     // [96] if(*((const signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1 -- _deref_pbsc1_ge_0_then_la1 
     lda memA
     cmp #0
-    bpl b1_from_b5
-    jmp b3
+    bpl __b1_from___b5
+    jmp __b3
     // mulf8s_prepared::@3
-  b3:
+  __b3:
     // [97] (byte~) mulf8s_prepared::$8 ← > (word) mulf8s_prepared::m#0 -- vbuz1=_hi_vwuz2 
     lda.z m+1
-    sta.z _8
+    sta.z __8
     // [98] (byte~) mulf8s_prepared::$15 ← (byte~) mulf8s_prepared::$8 - (byte)(signed byte) mulf8s_prepared::b#4 -- vbuz1=vbuz2_minus_vbuz3 
-    lda.z _8
+    lda.z __8
     sec
     sbc.z b
-    sta.z _15
+    sta.z __15
     // [99] (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#0 hi= (byte~) mulf8s_prepared::$15 -- vwuz1=vwuz1_sethi_vbuz2 
-    lda.z _15
+    lda.z __15
     sta.z m+1
     // [100] phi from mulf8s_prepared::@3 mulf8s_prepared::@5 to mulf8s_prepared::@1 [phi:mulf8s_prepared::@3/mulf8s_prepared::@5->mulf8s_prepared::@1]
-  b1_from_b3:
-  b1_from_b5:
+  __b1_from___b3:
+  __b1_from___b5:
     // [100] phi (word) mulf8s_prepared::m#5 = (word) mulf8s_prepared::m#1 [phi:mulf8s_prepared::@3/mulf8s_prepared::@5->mulf8s_prepared::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // mulf8s_prepared::@1
-  b1:
+  __b1:
     // [101] if((signed byte) mulf8s_prepared::b#4>=(signed byte) 0) goto mulf8s_prepared::@2 -- vbsz1_ge_0_then_la1 
     lda.z b
     cmp #0
-    bpl b2_from_b1
-    jmp b4
+    bpl __b2_from___b1
+    jmp __b4
     // mulf8s_prepared::@4
-  b4:
+  __b4:
     // [102] (byte~) mulf8s_prepared::$12 ← > (word) mulf8s_prepared::m#5 -- vbuz1=_hi_vwuz2 
     lda.z m+1
-    sta.z _12
+    sta.z __12
     // [103] (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$12 - (byte)*((const signed byte*) mulf8s_prepared::memA) -- vbuz1=vbuz2_minus__deref_pbuc1 
-    lda.z _12
+    lda.z __12
     sec
     sbc memA
-    sta.z _16
+    sta.z __16
     // [104] (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$16 -- vwuz1=vwuz1_sethi_vbuz2 
-    lda.z _16
+    lda.z __16
     sta.z m+1
     // [105] phi from mulf8s_prepared::@1 mulf8s_prepared::@4 to mulf8s_prepared::@2 [phi:mulf8s_prepared::@1/mulf8s_prepared::@4->mulf8s_prepared::@2]
-  b2_from_b1:
-  b2_from_b4:
+  __b2_from___b1:
+  __b2_from___b4:
     // [105] phi (word) mulf8s_prepared::m#4 = (word) mulf8s_prepared::m#5 [phi:mulf8s_prepared::@1/mulf8s_prepared::@4->mulf8s_prepared::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // mulf8s_prepared::@2
-  b2:
-    jmp breturn
+  __b2:
+    jmp __breturn
     // mulf8s_prepared::@return
-  breturn:
+  __breturn:
     // [106] return 
     rts
 }
@@ -3401,9 +3401,9 @@ mulf8u_prepared: {
     sta.z return
     lda memB
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // mulf8u_prepared::@return
-  breturn:
+  __breturn:
     // [110] return 
     rts
 }
@@ -3423,9 +3423,9 @@ mulf8u_prepare: {
     eor #$ff
     sta mulf8u_prepared.sm2+1
     sta mulf8u_prepared.sm4+1
-    jmp breturn
+    jmp __breturn
     // mulf8u_prepare::@return
-  breturn:
+  __breturn:
     // [114] return 
     rts
 }
@@ -3455,9 +3455,9 @@ clock_start: {
     // [119] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START
     sta CIA2_TIMER_A_CONTROL
-    jmp breturn
+    jmp __breturn
     // clock_start::@return
-  breturn:
+  __breturn:
     // [120] return 
     rts
 }
@@ -3469,24 +3469,24 @@ init: {
     // [130] phi from init to mulf_init [phi:init->mulf_init]
   mulf_init_from_init:
     jsr mulf_init
-    jmp b2
+    jmp __b2
     // init::@2
-  b2:
+  __b2:
     // [123] *((const byte*) SPRITES_ENABLE) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     lda #$ff
     sta SPRITES_ENABLE
     // [124] phi from init::@2 to init::@1 [phi:init::@2->init::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [124] phi (byte) init::i#2 = (byte) 0 [phi:init::@2->init::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [124] phi from init::@1 to init::@1 [phi:init::@1->init::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [124] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@1->init::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // init::@1
-  b1:
+  __b1:
     // [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #SPRITE/$40
     ldy.z i
@@ -3500,19 +3500,19 @@ init: {
     // [128] if((byte) init::i#1!=(byte) 8) goto init::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // init::@return
-  breturn:
+  __breturn:
     // [129] return 
     rts
 }
   // mulf_init
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label _9 = $5f
-    .label _12 = $60
-    .label _13 = $61
+    .label __9 = $5f
+    .label __12 = $60
+    .label __13 = $61
     .label c = $16
     .label sqr1_hi = $17
     .label sqr = $20
@@ -3523,7 +3523,7 @@ mulf_init: {
     .label sqr2_lo = $1a
     .label dir = $1f
     // [131] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
-  b1_from_mulf_init:
+  __b1_from_mulf_init:
     // [131] phi (byte) mulf_init::x_2#3 = (byte) 0 [phi:mulf_init->mulf_init::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z x_2
@@ -3545,18 +3545,18 @@ mulf_init: {
     sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta.z sqr1_lo+1
-    jmp b1
+    jmp __b1
     // mulf_init::@1
-  b1:
+  __b1:
     // [132] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     // [133] phi from mulf_init::@1 to mulf_init::@5 [phi:mulf_init::@1->mulf_init::@5]
-  b5_from_b1:
+  __b5_from___b1:
     // [133] phi (byte) mulf_init::dir#2 = (byte) $ff [phi:mulf_init::@1->mulf_init::@5#0] -- vbuz1=vbuc1 
     lda #$ff
     sta.z dir
@@ -3573,19 +3573,19 @@ mulf_init: {
     sta.z sqr2_lo
     lda #>mulf_sqr2_lo
     sta.z sqr2_lo+1
-    jmp b5
+    jmp __b5
     // mulf_init::@5
-  b5:
+  __b5:
     // [134] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b6
-    jmp b7
+    bne __b6
+    jmp __b7
     // mulf_init::@7
-  b7:
+  __b7:
     // [135] *((const byte[$200]) mulf_sqr2_lo+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_lo+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
@@ -3593,13 +3593,13 @@ mulf_init: {
     // [136] *((const byte[$200]) mulf_sqr2_hi+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_hi+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
     lda mulf_sqr1_hi+$100
     sta mulf_sqr2_hi+$1ff
-    jmp breturn
+    jmp __breturn
     // mulf_init::@return
-  breturn:
+  __breturn:
     // [137] return 
     rts
     // mulf_init::@6
-  b6:
+  __b6:
     // [138] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte[$200]) mulf_sqr1_lo + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z x_255
     lda mulf_sqr1_lo,y
@@ -3623,51 +3623,51 @@ mulf_init: {
     // [142] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@9 -- vbuz1_neq_0_then_la1 
     lda.z x_255
     cmp #0
-    bne b9_from_b6
+    bne __b9_from___b6
     // [144] phi from mulf_init::@6 to mulf_init::@8 [phi:mulf_init::@6->mulf_init::@8]
-  b8_from_b6:
+  __b8_from___b6:
     // [144] phi (byte) mulf_init::dir#4 = (byte) 1 [phi:mulf_init::@6->mulf_init::@8#0] -- vbuz1=vbuc1 
     lda #1
     sta.z dir
-    jmp b8
+    jmp __b8
     // [143] phi from mulf_init::@6 to mulf_init::@9 [phi:mulf_init::@6->mulf_init::@9]
-  b9_from_b6:
-    jmp b9
+  __b9_from___b6:
+    jmp __b9
     // mulf_init::@9
-  b9:
+  __b9:
     // [144] phi from mulf_init::@9 to mulf_init::@8 [phi:mulf_init::@9->mulf_init::@8]
-  b8_from_b9:
+  __b8_from___b9:
     // [144] phi (byte) mulf_init::dir#4 = (byte) mulf_init::dir#2 [phi:mulf_init::@9->mulf_init::@8#0] -- register_copy 
-    jmp b8
+    jmp __b8
     // mulf_init::@8
-  b8:
+  __b8:
     // [145] (byte*) mulf_init::sqr2_lo#1 ← ++ (byte*) mulf_init::sqr2_lo#2 -- pbuz1=_inc_pbuz1 
     inc.z sqr2_lo
     bne !+
     inc.z sqr2_lo+1
   !:
     // [133] phi from mulf_init::@8 to mulf_init::@5 [phi:mulf_init::@8->mulf_init::@5]
-  b5_from_b8:
+  __b5_from___b8:
     // [133] phi (byte) mulf_init::dir#2 = (byte) mulf_init::dir#4 [phi:mulf_init::@8->mulf_init::@5#0] -- register_copy 
     // [133] phi (byte*) mulf_init::sqr2_hi#2 = (byte*) mulf_init::sqr2_hi#1 [phi:mulf_init::@8->mulf_init::@5#1] -- register_copy 
     // [133] phi (byte) mulf_init::x_255#2 = (byte) mulf_init::x_255#1 [phi:mulf_init::@8->mulf_init::@5#2] -- register_copy 
     // [133] phi (byte*) mulf_init::sqr2_lo#2 = (byte*) mulf_init::sqr2_lo#1 [phi:mulf_init::@8->mulf_init::@5#3] -- register_copy 
-    jmp b5
+    jmp __b5
     // mulf_init::@2
-  b2:
+  __b2:
     // [146] (byte) mulf_init::c#1 ← ++ (byte) mulf_init::c#2 -- vbuz1=_inc_vbuz1 
     inc.z c
     // [147] (byte~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z c
-    sta.z _9
+    sta.z __9
     // [148] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@3 -- vbuz1_neq_0_then_la1 
-    lda.z _9
+    lda.z __9
     cmp #0
-    bne b3_from_b2
-    jmp b4
+    bne __b3_from___b2
+    jmp __b4
     // mulf_init::@4
-  b4:
+  __b4:
     // [149] (byte) mulf_init::x_2#1 ← ++ (byte) mulf_init::x_2#3 -- vbuz1=_inc_vbuz1 
     inc.z x_2
     // [150] (word) mulf_init::sqr#2 ← ++ (word) mulf_init::sqr#4 -- vwuz1=_inc_vwuz1 
@@ -3676,25 +3676,25 @@ mulf_init: {
     inc.z sqr+1
   !:
     // [151] phi from mulf_init::@2 mulf_init::@4 to mulf_init::@3 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3]
-  b3_from_b2:
-  b3_from_b4:
+  __b3_from___b2:
+  __b3_from___b4:
     // [151] phi (byte) mulf_init::x_2#2 = (byte) mulf_init::x_2#3 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3#0] -- register_copy 
     // [151] phi (word) mulf_init::sqr#3 = (word) mulf_init::sqr#4 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // mulf_init::@3
-  b3:
+  __b3:
     // [152] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3 -- vbuz1=_lo_vwuz2 
     lda.z sqr
-    sta.z _12
+    sta.z __12
     // [153] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$12 -- _deref_pbuz1=vbuz2 
-    lda.z _12
+    lda.z __12
     ldy #0
     sta (sqr1_lo),y
     // [154] (byte~) mulf_init::$13 ← > (word) mulf_init::sqr#3 -- vbuz1=_hi_vwuz2 
     lda.z sqr+1
-    sta.z _13
+    sta.z __13
     // [155] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$13 -- _deref_pbuz1=vbuz2 
-    lda.z _13
+    lda.z __13
     ldy #0
     sta (sqr1_hi),y
     // [156] (byte*) mulf_init::sqr1_hi#1 ← ++ (byte*) mulf_init::sqr1_hi#2 -- pbuz1=_inc_pbuz1 
@@ -3716,13 +3716,13 @@ mulf_init: {
     inc.z sqr1_lo+1
   !:
     // [131] phi from mulf_init::@3 to mulf_init::@1 [phi:mulf_init::@3->mulf_init::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [131] phi (byte) mulf_init::x_2#3 = (byte) mulf_init::x_2#2 [phi:mulf_init::@3->mulf_init::@1#0] -- register_copy 
     // [131] phi (byte*) mulf_init::sqr1_hi#2 = (byte*) mulf_init::sqr1_hi#1 [phi:mulf_init::@3->mulf_init::@1#1] -- register_copy 
     // [131] phi (word) mulf_init::sqr#4 = (word) mulf_init::sqr#1 [phi:mulf_init::@3->mulf_init::@1#2] -- register_copy 
     // [131] phi (byte) mulf_init::c#2 = (byte) mulf_init::c#1 [phi:mulf_init::@3->mulf_init::@1#3] -- register_copy 
     // [131] phi (byte*) mulf_init::sqr1_lo#2 = (byte*) mulf_init::sqr1_lo#1 [phi:mulf_init::@3->mulf_init::@1#4] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
@@ -4161,7 +4161,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // 2D rotattion of 8 sprites 
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SPRITES_XPOS = $d000
@@ -4193,18 +4193,18 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITE = $3000
   .label COS = SIN+$40
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm(location (const byte*) SPRITE) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 // sin(x) = cos(x+PI/2)
 main: {
@@ -4215,29 +4215,29 @@ main: {
   init_from_main:
     jsr init
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call anim 
     // [9] phi from main::@1 to anim [phi:main::@1->anim]
-  anim_from_b1:
+  anim_from___b1:
     jsr anim
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
   // anim
 anim: {
-    .label _6 = 3
-    .label _8 = 3
-    .label _11 = 3
-    .label _12 = 3
-    .label _13 = 3
-    .label _14 = 3
-    .label _29 = $13
+    .label __6 = 3
+    .label __8 = 3
+    .label __11 = 3
+    .label __12 = 3
+    .label __13 = 3
+    .label __14 = 3
+    .label __29 = $13
     .label x = $b
     .label y = $c
     .label xr = $d
@@ -4248,43 +4248,43 @@ anim: {
     .label angle = 7
     .label cyclecount = $13
     // [10] phi from anim to anim::@1 [phi:anim->anim::@1]
-  b1_from_anim:
+  __b1_from_anim:
     // [10] phi (byte) anim::angle#9 = (byte) 0 [phi:anim->anim::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z angle
-    jmp b1
+    jmp __b1
     // anim::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // anim::@2
-  b2:
+  __b2:
     // [11] if(*((const byte*) RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // anim::@3
-  b3:
+  __b3:
     // [12] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // [13] call clock_start 
     jsr clock_start
     // [14] phi from anim::@3 to anim::@4 [phi:anim::@3->anim::@4]
-  b4_from_b3:
+  __b4_from___b3:
     // [14] phi (byte) anim::sprite_msb#10 = (byte) 0 [phi:anim::@3->anim::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta.z sprite_msb
     // [14] phi (byte) anim::i#10 = (byte) 0 [phi:anim::@3->anim::@4#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b4
+    jmp __b4
     // [14] phi from anim::@5 to anim::@4 [phi:anim::@5->anim::@4]
-  b4_from_b5:
+  __b4_from___b5:
     // [14] phi (byte) anim::sprite_msb#10 = (byte) anim::sprite_msb#5 [phi:anim::@5->anim::@4#0] -- register_copy 
     // [14] phi (byte) anim::i#10 = (byte) anim::i#1 [phi:anim::@5->anim::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // anim::@4
-  b4:
+  __b4:
     // [15] (signed byte) anim::x#0 ← *((const signed byte[8]) xs + (byte) anim::i#10) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z i
     lda xs,y
@@ -4305,43 +4305,43 @@ anim: {
   mulf8u_prepare_from_mulf8s_prepare1:
     // [111] phi (byte) mulf8u_prepare::a#2 = (byte~) mulf8u_prepare::a#3 [phi:anim::mulf8s_prepare1->mulf8u_prepare#0] -- register_copy 
     jsr mulf8u_prepare
-    jmp b8
+    jmp __b8
     // anim::@8
-  b8:
+  __b8:
     // [19] (signed byte) mulf8s_prepared::b#0 ← (signed byte) anim::x#0 -- vbsyy=vbsz1 
     ldy.z x
     // [20] call mulf8s_prepared 
     // [91] phi from anim::@8 to mulf8s_prepared [phi:anim::@8->mulf8s_prepared]
-  mulf8s_prepared_from_b8:
+  mulf8s_prepared_from___b8:
     // [91] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#0 [phi:anim::@8->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
-    jmp b10
+    jmp __b10
     // anim::@10
-  b10:
+  __b10:
     // [21] (signed word~) anim::$6 ← (signed word)(word) mulf8s_prepared::m#4
     // [22] (signed word) anim::xr#0 ← (signed word~) anim::$6 << (byte) 1 -- vwsz1=vwsz2_rol_1 
-    lda.z _6
+    lda.z __6
     asl
     sta.z xr
-    lda.z _6+1
+    lda.z __6+1
     rol
     sta.z xr+1
     // [23] (signed byte) mulf8s_prepared::b#1 ← (signed byte) anim::y#0 -- vbsyy=vbsz1 
     ldy.z y
     // [24] call mulf8s_prepared 
     // [91] phi from anim::@10 to mulf8s_prepared [phi:anim::@10->mulf8s_prepared]
-  mulf8s_prepared_from_b10:
+  mulf8s_prepared_from___b10:
     // [91] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#1 [phi:anim::@10->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
-    jmp b11
+    jmp __b11
     // anim::@11
-  b11:
+  __b11:
     // [25] (signed word~) anim::$8 ← (signed word)(word) mulf8s_prepared::m#4
     // [26] (signed word) anim::yr#0 ← (signed word~) anim::$8 << (byte) 1 -- vwsz1=vwsz2_rol_1 
-    lda.z _8
+    lda.z __8
     asl
     sta.z yr
-    lda.z _8+1
+    lda.z __8+1
     rol
     sta.z yr+1
     jmp mulf8s_prepare2
@@ -4355,53 +4355,53 @@ anim: {
   mulf8u_prepare_from_mulf8s_prepare2:
     // [111] phi (byte) mulf8u_prepare::a#2 = (byte~) mulf8u_prepare::a#4 [phi:anim::mulf8s_prepare2->mulf8u_prepare#0] -- register_copy 
     jsr mulf8u_prepare
-    jmp b9
+    jmp __b9
     // anim::@9
-  b9:
+  __b9:
     // [29] (signed byte) mulf8s_prepared::b#2 ← (signed byte) anim::y#0 -- vbsyy=vbsz1 
     ldy.z y
     // [30] call mulf8s_prepared 
     // [91] phi from anim::@9 to mulf8s_prepared [phi:anim::@9->mulf8s_prepared]
-  mulf8s_prepared_from_b9:
+  mulf8s_prepared_from___b9:
     // [91] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#2 [phi:anim::@9->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
-    jmp b12
+    jmp __b12
     // anim::@12
-  b12:
+  __b12:
     // [31] (signed word~) anim::$11 ← (signed word)(word) mulf8s_prepared::m#4
     // [32] (signed word~) anim::$12 ← (signed word~) anim::$11 << (byte) 1 -- vwsz1=vwsz1_rol_1 
-    asl.z _12
-    rol.z _12+1
+    asl.z __12
+    rol.z __12+1
     // [33] (signed word) anim::xr#1 ← (signed word) anim::xr#0 - (signed word~) anim::$12 -- vwsz1=vwsz1_minus_vwsz2 
     lda.z xr
     sec
-    sbc.z _12
+    sbc.z __12
     sta.z xr
     lda.z xr+1
-    sbc.z _12+1
+    sbc.z __12+1
     sta.z xr+1
     // [34] (signed byte) mulf8s_prepared::b#3 ← (signed byte) anim::x#0 -- vbsyy=vbsz1 
     ldy.z x
     // [35] call mulf8s_prepared 
     // [91] phi from anim::@12 to mulf8s_prepared [phi:anim::@12->mulf8s_prepared]
-  mulf8s_prepared_from_b12:
+  mulf8s_prepared_from___b12:
     // [91] phi (signed byte) mulf8s_prepared::b#4 = (signed byte) mulf8s_prepared::b#3 [phi:anim::@12->mulf8s_prepared#0] -- register_copy 
     jsr mulf8s_prepared
-    jmp b13
+    jmp __b13
     // anim::@13
-  b13:
+  __b13:
     // [36] (signed word~) anim::$13 ← (signed word)(word) mulf8s_prepared::m#4
     // [37] (signed word~) anim::$14 ← (signed word~) anim::$13 << (byte) 1 -- vwsz1=vwsz1_rol_1 
-    asl.z _14
-    rol.z _14+1
+    asl.z __14
+    rol.z __14+1
     // [38] (signed word) anim::yr#1 ← (signed word) anim::yr#0 + (signed word~) anim::$14 -- vwsz1=vwsz1_plus_vwsz2 
     // signed fixed[8.8]
     lda.z yr
     clc
-    adc.z _14
+    adc.z __14
     sta.z yr
     lda.z yr+1
-    adc.z _14+1
+    adc.z __14+1
     sta.z yr+1
     // [39] (byte~) anim::$17 ← > (signed word) anim::xr#1 -- vbuaa=_hi_vwsz1 
     lda.z xr+1
@@ -4423,21 +4423,21 @@ anim: {
     lda.z xpos+1
     // [43] if((byte~) anim::$20==(byte) 0) goto anim::@5 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b5_from_b13
-    jmp b6
+    beq __b5_from___b13
+    jmp __b6
     // anim::@6
-  b6:
+  __b6:
     // [44] (byte) anim::sprite_msb#2 ← (byte) anim::sprite_msb#1 | (byte) $80 -- vbuz1=vbuz1_bor_vbuc1 
     lda #$80
     ora.z sprite_msb
     sta.z sprite_msb
     // [45] phi from anim::@13 anim::@6 to anim::@5 [phi:anim::@13/anim::@6->anim::@5]
-  b5_from_b13:
-  b5_from_b6:
+  __b5_from___b13:
+  __b5_from___b6:
     // [45] phi (byte) anim::sprite_msb#5 = (byte) anim::sprite_msb#1 [phi:anim::@13/anim::@6->anim::@5#0] -- register_copy 
-    jmp b5
+    jmp __b5
     // anim::@5
-  b5:
+  __b5:
     // [46] (byte~) anim::$24 ← > (signed word) anim::yr#1 -- vbuaa=_hi_vwsz1 
     lda.z yr+1
     // [47] (byte) anim::ypos#0 ← (byte~) anim::$24 + (byte) $59+(byte) $33 -- vbuyy=vbuaa_plus_vbuc1 
@@ -4460,10 +4460,10 @@ anim: {
     // [53] if((byte) anim::i#1!=(byte) 8) goto anim::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b4_from_b5
-    jmp b7
+    bne __b4_from___b5
+    jmp __b7
     // anim::@7
-  b7:
+  __b7:
     // [54] *((const byte*) SPRITES_XMSB) ← (byte) anim::sprite_msb#5 -- _deref_pbuc1=vbuz1 
     lda.z sprite_msb
     sta SPRITES_XMSB
@@ -4472,9 +4472,9 @@ anim: {
     // [56] call clock 
     jsr clock
     // [57] (dword) clock::return#2 ← (dword) clock::return#0
-    jmp b14
+    jmp __b14
     // anim::@14
-  b14:
+  __b14:
     // [58] (dword~) anim::$29 ← (dword) clock::return#2
     // [59] (dword) anim::cyclecount#0 ← (dword~) anim::$29 - (const dword) CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
     lda.z cyclecount
@@ -4493,16 +4493,16 @@ anim: {
     // [60] (dword) print_dword_at::dw#0 ← (dword) anim::cyclecount#0
     // [61] call print_dword_at 
     jsr print_dword_at
-    jmp b15
+    jmp __b15
     // anim::@15
-  b15:
+  __b15:
     // [62] *((const byte*) BORDERCOL) ← (const byte) LIGHT_BLUE -- _deref_pbuc1=vbuc2 
     lda #LIGHT_BLUE
     sta BORDERCOL
     // [10] phi from anim::@15 to anim::@1 [phi:anim::@15->anim::@1]
-  b1_from_b15:
+  __b1_from___b15:
     // [10] phi (byte) anim::angle#9 = (byte) anim::angle#1 [phi:anim::@15->anim::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // print_dword_at
 // Print a dword as HEX at a specific position
@@ -4524,9 +4524,9 @@ print_dword_at: {
     sta.z print_word_at.at+1
     // [68] phi (word) print_word_at::w#2 = (word) print_word_at::w#0 [phi:print_dword_at->print_word_at#1] -- register_copy 
     jsr print_word_at
-    jmp b1
+    jmp __b1
     // print_dword_at::@1
-  b1:
+  __b1:
     // [65] (word) print_word_at::w#1 ← < (dword) print_dword_at::dw#0 -- vwuz1=_lo_vduz2 
     lda.z dw
     sta.z print_word_at.w
@@ -4534,7 +4534,7 @@ print_dword_at: {
     sta.z print_word_at.w+1
     // [66] call print_word_at 
     // [68] phi from print_dword_at::@1 to print_word_at [phi:print_dword_at::@1->print_word_at]
-  print_word_at_from_b1:
+  print_word_at_from___b1:
     // [68] phi (byte*) print_word_at::at#2 = (const byte*) SCREEN+(byte) 4 [phi:print_dword_at::@1->print_word_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+4
     sta.z print_word_at.at
@@ -4542,9 +4542,9 @@ print_dword_at: {
     sta.z print_word_at.at+1
     // [68] phi (word) print_word_at::w#2 = (word) print_word_at::w#1 [phi:print_dword_at::@1->print_word_at#1] -- register_copy 
     jsr print_word_at
-    jmp breturn
+    jmp __breturn
     // print_dword_at::@return
-  breturn:
+  __breturn:
     // [67] return 
     rts
 }
@@ -4564,9 +4564,9 @@ print_word_at: {
     // [76] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#0 [phi:print_word_at->print_byte_at#0] -- register_copy 
     // [76] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#0 [phi:print_word_at->print_byte_at#1] -- register_copy 
     jsr print_byte_at
-    jmp b1
+    jmp __b1
     // print_word_at::@1
-  b1:
+  __b1:
     // [72] (byte) print_byte_at::b#1 ← < (word) print_word_at::w#2 -- vbuz1=_lo_vwuz2 
     lda.z w
     sta.z print_byte_at.b
@@ -4580,13 +4580,13 @@ print_word_at: {
   !:
     // [74] call print_byte_at 
     // [76] phi from print_word_at::@1 to print_byte_at [phi:print_word_at::@1->print_byte_at]
-  print_byte_at_from_b1:
+  print_byte_at_from___b1:
     // [76] phi (byte*) print_byte_at::at#2 = (byte*) print_byte_at::at#1 [phi:print_word_at::@1->print_byte_at#0] -- register_copy 
     // [76] phi (byte) print_byte_at::b#2 = (byte) print_byte_at::b#1 [phi:print_word_at::@1->print_byte_at#1] -- register_copy 
     jsr print_byte_at
-    jmp breturn
+    jmp __breturn
     // print_word_at::@return
-  breturn:
+  __breturn:
     // [75] return 
     rts
 }
@@ -4616,9 +4616,9 @@ print_byte_at: {
     // [86] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_byte_at->print_char_at#0] -- register_copy 
     // [86] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_byte_at->print_char_at#1] -- register_copy 
     jsr print_char_at
-    jmp b1
+    jmp __b1
     // print_byte_at::@1
-  b1:
+  __b1:
     // [81] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
     lda #$f
     and.z b
@@ -4635,13 +4635,13 @@ print_byte_at: {
     ldx print_hextab,y
     // [84] call print_char_at 
     // [86] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
-  print_char_at_from_b1:
+  print_char_at_from___b1:
     // [86] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
     // [86] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
-    jmp breturn
+    jmp __breturn
     // print_byte_at::@return
-  breturn:
+  __breturn:
     // [85] return 
     rts
 }
@@ -4654,9 +4654,9 @@ print_char_at: {
     txa
     ldy #0
     sta (at),y
-    jmp breturn
+    jmp __breturn
     // print_char_at::@return
-  breturn:
+  __breturn:
     // [88] return 
     rts
 }
@@ -4679,9 +4679,9 @@ clock: {
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
     sta.z return+3
-    jmp breturn
+    jmp __breturn
     // clock::@return
-  breturn:
+  __breturn:
     // [90] return 
     rts
 }
@@ -4697,17 +4697,17 @@ mulf8s_prepared: {
     // [93] call mulf8u_prepared 
     jsr mulf8u_prepared
     // [94] (word) mulf8u_prepared::return#2 ← (word) mulf8u_prepared::return#0
-    jmp b5
+    jmp __b5
     // mulf8s_prepared::@5
-  b5:
+  __b5:
     // [95] (word) mulf8s_prepared::m#0 ← (word) mulf8u_prepared::return#2
     // [96] if(*((const signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1 -- _deref_pbsc1_ge_0_then_la1 
     lda memA
     cmp #0
-    bpl b1_from_b5
-    jmp b3
+    bpl __b1_from___b5
+    jmp __b3
     // mulf8s_prepared::@3
-  b3:
+  __b3:
     // [97] (byte~) mulf8s_prepared::$8 ← > (word) mulf8s_prepared::m#0 -- vbuaa=_hi_vwuz1 
     lda.z m+1
     // [98] (byte~) mulf8s_prepared::$15 ← (byte~) mulf8s_prepared::$8 - (byte)(signed byte) mulf8s_prepared::b#4 -- vbuaa=vbuaa_minus_vbuyy 
@@ -4717,18 +4717,18 @@ mulf8s_prepared: {
     // [99] (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#0 hi= (byte~) mulf8s_prepared::$15 -- vwuz1=vwuz1_sethi_vbuaa 
     sta.z m+1
     // [100] phi from mulf8s_prepared::@3 mulf8s_prepared::@5 to mulf8s_prepared::@1 [phi:mulf8s_prepared::@3/mulf8s_prepared::@5->mulf8s_prepared::@1]
-  b1_from_b3:
-  b1_from_b5:
+  __b1_from___b3:
+  __b1_from___b5:
     // [100] phi (word) mulf8s_prepared::m#5 = (word) mulf8s_prepared::m#1 [phi:mulf8s_prepared::@3/mulf8s_prepared::@5->mulf8s_prepared::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // mulf8s_prepared::@1
-  b1:
+  __b1:
     // [101] if((signed byte) mulf8s_prepared::b#4>=(signed byte) 0) goto mulf8s_prepared::@2 -- vbsyy_ge_0_then_la1 
     cpy #0
-    bpl b2_from_b1
-    jmp b4
+    bpl __b2_from___b1
+    jmp __b4
     // mulf8s_prepared::@4
-  b4:
+  __b4:
     // [102] (byte~) mulf8s_prepared::$12 ← > (word) mulf8s_prepared::m#5 -- vbuaa=_hi_vwuz1 
     lda.z m+1
     // [103] (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$12 - (byte)*((const signed byte*) mulf8s_prepared::memA) -- vbuaa=vbuaa_minus__deref_pbuc1 
@@ -4737,15 +4737,15 @@ mulf8s_prepared: {
     // [104] (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$16 -- vwuz1=vwuz1_sethi_vbuaa 
     sta.z m+1
     // [105] phi from mulf8s_prepared::@1 mulf8s_prepared::@4 to mulf8s_prepared::@2 [phi:mulf8s_prepared::@1/mulf8s_prepared::@4->mulf8s_prepared::@2]
-  b2_from_b1:
-  b2_from_b4:
+  __b2_from___b1:
+  __b2_from___b4:
     // [105] phi (word) mulf8s_prepared::m#4 = (word) mulf8s_prepared::m#5 [phi:mulf8s_prepared::@1/mulf8s_prepared::@4->mulf8s_prepared::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // mulf8s_prepared::@2
-  b2:
-    jmp breturn
+  __b2:
+    jmp __breturn
     // mulf8s_prepared::@return
-  breturn:
+  __breturn:
     // [106] return 
     rts
 }
@@ -4777,9 +4777,9 @@ mulf8u_prepared: {
     sta.z return
     lda memB
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // mulf8u_prepared::@return
-  breturn:
+  __breturn:
     // [110] return 
     rts
 }
@@ -4797,9 +4797,9 @@ mulf8u_prepare: {
     eor #$ff
     sta mulf8u_prepared.sm2+1
     sta mulf8u_prepared.sm4+1
-    jmp breturn
+    jmp __breturn
     // mulf8u_prepare::@return
-  breturn:
+  __breturn:
     // [114] return 
     rts
 }
@@ -4829,9 +4829,9 @@ clock_start: {
     // [119] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START
     sta CIA2_TIMER_A_CONTROL
-    jmp breturn
+    jmp __breturn
     // clock_start::@return
-  breturn:
+  __breturn:
     // [120] return 
     rts
 }
@@ -4842,23 +4842,23 @@ init: {
     // [130] phi from init to mulf_init [phi:init->mulf_init]
   mulf_init_from_init:
     jsr mulf_init
-    jmp b2
+    jmp __b2
     // init::@2
-  b2:
+  __b2:
     // [123] *((const byte*) SPRITES_ENABLE) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     lda #$ff
     sta SPRITES_ENABLE
     // [124] phi from init::@2 to init::@1 [phi:init::@2->init::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [124] phi (byte) init::i#2 = (byte) 0 [phi:init::@2->init::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [124] phi from init::@1 to init::@1 [phi:init::@1->init::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [124] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@1->init::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // init::@1
-  b1:
+  __b1:
     // [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
     sta sprites_ptr,x
@@ -4869,10 +4869,10 @@ init: {
     inx
     // [128] if((byte) init::i#1!=(byte) 8) goto init::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // init::@return
-  breturn:
+  __breturn:
     // [129] return 
     rts
 }
@@ -4887,7 +4887,7 @@ mulf_init: {
     .label sqr2_lo = $d
     .label dir = $a
     // [131] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
-  b1_from_mulf_init:
+  __b1_from_mulf_init:
     // [131] phi (byte) mulf_init::x_2#3 = (byte) 0 [phi:mulf_init->mulf_init::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [131] phi (byte*) mulf_init::sqr1_hi#2 = (const byte[$200]) mulf_sqr1_hi+(byte) 1 [phi:mulf_init->mulf_init::@1#1] -- pbuz1=pbuc1 
@@ -4908,18 +4908,18 @@ mulf_init: {
     sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta.z sqr1_lo+1
-    jmp b1
+    jmp __b1
     // mulf_init::@1
-  b1:
+  __b1:
     // [132] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     // [133] phi from mulf_init::@1 to mulf_init::@5 [phi:mulf_init::@1->mulf_init::@5]
-  b5_from_b1:
+  __b5_from___b1:
     // [133] phi (byte) mulf_init::dir#2 = (byte) $ff [phi:mulf_init::@1->mulf_init::@5#0] -- vbuz1=vbuc1 
     lda #$ff
     sta.z dir
@@ -4935,19 +4935,19 @@ mulf_init: {
     sta.z sqr2_lo
     lda #>mulf_sqr2_lo
     sta.z sqr2_lo+1
-    jmp b5
+    jmp __b5
     // mulf_init::@5
-  b5:
+  __b5:
     // [134] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b6
-    jmp b7
+    bne __b6
+    jmp __b7
     // mulf_init::@7
-  b7:
+  __b7:
     // [135] *((const byte[$200]) mulf_sqr2_lo+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_lo+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
@@ -4955,13 +4955,13 @@ mulf_init: {
     // [136] *((const byte[$200]) mulf_sqr2_hi+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_hi+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
     lda mulf_sqr1_hi+$100
     sta mulf_sqr2_hi+$1ff
-    jmp breturn
+    jmp __breturn
     // mulf_init::@return
-  breturn:
+  __breturn:
     // [137] return 
     rts
     // mulf_init::@6
-  b6:
+  __b6:
     // [138] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte[$200]) mulf_sqr1_lo + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda mulf_sqr1_lo,x
     ldy #0
@@ -4982,38 +4982,38 @@ mulf_init: {
     tax
     // [142] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@9 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b9_from_b6
+    bne __b9_from___b6
     // [144] phi from mulf_init::@6 to mulf_init::@8 [phi:mulf_init::@6->mulf_init::@8]
-  b8_from_b6:
+  __b8_from___b6:
     // [144] phi (byte) mulf_init::dir#4 = (byte) 1 [phi:mulf_init::@6->mulf_init::@8#0] -- vbuz1=vbuc1 
     lda #1
     sta.z dir
-    jmp b8
+    jmp __b8
     // [143] phi from mulf_init::@6 to mulf_init::@9 [phi:mulf_init::@6->mulf_init::@9]
-  b9_from_b6:
-    jmp b9
+  __b9_from___b6:
+    jmp __b9
     // mulf_init::@9
-  b9:
+  __b9:
     // [144] phi from mulf_init::@9 to mulf_init::@8 [phi:mulf_init::@9->mulf_init::@8]
-  b8_from_b9:
+  __b8_from___b9:
     // [144] phi (byte) mulf_init::dir#4 = (byte) mulf_init::dir#2 [phi:mulf_init::@9->mulf_init::@8#0] -- register_copy 
-    jmp b8
+    jmp __b8
     // mulf_init::@8
-  b8:
+  __b8:
     // [145] (byte*) mulf_init::sqr2_lo#1 ← ++ (byte*) mulf_init::sqr2_lo#2 -- pbuz1=_inc_pbuz1 
     inc.z sqr2_lo
     bne !+
     inc.z sqr2_lo+1
   !:
     // [133] phi from mulf_init::@8 to mulf_init::@5 [phi:mulf_init::@8->mulf_init::@5]
-  b5_from_b8:
+  __b5_from___b8:
     // [133] phi (byte) mulf_init::dir#2 = (byte) mulf_init::dir#4 [phi:mulf_init::@8->mulf_init::@5#0] -- register_copy 
     // [133] phi (byte*) mulf_init::sqr2_hi#2 = (byte*) mulf_init::sqr2_hi#1 [phi:mulf_init::@8->mulf_init::@5#1] -- register_copy 
     // [133] phi (byte) mulf_init::x_255#2 = (byte) mulf_init::x_255#1 [phi:mulf_init::@8->mulf_init::@5#2] -- register_copy 
     // [133] phi (byte*) mulf_init::sqr2_lo#2 = (byte*) mulf_init::sqr2_lo#1 [phi:mulf_init::@8->mulf_init::@5#3] -- register_copy 
-    jmp b5
+    jmp __b5
     // mulf_init::@2
-  b2:
+  __b2:
     // [146] (byte) mulf_init::c#1 ← ++ (byte) mulf_init::c#2 -- vbuz1=_inc_vbuz1 
     inc.z c
     // [147] (byte~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
@@ -5021,10 +5021,10 @@ mulf_init: {
     and.z c
     // [148] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@3 -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne b3_from_b2
-    jmp b4
+    bne __b3_from___b2
+    jmp __b4
     // mulf_init::@4
-  b4:
+  __b4:
     // [149] (byte) mulf_init::x_2#1 ← ++ (byte) mulf_init::x_2#3 -- vbuxx=_inc_vbuxx 
     inx
     // [150] (word) mulf_init::sqr#2 ← ++ (word) mulf_init::sqr#4 -- vwuz1=_inc_vwuz1 
@@ -5033,13 +5033,13 @@ mulf_init: {
     inc.z sqr+1
   !:
     // [151] phi from mulf_init::@2 mulf_init::@4 to mulf_init::@3 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3]
-  b3_from_b2:
-  b3_from_b4:
+  __b3_from___b2:
+  __b3_from___b4:
     // [151] phi (byte) mulf_init::x_2#2 = (byte) mulf_init::x_2#3 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3#0] -- register_copy 
     // [151] phi (word) mulf_init::sqr#3 = (word) mulf_init::sqr#4 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // mulf_init::@3
-  b3:
+  __b3:
     // [152] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3 -- vbuaa=_lo_vwuz1 
     lda.z sqr
     // [153] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$12 -- _deref_pbuz1=vbuaa 
@@ -5069,13 +5069,13 @@ mulf_init: {
     inc.z sqr1_lo+1
   !:
     // [131] phi from mulf_init::@3 to mulf_init::@1 [phi:mulf_init::@3->mulf_init::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [131] phi (byte) mulf_init::x_2#3 = (byte) mulf_init::x_2#2 [phi:mulf_init::@3->mulf_init::@1#0] -- register_copy 
     // [131] phi (byte*) mulf_init::sqr1_hi#2 = (byte*) mulf_init::sqr1_hi#1 [phi:mulf_init::@3->mulf_init::@1#1] -- register_copy 
     // [131] phi (word) mulf_init::sqr#4 = (word) mulf_init::sqr#1 [phi:mulf_init::@3->mulf_init::@1#2] -- register_copy 
     // [131] phi (byte) mulf_init::c#2 = (byte) mulf_init::c#1 [phi:mulf_init::@3->mulf_init::@1#3] -- register_copy 
     // [131] phi (byte*) mulf_init::sqr1_lo#2 = (byte*) mulf_init::sqr1_lo#1 [phi:mulf_init::@3->mulf_init::@1#4] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
@@ -5111,55 +5111,55 @@ SIN:
 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
 Removing instruction jmp mulf8s_prepare1
-Removing instruction jmp b8
-Removing instruction jmp b10
-Removing instruction jmp b11
+Removing instruction jmp __b8
+Removing instruction jmp __b10
+Removing instruction jmp __b11
 Removing instruction jmp mulf8s_prepare2
-Removing instruction jmp b9
-Removing instruction jmp b12
-Removing instruction jmp b13
-Removing instruction jmp b6
-Removing instruction jmp b5
-Removing instruction jmp b7
-Removing instruction jmp b14
-Removing instruction jmp b15
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp b5
-Removing instruction jmp b3
-Removing instruction jmp b1
-Removing instruction jmp b4
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp b2
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b5
-Removing instruction jmp b7
-Removing instruction jmp breturn
-Removing instruction jmp b9
-Removing instruction jmp b8
-Removing instruction jmp b4
-Removing instruction jmp b3
+Removing instruction jmp __b9
+Removing instruction jmp __b12
+Removing instruction jmp __b13
+Removing instruction jmp __b6
+Removing instruction jmp __b5
+Removing instruction jmp __b7
+Removing instruction jmp __b14
+Removing instruction jmp __b15
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b5
+Removing instruction jmp __b3
+Removing instruction jmp __b1
+Removing instruction jmp __b4
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b5
+Removing instruction jmp __b7
+Removing instruction jmp __breturn
+Removing instruction jmp __b9
+Removing instruction jmp __b8
+Removing instruction jmp __b4
+Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
 Removing instruction ldy.z i
@@ -5172,103 +5172,104 @@ Removing instruction lda #0
 Removing instruction ldy #0
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b5_from_b13 with b5
-Replacing label b4_from_b5 with b4
-Replacing label b1 with b2
-Replacing label b1_from_b5 with b1
-Replacing label b2_from_b1 with b2
-Replacing label b1_from_b1 with b1
-Replacing label b9_from_b6 with b8
-Replacing label b3_from_b2 with b3
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction anim_from_b1:
-Removing instruction b1:
-Removing instruction b4_from_b5:
-Removing instruction b5_from_b13:
-Removing instruction b5_from_b6:
-Removing instruction b1_from_b3:
-Removing instruction b1_from_b5:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b4:
-Removing instruction breturn:
-Removing instruction b1_from_b1:
-Removing instruction b9_from_b6:
-Removing instruction b9:
-Removing instruction b8_from_b9:
-Removing instruction b3_from_b2:
-Removing instruction b3_from_b4:
+Replacing label __bbegin with __b1
+Replacing label __b5_from___b13 with __b5
+Replacing label __b4_from___b5 with __b4
+Replacing label __b1 with __b2
+Replacing label __b1_from___b5 with __b1
+Replacing label __b2_from___b1 with __b2
+Replacing label __b1_from___b1 with __b1
+Replacing label __b9_from___b6 with __b8
+Replacing label __b3_from___b2 with __b3
+Removing instruction __bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction anim_from___b1:
+Removing instruction __b1:
+Removing instruction __b4_from___b5:
+Removing instruction __b5_from___b13:
+Removing instruction __b5_from___b6:
+Removing instruction __b1_from___b3:
+Removing instruction __b1_from___b5:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b4:
+Removing instruction __breturn:
+Removing instruction __b1_from___b1:
+Removing instruction __b9_from___b6:
+Removing instruction __b9:
+Removing instruction __b8_from___b9:
+Removing instruction __b3_from___b2:
+Removing instruction __b3_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction init_from_main:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction b1_from_anim:
-Removing instruction b3:
-Removing instruction b4_from_b3:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b1_from_anim:
+Removing instruction __b3:
+Removing instruction __b4_from___b3:
 Removing instruction mulf8s_prepare1:
 Removing instruction mulf8u_prepare_from_mulf8s_prepare1:
-Removing instruction b8:
-Removing instruction mulf8s_prepared_from_b8:
-Removing instruction b10:
-Removing instruction mulf8s_prepared_from_b10:
-Removing instruction b11:
+Removing instruction __b8:
+Removing instruction mulf8s_prepared_from___b8:
+Removing instruction __b10:
+Removing instruction mulf8s_prepared_from___b10:
+Removing instruction __b11:
 Removing instruction mulf8s_prepare2:
 Removing instruction mulf8u_prepare_from_mulf8s_prepare2:
-Removing instruction b9:
-Removing instruction mulf8s_prepared_from_b9:
-Removing instruction b12:
-Removing instruction mulf8s_prepared_from_b12:
-Removing instruction b13:
-Removing instruction b6:
-Removing instruction b7:
-Removing instruction b14:
-Removing instruction b15:
-Removing instruction b1_from_b15:
+Removing instruction __b9:
+Removing instruction mulf8s_prepared_from___b9:
+Removing instruction __b12:
+Removing instruction mulf8s_prepared_from___b12:
+Removing instruction __b13:
+Removing instruction __b6:
+Removing instruction __b7:
+Removing instruction __b14:
+Removing instruction __b15:
+Removing instruction __b1_from___b15:
 Removing instruction print_word_at_from_print_dword_at:
-Removing instruction b1:
-Removing instruction print_word_at_from_b1:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction print_word_at_from___b1:
+Removing instruction __breturn:
 Removing instruction print_byte_at_from_print_word_at:
-Removing instruction b1:
-Removing instruction print_byte_at_from_b1:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction print_byte_at_from___b1:
+Removing instruction __breturn:
 Removing instruction print_char_at_from_print_byte_at:
-Removing instruction b1:
-Removing instruction print_char_at_from_b1:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction b5:
-Removing instruction b3:
-Removing instruction b4:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction print_char_at_from___b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __b5:
+Removing instruction __b3:
+Removing instruction __b4:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction mulf_init_from_init:
-Removing instruction b2:
-Removing instruction b1_from_b2:
-Removing instruction breturn:
-Removing instruction b1_from_mulf_init:
-Removing instruction b5_from_b1:
-Removing instruction b7:
-Removing instruction breturn:
-Removing instruction b8_from_b6:
-Removing instruction b5_from_b8:
-Removing instruction b4:
-Removing instruction b1_from_b3:
+Removing instruction __b2:
+Removing instruction __b1_from___b2:
+Removing instruction __breturn:
+Removing instruction __b1_from_mulf_init:
+Removing instruction __b5_from___b1:
+Removing instruction __b7:
+Removing instruction __breturn:
+Removing instruction __b8_from___b6:
+Removing instruction __b5_from___b8:
+Removing instruction __b4:
+Removing instruction __b1_from___b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b4
-Removing instruction jmp b1
-Removing instruction jmp b8
+Removing instruction jmp __b4
+Removing instruction jmp __b1
+Removing instruction jmp __b8
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [152] bne b4 to beq
+Fixing long branch [152] bne __b4 to beq
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -5617,13 +5618,13 @@ main: {
 }
   // anim
 anim: {
-    .label _6 = 3
-    .label _8 = 3
-    .label _11 = 3
-    .label _12 = 3
-    .label _13 = 3
-    .label _14 = 3
-    .label _29 = $13
+    .label __6 = 3
+    .label __8 = 3
+    .label __11 = 3
+    .label __12 = 3
+    .label __13 = 3
+    .label __14 = 3
+    .label __29 = $13
     .label x = $b
     .label y = $c
     .label xr = $d
@@ -5639,12 +5640,12 @@ anim: {
     sta.z angle
     // anim::@1
     // anim::@2
-  b2:
+  __b2:
     // while(*RASTER!=$ff)
     // [11] if(*((const byte*) RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     // anim::@3
     // (*BORDERCOL)++;
     // [12] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
@@ -5662,7 +5663,7 @@ anim: {
     // [14] phi (byte) anim::sprite_msb#10 = (byte) anim::sprite_msb#5 [phi:anim::@5->anim::@4#0] -- register_copy 
     // [14] phi (byte) anim::i#10 = (byte) anim::i#1 [phi:anim::@5->anim::@4#1] -- register_copy 
     // anim::@4
-  b4:
+  __b4:
     // x = xs[i]
     // [15] (signed byte) anim::x#0 ← *((const signed byte[8]) xs + (byte) anim::i#10) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z i
@@ -5695,10 +5696,10 @@ anim: {
     // [21] (signed word~) anim::$6 ← (signed word)(word) mulf8s_prepared::m#4
     // xr = mulf8s_prepared(x)*2
     // [22] (signed word) anim::xr#0 ← (signed word~) anim::$6 << (byte) 1 -- vwsz1=vwsz2_rol_1 
-    lda.z _6
+    lda.z __6
     asl
     sta.z xr
-    lda.z _6+1
+    lda.z __6+1
     rol
     sta.z xr+1
     // mulf8s_prepared(y)
@@ -5713,10 +5714,10 @@ anim: {
     // [25] (signed word~) anim::$8 ← (signed word)(word) mulf8s_prepared::m#4
     // yr = mulf8s_prepared(y)*2
     // [26] (signed word) anim::yr#0 ← (signed word~) anim::$8 << (byte) 1 -- vwsz1=vwsz2_rol_1 
-    lda.z _8
+    lda.z __8
     asl
     sta.z yr
-    lda.z _8+1
+    lda.z __8+1
     rol
     sta.z yr+1
     // anim::mulf8s_prepare2
@@ -5741,16 +5742,16 @@ anim: {
     // [31] (signed word~) anim::$11 ← (signed word)(word) mulf8s_prepared::m#4
     // mulf8s_prepared(y)*2
     // [32] (signed word~) anim::$12 ← (signed word~) anim::$11 << (byte) 1 -- vwsz1=vwsz1_rol_1 
-    asl.z _12
-    rol.z _12+1
+    asl.z __12
+    rol.z __12+1
     // xr -= mulf8s_prepared(y)*2
     // [33] (signed word) anim::xr#1 ← (signed word) anim::xr#0 - (signed word~) anim::$12 -- vwsz1=vwsz1_minus_vwsz2 
     lda.z xr
     sec
-    sbc.z _12
+    sbc.z __12
     sta.z xr
     lda.z xr+1
-    sbc.z _12+1
+    sbc.z __12+1
     sta.z xr+1
     // mulf8s_prepared(x)
     // [34] (signed byte) mulf8s_prepared::b#3 ← (signed byte) anim::x#0 -- vbsyy=vbsz1 
@@ -5764,17 +5765,17 @@ anim: {
     // [36] (signed word~) anim::$13 ← (signed word)(word) mulf8s_prepared::m#4
     // mulf8s_prepared(x)*2
     // [37] (signed word~) anim::$14 ← (signed word~) anim::$13 << (byte) 1 -- vwsz1=vwsz1_rol_1 
-    asl.z _14
-    rol.z _14+1
+    asl.z __14
+    rol.z __14+1
     // yr += mulf8s_prepared(x)*2
     // [38] (signed word) anim::yr#1 ← (signed word) anim::yr#0 + (signed word~) anim::$14 -- vwsz1=vwsz1_plus_vwsz2 
     // signed fixed[8.8]
     lda.z yr
     clc
-    adc.z _14
+    adc.z __14
     sta.z yr
     lda.z yr+1
-    adc.z _14+1
+    adc.z __14+1
     sta.z yr+1
     // >xr
     // [39] (byte~) anim::$17 ← > (signed word) anim::xr#1 -- vbuaa=_hi_vwsz1 
@@ -5800,7 +5801,7 @@ anim: {
     // if(>xpos!=0)
     // [43] if((byte~) anim::$20==(byte) 0) goto anim::@5 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b5
+    beq __b5
     // anim::@6
     // sprite_msb |= $80
     // [44] (byte) anim::sprite_msb#2 ← (byte) anim::sprite_msb#1 | (byte) $80 -- vbuz1=vbuz1_bor_vbuc1 
@@ -5810,7 +5811,7 @@ anim: {
     // [45] phi from anim::@13 anim::@6 to anim::@5 [phi:anim::@13/anim::@6->anim::@5]
     // [45] phi (byte) anim::sprite_msb#5 = (byte) anim::sprite_msb#1 [phi:anim::@13/anim::@6->anim::@5#0] -- register_copy 
     // anim::@5
-  b5:
+  __b5:
     // (>yr) + 89
     // [46] (byte~) anim::$24 ← > (signed word) anim::yr#1 -- vbuaa=_hi_vwsz1 
     lda.z yr+1
@@ -5840,9 +5841,9 @@ anim: {
     // [53] if((byte) anim::i#1!=(byte) 8) goto anim::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    beq !b4+
-    jmp b4
-  !b4:
+    beq !__b4+
+    jmp __b4
+  !__b4:
     // anim::@7
     // *SPRITES_XMSB = sprite_msb
     // [54] *((const byte*) SPRITES_XMSB) ← (byte) anim::sprite_msb#5 -- _deref_pbuc1=vbuz1 
@@ -5883,7 +5884,7 @@ anim: {
     sta BORDERCOL
     // [10] phi from anim::@15 to anim::@1 [phi:anim::@15->anim::@1]
     // [10] phi (byte) anim::angle#9 = (byte) anim::angle#1 [phi:anim::@15->anim::@1#0] -- register_copy 
-    jmp b2
+    jmp __b2
 }
   // print_dword_at
 // Print a dword as HEX at a specific position
@@ -6079,7 +6080,7 @@ mulf8s_prepared: {
     // [96] if(*((const signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1 -- _deref_pbsc1_ge_0_then_la1 
     lda memA
     cmp #0
-    bpl b1
+    bpl __b1
     // mulf8s_prepared::@3
     // >m
     // [97] (byte~) mulf8s_prepared::$8 ← > (word) mulf8s_prepared::m#0 -- vbuaa=_hi_vwuz1 
@@ -6094,11 +6095,11 @@ mulf8s_prepared: {
     // [100] phi from mulf8s_prepared::@3 mulf8s_prepared::@5 to mulf8s_prepared::@1 [phi:mulf8s_prepared::@3/mulf8s_prepared::@5->mulf8s_prepared::@1]
     // [100] phi (word) mulf8s_prepared::m#5 = (word) mulf8s_prepared::m#1 [phi:mulf8s_prepared::@3/mulf8s_prepared::@5->mulf8s_prepared::@1#0] -- register_copy 
     // mulf8s_prepared::@1
-  b1:
+  __b1:
     // if(b<0)
     // [101] if((signed byte) mulf8s_prepared::b#4>=(signed byte) 0) goto mulf8s_prepared::@2 -- vbsyy_ge_0_then_la1 
     cpy #0
-    bpl b2
+    bpl __b2
     // mulf8s_prepared::@4
     // >m
     // [102] (byte~) mulf8s_prepared::$12 ← > (word) mulf8s_prepared::m#5 -- vbuaa=_hi_vwuz1 
@@ -6112,7 +6113,7 @@ mulf8s_prepared: {
     // [105] phi from mulf8s_prepared::@1 mulf8s_prepared::@4 to mulf8s_prepared::@2 [phi:mulf8s_prepared::@1/mulf8s_prepared::@4->mulf8s_prepared::@2]
     // [105] phi (word) mulf8s_prepared::m#4 = (word) mulf8s_prepared::m#5 [phi:mulf8s_prepared::@1/mulf8s_prepared::@4->mulf8s_prepared::@2#0] -- register_copy 
     // mulf8s_prepared::@2
-  b2:
+  __b2:
     // mulf8s_prepared::@return
     // }
     // [106] return 
@@ -6228,7 +6229,7 @@ init: {
     // [124] phi from init::@1 to init::@1 [phi:init::@1->init::@1]
     // [124] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@1->init::@1#0] -- register_copy 
     // init::@1
-  b1:
+  __b1:
     // sprites_ptr[i] = (byte)(SPRITE/$40)
     // [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
@@ -6242,7 +6243,7 @@ init: {
     inx
     // [128] if((byte) init::i#1!=(byte) 8) goto init::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
-    bne b1
+    bne __b1
     // init::@return
     // }
     // [129] return 
@@ -6278,15 +6279,15 @@ mulf_init: {
     lda #>mulf_sqr1_lo+1
     sta.z sqr1_lo+1
     // mulf_init::@1
-  b1:
+  __b1:
     // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
     // [132] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     // [133] phi from mulf_init::@1 to mulf_init::@5 [phi:mulf_init::@1->mulf_init::@5]
     // [133] phi (byte) mulf_init::dir#2 = (byte) $ff [phi:mulf_init::@1->mulf_init::@5#0] -- vbuz1=vbuc1 
     lda #$ff
@@ -6304,15 +6305,15 @@ mulf_init: {
     lda #>mulf_sqr2_lo
     sta.z sqr2_lo+1
     // mulf_init::@5
-  b5:
+  __b5:
     // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     // [134] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     // mulf_init::@7
     // *(mulf_sqr2_lo+511) = *(mulf_sqr1_lo+256)
     // [135] *((const byte[$200]) mulf_sqr2_lo+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_lo+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
@@ -6328,7 +6329,7 @@ mulf_init: {
     // [137] return 
     rts
     // mulf_init::@6
-  b6:
+  __b6:
     // *sqr2_lo = mulf_sqr1_lo[x_255]
     // [138] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte[$200]) mulf_sqr1_lo + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda mulf_sqr1_lo,x
@@ -6353,7 +6354,7 @@ mulf_init: {
     // if(x_255==0)
     // [142] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@9 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b8
+    bne __b8
     // [144] phi from mulf_init::@6 to mulf_init::@8 [phi:mulf_init::@6->mulf_init::@8]
     // [144] phi (byte) mulf_init::dir#4 = (byte) 1 [phi:mulf_init::@6->mulf_init::@8#0] -- vbuz1=vbuc1 
     lda #1
@@ -6363,7 +6364,7 @@ mulf_init: {
     // [144] phi from mulf_init::@9 to mulf_init::@8 [phi:mulf_init::@9->mulf_init::@8]
     // [144] phi (byte) mulf_init::dir#4 = (byte) mulf_init::dir#2 [phi:mulf_init::@9->mulf_init::@8#0] -- register_copy 
     // mulf_init::@8
-  b8:
+  __b8:
     // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     // [145] (byte*) mulf_init::sqr2_lo#1 ← ++ (byte*) mulf_init::sqr2_lo#2 -- pbuz1=_inc_pbuz1 
     inc.z sqr2_lo
@@ -6375,9 +6376,9 @@ mulf_init: {
     // [133] phi (byte*) mulf_init::sqr2_hi#2 = (byte*) mulf_init::sqr2_hi#1 [phi:mulf_init::@8->mulf_init::@5#1] -- register_copy 
     // [133] phi (byte) mulf_init::x_255#2 = (byte) mulf_init::x_255#1 [phi:mulf_init::@8->mulf_init::@5#2] -- register_copy 
     // [133] phi (byte*) mulf_init::sqr2_lo#2 = (byte*) mulf_init::sqr2_lo#1 [phi:mulf_init::@8->mulf_init::@5#3] -- register_copy 
-    jmp b5
+    jmp __b5
     // mulf_init::@2
-  b2:
+  __b2:
     // if((++c&1)==0)
     // [146] (byte) mulf_init::c#1 ← ++ (byte) mulf_init::c#2 -- vbuz1=_inc_vbuz1 
     inc.z c
@@ -6388,7 +6389,7 @@ mulf_init: {
     // if((++c&1)==0)
     // [148] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@3 -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne b3
+    bne __b3
     // mulf_init::@4
     // x_2++;
     // [149] (byte) mulf_init::x_2#1 ← ++ (byte) mulf_init::x_2#3 -- vbuxx=_inc_vbuxx 
@@ -6403,7 +6404,7 @@ mulf_init: {
     // [151] phi (byte) mulf_init::x_2#2 = (byte) mulf_init::x_2#3 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3#0] -- register_copy 
     // [151] phi (word) mulf_init::sqr#3 = (word) mulf_init::sqr#4 [phi:mulf_init::@2/mulf_init::@4->mulf_init::@3#1] -- register_copy 
     // mulf_init::@3
-  b3:
+  __b3:
     // <sqr
     // [152] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3 -- vbuaa=_lo_vwuz1 
     lda.z sqr
@@ -6444,7 +6445,7 @@ mulf_init: {
     // [131] phi (word) mulf_init::sqr#4 = (word) mulf_init::sqr#1 [phi:mulf_init::@3->mulf_init::@1#2] -- register_copy 
     // [131] phi (byte) mulf_init::c#2 = (byte) mulf_init::c#1 [phi:mulf_init::@3->mulf_init::@1#3] -- register_copy 
     // [131] phi (byte*) mulf_init::sqr1_lo#2 = (byte*) mulf_init::sqr1_lo#1 [phi:mulf_init::@3->mulf_init::@1#4] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).

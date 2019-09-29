@@ -6,22 +6,22 @@
 main: {
     .label w = 2
     ldx #0
-  b1:
+  __b1:
     txa
     and #1
     cmp #0
-    beq b3
+    beq __b3
     lda #<-1
     sta.z w
     lda #>-1
     sta.z w+1
-    jmp b2
-  b3:
+    jmp __b2
+  __b3:
     txa
     sta.z w
     lda #0
     sta.z w+1
-  b2:
+  __b2:
     txa
     asl
     tay
@@ -31,6 +31,6 @@ main: {
     sta screen+1,y
     inx
     cpx #8
-    bne b1
+    bne __b1
     rts
 }

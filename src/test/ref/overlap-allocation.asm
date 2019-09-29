@@ -6,23 +6,23 @@
   .label SCREEN = $400
 main: {
     ldx #0
-  b1:
+  __b1:
     jsr plot
     inx
     cpx #$b
-    bne b1
+    bne __b1
     ldx #0
-  b2:
+  __b2:
     jsr plot
     inx
     cpx #$b
-    bne b2
+    bne __b2
     ldx #0
-  b3:
+  __b3:
     jsr plot
     inx
     cpx #$b
-    bne b3
+    bne __b3
     rts
 }
 // plot(byte register(X) x)

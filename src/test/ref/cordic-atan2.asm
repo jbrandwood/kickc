@@ -24,10 +24,10 @@ main: {
     sta.z screen+1
     lda #-$c
     sta.z y
-  b1:
+  __b1:
     lda #-$13
     sta.z x
-  b2:
+  __b2:
     jsr atan2_8
     txa
     ldy #0
@@ -39,24 +39,24 @@ main: {
     inc.z x
     lda #$15
     cmp.z x
-    bne b2
+    bne __b2
     inc.z y
     lda #$d
     cmp.z y
-    bne b1
-  b4:
+    bne __b1
+  __b4:
     lda COLS+$c*$28+$13
     clc
     adc #1
     sta COLS+$c*$28+$13
-    jmp b4
+    jmp __b4
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_8
 // Returns the angle in hex-degrees (0=0, 0x80=PI, 0x100=2*PI)
 // atan2_8(signed byte zeropage($a) x, signed byte zeropage(5) y)
 atan2_8: {
-    .label _7 = $b
+    .label __7 = $b
     .label xi = $b
     .label xd = $c
     .label angle = 2
@@ -66,59 +66,59 @@ atan2_8: {
     lda.z y
     cmp #0
     beq !+
-    bmi !b1+
-    jmp b1
-  !b1:
+    bmi !__b1+
+    jmp __b1
+  !__b1:
   !:
     lda.z y
     eor #$ff
     clc
     adc #1
     tax
-  b3:
+  __b3:
     lda.z x
     cmp #0
     beq !+
-    bmi !b4+
-    jmp b4
-  !b4:
+    bmi !__b4+
+    jmp __b4
+  !__b4:
   !:
     lda.z x
     eor #$ff
     clc
     adc #1
-    sta.z _7
-  b6:
+    sta.z __7
+  __b6:
     lda #0
     sta.z angle
     sta.z i
-  b10:
+  __b10:
     txa
     cmp #0
-    bne b11
-  b12:
+    bne __b11
+  __b12:
     lda.z angle
     lsr
     tax
     lda.z x
     cmp #0
-    bpl b7
+    bpl __b7
     txa
     eor #$ff
     clc
     adc #$80+1
     tax
-  b7:
+  __b7:
     lda.z y
     cmp #0
-    bpl b8
+    bpl __b8
     dex
     txa
     eor #$ff
     tax
-  b8:
+  __b8:
     rts
-  b11:
+  __b11:
     lda.z xi
     ldy.z i
     cpy #0
@@ -144,7 +144,7 @@ atan2_8: {
     txa
     cmp #0
     beq !+
-    bpl b13
+    bpl __b13
   !:
     tya
     eor #$ff
@@ -160,13 +160,13 @@ atan2_8: {
     sec
     sbc CORDIC_ATAN2_ANGLES_8,y
     sta.z angle
-  b14:
+  __b14:
     inc.z i
     lda #CORDIC_ITERATIONS_8-1+1
     cmp.z i
-    beq b12
-    jmp b10
-  b13:
+    beq __b12
+    jmp __b10
+  __b13:
     tya
     clc
     adc.z xi
@@ -180,19 +180,19 @@ atan2_8: {
     clc
     adc CORDIC_ATAN2_ANGLES_8,y
     sta.z angle
-    jmp b14
-  b4:
+    jmp __b14
+  __b4:
     lda.z x
     sta.z xi
-    jmp b6
-  b1:
+    jmp __b6
+  __b1:
     ldx.z y
-    jmp b3
+    jmp __b3
 }
 // Make charset from proto chars
 // init_font_hex(byte* zeropage(6) charset)
 init_font_hex: {
-    .label _0 = $d
+    .label __0 = $d
     .label idx = $b
     .label proto_lo = 8
     .label charset = 6
@@ -209,21 +209,21 @@ init_font_hex: {
     sta.z charset
     lda #>CHARSET
     sta.z charset+1
-  b1:
+  __b1:
     lda #0
     sta.z c1
     lda #<FONT_HEX_PROTO
     sta.z proto_lo
     lda #>FONT_HEX_PROTO
     sta.z proto_lo+1
-  b2:
+  __b2:
     lda #0
     tay
     sta (charset),y
     lda #1
     sta.z idx
     ldx #0
-  b3:
+  __b3:
     txa
     tay
     lda (proto_hi),y
@@ -231,18 +231,18 @@ init_font_hex: {
     asl
     asl
     asl
-    sta.z _0
+    sta.z __0
     txa
     tay
     lda (proto_lo),y
     asl
-    ora.z _0
+    ora.z __0
     ldy.z idx
     sta (charset),y
     inc.z idx
     inx
     cpx #5
-    bne b3
+    bne __b3
     lda #0
     ldy.z idx
     sta (charset),y
@@ -265,7 +265,7 @@ init_font_hex: {
     inc.z c1
     lda #$10
     cmp.z c1
-    bne b2
+    bne __b2
     lda #5
     clc
     adc.z proto_hi
@@ -276,7 +276,7 @@ init_font_hex: {
     inc.z c
     lda #$10
     cmp.z c
-    bne b1
+    bne __b1
     rts
 }
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex

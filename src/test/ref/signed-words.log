@@ -960,7 +960,7 @@ Target platform is c64basic / MOS6502X
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SPRITES_XPOS = $d000
@@ -986,27 +986,27 @@ Target platform is c64basic / MOS6502X
   .label yvel_12 = 6
   .label yvel_21 = 6
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call init 
     jsr init
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (signed word) yvel_init#13 = (signed byte) $64 [phi:main->main::@1#0] -- vwsz1=vbsc1 
     lda #<$64
     sta.z yvel_init
@@ -1032,46 +1032,46 @@ main: {
     sta.z yvel_12
     lda #>$64
     sta.z yvel_12+1
-    jmp b1
+    jmp __b1
     // [6] phi from main::@1 main::@2 to main::@1 [phi:main::@1/main::@2->main::@1]
-  b1_from_b1:
-  b1_from_b2:
+  __b1_from___b1:
+  __b1_from___b2:
     // [6] phi (signed word) yvel_init#13 = (signed word) yvel_init#13 [phi:main::@1/main::@2->main::@1#0] -- register_copy 
     // [6] phi (signed word) xvel#12 = (signed word) xvel#12 [phi:main::@1/main::@2->main::@1#1] -- register_copy 
     // [6] phi (signed word) ypos#13 = (signed word) ypos#13 [phi:main::@1/main::@2->main::@1#2] -- register_copy 
     // [6] phi (signed word) xpos#12 = (signed word) xpos#12 [phi:main::@1/main::@2->main::@1#3] -- register_copy 
     // [6] phi (signed word) yvel#12 = (signed word) yvel#12 [phi:main::@1/main::@2->main::@1#4] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b1_from_b1
+    bne __b1_from___b1
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] call anim 
     jsr anim
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // anim
 anim: {
-    .label _5 = $f
-    .label _7 = $13
-    .label _9 = $17
-    .label _10 = $18
-    .label _11 = $19
+    .label __5 = $f
+    .label __7 = $13
+    .label __9 = $17
+    .label __10 = $18
+    .label __11 = $19
     .label sprite_x = $11
     .label sprite_y = $15
     // [10] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1 -- vwsz1_ge_0_then_la1 
     lda.z ypos+1
-    bpl b1_from_anim
-    jmp b2
+    bpl __b1_from_anim
+    jmp __b2
     // anim::@2
-  b2:
+  __b2:
     // [11] (signed word) xvel#14 ← - (signed word) xvel#12 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
@@ -1096,33 +1096,33 @@ anim: {
     bvc !+
     eor #$80
   !:
-    bpl b4_from_b2
+    bpl __b4_from___b2
     // [15] phi from anim::@2 to anim::@3 [phi:anim::@2->anim::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [15] phi (signed word) yvel#4 = (signed word) $c8 [phi:anim::@2->anim::@3#0] -- vwsz1=vwsc1 
     lda #<$c8
     sta.z yvel
     lda #>$c8
     sta.z yvel+1
-    jmp b3
+    jmp __b3
     // [14] phi from anim::@2 to anim::@4 [phi:anim::@2->anim::@4]
-  b4_from_b2:
-    jmp b4
+  __b4_from___b2:
+    jmp __b4
     // anim::@4
-  b4:
+  __b4:
     // [15] phi from anim::@4 to anim::@3 [phi:anim::@4->anim::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [15] phi (signed word) yvel#4 = (signed word) yvel_init#3 [phi:anim::@4->anim::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // anim::@3
-  b3:
+  __b3:
     // [16] (signed word~) yvel#21 ← (signed word) yvel#4 -- vwsz1=vwsz2 
     lda.z yvel
     sta.z yvel_21
     lda.z yvel+1
     sta.z yvel_21+1
     // [17] phi from anim::@3 to anim::@1 [phi:anim::@3->anim::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [17] phi (signed word) yvel_init#11 = (signed word) yvel#4 [phi:anim::@3->anim::@1#0] -- register_copy 
     // [17] phi (signed word) ypos#10 = (signed byte) 0 [phi:anim::@3->anim::@1#1] -- vwsz1=vbsc1 
     lda #<0
@@ -1136,17 +1136,17 @@ anim: {
     lda #>0
     sta.z xpos+1
     // [17] phi (signed word) yvel#9 = (signed word~) yvel#21 [phi:anim::@3->anim::@1#4] -- register_copy 
-    jmp b1
+    jmp __b1
     // [17] phi from anim to anim::@1 [phi:anim->anim::@1]
-  b1_from_anim:
+  __b1_from_anim:
     // [17] phi (signed word) yvel_init#11 = (signed word) yvel_init#13 [phi:anim->anim::@1#0] -- register_copy 
     // [17] phi (signed word) ypos#10 = (signed word) ypos#13 [phi:anim->anim::@1#1] -- register_copy 
     // [17] phi (signed word) xvel#10 = (signed word) xvel#12 [phi:anim->anim::@1#2] -- register_copy 
     // [17] phi (signed word) xpos#9 = (signed word) xpos#12 [phi:anim->anim::@1#3] -- register_copy 
     // [17] phi (signed word) yvel#9 = (signed word) yvel#12 [phi:anim->anim::@1#4] -- register_copy 
-    jmp b1
+    jmp __b1
     // anim::@1
-  b1:
+  __b1:
     // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g -- vwsz1=vwsz1_plus_vwsc1 
     clc
     lda.z yvel_10
@@ -1175,73 +1175,73 @@ anim: {
     lda.z xpos
     sta.z $ff
     lda.z xpos+1
-    sta.z _5
+    sta.z __5
     lda #0
     bit.z xpos+1
     bpl !+
     lda #$ff
   !:
-    sta.z _5+1
+    sta.z __5+1
     rol.z $ff
-    rol.z _5
-    rol.z _5+1
+    rol.z __5
+    rol.z __5+1
     // [22] (signed word) anim::sprite_x#0 ← (signed word~) anim::$5 + (signed word) $a0 -- vwsz1=vwsz2_plus_vwsc1 
-    lda.z _5
+    lda.z __5
     clc
     adc #<$a0
     sta.z sprite_x
-    lda.z _5+1
+    lda.z __5+1
     adc #>$a0
     sta.z sprite_x+1
     // [23] (signed word~) anim::$7 ← (signed word) ypos#11 >> (signed byte) 5 -- vwsz1=vwsz2_ror_5 
     lda.z ypos
     sta.z $ff
     lda.z ypos+1
-    sta.z _7
+    sta.z __7
     lda #0
     bit.z ypos+1
     bpl !+
     lda #$ff
   !:
-    sta.z _7+1
+    sta.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     // [24] (signed word) anim::sprite_y#0 ← (signed word) $e6 - (signed word~) anim::$7 -- vwsz1=vwsc1_minus_vwsz2 
     lda #<$e6
     sec
-    sbc.z _7
+    sbc.z __7
     sta.z sprite_y
     lda #>$e6
-    sbc.z _7+1
+    sbc.z __7+1
     sta.z sprite_y+1
     // [25] (byte~) anim::$9 ← (byte)(signed word) anim::sprite_x#0 -- vbuz1=_byte_vwsz2 
     lda.z sprite_x
-    sta.z _9
+    sta.z __9
     // [26] *((const byte*) SPRITES_XPOS) ← (byte~) anim::$9 -- _deref_pbuc1=vbuz1 
-    lda.z _9
+    lda.z __9
     sta SPRITES_XPOS
     // [27] (byte~) anim::$10 ← (byte)(signed word) anim::sprite_y#0 -- vbuz1=_byte_vwsz2 
     lda.z sprite_y
-    sta.z _10
+    sta.z __10
     // [28] *((const byte*) SPRITES_YPOS) ← (byte~) anim::$10 -- _deref_pbuc1=vbuz1 
-    lda.z _10
+    lda.z __10
     sta SPRITES_YPOS
     // [29] (byte~) anim::$11 ← > (signed word) anim::sprite_x#0 -- vbuz1=_hi_vwsz2 
     lda.z sprite_x+1
-    sta.z _11
+    sta.z __11
     // [30] *((const byte*) SPRITES_XMSB) ← (byte~) anim::$11 -- _deref_pbuc1=vbuz1 
-    lda.z _11
+    lda.z __11
     sta SPRITES_XMSB
-    jmp breturn
+    jmp __breturn
     // anim::@return
-  breturn:
+  __breturn:
     // [31] return 
     rts
 }
@@ -1272,34 +1272,34 @@ init: {
     lda #SPRITE/$40
     sta SPRITES_PTR
     // [39] phi from init to init::@1 [phi:init->init::@1]
-  b1_from_init:
+  __b1_from_init:
     // [39] phi (byte*) init::sc#2 = (const byte*) SCREEN [phi:init->init::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
     sta.z sc+1
-    jmp b1
+    jmp __b1
     // init::@1
-  b1:
+  __b1:
     // [40] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
-    bne b2
+    bne __b2
     lda.z sc
     cmp #<SCREEN+$3e8
-    bne b2
+    bne __b2
     // [41] phi from init::@1 to init::@3 [phi:init::@1->init::@3]
-  b3_from_b1:
+  __b3_from___b1:
     // [41] phi (byte) init::i#2 = (byte) 0 [phi:init::@1->init::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b3
+    jmp __b3
     // [41] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
-  b3_from_b3:
+  __b3_from___b3:
     // [41] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@3->init::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // init::@3
-  b3:
+  __b3:
     // [42] *((const byte*) SPRITE + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #$ff
     ldy.z i
@@ -1309,14 +1309,14 @@ init: {
     // [44] if((byte) init::i#1!=(byte) $40) goto init::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #$40
     cmp.z i
-    bne b3_from_b3
-    jmp breturn
+    bne __b3_from___b3
+    jmp __breturn
     // init::@return
-  breturn:
+  __breturn:
     // [45] return 
     rts
     // init::@2
-  b2:
+  __b2:
     // [46] *((byte*) init::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
@@ -1327,9 +1327,9 @@ init: {
     inc.z sc+1
   !:
     // [39] phi from init::@2 to init::@1 [phi:init::@2->init::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [39] phi (byte*) init::sc#2 = (byte*) init::sc#1 [phi:init::@2->init::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
@@ -1427,7 +1427,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SPRITES_XPOS = $d000
@@ -1453,27 +1453,27 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label yvel_12 = 4
   .label yvel_21 = 4
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call init 
     jsr init
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (signed word) yvel_init#13 = (signed byte) $64 [phi:main->main::@1#0] -- vwsz1=vbsc1 
     lda #<$64
     sta.z yvel_init
@@ -1499,43 +1499,43 @@ main: {
     sta.z yvel_12
     lda #>$64
     sta.z yvel_12+1
-    jmp b1
+    jmp __b1
     // [6] phi from main::@1 main::@2 to main::@1 [phi:main::@1/main::@2->main::@1]
-  b1_from_b1:
-  b1_from_b2:
+  __b1_from___b1:
+  __b1_from___b2:
     // [6] phi (signed word) yvel_init#13 = (signed word) yvel_init#13 [phi:main::@1/main::@2->main::@1#0] -- register_copy 
     // [6] phi (signed word) xvel#12 = (signed word) xvel#12 [phi:main::@1/main::@2->main::@1#1] -- register_copy 
     // [6] phi (signed word) ypos#13 = (signed word) ypos#13 [phi:main::@1/main::@2->main::@1#2] -- register_copy 
     // [6] phi (signed word) xpos#12 = (signed word) xpos#12 [phi:main::@1/main::@2->main::@1#3] -- register_copy 
     // [6] phi (signed word) yvel#12 = (signed word) yvel#12 [phi:main::@1/main::@2->main::@1#4] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b1_from_b1
+    bne __b1_from___b1
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] call anim 
     jsr anim
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // anim
 anim: {
-    .label _5 = $c
-    .label _7 = $e
+    .label __5 = $c
+    .label __7 = $e
     .label sprite_x = $c
     .label sprite_y = $e
     // [10] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1 -- vwsz1_ge_0_then_la1 
     lda.z ypos+1
-    bpl b1_from_anim
-    jmp b2
+    bpl __b1_from_anim
+    jmp __b2
     // anim::@2
-  b2:
+  __b2:
     // [11] (signed word) xvel#14 ← - (signed word) xvel#12 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
@@ -1560,33 +1560,33 @@ anim: {
     bvc !+
     eor #$80
   !:
-    bpl b4_from_b2
+    bpl __b4_from___b2
     // [15] phi from anim::@2 to anim::@3 [phi:anim::@2->anim::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [15] phi (signed word) yvel#4 = (signed word) $c8 [phi:anim::@2->anim::@3#0] -- vwsz1=vwsc1 
     lda #<$c8
     sta.z yvel
     lda #>$c8
     sta.z yvel+1
-    jmp b3
+    jmp __b3
     // [14] phi from anim::@2 to anim::@4 [phi:anim::@2->anim::@4]
-  b4_from_b2:
-    jmp b4
+  __b4_from___b2:
+    jmp __b4
     // anim::@4
-  b4:
+  __b4:
     // [15] phi from anim::@4 to anim::@3 [phi:anim::@4->anim::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [15] phi (signed word) yvel#4 = (signed word) yvel_init#3 [phi:anim::@4->anim::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // anim::@3
-  b3:
+  __b3:
     // [16] (signed word~) yvel#21 ← (signed word) yvel#4 -- vwsz1=vwsz2 
     lda.z yvel
     sta.z yvel_21
     lda.z yvel+1
     sta.z yvel_21+1
     // [17] phi from anim::@3 to anim::@1 [phi:anim::@3->anim::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [17] phi (signed word) yvel_init#11 = (signed word) yvel#4 [phi:anim::@3->anim::@1#0] -- register_copy 
     // [17] phi (signed word) ypos#10 = (signed byte) 0 [phi:anim::@3->anim::@1#1] -- vwsz1=vbsc1 
     lda #<0
@@ -1600,17 +1600,17 @@ anim: {
     lda #>0
     sta.z xpos+1
     // [17] phi (signed word) yvel#9 = (signed word~) yvel#21 [phi:anim::@3->anim::@1#4] -- register_copy 
-    jmp b1
+    jmp __b1
     // [17] phi from anim to anim::@1 [phi:anim->anim::@1]
-  b1_from_anim:
+  __b1_from_anim:
     // [17] phi (signed word) yvel_init#11 = (signed word) yvel_init#13 [phi:anim->anim::@1#0] -- register_copy 
     // [17] phi (signed word) ypos#10 = (signed word) ypos#13 [phi:anim->anim::@1#1] -- register_copy 
     // [17] phi (signed word) xvel#10 = (signed word) xvel#12 [phi:anim->anim::@1#2] -- register_copy 
     // [17] phi (signed word) xpos#9 = (signed word) xpos#12 [phi:anim->anim::@1#3] -- register_copy 
     // [17] phi (signed word) yvel#9 = (signed word) yvel#12 [phi:anim->anim::@1#4] -- register_copy 
-    jmp b1
+    jmp __b1
     // anim::@1
-  b1:
+  __b1:
     // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g -- vwsz1=vwsz1_plus_vwsc1 
     clc
     lda.z yvel_10
@@ -1639,16 +1639,16 @@ anim: {
     lda.z xpos
     sta.z $ff
     lda.z xpos+1
-    sta.z _5
+    sta.z __5
     lda #0
     bit.z xpos+1
     bpl !+
     lda #$ff
   !:
-    sta.z _5+1
+    sta.z __5+1
     rol.z $ff
-    rol.z _5
-    rol.z _5+1
+    rol.z __5
+    rol.z __5+1
     // [22] (signed word) anim::sprite_x#0 ← (signed word~) anim::$5 + (signed word) $a0 -- vwsz1=vwsz1_plus_vwsc1 
     clc
     lda.z sprite_x
@@ -1661,22 +1661,22 @@ anim: {
     lda.z ypos
     sta.z $ff
     lda.z ypos+1
-    sta.z _7
+    sta.z __7
     lda #0
     bit.z ypos+1
     bpl !+
     lda #$ff
   !:
-    sta.z _7+1
+    sta.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     // [24] (signed word) anim::sprite_y#0 ← (signed word) $e6 - (signed word~) anim::$7 -- vwsz1=vwsc1_minus_vwsz1 
     lda #<$e6
     sec
@@ -1697,9 +1697,9 @@ anim: {
     lda.z sprite_x+1
     // [30] *((const byte*) SPRITES_XMSB) ← (byte~) anim::$11 -- _deref_pbuc1=vbuaa 
     sta SPRITES_XMSB
-    jmp breturn
+    jmp __breturn
     // anim::@return
-  breturn:
+  __breturn:
     // [31] return 
     rts
 }
@@ -1729,33 +1729,33 @@ init: {
     lda #SPRITE/$40
     sta SPRITES_PTR
     // [39] phi from init to init::@1 [phi:init->init::@1]
-  b1_from_init:
+  __b1_from_init:
     // [39] phi (byte*) init::sc#2 = (const byte*) SCREEN [phi:init->init::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
     sta.z sc+1
-    jmp b1
+    jmp __b1
     // init::@1
-  b1:
+  __b1:
     // [40] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
-    bne b2
+    bne __b2
     lda.z sc
     cmp #<SCREEN+$3e8
-    bne b2
+    bne __b2
     // [41] phi from init::@1 to init::@3 [phi:init::@1->init::@3]
-  b3_from_b1:
+  __b3_from___b1:
     // [41] phi (byte) init::i#2 = (byte) 0 [phi:init::@1->init::@3#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b3
+    jmp __b3
     // [41] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
-  b3_from_b3:
+  __b3_from___b3:
     // [41] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@3->init::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // init::@3
-  b3:
+  __b3:
     // [42] *((const byte*) SPRITE + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$ff
     sta SPRITE,x
@@ -1763,14 +1763,14 @@ init: {
     inx
     // [44] if((byte) init::i#1!=(byte) $40) goto init::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$40
-    bne b3_from_b3
-    jmp breturn
+    bne __b3_from___b3
+    jmp __breturn
     // init::@return
-  breturn:
+  __breturn:
     // [45] return 
     rts
     // init::@2
-  b2:
+  __b2:
     // [46] *((byte*) init::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
@@ -1781,25 +1781,25 @@ init: {
     inc.z sc+1
   !:
     // [39] phi from init::@2 to init::@1 [phi:init::@2->init::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [39] phi (byte*) init::sc#2 = (byte*) init::sc#1 [phi:init::@2->init::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b2
-Removing instruction jmp b4
-Removing instruction jmp b3
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b2
+Removing instruction jmp __b4
+Removing instruction jmp __b3
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Removing instruction lda #<0
@@ -1810,45 +1810,46 @@ Removing instruction lda #>0
 Removing instruction lda #0
 Removing instruction lda #$64
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b2 with b1
-Replacing label b1_from_anim with b1
-Replacing label b4_from_b2 with b3
-Replacing label b3_from_b3 with b3
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
-Removing instruction b1_from_b2:
-Removing instruction b2_from_b1:
-Removing instruction b4_from_b2:
-Removing instruction b4:
-Removing instruction b3_from_b4:
-Removing instruction b1_from_anim:
-Removing instruction b3_from_b3:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from___b2 with __b1
+Replacing label __b1_from_anim with __b1
+Replacing label __b4_from___b2 with __b3
+Replacing label __b3_from___b3 with __b3
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
+Removing instruction __b1_from___b2:
+Removing instruction __b2_from___b1:
+Removing instruction __b4_from___b2:
+Removing instruction __b4:
+Removing instruction __b3_from___b4:
+Removing instruction __b1_from_anim:
+Removing instruction __b3_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b2:
-Removing instruction b2:
-Removing instruction b3_from_b2:
-Removing instruction b1_from_b3:
-Removing instruction breturn:
-Removing instruction b1_from_init:
-Removing instruction b3_from_b1:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b2:
+Removing instruction __b2:
+Removing instruction __b3_from___b2:
+Removing instruction __b1_from___b3:
+Removing instruction __breturn:
+Removing instruction __b1_from_init:
+Removing instruction __b3_from___b1:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp b1
-Removing instruction jmp b3
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __b1
+Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -2006,29 +2007,29 @@ main: {
     // [6] phi (signed word) xpos#12 = (signed word) xpos#12 [phi:main::@1/main::@2->main::@1#3] -- register_copy 
     // [6] phi (signed word) yvel#12 = (signed word) yvel#12 [phi:main::@1/main::@2->main::@1#4] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // while (*RASTER!=$ff)
     // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b1
+    bne __b1
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // anim()
     // [9] call anim 
     jsr anim
-    jmp b1
+    jmp __b1
 }
   // anim
 anim: {
-    .label _5 = $c
-    .label _7 = $e
+    .label __5 = $c
+    .label __7 = $e
     .label sprite_x = $c
     .label sprite_y = $e
     // if(ypos<0)
     // [10] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1 -- vwsz1_ge_0_then_la1 
     lda.z ypos+1
-    bpl b1
+    bpl __b1
     // anim::@2
     // xvel = -xvel
     // [11] (signed word) xvel#14 ← - (signed word) xvel#12 -- vwsz1=_neg_vwsz1 
@@ -2057,7 +2058,7 @@ anim: {
     bvc !+
     eor #$80
   !:
-    bpl b3
+    bpl __b3
     // [15] phi from anim::@2 to anim::@3 [phi:anim::@2->anim::@3]
     // [15] phi (signed word) yvel#4 = (signed word) $c8 [phi:anim::@2->anim::@3#0] -- vwsz1=vwsc1 
     lda #<$c8
@@ -2069,7 +2070,7 @@ anim: {
     // [15] phi from anim::@4 to anim::@3 [phi:anim::@4->anim::@3]
     // [15] phi (signed word) yvel#4 = (signed word) yvel_init#3 [phi:anim::@4->anim::@3#0] -- register_copy 
     // anim::@3
-  b3:
+  __b3:
     // [16] (signed word~) yvel#21 ← (signed word) yvel#4 -- vwsz1=vwsz2 
     lda.z yvel
     sta.z yvel_21
@@ -2093,7 +2094,7 @@ anim: {
     // [17] phi (signed word) xpos#9 = (signed word) xpos#12 [phi:anim->anim::@1#3] -- register_copy 
     // [17] phi (signed word) yvel#9 = (signed word) yvel#12 [phi:anim->anim::@1#4] -- register_copy 
     // anim::@1
-  b1:
+  __b1:
     // yvel + g
     // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g -- vwsz1=vwsz1_plus_vwsc1 
     clc
@@ -2126,16 +2127,16 @@ anim: {
     lda.z xpos
     sta.z $ff
     lda.z xpos+1
-    sta.z _5
+    sta.z __5
     lda #0
     bit.z xpos+1
     bpl !+
     lda #$ff
   !:
-    sta.z _5+1
+    sta.z __5+1
     rol.z $ff
-    rol.z _5
-    rol.z _5+1
+    rol.z __5
+    rol.z __5+1
     // sprite_x = xpos>>7 + 160
     // [22] (signed word) anim::sprite_x#0 ← (signed word~) anim::$5 + (signed word) $a0 -- vwsz1=vwsz1_plus_vwsc1 
     clc
@@ -2150,22 +2151,22 @@ anim: {
     lda.z ypos
     sta.z $ff
     lda.z ypos+1
-    sta.z _7
+    sta.z __7
     lda #0
     bit.z ypos+1
     bpl !+
     lda #$ff
   !:
-    sta.z _7+1
+    sta.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     // sprite_y = 230 - ypos>>5
     // [24] (signed word) anim::sprite_y#0 ← (signed word) $e6 - (signed word~) anim::$7 -- vwsz1=vwsc1_minus_vwsz1 
     lda #<$e6
@@ -2235,22 +2236,22 @@ init: {
     lda #>SCREEN
     sta.z sc+1
     // init::@1
-  b1:
+  __b1:
     // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++ )
     // [40] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
-    bne b2
+    bne __b2
     lda.z sc
     cmp #<SCREEN+$3e8
-    bne b2
+    bne __b2
     // [41] phi from init::@1 to init::@3 [phi:init::@1->init::@3]
     // [41] phi (byte) init::i#2 = (byte) 0 [phi:init::@1->init::@3#0] -- vbuxx=vbuc1 
     ldx #0
     // [41] phi from init::@3 to init::@3 [phi:init::@3->init::@3]
     // [41] phi (byte) init::i#2 = (byte) init::i#1 [phi:init::@3->init::@3#0] -- register_copy 
     // init::@3
-  b3:
+  __b3:
     // SPRITE[i] = $ff
     // [42] *((const byte*) SPRITE + (byte) init::i#2) ← (byte) $ff -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$ff
@@ -2260,13 +2261,13 @@ init: {
     inx
     // [44] if((byte) init::i#1!=(byte) $40) goto init::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$40
-    bne b3
+    bne __b3
     // init::@return
     // }
     // [45] return 
     rts
     // init::@2
-  b2:
+  __b2:
     // *sc = ' '
     // [46] *((byte*) init::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
@@ -2280,7 +2281,7 @@ init: {
   !:
     // [39] phi from init::@2 to init::@1 [phi:init::@2->init::@1]
     // [39] phi (byte*) init::sc#2 = (byte*) init::sc#1 [phi:init::@2->init::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 

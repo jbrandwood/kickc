@@ -461,26 +461,26 @@ Target platform is c64basic / MOS6502X
 // Show default font on screen
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = 4
@@ -492,7 +492,7 @@ main: {
   memset_from_main:
     jsr memset
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (byte) main::x#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z x
@@ -504,31 +504,31 @@ main: {
     // [6] phi (byte) main::ch#3 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z ch
-    jmp b1
+    jmp __b1
     // [6] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [6] phi (byte) main::x#4 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
     // [6] phi (byte*) main::screen#5 = (byte*) main::screen#2 [phi:main::@3->main::@1#1] -- register_copy 
     // [6] phi (byte) main::ch#3 = (byte) main::ch#1 [phi:main::@3->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [7] phi (byte) main::y#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z y
     // [7] phi (byte*) main::screen#3 = (byte*) main::screen#5 [phi:main::@1->main::@2#1] -- register_copy 
     // [7] phi (byte) main::ch#2 = (byte) main::ch#3 [phi:main::@1->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // [7] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [7] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@2->main::@2#0] -- register_copy 
     // [7] phi (byte*) main::screen#3 = (byte*) main::screen#1 [phi:main::@2->main::@2#1] -- register_copy 
     // [7] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@2->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] *((byte*) main::screen#3) ← (byte) main::ch#2 -- _deref_pbuz1=vbuz2 
     lda.z ch
     ldy #0
@@ -545,10 +545,10 @@ main: {
     // [12] if((byte) main::y#1!=(byte) $10) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z y
-    bne b2_from_b2
-    jmp b3
+    bne __b2_from___b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [13] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte)(number) $28-(number) $10 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28-$10
     clc
@@ -562,10 +562,10 @@ main: {
     // [15] if((byte) main::x#1!=(byte) $10) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z x
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [16] return 
     rts
 }
@@ -578,29 +578,29 @@ memset: {
     .label end = str+num
     .label dst = 7
     // [18] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
+  __b1_from_memset:
     // [18] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [19] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // [21] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
@@ -611,9 +611,9 @@ memset: {
     inc.z dst+1
   !:
     // [18] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [18] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
@@ -662,26 +662,26 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Show default font on screen
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = 4
@@ -692,7 +692,7 @@ main: {
   memset_from_main:
     jsr memset
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (byte) main::x#4 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z x
@@ -704,30 +704,30 @@ main: {
     // [6] phi (byte) main::ch#3 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z ch
-    jmp b1
+    jmp __b1
     // [6] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [6] phi (byte) main::x#4 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
     // [6] phi (byte*) main::screen#5 = (byte*) main::screen#2 [phi:main::@3->main::@1#1] -- register_copy 
     // [6] phi (byte) main::ch#3 = (byte) main::ch#1 [phi:main::@3->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [7] phi (byte) main::y#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
     // [7] phi (byte*) main::screen#3 = (byte*) main::screen#5 [phi:main::@1->main::@2#1] -- register_copy 
     // [7] phi (byte) main::ch#2 = (byte) main::ch#3 [phi:main::@1->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // [7] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [7] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@2->main::@2#0] -- register_copy 
     // [7] phi (byte*) main::screen#3 = (byte*) main::screen#1 [phi:main::@2->main::@2#1] -- register_copy 
     // [7] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@2->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] *((byte*) main::screen#3) ← (byte) main::ch#2 -- _deref_pbuz1=vbuz2 
     lda.z ch
     ldy #0
@@ -743,10 +743,10 @@ main: {
     inx
     // [12] if((byte) main::y#1!=(byte) $10) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
-    bne b2_from_b2
-    jmp b3
+    bne __b2_from___b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [13] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte)(number) $28-(number) $10 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28-$10
     clc
@@ -760,10 +760,10 @@ main: {
     // [15] if((byte) main::x#1!=(byte) $10) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z x
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [16] return 
     rts
 }
@@ -776,29 +776,29 @@ memset: {
     .label end = str+num
     .label dst = 4
     // [18] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
+  __b1_from_memset:
     // [18] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [19] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // [21] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
@@ -809,48 +809,49 @@ memset: {
     inc.z dst+1
   !:
     // [18] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [18] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b2_from_b2 with b2
-Replacing label b1_from_b3 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b3:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b2_from___b2 with __b2
+Replacing label __b1_from___b3 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b3:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction memset_from_main:
-Removing instruction b1_from_main:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction b1_from_memset:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
+Removing instruction __b1_from_main:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b1_from_memset:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Removing instruction jmp b2
+Removing instruction jmp __b1
+Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -945,7 +946,7 @@ main: {
     // [6] phi (byte*) main::screen#5 = (byte*) main::screen#2 [phi:main::@3->main::@1#1] -- register_copy 
     // [6] phi (byte) main::ch#3 = (byte) main::ch#1 [phi:main::@3->main::@1#2] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // [7] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [7] phi (byte) main::y#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
@@ -956,7 +957,7 @@ main: {
     // [7] phi (byte*) main::screen#3 = (byte*) main::screen#1 [phi:main::@2->main::@2#1] -- register_copy 
     // [7] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@2->main::@2#2] -- register_copy 
     // main::@2
-  b2:
+  __b2:
     // *screen++ = ch++
     // [8] *((byte*) main::screen#3) ← (byte) main::ch#2 -- _deref_pbuz1=vbuz2 
     lda.z ch
@@ -975,7 +976,7 @@ main: {
     inx
     // [12] if((byte) main::y#1!=(byte) $10) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
-    bne b2
+    bne __b2
     // main::@3
     // screen += (40-16)
     // [13] (byte*) main::screen#2 ← (byte*) main::screen#1 + (byte)(number) $28-(number) $10 -- pbuz1=pbuz1_plus_vbuc1 
@@ -992,7 +993,7 @@ main: {
     // [15] if((byte) main::x#1!=(byte) $10) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z x
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [16] return 
@@ -1013,21 +1014,21 @@ memset: {
     lda #>str
     sta.z dst+1
     // memset::@1
-  b1:
+  __b1:
     // for(char* dst = str; dst!=end; dst++)
     // [19] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     // memset::@return
     // }
     // [20] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // *dst = c
     // [21] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
@@ -1041,7 +1042,7 @@ memset: {
   !:
     // [18] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
     // [18] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 

@@ -235,25 +235,25 @@ Target platform is c64basic / MOS6502X
 // Minimal example program generating two long jumps
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call long1 
@@ -261,17 +261,17 @@ main: {
   long1_from_main:
     jsr long1
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call long2 
     // [9] phi from main::@1 to long2 [phi:main::@1->long2]
-  long2_from_b1:
+  long2_from___b1:
     jsr long2
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -280,17 +280,17 @@ long2: {
     .label SCREEN = $400
     .label i = 2
     // [10] phi from long2 to long2::@1 [phi:long2->long2::@1]
-  b1_from_long2:
+  __b1_from_long2:
     // [10] phi (byte) long2::i#2 = (byte) 0 [phi:long2->long2::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [10] phi from long2::@1 to long2::@1 [phi:long2::@1->long2::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [10] phi (byte) long2::i#2 = (byte) long2::i#1 [phi:long2::@1->long2::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // long2::@1
-  b1:
+  __b1:
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
@@ -557,10 +557,10 @@ long2: {
     // [14] if((byte) long2::i#1!=(byte) $b) goto long2::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // long2::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
 }
@@ -569,17 +569,17 @@ long1: {
     .label SCREEN = $400
     .label i = 3
     // [17] phi from long1 to long1::@1 [phi:long1->long1::@1]
-  b1_from_long1:
+  __b1_from_long1:
     // [17] phi (byte) long1::i#2 = (byte) 0 [phi:long1->long1::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [17] phi from long1::@1 to long1::@1 [phi:long1::@1->long1::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [17] phi (byte) long1::i#2 = (byte) long1::i#1 [phi:long1::@1->long1::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // long1::@1
-  b1:
+  __b1:
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
@@ -846,10 +846,10 @@ long1: {
     // [21] if((byte) long1::i#1!=(byte) $b) goto long1::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // long1::@return
-  breturn:
+  __breturn:
     // [22] return 
     rts
 }
@@ -875,25 +875,25 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Minimal example program generating two long jumps
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call long1 
@@ -901,17 +901,17 @@ main: {
   long1_from_main:
     jsr long1
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call long2 
     // [9] phi from main::@1 to long2 [phi:main::@1->long2]
-  long2_from_b1:
+  long2_from___b1:
     jsr long2
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -919,16 +919,16 @@ main: {
 long2: {
     .label SCREEN = $400
     // [10] phi from long2 to long2::@1 [phi:long2->long2::@1]
-  b1_from_long2:
+  __b1_from_long2:
     // [10] phi (byte) long2::i#2 = (byte) 0 [phi:long2->long2::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [10] phi from long2::@1 to long2::@1 [phi:long2::@1->long2::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [10] phi (byte) long2::i#2 = (byte) long2::i#1 [phi:long2::@1->long2::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // long2::@1
-  b1:
+  __b1:
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
@@ -1193,10 +1193,10 @@ long2: {
     inx
     // [14] if((byte) long2::i#1!=(byte) $b) goto long2::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // long2::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
 }
@@ -1204,16 +1204,16 @@ long2: {
 long1: {
     .label SCREEN = $400
     // [17] phi from long1 to long1::@1 [phi:long1->long1::@1]
-  b1_from_long1:
+  __b1_from_long1:
     // [17] phi (byte) long1::i#2 = (byte) 0 [phi:long1->long1::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [17] phi from long1::@1 to long1::@1 [phi:long1::@1->long1::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [17] phi (byte) long1::i#2 = (byte) long1::i#1 [phi:long1::@1->long1::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // long1::@1
-  b1:
+  __b1:
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
@@ -1478,55 +1478,56 @@ long1: {
     inx
     // [21] if((byte) long1::i#1!=(byte) $b) goto long1::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // long1::@return
-  breturn:
+  __breturn:
     // [22] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction long2_from_b1:
-Removing instruction b1_from_b1:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction long2_from___b1:
+Removing instruction __b1_from___b1:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction long1_from_main:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction b1_from_long2:
-Removing instruction breturn:
-Removing instruction b1_from_long1:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b1_from_long2:
+Removing instruction __breturn:
+Removing instruction __b1_from_long1:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Removing instruction jmp b1
+Removing instruction jmp __b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [273] bne b1 to beq
-Fixing long branch [542] bne b1 to beq
+Fixing long branch [273] bne __b1 to beq
+Fixing long branch [542] bne __b1 to beq
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -1597,7 +1598,7 @@ long2: {
     // [10] phi from long2::@1 to long2::@1 [phi:long2::@1->long2::@1]
     // [10] phi (byte) long2::i#2 = (byte) long2::i#1 [phi:long2::@1->long2::@1#0] -- register_copy 
     // long2::@1
-  b1:
+  __b1:
     // asm
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
@@ -1865,9 +1866,9 @@ long2: {
     inx
     // [14] if((byte) long2::i#1!=(byte) $b) goto long2::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
-    beq !b1+
-    jmp b1
-  !b1:
+    beq !__b1+
+    jmp __b1
+  !__b1:
     // long2::@return
     // }
     // [15] return 
@@ -1882,7 +1883,7 @@ long1: {
     // [17] phi from long1::@1 to long1::@1 [phi:long1::@1->long1::@1]
     // [17] phi (byte) long1::i#2 = (byte) long1::i#1 [phi:long1::@1->long1::@1#0] -- register_copy 
     // long1::@1
-  b1:
+  __b1:
     // asm
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
@@ -2150,9 +2151,9 @@ long1: {
     inx
     // [21] if((byte) long1::i#1!=(byte) $b) goto long1::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
-    beq !b1+
-    jmp b1
-  !b1:
+    beq !__b1+
+    jmp __b1
+  !__b1:
     // long1::@return
     // }
     // [22] return 

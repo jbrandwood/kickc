@@ -4,24 +4,24 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label _1 = 4
+    .label __1 = 4
     .label screen = 2
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
     ldx #0
-  b1:
+  __b1:
     txa
     asl
-    sta.z _1
+    sta.z __1
     ldy #0
     sta (screen),y
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    lda.z _1
+    lda.z __1
     ldy #0
     sta (screen),y
     inc.z screen
@@ -30,6 +30,6 @@ main: {
   !:
     inx
     cpx #3
-    bne b1
+    bne __b1
     rts
 }

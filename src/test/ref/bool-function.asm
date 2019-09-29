@@ -5,7 +5,7 @@
 main: {
     .label screen = $400
     ldx #0
-  b1:
+  __b1:
     txa
     and #1
     eor #0
@@ -16,18 +16,18 @@ main: {
     sta.z isSet.b
     jsr isSet
     cmp #0
-    bne b2
+    bne __b2
     lda #' '
     sta screen,x
-  b3:
+  __b3:
     inx
     cpx #$65
-    bne b1
+    bne __b1
     rts
-  b2:
+  __b2:
     lda #'*'
     sta screen,x
-    jmp b3
+    jmp __b3
 }
 // Determine whether to set a char to '*.
 // Returns true if i&8!=0 or b=true

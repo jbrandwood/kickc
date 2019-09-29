@@ -8,17 +8,17 @@ main: {
     sta.z cols
     lda #>$d800
     sta.z cols+1
-  b1:
+  __b1:
     lda.z cols+1
     cmp #>$d800+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z cols
     cmp #<$d800+$3e8
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     jsr fn1
     ldy #0
     lda (cols),y
@@ -29,7 +29,7 @@ main: {
     bne !+
     inc.z cols+1
   !:
-    jmp b1
+    jmp __b1
 }
 fn1: {
     .label screen = 4
@@ -37,17 +37,17 @@ fn1: {
     sta.z screen
     lda #>$400
     sta.z screen+1
-  b1:
+  __b1:
     lda.z screen+1
     cmp #>$400+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z screen
     cmp #<$400+$3e8
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     ldy #0
     lda (screen),y
     clc
@@ -57,5 +57,5 @@ fn1: {
     bne !+
     inc.z screen+1
   !:
-    jmp b1
+    jmp __b1
 }

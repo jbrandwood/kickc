@@ -28,7 +28,7 @@ main: {
     lda #<0
     sta.z next
     sta.z next+1
-  b1:
+  __b1:
     jsr bitmap_line
     inc.z next
     bne !+
@@ -36,14 +36,14 @@ main: {
   !:
     lda.z next+1
     cmp #>$140
-    bne b1
+    bne __b1
     lda.z next
     cmp #<$140
-    bne b1
+    bne __b1
     lda #<0
     sta.z next
     sta.z next+1
-    jmp b1
+    jmp __b1
 }
 // Draw a line on the bitmap using bresenhams algorithm
 // bitmap_line(word zeropage($a) x2)
@@ -75,17 +75,17 @@ bitmap_line: {
     sta.z abs_u16.w+1
     jsr abs_u16
     lda.z dx
-    bne b1
+    bne __b1
     lda.z dx+1
-    bne b1
+    bne __b1
     lda.z dy
     bne !+
     lda.z dy+1
-    bne !b4+
-    jmp b4
-  !b4:
+    bne !__b4+
+    jmp __b4
+  !__b4:
   !:
-  b1:
+  __b1:
     lda.z x2
     sta.z sgn_u16.w
     lda.z x2+1
@@ -102,11 +102,11 @@ bitmap_line: {
     jsr sgn_u16
     lda.z dy+1
     cmp.z dx+1
-    bcc b2
+    bcc __b2
     bne !+
     lda.z dy
     cmp.z dx
-    bcc b2
+    bcc __b2
   !:
     lda.z dx+1
     lsr
@@ -122,7 +122,7 @@ bitmap_line: {
     sta.z y
     lda #>y1
     sta.z y+1
-  b6:
+  __b6:
     lda.z y
     tax
     jsr bitmap_plot
@@ -144,9 +144,9 @@ bitmap_line: {
     bne !+
     lda.z e
     cmp.z dy
-    beq b7
+    beq __b7
   !:
-    bcc b7
+    bcc __b7
     lda.z x
     clc
     adc.z sx
@@ -161,19 +161,19 @@ bitmap_line: {
     lda.z e+1
     sbc.z dy+1
     sta.z e+1
-  b7:
+  __b7:
     lda.z y+1
     cmp #>y2
-    bne b6
+    bne __b6
     lda.z y
     cmp #<y2
-    bne b6
-  b3:
+    bne __b6
+  __b3:
     lda.z y
     tax
     jsr bitmap_plot
     rts
-  b2:
+  __b2:
     lda.z dy+1
     lsr
     sta.z e1+1
@@ -188,7 +188,7 @@ bitmap_line: {
     sta.z y
     lda #>y1
     sta.z y+1
-  b9:
+  __b9:
     lda.z y
     tax
     jsr bitmap_plot
@@ -210,9 +210,9 @@ bitmap_line: {
     bne !+
     lda.z e1
     cmp.z dx
-    beq b10
+    beq __b10
   !:
-    bcc b10
+    bcc __b10
     lda.z y
     clc
     adc.z sy
@@ -227,15 +227,15 @@ bitmap_line: {
     lda.z e1+1
     sbc.z dx+1
     sta.z e1+1
-  b10:
+  __b10:
     lda.z x+1
     cmp.z x2+1
-    bne b9
+    bne __b9
     lda.z x
     cmp.z x2
-    bne b9
-    jmp b3
-  b4:
+    bne __b9
+    jmp __b3
+  __b4:
     lda #<x1
     sta.z bitmap_plot.x
     lda #>x1
@@ -247,7 +247,7 @@ bitmap_line: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage($e) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $16
+    .label __1 = $16
     .label plotter = $14
     .label x = $e
     lda bitmap_plot_yhi,x
@@ -256,16 +256,16 @@ bitmap_plot: {
     sta.z plotter
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter+1
     lda.z x
     tay
@@ -284,13 +284,13 @@ sgn_u16: {
     lda.z w+1
     and #$80
     cmp #0
-    bne b1
+    bne __b1
     lda #<1
     sta.z return
     lda #>1
     sta.z return+1
     rts
-  b1:
+  __b1:
     lda #<-1
     sta.z return
     lda #>-1
@@ -305,9 +305,9 @@ abs_u16: {
     lda.z w+1
     and #$80
     cmp #0
-    bne b1
+    bne __b1
     rts
-  b1:
+  __b1:
     sec
     lda #0
     sbc.z return
@@ -354,7 +354,7 @@ memset: {
     lda.z num
     bne !+
     lda.z num+1
-    beq breturn
+    beq __breturn
   !:
     lda.z end
     clc
@@ -363,16 +363,16 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-  b2:
+  __b2:
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
-  breturn:
+    bne __b3
+  __breturn:
     rts
-  b3:
+  __b3:
     txa
     ldy #0
     sta (dst),y
@@ -380,40 +380,40 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2
+    jmp __b2
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _7 = $18
+    .label __7 = $18
     .label yoffs = $e
     ldx #0
     lda #$80
-  b1:
+  __b1:
     sta bitmap_plot_bit,x
     lsr
     cmp #0
-    bne b2
+    bne __b2
     lda #$80
-  b2:
+  __b2:
     inx
     cpx #0
-    bne b1
+    bne __b1
     lda #<BITMAP
     sta.z yoffs
     lda #>BITMAP
     sta.z yoffs+1
     ldx #0
-  b3:
+  __b3:
     lda #7
-    sax.z _7
+    sax.z __7
     lda.z yoffs
-    ora.z _7
+    ora.z __7
     sta bitmap_plot_ylo,x
     lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp.z _7
-    bne b4
+    cmp.z __7
+    bne __b4
     clc
     lda.z yoffs
     adc #<$28*8
@@ -421,10 +421,10 @@ bitmap_init: {
     lda.z yoffs+1
     adc #>$28*8
     sta.z yoffs+1
-  b4:
+  __b4:
     inx
     cpx #0
-    bne b3
+    bne __b3
     rts
 }
   // Tables for the plotter - initialized by calling bitmap_init();

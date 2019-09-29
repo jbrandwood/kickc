@@ -11,11 +11,11 @@ main: {
     lda #>SCREEN+$27
     sta.z sc+1
     ldx #0
-  b1:
+  __b1:
     cpx #$28
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     txa
     ldy #0
     sta (sc),y
@@ -25,5 +25,5 @@ main: {
     dec.z sc+1
   !:
     dec.z sc
-    jmp b1
+    jmp __b1
 }

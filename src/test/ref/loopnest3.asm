@@ -4,11 +4,11 @@
   .label SCREEN = $400
 main: {
     ldy #0
-  b1:
+  __b1:
     jsr b
     iny
     cpy #$65
-    bne b1
+    bne __b1
     rts
 }
 // b(byte register(Y) i)
@@ -20,10 +20,10 @@ b: {
 // c(byte register(A) i)
 c: {
     ldx #0
-  b1:
+  __b1:
     sta SCREEN,x
     inx
     cpx #$65
-    bne b1
+    bne __b1
     rts
 }

@@ -299,29 +299,29 @@ Target platform is c64basic / MOS6502X
 // https://forums.nesdev.com/viewtopic.php?f=2&t=18735
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
-    .label _1 = $b
-    .label _3 = $f
+    .label __1 = $b
+    .label __3 = $f
     .label y1 = 5
     .label y2 = 7
     // [4] (signed word) main::y1#0 ← (signed word) $1234 -- vwsz1=vwsc1 
@@ -351,22 +351,22 @@ main: {
     sta.z foo.return_2
     lda.z foo.return+1
     sta.z foo.return_2+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [8] (signed word~) main::$1 ← (signed word) foo::return#2 -- vwsz1=vwsz2 
     lda.z foo.return_2
-    sta.z _1
+    sta.z __1
     lda.z foo.return_2+1
-    sta.z _1+1
+    sta.z __1+1
     // [9] *((const signed word*) main::SCREEN#0) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
-    lda.z _1
+    lda.z __1
     sta SCREEN
-    lda.z _1+1
+    lda.z __1+1
     sta SCREEN+1
     // [10] call foo 
     // [15] phi from main::@1 to foo [phi:main::@1->foo]
-  foo_from_b1:
+  foo_from___b1:
     // [15] phi (signed word*) foo::y#2 = &(signed word) main::y2#0 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
     lda #<y2
     sta.z foo.y
@@ -381,29 +381,29 @@ main: {
     sta.z foo.return_3
     lda.z foo.return+1
     sta.z foo.return_3+1
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [12] (signed word~) main::$3 ← (signed word) foo::return#3 -- vwsz1=vwsz2 
     lda.z foo.return_3
-    sta.z _3
+    sta.z __3
     lda.z foo.return_3+1
-    sta.z _3+1
+    sta.z __3+1
     // [13] *((const signed word*) main::SCREEN#0+(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$3 -- _deref_pwsc1=vwsz1 
-    lda.z _3
+    lda.z __3
     sta SCREEN+SIZEOF_SIGNED_WORD
-    lda.z _3+1
+    lda.z __3+1
     sta SCREEN+SIZEOF_SIGNED_WORD+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
   // foo
 // foo(byte zeropage(2) x, signed word* zeropage(3) y)
 foo: {
-    .label _1 = $11
+    .label __1 = $11
     .label return = $12
     .label return_2 = 9
     .label return_3 = $d
@@ -412,9 +412,9 @@ foo: {
     // [16] (byte~) foo::$1 ← (byte) foo::x#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z x
     asl
-    sta.z _1
+    sta.z __1
     // [17] (signed word) foo::return#0 ← *((const signed word[4]) wow + (byte~) foo::$1) + *((signed word*) foo::y#2) -- vwsz1=pwsc1_derefidx_vbuz2_plus__deref_pwsz3 
-    ldx.z _1
+    ldx.z __1
     clc
     ldy #0
     lda wow,x
@@ -424,9 +424,9 @@ foo: {
     lda wow+1,x
     adc (y),y
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // foo::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
@@ -478,29 +478,29 @@ ASSEMBLER BEFORE OPTIMIZATION
 // https://forums.nesdev.com/viewtopic.php?f=2&t=18735
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
-    .label _1 = 2
-    .label _3 = 2
+    .label __1 = 2
+    .label __3 = 2
     .label y1 = 4
     .label y2 = 6
     // [4] (signed word) main::y1#0 ← (signed word) $1234 -- vwsz1=vwsc1 
@@ -525,18 +525,18 @@ main: {
     ldx #1
     jsr foo
     // [7] (signed word) foo::return#2 ← (signed word) foo::return#0
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [8] (signed word~) main::$1 ← (signed word) foo::return#2
     // [9] *((const signed word*) main::SCREEN#0) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
-    lda.z _1
+    lda.z __1
     sta SCREEN
-    lda.z _1+1
+    lda.z __1+1
     sta SCREEN+1
     // [10] call foo 
     // [15] phi from main::@1 to foo [phi:main::@1->foo]
-  foo_from_b1:
+  foo_from___b1:
     // [15] phi (signed word*) foo::y#2 = &(signed word) main::y2#0 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
     lda #<y2
     sta.z foo.y
@@ -546,18 +546,18 @@ main: {
     ldx #2
     jsr foo
     // [11] (signed word) foo::return#3 ← (signed word) foo::return#0
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [12] (signed word~) main::$3 ← (signed word) foo::return#3
     // [13] *((const signed word*) main::SCREEN#0+(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$3 -- _deref_pwsc1=vwsz1 
-    lda.z _3
+    lda.z __3
     sta SCREEN+SIZEOF_SIGNED_WORD
-    lda.z _3+1
+    lda.z __3+1
     sta SCREEN+SIZEOF_SIGNED_WORD+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -582,9 +582,9 @@ foo: {
     sta.z return+1
     pla
     sta.z return
-    jmp breturn
+    jmp __breturn
     // foo::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
@@ -592,29 +592,30 @@ foo: {
   wow: .word $cafe, $babe, $1234, $5678
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction foo_from_main:
-Removing instruction b1:
-Removing instruction foo_from_b1:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction foo_from___b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -675,8 +676,8 @@ Score: 141
   // main
 main: {
     .label SCREEN = $400
-    .label _1 = 2
-    .label _3 = 2
+    .label __1 = 2
+    .label __3 = 2
     .label y1 = 4
     .label y2 = 6
     // y1 = 0x1234
@@ -708,9 +709,9 @@ main: {
     // [8] (signed word~) main::$1 ← (signed word) foo::return#2
     // *SCREEN++ = foo(1, &y1)
     // [9] *((const signed word*) main::SCREEN#0) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
-    lda.z _1
+    lda.z __1
     sta SCREEN
-    lda.z _1+1
+    lda.z __1+1
     sta SCREEN+1
     // foo(2, &y2)
     // [10] call foo 
@@ -729,9 +730,9 @@ main: {
     // [12] (signed word~) main::$3 ← (signed word) foo::return#3
     // *SCREEN++ = foo(2, &y2)
     // [13] *((const signed word*) main::SCREEN#0+(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$3 -- _deref_pwsc1=vwsz1 
-    lda.z _3
+    lda.z __3
     sta SCREEN+SIZEOF_SIGNED_WORD
-    lda.z _3+1
+    lda.z __3+1
     sta SCREEN+SIZEOF_SIGNED_WORD+1
     // main::@return
     // }

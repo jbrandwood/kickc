@@ -298,23 +298,23 @@ Target platform is c64basic / MOS6502X
 // vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 < vbuaa=pbuz1_derefidx_vbuc1_band_vbuxx < vbuaa=pbuz1_derefidx_vbuaa_band_vbuxx < vbuaa=pbuz1_derefidx_vbuyy_band_vbuxx < vbuaa=pbuz1_derefidx_vbuyy_band_vbuaa < vbuaa=vbuaa_band_pbuz1_derefidx_vbuyy - clobber:A Y  cycles:11.5
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
@@ -340,9 +340,9 @@ main: {
     // [7] (byte) fct::return#0 ← (byte) fct::return#2 -- vbuz1=vbuz2 
     lda.z fct.return_2
     sta.z fct.return
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [8] (byte) main::a1#0 ← (byte) fct::return#0 -- vbuz1=vbuz2 
     lda.z fct.return
     sta.z a1
@@ -351,7 +351,7 @@ main: {
     sta screen
     // [10] call fct 
     // [15] phi from main::@1 to fct [phi:main::@1->fct]
-  fct_from_b1:
+  fct_from___b1:
     // [15] phi (byte*) fct::z#2 = ++(byte*) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
     lda #<$450+1
     sta.z fct.z
@@ -363,18 +363,18 @@ main: {
     // [11] (byte) fct::return#1 ← (byte) fct::return#2 -- vbuz1=vbuz2 
     lda.z fct.return_2
     sta.z fct.return_1
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [12] (byte) main::a2#0 ← (byte) fct::return#1 -- vbuz1=vbuz2 
     lda.z fct.return_1
     sta.z a2
     // [13] *((const byte*) main::screen+(byte) 1) ← (byte) main::a2#0 -- _deref_pbuc1=vbuz1 
     lda.z a2
     sta screen+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -390,9 +390,9 @@ fct: {
     txa
     and (z),y
     sta.z return_2
-    jmp breturn
+    jmp __breturn
     // fct::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
@@ -425,23 +425,23 @@ ASSEMBLER BEFORE OPTIMIZATION
 // vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 < vbuaa=pbuz1_derefidx_vbuc1_band_vbuxx < vbuaa=pbuz1_derefidx_vbuaa_band_vbuxx < vbuaa=pbuz1_derefidx_vbuyy_band_vbuxx < vbuaa=pbuz1_derefidx_vbuyy_band_vbuaa < vbuaa=vbuaa_band_pbuz1_derefidx_vbuyy - clobber:A Y  cycles:11.5
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
@@ -463,15 +463,15 @@ main: {
     ldx #$aa
     jsr fct
     // [7] (byte) fct::return#0 ← (byte) fct::return#2
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [8] (byte) main::a1#0 ← (byte) fct::return#0
     // [9] *((const byte*) main::screen) ← (byte) main::a1#0 -- _deref_pbuc1=vbuaa 
     sta screen
     // [10] call fct 
     // [15] phi from main::@1 to fct [phi:main::@1->fct]
-  fct_from_b1:
+  fct_from___b1:
     // [15] phi (byte*) fct::z#2 = ++(byte*) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
     lda #<$450+1
     sta.z fct.z
@@ -481,15 +481,15 @@ main: {
     ldx #$55
     jsr fct
     // [11] (byte) fct::return#1 ← (byte) fct::return#2
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [12] (byte) main::a2#0 ← (byte) fct::return#1
     // [13] *((const byte*) main::screen+(byte) 1) ← (byte) main::a2#0 -- _deref_pbuc1=vbuaa 
     sta screen+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -501,38 +501,39 @@ fct: {
     ldy #2
     txa
     and (z),y
-    jmp breturn
+    jmp __breturn
     // fct::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction fct_from_main:
-Removing instruction b1:
-Removing instruction fct_from_b1:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction fct_from___b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

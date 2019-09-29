@@ -20,20 +20,35 @@ main: {
     sta.z print_char_cursor+1
     lda #7
     sta.z a
-  b1:
+  __b1:
     lda #$ce
     sec
     sbc.z a
     sta.z b
     lda.z a
     cmp.z b
-    bcs b22
+    bcs b1
     ldx #'+'
-    jmp b2
-  b22:
+    jmp __b2
+  b1:
     ldx #'-'
+  __b2:
+    lda.z b
+    sta.z printu.b
+    lda #<op
+    sta.z printu.op
+    lda #>op
+    sta.z printu.op+1
+    jsr printu
+    lda.z a
+    cmp #$37
+    bcs b2
+    ldx #'+'
+    jmp __b3
   b2:
-    lda.z b
+    ldx #'-'
+  __b3:
+    lda #$37
     sta.z printu.b
     lda #<op
     sta.z printu.op
@@ -41,14 +56,16 @@ main: {
     sta.z printu.op+1
     jsr printu
     lda.z a
-    cmp #$37
-    bcs b23
+    ldy.z i
+    cmp cs,y
+    bcs b3
     ldx #'+'
-    jmp b3
-  b23:
-    ldx #'-'
+    jmp __b4
   b3:
-    lda #$37
+    ldx #'-'
+  __b4:
+    ldy.z i
+    lda cs,y
     sta.z printu.b
     lda #<op
     sta.z printu.op
@@ -56,65 +73,48 @@ main: {
     sta.z printu.op+1
     jsr printu
     lda.z a
-    ldy.z i
-    cmp cs,y
-    bcs b24
+    cmp.z a
+    bcs b4
     ldx #'+'
-    jmp b4
-  b24:
-    ldx #'-'
+    jmp __b5
   b4:
-    ldy.z i
-    lda cs,y
+    ldx #'-'
+  __b5:
+    lda.z a
     sta.z printu.b
     lda #<op
     sta.z printu.op
     lda #>op
     sta.z printu.op+1
     jsr printu
-    lda.z a
+    jsr print_ln
+    lda.z b
     cmp.z a
-    bcs b25
+    bcs b5
     ldx #'+'
-    jmp b5
-  b25:
-    ldx #'-'
+    jmp __b6
   b5:
-    lda.z a
+    ldx #'-'
+  __b6:
+    lda.z b
     sta.z printu.b
-    lda #<op
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
+    lda #<op4
     sta.z printu.op
-    lda #>op
+    lda #>op4
     sta.z printu.op+1
     jsr printu
-    jsr print_ln
-    lda.z b
-    cmp.z a
-    bcs b26
+    lda.z a
+    cmp #$37+1
+    bcc b6
     ldx #'+'
-    jmp b6
-  b26:
-    ldx #'-'
+    jmp __b7
   b6:
-    lda.z b
-    sta.z printu.b
-    lda.z print_line_cursor
-    sta.z print_char_cursor
-    lda.z print_line_cursor+1
-    sta.z print_char_cursor+1
-    lda #<op4
-    sta.z printu.op
-    lda #>op4
-    sta.z printu.op+1
-    jsr printu
-    lda.z a
-    cmp #$37+1
-    bcc b27
-    ldx #'+'
-    jmp b7
-  b27:
     ldx #'-'
-  b7:
+  __b7:
     lda #$37
     sta.z printu.b
     lda #<op4
@@ -125,12 +125,12 @@ main: {
     ldy.z i
     lda cs,y
     cmp.z a
-    bcs b28
+    bcs b7
     ldx #'+'
-    jmp b8
-  b28:
+    jmp __b8
+  b7:
     ldx #'-'
-  b8:
+  __b8:
     ldy.z i
     lda cs,y
     sta.z printu.b
@@ -141,12 +141,12 @@ main: {
     jsr printu
     lda.z a
     cmp.z a
-    bcs b29
+    bcs b8
     ldx #'+'
-    jmp b9
-  b29:
+    jmp __b9
+  b8:
     ldx #'-'
-  b9:
+  __b9:
     lda.z a
     sta.z printu.b
     lda #<op4
@@ -157,12 +157,12 @@ main: {
     jsr print_ln
     lda.z b
     cmp.z a
-    bcc b30
+    bcc b9
     ldx #'+'
-    jmp b10
-  b30:
+    jmp __b10
+  b9:
     ldx #'-'
-  b10:
+  __b10:
     lda.z b
     sta.z printu.b
     lda.z print_line_cursor
@@ -176,12 +176,12 @@ main: {
     jsr printu
     lda.z a
     cmp #$37+1
-    bcs b31
+    bcs b10
     ldx #'+'
-    jmp b11
-  b31:
+    jmp __b11
+  b10:
     ldx #'-'
-  b11:
+  __b11:
     lda #$37
     sta.z printu.b
     lda #<op8
@@ -192,12 +192,12 @@ main: {
     ldy.z i
     lda cs,y
     cmp.z a
-    bcc b32
+    bcc b11
     ldx #'+'
-    jmp b12
-  b32:
+    jmp __b12
+  b11:
     ldx #'-'
-  b12:
+  __b12:
     ldy.z i
     lda cs,y
     sta.z printu.b
@@ -208,12 +208,12 @@ main: {
     jsr printu
     lda.z a
     cmp.z a
-    bcc b33
+    bcc b12
     ldx #'+'
-    jmp b13
-  b33:
+    jmp __b13
+  b12:
     ldx #'-'
-  b13:
+  __b13:
     lda.z a
     sta.z printu.b
     lda #<op8
@@ -224,12 +224,12 @@ main: {
     jsr print_ln
     lda.z a
     cmp.z b
-    bcc b34
+    bcc b13
     ldx #'+'
-    jmp b14
-  b34:
+    jmp __b14
+  b13:
     ldx #'-'
-  b14:
+  __b14:
     lda.z b
     sta.z printu.b
     lda.z print_line_cursor
@@ -243,12 +243,12 @@ main: {
     jsr printu
     lda.z a
     cmp #$37
-    bcc b35
+    bcc b14
     ldx #'+'
-    jmp b15
-  b35:
+    jmp __b15
+  b14:
     ldx #'-'
-  b15:
+  __b15:
     lda #$37
     sta.z printu.b
     lda #<op12
@@ -259,12 +259,12 @@ main: {
     lda.z a
     ldy.z i
     cmp cs,y
-    bcc b36
+    bcc b15
     ldx #'+'
-    jmp b16
-  b36:
+    jmp __b16
+  b15:
     ldx #'-'
-  b16:
+  __b16:
     ldy.z i
     lda cs,y
     sta.z printu.b
@@ -275,12 +275,12 @@ main: {
     jsr printu
     lda.z a
     cmp.z a
-    bcc b37
+    bcc b16
     ldx #'+'
-    jmp b17
-  b37:
+    jmp __b17
+  b16:
     ldx #'-'
-  b17:
+  __b17:
     lda.z a
     sta.z printu.b
     lda #<op12
@@ -291,12 +291,12 @@ main: {
     jsr print_ln
     lda.z a
     cmp.z b
-    bne b38
+    bne b17
     ldx #'+'
-    jmp b18
-  b38:
+    jmp __b18
+  b17:
     ldx #'-'
-  b18:
+  __b18:
     lda.z b
     sta.z printu.b
     lda.z print_line_cursor
@@ -310,12 +310,12 @@ main: {
     jsr printu
     lda #$37
     cmp.z a
-    bne b39
+    bne b18
     ldx #'+'
-    jmp b19
-  b39:
+    jmp __b19
+  b18:
     ldx #'-'
-  b19:
+  __b19:
     lda #$37
     sta.z printu.b
     lda #<op16
@@ -326,12 +326,12 @@ main: {
     lda.z a
     ldy.z i
     cmp cs,y
-    bne b40
+    bne b19
     ldx #'+'
-    jmp b20
-  b40:
+    jmp __b20
+  b19:
     ldx #'-'
-  b20:
+  __b20:
     ldy.z i
     lda cs,y
     sta.z printu.b
@@ -342,12 +342,12 @@ main: {
     jsr printu
     lda.z a
     cmp.z a
-    bne b41
+    bne b20
     ldx #'+'
-    jmp b21
-  b41:
+    jmp __b21
+  b20:
     ldx #'-'
-  b21:
+  __b21:
     lda.z a
     sta.z printu.b
     lda #<op16
@@ -362,15 +362,15 @@ main: {
     inc.z i
     lda #5
     cmp.z i
-    bne b68
-  b42:
-    jmp b42
-  b68:
+    bne __b68
+  __b42:
+    jmp __b42
+  __b68:
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    jmp b1
+    jmp __b1
     op: .text "< "
     .byte 0
     op4: .text "> "
@@ -385,7 +385,7 @@ main: {
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -395,11 +395,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -457,13 +457,13 @@ print_byte: {
 // print_str(byte* zeropage(4) str)
 print_str: {
     .label str = 4
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -475,7 +475,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -493,15 +493,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -509,6 +509,6 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"

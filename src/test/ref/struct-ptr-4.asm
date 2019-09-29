@@ -17,7 +17,7 @@ main: {
     sta.z points
     lda #>POINTS
     sta.z points+1
-  b1:
+  __b1:
     txa
     ldy #0
     sta (points),y
@@ -35,7 +35,7 @@ main: {
   !:
     inx
     cpx #4
-    bne b1
+    bne __b1
     lda #0
     sta.z i1
     tax
@@ -43,7 +43,7 @@ main: {
     sta.z points_5
     lda #>POINTS
     sta.z points_5+1
-  b2:
+  __b2:
     ldy #0
     lda (points_5),y
     sta SCREEN,x
@@ -65,6 +65,6 @@ main: {
     inc.z i1
     lda #4
     cmp.z i1
-    bne b2
+    bne __b2
     rts
 }

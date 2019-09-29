@@ -5,26 +5,26 @@
   .label SCREEN = $400
 main: {
     ldx #0
-  b1:
+  __b1:
     lda msg1,x
     cmp #0
-    bne b2
+    bne __b2
     ldx #0
-  b3:
+  __b3:
     lda msg2,x
     cmp #0
-    bne b4
+    bne __b4
     rts
-  b4:
+  __b4:
     lda msg2,x
     sta SCREEN+$28,x
     inx
-    jmp b3
-  b2:
+    jmp __b3
+  __b2:
     lda msg1,x
     sta SCREEN,x
     inx
-    jmp b1
+    jmp __b1
 }
   msg1: .text "camelot"
   .byte 0

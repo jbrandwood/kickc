@@ -12,43 +12,43 @@ main: {
 }
 set_process_name: {
     .label j = 2
-    .label _1 = 4
-    .label _2 = 6
+    .label __1 = 4
+    .label __2 = 6
     lda #<0
     sta.z j
     sta.z j+1
-  b1:
+  __b1:
     lda.z j+1
-    bmi b2
+    bmi __b2
     cmp #>$11
-    bcc b2
+    bcc __b2
     bne !+
     lda.z j
     cmp #<$11
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda #<main.name
     clc
     adc.z j
-    sta.z _1
+    sta.z __1
     lda #>main.name
     adc.z j+1
-    sta.z _1+1
+    sta.z __1+1
     lda #<process_name
     clc
     adc.z j
-    sta.z _2
+    sta.z __2
     lda #>process_name
     adc.z j+1
-    sta.z _2+1
+    sta.z __2+1
     ldy #0
-    lda (_1),y
-    sta (_2),y
+    lda (__1),y
+    sta (__2),y
     inc.z j
     bne !+
     inc.z j+1
   !:
-    jmp b1
+    jmp __b1
 }

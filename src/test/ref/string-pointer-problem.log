@@ -201,35 +201,35 @@ Target platform is c64basic / MOS6502X
 // https://gitlab.com/camelot/kickc/issues/315
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label process_name = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call set_process_name 
     // [7] phi from main to set_process_name [phi:main->set_process_name]
   set_process_name_from_main:
     jsr set_process_name
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [6] return 
     rts
     name: .text "keyboard"
@@ -238,65 +238,65 @@ main: {
   // set_process_name
 set_process_name: {
     .label j = 2
-    .label _1 = 4
-    .label _2 = 6
+    .label __1 = 4
+    .label __2 = 6
     // [8] phi from set_process_name to set_process_name::@1 [phi:set_process_name->set_process_name::@1]
-  b1_from_set_process_name:
+  __b1_from_set_process_name:
     // [8] phi (signed word) set_process_name::j#2 = (signed byte) 0 [phi:set_process_name->set_process_name::@1#0] -- vwsz1=vbsc1 
     lda #<0
     sta.z j
     lda #>0
     sta.z j+1
-    jmp b1
+    jmp __b1
     // set_process_name::@1
-  b1:
+  __b1:
     // [9] if((signed word) set_process_name::j#2<(signed byte) $11) goto set_process_name::@2 -- vwsz1_lt_vwuc1_then_la1 
     lda.z j+1
-    bmi b2
+    bmi __b2
     cmp #>$11
-    bcc b2
+    bcc __b2
     bne !+
     lda.z j
     cmp #<$11
-    bcc b2
+    bcc __b2
   !:
-    jmp breturn
+    jmp __breturn
     // set_process_name::@return
-  breturn:
+  __breturn:
     // [10] return 
     rts
     // set_process_name::@2
-  b2:
+  __b2:
     // [11] (byte*~) set_process_name::$1 ← (const string) main::name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<main.name
     clc
     adc.z j
-    sta.z _1
+    sta.z __1
     lda #>main.name
     adc.z j+1
-    sta.z _1+1
+    sta.z __1+1
     // [12] (byte*~) set_process_name::$2 ← (const byte*) process_name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<process_name
     clc
     adc.z j
-    sta.z _2
+    sta.z __2
     lda #>process_name
     adc.z j+1
-    sta.z _2+1
+    sta.z __2+1
     // [13] *((byte*~) set_process_name::$2) ← *((byte*~) set_process_name::$1) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
-    lda (_1),y
+    lda (__1),y
     ldy #0
-    sta (_2),y
+    sta (__2),y
     // [14] (signed word) set_process_name::j#1 ← ++ (signed word) set_process_name::j#2 -- vwsz1=_inc_vwsz1 
     inc.z j
     bne !+
     inc.z j+1
   !:
     // [8] phi from set_process_name::@2 to set_process_name::@1 [phi:set_process_name::@2->set_process_name::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [8] phi (signed word) set_process_name::j#2 = (signed word) set_process_name::j#1 [phi:set_process_name::@2->set_process_name::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
@@ -324,35 +324,35 @@ ASSEMBLER BEFORE OPTIMIZATION
 // https://gitlab.com/camelot/kickc/issues/315
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label process_name = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call set_process_name 
     // [7] phi from main to set_process_name [phi:main->set_process_name]
   set_process_name_from_main:
     jsr set_process_name
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [6] return 
     rts
     name: .text "keyboard"
@@ -361,94 +361,95 @@ main: {
   // set_process_name
 set_process_name: {
     .label j = 2
-    .label _1 = 4
-    .label _2 = 6
+    .label __1 = 4
+    .label __2 = 6
     // [8] phi from set_process_name to set_process_name::@1 [phi:set_process_name->set_process_name::@1]
-  b1_from_set_process_name:
+  __b1_from_set_process_name:
     // [8] phi (signed word) set_process_name::j#2 = (signed byte) 0 [phi:set_process_name->set_process_name::@1#0] -- vwsz1=vbsc1 
     lda #<0
     sta.z j
     lda #>0
     sta.z j+1
-    jmp b1
+    jmp __b1
     // set_process_name::@1
-  b1:
+  __b1:
     // [9] if((signed word) set_process_name::j#2<(signed byte) $11) goto set_process_name::@2 -- vwsz1_lt_vwuc1_then_la1 
     lda.z j+1
-    bmi b2
+    bmi __b2
     cmp #>$11
-    bcc b2
+    bcc __b2
     bne !+
     lda.z j
     cmp #<$11
-    bcc b2
+    bcc __b2
   !:
-    jmp breturn
+    jmp __breturn
     // set_process_name::@return
-  breturn:
+  __breturn:
     // [10] return 
     rts
     // set_process_name::@2
-  b2:
+  __b2:
     // [11] (byte*~) set_process_name::$1 ← (const string) main::name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<main.name
     clc
     adc.z j
-    sta.z _1
+    sta.z __1
     lda #>main.name
     adc.z j+1
-    sta.z _1+1
+    sta.z __1+1
     // [12] (byte*~) set_process_name::$2 ← (const byte*) process_name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<process_name
     clc
     adc.z j
-    sta.z _2
+    sta.z __2
     lda #>process_name
     adc.z j+1
-    sta.z _2+1
+    sta.z __2+1
     // [13] *((byte*~) set_process_name::$2) ← *((byte*~) set_process_name::$1) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
-    lda (_1),y
+    lda (__1),y
     ldy #0
-    sta (_2),y
+    sta (__2),y
     // [14] (signed word) set_process_name::j#1 ← ++ (signed word) set_process_name::j#2 -- vwsz1=_inc_vwsz1 
     inc.z j
     bne !+
     inc.z j+1
   !:
     // [8] phi from set_process_name::@2 to set_process_name::@1 [phi:set_process_name::@2->set_process_name::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [8] phi (signed word) set_process_name::j#2 = (signed word) set_process_name::j#1 [phi:set_process_name::@2->set_process_name::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction set_process_name_from_main:
-Removing instruction breturn:
-Removing instruction b1_from_set_process_name:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
+Removing instruction __breturn:
+Removing instruction __b1_from_set_process_name:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -510,53 +511,53 @@ main: {
   // set_process_name
 set_process_name: {
     .label j = 2
-    .label _1 = 4
-    .label _2 = 6
+    .label __1 = 4
+    .label __2 = 6
     // [8] phi from set_process_name to set_process_name::@1 [phi:set_process_name->set_process_name::@1]
     // [8] phi (signed word) set_process_name::j#2 = (signed byte) 0 [phi:set_process_name->set_process_name::@1#0] -- vwsz1=vbsc1 
     lda #<0
     sta.z j
     sta.z j+1
     // set_process_name::@1
-  b1:
+  __b1:
     // for(signed int j = 0; j < 17; j++)
     // [9] if((signed word) set_process_name::j#2<(signed byte) $11) goto set_process_name::@2 -- vwsz1_lt_vwuc1_then_la1 
     lda.z j+1
-    bmi b2
+    bmi __b2
     cmp #>$11
-    bcc b2
+    bcc __b2
     bne !+
     lda.z j
     cmp #<$11
-    bcc b2
+    bcc __b2
   !:
     // set_process_name::@return
     // }
     // [10] return 
     rts
     // set_process_name::@2
-  b2:
+  __b2:
     // process_name[j]=name[j]
     // [11] (byte*~) set_process_name::$1 ← (const string) main::name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<main.name
     clc
     adc.z j
-    sta.z _1
+    sta.z __1
     lda #>main.name
     adc.z j+1
-    sta.z _1+1
+    sta.z __1+1
     // [12] (byte*~) set_process_name::$2 ← (const byte*) process_name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<process_name
     clc
     adc.z j
-    sta.z _2
+    sta.z __2
     lda #>process_name
     adc.z j+1
-    sta.z _2+1
+    sta.z __2+1
     // [13] *((byte*~) set_process_name::$2) ← *((byte*~) set_process_name::$1) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
-    lda (_1),y
-    sta (_2),y
+    lda (__1),y
+    sta (__2),y
     // for(signed int j = 0; j < 17; j++)
     // [14] (signed word) set_process_name::j#1 ← ++ (signed word) set_process_name::j#2 -- vwsz1=_inc_vwsz1 
     inc.z j
@@ -565,7 +566,7 @@ set_process_name: {
   !:
     // [8] phi from set_process_name::@2 to set_process_name::@1 [phi:set_process_name::@2->set_process_name::@1]
     // [8] phi (signed word) set_process_name::j#2 = (signed word) set_process_name::j#1 [phi:set_process_name::@2->set_process_name::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 

@@ -2046,7 +2046,7 @@ Target platform is c64basic / MOS6502X
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // Processor port data direction register
@@ -2112,18 +2112,18 @@ Target platform is c64basic / MOS6502X
   .label irq_cnt = $f
   .label sin_idx = 5
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [1] (byte) render_screen_showing#0 ← (byte) 0 -- vbuz1=vbuc1 
   // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
   sta.z render_screen_showing
   // kickasm(location (const byte*) PLAYFIELD_SPRITES) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000)) 	// Put the sprites into memory  	.for(var sy=0;sy<10;sy++) { 	    .var sprite_gfx_y = sy*20 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 	    	    .var gfx_y =  sprite_gfx_y + mod(2100+y-sprite_gfx_y,21) 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,gfx_y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
-  jmp b2
+  jmp __b2
   // @2
-b2:
+__b2:
   // [3] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST -- vbuz1=vbuc1 
   // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
@@ -2133,13 +2133,13 @@ b2:
   lda #SPRITES_FIRST_YPOS+$15
   sta.z irq_sprite_ypos
   // [5] phi from @2 to toSpritePtr1 [phi:@2->toSpritePtr1]
-toSpritePtr1_from_b2:
+toSpritePtr1_from___b2:
   jmp toSpritePtr1
   // toSpritePtr1
 toSpritePtr1:
-  jmp b5
+  jmp __b5
   // @5
-b5:
+__b5:
   // [6] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0+(byte) 3 -- vbuz1=vbuc1 
   // Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
@@ -2148,30 +2148,30 @@ b5:
   // Counting the 10 IRQs
   lda #0
   sta.z irq_cnt
-  jmp b3
+  jmp __b3
   // @3
-b3:
+__b3:
   // kickasm(location (const byte*) SIN_SPRITE) {{ .fill $40, $ff  }}
   // [9] phi from @3 to @4 [phi:@3->@4]
-b4_from_b3:
-  jmp b4
+__b4_from___b3:
+  jmp __b4
   // @4
-b4:
+__b4:
   // [10] call main 
   // [12] phi from @4 to main [phi:@4->main]
-main_from_b4:
+main_from___b4:
   jsr main
   // [11] phi from @4 to @end [phi:@4->@end]
-bend_from_b4:
-  jmp bend
+__bend_from___b4:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const toSpritePtr2_return = SIN_SPRITE/$40
     .const vicSelectGfxBank1_toDd001_return = 3
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
-    .label _6 = $11
+    .label __6 = $11
     .label s2 = $10
     .label xpos = 3
     .label ypos = 4
@@ -2187,33 +2187,33 @@ main: {
     jmp vicSelectGfxBank1_toDd001
     // main::vicSelectGfxBank1_toDd001
   vicSelectGfxBank1_toDd001:
-    jmp vicSelectGfxBank1_b1
+    jmp vicSelectGfxBank1___b1
     // main::vicSelectGfxBank1_@1
-  vicSelectGfxBank1_b1:
+  vicSelectGfxBank1___b1:
     // [15] *((const byte*) CIA2_PORT_A) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 -- _deref_pbuc1=vbuc2 
     lda #vicSelectGfxBank1_toDd001_return
     sta CIA2_PORT_A
     // [16] phi from main::vicSelectGfxBank1_@1 to main::toD0181 [phi:main::vicSelectGfxBank1_@1->main::toD0181]
-  toD0181_from_vicSelectGfxBank1_b1:
+  toD0181_from_vicSelectGfxBank1___b1:
     jmp toD0181
     // main::toD0181
   toD0181:
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [17] *((const byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // [18] call sprites_init 
     jsr sprites_init
-    jmp b5
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [19] *((const byte*) SPRITES_ENABLE) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     lda #$ff
     sta SPRITES_ENABLE
     // [20] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [20] phi (byte) main::ypos#2 = (byte) $32 [phi:main::@5->main::@1#0] -- vbuz1=vbuc1 
     lda #$32
     sta.z ypos
@@ -2223,15 +2223,15 @@ main: {
     // [20] phi (byte) main::s#2 = (byte) 4 [phi:main::@5->main::@1#2] -- vbuz1=vbuc1 
     lda #4
     sta.z s
-    jmp b1
+    jmp __b1
     // [20] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [20] phi (byte) main::ypos#2 = (byte) main::ypos#1 [phi:main::@4->main::@1#0] -- register_copy 
     // [20] phi (byte) main::xpos#2 = (byte) main::xpos#1 [phi:main::@4->main::@1#1] -- register_copy 
     // [20] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@4->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [21] (byte) main::s2#0 ← (byte) main::s#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z s
     asl
@@ -2247,19 +2247,19 @@ main: {
     // [24] (byte~) main::$6 ← (byte) main::s#2 - (byte) 3 -- vbuz1=vbuz2_minus_vbuc1 
     lax.z s
     axs #3
-    stx.z _6
+    stx.z __6
     // [25] *((const byte*) SPRITES_COLS + (byte) main::s#2) ← (byte~) main::$6 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _6
+    lda.z __6
     ldy.z s
     sta SPRITES_COLS,y
     // [26] phi from main::@1 to main::toSpritePtr2 [phi:main::@1->main::toSpritePtr2]
-  toSpritePtr2_from_b1:
+  toSpritePtr2_from___b1:
     jmp toSpritePtr2
     // main::toSpritePtr2
   toSpritePtr2:
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [27] *((const byte*) PLAYFIELD_SPRITE_PTRS_1 + (byte) main::s#2) ← (const byte) main::toSpritePtr2_return#0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #toSpritePtr2_return
     ldy.z s
@@ -2277,77 +2277,77 @@ main: {
     // [31] if((byte) main::s#1!=(byte) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z s
-    bne b1_from_b4
+    bne __b1_from___b4
     // [32] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
-  b2_from_b4:
-    jmp b2
+  __b2_from___b4:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [33] call sprites_irq_init 
     jsr sprites_irq_init
     // [34] phi from main::@2 to main::@6 [phi:main::@2->main::@6]
-  b6_from_b2:
-    jmp b6
+  __b6_from___b2:
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [35] call loop 
     // [37] phi from main::@6 to loop [phi:main::@6->loop]
-  loop_from_b6:
+  loop_from___b6:
     jsr loop
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [36] return 
     rts
 }
   // loop
 loop: {
-    .label _1 = $12
+    .label __1 = $12
     .label idx = 7
     .label s = 6
     // [38] phi from loop to loop::@1 [phi:loop->loop::@1]
-  b1_from_loop:
+  __b1_from_loop:
     // [38] phi (byte) sin_idx#10 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z sin_idx
-    jmp b1
+    jmp __b1
     // loop::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // loop::@2
-  b2:
+  __b2:
     // [39] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // loop::@3
-  b3:
+  __b3:
     // [40] (byte) loop::idx#0 ← (byte) sin_idx#10 -- vbuz1=vbuz2 
     lda.z sin_idx
     sta.z idx
     // [41] phi from loop::@3 to loop::@4 [phi:loop::@3->loop::@4]
-  b4_from_b3:
+  __b4_from___b3:
     // [41] phi (byte) loop::idx#2 = (byte) loop::idx#0 [phi:loop::@3->loop::@4#0] -- register_copy 
     // [41] phi (byte) loop::s#2 = (byte) 4 [phi:loop::@3->loop::@4#1] -- vbuz1=vbuc1 
     lda #4
     sta.z s
-    jmp b4
+    jmp __b4
     // [41] phi from loop::@4 to loop::@4 [phi:loop::@4->loop::@4]
-  b4_from_b4:
+  __b4_from___b4:
     // [41] phi (byte) loop::idx#2 = (byte) loop::idx#1 [phi:loop::@4->loop::@4#0] -- register_copy 
     // [41] phi (byte) loop::s#2 = (byte) loop::s#1 [phi:loop::@4->loop::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // loop::@4
-  b4:
+  __b4:
     // [42] (byte~) loop::$1 ← (byte) loop::s#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z s
     asl
-    sta.z _1
+    sta.z __1
     // [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte[$100]) SIN + (byte) loop::idx#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z idx
     lda SIN,y
-    ldy.z _1
+    ldy.z __1
     sta SPRITES_YPOS,y
     // [44] (byte) loop::idx#1 ← (byte) loop::idx#2 + (byte) $a -- vbuz1=vbuz1_plus_vbuc1 
     lax.z idx
@@ -2358,16 +2358,16 @@ loop: {
     // [46] if((byte) loop::s#1!=(byte) 8) goto loop::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z s
-    bne b4_from_b4
-    jmp b5
+    bne __b4_from___b4
+    jmp __b5
     // loop::@5
-  b5:
+  __b5:
     // [47] (byte) sin_idx#3 ← ++ (byte) sin_idx#10 -- vbuz1=_inc_vbuz1 
     inc.z sin_idx
     // [38] phi from loop::@5 to loop::@1 [phi:loop::@5->loop::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [38] phi (byte) sin_idx#10 = (byte) sin_idx#3 [phi:loop::@5->loop::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // sprites_irq_init
 // Setup the IRQ
@@ -2411,9 +2411,9 @@ sprites_irq_init: {
     sta HARDWARE_IRQ+1
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // sprites_irq_init::@return
-  breturn:
+  __breturn:
     // [59] return 
     rts
 }
@@ -2436,21 +2436,21 @@ sprites_init: {
     lda SPRITES_EXPAND_Y
     sta SPRITES_EXPAND_X
     // [64] phi from sprites_init to sprites_init::@1 [phi:sprites_init->sprites_init::@1]
-  b1_from_sprites_init:
+  __b1_from_sprites_init:
     // [64] phi (byte) sprites_init::xpos#2 = (byte)(number) $18+(number) $f*(number) 8 [phi:sprites_init->sprites_init::@1#0] -- vbuz1=vbuc1 
     lda #$18+$f*8
     sta.z xpos
     // [64] phi (byte) sprites_init::s#2 = (byte) 0 [phi:sprites_init->sprites_init::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z s
-    jmp b1
+    jmp __b1
     // [64] phi from sprites_init::@1 to sprites_init::@1 [phi:sprites_init::@1->sprites_init::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [64] phi (byte) sprites_init::xpos#2 = (byte) sprites_init::xpos#1 [phi:sprites_init::@1->sprites_init::@1#0] -- register_copy 
     // [64] phi (byte) sprites_init::s#2 = (byte) sprites_init::s#1 [phi:sprites_init::@1->sprites_init::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // sprites_init::@1
-  b1:
+  __b1:
     // [65] (byte) sprites_init::s2#0 ← (byte) sprites_init::s#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z s
     asl
@@ -2472,10 +2472,10 @@ sprites_init: {
     // [70] if((byte) sprites_init::s#1!=(byte) 4) goto sprites_init::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z s
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // sprites_init::@return
-  breturn:
+  __breturn:
     // [71] return 
     rts
 }
@@ -2485,7 +2485,7 @@ sprites_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES/$40
-    .label _0 = $15
+    .label __0 = $15
     .label ypos = $14
     .label raster_sprite_gfx_modify = $a
     .label ptr = $16
@@ -2520,31 +2520,31 @@ sprites_irq: {
     // [78] (byte~) sprites_irq::$0 ← (byte) irq_raster_next#0 + (byte) 1 -- vbuz1=vbuz2_plus_1 
     ldy.z irq_raster_next
     iny
-    sty.z _0
+    sty.z __0
     // [79] (byte) sprites_irq::raster_sprite_gfx_modify#0 ← (byte~) sprites_irq::$0 -- vbuz1=vbuz2 
     // Wait for the y-position before changing sprite pointers
-    lda.z _0
+    lda.z __0
     sta.z raster_sprite_gfx_modify
-    jmp b8
+    jmp __b8
     // sprites_irq::@8
-  b8:
+  __b8:
     // [80] if(*((const byte*) RASTER)<(byte) sprites_irq::raster_sprite_gfx_modify#0) goto sprites_irq::@8 -- _deref_pbuc1_lt_vbuz1_then_la1 
     lda RASTER
     cmp.z raster_sprite_gfx_modify
-    bcc b8
-    jmp b9
+    bcc __b8
+    jmp __b9
     // sprites_irq::@9
-  b9:
+  __b9:
     // [81] (byte) sprites_irq::ptr#0 ← (byte) irq_sprite_ptr#0 -- vbuz1=vbuz2 
     lda.z irq_sprite_ptr
     sta.z ptr
     // [82] if((byte) render_screen_showing#0==(byte) 0) goto sprites_irq::@1 -- vbuz1_eq_0_then_la1 
     lda.z render_screen_showing
     cmp #0
-    beq b1
-    jmp b10
+    beq __b1
+    jmp __b10
     // sprites_irq::@10
-  b10:
+  __b10:
     // [83] *((const byte*) PLAYFIELD_SPRITE_PTRS_2) ← (byte) sprites_irq::ptr#0 -- _deref_pbuc1=vbuz1 
     lda.z ptr
     sta PLAYFIELD_SPRITE_PTRS_2
@@ -2565,25 +2565,25 @@ sprites_irq: {
     // [88] *((const byte*) PLAYFIELD_SPRITE_PTRS_2+(byte) 3) ← (byte) sprites_irq::ptr#4 -- _deref_pbuc1=vbuz1 
     lda.z ptr_4
     sta PLAYFIELD_SPRITE_PTRS_2+3
-    jmp b2
+    jmp __b2
     // sprites_irq::@2
-  b2:
+  __b2:
     // [89] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 -- vbuz1=_inc_vbuz1 
     inc.z irq_cnt
     // [90] if((byte) irq_cnt#1==(byte) 9) goto sprites_irq::@3 -- vbuz1_eq_vbuc1_then_la1 
     lda #9
     cmp.z irq_cnt
-    beq b3
-    jmp b6
+    beq __b3
+    jmp __b6
     // sprites_irq::@6
-  b6:
+  __b6:
     // [91] if((byte) irq_cnt#1==(byte) $a) goto sprites_irq::@4 -- vbuz1_eq_vbuc1_then_la1 
     lda #$a
     cmp.z irq_cnt
-    beq b4
-    jmp b7
+    beq __b4
+    jmp __b7
     // sprites_irq::@7
-  b7:
+  __b7:
     // [92] (byte) irq_raster_next#3 ← (byte) irq_raster_next#0 + (byte) $14 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z irq_raster_next
     axs #-[$14]
@@ -2597,16 +2597,16 @@ sprites_irq: {
     axs #-[3]
     stx.z irq_sprite_ptr
     // [95] phi from sprites_irq::@11 sprites_irq::@4 sprites_irq::@7 to sprites_irq::@5 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5]
-  b5_from_b11:
-  b5_from_b4:
-  b5_from_b7:
+  __b5_from___b11:
+  __b5_from___b4:
+  __b5_from___b7:
     // [95] phi (byte) irq_sprite_ptr#11 = (byte) irq_sprite_ptr#1 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5#0] -- register_copy 
     // [95] phi (byte) irq_sprite_ypos#11 = (byte) irq_sprite_ypos#1 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5#1] -- register_copy 
     // [95] phi (byte) irq_cnt#3 = (byte) irq_cnt#1 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5#2] -- register_copy 
     // [95] phi (byte) irq_raster_next#4 = (byte) irq_raster_next#1 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5#3] -- register_copy 
-    jmp b5
+    jmp __b5
     // sprites_irq::@5
-  b5:
+  __b5:
     // [96] *((const byte*) RASTER) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
     // Setup next interrupt
     lda.z irq_raster_next
@@ -2615,9 +2615,9 @@ sprites_irq: {
     // Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    jmp breturn
+    jmp __breturn
     // sprites_irq::@return
-  breturn:
+  __breturn:
     // [98] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
@@ -2627,7 +2627,7 @@ sprites_irq: {
     ldy #00
     rti
     // sprites_irq::@4
-  b4:
+  __b4:
     // [99] (byte) irq_cnt#2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z irq_cnt
@@ -2642,9 +2642,9 @@ sprites_irq: {
     lax.z irq_sprite_ptr
     axs #-[3]
     stx.z irq_sprite_ptr
-    jmp b5_from_b4
+    jmp __b5_from___b4
     // sprites_irq::@3
-  b3:
+  __b3:
     // [103] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z irq_raster_next
     axs #-[$15]
@@ -2653,19 +2653,19 @@ sprites_irq: {
     lda #SPRITES_FIRST_YPOS
     sta.z irq_sprite_ypos
     // [105] phi from sprites_irq::@3 to sprites_irq::toSpritePtr2 [phi:sprites_irq::@3->sprites_irq::toSpritePtr2]
-  toSpritePtr2_from_b3:
+  toSpritePtr2_from___b3:
     jmp toSpritePtr2
     // sprites_irq::toSpritePtr2
   toSpritePtr2:
-    jmp b11
+    jmp __b11
     // sprites_irq::@11
-  b11:
+  __b11:
     // [106] (byte) irq_sprite_ptr#1 ← (const byte) sprites_irq::toSpritePtr2_return#0 -- vbuz1=vbuc1 
     lda #toSpritePtr2_return
     sta.z irq_sprite_ptr
-    jmp b5_from_b11
+    jmp __b5_from___b11
     // sprites_irq::@1
-  b1:
+  __b1:
     // [107] *((const byte*) PLAYFIELD_SPRITE_PTRS_1) ← (byte) sprites_irq::ptr#0 -- _deref_pbuc1=vbuz1 
     lda.z ptr
     sta PLAYFIELD_SPRITE_PTRS_1
@@ -2686,7 +2686,7 @@ sprites_irq: {
     // [112] *((const byte*) PLAYFIELD_SPRITE_PTRS_1+(byte) 3) ← (byte) sprites_irq::ptr#2 -- _deref_pbuc1=vbuz1 
     lda.z ptr_2
     sta PLAYFIELD_SPRITE_PTRS_1+3
-    jmp b2
+    jmp __b2
 }
   // File Data
 SIN:
@@ -2924,7 +2924,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // Processor port data direction register
@@ -2990,18 +2990,18 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label irq_cnt = 9
   .label sin_idx = 3
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [1] (byte) render_screen_showing#0 ← (byte) 0 -- vbuz1=vbuc1 
   // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
   sta.z render_screen_showing
   // kickasm(location (const byte*) PLAYFIELD_SPRITES) {{ .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000)) 	// Put the sprites into memory  	.for(var sy=0;sy<10;sy++) { 	    .var sprite_gfx_y = sy*20 		.for(var sx=0;sx<3;sx++) { 	    	.for (var y=0;y<21; y++) { 	    	    .var gfx_y =  sprite_gfx_y + mod(2100+y-sprite_gfx_y,21) 		    	.for (var c=0; c<3; c++) { 	            	.byte sprites.getSinglecolorByte(sx*3+c,gfx_y) 	            } 	        } 	    	.byte 0 	  	} 	}  }}
-  jmp b2
+  jmp __b2
   // @2
-b2:
+__b2:
   // [3] (byte) irq_raster_next#0 ← (const byte) IRQ_RASTER_FIRST -- vbuz1=vbuc1 
   // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
@@ -3011,13 +3011,13 @@ b2:
   lda #SPRITES_FIRST_YPOS+$15
   sta.z irq_sprite_ypos
   // [5] phi from @2 to toSpritePtr1 [phi:@2->toSpritePtr1]
-toSpritePtr1_from_b2:
+toSpritePtr1_from___b2:
   jmp toSpritePtr1
   // toSpritePtr1
 toSpritePtr1:
-  jmp b5
+  jmp __b5
   // @5
-b5:
+__b5:
   // [6] (byte) irq_sprite_ptr#0 ← (const byte) toSpritePtr1_return#0+(byte) 3 -- vbuz1=vbuc1 
   // Index of the sprites to show on the next IRQ
   lda #toSpritePtr1_return+3
@@ -3026,24 +3026,24 @@ b5:
   // Counting the 10 IRQs
   lda #0
   sta.z irq_cnt
-  jmp b3
+  jmp __b3
   // @3
-b3:
+__b3:
   // kickasm(location (const byte*) SIN_SPRITE) {{ .fill $40, $ff  }}
   // [9] phi from @3 to @4 [phi:@3->@4]
-b4_from_b3:
-  jmp b4
+__b4_from___b3:
+  jmp __b4
   // @4
-b4:
+__b4:
   // [10] call main 
   // [12] phi from @4 to main [phi:@4->main]
-main_from_b4:
+main_from___b4:
   jsr main
   // [11] phi from @4 to @end [phi:@4->@end]
-bend_from_b4:
-  jmp bend
+__bend_from___b4:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const toSpritePtr2_return = SIN_SPRITE/$40
@@ -3062,33 +3062,33 @@ main: {
     jmp vicSelectGfxBank1_toDd001
     // main::vicSelectGfxBank1_toDd001
   vicSelectGfxBank1_toDd001:
-    jmp vicSelectGfxBank1_b1
+    jmp vicSelectGfxBank1___b1
     // main::vicSelectGfxBank1_@1
-  vicSelectGfxBank1_b1:
+  vicSelectGfxBank1___b1:
     // [15] *((const byte*) CIA2_PORT_A) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 -- _deref_pbuc1=vbuc2 
     lda #vicSelectGfxBank1_toDd001_return
     sta CIA2_PORT_A
     // [16] phi from main::vicSelectGfxBank1_@1 to main::toD0181 [phi:main::vicSelectGfxBank1_@1->main::toD0181]
-  toD0181_from_vicSelectGfxBank1_b1:
+  toD0181_from_vicSelectGfxBank1___b1:
     jmp toD0181
     // main::toD0181
   toD0181:
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [17] *((const byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // [18] call sprites_init 
     jsr sprites_init
-    jmp b5
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [19] *((const byte*) SPRITES_ENABLE) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     lda #$ff
     sta SPRITES_ENABLE
     // [20] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [20] phi (byte) main::ypos#2 = (byte) $32 [phi:main::@5->main::@1#0] -- vbuz1=vbuc1 
     lda #$32
     sta.z ypos
@@ -3097,15 +3097,15 @@ main: {
     sta.z xpos
     // [20] phi (byte) main::s#2 = (byte) 4 [phi:main::@5->main::@1#2] -- vbuyy=vbuc1 
     ldy #4
-    jmp b1
+    jmp __b1
     // [20] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [20] phi (byte) main::ypos#2 = (byte) main::ypos#1 [phi:main::@4->main::@1#0] -- register_copy 
     // [20] phi (byte) main::xpos#2 = (byte) main::xpos#1 [phi:main::@4->main::@1#1] -- register_copy 
     // [20] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@4->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [21] (byte) main::s2#0 ← (byte) main::s#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
     tya
     asl
@@ -3123,13 +3123,13 @@ main: {
     // [25] *((const byte*) SPRITES_COLS + (byte) main::s#2) ← (byte~) main::$6 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SPRITES_COLS,y
     // [26] phi from main::@1 to main::toSpritePtr2 [phi:main::@1->main::toSpritePtr2]
-  toSpritePtr2_from_b1:
+  toSpritePtr2_from___b1:
     jmp toSpritePtr2
     // main::toSpritePtr2
   toSpritePtr2:
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [27] *((const byte*) PLAYFIELD_SPRITE_PTRS_1 + (byte) main::s#2) ← (const byte) main::toSpritePtr2_return#0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #toSpritePtr2_return
     sta PLAYFIELD_SPRITE_PTRS_1,y
@@ -3145,26 +3145,26 @@ main: {
     iny
     // [31] if((byte) main::s#1!=(byte) 8) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #8
-    bne b1_from_b4
+    bne __b1_from___b4
     // [32] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
-  b2_from_b4:
-    jmp b2
+  __b2_from___b4:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [33] call sprites_irq_init 
     jsr sprites_irq_init
     // [34] phi from main::@2 to main::@6 [phi:main::@2->main::@6]
-  b6_from_b2:
-    jmp b6
+  __b6_from___b2:
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [35] call loop 
     // [37] phi from main::@6 to loop [phi:main::@6->loop]
-  loop_from_b6:
+  loop_from___b6:
     jsr loop
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [36] return 
     rts
 }
@@ -3172,39 +3172,39 @@ main: {
 loop: {
     .label s = 2
     // [38] phi from loop to loop::@1 [phi:loop->loop::@1]
-  b1_from_loop:
+  __b1_from_loop:
     // [38] phi (byte) sin_idx#10 = (byte) 0 [phi:loop->loop::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z sin_idx
-    jmp b1
+    jmp __b1
     // loop::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // loop::@2
-  b2:
+  __b2:
     // [39] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // loop::@3
-  b3:
+  __b3:
     // [40] (byte) loop::idx#0 ← (byte) sin_idx#10 -- vbuxx=vbuz1 
     ldx.z sin_idx
     // [41] phi from loop::@3 to loop::@4 [phi:loop::@3->loop::@4]
-  b4_from_b3:
+  __b4_from___b3:
     // [41] phi (byte) loop::idx#2 = (byte) loop::idx#0 [phi:loop::@3->loop::@4#0] -- register_copy 
     // [41] phi (byte) loop::s#2 = (byte) 4 [phi:loop::@3->loop::@4#1] -- vbuz1=vbuc1 
     lda #4
     sta.z s
-    jmp b4
+    jmp __b4
     // [41] phi from loop::@4 to loop::@4 [phi:loop::@4->loop::@4]
-  b4_from_b4:
+  __b4_from___b4:
     // [41] phi (byte) loop::idx#2 = (byte) loop::idx#1 [phi:loop::@4->loop::@4#0] -- register_copy 
     // [41] phi (byte) loop::s#2 = (byte) loop::s#1 [phi:loop::@4->loop::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // loop::@4
-  b4:
+  __b4:
     // [42] (byte~) loop::$1 ← (byte) loop::s#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z s
     asl
@@ -3220,16 +3220,16 @@ loop: {
     // [46] if((byte) loop::s#1!=(byte) 8) goto loop::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z s
-    bne b4_from_b4
-    jmp b5
+    bne __b4_from___b4
+    jmp __b5
     // loop::@5
-  b5:
+  __b5:
     // [47] (byte) sin_idx#3 ← ++ (byte) sin_idx#10 -- vbuz1=_inc_vbuz1 
     inc.z sin_idx
     // [38] phi from loop::@5 to loop::@1 [phi:loop::@5->loop::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [38] phi (byte) sin_idx#10 = (byte) sin_idx#3 [phi:loop::@5->loop::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // sprites_irq_init
 // Setup the IRQ
@@ -3273,9 +3273,9 @@ sprites_irq_init: {
     sta HARDWARE_IRQ+1
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // sprites_irq_init::@return
-  breturn:
+  __breturn:
     // [59] return 
     rts
 }
@@ -3296,20 +3296,20 @@ sprites_init: {
     lda SPRITES_EXPAND_Y
     sta SPRITES_EXPAND_X
     // [64] phi from sprites_init to sprites_init::@1 [phi:sprites_init->sprites_init::@1]
-  b1_from_sprites_init:
+  __b1_from_sprites_init:
     // [64] phi (byte) sprites_init::xpos#2 = (byte)(number) $18+(number) $f*(number) 8 [phi:sprites_init->sprites_init::@1#0] -- vbuz1=vbuc1 
     lda #$18+$f*8
     sta.z xpos
     // [64] phi (byte) sprites_init::s#2 = (byte) 0 [phi:sprites_init->sprites_init::@1#1] -- vbuyy=vbuc1 
     ldy #0
-    jmp b1
+    jmp __b1
     // [64] phi from sprites_init::@1 to sprites_init::@1 [phi:sprites_init::@1->sprites_init::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [64] phi (byte) sprites_init::xpos#2 = (byte) sprites_init::xpos#1 [phi:sprites_init::@1->sprites_init::@1#0] -- register_copy 
     // [64] phi (byte) sprites_init::s#2 = (byte) sprites_init::s#1 [phi:sprites_init::@1->sprites_init::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // sprites_init::@1
-  b1:
+  __b1:
     // [65] (byte) sprites_init::s2#0 ← (byte) sprites_init::s#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
     tya
     asl
@@ -3328,10 +3328,10 @@ sprites_init: {
     iny
     // [70] if((byte) sprites_init::s#1!=(byte) 4) goto sprites_init::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #4
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // sprites_init::@return
-  breturn:
+  __breturn:
     // [71] return 
     rts
 }
@@ -3366,25 +3366,25 @@ sprites_irq: {
     // [79] (byte) sprites_irq::raster_sprite_gfx_modify#0 ← (byte~) sprites_irq::$0 -- vbuz1=vbuxx 
     // Wait for the y-position before changing sprite pointers
     stx.z raster_sprite_gfx_modify
-    jmp b8
+    jmp __b8
     // sprites_irq::@8
-  b8:
+  __b8:
     // [80] if(*((const byte*) RASTER)<(byte) sprites_irq::raster_sprite_gfx_modify#0) goto sprites_irq::@8 -- _deref_pbuc1_lt_vbuz1_then_la1 
     lda RASTER
     cmp.z raster_sprite_gfx_modify
-    bcc b8
-    jmp b9
+    bcc __b8
+    jmp __b9
     // sprites_irq::@9
-  b9:
+  __b9:
     // [81] (byte) sprites_irq::ptr#0 ← (byte) irq_sprite_ptr#0 -- vbuxx=vbuz1 
     ldx.z irq_sprite_ptr
     // [82] if((byte) render_screen_showing#0==(byte) 0) goto sprites_irq::@1 -- vbuz1_eq_0_then_la1 
     lda.z render_screen_showing
     cmp #0
-    beq b1
-    jmp b10
+    beq __b1
+    jmp __b10
     // sprites_irq::@10
-  b10:
+  __b10:
     // [83] *((const byte*) PLAYFIELD_SPRITE_PTRS_2) ← (byte) sprites_irq::ptr#0 -- _deref_pbuc1=vbuxx 
     stx PLAYFIELD_SPRITE_PTRS_2
     // [84] (byte) sprites_irq::ptr#3 ← ++ (byte) sprites_irq::ptr#0 -- vbuaa=_inc_vbuxx 
@@ -3399,25 +3399,25 @@ sprites_irq: {
     adc #1
     // [88] *((const byte*) PLAYFIELD_SPRITE_PTRS_2+(byte) 3) ← (byte) sprites_irq::ptr#4 -- _deref_pbuc1=vbuaa 
     sta PLAYFIELD_SPRITE_PTRS_2+3
-    jmp b2
+    jmp __b2
     // sprites_irq::@2
-  b2:
+  __b2:
     // [89] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 -- vbuz1=_inc_vbuz1 
     inc.z irq_cnt
     // [90] if((byte) irq_cnt#1==(byte) 9) goto sprites_irq::@3 -- vbuz1_eq_vbuc1_then_la1 
     lda #9
     cmp.z irq_cnt
-    beq b3
-    jmp b6
+    beq __b3
+    jmp __b6
     // sprites_irq::@6
-  b6:
+  __b6:
     // [91] if((byte) irq_cnt#1==(byte) $a) goto sprites_irq::@4 -- vbuz1_eq_vbuc1_then_la1 
     lda #$a
     cmp.z irq_cnt
-    beq b4
-    jmp b7
+    beq __b4
+    jmp __b7
     // sprites_irq::@7
-  b7:
+  __b7:
     // [92] (byte) irq_raster_next#3 ← (byte) irq_raster_next#0 + (byte) $14 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z irq_raster_next
     axs #-[$14]
@@ -3431,16 +3431,16 @@ sprites_irq: {
     axs #-[3]
     stx.z irq_sprite_ptr
     // [95] phi from sprites_irq::@11 sprites_irq::@4 sprites_irq::@7 to sprites_irq::@5 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5]
-  b5_from_b11:
-  b5_from_b4:
-  b5_from_b7:
+  __b5_from___b11:
+  __b5_from___b4:
+  __b5_from___b7:
     // [95] phi (byte) irq_sprite_ptr#11 = (byte) irq_sprite_ptr#1 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5#0] -- register_copy 
     // [95] phi (byte) irq_sprite_ypos#11 = (byte) irq_sprite_ypos#1 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5#1] -- register_copy 
     // [95] phi (byte) irq_cnt#3 = (byte) irq_cnt#1 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5#2] -- register_copy 
     // [95] phi (byte) irq_raster_next#4 = (byte) irq_raster_next#1 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5#3] -- register_copy 
-    jmp b5
+    jmp __b5
     // sprites_irq::@5
-  b5:
+  __b5:
     // [96] *((const byte*) RASTER) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
     // Setup next interrupt
     lda.z irq_raster_next
@@ -3449,9 +3449,9 @@ sprites_irq: {
     // Acknowledge the IRQ and setup the next one
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    jmp breturn
+    jmp __breturn
     // sprites_irq::@return
-  breturn:
+  __breturn:
     // [98] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
@@ -3459,7 +3459,7 @@ sprites_irq: {
     ldx #00
     rti
     // sprites_irq::@4
-  b4:
+  __b4:
     // [99] (byte) irq_cnt#2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z irq_cnt
@@ -3474,9 +3474,9 @@ sprites_irq: {
     lax.z irq_sprite_ptr
     axs #-[3]
     stx.z irq_sprite_ptr
-    jmp b5_from_b4
+    jmp __b5_from___b4
     // sprites_irq::@3
-  b3:
+  __b3:
     // [103] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z irq_raster_next
     axs #-[$15]
@@ -3485,19 +3485,19 @@ sprites_irq: {
     lda #SPRITES_FIRST_YPOS
     sta.z irq_sprite_ypos
     // [105] phi from sprites_irq::@3 to sprites_irq::toSpritePtr2 [phi:sprites_irq::@3->sprites_irq::toSpritePtr2]
-  toSpritePtr2_from_b3:
+  toSpritePtr2_from___b3:
     jmp toSpritePtr2
     // sprites_irq::toSpritePtr2
   toSpritePtr2:
-    jmp b11
+    jmp __b11
     // sprites_irq::@11
-  b11:
+  __b11:
     // [106] (byte) irq_sprite_ptr#1 ← (const byte) sprites_irq::toSpritePtr2_return#0 -- vbuz1=vbuc1 
     lda #toSpritePtr2_return
     sta.z irq_sprite_ptr
-    jmp b5_from_b11
+    jmp __b5_from___b11
     // sprites_irq::@1
-  b1:
+  __b1:
     // [107] *((const byte*) PLAYFIELD_SPRITE_PTRS_1) ← (byte) sprites_irq::ptr#0 -- _deref_pbuc1=vbuxx 
     stx PLAYFIELD_SPRITE_PTRS_1
     // [108] (byte) sprites_irq::ptr#1 ← ++ (byte) sprites_irq::ptr#0 -- vbuxx=_inc_vbuxx 
@@ -3511,7 +3511,7 @@ sprites_irq: {
     txa
     // [112] *((const byte*) PLAYFIELD_SPRITE_PTRS_1+(byte) 3) ← (byte) sprites_irq::ptr#2 -- _deref_pbuc1=vbuaa 
     sta PLAYFIELD_SPRITE_PTRS_1+3
-    jmp b2
+    jmp __b2
 }
   // File Data
 SIN:
@@ -3541,112 +3541,113 @@ SIN:
 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp b2
+Removing instruction jmp __b1
+Removing instruction jmp __b2
 Removing instruction jmp toSpritePtr1
-Removing instruction jmp b5
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp bend
+Removing instruction jmp __b5
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __bend
 Removing instruction jmp vicSelectGfxBank1
 Removing instruction jmp vicSelectGfxBank1_toDd001
-Removing instruction jmp vicSelectGfxBank1_b1
+Removing instruction jmp vicSelectGfxBank1___b1
 Removing instruction jmp toD0181
-Removing instruction jmp b3
-Removing instruction jmp b5
-Removing instruction jmp b1
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Removing instruction jmp __b1
 Removing instruction jmp toSpritePtr2
-Removing instruction jmp b4
-Removing instruction jmp b2
-Removing instruction jmp b6
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b8
-Removing instruction jmp b9
-Removing instruction jmp b10
-Removing instruction jmp b2
-Removing instruction jmp b6
-Removing instruction jmp b7
-Removing instruction jmp b5
-Removing instruction jmp breturn
+Removing instruction jmp __b4
+Removing instruction jmp __b2
+Removing instruction jmp __b6
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b5
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b8
+Removing instruction jmp __b9
+Removing instruction jmp __b10
+Removing instruction jmp __b2
+Removing instruction jmp __b6
+Removing instruction jmp __b7
+Removing instruction jmp __b5
+Removing instruction jmp __breturn
 Removing instruction jmp toSpritePtr2
-Removing instruction jmp b11
+Removing instruction jmp __b11
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda SPRITES_MC
 Removing instruction lda SPRITES_EXPAND_Y
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b4 with b1
-Replacing label b4_from_b4 with b4
-Replacing label b1 with b2
-Replacing label b1_from_b1 with b1
-Replacing label b5_from_b4 with b5
-Replacing label b5_from_b11 with b5
-Removing instruction b1:
-Removing instruction toSpritePtr1_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b4 with __b1
+Replacing label __b4_from___b4 with __b4
+Replacing label __b1 with __b2
+Replacing label __b1_from___b1 with __b1
+Replacing label __b5_from___b4 with __b5
+Replacing label __b5_from___b11 with __b5
+Removing instruction __bbegin:
+Removing instruction toSpritePtr1_from___b2:
 Removing instruction toSpritePtr1:
-Removing instruction b3:
-Removing instruction b4_from_b3:
-Removing instruction main_from_b4:
-Removing instruction bend_from_b4:
+Removing instruction __b3:
+Removing instruction __b4_from___b3:
+Removing instruction main_from___b4:
+Removing instruction __bend_from___b4:
 Removing instruction vicSelectGfxBank1_toDd001_from_vicSelectGfxBank1:
 Removing instruction vicSelectGfxBank1_toDd001:
-Removing instruction toD0181_from_vicSelectGfxBank1_b1:
+Removing instruction toD0181_from_vicSelectGfxBank1___b1:
 Removing instruction toD0181:
-Removing instruction b1_from_b4:
-Removing instruction toSpritePtr2_from_b1:
+Removing instruction __b1_from___b4:
+Removing instruction toSpritePtr2_from___b1:
 Removing instruction toSpritePtr2:
-Removing instruction b2_from_b4:
-Removing instruction b6_from_b2:
-Removing instruction loop_from_b6:
-Removing instruction b1:
-Removing instruction b4_from_b4:
-Removing instruction b1_from_b1:
-Removing instruction b5_from_b11:
-Removing instruction b5_from_b4:
-Removing instruction b5_from_b7:
-Removing instruction breturn:
-Removing instruction toSpritePtr2_from_b3:
+Removing instruction __b2_from___b4:
+Removing instruction __b6_from___b2:
+Removing instruction loop_from___b6:
+Removing instruction __b1:
+Removing instruction __b4_from___b4:
+Removing instruction __b1_from___b1:
+Removing instruction __b5_from___b11:
+Removing instruction __b5_from___b4:
+Removing instruction __b5_from___b7:
+Removing instruction __breturn:
+Removing instruction toSpritePtr2_from___b3:
 Removing instruction toSpritePtr2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
-Removing instruction b5:
-Removing instruction b4:
-Removing instruction bend:
+Removing instruction __b2:
+Removing instruction __b5:
+Removing instruction __b4:
+Removing instruction __bend:
 Removing instruction vicSelectGfxBank1:
-Removing instruction vicSelectGfxBank1_b1:
-Removing instruction b3:
-Removing instruction b5:
-Removing instruction b1_from_b5:
-Removing instruction b4:
-Removing instruction b2:
-Removing instruction b6:
-Removing instruction breturn:
-Removing instruction b1_from_loop:
-Removing instruction b3:
-Removing instruction b4_from_b3:
-Removing instruction b5:
-Removing instruction b1_from_b5:
-Removing instruction breturn:
-Removing instruction b1_from_sprites_init:
-Removing instruction breturn:
-Removing instruction b9:
-Removing instruction b10:
-Removing instruction b6:
-Removing instruction b7:
-Removing instruction b11:
+Removing instruction vicSelectGfxBank1___b1:
+Removing instruction __b3:
+Removing instruction __b5:
+Removing instruction __b1_from___b5:
+Removing instruction __b4:
+Removing instruction __b2:
+Removing instruction __b6:
+Removing instruction __breturn:
+Removing instruction __b1_from_loop:
+Removing instruction __b3:
+Removing instruction __b4_from___b3:
+Removing instruction __b5:
+Removing instruction __b1_from___b5:
+Removing instruction __breturn:
+Removing instruction __b1_from_sprites_init:
+Removing instruction __breturn:
+Removing instruction __b9:
+Removing instruction __b10:
+Removing instruction __b6:
+Removing instruction __b7:
+Removing instruction __b11:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
-Removing instruction jmp b1
-Removing instruction jmp b4
-Removing instruction jmp b1
+Removing instruction jmp __b1
+Removing instruction jmp __b4
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
@@ -3849,7 +3850,7 @@ Score: 11662
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   // Global Constants & labels
   // Processor port data direction register
@@ -3915,8 +3916,8 @@ Score: 11662
   .label irq_cnt = 9
   .label sin_idx = 3
   // @begin
-bbegin:
   // @1
+__b1:
   // render_screen_showing = 0
   // [1] (byte) render_screen_showing#0 ← (byte) 0 -- vbuz1=vbuc1 
   // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
@@ -4007,7 +4008,7 @@ main: {
     // [20] phi (byte) main::xpos#2 = (byte) main::xpos#1 [phi:main::@4->main::@1#1] -- register_copy 
     // [20] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@4->main::@1#2] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // s2 = s*2
     // [21] (byte) main::s2#0 ← (byte) main::s#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
     tya
@@ -4051,7 +4052,7 @@ main: {
     iny
     // [31] if((byte) main::s#1!=(byte) 8) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #8
-    bne b1
+    bne __b1
     // [32] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
     // main::@2
     // sprites_irq_init()
@@ -4077,12 +4078,12 @@ loop: {
     sta.z sin_idx
     // loop::@1
     // loop::@2
-  b2:
+  __b2:
     // while (*RASTER!=$ff)
     // [39] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     // loop::@3
     // idx = sin_idx
     // [40] (byte) loop::idx#0 ← (byte) sin_idx#10 -- vbuxx=vbuz1 
@@ -4096,7 +4097,7 @@ loop: {
     // [41] phi (byte) loop::idx#2 = (byte) loop::idx#1 [phi:loop::@4->loop::@4#0] -- register_copy 
     // [41] phi (byte) loop::s#2 = (byte) loop::s#1 [phi:loop::@4->loop::@4#1] -- register_copy 
     // loop::@4
-  b4:
+  __b4:
     // s*2
     // [42] (byte~) loop::$1 ← (byte) loop::s#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z s
@@ -4116,14 +4117,14 @@ loop: {
     // [46] if((byte) loop::s#1!=(byte) 8) goto loop::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z s
-    bne b4
+    bne __b4
     // loop::@5
     // sin_idx++;
     // [47] (byte) sin_idx#3 ← ++ (byte) sin_idx#10 -- vbuz1=_inc_vbuz1 
     inc.z sin_idx
     // [38] phi from loop::@5 to loop::@1 [phi:loop::@5->loop::@1]
     // [38] phi (byte) sin_idx#10 = (byte) sin_idx#3 [phi:loop::@5->loop::@1#0] -- register_copy 
-    jmp b2
+    jmp __b2
 }
   // sprites_irq_init
 // Setup the IRQ
@@ -4211,7 +4212,7 @@ sprites_init: {
     // [64] phi (byte) sprites_init::xpos#2 = (byte) sprites_init::xpos#1 [phi:sprites_init::@1->sprites_init::@1#0] -- register_copy 
     // [64] phi (byte) sprites_init::s#2 = (byte) sprites_init::s#1 [phi:sprites_init::@1->sprites_init::@1#1] -- register_copy 
     // sprites_init::@1
-  b1:
+  __b1:
     // s2 = s*2
     // [65] (byte) sprites_init::s2#0 ← (byte) sprites_init::s#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
     tya
@@ -4235,7 +4236,7 @@ sprites_init: {
     iny
     // [70] if((byte) sprites_init::s#1!=(byte) 4) goto sprites_init::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #4
-    bne b1
+    bne __b1
     // sprites_init::@return
     // }
     // [71] return 
@@ -4281,12 +4282,12 @@ sprites_irq: {
     // Wait for the y-position before changing sprite pointers
     stx.z raster_sprite_gfx_modify
     // sprites_irq::@8
-  b8:
+  __b8:
     // while(*RASTER<raster_sprite_gfx_modify)
     // [80] if(*((const byte*) RASTER)<(byte) sprites_irq::raster_sprite_gfx_modify#0) goto sprites_irq::@8 -- _deref_pbuc1_lt_vbuz1_then_la1 
     lda RASTER
     cmp.z raster_sprite_gfx_modify
-    bcc b8
+    bcc __b8
     // sprites_irq::@9
     // ptr = irq_sprite_ptr
     // [81] (byte) sprites_irq::ptr#0 ← (byte) irq_sprite_ptr#0 -- vbuxx=vbuz1 
@@ -4295,7 +4296,7 @@ sprites_irq: {
     // [82] if((byte) render_screen_showing#0==(byte) 0) goto sprites_irq::@1 -- vbuz1_eq_0_then_la1 
     lda.z render_screen_showing
     cmp #0
-    beq b1
+    beq __b1
     // sprites_irq::@10
     // PLAYFIELD_SPRITE_PTRS_2[0] = ptr++
     // [83] *((const byte*) PLAYFIELD_SPRITE_PTRS_2) ← (byte) sprites_irq::ptr#0 -- _deref_pbuc1=vbuxx 
@@ -4318,7 +4319,7 @@ sprites_irq: {
     // [88] *((const byte*) PLAYFIELD_SPRITE_PTRS_2+(byte) 3) ← (byte) sprites_irq::ptr#4 -- _deref_pbuc1=vbuaa 
     sta PLAYFIELD_SPRITE_PTRS_2+3
     // sprites_irq::@2
-  b2:
+  __b2:
     // ++irq_cnt;
     // [89] (byte) irq_cnt#1 ← ++ (byte) irq_cnt#0 -- vbuz1=_inc_vbuz1 
     inc.z irq_cnt
@@ -4326,13 +4327,13 @@ sprites_irq: {
     // [90] if((byte) irq_cnt#1==(byte) 9) goto sprites_irq::@3 -- vbuz1_eq_vbuc1_then_la1 
     lda #9
     cmp.z irq_cnt
-    beq b3
+    beq __b3
     // sprites_irq::@6
     // if(irq_cnt==10)
     // [91] if((byte) irq_cnt#1==(byte) $a) goto sprites_irq::@4 -- vbuz1_eq_vbuc1_then_la1 
     lda #$a
     cmp.z irq_cnt
-    beq b4
+    beq __b4
     // sprites_irq::@7
     // irq_raster_next += 20
     // [92] (byte) irq_raster_next#3 ← (byte) irq_raster_next#0 + (byte) $14 -- vbuz1=vbuz1_plus_vbuc1 
@@ -4355,7 +4356,7 @@ sprites_irq: {
     // [95] phi (byte) irq_cnt#3 = (byte) irq_cnt#1 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5#2] -- register_copy 
     // [95] phi (byte) irq_raster_next#4 = (byte) irq_raster_next#1 [phi:sprites_irq::@11/sprites_irq::@4/sprites_irq::@7->sprites_irq::@5#3] -- register_copy 
     // sprites_irq::@5
-  b5:
+  __b5:
     // *RASTER = irq_raster_next
     // [96] *((const byte*) RASTER) ← (byte) irq_raster_next#4 -- _deref_pbuc1=vbuz1 
     // Setup next interrupt
@@ -4375,7 +4376,7 @@ sprites_irq: {
     ldx #00
     rti
     // sprites_irq::@4
-  b4:
+  __b4:
     // irq_cnt = 0
     // [99] (byte) irq_cnt#2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
@@ -4394,9 +4395,9 @@ sprites_irq: {
     lax.z irq_sprite_ptr
     axs #-[3]
     stx.z irq_sprite_ptr
-    jmp b5
+    jmp __b5
     // sprites_irq::@3
-  b3:
+  __b3:
     // irq_raster_next += 21
     // [103] (byte) irq_raster_next#1 ← (byte) irq_raster_next#0 + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z irq_raster_next
@@ -4413,9 +4414,9 @@ sprites_irq: {
     // [106] (byte) irq_sprite_ptr#1 ← (const byte) sprites_irq::toSpritePtr2_return#0 -- vbuz1=vbuc1 
     lda #toSpritePtr2_return
     sta.z irq_sprite_ptr
-    jmp b5
+    jmp __b5
     // sprites_irq::@1
-  b1:
+  __b1:
     // PLAYFIELD_SPRITE_PTRS_1[0] = ptr++
     // [107] *((const byte*) PLAYFIELD_SPRITE_PTRS_1) ← (byte) sprites_irq::ptr#0 -- _deref_pbuc1=vbuxx 
     stx PLAYFIELD_SPRITE_PTRS_1
@@ -4435,7 +4436,7 @@ sprites_irq: {
     // PLAYFIELD_SPRITE_PTRS_1[3] = ptr
     // [112] *((const byte*) PLAYFIELD_SPRITE_PTRS_1+(byte) 3) ← (byte) sprites_irq::ptr#2 -- _deref_pbuc1=vbuaa 
     sta PLAYFIELD_SPRITE_PTRS_1+3
-    jmp b2
+    jmp __b2
 }
   // File Data
 SIN:

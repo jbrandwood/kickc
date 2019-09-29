@@ -267,32 +267,32 @@ Target platform is c64basic / MOS6502X
 // Test that the compiler optimizes when the same parameter value is passed into a function in all calls
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
     .label reverse = $80
-    .label _0 = 4
-    .label _1 = 6
-    .label _2 = 8
+    .label __0 = 4
+    .label __1 = 6
+    .label __2 = 8
     // [5] call sum 
     // [18] phi from main to sum [phi:main->sum]
   sum_from_main:
@@ -303,18 +303,18 @@ main: {
     // [6] (byte) sum::return#0 ← (byte) sum::return#3 -- vbuz1=vbuz2 
     lda.z sum.return_3
     sta.z sum.return
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (byte~) main::$0 ← (byte) sum::return#0 -- vbuz1=vbuz2 
     lda.z sum.return
-    sta.z _0
+    sta.z __0
     // [8] *((const byte*) main::screen) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
-    lda.z _0
+    lda.z __0
     sta screen
     // [9] call sum 
     // [18] phi from main::@1 to sum [phi:main::@1->sum]
-  sum_from_b1:
+  sum_from___b1:
     // [18] phi (byte) sum::b#3 = (byte) 'm' [phi:main::@1->sum#0] -- vbuz1=vbuc1 
     lda #'m'
     sta.z sum.b
@@ -322,18 +322,18 @@ main: {
     // [10] (byte) sum::return#1 ← (byte) sum::return#3 -- vbuz1=vbuz2 
     lda.z sum.return_3
     sta.z sum.return_1
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [11] (byte~) main::$1 ← (byte) sum::return#1 -- vbuz1=vbuz2 
     lda.z sum.return_1
-    sta.z _1
+    sta.z __1
     // [12] *((const byte*) main::screen+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
-    lda.z _1
+    lda.z __1
     sta screen+1
     // [13] call sum 
     // [18] phi from main::@2 to sum [phi:main::@2->sum]
-  sum_from_b2:
+  sum_from___b2:
     // [18] phi (byte) sum::b#3 = (byte) 'l' [phi:main::@2->sum#0] -- vbuz1=vbuc1 
     lda #'l'
     sta.z sum.b
@@ -341,18 +341,18 @@ main: {
     // [14] (byte) sum::return#2 ← (byte) sum::return#3 -- vbuz1=vbuz2 
     lda.z sum.return_3
     sta.z sum.return_2
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [15] (byte~) main::$2 ← (byte) sum::return#2 -- vbuz1=vbuz2 
     lda.z sum.return_2
-    sta.z _2
+    sta.z __2
     // [16] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
-    lda.z _2
+    lda.z __2
     sta screen+2
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
@@ -368,9 +368,9 @@ sum: {
     lax.z b
     axs #-[main.reverse]
     stx.z return_3
-    jmp breturn
+    jmp __breturn
     // sum::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
 }
@@ -403,25 +403,25 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test that the compiler optimizes when the same parameter value is passed into a function in all calls
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
@@ -433,41 +433,41 @@ main: {
     lda #'c'
     jsr sum
     // [6] (byte) sum::return#0 ← (byte) sum::return#3
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (byte~) main::$0 ← (byte) sum::return#0
     // [8] *((const byte*) main::screen) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta screen
     // [9] call sum 
     // [18] phi from main::@1 to sum [phi:main::@1->sum]
-  sum_from_b1:
+  sum_from___b1:
     // [18] phi (byte) sum::b#3 = (byte) 'm' [phi:main::@1->sum#0] -- vbuaa=vbuc1 
     lda #'m'
     jsr sum
     // [10] (byte) sum::return#1 ← (byte) sum::return#3
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [11] (byte~) main::$1 ← (byte) sum::return#1
     // [12] *((const byte*) main::screen+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta screen+1
     // [13] call sum 
     // [18] phi from main::@2 to sum [phi:main::@2->sum]
-  sum_from_b2:
+  sum_from___b2:
     // [18] phi (byte) sum::b#3 = (byte) 'l' [phi:main::@2->sum#0] -- vbuaa=vbuc1 
     lda #'l'
     jsr sum
     // [14] (byte) sum::return#2 ← (byte) sum::return#3
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [15] (byte~) main::$2 ← (byte) sum::return#2
     // [16] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+2
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
@@ -477,42 +477,43 @@ sum: {
     // [19] (byte) sum::return#3 ← (const byte) main::reverse + (byte) sum::b#3 -- vbuaa=vbuc1_plus_vbuaa 
     clc
     adc #main.reverse
-    jmp breturn
+    jmp __breturn
     // sum::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction sum_from_main:
-Removing instruction b1:
-Removing instruction sum_from_b1:
-Removing instruction b2:
-Removing instruction sum_from_b2:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction sum_from___b1:
+Removing instruction __b2:
+Removing instruction sum_from___b2:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

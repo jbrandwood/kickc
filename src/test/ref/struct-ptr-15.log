@@ -433,30 +433,30 @@ Target platform is c64basic / MOS6502X
 // Minimal struct -  using pointers to nested structs
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_CIRCLE = 3
   .const OFFSET_STRUCT_CIRCLE_CENTER = 1
   .const OFFSET_STRUCT_POINT_Y = 1
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
-    .label _14 = 7
+    .label __14 = 7
     .label x = 6
     .label y = 9
     .label idx = $a
@@ -483,7 +483,7 @@ main: {
     lda #$f
     sta circles+1*SIZEOF_STRUCT_CIRCLE
     // [10] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [10] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -495,15 +495,15 @@ main: {
     sta.z ptr
     lda #>circles
     sta.z ptr+1
-    jmp b1
+    jmp __b1
     // [10] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [10] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [10] phi (byte) main::idx#3 = (byte) main::idx#2 [phi:main::@1->main::@1#1] -- register_copy 
     // [10] phi (struct Circle*) main::ptr#2 = (struct Circle*) main::ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [11] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) -- vbuz1=pbuz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_CIRCLE_CENTER
     lda (ptr),y
@@ -512,13 +512,13 @@ main: {
     lda #OFFSET_STRUCT_CIRCLE_CENTER
     clc
     adc.z ptr
-    sta.z _14
+    sta.z __14
     lda #0
     adc.z ptr+1
-    sta.z _14+1
+    sta.z __14+1
     // [13] (byte) main::y#0 ← *((byte*)(struct Point*) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=pbuz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_POINT_Y
-    lda (_14),y
+    lda (__14),y
     sta.z y
     // [14] *((const byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z x
@@ -549,10 +549,10 @@ main: {
     // [20] if((byte) main::i#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #2
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
 }
@@ -623,30 +623,30 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Minimal struct -  using pointers to nested structs
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_CIRCLE = 3
   .const OFFSET_STRUCT_CIRCLE_CENTER = 1
   .const OFFSET_STRUCT_POINT_Y = 1
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
-    .label _14 = 6
+    .label __14 = 6
     .label x = 5
     .label ptr = 2
     .label i = 4
@@ -669,7 +669,7 @@ main: {
     lda #$f
     sta circles+1*SIZEOF_STRUCT_CIRCLE
     // [10] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [10] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -680,15 +680,15 @@ main: {
     sta.z ptr
     lda #>circles
     sta.z ptr+1
-    jmp b1
+    jmp __b1
     // [10] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [10] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [10] phi (byte) main::idx#3 = (byte) main::idx#2 [phi:main::@1->main::@1#1] -- register_copy 
     // [10] phi (struct Circle*) main::ptr#2 = (struct Circle*) main::ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [11] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) -- vbuz1=pbuz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_CIRCLE_CENTER
     lda (ptr),y
@@ -697,13 +697,13 @@ main: {
     lda #OFFSET_STRUCT_CIRCLE_CENTER
     clc
     adc.z ptr
-    sta.z _14
+    sta.z __14
     lda #0
     adc.z ptr+1
-    sta.z _14+1
+    sta.z __14+1
     // [13] (byte) main::y#0 ← *((byte*)(struct Point*) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) -- vbuyy=pbuz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_POINT_Y
-    lda (_14),y
+    lda (__14),y
     tay
     // [14] *((const byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z x
@@ -728,10 +728,10 @@ main: {
     // [20] if((byte) main::i#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #2
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
 }
@@ -739,29 +739,30 @@ main: {
   circles: .fill 3*2, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldx #0 with TAX
 Replacing instruction lda #OFFSET_STRUCT_CIRCLE_CENTER with TYA
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -827,7 +828,7 @@ Score: 1082
   // main
 main: {
     .label SCREEN = $400
-    .label _14 = 6
+    .label __14 = 6
     .label x = 5
     .label ptr = 2
     .label i = 4
@@ -871,7 +872,7 @@ main: {
     // [10] phi (byte) main::idx#3 = (byte) main::idx#2 [phi:main::@1->main::@1#1] -- register_copy 
     // [10] phi (struct Circle*) main::ptr#2 = (struct Circle*) main::ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // x = ptr->center.x
     // [11] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) -- vbuz1=pbuz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_CIRCLE_CENTER
@@ -882,13 +883,13 @@ main: {
     tya
     clc
     adc.z ptr
-    sta.z _14
+    sta.z __14
     lda #0
     adc.z ptr+1
-    sta.z _14+1
+    sta.z __14+1
     // [13] (byte) main::y#0 ← *((byte*)(struct Point*) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) -- vbuyy=pbuz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_POINT_Y
-    lda (_14),y
+    lda (__14),y
     tay
     // SCREEN[idx++] = x
     // [14] *((const byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 -- pbuc1_derefidx_vbuxx=vbuz1 
@@ -919,7 +920,7 @@ main: {
     // [20] if((byte) main::i#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #2
     cmp.z i
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [21] return 

@@ -197,9 +197,9 @@ main: {
     sta PROCPORT_DDR
     lda #PROCPORT_BASIC_KERNEL_IO
     sta PROCPORT
-  b1:
+  __b1:
     inc SCREEN+$3e7
-    jmp b1
+    jmp __b1
     str: .text "ddr port ddr2 $00 $01 $a000 $d000 $e000"
     .byte 0
 }
@@ -288,7 +288,7 @@ testProcport: {
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -298,11 +298,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -338,13 +338,13 @@ print_char: {
 // print_str(byte* zeropage(6) str)
 print_str: {
     .label str = 6
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -356,7 +356,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -374,15 +374,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -390,6 +390,6 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"

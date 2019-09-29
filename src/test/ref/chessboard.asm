@@ -17,9 +17,9 @@ main: {
     sta.z screen
     lda #>$400
     sta.z screen+1
-  b1:
+  __b1:
     ldy #0
-  b2:
+  __b2:
     lda #$a0
     sta (screen),y
     txa
@@ -29,7 +29,7 @@ main: {
     tax
     iny
     cpy #8
-    bne b2
+    bne __b2
     txa
     eor #1
     tax
@@ -50,6 +50,6 @@ main: {
     inc.z row
     lda #8
     cmp.z row
-    bne b1
+    bne __b1
     rts
 }

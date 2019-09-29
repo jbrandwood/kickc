@@ -1,9 +1,9 @@
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label ptr = 2
-bbegin:
+__bbegin:
   lda #<$1000
   sta.z ptr
   lda #>$1000

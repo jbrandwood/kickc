@@ -7,7 +7,7 @@ main: {
     .label f = 3
     lda #0
     sta.z i
-  b2:
+  __b2:
     inc.z i
     lda #1
     and.z i
@@ -18,7 +18,7 @@ main: {
     lda fns+1,y
     sta.z f+1
     jsr bi_f
-    jmp b2
+    jmp __b2
   bi_f:
     jmp (f)
 }

@@ -1,7 +1,7 @@
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
 // Plots simple plots
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   // Processor port data direction register
   .label PROCPORT_DDR = 0
@@ -37,7 +37,7 @@
   .label BITMAP = $2000
   .label SCREEN = $400
   .label frame_cnt = 7
-bbegin:
+__b1:
   // Counts frames - updated by the IRQ
   lda #1
   sta.z frame_cnt
@@ -64,7 +64,7 @@ main: {
     sta.z y
     sta.z x
     sta.z x+1
-  b2:
+  __b2:
     ldx.z y
     jsr bitmap_plot
     lda.z x
@@ -83,13 +83,13 @@ main: {
     bne !+
     lda.z x+1
     cmp #>$13f
-    beq b5
+    beq __b5
   !:
     lda.z x
-    bne b3
+    bne __b3
     lda.z x+1
-    bne b3
-  b5:
+    bne __b3
+  __b5:
     sec
     lda #0
     sbc.z vx
@@ -97,28 +97,28 @@ main: {
     lda #0
     sbc.z vx+1
     sta.z vx+1
-  b3:
+  __b3:
     lda #$c7
     cmp.z y
-    beq b6
+    beq __b6
     lda.z y
     cmp #0
-    bne b4
-  b6:
+    bne __b4
+  __b6:
     lda.z vy
     eor #$ff
     clc
     adc #1
     sta.z vy
-  b4:
+  __b4:
     ldx.z frame_cnt
     inc plots_per_frame,x
-    jmp b2
+    jmp __b2
 }
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage(3) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $a
+    .label __1 = $a
     .label plotter = 8
     .label x = 3
     lda bitmap_plot_yhi,x
@@ -127,16 +127,16 @@ bitmap_plot: {
     sta.z plotter
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter+1
     lda.z x
     tay
@@ -211,7 +211,7 @@ memset: {
     lda.z num
     bne !+
     lda.z num+1
-    beq breturn
+    beq __breturn
   !:
     lda.z end
     clc
@@ -220,16 +220,16 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-  b2:
+  __b2:
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
-  breturn:
+    bne __b3
+  __breturn:
     rts
-  b3:
+  __b3:
     txa
     ldy #0
     sta (dst),y
@@ -237,40 +237,40 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2
+    jmp __b2
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _7 = $c
+    .label __7 = $c
     .label yoffs = 8
     ldx #0
     lda #$80
-  b1:
+  __b1:
     sta bitmap_plot_bit,x
     lsr
     cmp #0
-    bne b2
+    bne __b2
     lda #$80
-  b2:
+  __b2:
     inx
     cpx #0
-    bne b1
+    bne __b1
     lda #<BITMAP
     sta.z yoffs
     lda #>BITMAP
     sta.z yoffs+1
     ldx #0
-  b3:
+  __b3:
     lda #7
-    sax.z _7
+    sax.z __7
     lda.z yoffs
-    ora.z _7
+    ora.z __7
     sta bitmap_plot_ylo,x
     lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp.z _7
-    bne b4
+    cmp.z __7
+    bne __b4
     clc
     lda.z yoffs
     adc #<$28*8
@@ -278,10 +278,10 @@ bitmap_init: {
     lda.z yoffs+1
     adc #>$28*8
     sta.z yoffs+1
-  b4:
+  __b4:
     inx
     cpx #0
-    bne b3
+    bne __b3
     rts
 }
 // Interrupt Routine counting frames
@@ -291,9 +291,9 @@ irq: {
     sta BGCOL
     lda #0
     cmp.z frame_cnt
-    beq b1
+    beq __b1
     inc.z frame_cnt
-  b1:
+  __b1:
     lda #BLACK
     sta BGCOL
     // Acknowledge the IRQ

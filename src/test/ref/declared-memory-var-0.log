@@ -141,51 +141,51 @@ Target platform is c64basic / MOS6502X
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label idx_ptr = idx
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [0] *((const byte*) idx_ptr) ← (byte) 0 -- _deref_pbuc1=vbuc2 
   lda #0
   sta idx_ptr
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [5] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
-  jmp b2
+  jmp __b2
   // @2
-b2:
+__b2:
   // [3] *((const byte*) idx_ptr) ← *((const byte*) idx_ptr) -- _deref_pbuc1=_deref_pbuc1 
   lda idx_ptr
   sta idx_ptr
   // [4] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label i = 2
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_ptr) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
     lda idx_ptr
     ldy.z i
@@ -200,10 +200,10 @@ main: {
     // [10] if((byte) main::i#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] *((const byte*) idx_ptr) ← *((const byte*) idx_ptr) -- _deref_pbuc1=_deref_pbuc1 
     lda idx_ptr
     sta idx_ptr
@@ -239,49 +239,49 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label idx_ptr = idx
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [0] *((const byte*) idx_ptr) ← (byte) 0 -- _deref_pbuc1=vbuc2 
   lda #0
   sta idx_ptr
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [5] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
-  jmp b2
+  jmp __b2
   // @2
-b2:
+__b2:
   // [3] *((const byte*) idx_ptr) ← *((const byte*) idx_ptr) -- _deref_pbuc1=_deref_pbuc1 
   lda idx_ptr
   sta idx_ptr
   // [4] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_ptr) -- pbuc1_derefidx_vbuxx=_deref_pbuc2 
     lda idx_ptr
     sta SCREEN,x
@@ -294,10 +294,10 @@ main: {
     inx
     // [10] if((byte) main::i#1!=(byte) 6) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #6
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] *((const byte*) idx_ptr) ← *((const byte*) idx_ptr) -- _deref_pbuc1=_deref_pbuc1 
     lda idx_ptr
     sta idx_ptr
@@ -308,27 +308,27 @@ main: {
   idx: .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b2:
-Removing instruction b1_from_b1:
+Replacing label __b1_from___b1 with __b1
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b2:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b1:
-Removing instruction b2:
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda idx_ptr
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
@@ -361,13 +361,13 @@ Score: 323
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label idx_ptr = idx
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // idx
   // [0] *((const byte*) idx_ptr) ← (byte) 0 -- _deref_pbuc1=vbuc2 
   lda #0
@@ -390,7 +390,7 @@ main: {
     // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // SCREEN[i] = idx
     // [7] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_ptr) -- pbuc1_derefidx_vbuxx=_deref_pbuc2 
     lda idx_ptr
@@ -406,7 +406,7 @@ main: {
     inx
     // [10] if((byte) main::i#1!=(byte) 6) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #6
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [11] *((const byte*) idx_ptr) ← *((const byte*) idx_ptr) -- _deref_pbuc1=_deref_pbuc1 

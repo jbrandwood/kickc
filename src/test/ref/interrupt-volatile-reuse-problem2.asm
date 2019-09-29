@@ -1,12 +1,12 @@
 // Illustrates problem where volatiles reuse ZP addresses of other variables
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label IRQ_STATUS = $d019
   .label SCREEN = $400
   .label col1 = 3
-bbegin:
+__bbegin:
   lda #0
   sta.z col1
   jsr main
@@ -17,29 +17,29 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  b4:
-    ldx #0
   b1:
+    ldx #0
+  __b1:
     lda #0
     sta.z y
-  b2:
+  __b2:
     ldy #0
-  b3:
+  __b3:
     tya
     clc
     adc.z y
     sta SCREEN,x
     iny
     cpy #$b
-    bne b3
+    bne __b3
     inc.z y
     lda #$b
     cmp.z y
-    bne b2
+    bne __b2
     inx
     cpx #$b
-    bne b1
-    jmp b4
+    bne __b1
+    jmp b1
 }
 irq: {
     // Acknowledge the IRQ

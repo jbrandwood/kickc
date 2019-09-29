@@ -5,12 +5,12 @@
 main: {
     .label SCREEN = $400
     ldx #0
-  b1:
+  __b1:
     lda sbs,x
     sta SCREEN,x
     inx
     cpx #4
-    bne b1
+    bne __b1
     rts
     sbs: .byte -1, -2, -3, -4
 }

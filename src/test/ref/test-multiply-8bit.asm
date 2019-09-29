@@ -25,10 +25,10 @@ mul8s_compare: {
     .label b = $f
     lda #-$80
     sta.z a
-  b1:
+  __b1:
     lda #-$80
     cmp.z a
-    bne b2
+    bne b1
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -40,16 +40,16 @@ mul8s_compare: {
     jsr print_str
     jsr print_ln
     rts
-  b2:
+  b1:
     lda #-$80
     sta.z b
-  b3:
+  __b3:
     lda #-$80
     cmp.z b
-    bne b4
+    bne __b4
     inc.z a
-    jmp b1
-  b4:
+    jmp __b1
+  __b4:
     ldx.z b
     jsr muls8s
     lda.z a
@@ -62,32 +62,32 @@ mul8s_compare: {
     bne !+
     lda.z ms+1
     cmp.z mf+1
-    beq b5
+    beq b2
   !:
     ldx #0
-    jmp b6
-  b5:
+    jmp __b6
+  b2:
     ldx #1
-  b6:
+  __b6:
     lda.z ms
     cmp.z mn
     bne !+
     lda.z ms+1
     cmp.z mn+1
-    beq b7
+    beq __b7
   !:
     ldx #0
-  b7:
+  __b7:
     cpx #0
-    bne b8
+    bne __b8
     lda #2
     sta BGCOL
     ldx.z a
     jsr mul8s_error
     rts
-  b8:
+  __b8:
     inc.z b
-    jmp b3
+    jmp __b3
     str: .text "signed multiply results match!"
     .byte 0
 }
@@ -147,7 +147,7 @@ mul8s_error: {
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -157,11 +157,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -170,13 +170,13 @@ print_ln: {
 print_sword: {
     .label w = 4
     lda.z w+1
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_word
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     sec
@@ -186,7 +186,7 @@ print_sword: {
     lda #0
     sbc.z w+1
     sta.z w+1
-    jmp b2
+    jmp __b2
 }
 // Print a single char
 // print_char(byte register(A) ch)
@@ -232,13 +232,13 @@ print_byte: {
 // print_str(byte* zeropage($d) str)
 print_str: {
     .label str = $d
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -250,19 +250,19 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Print a signed byte as HEX
 // print_sbyte(signed byte register(X) b)
 print_sbyte: {
     cpx #0
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_byte
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     txa
@@ -270,7 +270,7 @@ print_sbyte: {
     clc
     adc #1
     tax
-    jmp b2
+    jmp __b2
 }
 // Multiply of two signed bytes to a signed word
 // Fixes offsets introduced by using unsigned multiplication
@@ -286,20 +286,20 @@ mul8s: {
     jsr mul8u
     lda.z a
     cmp #0
-    bpl b1
+    bpl __b1
     lda.z m+1
     sty.z $ff
     sec
     sbc.z $ff
     sta.z m+1
-  b1:
+  __b1:
     cpy #0
-    bpl b2
+    bpl __b2
     lda.z m+1
     sec
     sbc.z a
     sta.z m+1
-  b2:
+  __b2:
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
@@ -311,15 +311,15 @@ mul8u: {
     lda #<0
     sta.z res
     sta.z res+1
-  b1:
+  __b1:
     cpx #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     txa
     and #1
     cmp #0
-    beq b3
+    beq __b3
     lda.z res
     clc
     adc.z mb
@@ -327,13 +327,13 @@ mul8u: {
     lda.z res+1
     adc.z mb+1
     sta.z res+1
-  b3:
+  __b3:
     txa
     lsr
     tax
     asl.z mb
     rol.z mb+1
-    jmp b1
+    jmp __b1
 }
 // Fast multiply two signed bytes to a word result
 // mulf8s(signed byte register(A) a, signed byte register(X) b)
@@ -355,20 +355,20 @@ mulf8s_prepared: {
     jsr mulf8u_prepared
     lda memA
     cmp #0
-    bpl b1
+    bpl __b1
     lda.z m+1
     sec
     sbc.z b
     sta.z m+1
-  b1:
+  __b1:
     lda.z b
     cmp #0
-    bpl b2
+    bpl __b2
     lda.z m+1
     sec
     sbc memA
     sta.z m+1
-  b2:
+  __b2:
     rts
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
@@ -416,23 +416,23 @@ muls8s: {
     .label return = 4
     .label a = $c
     lda.z a
-    bmi b8
+    bmi b3
     cmp #1
-    bmi b7
+    bmi b2
     lda #<0
     sta.z m
     sta.z m+1
     tay
-  b3:
+  __b3:
     cpy.z a
-    bne b4
+    bne __b4
     rts
-  b7:
+  b2:
     lda #<0
     sta.z return
     sta.z return+1
     rts
-  b4:
+  __b4:
     txa
     sta.z $fe
     ora #$7f
@@ -448,17 +448,17 @@ muls8s: {
     adc.z $ff
     sta.z m+1
     iny
-    jmp b3
-  b8:
+    jmp __b3
+  b3:
     lda #<0
     sta.z m
     sta.z m+1
     tay
-  b5:
+  __b5:
     cpy.z a
-    bne b6
+    bne __b6
     rts
-  b6:
+  __b6:
     txa
     sta.z $fe
     ora #$7f
@@ -474,7 +474,7 @@ muls8s: {
     sbc.z $ff
     sta.z m+1
     dey
-    jmp b5
+    jmp __b5
 }
 // Perform all possible byte multiplications (slow and fast) and compare the results
 mul8u_compare: {
@@ -485,10 +485,10 @@ mul8u_compare: {
     .label a = $c
     lda #0
     sta.z a
-  b1:
+  __b1:
     lda #0
     sta.z b
-  b2:
+  __b2:
     ldx.z b
     jsr muls8u
     lda.z a
@@ -505,38 +505,38 @@ mul8u_compare: {
     bne !+
     lda.z ms+1
     cmp.z mf+1
-    beq b6
+    beq b1
   !:
     ldx #0
-    jmp b3
-  b6:
+    jmp __b3
+  b1:
     ldx #1
-  b3:
+  __b3:
     lda.z ms
     cmp.z mn
     bne !+
     lda.z ms+1
     cmp.z mn+1
-    beq b4
+    beq __b4
   !:
     ldx #0
-  b4:
+  __b4:
     cpx #0
-    bne b5
+    bne __b5
     lda #2
     sta BGCOL
     ldx.z a
     jsr mul8u_error
     rts
-  b5:
+  __b5:
     inc.z b
     lda.z b
     cmp #0
-    bne b2
+    bne __b2
     inc.z a
     lda.z a
     cmp #0
-    bne b1
+    bne __b1
     lda #<str
     sta.z print_str.str
     lda #>str
@@ -614,21 +614,21 @@ muls8u: {
     .label a = $c
     lda.z a
     cmp #0
-    beq b4
+    beq b1
     lda #<0
     sta.z m
     sta.z m+1
     tay
-  b2:
+  __b2:
     cpy.z a
-    bne b3
+    bne __b3
     rts
-  b4:
+  b1:
     lda #<0
     sta.z return
     sta.z return+1
     rts
-  b3:
+  __b3:
     txa
     clc
     adc.z m
@@ -637,7 +637,7 @@ muls8u: {
     inc.z m+1
   !:
     iny
-    jmp b2
+    jmp __b2
 }
 // Compare the ASM-based mul tables with the KC-based mul tables
 // Red screen on failure - green on success
@@ -652,14 +652,14 @@ mulf_tables_cmp: {
     sta.z kc_sqr
     lda #>mulf_sqr1_lo
     sta.z kc_sqr+1
-  b1:
+  __b1:
     lda.z kc_sqr+1
     cmp #>mulf_sqr1_lo+$200*4
-    bcc b2
+    bcc __b2
     bne !+
     lda.z kc_sqr
     cmp #<mulf_sqr1_lo+$200*4
-    bcc b2
+    bcc __b2
   !:
     lda #<$400
     sta.z print_char_cursor
@@ -680,11 +680,11 @@ mulf_tables_cmp: {
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     rts
-  b2:
+  __b2:
     ldy #0
     lda (kc_sqr),y
     cmp (asm_sqr),y
-    beq b4
+    beq __b4
     lda #2
     sta BGCOL
     lda #<$400
@@ -712,7 +712,7 @@ mulf_tables_cmp: {
     lda #>$400
     sta.z print_line_cursor+1
     rts
-  b4:
+  __b4:
     inc.z asm_sqr
     bne !+
     inc.z asm_sqr+1
@@ -721,7 +721,7 @@ mulf_tables_cmp: {
     bne !+
     inc.z kc_sqr+1
   !:
-    jmp b1
+    jmp __b1
     str: .text "multiply tables match!"
     .byte 0
     str1: .text "multiply table mismatch at "
@@ -804,13 +804,13 @@ mulf_init: {
     sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta.z sqr1_lo+1
-  b1:
+  __b1:
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     lda #$ff
     sta.z dir
     lda #<mulf_sqr2_hi
@@ -822,20 +822,20 @@ mulf_init: {
     sta.z sqr2_lo
     lda #>mulf_sqr2_lo
     sta.z sqr2_lo+1
-  b5:
+  __b5:
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
     lda mulf_sqr1_hi+$100
     sta mulf_sqr2_hi+$1ff
     rts
-  b6:
+  __b6:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -850,27 +850,27 @@ mulf_init: {
     adc.z dir
     tax
     cpx #0
-    bne b8
+    bne __b8
     lda #1
     sta.z dir
-  b8:
+  __b8:
     inc.z sqr2_lo
     bne !+
     inc.z sqr2_lo+1
   !:
-    jmp b5
-  b2:
+    jmp __b5
+  __b2:
     inc.z c
     lda #1
     and.z c
     cmp #0
-    bne b3
+    bne __b3
     inx
     inc.z sqr
     bne !+
     inc.z sqr+1
   !:
-  b3:
+  __b3:
     lda.z sqr
     ldy #0
     sta (sqr1_lo),y
@@ -891,7 +891,7 @@ mulf_init: {
     bne !+
     inc.z sqr1_lo+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -909,15 +909,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -925,7 +925,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).

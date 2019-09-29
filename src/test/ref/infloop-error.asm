@@ -7,21 +7,21 @@ main: {
     ldy #0
     ldx #$ff
     tya
-  b2:
+  __b2:
     clc
     adc #1
     stx.z $ff
     cmp.z $ff
-    bcs b3
+    bcs __b3
     tax
-  b3:
+  __b3:
     sta.z $ff
     cpy.z $ff
-    bcs b4
+    bcs __b4
     tay
-  b4:
+  __b4:
     stx SCREEN
     sty SCREEN+1
     sta SCREEN+2
-    jmp b2
+    jmp __b2
 }

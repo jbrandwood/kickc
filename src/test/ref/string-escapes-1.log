@@ -238,32 +238,32 @@ Target platform is c64basic / MOS6502X
 // Test using some simple supported string escape \n in both string and char
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label cursor = 6
     .label msg = 2
     .label line = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::cursor#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z cursor
@@ -279,29 +279,29 @@ main: {
     sta.z msg
     lda #>MESSAGE
     sta.z msg+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [8] if(*((byte*) main::msg#2)==(byte) ' ') goto main::@3 -- _deref_pbuz1_eq_vbuc1_then_la1 
     lda #'\n'
     ldy #0
     cmp (msg),y
-    beq b3
-    jmp b4
+    beq __b3
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [9] *((byte*) main::cursor#3) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (msg),y
@@ -313,26 +313,26 @@ main: {
     inc.z cursor+1
   !:
     // [11] phi from main::@3 main::@4 to main::@5 [phi:main::@3/main::@4->main::@5]
-  b5_from_b3:
-  b5_from_b4:
+  __b5_from___b3:
+  __b5_from___b4:
     // [11] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
     // [11] phi (byte*) main::line#5 = (byte*~) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
-    jmp b5
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [12] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
     // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#6 [phi:main::@5->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::line#2 = (byte*) main::line#5 [phi:main::@5->main::@1#1] -- register_copy 
     // [5] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@5->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@3
-  b3:
+  __b3:
     // [13] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$28
     clc
@@ -346,7 +346,7 @@ main: {
     sta.z line
     lda.z cursor+1
     sta.z line+1
-    jmp b5_from_b3
+    jmp __b5_from___b3
 }
   // File Data
   MESSAGE: .text @"hello\nworld"
@@ -375,32 +375,32 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test using some simple supported string escape \n in both string and char
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label cursor = 6
     .label msg = 2
     .label line = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::cursor#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z cursor
@@ -416,29 +416,29 @@ main: {
     sta.z msg
     lda #>MESSAGE
     sta.z msg+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [8] if(*((byte*) main::msg#2)==(byte) ' ') goto main::@3 -- _deref_pbuz1_eq_vbuc1_then_la1 
     lda #'\n'
     ldy #0
     cmp (msg),y
-    beq b3
-    jmp b4
+    beq __b3
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [9] *((byte*) main::cursor#3) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (msg),y
@@ -450,26 +450,26 @@ main: {
     inc.z cursor+1
   !:
     // [11] phi from main::@3 main::@4 to main::@5 [phi:main::@3/main::@4->main::@5]
-  b5_from_b3:
-  b5_from_b4:
+  __b5_from___b3:
+  __b5_from___b4:
     // [11] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
     // [11] phi (byte*) main::line#5 = (byte*~) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
-    jmp b5
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [12] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
     // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#6 [phi:main::@5->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::line#2 = (byte*) main::line#5 [phi:main::@5->main::@1#1] -- register_copy 
     // [5] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@5->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@3
-  b3:
+  __b3:
     // [13] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$28
     clc
@@ -483,42 +483,43 @@ main: {
     sta.z line
     lda.z cursor+1
     sta.z line+1
-    jmp b5_from_b3
+    jmp __b5_from___b3
 }
   // File Data
   MESSAGE: .text @"hello\nworld"
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b4
-Removing instruction jmp b5
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b4
+Removing instruction jmp __b5
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b5_from_b3 with b5
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b5_from_b3:
-Removing instruction b5_from_b4:
+Replacing label __bbegin with __b1
+Replacing label __b5_from___b3 with __b5
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b5_from___b3:
+Removing instruction __b5_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
-Removing instruction b4:
-Removing instruction b1_from_b5:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b4:
+Removing instruction __b1_from___b5:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -591,19 +592,19 @@ main: {
     lda #>MESSAGE
     sta.z msg+1
     // main::@1
-  b1:
+  __b1:
     // while(*msg)
     // [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
-    bne b2
+    bne __b2
     // main::@return
     // }
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // case '\n':
     //                 line += 0x28;
     //                 cursor = line;
@@ -612,7 +613,7 @@ main: {
     lda #'\n'
     ldy #0
     cmp (msg),y
-    beq b3
+    beq __b3
     // main::@4
     // *cursor++ = *msg
     // [9] *((byte*) main::cursor#3) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
@@ -628,7 +629,7 @@ main: {
     // [11] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
     // [11] phi (byte*) main::line#5 = (byte*~) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
     // main::@5
-  b5:
+  __b5:
     // msg++;
     // [12] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
     inc.z msg
@@ -639,9 +640,9 @@ main: {
     // [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#6 [phi:main::@5->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::line#2 = (byte*) main::line#5 [phi:main::@5->main::@1#1] -- register_copy 
     // [5] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@5->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@3
-  b3:
+  __b3:
     // line += 0x28
     // [13] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$28
@@ -656,7 +657,7 @@ main: {
     sta.z line
     lda.z cursor+1
     sta.z line+1
-    jmp b5
+    jmp __b5
 }
   // File Data
   MESSAGE: .text @"hello\nworld"

@@ -209,25 +209,25 @@ Target platform is c64basic / MOS6502X
 // Test rewriting of constant comparisons for pointers
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
@@ -235,15 +235,15 @@ main: {
     .label sc = 2
     .label cc = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::sc#2 = (const byte*) main::screen [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z sc
     lda #>screen
     sta.z sc+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte*) main::sc#2<=(const byte*) main::screen+(word) $3e7) goto main::@2 -- pbuz1_le_pbuc1_then_la1 
     lda.z sc+1
     cmp #>screen+$3e7
@@ -251,34 +251,34 @@ main: {
     lda.z sc
     cmp #<screen+$3e7
   !:
-    bcc b2
-    beq b2
+    bcc __b2
+    beq __b2
     // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
-  b3_from_b1:
+  __b3_from___b1:
     // [7] phi (byte*) main::cc#2 = (const byte*) main::cols+(word) $3e7 [phi:main::@1->main::@3#0] -- pbuz1=pbuc1 
     lda #<cols+$3e7
     sta.z cc
     lda #>cols+$3e7
     sta.z cc+1
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [8] if((byte*) main::cc#2>(const byte*) main::cols-(byte) 1) goto main::@4 -- pbuz1_gt_pbuc1_then_la1 
     lda #>cols-1
     cmp.z cc+1
-    bcc b4
+    bcc __b4
     bne !+
     lda #<cols-1
     cmp.z cc
-    bcc b4
+    bcc __b4
   !:
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
     // main::@4
-  b4:
+  __b4:
     // [10] *((byte*) main::cc#2) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
     ldy #0
@@ -290,11 +290,11 @@ main: {
   !:
     dec.z cc
     // [7] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [7] phi (byte*) main::cc#2 = (byte*) main::cc#1 [phi:main::@4->main::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // main::@2
-  b2:
+  __b2:
     // [12] *((byte*) main::sc#2) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
@@ -305,9 +305,9 @@ main: {
     inc.z sc+1
   !:
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
@@ -332,25 +332,25 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test rewriting of constant comparisons for pointers
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
@@ -358,15 +358,15 @@ main: {
     .label sc = 2
     .label cc = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::sc#2 = (const byte*) main::screen [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z sc
     lda #>screen
     sta.z sc+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte*) main::sc#2<=(const byte*) main::screen+(word) $3e7) goto main::@2 -- pbuz1_le_pbuc1_then_la1 
     lda.z sc+1
     cmp #>screen+$3e7
@@ -374,34 +374,34 @@ main: {
     lda.z sc
     cmp #<screen+$3e7
   !:
-    bcc b2
-    beq b2
+    bcc __b2
+    beq __b2
     // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
-  b3_from_b1:
+  __b3_from___b1:
     // [7] phi (byte*) main::cc#2 = (const byte*) main::cols+(word) $3e7 [phi:main::@1->main::@3#0] -- pbuz1=pbuc1 
     lda #<cols+$3e7
     sta.z cc
     lda #>cols+$3e7
     sta.z cc+1
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [8] if((byte*) main::cc#2>(const byte*) main::cols-(byte) 1) goto main::@4 -- pbuz1_gt_pbuc1_then_la1 
     lda #>cols-1
     cmp.z cc+1
-    bcc b4
+    bcc __b4
     bne !+
     lda #<cols-1
     cmp.z cc
-    bcc b4
+    bcc __b4
   !:
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
     // main::@4
-  b4:
+  __b4:
     // [10] *((byte*) main::cc#2) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
     ldy #0
@@ -413,11 +413,11 @@ main: {
   !:
     dec.z cc
     // [7] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [7] phi (byte*) main::cc#2 = (byte*) main::cc#1 [phi:main::@4->main::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // main::@2
-  b2:
+  __b2:
     // [12] *((byte*) main::sc#2) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
@@ -428,35 +428,36 @@ main: {
     inc.z sc+1
   !:
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b3_from_b1:
-Removing instruction breturn:
-Removing instruction b3_from_b4:
-Removing instruction b1_from_b2:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b3_from___b1:
+Removing instruction __breturn:
+Removing instruction __b3_from___b4:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -512,7 +513,7 @@ main: {
     lda #>screen
     sta.z sc+1
     // main::@1
-  b1:
+  __b1:
     // for(byte* sc =screen;sc<=screen+999;sc++)
     // [6] if((byte*) main::sc#2<=(const byte*) main::screen+(word) $3e7) goto main::@2 -- pbuz1_le_pbuc1_then_la1 
     lda.z sc+1
@@ -521,8 +522,8 @@ main: {
     lda.z sc
     cmp #<screen+$3e7
   !:
-    bcc b2
-    beq b2
+    bcc __b2
+    beq __b2
     // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
     // [7] phi (byte*) main::cc#2 = (const byte*) main::cols+(word) $3e7 [phi:main::@1->main::@3#0] -- pbuz1=pbuc1 
     lda #<cols+$3e7
@@ -530,23 +531,23 @@ main: {
     lda #>cols+$3e7
     sta.z cc+1
     // main::@3
-  b3:
+  __b3:
     // for(byte* cc =cols+999;cc>cols-1;cc--)
     // [8] if((byte*) main::cc#2>(const byte*) main::cols-(byte) 1) goto main::@4 -- pbuz1_gt_pbuc1_then_la1 
     lda #>cols-1
     cmp.z cc+1
-    bcc b4
+    bcc __b4
     bne !+
     lda #<cols-1
     cmp.z cc
-    bcc b4
+    bcc __b4
   !:
     // main::@return
     // }
     // [9] return 
     rts
     // main::@4
-  b4:
+  __b4:
     // *cc=2
     // [10] *((byte*) main::cc#2) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
@@ -561,9 +562,9 @@ main: {
     dec.z cc
     // [7] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
     // [7] phi (byte*) main::cc#2 = (byte*) main::cc#1 [phi:main::@4->main::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // main::@2
-  b2:
+  __b2:
     // *sc='a'
     // [12] *((byte*) main::sc#2) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
@@ -577,7 +578,7 @@ main: {
   !:
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 

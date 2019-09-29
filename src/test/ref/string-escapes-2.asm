@@ -7,18 +7,18 @@ main: {
     .label i = 2
     lda #0
     sta.z i
-  b1:
+  __b1:
     lda #0
     ldy.z i
     cmp MESSAGE,y
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy.z i
     lda MESSAGE,y
     jsr chrout
     inc.z i
-    jmp b1
+    jmp __b1
 }
 // chrout(byte register(A) c)
 chrout: {

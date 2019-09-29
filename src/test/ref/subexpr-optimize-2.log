@@ -202,37 +202,37 @@ Target platform is c64basic / MOS6502X
 // Tests optimization of identical sub-expressions
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _0 = 5
-    .label _1 = 6
-    .label _2 = 9
-    .label _3 = $a
+    .label __0 = 5
+    .label __1 = 6
+    .label __2 = 9
+    .label __3 = $a
     .label screen = 7
     .label screen_2 = 3
     .label i = 2
     .label screen_3 = 3
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen_3
@@ -241,24 +241,24 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 -- vbuz1=vbuz2_plus_1 
     ldy.z i
     iny
-    sty.z _0
+    sty.z __0
     // [7] (byte~) main::$1 ← (byte~) main::$0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda.z _0
+    lda.z __0
     asl
-    sta.z _1
+    sta.z __1
     // [8] *((byte*) main::screen#3) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
-    lda.z _1
+    lda.z __1
     ldy #0
     sta (screen_3),y
     // [9] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz2 
@@ -272,13 +272,13 @@ main: {
     // [10] (byte~) main::$2 ← (byte) main::i#2 + (byte) 1 -- vbuz1=vbuz2_plus_1 
     ldy.z i
     iny
-    sty.z _2
+    sty.z __2
     // [11] (byte~) main::$3 ← (byte~) main::$2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda.z _2
+    lda.z __2
     asl
-    sta.z _3
+    sta.z __3
     // [12] *((byte*) main::screen#1) ← (byte~) main::$3 -- _deref_pbuz1=vbuz2 
-    lda.z _3
+    lda.z __3
     ldy #0
     sta (screen),y
     // [13] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz2 
@@ -294,10 +294,10 @@ main: {
     // [15] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [16] return 
     rts
 }
@@ -342,31 +342,31 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests optimization of identical sub-expressions
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = 3
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
@@ -375,14 +375,14 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 -- vbuaa=vbuz1_plus_1 
     lda.z i
     clc
@@ -416,38 +416,39 @@ main: {
     // [15] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [16] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -511,7 +512,7 @@ main: {
     // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // i+1
     // [6] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 -- vbuaa=vbuz1_plus_1 
     lda.z i
@@ -554,7 +555,7 @@ main: {
     // [15] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp.z i
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [16] return 

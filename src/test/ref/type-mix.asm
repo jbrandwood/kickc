@@ -9,7 +9,7 @@ main: {
     txa
     sta.z w
     sta.z w+1
-  b1:
+  __b1:
     lda.z w
     sec
     sbc #$c
@@ -21,6 +21,6 @@ main: {
     sta SCREEN,x
     inx
     cpx #$b
-    bne b1
+    bne __b1
     rts
 }

@@ -261,27 +261,27 @@ Target platform is c64basic / MOS6502X
 // Test void pointer - issues when assigning returns from malloc()
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label heap_head = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label buf1 = 6
@@ -300,9 +300,9 @@ main: {
     sta.z malloc.return
     lda.z malloc.return_2+1
     sta.z malloc.return+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (void*) main::buf1#0 ← (void*) malloc::return#0 -- pvoz1=pvoz2 
     lda.z malloc.return
     sta.z buf1
@@ -310,7 +310,7 @@ main: {
     sta.z buf1+1
     // [8] call malloc 
     // [16] phi from main::@1 to malloc [phi:main::@1->malloc]
-  malloc_from_b1:
+  malloc_from___b1:
     // [16] phi (byte*) heap_head#10 = (byte*) heap_head#11 [phi:main::@1->malloc#0] -- register_copy 
     jsr malloc
     // [9] (void*) malloc::return#1 ← (void*) malloc::return#2 -- pvoz1=pvoz2 
@@ -318,9 +318,9 @@ main: {
     sta.z malloc.return_1
     lda.z malloc.return_2+1
     sta.z malloc.return_1+1
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [10] (void*) main::buf2#0 ← (void*) malloc::return#1 -- pvoz1=pvoz2 
     lda.z malloc.return_1
     sta.z buf2
@@ -342,9 +342,9 @@ main: {
     ldy #0
     lda (buf2),y
     sta SCREEN+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
 }
@@ -363,9 +363,9 @@ malloc: {
     sta.z return_2
     lda.z heap_head+1
     sta.z return_2+1
-    jmp breturn
+    jmp __breturn
     // malloc::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
 }
@@ -406,27 +406,27 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test void pointer - issues when assigning returns from malloc()
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label heap_head = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label buf1 = 4
@@ -445,19 +445,19 @@ main: {
     sta.z malloc.return
     lda.z malloc.return_2+1
     sta.z malloc.return+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (void*) main::buf1#0 ← (void*) malloc::return#0
     // [8] call malloc 
     // [16] phi from main::@1 to malloc [phi:main::@1->malloc]
-  malloc_from_b1:
+  malloc_from___b1:
     // [16] phi (byte*) heap_head#10 = (byte*) heap_head#11 [phi:main::@1->malloc#0] -- register_copy 
     jsr malloc
     // [9] (void*) malloc::return#1 ← (void*) malloc::return#2
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [10] (void*) main::buf2#0 ← (void*) malloc::return#1
     // [11] *((byte*)(void*) main::buf1#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
@@ -475,9 +475,9 @@ main: {
     ldy #0
     lda (buf2),y
     sta SCREEN+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
 }
@@ -496,43 +496,44 @@ malloc: {
     sta.z return_2
     lda.z heap_head+1
     sta.z return_2+1
-    jmp breturn
+    jmp __breturn
     // malloc::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Removing instruction ldy #0
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction malloc_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction malloc_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction malloc_from_main:
-Removing instruction b1:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

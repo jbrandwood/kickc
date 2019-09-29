@@ -11,7 +11,7 @@ main: {
     .label x = 4
     .label idx = 2
     .label y = 5
-    .label _15 = 6
+    .label __15 = 6
     lda #y0
     sta.z y
     ldx #y1/2
@@ -20,17 +20,17 @@ main: {
     lda #<0
     sta.z idx
     sta.z idx+1
-  b1:
+  __b1:
     lda.z idx
     clc
     adc #<screen
-    sta.z _15
+    sta.z __15
     lda.z idx+1
     adc #>screen
-    sta.z _15+1
+    sta.z __15+1
     lda #STAR
     ldy #0
-    sta (_15),y
+    sta (__15),y
     inc.z x
     inc.z idx
     bne !+
@@ -39,8 +39,8 @@ main: {
     txa
     axs #-[y1]
     cpx #x1
-    bcc b2
-    beq b2
+    bcc __b2
+    beq __b2
     inc.z y
     lda #$28
     clc
@@ -51,9 +51,9 @@ main: {
   !:
     txa
     axs #x1
-  b2:
+  __b2:
     lda.z x
     cmp #x1+1
-    bcc b1
+    bcc __b1
     rts
 }

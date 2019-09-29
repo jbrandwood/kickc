@@ -15,7 +15,7 @@ main: {
     lda #>$400
     sta.z screen+1
     ldx #0
-  b1:
+  __b1:
     ldy sintab,x
     lda #'*'
     sta (screen),y
@@ -37,7 +37,7 @@ main: {
   !:
     inx
     cpx #$19
-    bne b1
+    bne __b1
     rts
 }
 .pc = sintab "sintab"

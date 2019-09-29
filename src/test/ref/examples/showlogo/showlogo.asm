@@ -51,16 +51,16 @@ main: {
     sta.z memset.num+1
     jsr memset
     ldx #0
-  b1:
+  __b1:
     txa
     sta SCREEN,x
     inx
     cpx #$f0
-    bne b1
-  b2:
+    bne __b1
+  __b2:
     inc SCREEN+$3e7
     inc $d020 
-    jmp b2
+    jmp __b2
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zeropage(4) str, byte register(X) c, word zeropage(2) num)
@@ -72,7 +72,7 @@ memset: {
     lda.z num
     bne !+
     lda.z num+1
-    beq breturn
+    beq __breturn
   !:
     lda.z end
     clc
@@ -81,16 +81,16 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-  b2:
+  __b2:
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
-  breturn:
+    bne __b3
+  __breturn:
     rts
-  b3:
+  __b3:
     txa
     ldy #0
     sta (dst),y
@@ -98,7 +98,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2
+    jmp __b2
 }
 .pc = LOGO "LOGO"
   .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))

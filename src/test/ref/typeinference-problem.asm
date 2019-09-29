@@ -5,7 +5,7 @@
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/2) and g(x) = f(1-x) 
 main: {
     ldy #0
-  b1:
+  __b1:
     tya
     eor #$ff
     tax
@@ -14,7 +14,7 @@ main: {
     sta table,x
     iny
     cpy #$81
-    bne b1
+    bne __b1
     rts
 }
   table: .fill $100, 0

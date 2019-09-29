@@ -34,7 +34,7 @@ print_person: {
     inx
     lda #0
     sta.z i
-  b1:
+  __b1:
     ldy #OFFSET_STRUCT_PERSON_NAME
     lda (person),y
     sta.z $fe
@@ -44,12 +44,12 @@ print_person: {
     ldy.z i
     lda ($fe),y
     cmp #0
-    bne b2
+    bne __b2
     lda #' '
     sta SCREEN,x
     inx
     rts
-  b2:
+  __b2:
     ldy #OFFSET_STRUCT_PERSON_NAME
     lda (person),y
     sta.z $fe
@@ -61,15 +61,15 @@ print_person: {
     sta SCREEN,x
     inx
     inc.z i
-    jmp b1
+    jmp __b1
 }
-  _0: .text "jesper"
+  __0: .text "jesper"
   .byte 0
-  _1: .text "repsej"
+  __1: .text "repsej"
   .byte 0
   persons: .byte 4
-  .word _0
+  .word __0
   .byte 7
-  .word _1
+  .word __1
   DIGIT: .text "0123456789"
   .byte 0

@@ -6,7 +6,7 @@
   .label print_char_cursor = 4
 main: {
     ldy #0
-  b1:
+  __b1:
     tya
     ldx #$80
     jsr sub
@@ -18,7 +18,7 @@ main: {
     jsr sub
     iny
     cpy #9
-    bne b1
+    bne __b1
     jsr print_cls
     lda #<$400
     sta.z print_line_cursor
@@ -29,7 +29,7 @@ main: {
     lda #>$400
     sta.z print_char_cursor+1
     ldx #0
-  b3:
+  __b3:
     txa
     asl
     tay
@@ -41,18 +41,18 @@ main: {
     jsr print_ln
     inx
     cpx #9
-    bne b9
+    bne __b9
     rts
-  b9:
+  __b9:
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    jmp b3
+    jmp __b3
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -62,11 +62,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -75,13 +75,13 @@ print_ln: {
 print_sword: {
     .label w = 2
     lda.z w+1
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_word
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     sec
@@ -91,7 +91,7 @@ print_sword: {
     lda #0
     sbc.z w+1
     sta.z w+1
-    jmp b2
+    jmp __b2
 }
 // Print a single char
 // print_char(byte register(A) ch)
@@ -151,15 +151,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -167,7 +167,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
 // sub(byte register(A) idx, byte register(X) s)
 sub: {

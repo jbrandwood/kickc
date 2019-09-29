@@ -77,18 +77,18 @@ main: {
     lda #>SCREEN
     sta.z sc+1
   // Clear screen
-  b1:
+  __b1:
     lda.z sc+1
     cmp #>SCREEN+$3e8
-    bcs !b2+
-    jmp b2
-  !b2:
+    bcs !__b2+
+    jmp __b2
+  !__b2:
     bne !+
     lda.z sc
     cmp #<SCREEN+$3e8
-    bcs !b2+
-    jmp b2
-  !b2:
+    bcs !__b2+
+    jmp __b2
+  !__b2:
   !:
     lda #<SCREEN+1
     sta.z print_str_at.at
@@ -128,7 +128,7 @@ main: {
     jsr print_str_at
     lda #0
     sta.z i
-  b4:
+  __b4:
     ldy.z i
     ldx #0
     lda #$20
@@ -136,76 +136,76 @@ main: {
     inc.z i
     lda #4
     cmp.z i
-    bne b4
+    bne __b4
     lda #0
     sta.z cur_pos
-  b5:
+  __b5:
     ldx #KEY_F1
     jsr keyboard_key_pressed
     cmp #0
-    beq b6
+    beq __b6
     lda #0
     sta.z cur_pos
-  b6:
+  __b6:
     ldx #KEY_F3
     jsr keyboard_key_pressed
     cmp #0
-    beq b7
+    beq __b7
     lda #1
     sta.z cur_pos
-  b7:
+  __b7:
     ldx #KEY_F5
     jsr keyboard_key_pressed
     cmp #0
-    beq b8
+    beq __b8
     lda #2
     sta.z cur_pos
-  b8:
+  __b8:
     ldx #KEY_F7
     jsr keyboard_key_pressed
     cmp #0
-    beq b9
+    beq __b9
     lda #3
     sta.z cur_pos
-  b9:
+  __b9:
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
     cmp #0
-    bne b10
+    bne __b10
     lda #0
     sta.z shift
-    jmp b11
-  b10:
+    jmp __b11
+  __b10:
     lda #1
     sta.z shift
-  b11:
+  __b11:
     lda #0
     sta.z ch
   // Check for key presses - and plot char if found
-  b12:
+  __b12:
     ldx.z ch
     jsr keyboard_get_keycode
     cmp #$3f
-    beq b3
+    beq b1
     tax
     jsr keyboard_key_pressed
-    jmp b13
-  b3:
+    jmp __b13
+  b1:
     lda #0
-  b13:
+  __b13:
     cmp #0
-    beq b14
+    beq __b14
     ldy.z cur_pos
     lda.z ch
     ldx.z shift
     jsr plot_chargen
-  b14:
+  __b14:
     inc.z ch
     lda #$40
     cmp.z ch
-    bne b12
-    jmp b5
-  b2:
+    bne __b12
+    jmp __b5
+  __b2:
     lda #' '
     ldy #0
     sta (sc),y
@@ -213,7 +213,7 @@ main: {
     bne !+
     inc.z sc+1
   !:
-    jmp b1
+    jmp __b1
     str: .text "f1"
     .byte 0
     str1: .text "f3"
@@ -226,23 +226,23 @@ main: {
 // Render 8x8 char (ch) as pixels on char canvas #pos
 // plot_chargen(byte register(Y) pos, byte register(A) ch, byte register(X) shift)
 plot_chargen: {
-    .label _0 = 6
-    .label _1 = 6
-    .label _7 = $a
+    .label __0 = 6
+    .label __1 = 6
+    .label __7 = $a
     .label chargen = 6
     .label sc = $a
     .label bits = 9
     .label y = 8
     sei
-    sta.z _0
+    sta.z __0
     lda #0
-    sta.z _0+1
-    asl.z _1
-    rol.z _1+1
-    asl.z _1
-    rol.z _1+1
-    asl.z _1
-    rol.z _1+1
+    sta.z __0+1
+    asl.z __1
+    rol.z __1+1
+    asl.z __1
+    rol.z __1+1
+    asl.z __1
+    rol.z __1+1
     clc
     lda.z chargen
     adc #<CHARGEN
@@ -251,7 +251,7 @@ plot_chargen: {
     adc #>CHARGEN
     sta.z chargen+1
     cpx #0
-    beq b1
+    beq __b1
     clc
     lda.z chargen
     adc #<$800
@@ -259,7 +259,7 @@ plot_chargen: {
     lda.z chargen+1
     adc #>$800
     sta.z chargen+1
-  b1:
+  __b1:
     lda #$32
     sta PROCPORT
     tya
@@ -274,21 +274,21 @@ plot_chargen: {
     sta.z sc+1
     lda #0
     sta.z y
-  b3:
+  __b3:
     ldy.z y
     lda (chargen),y
     sta.z bits
     ldx #0
-  b4:
+  __b4:
     lda #$80
     and.z bits
     cmp #0
-    beq b2
+    beq b1
     lda #'*'
-    jmp b5
-  b2:
+    jmp __b5
+  b1:
     lda #'.'
-  b5:
+  __b5:
     ldy #0
     sta (sc),y
     inc.z sc
@@ -298,7 +298,7 @@ plot_chargen: {
     asl.z bits
     inx
     cpx #8
-    bne b4
+    bne __b4
     lda #$20
     clc
     adc.z sc
@@ -309,7 +309,7 @@ plot_chargen: {
     inc.z y
     lda #8
     cmp.z y
-    bne b3
+    bne __b3
     lda #$37
     sta PROCPORT
     cli
@@ -329,15 +329,15 @@ mul8u: {
     lda #<0
     sta.z res
     sta.z res+1
-  b1:
+  __b1:
     cpx #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     txa
     and #1
     cmp #0
-    beq b3
+    beq __b3
     lda.z res
     clc
     adc.z mb
@@ -345,13 +345,13 @@ mul8u: {
     lda.z res+1
     adc.z mb+1
     sta.z res+1
-  b3:
+  __b3:
     txa
     lsr
     tax
     asl.z mb
     rol.z mb+1
-    jmp b1
+    jmp __b1
 }
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
@@ -398,13 +398,13 @@ keyboard_get_keycode: {
 print_str_at: {
     .label at = $c
     .label str = $a
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (at),y
@@ -416,7 +416,7 @@ print_str_at: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f

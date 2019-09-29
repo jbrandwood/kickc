@@ -8,7 +8,7 @@ main: {
     txa
     sta.z w
     sta.z w+1
-  b1:
+  __b1:
     txa
     clc
     adc.z w
@@ -18,6 +18,6 @@ main: {
   !:
     inx
     cpx #$b
-    bne b1
+    bne __b1
     rts
 }

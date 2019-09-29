@@ -135,26 +135,26 @@ Target platform is c64basic / MOS6502X
 // Test some forced zeropage access
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _5 = 4
+    .label __5 = 4
     .label u = 2
     // [4] (word) main::u#1 ← *((word*) 160) - (word) $22b -- vwuz1=_deref_pwuc1_minus_vwuc2 
     sec
@@ -173,18 +173,18 @@ main: {
     clc
     lda $d1
     adc #<$d400
-    sta.z _5
+    sta.z __5
     lda $d1+1
     adc #>$d400
-    sta.z _5+1
+    sta.z __5+1
     // [7] *((byte**) 243) ← (byte*~) main::$5 -- _deref_pptc1=pbuz1 
-    lda.z _5
+    lda.z __5
     sta $f3
-    lda.z _5+1
+    lda.z __5+1
     sta $f3+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -210,26 +210,26 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test some forced zeropage access
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _5 = 4
+    .label __5 = 4
     .label u = 2
     // [4] (word) main::u#1 ← *((word*) 160) - (word) $22b -- vwuz1=_deref_pwuc1_minus_vwuc2 
     sec
@@ -248,39 +248,40 @@ main: {
     clc
     lda $d1
     adc #<$d400
-    sta.z _5
+    sta.z __5
     lda $d1+1
     adc #>$d400
-    sta.z _5+1
+    sta.z __5+1
     // [7] *((byte**) 243) ← (byte*~) main::$5 -- _deref_pptc1=pbuz1 
-    lda.z _5
+    lda.z __5
     sta $f3
-    lda.z _5+1
+    lda.z __5+1
     sta $f3+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -315,7 +316,7 @@ Score: 74
   // @end
   // main
 main: {
-    .label _5 = 4
+    .label __5 = 4
     .label u = 2
     // u = *(word *)0xA0 - u
     // [4] (word) main::u#1 ← *((word*) 160) - (word) $22b -- vwuz1=_deref_pwuc1_minus_vwuc2 
@@ -337,15 +338,15 @@ main: {
     clc
     lda $d1
     adc #<$d400
-    sta.z _5
+    sta.z __5
     lda $d1+1
     adc #>$d400
-    sta.z _5+1
+    sta.z __5+1
     // *(byte **)0xF3 = *(byte **)0xD1 + 0xD400
     // [7] *((byte**) 243) ← (byte*~) main::$5 -- _deref_pptc1=pbuz1 
-    lda.z _5
+    lda.z __5
     sta $f3
-    lda.z _5+1
+    lda.z __5+1
     sta $f3+1
     // main::@return
     // }

@@ -12,7 +12,7 @@ main: {
     sta.z screen
     lda #>$400
     sta.z screen+1
-  b1:
+  __b1:
     ldy #0
     lda (screen),y
     asl
@@ -39,10 +39,10 @@ main: {
   !:
     lda.z i+1
     cmp #>$3e8
-    bne b1
+    bne __b1
     lda.z i
     cmp #<$3e8
-    bne b1
+    bne __b1
     rts
 }
   CHAR_COUNTS: .fill 2*$100, 0

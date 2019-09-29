@@ -290,35 +290,35 @@ Target platform is c64basic / MOS6502X
 // Demonstrates problem with conditions using negated struct references
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_SETTING = 2
   .const OFFSET_STRUCT_SETTING_ID = 1
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const len = 3*SIZEOF_STRUCT_SETTING/SIZEOF_STRUCT_SETTING
     .label setting = 2
     .label idx = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z idx
@@ -327,33 +327,33 @@ main: {
     sta.z setting
     lda #>settings
     sta.z setting+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((struct Setting*) main::setting#2<(const struct Setting[]) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
     lda.z setting+1
     cmp #>settings+len*SIZEOF_STRUCT_SETTING
-    bcc b2
+    bcc __b2
     bne !+
     lda.z setting
     cmp #<settings+len*SIZEOF_STRUCT_SETTING
-    bcc b2
+    bcc __b2
   !:
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [8] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (setting),y
     cmp #0
-    bne b3_from_b2
-    jmp b4
+    bne __b3_from___b2
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
     ldx.z idx
     ldy #OFFSET_STRUCT_SETTING_ID
@@ -362,12 +362,12 @@ main: {
     // [10] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz1 
     inc.z idx
     // [11] phi from main::@2 main::@4 to main::@3 [phi:main::@2/main::@4->main::@3]
-  b3_from_b2:
-  b3_from_b4:
+  __b3_from___b2:
+  __b3_from___b4:
     // [11] phi (byte) main::idx#5 = (byte) main::idx#2 [phi:main::@2/main::@4->main::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [12] (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#2 + (const byte) SIZEOF_STRUCT_SETTING -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_SETTING
     clc
@@ -377,10 +377,10 @@ main: {
     inc.z setting+1
   !:
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [5] phi (byte) main::idx#2 = (byte) main::idx#5 [phi:main::@3->main::@1#0] -- register_copy 
     // [5] phi (struct Setting*) main::setting#2 = (struct Setting*) main::setting#1 [phi:main::@3->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   settings: .byte 0, 'a', 1, 'b', 0, 'c'
@@ -413,34 +413,34 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Demonstrates problem with conditions using negated struct references
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_SETTING = 2
   .const OFFSET_STRUCT_SETTING_ID = 1
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const len = 3*SIZEOF_STRUCT_SETTING/SIZEOF_STRUCT_SETTING
     .label setting = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [5] phi (struct Setting*) main::setting#2 = (const struct Setting[]) settings [phi:main->main::@1#1] -- pssz1=pssc1 
@@ -448,33 +448,33 @@ main: {
     sta.z setting
     lda #>settings
     sta.z setting+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((struct Setting*) main::setting#2<(const struct Setting[]) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
     lda.z setting+1
     cmp #>settings+len*SIZEOF_STRUCT_SETTING
-    bcc b2
+    bcc __b2
     bne !+
     lda.z setting
     cmp #<settings+len*SIZEOF_STRUCT_SETTING
-    bcc b2
+    bcc __b2
   !:
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [8] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (setting),y
     cmp #0
-    bne b3_from_b2
-    jmp b4
+    bne __b3_from___b2
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #OFFSET_STRUCT_SETTING_ID
     lda (setting),y
@@ -482,12 +482,12 @@ main: {
     // [10] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
     inx
     // [11] phi from main::@2 main::@4 to main::@3 [phi:main::@2/main::@4->main::@3]
-  b3_from_b2:
-  b3_from_b4:
+  __b3_from___b2:
+  __b3_from___b4:
     // [11] phi (byte) main::idx#5 = (byte) main::idx#2 [phi:main::@2/main::@4->main::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [12] (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#2 + (const byte) SIZEOF_STRUCT_SETTING -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_SETTING
     clc
@@ -497,40 +497,41 @@ main: {
     inc.z setting+1
   !:
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [5] phi (byte) main::idx#2 = (byte) main::idx#5 [phi:main::@3->main::@1#0] -- register_copy 
     // [5] phi (struct Setting*) main::setting#2 = (struct Setting*) main::setting#1 [phi:main::@3->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   settings: .byte 0, 'a', 1, 'b', 0, 'c'
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b4
-Removing instruction jmp b3
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b4
+Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b3_from_b2 with b3
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b3_from_b2:
-Removing instruction b3_from_b4:
+Replacing label __bbegin with __b1
+Replacing label __b3_from___b2 with __b3
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b3_from___b2:
+Removing instruction __b3_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
-Removing instruction b4:
-Removing instruction b1_from_b3:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b4:
+Removing instruction __b1_from___b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -596,29 +597,29 @@ main: {
     lda #>settings
     sta.z setting+1
     // main::@1
-  b1:
+  __b1:
     // for(struct Setting* setting = settings; setting<settings+len; setting++)
     // [6] if((struct Setting*) main::setting#2<(const struct Setting[]) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
     lda.z setting+1
     cmp #>settings+len*SIZEOF_STRUCT_SETTING
-    bcc b2
+    bcc __b2
     bne !+
     lda.z setting
     cmp #<settings+len*SIZEOF_STRUCT_SETTING
-    bcc b2
+    bcc __b2
   !:
     // main::@return
     // }
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // if (! setting->off)
     // [8] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (setting),y
     cmp #0
-    bne b3
+    bne __b3
     // main::@4
     // SCREEN[idx++] = setting->id
     // [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
@@ -631,7 +632,7 @@ main: {
     // [11] phi from main::@2 main::@4 to main::@3 [phi:main::@2/main::@4->main::@3]
     // [11] phi (byte) main::idx#5 = (byte) main::idx#2 [phi:main::@2/main::@4->main::@3#0] -- register_copy 
     // main::@3
-  b3:
+  __b3:
     // for(struct Setting* setting = settings; setting<settings+len; setting++)
     // [12] (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#2 + (const byte) SIZEOF_STRUCT_SETTING -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_SETTING
@@ -644,7 +645,7 @@ main: {
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [5] phi (byte) main::idx#2 = (byte) main::idx#5 [phi:main::@3->main::@1#0] -- register_copy 
     // [5] phi (struct Setting*) main::setting#2 = (struct Setting*) main::setting#1 [phi:main::@3->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   settings: .byte 0, 'a', 1, 'b', 0, 'c'

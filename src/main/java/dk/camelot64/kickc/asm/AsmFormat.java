@@ -286,20 +286,20 @@ public class AsmFormat {
       StringBuilder result = new StringBuilder();
       char[] sourceChars = source.toCharArray();
       for(char sourceChar : sourceChars) {
-         char resultChar;
          switch(sourceChar) {
             case '@':
-               resultChar = 'b';
+               result.append("__b");
                break;
             case ':':
             case '#':
+               result.append('_');
+               break;
             case '$':
-               resultChar = '_';
+               result.append("__");
                break;
             default:
-               resultChar = sourceChar;
+               result.append(sourceChar);
          }
-         result.append(resultChar);
       }
       return result.toString();
    }

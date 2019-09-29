@@ -6,19 +6,19 @@
   .label raster = $d012
   .label bordercol = $d020
 main: {
-    .label _1 = 8
+    .label __1 = 8
     .label time_start = 9
     sei
     jsr cls
-  b1:
+  __b1:
     lda #$80
     and control
-    sta.z _1
+    sta.z __1
     lda raster
     lsr
-    ora.z _1
+    ora.z __1
     cmp #$30
-    bne b1
+    bne __b1
     lda #1
     sta bordercol
     lda raster
@@ -82,16 +82,16 @@ main: {
     sta.z utoa10w.value+1
     jsr utoa10w
     ldx #0
-  b3:
+  __b3:
     lda msg,x
     cmp #0
-    bne b4
-    jmp b1
-  b4:
+    bne __b4
+    jmp __b1
+  __b4:
     lda msg,x
     sta $400+$28+$28+$28+$28+$50+3,x
     inx
-    jmp b3
+    jmp __b3
     msg: .text "raster lines"
     .byte 0
 }
@@ -110,7 +110,7 @@ utoa10w: {
     sta.z bStarted
     sta.z digit
     tax
-  b1:
+  __b1:
     txa
     asl
     tay
@@ -119,16 +119,16 @@ utoa10w: {
     bne !+
     lda UTOA10_SUB,y
     cmp.z value
-    beq b2
+    beq __b2
   !:
-    bcc b2
+    bcc __b2
     txa
     and #1
     cmp #0
-    beq b6
+    beq __b6
     lda.z bStarted
     cmp #0
-    beq b7
+    beq __b7
     ldy.z digit
     lda DIGITS,y
     ldy #0
@@ -137,13 +137,13 @@ utoa10w: {
     bne !+
     inc.z dst+1
   !:
-  b7:
+  __b7:
     lda #0
     sta.z digit
-  b6:
+  __b6:
     inx
     cpx #8
-    bne b1
+    bne __b1
     lda.z value
     tay
     lda DIGITS,y
@@ -157,7 +157,7 @@ utoa10w: {
     tay
     sta (dst),y
     rts
-  b2:
+  __b2:
     lda UTOA10_VAL,x
     clc
     adc.z digit
@@ -174,7 +174,7 @@ utoa10w: {
     sta.z value+1
     lda #1
     sta.z bStarted
-    jmp b1
+    jmp __b1
 }
 // Hexadecimal utoa() for an unsigned int (16bits)
 // utoa16w(word zeropage(2) value, byte* zeropage(4) dst)
@@ -210,11 +210,11 @@ utoa16w: {
 // utoa16n(byte register(A) nybble, byte register(X) started)
 utoa16n: {
     cmp #0
-    beq b1
+    beq __b1
     ldx #1
-  b1:
+  __b1:
     cpx #0
-    beq breturn
+    beq __breturn
     tay
     lda DIGITS,y
     ldy.z utoa16w.dst
@@ -227,7 +227,7 @@ utoa16n: {
     bne !+
     inc.z utoa16w.dst+1
   !:
-  breturn:
+  __breturn:
     rts
 }
 cls: {
@@ -237,7 +237,7 @@ cls: {
     sta.z sc
     lda #>screen
     sta.z sc+1
-  b1:
+  __b1:
     lda #' '
     ldy #0
     sta (sc),y
@@ -247,10 +247,10 @@ cls: {
   !:
     lda.z sc+1
     cmp #>screen+$3e7+1
-    bne b1
+    bne __b1
     lda.z sc
     cmp #<screen+$3e7+1
-    bne b1
+    bne __b1
     rts
 }
   // Digits used for utoa()

@@ -12,9 +12,9 @@ main: {
     lda #>items
     sta.z cur_item+1
     ldx #0
-  b1:
+  __b1:
     ldy #0
-  b2:
+  __b2:
     txa
     asl
     asl
@@ -25,7 +25,7 @@ main: {
     sta (cur_item),y
     iny
     cpy #ITEM_SIZE-1+1
-    bne b2
+    bne __b2
     lda #ITEM_SIZE
     clc
     adc.z cur_item
@@ -35,7 +35,7 @@ main: {
   !:
     inx
     cpx #ITEM_COUNT-1+1
-    bne b1
+    bne __b1
     rts
 }
   items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

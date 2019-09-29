@@ -345,41 +345,41 @@ Target platform is c64basic / MOS6502X
 // Tests optimization of identical sub-expressions
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _0 = 7
-    .label _2 = 5
-    .label _4 = 5
-    .label _5 = 5
-    .label _6 = $a
-    .label _8 = 6
-    .label _10 = 6
-    .label _11 = 6
+    .label __0 = 7
+    .label __2 = 5
+    .label __4 = 5
+    .label __5 = 5
+    .label __6 = $a
+    .label __8 = 6
+    .label __10 = 6
+    .label __11 = 6
     .label screen = 8
     .label screen_2 = 3
     .label i = 2
     .label screen_3 = 3
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen_3
@@ -388,39 +388,39 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [5] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
-  b1_from_b7:
+  __b1_from___b7:
     // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@7->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z i
-    sta.z _0
+    sta.z __0
     // [7] if((byte) 0!=(byte~) main::$0) goto main::@2 -- vbuc1_neq_vbuz1_then_la1 
     lda #0
-    cmp.z _0
-    bne b2
-    jmp b3
+    cmp.z __0
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [8] (byte~) main::$2 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
     lda.z i
     asl
     asl
-    sta.z _2
+    sta.z __2
     // [9] phi from main::@2 main::@3 to main::@4 [phi:main::@2/main::@3->main::@4]
-  b4_from_b2:
-  b4_from_b3:
+  __b4_from___b2:
+  __b4_from___b3:
     // [9] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@2/main::@3->main::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [10] *((byte*) main::screen#3) ← (byte~) main::$5 -- _deref_pbuz1=vbuz2 
-    lda.z _5
+    lda.z __5
     ldy #0
     sta (screen_3),y
     // [11] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz2 
@@ -434,28 +434,28 @@ main: {
     // [12] (byte~) main::$6 ← (byte) main::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z i
-    sta.z _6
+    sta.z __6
     // [13] if((byte) 0!=(byte~) main::$6) goto main::@5 -- vbuc1_neq_vbuz1_then_la1 
     lda #0
-    cmp.z _6
-    bne b5
-    jmp b6
+    cmp.z __6
+    bne __b5
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [14] (byte~) main::$8 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
     lda.z i
     asl
     asl
-    sta.z _8
+    sta.z __8
     // [15] phi from main::@5 main::@6 to main::@7 [phi:main::@5/main::@6->main::@7]
-  b7_from_b5:
-  b7_from_b6:
+  __b7_from___b5:
+  __b7_from___b6:
     // [15] phi (byte~) main::$11 = (byte~) main::$10 [phi:main::@5/main::@6->main::@7#0] -- register_copy 
-    jmp b7
+    jmp __b7
     // main::@7
-  b7:
+  __b7:
     // [16] *((byte*) main::screen#1) ← (byte~) main::$11 -- _deref_pbuz1=vbuz2 
-    lda.z _11
+    lda.z __11
     ldy #0
     sta (screen),y
     // [17] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz2 
@@ -471,26 +471,26 @@ main: {
     // [19] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp.z i
-    bne b1_from_b7
-    jmp breturn
+    bne __b1_from___b7
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
     // main::@5
-  b5:
+  __b5:
     // [21] (byte~) main::$10 ← (byte) main::i#2 + (byte) 3 -- vbuz1=vbuz2_plus_vbuc1 
     lax.z i
     axs #-[3]
-    stx.z _10
-    jmp b7_from_b5
+    stx.z __10
+    jmp __b7_from___b5
     // main::@2
-  b2:
+  __b2:
     // [22] (byte~) main::$4 ← (byte) main::i#2 + (byte) 3 -- vbuz1=vbuz2_plus_vbuc1 
     lax.z i
     axs #-[3]
-    stx.z _4
-    jmp b4_from_b2
+    stx.z __4
+    jmp __b4_from___b2
 }
   // File Data
 
@@ -541,30 +541,30 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests optimization of identical sub-expressions
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
@@ -572,34 +572,34 @@ main: {
     sta.z screen+1
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [5] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
-  b1_from_b7:
+  __b1_from___b7:
     // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@7->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
     // [7] if((byte) 0!=(byte~) main::$0) goto main::@2 -- vbuc1_neq_vbuaa_then_la1 
     cmp #0
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [8] (byte~) main::$2 ← (byte) main::i#2 << (byte) 2 -- vbuaa=vbuxx_rol_2 
     txa
     asl
     asl
     // [9] phi from main::@2 main::@3 to main::@4 [phi:main::@2/main::@3->main::@4]
-  b4_from_b2:
-  b4_from_b3:
+  __b4_from___b2:
+  __b4_from___b3:
     // [9] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@2/main::@3->main::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [10] *((byte*) main::screen#3) ← (byte~) main::$5 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (screen),y
@@ -613,21 +613,21 @@ main: {
     and #1
     // [13] if((byte) 0!=(byte~) main::$6) goto main::@5 -- vbuc1_neq_vbuaa_then_la1 
     cmp #0
-    bne b5
-    jmp b6
+    bne __b5
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [14] (byte~) main::$8 ← (byte) main::i#2 << (byte) 2 -- vbuaa=vbuxx_rol_2 
     txa
     asl
     asl
     // [15] phi from main::@5 main::@6 to main::@7 [phi:main::@5/main::@6->main::@7]
-  b7_from_b5:
-  b7_from_b6:
+  __b7_from___b5:
+  __b7_from___b6:
     // [15] phi (byte~) main::$11 = (byte~) main::$10 [phi:main::@5/main::@6->main::@7#0] -- register_copy 
-    jmp b7
+    jmp __b7
     // main::@7
-  b7:
+  __b7:
     // [16] *((byte*) main::screen#1) ← (byte~) main::$11 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (screen),y
@@ -640,64 +640,65 @@ main: {
     inx
     // [19] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
-    bne b1_from_b7
-    jmp breturn
+    bne __b1_from___b7
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
     // main::@5
-  b5:
+  __b5:
     // [21] (byte~) main::$10 ← (byte) main::i#2 + (byte) 3 -- vbuaa=vbuxx_plus_vbuc1 
     txa
     clc
     adc #3
-    jmp b7_from_b5
+    jmp __b7_from___b5
     // main::@2
-  b2:
+  __b2:
     // [22] (byte~) main::$4 ← (byte) main::i#2 + (byte) 3 -- vbuaa=vbuxx_plus_vbuc1 
     txa
     clc
     adc #3
-    jmp b4_from_b2
+    jmp __b4_from___b2
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b6
-Removing instruction jmp b7
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b6
+Removing instruction jmp __b7
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b7 with b1
-Replacing label b7_from_b5 with b7
-Replacing label b4_from_b2 with b4
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b7:
-Removing instruction b4_from_b2:
-Removing instruction b4_from_b3:
-Removing instruction b7_from_b5:
-Removing instruction b7_from_b6:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b7 with __b1
+Replacing label __b7_from___b5 with __b7
+Replacing label __b4_from___b2 with __b4
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b7:
+Removing instruction __b4_from___b2:
+Removing instruction __b4_from___b3:
+Removing instruction __b7_from___b5:
+Removing instruction __b7_from___b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b3:
-Removing instruction b6:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b3:
+Removing instruction __b6:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -769,7 +770,7 @@ main: {
     // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@7->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#1] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // i&1
     // [6] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
@@ -777,7 +778,7 @@ main: {
     // (i&1)?i+3:i*4
     // [7] if((byte) 0!=(byte~) main::$0) goto main::@2 -- vbuc1_neq_vbuaa_then_la1 
     cmp #0
-    bne b2
+    bne __b2
     // main::@3
     // [8] (byte~) main::$2 ← (byte) main::i#2 << (byte) 2 -- vbuaa=vbuxx_rol_2 
     txa
@@ -786,7 +787,7 @@ main: {
     // [9] phi from main::@2 main::@3 to main::@4 [phi:main::@2/main::@3->main::@4]
     // [9] phi (byte~) main::$5 = (byte~) main::$4 [phi:main::@2/main::@3->main::@4#0] -- register_copy 
     // main::@4
-  b4:
+  __b4:
     // *screen++ = (i&1)?i+3:i*4
     // [10] *((byte*) main::screen#3) ← (byte~) main::$5 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -804,7 +805,7 @@ main: {
     // (i&1)?i+3:i*4
     // [13] if((byte) 0!=(byte~) main::$6) goto main::@5 -- vbuc1_neq_vbuaa_then_la1 
     cmp #0
-    bne b5
+    bne __b5
     // main::@6
     // [14] (byte~) main::$8 ← (byte) main::i#2 << (byte) 2 -- vbuaa=vbuxx_rol_2 
     txa
@@ -813,7 +814,7 @@ main: {
     // [15] phi from main::@5 main::@6 to main::@7 [phi:main::@5/main::@6->main::@7]
     // [15] phi (byte~) main::$11 = (byte~) main::$10 [phi:main::@5/main::@6->main::@7#0] -- register_copy 
     // main::@7
-  b7:
+  __b7:
     // *screen++ = (i&1)?i+3:i*4
     // [16] *((byte*) main::screen#1) ← (byte~) main::$11 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -829,26 +830,26 @@ main: {
     inx
     // [19] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [20] return 
     rts
     // main::@5
-  b5:
+  __b5:
     // (i&1)?i+3:i*4
     // [21] (byte~) main::$10 ← (byte) main::i#2 + (byte) 3 -- vbuaa=vbuxx_plus_vbuc1 
     txa
     clc
     adc #3
-    jmp b7
+    jmp __b7
     // main::@2
-  b2:
+  __b2:
     // [22] (byte~) main::$4 ← (byte) main::i#2 + (byte) 3 -- vbuaa=vbuxx_plus_vbuc1 
     txa
     clc
     adc #3
-    jmp b4
+    jmp __b4
 }
   // File Data
 

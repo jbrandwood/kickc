@@ -9,18 +9,18 @@ main: {
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-  b1:
+  __b1:
     ldy #0
     lda (nxt),y
     tay
     cpy #0
-    bne b2
+    bne __b2
     ldy TEXT
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-  b2:
+  __b2:
     inx
     tya
     sta SCREEN,x
@@ -28,7 +28,7 @@ main: {
     bne !+
     inc.z nxt+1
   !:
-    jmp b1
+    jmp __b1
 }
   TEXT: .text "01234567"
   .byte 0

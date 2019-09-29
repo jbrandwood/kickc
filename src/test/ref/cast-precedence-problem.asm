@@ -17,11 +17,11 @@ main: {
     sta SCREEN+1
     lda SCREEN
     cmp SCREEN+1
-    beq b1
+    beq __b1
     lda #2
     sta BGCOL
     rts
-  b1:
+  __b1:
     lda #5
     sta BGCOL
     rts

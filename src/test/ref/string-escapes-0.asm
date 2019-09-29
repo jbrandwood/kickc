@@ -5,16 +5,16 @@
   .label SCREEN = $400
 main: {
     ldx #0
-  b1:
+  __b1:
     lda MESSAGE,x
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda MESSAGE,x
     sta SCREEN,x
     inx
-    jmp b1
+    jmp __b1
 }
   MESSAGE: .text @"\r\f\n\"'\\"
   .byte 0

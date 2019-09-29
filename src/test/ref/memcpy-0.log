@@ -501,7 +501,7 @@ Target platform is c64basic / MOS6502X
 // Test memcpy - copy charset and screen using memcpy() from stdlib string
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // Processor Port Register controlling RAM/ROM configuration and the datasette
@@ -517,21 +517,21 @@ Target platform is c64basic / MOS6502X
   .label SCREEN = $400
   .label SCREEN_COPY = $2400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN_COPY&$3fff)*4)|(>CHARSET)/4&$f
@@ -540,15 +540,15 @@ main: {
     jmp toD0181
     // main::toD0181
   toD0181:
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // [7] call memcpy 
     // [14] phi from main::@1 to memcpy [phi:main::@1->memcpy]
-  memcpy_from_b1:
+  memcpy_from___b1:
     // [14] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
     lda #<$400
     sta.z memcpy.num
@@ -565,9 +565,9 @@ main: {
     lda #>SCREEN
     sta.z memcpy.source+1
     jsr memcpy
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // asm { sei  }
     sei
     // [9] *((const byte*) PROCPORT) ← (const byte) PROCPORT_RAM_CHARROM -- _deref_pbuc1=vbuc2 
@@ -575,7 +575,7 @@ main: {
     sta PROCPORT
     // [10] call memcpy 
     // [14] phi from main::@2 to memcpy [phi:main::@2->memcpy]
-  memcpy_from_b2:
+  memcpy_from___b2:
     // [14] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
     lda #<$800
     sta.z memcpy.num
@@ -592,17 +592,17 @@ main: {
     lda #>CHARGEN
     sta.z memcpy.source+1
     jsr memcpy
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] *((const byte*) PROCPORT) ← (const byte) PROCPORT_BASIC_KERNEL_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_BASIC_KERNEL_IO
     sta PROCPORT
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -636,27 +636,27 @@ memcpy: {
     lda.z destination+1
     sta.z dst+1
     // [18] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
-  b1_from_memcpy:
-  b1_from_b2:
+  __b1_from_memcpy:
+  __b1_from___b2:
     // [18] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
     // [18] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // memcpy::@1
-  b1:
+  __b1:
     // [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memcpy::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
     // memcpy::@2
-  b2:
+  __b2:
     // [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
@@ -672,7 +672,7 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
 
@@ -709,7 +709,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test memcpy - copy charset and screen using memcpy() from stdlib string
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // Processor Port Register controlling RAM/ROM configuration and the datasette
@@ -725,21 +725,21 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   .label SCREEN_COPY = $2400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN_COPY&$3fff)*4)|(>CHARSET)/4&$f
@@ -748,15 +748,15 @@ main: {
     jmp toD0181
     // main::toD0181
   toD0181:
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // [7] call memcpy 
     // [14] phi from main::@1 to memcpy [phi:main::@1->memcpy]
-  memcpy_from_b1:
+  memcpy_from___b1:
     // [14] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
     lda #<$400
     sta.z memcpy.num
@@ -773,9 +773,9 @@ main: {
     lda #>SCREEN
     sta.z memcpy.source+1
     jsr memcpy
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // asm { sei  }
     sei
     // [9] *((const byte*) PROCPORT) ← (const byte) PROCPORT_RAM_CHARROM -- _deref_pbuc1=vbuc2 
@@ -783,7 +783,7 @@ main: {
     sta PROCPORT
     // [10] call memcpy 
     // [14] phi from main::@2 to memcpy [phi:main::@2->memcpy]
-  memcpy_from_b2:
+  memcpy_from___b2:
     // [14] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
     lda #<$800
     sta.z memcpy.num
@@ -800,17 +800,17 @@ main: {
     lda #>CHARGEN
     sta.z memcpy.source+1
     jsr memcpy
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] *((const byte*) PROCPORT) ← (const byte) PROCPORT_BASIC_KERNEL_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_BASIC_KERNEL_IO
     sta PROCPORT
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -836,27 +836,27 @@ memcpy: {
     // [16] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
     // [17] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
     // [18] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
-  b1_from_memcpy:
-  b1_from_b2:
+  __b1_from_memcpy:
+  __b1_from___b2:
     // [18] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
     // [18] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // memcpy::@1
-  b1:
+  __b1:
     // [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memcpy::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
     // memcpy::@2
-  b2:
+  __b2:
     // [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
@@ -872,46 +872,47 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
+Removing instruction jmp __b1
+Removing instruction jmp __bend
 Removing instruction jmp toD0181
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b2 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Removing instruction toD0181_from_main:
 Removing instruction toD0181:
-Removing instruction b1_from_memcpy:
-Removing instruction b1_from_b2:
+Removing instruction __b1_from_memcpy:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1:
-Removing instruction memcpy_from_b1:
-Removing instruction b2:
-Removing instruction memcpy_from_b2:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1:
+Removing instruction memcpy_from___b1:
+Removing instruction __b2:
+Removing instruction memcpy_from___b2:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -1087,21 +1088,21 @@ memcpy: {
     // [18] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
     // [18] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     // memcpy::@1
-  b1:
+  __b1:
     // while(src!=src_end)
     // [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
+    bne __b2
     // memcpy::@return
     // }
     // [20] return 
     rts
     // memcpy::@2
-  b2:
+  __b2:
     // *dst++ = *src++
     // [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -1118,7 +1119,7 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1
+    jmp __b1
 }
   // File Data
 

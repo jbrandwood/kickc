@@ -10,7 +10,7 @@ main: {
 long2: {
     .label SCREEN = $400
     ldx #0
-  b1:
+  __b1:
     nop
     nop
     nop
@@ -271,15 +271,15 @@ long2: {
     sta SCREEN,x
     inx
     cpx #$b
-    beq !b1+
-    jmp b1
-  !b1:
+    beq !__b1+
+    jmp __b1
+  !__b1:
     rts
 }
 long1: {
     .label SCREEN = $400
     ldx #0
-  b1:
+  __b1:
     nop
     nop
     nop
@@ -540,8 +540,8 @@ long1: {
     sta SCREEN,x
     inx
     cpx #$b
-    beq !b1+
-    jmp b1
-  !b1:
+    beq !__b1+
+    jmp __b1
+  !__b1:
     rts
 }

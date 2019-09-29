@@ -282,35 +282,35 @@ Target platform is c64basic / MOS6502X
 // Minimal classic for() loop - coded using while() to test optimization of loop heads
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call memset 
     // [7] phi from main to memset [phi:main->memset]
   memset_from_main:
     jsr memset
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [6] return 
     rts
 }
@@ -323,29 +323,29 @@ memset: {
     .label end = str+num
     .label dst = 2
     // [8] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
+  __b1_from_memset:
     // [8] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [9] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [10] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // [11] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
@@ -356,9 +356,9 @@ memset: {
     inc.z dst+1
   !:
     // [8] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [8] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
@@ -381,35 +381,35 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Minimal classic for() loop - coded using while() to test optimization of loop heads
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call memset 
     // [7] phi from main to memset [phi:main->memset]
   memset_from_main:
     jsr memset
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [6] return 
     rts
 }
@@ -422,29 +422,29 @@ memset: {
     .label end = str+num
     .label dst = 2
     // [8] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
+  __b1_from_memset:
     // [8] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [9] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [10] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // [11] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
@@ -455,35 +455,36 @@ memset: {
     inc.z dst+1
   !:
     // [8] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [8] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction memset_from_main:
-Removing instruction breturn:
-Removing instruction b1_from_memset:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
+Removing instruction __breturn:
+Removing instruction __b1_from_memset:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -557,21 +558,21 @@ memset: {
     lda #>str
     sta.z dst+1
     // memset::@1
-  b1:
+  __b1:
     // while(dst!=end)
     // [9] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     // memset::@return
     // }
     // [10] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // *dst = c
     // [11] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
@@ -585,7 +586,7 @@ memset: {
   !:
     // [8] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
     // [8] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 

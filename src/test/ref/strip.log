@@ -421,26 +421,26 @@ Target platform is c64basic / MOS6502X
 // Tests of strip() function from https://news.ycombinator.com/item?id=12080871
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = 4
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call strip 
@@ -456,13 +456,13 @@ main: {
     sta.z strip.dest+1
     jsr strip
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call print 
     // [13] phi from main::@1 to print [phi:main::@1->print]
-  print_from_b1:
+  print_from___b1:
     // [13] phi (byte*) screen#15 = (byte*) 1024 [phi:main::@1->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
@@ -475,13 +475,13 @@ main: {
     sta.z print.msg+1
     jsr print
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] call strip 
     // [20] phi from main::@2 to strip [phi:main::@2->strip]
-  strip_from_b2:
+  strip_from___b2:
     // [20] phi (byte) strip::c#3 = (byte) 'y' [phi:main::@2->strip#0] -- vbuz1=vbuc1 
     lda #'y'
     sta.z strip.c
@@ -492,13 +492,13 @@ main: {
     sta.z strip.dest+1
     jsr strip
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] call print 
     // [13] phi from main::@3 to print [phi:main::@3->print]
-  print_from_b3:
+  print_from___b3:
     // [13] phi (byte*) screen#15 = (byte*) screen#11 [phi:main::@3->print#0] -- register_copy 
     // [13] phi (byte*) print::msg#4 = (const byte[]) msg2 [phi:main::@3->print#1] -- pbuz1=pbuc1 
     lda #<msg2
@@ -506,9 +506,9 @@ main: {
     lda #>msg2
     sta.z print.msg+1
     jsr print
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
@@ -517,13 +517,13 @@ main: {
 print: {
     .label msg = 2
     // [14] phi from print print::@1 to print::@1 [phi:print/print::@1->print::@1]
-  b1_from_print:
-  b1_from_b1:
+  __b1_from_print:
+  __b1_from___b1:
     // [14] phi (byte*) screen#10 = (byte*) screen#15 [phi:print/print::@1->print::@1#0] -- register_copy 
     // [14] phi (byte*) print::msg#3 = (byte*) print::msg#4 [phi:print/print::@1->print::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print::@1
-  b1:
+  __b1:
     // [15] *((byte*) screen#10) ← *((byte*) print::msg#3) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (msg),y
@@ -543,10 +543,10 @@ print: {
     ldy #0
     lda (msg),y
     cmp #0
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // print::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
 }
@@ -565,21 +565,21 @@ strip: {
     lda.z dest+1
     sta.z p_7+1
     // [22] phi from strip strip::@4 to strip::@1 [phi:strip/strip::@4->strip::@1]
-  b1_from_strip:
-  b1_from_b4:
+  __b1_from_strip:
+  __b1_from___b4:
     // [22] phi (byte*) strip::dest#2 = (byte*) strip::dest#0 [phi:strip/strip::@4->strip::@1#0] -- register_copy 
     // [22] phi (byte*) strip::p#4 = (byte*~) strip::p#7 [phi:strip/strip::@4->strip::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // strip::@1
-  b1:
+  __b1:
     // [23] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2 -- _deref_pbuz1_eq_vbuz2_then_la1 
     lda.z c
     ldy #0
     cmp (p_4),y
-    beq b2_from_b1
-    jmp b3
+    beq __b2_from___b1
+    jmp __b3
     // strip::@3
-  b3:
+  __b3:
     // [24] *((byte*) strip::dest#2) ← *((byte*) strip::p#4) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (p_4),y
@@ -591,12 +591,12 @@ strip: {
     inc.z dest+1
   !:
     // [26] phi from strip::@1 strip::@3 to strip::@2 [phi:strip::@1/strip::@3->strip::@2]
-  b2_from_b1:
-  b2_from_b3:
+  __b2_from___b1:
+  __b2_from___b3:
     // [26] phi (byte*) strip::dest#4 = (byte*) strip::dest#2 [phi:strip::@1/strip::@3->strip::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // strip::@2
-  b2:
+  __b2:
     // [27] (byte*) strip::p#2 ← ++ (byte*) strip::p#4 -- pbuz1=_inc_pbuz2 
     lda.z p_4
     clc
@@ -609,20 +609,20 @@ strip: {
     ldy #0
     lda (p_4),y
     cmp #0
-    bne b4
-    jmp breturn
+    bne __b4
+    jmp __breturn
     // strip::@return
-  breturn:
+  __breturn:
     // [29] return 
     rts
     // strip::@4
-  b4:
+  __b4:
     // [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
     lda.z p
     sta.z p_8
     lda.z p+1
     sta.z p_8+1
-    jmp b1_from_b4
+    jmp __b1_from___b4
 }
   // File Data
   msg1: .text "hello world!"
@@ -677,26 +677,26 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests of strip() function from https://news.ycombinator.com/item?id=12080871
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call strip 
@@ -711,13 +711,13 @@ main: {
     sta.z strip.dest+1
     jsr strip
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call print 
     // [13] phi from main::@1 to print [phi:main::@1->print]
-  print_from_b1:
+  print_from___b1:
     // [13] phi (byte*) screen#15 = (byte*) 1024 [phi:main::@1->print#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
@@ -730,13 +730,13 @@ main: {
     sta.z print.msg+1
     jsr print
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] call strip 
     // [20] phi from main::@2 to strip [phi:main::@2->strip]
-  strip_from_b2:
+  strip_from___b2:
     // [20] phi (byte) strip::c#3 = (byte) 'y' [phi:main::@2->strip#0] -- vbuxx=vbuc1 
     ldx #'y'
     // [20] phi (byte*) strip::dest#0 = (const byte[]) msg2 [phi:main::@2->strip#1] -- pbuz1=pbuc1 
@@ -746,13 +746,13 @@ main: {
     sta.z strip.dest+1
     jsr strip
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] call print 
     // [13] phi from main::@3 to print [phi:main::@3->print]
-  print_from_b3:
+  print_from___b3:
     // [13] phi (byte*) screen#15 = (byte*) screen#11 [phi:main::@3->print#0] -- register_copy 
     // [13] phi (byte*) print::msg#4 = (const byte[]) msg2 [phi:main::@3->print#1] -- pbuz1=pbuc1 
     lda #<msg2
@@ -760,9 +760,9 @@ main: {
     lda #>msg2
     sta.z print.msg+1
     jsr print
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
@@ -771,13 +771,13 @@ main: {
 print: {
     .label msg = 4
     // [14] phi from print print::@1 to print::@1 [phi:print/print::@1->print::@1]
-  b1_from_print:
-  b1_from_b1:
+  __b1_from_print:
+  __b1_from___b1:
     // [14] phi (byte*) screen#10 = (byte*) screen#15 [phi:print/print::@1->print::@1#0] -- register_copy 
     // [14] phi (byte*) print::msg#3 = (byte*) print::msg#4 [phi:print/print::@1->print::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print::@1
-  b1:
+  __b1:
     // [15] *((byte*) screen#10) ← *((byte*) print::msg#3) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (msg),y
@@ -797,10 +797,10 @@ print: {
     ldy #0
     lda (msg),y
     cmp #0
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // print::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
 }
@@ -818,21 +818,21 @@ strip: {
     lda.z dest+1
     sta.z p_7+1
     // [22] phi from strip strip::@4 to strip::@1 [phi:strip/strip::@4->strip::@1]
-  b1_from_strip:
-  b1_from_b4:
+  __b1_from_strip:
+  __b1_from___b4:
     // [22] phi (byte*) strip::dest#2 = (byte*) strip::dest#0 [phi:strip/strip::@4->strip::@1#0] -- register_copy 
     // [22] phi (byte*) strip::p#4 = (byte*~) strip::p#7 [phi:strip/strip::@4->strip::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // strip::@1
-  b1:
+  __b1:
     // [23] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2 -- _deref_pbuz1_eq_vbuxx_then_la1 
     txa
     ldy #0
     cmp (p_4),y
-    beq b2_from_b1
-    jmp b3
+    beq __b2_from___b1
+    jmp __b3
     // strip::@3
-  b3:
+  __b3:
     // [24] *((byte*) strip::dest#2) ← *((byte*) strip::p#4) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (p_4),y
@@ -844,12 +844,12 @@ strip: {
     inc.z dest+1
   !:
     // [26] phi from strip::@1 strip::@3 to strip::@2 [phi:strip::@1/strip::@3->strip::@2]
-  b2_from_b1:
-  b2_from_b3:
+  __b2_from___b1:
+  __b2_from___b3:
     // [26] phi (byte*) strip::dest#4 = (byte*) strip::dest#2 [phi:strip::@1/strip::@3->strip::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // strip::@2
-  b2:
+  __b2:
     // [27] (byte*) strip::p#2 ← ++ (byte*) strip::p#4 -- pbuz1=_inc_pbuz2 
     lda.z p_4
     clc
@@ -862,20 +862,20 @@ strip: {
     ldy #0
     lda (p_4),y
     cmp #0
-    bne b4
-    jmp breturn
+    bne __b4
+    jmp __breturn
     // strip::@return
-  breturn:
+  __breturn:
     // [29] return 
     rts
     // strip::@4
-  b4:
+  __b4:
     // [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
     lda.z p
     sta.z p_8
     lda.z p+1
     sta.z p_8+1
-    jmp b1_from_b4
+    jmp __b1_from___b4
 }
   // File Data
   msg1: .text "hello world!"
@@ -884,58 +884,59 @@ strip: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp b2
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b1 with b1
-Replacing label b2_from_b1 with b2
-Replacing label b1_from_b4 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction print_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction strip_from_b2:
-Removing instruction b3_from_b2:
-Removing instruction print_from_b3:
-Removing instruction b1_from_print:
-Removing instruction b1_from_b1:
-Removing instruction b1_from_strip:
-Removing instruction b1_from_b4:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b3:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b2_from___b1 with __b2
+Replacing label __b1_from___b4 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction print_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction strip_from___b2:
+Removing instruction __b3_from___b2:
+Removing instruction print_from___b3:
+Removing instruction __b1_from_print:
+Removing instruction __b1_from___b1:
+Removing instruction __b1_from_strip:
+Removing instruction __b1_from___b4:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction strip_from_main:
-Removing instruction b1:
-Removing instruction b2:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction b3:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __b3:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -1071,7 +1072,7 @@ print: {
     // [14] phi (byte*) screen#10 = (byte*) screen#15 [phi:print/print::@1->print::@1#0] -- register_copy 
     // [14] phi (byte*) print::msg#3 = (byte*) print::msg#4 [phi:print/print::@1->print::@1#1] -- register_copy 
     // print::@1
-  b1:
+  __b1:
     // *screen++ = *msg++
     // [15] *((byte*) screen#10) ← *((byte*) print::msg#3) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -1093,7 +1094,7 @@ print: {
     ldy #0
     lda (msg),y
     cmp #0
-    bne b1
+    bne __b1
     // print::@return
     // }
     // [19] return 
@@ -1116,13 +1117,13 @@ strip: {
     // [22] phi (byte*) strip::dest#2 = (byte*) strip::dest#0 [phi:strip/strip::@4->strip::@1#0] -- register_copy 
     // [22] phi (byte*) strip::p#4 = (byte*~) strip::p#7 [phi:strip/strip::@4->strip::@1#1] -- register_copy 
     // strip::@1
-  b1:
+  __b1:
     // if(*p!=c)
     // [23] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2 -- _deref_pbuz1_eq_vbuxx_then_la1 
     txa
     ldy #0
     cmp (p_4),y
-    beq b2
+    beq __b2
     // strip::@3
     // *dest++=*p
     // [24] *((byte*) strip::dest#2) ← *((byte*) strip::p#4) -- _deref_pbuz1=_deref_pbuz2 
@@ -1137,7 +1138,7 @@ strip: {
     // [26] phi from strip::@1 strip::@3 to strip::@2 [phi:strip::@1/strip::@3->strip::@2]
     // [26] phi (byte*) strip::dest#4 = (byte*) strip::dest#2 [phi:strip::@1/strip::@3->strip::@2#0] -- register_copy 
     // strip::@2
-  b2:
+  __b2:
     // while(*p++!=0)
     // [27] (byte*) strip::p#2 ← ++ (byte*) strip::p#4 -- pbuz1=_inc_pbuz2 
     lda.z p_4
@@ -1151,19 +1152,19 @@ strip: {
     ldy #0
     lda (p_4),y
     cmp #0
-    bne b4
+    bne __b4
     // strip::@return
     // }
     // [29] return 
     rts
     // strip::@4
-  b4:
+  __b4:
     // [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
     lda.z p
     sta.z p_8
     lda.z p+1
     sta.z p_8+1
-    jmp b1
+    jmp __b1
 }
   // File Data
   msg1: .text "hello world!"

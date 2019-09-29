@@ -138,24 +138,24 @@ Target platform is c64basic / MOS6502X
 // Works if the C-lexer and the ASM-lexer are separated properly
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label lda = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label jmp = 1
@@ -164,18 +164,18 @@ main: {
     sta lda
     // [5] call bne 
     jsr bne
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // asm { ldaa jmpa bnea a:  }
     // Inline asm using the mnemonics
     lda a
     jmp a
     bne a
   a:
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
 }
@@ -184,9 +184,9 @@ bne: {
     // [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #main.jmp
     sta lda+1
-    jmp breturn
+    jmp __breturn
     // bne::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
@@ -212,24 +212,24 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Works if the C-lexer and the ASM-lexer are separated properly
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label lda = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label jmp = 1
@@ -238,18 +238,18 @@ main: {
     sta lda
     // [5] call bne 
     jsr bne
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // asm { ldaa jmpa bnea a:  }
     // Inline asm using the mnemonics
     lda a
     jmp a
     bne a
   a:
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
 }
@@ -258,37 +258,38 @@ bne: {
     // [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #main.jmp
     sta lda+1
-    jmp breturn
+    jmp __breturn
     // bne::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
 Removing instruction bne a
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction breturn:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
 Replacing jump to rts with rts in jmp a
 Succesful ASM optimization Pass5DoubleJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

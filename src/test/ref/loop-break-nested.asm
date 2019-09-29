@@ -8,33 +8,33 @@ main: {
     sta.z line
     lda #>$400
     sta.z line+1
-  b1:
+  __b1:
     lda.z line+1
     cmp #>$400+$28*$19
     bcc !+
-    bne breturn
+    bne __breturn
     lda.z line
     cmp #<$400+$28*$19
-    bcs breturn
+    bcs __breturn
   !:
     ldy #0
     lda (line),y
     cmp #'a'
-    bne b2
-  breturn:
+    bne b1
+  __breturn:
     rts
-  b2:
+  b1:
     ldy #0
-  b3:
+  __b3:
     lda (line),y
     cmp #'a'
-    beq b5
+    beq __b5
     lda #'a'
     sta (line),y
     iny
     cpy #$28
-    bne b3
-  b5:
+    bne __b3
+  __b5:
     lda #$28
     clc
     adc.z line
@@ -42,5 +42,5 @@ main: {
     bcc !+
     inc.z line+1
   !:
-    jmp b1
+    jmp __b1
 }

@@ -6,11 +6,11 @@
   .label SCREEN = $400
 main: {
     ldx #0
-  b1:
+  __b1:
     cpx settings
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     txa
     asl
     tay
@@ -24,7 +24,7 @@ main: {
     lda ($fe),y
     sta SCREEN,y
     inx
-    jmp b1
+    jmp __b1
 }
   seq: .word 1, 2, 3
   settings: .byte 3

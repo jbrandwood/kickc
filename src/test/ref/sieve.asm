@@ -38,8 +38,8 @@
 main: {
     .label toD0181_gfx = $1800
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
-    .label _10 = 9
-    .label _14 = $15
+    .label __10 = 9
+    .label __14 = $15
     .label cyclecount = 9
     .label sec100s = $d
     .label i = $11
@@ -48,7 +48,7 @@ main: {
     .label s = 4
     .label i_3 = $d
     .label i_10 = $d
-    .label _39 = $13
+    .label __39 = $13
     //Show lower case font
     lda #toD0181_return
     sta D018
@@ -101,18 +101,18 @@ main: {
     sta.z i
     lda #>2
     sta.z i+1
-  b1:
+  __b1:
     lda.z i+1
     cmp #>SQRT_COUNT
-    bcs !b2+
-    jmp b2
-  !b2:
+    bcs !__b2+
+    jmp __b2
+  !__b2:
     bne !+
     lda.z i
     cmp #<SQRT_COUNT
-    bcs !b2+
-    jmp b2
-  !b2:
+    bcs !__b2+
+    jmp __b2
+  !__b2:
   !:
     jsr clock
     lda.z cyclecount
@@ -129,9 +129,9 @@ main: {
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
     jsr div32u16u
-    lda.z _14
+    lda.z __14
     sta.z sec100s
-    lda.z _14+1
+    lda.z __14+1
     sta.z sec100s+1
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -154,14 +154,14 @@ main: {
     sta.z i_10
     lda #>2
     sta.z i_10+1
-  b8:
+  __b8:
     lda.z i_10+1
     cmp #>$514
-    bcc b9
+    bcc __b9
     bne !+
     lda.z i_10
     cmp #<$514
-    bcc b9
+    bcc __b9
   !:
     lda.z print_char_cursor_62
     sta.z print_char_cursor
@@ -172,38 +172,38 @@ main: {
     lda #>str4
     sta.z print_str.str+1
     jsr print_str
-  b13:
+  __b13:
     inc SCREEN+$3e7
-    jmp b13
-  b9:
+    jmp __b13
+  __b9:
     lda.z i_10
     clc
     adc #<sieve
-    sta.z _39
+    sta.z __39
     lda.z i_10+1
     adc #>sieve
-    sta.z _39+1
+    sta.z __39+1
     ldy #0
-    lda (_39),y
+    lda (__39),y
     cmp #0
-    bne b11
+    bne __b11
     lda.z print_char_cursor_62
     sta.z print_char_cursor
     lda.z print_char_cursor_62+1
     sta.z print_char_cursor+1
     jsr print_word_decimal
     jsr print_char
-  b11:
+  __b11:
     inc.z i_3
     bne !+
     inc.z i_3+1
   !:
-    jmp b8
-  b2:
+    jmp __b8
+  __b2:
     ldy #0
     lda (sieve_i),y
     cmp #0
-    bne b4
+    bne __b4
     lda.z i
     asl
     sta.z j
@@ -217,16 +217,16 @@ main: {
     lda.z j+1
     adc #>sieve
     sta.z s+1
-  b5:
+  __b5:
     lda.z j+1
     cmp #>COUNT
-    bcc b6
+    bcc __b6
     bne !+
     lda.z j
     cmp #<COUNT
-    bcc b6
+    bcc __b6
   !:
-  b4:
+  __b4:
     inc.z i
     bne !+
     inc.z i+1
@@ -235,8 +235,8 @@ main: {
     bne !+
     inc.z sieve_i+1
   !:
-    jmp b1
-  b6:
+    jmp __b1
+  __b6:
     lda #1
     ldy #0
     sta (s),y
@@ -254,7 +254,7 @@ main: {
     lda.z j+1
     adc.z i+1
     sta.z j+1
-    jmp b5
+    jmp __b5
     str: .text "Sieve benchmark - calculating primes"
     .byte 0
     str1: .text "between 2 and "
@@ -301,13 +301,13 @@ print_word_decimal: {
 // print_str(byte* zeropage($f) str)
 print_str: {
     .label str = $f
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -319,7 +319,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.
@@ -340,10 +340,10 @@ utoa: {
     ldx #0
     txa
     sta.z digit
-  b1:
+  __b1:
     lda.z digit
     cmp #max_digits-1
-    bcc b2
+    bcc __b2
     lda.z value
     tay
     lda DIGITS,y
@@ -357,7 +357,7 @@ utoa: {
     tay
     sta (buffer),y
     rts
-  b2:
+  __b2:
     lda.z digit
     asl
     tay
@@ -366,25 +366,25 @@ utoa: {
     lda RADIX_DECIMAL_VALUES+1,y
     sta.z digit_value+1
     cpx #0
-    bne b5
+    bne __b5
     cmp.z value+1
     bne !+
     lda.z digit_value
     cmp.z value
-    beq b5
+    beq __b5
   !:
-    bcc b5
-  b4:
+    bcc __b5
+  __b4:
     inc.z digit
-    jmp b1
-  b5:
+    jmp __b1
+  __b5:
     jsr utoa_append
     inc.z buffer
     bne !+
     inc.z buffer+1
   !:
     ldx #1
-    jmp b4
+    jmp __b4
 }
 // Used to convert a single digit of an unsigned number value to a string representation
 // Counts a single digit up from '0' as long as the value is larger than sub.
@@ -401,20 +401,20 @@ utoa_append: {
     .label sub = $19
     .label return = 2
     ldx #0
-  b1:
+  __b1:
     lda.z sub+1
     cmp.z value+1
     bne !+
     lda.z sub
     cmp.z value
-    beq b2
+    beq __b2
   !:
-    bcc b2
+    bcc __b2
     lda DIGITS,x
     ldy #0
     sta (buffer),y
     rts
-  b2:
+  __b2:
     inx
     lda.z value
     sec
@@ -423,11 +423,11 @@ utoa_append: {
     lda.z value+1
     sbc.z sub+1
     sta.z value+1
-    jmp b1
+    jmp __b1
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -437,11 +437,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -476,10 +476,10 @@ ultoa: {
     ldx #0
     txa
     sta.z digit
-  b1:
+  __b1:
     lda.z digit
     cmp #max_digits-1
-    bcc b2
+    bcc __b2
     lda.z value
     tay
     lda DIGITS,y
@@ -493,7 +493,7 @@ ultoa: {
     tay
     sta (buffer),y
     rts
-  b2:
+  __b2:
     lda.z digit
     asl
     asl
@@ -507,34 +507,34 @@ ultoa: {
     lda RADIX_DECIMAL_VALUES_LONG+3,y
     sta.z digit_value+3
     cpx #0
-    bne b5
+    bne __b5
     lda.z value+3
     cmp.z digit_value+3
     bcc !+
-    bne b5
+    bne __b5
     lda.z value+2
     cmp.z digit_value+2
     bcc !+
-    bne b5
+    bne __b5
     lda.z value+1
     cmp.z digit_value+1
     bcc !+
-    bne b5
+    bne __b5
     lda.z value
     cmp.z digit_value
-    bcs b5
+    bcs __b5
   !:
-  b4:
+  __b4:
     inc.z digit
-    jmp b1
-  b5:
+    jmp __b1
+  __b5:
     jsr ultoa_append
     inc.z buffer
     bne !+
     inc.z buffer+1
   !:
     ldx #1
-    jmp b4
+    jmp __b4
 }
 // Used to convert a single digit of an unsigned number value to a string representation
 // Counts a single digit up from '0' as long as the value is larger than sub.
@@ -551,28 +551,28 @@ ultoa_append: {
     .label sub = $15
     .label return = 9
     ldx #0
-  b1:
+  __b1:
     lda.z value+3
     cmp.z sub+3
     bcc !+
-    bne b2
+    bne __b2
     lda.z value+2
     cmp.z sub+2
     bcc !+
-    bne b2
+    bne __b2
     lda.z value+1
     cmp.z sub+1
     bcc !+
-    bne b2
+    bne __b2
     lda.z value
     cmp.z sub
-    bcs b2
+    bcs __b2
   !:
     lda DIGITS,x
     ldy #0
     sta (buffer),y
     rts
-  b2:
+  __b2:
     inx
     lda.z value
     sec
@@ -587,7 +587,7 @@ ultoa_append: {
     lda.z value+3
     sbc.z sub+3
     sta.z value+3
-    jmp b1
+    jmp __b1
 }
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
 // The 16-bit word remainder can be found in rem16u after the division
@@ -639,28 +639,28 @@ divr16u: {
     txa
     sta.z quotient
     sta.z quotient+1
-  b1:
+  __b1:
     asl.z rem
     rol.z rem+1
     lda.z dividend+1
     and #$80
     cmp #0
-    beq b2
+    beq __b2
     lda #1
     ora.z rem
     sta.z rem
-  b2:
+  __b2:
     asl.z dividend
     rol.z dividend+1
     asl.z quotient
     rol.z quotient+1
     lda.z rem+1
     cmp #>div32u16u.divisor
-    bcc b3
+    bcc __b3
     bne !+
     lda.z rem
     cmp #<div32u16u.divisor
-    bcc b3
+    bcc __b3
   !:
     inc.z quotient
     bne !+
@@ -673,10 +673,10 @@ divr16u: {
     lda.z rem+1
     sbc #>div32u16u.divisor
     sta.z rem+1
-  b3:
+  __b3:
     inx
     cpx #$10
-    bne b1
+    bne __b1
     rts
 }
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
@@ -730,7 +730,7 @@ memset: {
     lda.z num
     bne !+
     lda.z num+1
-    beq breturn
+    beq __breturn
   !:
     lda.z end
     clc
@@ -739,16 +739,16 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-  b2:
+  __b2:
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
-  breturn:
+    bne __b3
+  __breturn:
     rts
-  b3:
+  __b3:
     txa
     ldy #0
     sta (dst),y
@@ -756,7 +756,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2
+    jmp __b2
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {

@@ -5,13 +5,13 @@
 .pc = $80d "Program"
   .label DC00 = $dc00
 main: {
-  b1:
+  __b1:
     ldx DC00
     txa
     and #$1f
     cpx #0
-    bne b1
+    bne __b1
     cmp #$1f
-    beq b1
-    jmp b1
+    beq __b1
+    jmp __b1
 }

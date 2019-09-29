@@ -218,38 +218,38 @@ Target platform is c64basic / MOS6502X
 // Tests optimization of identical sub-expressions
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _1 = 6
-    .label _2 = 7
-    .label _3 = 5
-    .label _4 = $a
-    .label _5 = $b
+    .label __1 = 6
+    .label __2 = 7
+    .label __3 = 5
+    .label __4 = $a
+    .label __5 = $b
     .label screen = 8
     .label screen_2 = 3
     .label i = 2
     .label screen_3 = 3
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen_3
@@ -258,29 +258,29 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z _3
+    sta.z __3
     // [7] (byte~) main::$1 ← (byte~) main::$3 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
-    lda.z _3
+    lda.z __3
     clc
     adc.z i
-    sta.z _1
+    sta.z __1
     // [8] (byte~) main::$2 ← (byte~) main::$1 + (byte) 3 -- vbuz1=vbuz2_plus_vbuc1 
-    lax.z _1
+    lax.z __1
     axs #-[3]
-    stx.z _2
+    stx.z __2
     // [9] *((byte*) main::screen#3) ← (byte~) main::$2 -- _deref_pbuz1=vbuz2 
-    lda.z _2
+    lda.z __2
     ldy #0
     sta (screen_3),y
     // [10] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz2 
@@ -292,16 +292,16 @@ main: {
     adc #0
     sta.z screen+1
     // [11] (byte~) main::$4 ← (byte~) main::$3 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
-    lda.z _3
+    lda.z __3
     clc
     adc.z i
-    sta.z _4
+    sta.z __4
     // [12] (byte~) main::$5 ← (byte~) main::$4 + (byte) 3 -- vbuz1=vbuz2_plus_vbuc1 
-    lax.z _4
+    lax.z __4
     axs #-[3]
-    stx.z _5
+    stx.z __5
     // [13] *((byte*) main::screen#1) ← (byte~) main::$5 -- _deref_pbuz1=vbuz2 
-    lda.z _5
+    lda.z __5
     ldy #0
     sta (screen),y
     // [14] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 -- pbuz1=_inc_pbuz2 
@@ -317,10 +317,10 @@ main: {
     // [16] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
@@ -374,31 +374,31 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests optimization of identical sub-expressions
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _3 = 4
+    .label __3 = 4
     .label screen = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
@@ -406,22 +406,22 @@ main: {
     sta.z screen+1
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
     txa
     asl
-    sta.z _3
+    sta.z __3
     // [7] (byte~) main::$1 ← (byte~) main::$3 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
-    adc.z _3
+    adc.z __3
     // [8] (byte~) main::$2 ← (byte~) main::$1 + (byte) 3 -- vbuaa=vbuaa_plus_vbuc1 
     clc
     adc #3
@@ -436,7 +436,7 @@ main: {
     // [11] (byte~) main::$4 ← (byte~) main::$3 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
-    adc.z _3
+    adc.z __3
     // [12] (byte~) main::$5 ← (byte~) main::$4 + (byte) 3 -- vbuaa=vbuaa_plus_vbuc1 
     clc
     adc #3
@@ -452,38 +452,39 @@ main: {
     inx
     // [16] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -534,7 +535,7 @@ Score: 891
   // @end
   // main
 main: {
-    .label _3 = 4
+    .label __3 = 4
     .label screen = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
@@ -548,17 +549,17 @@ main: {
     // [5] phi (byte*) main::screen#3 = (byte*) main::screen#2 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // i*2
     // [6] (byte~) main::$3 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
     txa
     asl
-    sta.z _3
+    sta.z __3
     // i*2+i
     // [7] (byte~) main::$1 ← (byte~) main::$3 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
-    adc.z _3
+    adc.z __3
     // i*2+i+3
     // [8] (byte~) main::$2 ← (byte~) main::$1 + (byte) 3 -- vbuaa=vbuaa_plus_vbuc1 
     clc
@@ -577,7 +578,7 @@ main: {
     // [11] (byte~) main::$4 ← (byte~) main::$3 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
-    adc.z _3
+    adc.z __3
     // i*2+i+3
     // [12] (byte~) main::$5 ← (byte~) main::$4 + (byte) 3 -- vbuaa=vbuaa_plus_vbuc1 
     clc
@@ -597,7 +598,7 @@ main: {
     inx
     // [16] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [17] return 

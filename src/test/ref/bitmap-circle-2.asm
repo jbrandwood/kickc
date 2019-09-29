@@ -42,7 +42,7 @@ main: {
     sta.z i
     lda #>1
     sta.z i+1
-  b1:
+  __b1:
     lda.z i
     cmp #<$b4
     lda.z i+1
@@ -50,10 +50,10 @@ main: {
     bvc !+
     eor #$80
   !:
-    bmi b2
-  b3:
-    jmp b3
-  b2:
+    bmi __b2
+  __b3:
+    jmp __b3
+  __b2:
     lda.z i
     sta.z circle.r
     lda.z i+1
@@ -66,28 +66,28 @@ main: {
     lda.z i+1
     adc #>5
     sta.z i+1
-    jmp b1
+    jmp __b1
 }
 // circle(signed word zeropage(2) r)
 circle: {
     .const xc = $a0
     .const yc = $64
-    .label _0 = 4
-    .label _5 = $a
-    .label _6 = $a
-    .label _7 = 4
-    .label _9 = $c
-    .label _10 = 4
+    .label __0 = 4
+    .label __5 = $a
+    .label __6 = $a
+    .label __7 = 4
+    .label __9 = $c
+    .label __10 = 4
     .label r = 2
     .label p = 4
     .label y = 2
     .label x1 = 8
     lda.z r
     asl
-    sta.z _0
+    sta.z __0
     lda.z r+1
     rol
-    sta.z _0+1
+    sta.z __0+1
     sec
     lda #<3
     sbc.z p
@@ -98,7 +98,7 @@ circle: {
     lda #<0
     sta.z x1
     sta.z x1+1
-  b1:
+  __b1:
     lda.z y
     cmp.z x1
     lda.z y+1
@@ -106,13 +106,13 @@ circle: {
     bvc !+
     eor #$80
   !:
-    bpl b2
+    bpl __b2
     rts
-  b2:
+  __b2:
     lda.z p+1
-    bpl !b3+
-    jmp b3
-  !b3:
+    bpl !__b3+
+    jmp __b3
+  !__b3:
     sec
     lda.z y
     sbc #1
@@ -123,21 +123,21 @@ circle: {
     lda.z x1
     sec
     sbc.z y
-    sta.z _5
+    sta.z __5
     lda.z x1+1
     sbc.z y+1
-    sta.z _5+1
-    asl.z _6
-    rol.z _6+1
-    asl.z _6
-    rol.z _6+1
-    lda.z _7
+    sta.z __5+1
+    asl.z __6
+    rol.z __6+1
+    asl.z __6
+    rol.z __6+1
+    lda.z __7
     clc
-    adc.z _6
-    sta.z _7
-    lda.z _7+1
-    adc.z _6+1
-    sta.z _7+1
+    adc.z __6
+    sta.z __7
+    lda.z __7+1
+    adc.z __6+1
+    sta.z __7+1
     lda.z p
     clc
     adc #<$a
@@ -145,7 +145,7 @@ circle: {
     lda.z p+1
     adc #>$a
     sta.z p+1
-  b4:
+  __b4:
     lda.z x1
     clc
     adc #<xc
@@ -270,23 +270,23 @@ circle: {
     bne !+
     inc.z x1+1
   !:
-    jmp b1
-  b3:
+    jmp __b1
+  __b3:
     lda.z x1
     asl
-    sta.z _9
+    sta.z __9
     lda.z x1+1
     rol
-    sta.z _9+1
-    asl.z _9
-    rol.z _9+1
-    lda.z _10
+    sta.z __9+1
+    asl.z __9
+    rol.z __9+1
+    lda.z __10
     clc
-    adc.z _9
-    sta.z _10
-    lda.z _10+1
-    adc.z _9+1
-    sta.z _10+1
+    adc.z __9
+    sta.z __10
+    lda.z __10+1
+    adc.z __9+1
+    sta.z __10+1
     lda.z p
     clc
     adc #<6
@@ -294,22 +294,22 @@ circle: {
     lda.z p+1
     adc #>6
     sta.z p+1
-    jmp b4
+    jmp __b4
 }
 // plot(signed word zeropage($a) x, signed word zeropage($c) y)
 plot: {
-    .label _8 = $e
-    .label _11 = $c
-    .label _12 = $10
+    .label __8 = $e
+    .label __11 = $c
+    .label __12 = $10
     .label x = $a
     .label y = $c
     .label location = $e
-    .label _15 = $10
-    .label _16 = $10
+    .label __15 = $10
+    .label __16 = $10
     lda.z x+1
-    bpl !breturn+
-    jmp breturn
-  !breturn:
+    bpl !__breturn+
+    jmp __breturn
+  !__breturn:
     lda #<$13f
     cmp.z x
     lda #>$13f
@@ -317,13 +317,13 @@ plot: {
     bvc !+
     eor #$80
   !:
-    bpl !breturn+
-    jmp breturn
-  !breturn:
+    bpl !__breturn+
+    jmp __breturn
+  !__breturn:
     lda.z y+1
-    bpl !breturn+
-    jmp breturn
-  !breturn:
+    bpl !__breturn+
+    jmp __breturn
+  !__breturn:
     lda.z y
     cmp #<$c7+1
     lda.z y+1
@@ -331,15 +331,15 @@ plot: {
     bvc !+
     eor #$80
   !:
-    bmi !breturn+
-    jmp breturn
-  !breturn:
+    bmi !__breturn+
+    jmp __breturn
+  !__breturn:
     lda.z x
     and #<$fff8
-    sta.z _8
+    sta.z __8
     lda.z x+1
     and #>$fff8
-    sta.z _8+1
+    sta.z __8+1
     clc
     lda.z location
     adc #<BITMAP
@@ -355,51 +355,51 @@ plot: {
     bcc !+
     inc.z location+1
   !:
-    lda.z _11+1
+    lda.z __11+1
     cmp #$80
-    ror.z _11+1
-    ror.z _11
-    lda.z _11+1
+    ror.z __11+1
+    ror.z __11
+    lda.z __11+1
     cmp #$80
-    ror.z _11+1
-    ror.z _11
-    lda.z _11+1
+    ror.z __11+1
+    ror.z __11
+    lda.z __11+1
     cmp #$80
-    ror.z _11+1
-    ror.z _11
-    lda.z _11
+    ror.z __11+1
+    ror.z __11
+    lda.z __11
     asl
-    sta.z _15
-    lda.z _11+1
+    sta.z __15
+    lda.z __11+1
     rol
-    sta.z _15+1
-    asl.z _15
-    rol.z _15+1
-    lda.z _16
+    sta.z __15+1
+    asl.z __15
+    rol.z __15+1
+    lda.z __16
     clc
-    adc.z _11
-    sta.z _16
-    lda.z _16+1
-    adc.z _11+1
-    sta.z _16+1
-    lda.z _12+1
+    adc.z __11
+    sta.z __16
+    lda.z __16+1
+    adc.z __11+1
+    sta.z __16+1
+    lda.z __12+1
     sta.z $ff
-    lda.z _12
-    sta.z _12+1
+    lda.z __12
+    sta.z __12+1
     lda #0
-    sta.z _12
+    sta.z __12
     lsr.z $ff
-    ror.z _12+1
-    ror.z _12
+    ror.z __12+1
+    ror.z __12
     lsr.z $ff
-    ror.z _12+1
-    ror.z _12
+    ror.z __12+1
+    ror.z __12
     lda.z location
     clc
-    adc.z _12
+    adc.z __12
     sta.z location
     lda.z location+1
-    adc.z _12+1
+    adc.z __12+1
     sta.z location+1
     lda #7
     and.z x
@@ -408,7 +408,7 @@ plot: {
     ldy #0
     ora (location),y
     sta (location),y
-  breturn:
+  __breturn:
     rts
 }
 // Fill some memory with a value
@@ -424,15 +424,15 @@ fill: {
     lda.z end+1
     adc.z addr+1
     sta.z end+1
-  b1:
+  __b1:
     lda.z addr+1
     cmp.z end+1
-    bne b2
+    bne __b2
     lda.z addr
     cmp.z end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     txa
     ldy #0
     sta (addr),y
@@ -440,6 +440,6 @@ fill: {
     bne !+
     inc.z addr+1
   !:
-    jmp b1
+    jmp __b1
 }
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1

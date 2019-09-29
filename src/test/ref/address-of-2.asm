@@ -1,9 +1,9 @@
 // Test address-of by assigning the affected variable in multiple ways
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label val = 2
-bbegin:
+__bbegin:
   lda #0
   sta.z val
   jsr main

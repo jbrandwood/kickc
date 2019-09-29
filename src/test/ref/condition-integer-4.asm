@@ -5,59 +5,59 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    .label _6 = 2
-    .label _7 = 3
-    .label _11 = 4
-    .label _12 = 5
+    .label __6 = 2
+    .label __7 = 3
+    .label __11 = 4
+    .label __12 = 5
     ldx #0
     ldy #0
-  b1:
+  __b1:
     tya
     and #1
     cmp #0
-    beq b2
+    beq __b2
     lda #'+'
     sta SCREEN,x
-  b2:
+  __b2:
     tya
     and #2
     cmp #0
-    beq b3
+    beq __b3
     lda #'+'
     sta SCREEN+$28*1,x
-  b3:
+  __b3:
     tya
     and #1
-    sta.z _6
+    sta.z __6
     tya
     and #2
-    sta.z _7
+    sta.z __7
     lda #0
-    cmp.z _6
-    beq b4
-    cmp.z _7
-    beq b4
+    cmp.z __6
+    beq __b4
+    cmp.z __7
+    beq __b4
     lda #'+'
     sta SCREEN+$28*2,x
-  b4:
+  __b4:
     tya
     and #1
-    sta.z _11
+    sta.z __11
     tya
     and #2
-    sta.z _12
+    sta.z __12
     lda #0
-    cmp.z _11
-    bne b9
-    cmp.z _12
-    beq b5
-  b9:
+    cmp.z __11
+    bne __b9
+    cmp.z __12
+    beq __b5
+  __b9:
     lda #'+'
     sta SCREEN+$28*3,x
-  b5:
+  __b5:
     inx
     iny
     cpy #8
-    bne b1
+    bne __b1
     rts
 }

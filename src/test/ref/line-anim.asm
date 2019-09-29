@@ -51,7 +51,7 @@ main: {
     jsr screen_fill
     lda #0
     sta.z i
-  b1:
+  __b1:
     jsr point_init
     lda.z i
     asl
@@ -66,18 +66,18 @@ main: {
     inc.z i
     lda #SIZE-1+1
     cmp.z i
-    bne b1
-  b2:
+    bne __b1
+  __b2:
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     inc BORDERCOL
-    jmp b2
+    jmp __b2
 }
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage($a) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $e
+    .label __1 = $e
     .label x = $a
     .label plotter = $c
     lda bitmap_plot_yhi,x
@@ -86,16 +86,16 @@ bitmap_plot: {
     sta.z plotter
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter+1
     lda.z x
     tay
@@ -108,11 +108,11 @@ bitmap_plot: {
 // Initialize the points to be animated
 // point_init(byte zeropage($12) point_idx)
 point_init: {
-    .label _3 = 6
-    .label _4 = $c
-    .label _9 = $e
-    .label _10 = $10
-    .label _11 = $10
+    .label __3 = 6
+    .label __4 = $c
+    .label __9 = $e
+    .label __10 = $10
+    .label __11 = $10
     .label point_idx = $12
     .label y_diff = 6
     .label abs16s1_return = 2
@@ -131,95 +131,95 @@ point_init: {
     sta.z x_diff+1
     ldy.z point_idx
     lda y_end,y
-    sta.z _3
+    sta.z __3
     lda #0
-    sta.z _3+1
+    sta.z __3+1
     lda y_start,y
-    sta.z _4
+    sta.z __4
     lda #0
-    sta.z _4+1
+    sta.z __4+1
     lda.z y_diff
     sec
-    sbc.z _4
+    sbc.z __4
     sta.z y_diff
     lda.z y_diff+1
-    sbc.z _4+1
+    sbc.z __4+1
     sta.z y_diff+1
     lda.z x_diff+1
-    bpl !abs16s1_b1+
-    jmp abs16s1_b1
-  !abs16s1_b1:
+    bpl !abs16s1___b1+
+    jmp abs16s1___b1
+  !abs16s1___b1:
     lda.z x_diff
     sta.z abs16s1_return
     lda.z x_diff+1
     sta.z abs16s1_return+1
   abs16s2:
     lda.z y_diff+1
-    bpl !abs16s2_b1+
-    jmp abs16s2_b1
-  !abs16s2_b1:
+    bpl !abs16s2___b1+
+    jmp abs16s2___b1
+  !abs16s2___b1:
     lda.z y_diff
     sta.z abs16s2_return
     lda.z y_diff+1
     sta.z abs16s2_return+1
-  b6:
+  __b6:
     lda.z abs16s2_return+1
     cmp.z abs16s1_return+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z abs16s2_return
     cmp.z abs16s1_return
-    bcc b1
+    bcc __b1
   !:
-  b2:
+  __b2:
     lda.z point_idx
     asl
     tax
     lda x_start,x
-    sta.z _9
+    sta.z __9
     lda x_start+1,x
-    sta.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
-    lda.z _9
+    sta.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
+    lda.z __9
     sta x_cur,x
-    lda.z _9+1
+    lda.z __9+1
     sta x_cur+1,x
     ldy.z point_idx
     lda y_start,y
-    sta.z _10
+    sta.z __10
     lda #0
-    sta.z _10+1
-    asl.z _11
-    rol.z _11+1
-    asl.z _11
-    rol.z _11+1
-    asl.z _11
-    rol.z _11+1
-    asl.z _11
-    rol.z _11+1
-    lda.z _11
+    sta.z __10+1
+    asl.z __11
+    rol.z __11+1
+    asl.z __11
+    rol.z __11+1
+    asl.z __11
+    rol.z __11+1
+    asl.z __11
+    rol.z __11+1
+    lda.z __11
     sta y_cur,x
-    lda.z _11+1
+    lda.z __11+1
     sta y_cur+1,x
     lda #DELAY
     sta delay,y
     rts
-  b1:
+  __b1:
     // X is driver - abs(y/x) is < 1
     lda.z x_diff+1
-    bmi b4
+    bmi __b4
     // x add = 1.0
     lda #$10
     ldy.z point_idx
     sta x_add,y
-  b5:
+  __b5:
     jsr divr16s
     lda.z x_stepf+1
     lsr
@@ -228,14 +228,14 @@ point_init: {
     lsr
     ldy.z point_idx
     sta y_add,y
-    jmp b2
-  b4:
+    jmp __b2
+  __b4:
     // x add = -1.0
     lda #-$10
     ldy.z point_idx
     sta x_add,y
-    jmp b5
-  abs16s2_b1:
+    jmp __b5
+  abs16s2___b1:
     sec
     lda #0
     sbc.z y_diff
@@ -243,8 +243,8 @@ point_init: {
     lda #0
     sbc.z y_diff+1
     sta.z abs16s2_return+1
-    jmp b6
-  abs16s1_b1:
+    jmp __b6
+  abs16s1___b1:
     sec
     lda #0
     sbc.z x_diff
@@ -268,15 +268,15 @@ divr16s: {
     .label divisor = 8
     .label rem = 6
     lda.z rem+1
-    bmi b1
+    bmi __b1
     ldy #0
-  b2:
+  __b2:
     lda.z divisor+1
-    bmi b3
-  b4:
+    bmi __b3
+  __b4:
     jsr divr16u
     cpy #0
-    beq breturn
+    beq __breturn
     sec
     lda #0
     sbc.z return
@@ -284,9 +284,9 @@ divr16s: {
     lda #0
     sbc.z return+1
     sta.z return+1
-  breturn:
+  __breturn:
     rts
-  b3:
+  __b3:
     sec
     lda #0
     sbc.z divisoru
@@ -297,8 +297,8 @@ divr16s: {
     tya
     eor #1
     tay
-    jmp b4
-  b1:
+    jmp __b4
+  __b1:
     sec
     lda #0
     sbc.z remu
@@ -307,7 +307,7 @@ divr16s: {
     sbc.z remu+1
     sta.z remu+1
     ldy #1
-    jmp b2
+    jmp __b2
 }
 // Performs division on two 16 bit unsigned words and an initial remainder
 // Returns the quotient dividend/divisor.
@@ -326,28 +326,28 @@ divr16u: {
     sta.z quotient+1
     sta.z dividend
     sta.z dividend+1
-  b1:
+  __b1:
     asl.z rem
     rol.z rem+1
     lda.z dividend+1
     and #$80
     cmp #0
-    beq b2
+    beq __b2
     lda #1
     ora.z rem
     sta.z rem
-  b2:
+  __b2:
     asl.z dividend
     rol.z dividend+1
     asl.z quotient
     rol.z quotient+1
     lda.z rem+1
     cmp.z divisor+1
-    bcc b3
+    bcc __b3
     bne !+
     lda.z rem
     cmp.z divisor
-    bcc b3
+    bcc __b3
   !:
     inc.z quotient
     bne !+
@@ -360,10 +360,10 @@ divr16u: {
     lda.z rem+1
     sbc.z divisor+1
     sta.z rem+1
-  b3:
+  __b3:
     inx
     cpx #$10
-    bne b1
+    bne __b1
     rts
 }
 // Fill the screen with a specific char
@@ -378,9 +378,9 @@ screen_fill: {
     sta.z screen
     lda #>SCREEN
     sta.z screen+1
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda #ch
     ldy #0
     sta (screen),y
@@ -390,11 +390,11 @@ screen_fill: {
   !:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z y
     lda #$19
     cmp.z y
-    bne b1
+    bne __b1
     rts
 }
 // Clear all graphics on the bitmap
@@ -407,9 +407,9 @@ bitmap_clear: {
     sta.z bitmap+1
     lda #0
     sta.z y
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda #0
     tay
     sta (bitmap),y
@@ -419,44 +419,44 @@ bitmap_clear: {
   !:
     inx
     cpx #$c8
-    bne b2
+    bne __b2
     inc.z y
     lda #$28
     cmp.z y
-    bne b1
+    bne __b1
     rts
 }
 bitmap_init: {
-    .label _7 = $12
+    .label __7 = $12
     .label yoffs = 8
     ldx #0
     lda #$80
-  b1:
+  __b1:
     sta bitmap_plot_bit,x
     lsr
     cmp #0
-    bne b2
+    bne __b2
     lda #$80
-  b2:
+  __b2:
     inx
     cpx #0
-    bne b1
+    bne __b1
     lda #<BITMAP
     sta.z yoffs
     lda #>BITMAP
     sta.z yoffs+1
     ldx #0
-  b3:
+  __b3:
     lda #7
-    sax.z _7
+    sax.z __7
     lda.z yoffs
-    ora.z _7
+    ora.z __7
     sta bitmap_plot_ylo,x
     lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp.z _7
-    bne b4
+    cmp.z __7
+    bne __b4
     clc
     lda.z yoffs
     adc #<$28*8
@@ -464,10 +464,10 @@ bitmap_init: {
     lda.z yoffs+1
     adc #>$28*8
     sta.z yoffs+1
-  b4:
+  __b4:
     inx
     cpx #0
-    bne b3
+    bne __b3
     rts
 }
   // The coordinates of the lines to animate

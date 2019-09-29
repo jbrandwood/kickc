@@ -13,16 +13,16 @@ main: {
     ldy #2
     ldx #0
   // loop byte
-  b3:
+  __b3:
     cpx #0
-    beq b4
+    beq __b4
     lda #'+'
     sta SCREEN,y
     iny
-  b4:
+  __b4:
     inx
     cpx #3
-    bne b3
+    bne __b3
     lda #' '
     sta SCREEN,y
     iny
@@ -30,27 +30,27 @@ main: {
     sta.z i1
     sta.z i1+1
   // loop word
-  b7:
+  __b7:
     lda.z i1
     cmp #<0
     bne !+
     lda.z i1+1
     cmp #>0
-    beq b8
+    beq __b8
   !:
     lda #'+'
     sta SCREEN,y
     iny
-  b8:
+  __b8:
     inc.z i1
     bne !+
     inc.z i1+1
   !:
     lda.z i1+1
     cmp #>3
-    bne b7
+    bne __b7
     lda.z i1
     cmp #<3
-    bne b7
+    bne __b7
     rts
 }

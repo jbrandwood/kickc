@@ -5,9 +5,9 @@
 .pc = $80d "Program"
 main: {
     .label SCREEN = $400
-    .label _0 = 4
+    .label __0 = 4
     ldx #0
-  b1:
+  __b1:
     txa
     sta.z getValue.index
     lda #0
@@ -16,13 +16,13 @@ main: {
     txa
     asl
     tay
-    lda.z _0
+    lda.z __0
     sta SCREEN,y
-    lda.z _0+1
+    lda.z __0+1
     sta SCREEN+1,y
     inx
     cpx #$81
-    bne b1
+    bne __b1
     rts
 }
 // getValue(word zeropage(2) index)

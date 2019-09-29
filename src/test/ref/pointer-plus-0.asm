@@ -4,15 +4,15 @@
 .pc = $80d "Program"
 main: {
     .label SCREEN = $400
-    .label _0 = 2
-    .label _2 = 2
+    .label __0 = 2
+    .label __2 = 2
     lda #<msg1
     sta.z first.return
     lda #>msg1
     sta.z first.return+1
     jsr first
     ldy #0
-    lda (_0),y
+    lda (__0),y
     sta SCREEN
     lda #<msg2
     sta.z first.return
@@ -20,7 +20,7 @@ main: {
     sta.z first.return+1
     jsr first
     ldy #0
-    lda (_2),y
+    lda (__2),y
     sta SCREEN+1
     rts
 }

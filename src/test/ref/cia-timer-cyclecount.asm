@@ -19,9 +19,9 @@
   .const CLOCKS_PER_INIT = $12
   .label SCREEN = $400
 main: {
-    .label _1 = 9
+    .label __1 = 9
     .label cyclecount = 9
-  b1:
+  __b1:
     jsr clock_start
     nop
     jsr clock
@@ -39,7 +39,7 @@ main: {
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
     jsr print_dword_at
-    jmp b1
+    jmp __b1
 }
 // Print a dword as HEX at a specific position
 // print_dword_at(dword zeropage(9) dw)

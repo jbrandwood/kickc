@@ -63,11 +63,11 @@ test: {
     sta screen2,x
     lda ref,x
     cmp.z a
-    beq b1
+    beq __b1
     lda #RED
     sta cols,x
     rts
-  b1:
+  __b1:
     lda #GREEN
     sta cols,x
     rts

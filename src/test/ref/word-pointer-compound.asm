@@ -6,7 +6,7 @@
 main: {
     .label SCREEN = $400
     ldx #0
-  b1:
+  __b1:
     txa
     asl
     tay
@@ -19,7 +19,7 @@ main: {
     sta words+1,y
     inx
     cpx #3
-    bne b1
+    bne __b1
     lda words+1
     sta SCREEN
     lda words

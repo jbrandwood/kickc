@@ -44,17 +44,17 @@ mul16u: {
     sta.z a
     lda #>4
     sta.z a+1
-  b1:
+  __b1:
     lda.z a
-    bne b2
+    bne __b2
     lda.z a+1
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #1
     and.z a
     cmp #0
-    beq b3
+    beq __b3
     lda.z res
     clc
     adc.z mb
@@ -68,12 +68,12 @@ mul16u: {
     lda.z res+3
     adc.z mb+3
     sta.z res+3
-  b3:
+  __b3:
     lsr.z a+1
     ror.z a
     asl.z mb
     rol.z mb+1
     rol.z mb+2
     rol.z mb+3
-    jmp b1
+    jmp __b1
 }

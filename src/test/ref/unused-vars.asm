@@ -9,14 +9,14 @@ main: {
     .label COLS = $d800
     jsr s
     ldx #0
-  b1:
+  __b1:
     lda #col
     sta COLS,x
     lda #2/2+1+1
     sta SCREEN,x
     inx
     cpx #$65
-    bne b1
+    bne __b1
     rts
 }
 s: {

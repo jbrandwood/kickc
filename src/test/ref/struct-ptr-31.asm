@@ -21,8 +21,8 @@ main: {
 }
 // print_person(struct Person* zeropage(2) person)
 print_person: {
-    .label _1 = 4
-    .label _2 = 6
+    .label __1 = 4
+    .label __2 = 6
     .label person = 2
     ldy #0
     lda (person),y
@@ -34,34 +34,34 @@ print_person: {
     sta SCREEN,x
     inx
     ldy #0
-  b1:
+  __b1:
     lda #OFFSET_STRUCT_PERSON_NAME
     clc
     adc.z person
-    sta.z _1
+    sta.z __1
     lda #0
     adc.z person+1
-    sta.z _1+1
-    lda (_1),y
+    sta.z __1+1
+    lda (__1),y
     cmp #0
-    bne b2
+    bne __b2
     lda #' '
     sta SCREEN,x
     inx
     rts
-  b2:
+  __b2:
     lda #OFFSET_STRUCT_PERSON_NAME
     clc
     adc.z person
-    sta.z _2
+    sta.z __2
     lda #0
     adc.z person+1
-    sta.z _2+1
-    lda (_2),y
+    sta.z __2+1
+    lda (__2),y
     sta SCREEN,x
     inx
     iny
-    jmp b1
+    jmp __b1
 }
   persons: .byte 4
   .text "jesper"

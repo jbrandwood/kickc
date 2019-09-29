@@ -12,7 +12,7 @@ main: {
     lda #>$c8
     sta.z xpos+1
     ldx #0
-  b1:
+  __b1:
     stx.z position_sprite.spriteno
     jsr position_sprite
     lda #$a
@@ -24,7 +24,7 @@ main: {
   !:
     inx
     cpx #8
-    bne b1
+    bne __b1
     rts
 }
 // position_sprite(byte zeropage(4) spriteno, word zeropage(2) x)
@@ -40,11 +40,11 @@ position_sprite: {
     lda.z x
     sta SPRITES_XPOS,y
     lda.z x+1
-    bne b1
+    bne __b1
     lda.z x
     cmp #$ff
     beq !+
-    bcs b1
+    bcs __b1
   !:
     lda #1
     ldy.z spriteno
@@ -59,7 +59,7 @@ position_sprite: {
     and SPRITES_XMSB
     sta SPRITES_XMSB
     rts
-  b1:
+  __b1:
     lda #1
     ldy.z spriteno
     cpy #0

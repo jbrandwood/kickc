@@ -5,11 +5,11 @@ main: {
     .label SCREEN = $400
     ldx #0
   // Do some sums
-  b1:
+  __b1:
     lda #'a'
     sta SCREEN,x
     inx
     cpx #$b
-    bne b1
+    bne __b1
     rts
 }

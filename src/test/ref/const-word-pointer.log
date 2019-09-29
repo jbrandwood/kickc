@@ -165,31 +165,31 @@ Target platform is c64basic / MOS6502X
 // The result when running is "CML!" on the screen.
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
     .label wp = w
-    .label _1 = 4
-    .label _2 = 5
-    .label _3 = 6
-    .label _4 = 7
+    .label __1 = 4
+    .label __2 = 5
+    .label __3 = 6
+    .label __4 = 7
     .label w = 2
     // [4] (word) main::w#0 ← (word) $d03 -- vwuz1=vwuc1 
     lda #<$d03
@@ -198,15 +198,15 @@ main: {
     sta.z w+1
     // [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
     lda.z wp
-    sta.z _1
+    sta.z __1
     // [6] *((const byte*) main::screen) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
-    lda.z _1
+    lda.z __1
     sta screen
     // [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
     lda.z wp+1
-    sta.z _2
+    sta.z __2
     // [8] *((const byte*) main::screen+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
-    lda.z _2
+    lda.z __2
     sta screen+1
     // [9] *((const word*) main::wp#0) ← (word) $210c -- _deref_pwuc1=vwuc2 
     lda #<$210c
@@ -215,19 +215,19 @@ main: {
     sta.z wp+1
     // [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
     lda.z wp
-    sta.z _3
+    sta.z __3
     // [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
-    lda.z _3
+    lda.z __3
     sta screen+2
     // [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
     lda.z wp+1
-    sta.z _4
+    sta.z __4
     // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
-    lda.z _4
+    lda.z __4
     sta screen+3
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -256,23 +256,23 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The result when running is "CML!" on the screen.
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
@@ -304,30 +304,31 @@ main: {
     lda.z wp+1
     // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta screen+3
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   // Processor port data direction register
   .label PROCPORT_DDR = 0
@@ -63,7 +63,7 @@
   .label irq_sprite_ptr = 8
   .label irq_cnt = 9
   .label sin_idx = 3
-bbegin:
+__b1:
   // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
   sta.z render_screen_showing
@@ -101,7 +101,7 @@ main: {
     lda #$18
     sta.z xpos
     ldy #4
-  b1:
+  __b1:
     tya
     asl
     tax
@@ -123,7 +123,7 @@ main: {
     stx.z ypos
     iny
     cpy #8
-    bne b1
+    bne __b1
     jsr sprites_irq_init
     jsr loop
     rts
@@ -132,14 +132,14 @@ loop: {
     .label s = 2
     lda #0
     sta.z sin_idx
-  b2:
+  __b2:
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     ldx.z sin_idx
     lda #4
     sta.z s
-  b4:
+  __b4:
     lda.z s
     asl
     tay
@@ -150,9 +150,9 @@ loop: {
     inc.z s
     lda #8
     cmp.z s
-    bne b4
+    bne __b4
     inc.z sin_idx
-    jmp b2
+    jmp __b2
 }
 // Setup the IRQ
 sprites_irq_init: {
@@ -198,7 +198,7 @@ sprites_init: {
     lda #$18+$f*8
     sta.z xpos
     ldy #0
-  b1:
+  __b1:
     tya
     asl
     tax
@@ -211,7 +211,7 @@ sprites_init: {
     stx.z xpos
     iny
     cpy #4
-    bne b1
+    bne __b1
     rts
 }
 // Raster Interrupt Routine - sets up the sprites covering the playfield
@@ -235,14 +235,14 @@ sprites_irq: {
     inx
     // Wait for the y-position before changing sprite pointers
     stx.z raster_sprite_gfx_modify
-  b8:
+  __b8:
     lda RASTER
     cmp.z raster_sprite_gfx_modify
-    bcc b8
+    bcc __b8
     ldx.z irq_sprite_ptr
     lda.z render_screen_showing
     cmp #0
-    beq b1
+    beq __b1
     stx PLAYFIELD_SPRITE_PTRS_2
     inx
     txa
@@ -251,14 +251,14 @@ sprites_irq: {
     clc
     adc #1
     sta PLAYFIELD_SPRITE_PTRS_2+3
-  b2:
+  __b2:
     inc.z irq_cnt
     lda #9
     cmp.z irq_cnt
-    beq b3
+    beq __b3
     lda #$a
     cmp.z irq_cnt
-    beq b4
+    beq __b4
     lax.z irq_raster_next
     axs #-[$14]
     stx.z irq_raster_next
@@ -268,7 +268,7 @@ sprites_irq: {
     lax.z irq_sprite_ptr
     axs #-[3]
     stx.z irq_sprite_ptr
-  b5:
+  __b5:
     // Setup next interrupt
     lda.z irq_raster_next
     sta RASTER
@@ -280,7 +280,7 @@ sprites_irq: {
   regx:
     ldx #00
     rti
-  b4:
+  __b4:
     lda #0
     sta.z irq_cnt
     lda #IRQ_RASTER_FIRST
@@ -291,8 +291,8 @@ sprites_irq: {
     lax.z irq_sprite_ptr
     axs #-[3]
     stx.z irq_sprite_ptr
-    jmp b5
-  b3:
+    jmp __b5
+  __b3:
     lax.z irq_raster_next
     axs #-[$15]
     stx.z irq_raster_next
@@ -300,8 +300,8 @@ sprites_irq: {
     sta.z irq_sprite_ypos
     lda #toSpritePtr2_return
     sta.z irq_sprite_ptr
-    jmp b5
-  b1:
+    jmp __b5
+  __b1:
     stx PLAYFIELD_SPRITE_PTRS_1
     inx
     stx PLAYFIELD_SPRITE_PTRS_1+1
@@ -309,7 +309,7 @@ sprites_irq: {
     inx
     txa
     sta PLAYFIELD_SPRITE_PTRS_1+3
-    jmp b2
+    jmp __b2
 }
 SIN:
 .var AMPL = 200-21

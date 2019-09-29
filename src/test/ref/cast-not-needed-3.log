@@ -231,29 +231,29 @@ Target platform is c64basic / MOS6502X
 // Tests a cast that is not needed
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label DSP = $400
-    .label spritePtr1__0 = 4
+    .label spritePtr1___0 = 4
     .label getScreen1_return = 2
     .label spritePtr1_return = 6
     jmp getScreen1
@@ -271,23 +271,23 @@ main: {
     lda.z getScreen1_return
     clc
     adc #<$378
-    sta.z spritePtr1__0
+    sta.z spritePtr1___0
     lda.z getScreen1_return+1
     adc #>$378
-    sta.z spritePtr1__0+1
+    sta.z spritePtr1___0+1
     // [7] (byte) main::spritePtr1_return#0 ← *((byte*~) main::spritePtr1_$0) -- vbuz1=_deref_pbuz2 
     ldy #0
-    lda (spritePtr1__0),y
+    lda (spritePtr1___0),y
     sta.z spritePtr1_return
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [8] *((const byte*) main::DSP) ← (byte) main::spritePtr1_return#0 -- _deref_pbuc1=vbuz1 
     lda.z spritePtr1_return
     sta DSP
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
@@ -315,29 +315,29 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests a cast that is not needed
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label DSP = $400
-    .label spritePtr1__0 = 2
+    .label spritePtr1___0 = 2
     .label getScreen1_return = 2
     jmp getScreen1
     // main::getScreen1
@@ -352,23 +352,23 @@ main: {
   spritePtr1:
     // [6] (byte*~) main::spritePtr1_$0 ← (byte*) main::getScreen1_return#0 + (word) $378 -- pbuz1=pbuz1_plus_vwuc1 
     clc
-    lda.z spritePtr1__0
+    lda.z spritePtr1___0
     adc #<$378
-    sta.z spritePtr1__0
-    lda.z spritePtr1__0+1
+    sta.z spritePtr1___0
+    lda.z spritePtr1___0+1
     adc #>$378
-    sta.z spritePtr1__0+1
+    sta.z spritePtr1___0+1
     // [7] (byte) main::spritePtr1_return#0 ← *((byte*~) main::spritePtr1_$0) -- vbuaa=_deref_pbuz1 
     ldy #0
-    lda (spritePtr1__0),y
-    jmp b1
+    lda (spritePtr1___0),y
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [8] *((const byte*) main::DSP) ← (byte) main::spritePtr1_return#0 -- _deref_pbuc1=vbuaa 
     sta DSP
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
@@ -376,28 +376,29 @@ main: {
   screens: .word $400, $1400
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
+Removing instruction jmp __b1
+Removing instruction jmp __bend
 Removing instruction jmp getScreen1
 Removing instruction jmp spritePtr1
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction getScreen1:
 Removing instruction spritePtr1:
-Removing instruction b1:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -443,7 +444,7 @@ Score: 49
   // main
 main: {
     .label DSP = $400
-    .label spritePtr1__0 = 2
+    .label spritePtr1___0 = 2
     .label getScreen1_return = 2
     // main::getScreen1
     // return screens[id];
@@ -456,16 +457,16 @@ main: {
     // screen+$378
     // [6] (byte*~) main::spritePtr1_$0 ← (byte*) main::getScreen1_return#0 + (word) $378 -- pbuz1=pbuz1_plus_vwuc1 
     clc
-    lda.z spritePtr1__0
+    lda.z spritePtr1___0
     adc #<$378
-    sta.z spritePtr1__0
-    lda.z spritePtr1__0+1
+    sta.z spritePtr1___0
+    lda.z spritePtr1___0+1
     adc #>$378
-    sta.z spritePtr1__0+1
+    sta.z spritePtr1___0+1
     // (byte)*(screen+$378)
     // [7] (byte) main::spritePtr1_return#0 ← *((byte*~) main::spritePtr1_$0) -- vbuaa=_deref_pbuz1 
     ldy #0
-    lda (spritePtr1__0),y
+    lda (spritePtr1___0),y
     // main::@1
     // DSP[0] = spritePtr(getScreen(0))
     // [8] *((const byte*) main::DSP) ← (byte) main::spritePtr1_return#0 -- _deref_pbuc1=vbuaa 

@@ -16,18 +16,18 @@ main: {
     sta.z screen+1
     txa
     sta.z textid
-  b1:
+  __b1:
     jsr nexttext
-  b2:
+  __b2:
     ldy #0
     lda (text),y
     cmp #0
-    bne b3
+    bne __b3
     inx
     cpx #$15
-    bne b1
+    bne __b1
     rts
-  b3:
+  __b3:
     ldy #0
     lda (text),y
     sta (screen),y
@@ -39,7 +39,7 @@ main: {
     bne !+
     inc.z text+1
   !:
-    jmp b2
+    jmp __b2
 }
 // Choose the next text to show - by updating the text pointer pointed to by the passed pointer to a pointer
 nexttext: {
@@ -48,13 +48,13 @@ nexttext: {
     and.z textid
     inc.z textid
     cmp #0
-    beq b1
+    beq __b1
     lda #<text2
     sta.z textp
     lda #>text2
     sta.z textp+1
     rts
-  b1:
+  __b1:
     lda #<text1
     sta.z textp
     lda #>text1

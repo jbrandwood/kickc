@@ -59,17 +59,17 @@
 main: {
     .const fileEntry1_idx = 1
     .const fileEntry2_idx = 2
-    .label fileEntry1__0 = 2
-    .label fileEntry2__0 = 6
+    .label fileEntry1___0 = 2
+    .label fileEntry2___0 = 6
     .label entry1 = 2
     .label entry2 = 6
     jsr keyboard_init
     ldx #fileEntry1_idx
     jsr mul8u
     lda.z mul8u.return
-    sta.z fileEntry1__0
+    sta.z fileEntry1___0
     lda.z mul8u.return+1
-    sta.z fileEntry1__0+1
+    sta.z fileEntry1___0+1
     clc
     lda.z entry1
     adc #<files
@@ -141,10 +141,10 @@ main: {
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-  b1:
+  __b1:
     jsr keyboard_key_pressed
     cmp #0
-    beq b1
+    beq __b1
     jsr print_cls
     lda #<$400
     sta.z print_char_cursor
@@ -192,10 +192,10 @@ main: {
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-  b3:
+  __b3:
     jsr keyboard_key_pressed
     cmp #0
-    beq b3
+    beq __b3
     jsr print_cls
     rts
     str: .text "** entry 1 **"
@@ -221,15 +221,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -237,7 +237,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
@@ -266,13 +266,13 @@ keyboard_matrix_read: {
 // print_str(byte* zeropage($a) str)
 print_str: {
     .label str = $a
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -284,11 +284,11 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor_32
@@ -297,19 +297,19 @@ print_ln: {
     adc.z print_line_cursor_32+1
     sta.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b2
+    bcc __b2
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda.z print_line_cursor
     sta.z print_line_cursor_175
     lda.z print_line_cursor+1
     sta.z print_line_cursor_175+1
-    jmp b1
+    jmp __b1
 }
 // Print the contents of a file entry
 // printEntry(byte* zeropage(2) entry)
@@ -636,63 +636,63 @@ print_word: {
 // Sets the values to n, n+1, n... to help test that everything works as intended
 // initEntry(byte* zeropage(4) entry, byte register(X) n)
 initEntry: {
-    .label _1 = 8
-    .label _3 = $a
-    .label _5 = $c
-    .label _7 = $e
-    .label _17 = $10
+    .label __1 = 8
+    .label __3 = $a
+    .label __5 = $c
+    .label __7 = $e
+    .label __17 = $10
     .label entry = 4
     txa
     clc
     adc #<$1111
-    sta.z _1
+    sta.z __1
     lda #>$1111
     adc #0
-    sta.z _1+1
+    sta.z __1+1
     ldy #0
-    lda.z _1
+    lda.z __1
     sta (entry),y
     iny
-    lda.z _1+1
+    lda.z __1+1
     sta (entry),y
     txa
     clc
     adc #<$2222
-    sta.z _3
+    sta.z __3
     lda #>$2222
     adc #0
-    sta.z _3+1
+    sta.z __3+1
     ldy #2
-    lda.z _3
+    lda.z __3
     sta (entry),y
     iny
-    lda.z _3+1
+    lda.z __3+1
     sta (entry),y
     txa
     clc
     adc #<$3333
-    sta.z _5
+    sta.z __5
     lda #>$3333
     adc #0
-    sta.z _5+1
+    sta.z __5+1
     ldy #4
-    lda.z _5
+    lda.z __5
     sta (entry),y
     iny
-    lda.z _5+1
+    lda.z __5+1
     sta (entry),y
     txa
     clc
     adc #<$4444
-    sta.z _7
+    sta.z __7
     lda #>$4444
     adc #0
-    sta.z _7+1
+    sta.z __7+1
     ldy #6
-    lda.z _7
+    lda.z __7
     sta (entry),y
     iny
-    lda.z _7+1
+    lda.z __7+1
     sta (entry),y
     txa
     clc
@@ -717,15 +717,15 @@ initEntry: {
     txa
     clc
     adc #<$9999
-    sta.z _17
+    sta.z __17
     lda #>$9999
     adc #0
-    sta.z _17+1
+    sta.z __17+1
     ldy #$c
-    lda.z _17
+    lda.z __17
     sta (entry),y
     iny
-    lda.z _17+1
+    lda.z __17+1
     sta (entry),y
     txa
     clc
@@ -762,15 +762,15 @@ mul8u: {
     lda #<0
     sta.z res
     sta.z res+1
-  b1:
+  __b1:
     cpx #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     txa
     and #1
     cmp #0
-    beq b3
+    beq __b3
     lda.z res
     clc
     adc.z mb
@@ -778,13 +778,13 @@ mul8u: {
     lda.z res+1
     adc.z mb+1
     sta.z res+1
-  b3:
+  __b3:
     txa
     lsr
     tax
     asl.z mb
     rol.z mb+1
-    jmp b1
+    jmp __b1
 }
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {

@@ -386,7 +386,7 @@ Target platform is c64basic / MOS6502X
 // https://csdb.dk/release/?id=178673
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label BGCOL = $d021
@@ -396,19 +396,19 @@ Target platform is c64basic / MOS6502X
   .const BLACK = 0
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [4] *((const byte*) BGCOL) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
@@ -429,13 +429,13 @@ main: {
     sta.z memcpy.source+1
     jsr memcpy
     // [6] phi from main to main::@2 [phi:main->main::@2]
-  b2_from_main:
-    jmp b2
+  __b2_from_main:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [7] call memcpy 
     // [9] phi from main::@2 to memcpy [phi:main::@2->memcpy]
-  memcpy_from_b2:
+  memcpy_from___b2:
     // [9] phi (void*) memcpy::destination#2 = (void*)(const byte*) COLS [phi:main::@2->memcpy#0] -- pvoz1=pvoc1 
     lda #<COLS
     sta.z memcpy.destination
@@ -447,14 +447,14 @@ main: {
     lda #>MEDUSA_COLORS
     sta.z memcpy.source+1
     jsr memcpy
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [8] *((const byte*) SCREEN+(word) $3e7) ← *((const byte*) SCREEN+(word) $3e7) ^ (byte) $e -- _deref_pbuc1=_deref_pbuc1_bxor_vbuc2 
     lda #$e
     eor SCREEN+$3e7
     sta SCREEN+$3e7
-    jmp b1
+    jmp __b1
 }
   // memcpy
 // Copy block of memory (forwards)
@@ -485,27 +485,27 @@ memcpy: {
     lda.z destination+1
     sta.z dst+1
     // [13] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
-  b1_from_memcpy:
-  b1_from_b2:
+  __b1_from_memcpy:
+  __b1_from___b2:
     // [13] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
     // [13] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // memcpy::@1
-  b1:
+  __b1:
     // [14] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memcpy::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
     // memcpy::@2
-  b2:
+  __b2:
     // [16] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
@@ -521,7 +521,7 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
 MEDUSA_SCREEN:
@@ -565,7 +565,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // https://csdb.dk/release/?id=178673
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label BGCOL = $d021
@@ -575,19 +575,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const BLACK = 0
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [4] *((const byte*) BGCOL) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
@@ -608,13 +608,13 @@ main: {
     sta.z memcpy.source+1
     jsr memcpy
     // [6] phi from main to main::@2 [phi:main->main::@2]
-  b2_from_main:
-    jmp b2
+  __b2_from_main:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [7] call memcpy 
     // [9] phi from main::@2 to memcpy [phi:main::@2->memcpy]
-  memcpy_from_b2:
+  memcpy_from___b2:
     // [9] phi (void*) memcpy::destination#2 = (void*)(const byte*) COLS [phi:main::@2->memcpy#0] -- pvoz1=pvoc1 
     lda #<COLS
     sta.z memcpy.destination
@@ -626,14 +626,14 @@ main: {
     lda #>MEDUSA_COLORS
     sta.z memcpy.source+1
     jsr memcpy
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [8] *((const byte*) SCREEN+(word) $3e7) ← *((const byte*) SCREEN+(word) $3e7) ^ (byte) $e -- _deref_pbuc1=_deref_pbuc1_bxor_vbuc2 
     lda #$e
     eor SCREEN+$3e7
     sta SCREEN+$3e7
-    jmp b1
+    jmp __b1
 }
   // memcpy
 // Copy block of memory (forwards)
@@ -656,27 +656,27 @@ memcpy: {
     // [11] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
     // [12] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
     // [13] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
-  b1_from_memcpy:
-  b1_from_b2:
+  __b1_from_memcpy:
+  __b1_from___b2:
     // [13] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
     // [13] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // memcpy::@1
-  b1:
+  __b1:
     // [14] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memcpy::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
     // memcpy::@2
-  b2:
+  __b2:
     // [16] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
@@ -692,7 +692,7 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
 MEDUSA_SCREEN:
@@ -705,33 +705,34 @@ MEDUSA_COLORS:
 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b2
-Removing instruction jmp b1
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b2
+Removing instruction jmp __b1
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b2 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction b2_from_main:
-Removing instruction memcpy_from_b2:
-Removing instruction b1_from_memcpy:
-Removing instruction b1_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __b2_from_main:
+Removing instruction memcpy_from___b2:
+Removing instruction __b1_from_memcpy:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction memcpy_from_main:
-Removing instruction b2:
-Removing instruction breturn:
+Removing instruction __b2:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -837,13 +838,13 @@ main: {
     sta.z memcpy.source+1
     jsr memcpy
     // main::@1
-  b1:
+  __b1:
     // (*(SCREEN+999)) ^= 0x0e
     // [8] *((const byte*) SCREEN+(word) $3e7) ← *((const byte*) SCREEN+(word) $3e7) ^ (byte) $e -- _deref_pbuc1=_deref_pbuc1_bxor_vbuc2 
     lda #$e
     eor SCREEN+$3e7
     sta SCREEN+$3e7
-    jmp b1
+    jmp __b1
 }
   // memcpy
 // Copy block of memory (forwards)
@@ -870,21 +871,21 @@ memcpy: {
     // [13] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
     // [13] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     // memcpy::@1
-  b1:
+  __b1:
     // while(src!=src_end)
     // [14] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
+    bne __b2
     // memcpy::@return
     // }
     // [15] return 
     rts
     // memcpy::@2
-  b2:
+  __b2:
     // *dst++ = *src++
     // [16] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -901,7 +902,7 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1
+    jmp __b1
 }
   // File Data
 MEDUSA_SCREEN:

@@ -6,16 +6,16 @@
   .label RASTER = $d012
 main: {
     sei
-  b1:
+  __b1:
     lda RASTER
     cmp #$1e
-    bcc b2
+    bcc __b2
     lda #0
     sta BGCOL
-    jmp b1
-  b2:
+    jmp __b1
+  __b2:
     jsr incScreen
-    jmp b1
+    jmp __b1
 }
 incScreen: {
     lda RASTER

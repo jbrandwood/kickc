@@ -203,7 +203,7 @@ Target platform is c64basic / MOS6502X
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
@@ -211,21 +211,21 @@ Target platform is c64basic / MOS6502X
   .label cnt_11 = 3
   .label cnt_13 = 4
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call inccnt 
@@ -235,9 +235,9 @@ main: {
     lda #0
     sta.z cnt
     jsr inccnt
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const byte[$100]) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuz1 
     lda.z cnt_13
     sta SCREEN
@@ -247,12 +247,12 @@ main: {
     sty.z cnt
     // [8] call inccnt 
     // [12] phi from main::@1 to inccnt [phi:main::@1->inccnt]
-  inccnt_from_b1:
+  inccnt_from___b1:
     // [12] phi (byte) cnt#12 = (byte) cnt#2 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuz1=_inc_vbuz2 
     ldy.z cnt_13
     iny
@@ -260,9 +260,9 @@ main: {
     // [10] *((const byte[$100]) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuz1 
     lda.z cnt_11
     sta SCREEN+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
@@ -272,9 +272,9 @@ inccnt: {
     ldy.z cnt
     iny
     sty.z cnt_13
-    jmp breturn
+    jmp __breturn
     // inccnt::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -298,26 +298,26 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call inccnt 
@@ -326,28 +326,28 @@ main: {
     // [12] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
     ldx #0
     jsr inccnt
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const byte[$100]) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
     stx SCREEN
     // [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
     // [8] call inccnt 
     // [12] phi from main::@1 to inccnt [phi:main::@1->inccnt]
-  inccnt_from_b1:
+  inccnt_from___b1:
     // [12] phi (byte) cnt#12 = (byte) cnt#2 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
     // [10] *((const byte[$100]) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
@@ -355,39 +355,40 @@ main: {
 inccnt: {
     // [13] (byte) cnt#13 ← ++ (byte) cnt#12 -- vbuxx=_inc_vbuxx 
     inx
-    jmp breturn
+    jmp __breturn
     // inccnt::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction inccnt_from_main:
-Removing instruction b1:
-Removing instruction inccnt_from_b1:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction inccnt_from___b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

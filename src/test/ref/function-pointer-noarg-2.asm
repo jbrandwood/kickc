@@ -4,12 +4,12 @@
 .pc = $80d "Program"
 main: {
     ldx #0
-  b1:
+  __b1:
     txa
     and #1
     cmp #0
     inx
     cpx #$65
-    bne b1
+    bne __b1
     rts
 }

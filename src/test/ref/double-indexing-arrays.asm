@@ -6,7 +6,7 @@
   .label COLS = $d800
 main: {
     ldy #0
-  b1:
+  __b1:
     lda MAPDATA,y
     sta SCREEN,y
     ldx MAPDATA,y
@@ -34,7 +34,7 @@ main: {
     sta COLS+$320,y
     iny
     cpy #$c9
-    bne b1
+    bne __b1
     rts
 }
   MAPDATA: .fill $3e8, 0

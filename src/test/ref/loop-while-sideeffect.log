@@ -149,39 +149,39 @@ Target platform is c64basic / MOS6502X
 // Test a while()-loop where the condition has a side-effect
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label i = 3
     .label i_2 = 2
     .label i_5 = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 7 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #7
     sta.z i_2
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz2 
     ldy.z i_2
     iny
@@ -189,22 +189,22 @@ main: {
     // [7] if((byte) main::i#2!=(byte) 7) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
     cmp.z i_2
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [8] *((const byte*) SCREEN + (byte) main::i#1) ← (byte) 'x' -- pbuc1_derefidx_vbuz1=vbuc2 
     // The condition-evaluation should increment i - even if when it is not met
     lda #'x'
     ldy.z i
     sta SCREEN,y
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [10] *((const byte*) SCREEN + (byte) main::i#1) ← (byte) main::i#1 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
@@ -213,9 +213,9 @@ main: {
     lda.z i
     sta.z i_5
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte) main::i#2 = (byte~) main::i#5 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
@@ -236,89 +236,90 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test a while()-loop where the condition has a side-effect
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 7 [phi:main->main::@1#0] -- vbuaa=vbuc1 
     lda #7
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuaa 
     tax
     inx
     // [7] if((byte) main::i#2!=(byte) 7) goto main::@2 -- vbuaa_neq_vbuc1_then_la1 
     cmp #7
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [8] *((const byte*) SCREEN + (byte) main::i#1) ← (byte) 'x' -- pbuc1_derefidx_vbuxx=vbuc2 
     // The condition-evaluation should increment i - even if when it is not met
     lda #'x'
     sta SCREEN,x
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [10] *((const byte*) SCREEN + (byte) main::i#1) ← (byte) main::i#1 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // [11] (byte~) main::i#5 ← (byte) main::i#1 -- vbuaa=vbuxx 
     txa
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte) main::i#2 = (byte~) main::i#5 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -364,14 +365,14 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) 7 [phi:main->main::@1#0] -- vbuaa=vbuc1 
     lda #7
     // main::@1
-  b1:
+  __b1:
     // while(i++!=7)
     // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuaa 
     tax
     inx
     // [7] if((byte) main::i#2!=(byte) 7) goto main::@2 -- vbuaa_neq_vbuc1_then_la1 
     cmp #7
-    bne b2
+    bne __b2
     // main::@3
     // (SCREEN)[i] = 'x'
     // [8] *((const byte*) SCREEN + (byte) main::i#1) ← (byte) 'x' -- pbuc1_derefidx_vbuxx=vbuc2 
@@ -383,7 +384,7 @@ main: {
     // [9] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // SCREEN[i] = i
     // [10] *((const byte*) SCREEN + (byte) main::i#1) ← (byte) main::i#1 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
@@ -392,7 +393,7 @@ main: {
     txa
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [5] phi (byte) main::i#2 = (byte~) main::i#5 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 

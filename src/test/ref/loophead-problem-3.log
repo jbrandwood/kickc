@@ -379,31 +379,31 @@ Target platform is c64basic / MOS6502X
 // Reported by Richard-William Loerakker
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _2 = $16
-    .label _3 = $17
+    .label __2 = $16
+    .label __3 = $17
     .label result = $10
     .label kaputt = $14
     // [5] call mul16u 
@@ -419,9 +419,9 @@ main: {
     sta.z mul16u.return+2
     lda.z mul16u.res+3
     sta.z mul16u.return+3
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (dword) main::result#0 ← (dword) mul16u::return#2 -- vduz1=vduz2 
     lda.z mul16u.return
     sta.z result
@@ -438,19 +438,19 @@ main: {
     sta.z kaputt+1
     // [9] (byte~) main::$2 ← < (word) main::kaputt#0 -- vbuz1=_lo_vwuz2 
     lda.z kaputt
-    sta.z _2
+    sta.z __2
     // [10] *((const byte*) BORDERCOL) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
-    lda.z _2
+    lda.z __2
     sta BORDERCOL
     // [11] (byte~) main::$3 ← > (word) main::kaputt#0 -- vbuz1=_hi_vwuz2 
     lda.z kaputt+1
-    sta.z _3
+    sta.z __3
     // [12] *((const byte*) BGCOL) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
-    lda.z _3
+    lda.z __3
     sta BGCOL
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -459,13 +459,13 @@ main: {
 // mul16u(word zeropage(2) a)
 mul16u: {
     .const b = $7b
-    .label _1 = $18
+    .label __1 = $18
     .label a = 2
     .label mb = 8
     .label res = 4
     .label return = $c
     // [15] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
-  b1_from_mul16u:
+  __b1_from_mul16u:
     // [15] phi (dword) mul16u::mb#2 = (const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
     lda #<b
     sta.z mb
@@ -487,32 +487,32 @@ mul16u: {
     sta.z a
     lda #>4
     sta.z a+1
-    jmp b1
+    jmp __b1
     // mul16u::@1
-  b1:
+  __b1:
     // [16] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
     lda.z a
-    bne b2
+    bne __b2
     lda.z a+1
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // mul16u::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
     // mul16u::@2
-  b2:
+  __b2:
     // [18] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuz1=vwuz2_band_vbuc1 
     lda #1
     and.z a
-    sta.z _1
+    sta.z __1
     // [19] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuz1_eq_0_then_la1 
-    lda.z _1
+    lda.z __1
     cmp #0
-    beq b3_from_b2
-    jmp b4
+    beq __b3_from___b2
+    jmp __b4
     // mul16u::@4
-  b4:
+  __b4:
     // [20] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
     lda.z res
     clc
@@ -528,12 +528,12 @@ mul16u: {
     adc.z mb+3
     sta.z res+3
     // [21] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
-  b3_from_b2:
-  b3_from_b4:
+  __b3_from___b2:
+  __b3_from___b4:
     // [21] phi (dword) mul16u::res#6 = (dword) mul16u::res#2 [phi:mul16u::@2/mul16u::@4->mul16u::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // mul16u::@3
-  b3:
+  __b3:
     // [22] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
     lsr.z a+1
     ror.z a
@@ -543,11 +543,11 @@ mul16u: {
     rol.z mb+2
     rol.z mb+3
     // [15] phi from mul16u::@3 to mul16u::@1 [phi:mul16u::@3->mul16u::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [15] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
     // [15] phi (dword) mul16u::res#2 = (dword) mul16u::res#6 [phi:mul16u::@3->mul16u::@1#1] -- register_copy 
     // [15] phi (word) mul16u::a#2 = (word) mul16u::a#0 [phi:mul16u::@3->mul16u::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
@@ -591,27 +591,27 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Reported by Richard-William Loerakker
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label result = 2
@@ -621,9 +621,9 @@ main: {
   mul16u_from_main:
     jsr mul16u
     // [6] (dword) mul16u::return#2 ← (dword) mul16u::res#2
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (dword) main::result#0 ← (dword) mul16u::return#2
     // [8] (word) main::kaputt#0 ← < (dword) main::result#0 -- vwuz1=_lo_vduz2 
     lda.z result
@@ -638,9 +638,9 @@ main: {
     lda.z kaputt+1
     // [12] *((const byte*) BGCOL) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta BGCOL
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -654,7 +654,7 @@ mul16u: {
     .label res = 2
     .label return = 2
     // [15] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
-  b1_from_mul16u:
+  __b1_from_mul16u:
     // [15] phi (dword) mul16u::mb#2 = (const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
     lda #<b
     sta.z mb
@@ -676,30 +676,30 @@ mul16u: {
     sta.z a
     lda #>4
     sta.z a+1
-    jmp b1
+    jmp __b1
     // mul16u::@1
-  b1:
+  __b1:
     // [16] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
     lda.z a
-    bne b2
+    bne __b2
     lda.z a+1
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // mul16u::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
     // mul16u::@2
-  b2:
+  __b2:
     // [18] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuaa=vwuz1_band_vbuc1 
     lda #1
     and.z a
     // [19] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b3_from_b2
-    jmp b4
+    beq __b3_from___b2
+    jmp __b4
     // mul16u::@4
-  b4:
+  __b4:
     // [20] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
     lda.z res
     clc
@@ -715,12 +715,12 @@ mul16u: {
     adc.z mb+3
     sta.z res+3
     // [21] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
-  b3_from_b2:
-  b3_from_b4:
+  __b3_from___b2:
+  __b3_from___b4:
     // [21] phi (dword) mul16u::res#6 = (dword) mul16u::res#2 [phi:mul16u::@2/mul16u::@4->mul16u::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // mul16u::@3
-  b3:
+  __b3:
     // [22] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
     lsr.z a+1
     ror.z a
@@ -730,47 +730,48 @@ mul16u: {
     rol.z mb+2
     rol.z mb+3
     // [15] phi from mul16u::@3 to mul16u::@1 [phi:mul16u::@3->mul16u::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [15] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
     // [15] phi (dword) mul16u::res#2 = (dword) mul16u::res#6 [phi:mul16u::@3->mul16u::@1#1] -- register_copy 
     // [15] phi (word) mul16u::a#2 = (word) mul16u::a#0 [phi:mul16u::@3->mul16u::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b4
-Removing instruction jmp b3
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b4
+Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b3_from_b2 with b3
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b3_from_b2:
-Removing instruction b3_from_b4:
+Replacing label __bbegin with __b1
+Replacing label __b3_from___b2 with __b3
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b3_from___b2:
+Removing instruction __b3_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction mul16u_from_main:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction b1_from_mul16u:
-Removing instruction breturn:
-Removing instruction b4:
-Removing instruction b1_from_b3:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b1_from_mul16u:
+Removing instruction __breturn:
+Removing instruction __b4:
+Removing instruction __b1_from___b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -905,19 +906,19 @@ mul16u: {
     lda #>4
     sta.z a+1
     // mul16u::@1
-  b1:
+  __b1:
     // while(a!=0)
     // [16] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
     lda.z a
-    bne b2
+    bne __b2
     lda.z a+1
-    bne b2
+    bne __b2
     // mul16u::@return
     // }
     // [17] return 
     rts
     // mul16u::@2
-  b2:
+  __b2:
     // a&1
     // [18] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuaa=vwuz1_band_vbuc1 
     lda #1
@@ -925,7 +926,7 @@ mul16u: {
     // if( (a&1) != 0)
     // [19] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b3
+    beq __b3
     // mul16u::@4
     // res = res + mb
     // [20] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
@@ -945,7 +946,7 @@ mul16u: {
     // [21] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
     // [21] phi (dword) mul16u::res#6 = (dword) mul16u::res#2 [phi:mul16u::@2/mul16u::@4->mul16u::@3#0] -- register_copy 
     // mul16u::@3
-  b3:
+  __b3:
     // a = a>>1
     // [22] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
     lsr.z a+1
@@ -960,7 +961,7 @@ mul16u: {
     // [15] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
     // [15] phi (dword) mul16u::res#2 = (dword) mul16u::res#6 [phi:mul16u::@3->mul16u::@1#1] -- register_copy 
     // [15] phi (word) mul16u::a#2 = (word) mul16u::a#0 [phi:mul16u::@3->mul16u::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 

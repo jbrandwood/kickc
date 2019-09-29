@@ -7,14 +7,14 @@ main: {
     lda #1
     sta fibs+1
     ldx #0
-  b1:
+  __b1:
     lda fibs,x
     clc
     adc fibs+1,x
     sta fibs+2,x
     inx
     cpx #$f
-    bcc b1
+    bcc __b1
     rts
 }
   fibs: .fill $f, 0

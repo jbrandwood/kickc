@@ -25,48 +25,48 @@ main: {
     sta.z current_bit
     ldx #7
   // Wait for raster
-  b1:
+  __b1:
     lda #$fe
     cmp RASTER
-    bne b1
-  b2:
+    bne __b1
+  __b2:
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     inc BGCOL
     jsr scroll_soft
     dec BGCOL
-    jmp b1
+    jmp __b1
 }
 scroll_soft: {
     dex
     cpx #$ff
-    bne b1
+    bne __b1
     jsr scroll_bit
     ldx #7
-  b1:
+  __b1:
     stx SCROLL
     rts
 }
 scroll_bit: {
-    .label _7 = 7
+    .label __7 = 7
     .label c = 7
     .label sc = 3
     lsr.z current_bit
     lda.z current_bit
     cmp #0
-    bne b1
+    bne __b1
     jsr next_char
     txa
     sta.z c
     lda #0
     sta.z c+1
-    asl.z _7
-    rol.z _7+1
-    asl.z _7
-    rol.z _7+1
-    asl.z _7
-    rol.z _7+1
+    asl.z __7
+    rol.z __7+1
+    asl.z __7
+    rol.z __7+1
+    asl.z __7
+    rol.z __7+1
     clc
     lda.z current_chargen
     adc #<CHARGEN
@@ -76,7 +76,7 @@ scroll_bit: {
     sta.z current_chargen+1
     lda #$80
     sta.z current_bit
-  b1:
+  __b1:
     jsr scroll_hard
     sei
     lda #$32
@@ -86,18 +86,18 @@ scroll_bit: {
     lda #>SCREEN+$28+$27
     sta.z sc+1
     ldx #0
-  b3:
+  __b3:
     txa
     tay
     lda (current_chargen),y
     and.z current_bit
     cmp #0
-    beq b2
+    beq b1
     lda #$80+' '
-    jmp b4
-  b2:
+    jmp __b4
+  b1:
     lda #' '
-  b4:
+  __b4:
     ldy #0
     sta (sc),y
     lda #$28
@@ -109,7 +109,7 @@ scroll_bit: {
   !:
     inx
     cpx #8
-    bne b3
+    bne __b3
     lda #$37
     sta PROCPORT
     cli
@@ -118,11 +118,11 @@ scroll_bit: {
 scroll_hard: {
     ldx #0
   // Hard scroll
-  b1:
+  __b1:
     cpx #$27
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda SCREEN+1,x
     sta SCREEN,x
     lda SCREEN+$28*1+1,x
@@ -140,7 +140,7 @@ scroll_hard: {
     lda SCREEN+$28*7+1,x
     sta SCREEN+$28*7,x
     inx
-    jmp b1
+    jmp __b1
 }
 // Find the next char of the scroll text
 next_char: {
@@ -148,13 +148,13 @@ next_char: {
     lda (nxt),y
     tax
     cpx #0
-    bne b1
+    bne __b1
     ldx TEXT
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-  b1:
+  __b1:
     inc.z nxt
     bne !+
     inc.z nxt+1
@@ -169,17 +169,17 @@ fillscreen: {
     sta.z cursor
     lda #>SCREEN
     sta.z cursor+1
-  b1:
+  __b1:
     lda.z cursor+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z cursor
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda #fill
     ldy #0
     sta (cursor),y
@@ -187,7 +187,7 @@ fillscreen: {
     bne !+
     inc.z cursor+1
   !:
-    jmp b1
+    jmp __b1
 }
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
   .byte 0

@@ -8,7 +8,7 @@ main: {
     .label b = 2
     lda #0
     sta.z b
-  b1:
+  __b1:
     lda.z bp
     clc
     adc #1
@@ -17,6 +17,6 @@ main: {
     inc.z b
     lda #$b
     cmp.z b
-    bne b1
+    bne __b1
     rts
 }

@@ -16,9 +16,9 @@ main: {
     sta.z screen+1
     lda #0
     sta.z ch
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda.z ch
     ldy #0
     sta (screen),y
@@ -29,7 +29,7 @@ main: {
     inc.z ch
     inx
     cpx #$10
-    bne b2
+    bne __b2
     lda #$28-$10
     clc
     adc.z screen
@@ -40,7 +40,7 @@ main: {
     inc.z x
     lda #$10
     cmp.z x
-    bne b1
+    bne __b1
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -54,15 +54,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -70,5 +70,5 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }

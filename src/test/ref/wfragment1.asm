@@ -5,11 +5,11 @@
   .const MAX_OBJECTS = $10
 main: {
     ldy #0
-  b1:
+  __b1:
     jsr move_enemy
     iny
     cpy #6
-    bne b1
+    bne __b1
     rts
 }
 // move_enemy(byte register(Y) obj_slot)

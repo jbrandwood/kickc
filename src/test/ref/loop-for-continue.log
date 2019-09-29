@@ -208,61 +208,61 @@ Target platform is c64basic / MOS6502X
 // Tests continue statement in a simple for()-loop
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label idx = 3
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z idx
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp MESSAGE,y
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [8] if(*((const byte[]) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 -- pbuc1_derefidx_vbuz1_eq_vbuc2_then_la1 
     ldy.z i
     lda MESSAGE,y
     cmp #' '
-    beq b4_from_b2
-    jmp b3
+    beq __b4_from___b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((const byte[]) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z i
     lda MESSAGE,y
@@ -271,19 +271,19 @@ main: {
     // [10] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz1 
     inc.z idx
     // [11] phi from main::@2 main::@3 to main::@4 [phi:main::@2/main::@3->main::@4]
-  b4_from_b2:
-  b4_from_b3:
+  __b4_from___b2:
+  __b4_from___b3:
     // [11] phi (byte) main::idx#5 = (byte) main::idx#2 [phi:main::@2/main::@3->main::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [5] phi (byte) main::idx#2 = (byte) main::idx#5 [phi:main::@4->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   MESSAGE: .text "hello brave new world!"
@@ -313,105 +313,106 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests continue statement in a simple for()-loop
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda MESSAGE,x
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [8] if(*((const byte[]) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 -- pbuc1_derefidx_vbuxx_eq_vbuc2_then_la1 
     lda MESSAGE,x
     cmp #' '
-    beq b4_from_b2
-    jmp b3
+    beq __b4_from___b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((const byte[]) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
     lda MESSAGE,x
     sta SCREEN,y
     // [10] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuyy=_inc_vbuyy 
     iny
     // [11] phi from main::@2 main::@3 to main::@4 [phi:main::@2/main::@3->main::@4]
-  b4_from_b2:
-  b4_from_b3:
+  __b4_from___b2:
+  __b4_from___b3:
     // [11] phi (byte) main::idx#5 = (byte) main::idx#2 [phi:main::@2/main::@3->main::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [5] phi (byte) main::idx#2 = (byte) main::idx#5 [phi:main::@4->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   MESSAGE: .text "hello brave new world!"
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b3
-Removing instruction jmp b4
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b4
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b4_from_b2 with b4
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b4_from_b2:
-Removing instruction b4_from_b3:
+Replacing label __bbegin with __b1
+Replacing label __b4_from___b2 with __b4
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b4_from___b2:
+Removing instruction __b4_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
-Removing instruction b3:
-Removing instruction b1_from_b4:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b3:
+Removing instruction __b1_from___b4:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -464,23 +465,23 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     // main::@1
-  b1:
+  __b1:
     // for( char i =0; MESSAGE[i]; i++)
     // [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda MESSAGE,x
     cmp #0
-    bne b2
+    bne __b2
     // main::@return
     // }
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // if(MESSAGE[i]==' ')
     // [8] if(*((const byte[]) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 -- pbuc1_derefidx_vbuxx_eq_vbuc2_then_la1 
     lda MESSAGE,x
     cmp #' '
-    beq b4
+    beq __b4
     // main::@3
     // SCREEN[idx++] = MESSAGE[i]
     // [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((const byte[]) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
@@ -492,14 +493,14 @@ main: {
     // [11] phi from main::@2 main::@3 to main::@4 [phi:main::@2/main::@3->main::@4]
     // [11] phi (byte) main::idx#5 = (byte) main::idx#2 [phi:main::@2/main::@3->main::@4#0] -- register_copy 
     // main::@4
-  b4:
+  __b4:
     // for( char i =0; MESSAGE[i]; i++)
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [5] phi (byte) main::idx#2 = (byte) main::idx#5 [phi:main::@4->main::@1#0] -- register_copy 
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   MESSAGE: .text "hello brave new world!"

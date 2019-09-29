@@ -112,40 +112,40 @@ Target platform is c64basic / MOS6502X
 // Test setting the program PC through a #pc directive
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $1000 "Program"
   // Global Constants & labels
   .label BGCOL = $d021
   .label RASTER = $d012
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label col = 2
     // asm { sei  }
     sei
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [5] (byte) main::col#0 ← *((const byte*) RASTER) -- vbuz1=_deref_pbuc1 
     lda RASTER
     sta.z col
     // [6] *((const byte*) BGCOL) ← (byte) main::col#0 -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BGCOL
-    jmp b1
+    jmp __b1
 }
   // File Data
 
@@ -164,55 +164,56 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test setting the program PC through a #pc directive
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $1000 "Program"
   // Global Constants & labels
   .label BGCOL = $d021
   .label RASTER = $d012
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // asm { sei  }
     sei
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [5] (byte) main::col#0 ← *((const byte*) RASTER) -- vbuaa=_deref_pbuc1 
     lda RASTER
     // [6] *((const byte*) BGCOL) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
     sta BGCOL
-    jmp b1
+    jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -253,14 +254,14 @@ main: {
     // asm { sei  }
     sei
     // main::@1
-  b1:
+  __b1:
     // col = *RASTER
     // [5] (byte) main::col#0 ← *((const byte*) RASTER) -- vbuaa=_deref_pbuc1 
     lda RASTER
     // *BGCOL = col
     // [6] *((const byte*) BGCOL) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
     sta BGCOL
-    jmp b1
+    jmp __b1
 }
   // File Data
 

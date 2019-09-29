@@ -1171,7 +1171,7 @@ Target platform is c64basic / MOS6502X
 // Test that plus creates the expected type for all legal combinations of bytes (signed/unsigned - constant/variable)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const TYPEID_BYTE = 1
@@ -1179,60 +1179,60 @@ Target platform is c64basic / MOS6502X
   .label SCREEN = $400
   .label SSCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call testUnsigned 
     jsr testUnsigned
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call testUnsignedVals 
     jsr testUnsignedVals
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] call testSigned 
     jsr testSigned
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] call testSignedVals 
     jsr testSignedVals
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
   // testSignedVals
 testSignedVals: {
     .const sbc1 = -$78
-    .label _2 = 6
-    .label _3 = 7
-    .label _4 = 8
-    .label _5 = 9
-    .label _6 = $a
+    .label __2 = 6
+    .label __3 = 7
+    .label __4 = 8
+    .label __5 = 9
+    .label __6 = $a
     .label sbv1 = 5
     // [13] (signed byte) testSignedVals::sbv1#0 ← (signed byte) -$78 -- vbsz1=vbsc1 
     lda #-$78
@@ -1258,41 +1258,41 @@ testSignedVals: {
     // [20] (signed byte~) testSignedVals::$2 ← (signed byte) testSignedVals::sbv1#0 + (signed byte) -$78 -- vbsz1=vbsz2_plus_vbsc1 
     lax.z sbv1
     axs #-[-$78]
-    stx.z _2
+    stx.z __2
     // [21] *((const signed byte*) SSCREEN+++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$2 -- _deref_pbsc1=vbsz1 
-    lda.z _2
+    lda.z __2
     sta SSCREEN+$28*3+1+1+1+1+1+1
     // [22] (signed byte~) testSignedVals::$3 ← (signed byte) -$78 + (signed byte) testSignedVals::sbv1#0 -- vbsz1=vbsc1_plus_vbsz2 
     lax.z sbv1
     axs #-[-$78]
-    stx.z _3
+    stx.z __3
     // [23] *((const signed byte*) SSCREEN+++++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$3 -- _deref_pbsc1=vbsz1 
-    lda.z _3
+    lda.z __3
     sta SSCREEN+$28*3+1+1+1+1+1+1+1
     // [24] (signed byte~) testSignedVals::$4 ← (signed byte) testSignedVals::sbv1#0 + (const signed byte) testSignedVals::sbc1 -- vbsz1=vbsz2_plus_vbsc1 
     lax.z sbv1
     axs #-[sbc1]
-    stx.z _4
+    stx.z __4
     // [25] *((const signed byte*) SSCREEN+++++++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$4 -- _deref_pbsc1=vbsz1 
-    lda.z _4
+    lda.z __4
     sta SSCREEN+$28*3+1+1+1+1+1+1+1+1
     // [26] (signed byte~) testSignedVals::$5 ← (const signed byte) testSignedVals::sbc1 + (signed byte) testSignedVals::sbv1#0 -- vbsz1=vbsc1_plus_vbsz2 
     lax.z sbv1
     axs #-[sbc1]
-    stx.z _5
+    stx.z __5
     // [27] *((const signed byte*) SSCREEN+++++++++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$5 -- _deref_pbsc1=vbsz1 
-    lda.z _5
+    lda.z __5
     sta SSCREEN+$28*3+1+1+1+1+1+1+1+1+1
     // [28] (signed byte~) testSignedVals::$6 ← (signed byte) testSignedVals::sbv1#0 + (signed byte) testSignedVals::sbv1#0 -- vbsz1=vbsz2_plus_vbsz2 
     lda.z sbv1
     asl
-    sta.z _6
+    sta.z __6
     // [29] *((const signed byte*) SSCREEN+++++++++++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$6 -- _deref_pbsc1=vbsz1 
-    lda.z _6
+    lda.z __6
     sta SSCREEN+$28*3+1+1+1+1+1+1+1+1+1+1
-    jmp breturn
+    jmp __breturn
     // testSignedVals::@return
-  breturn:
+  __breturn:
     // [30] return 
     rts
 }
@@ -1335,20 +1335,20 @@ testSigned: {
     // [42] *((const byte*) SCREEN+++++++++++++++++++++(byte)(number) $28*(number) 2) ← (const byte) TYPEID_SIGNED_BYTE -- _deref_pbuc1=vbuc2 
     lda #TYPEID_SIGNED_BYTE
     sta SCREEN+$28*2+1+1+1+1+1+1+1+1+1+1
-    jmp breturn
+    jmp __breturn
     // testSigned::@return
-  breturn:
+  __breturn:
     // [43] return 
     rts
 }
   // testUnsignedVals
 testUnsignedVals: {
     .const ubc1 = $fa
-    .label _2 = $b
-    .label _3 = $c
-    .label _4 = $d
-    .label _5 = $e
-    .label _6 = $f
+    .label __2 = $b
+    .label __3 = $c
+    .label __4 = $d
+    .label __5 = $e
+    .label __6 = $f
     .label ubv1 = 3
     // [44] (byte) testUnsignedVals::ubv1#0 ← (byte) $fa -- vbuz1=vbuc1 
     lda #$fa
@@ -1374,41 +1374,41 @@ testUnsignedVals: {
     // [51] (byte~) testUnsignedVals::$2 ← (byte) testUnsignedVals::ubv1#0 + (byte) $fa -- vbuz1=vbuz2_plus_vbuc1 
     lax.z ubv1
     axs #-[$fa]
-    stx.z _2
+    stx.z __2
     // [52] *((const byte*) SCREEN+(byte) $2e) ← (byte~) testUnsignedVals::$2 -- _deref_pbuc1=vbuz1 
-    lda.z _2
+    lda.z __2
     sta SCREEN+$2e
     // [53] (byte~) testUnsignedVals::$3 ← (byte) $fa + (byte) testUnsignedVals::ubv1#0 -- vbuz1=vbuc1_plus_vbuz2 
     lax.z ubv1
     axs #-[$fa]
-    stx.z _3
+    stx.z __3
     // [54] *((const byte*) SCREEN+(byte) $2f) ← (byte~) testUnsignedVals::$3 -- _deref_pbuc1=vbuz1 
-    lda.z _3
+    lda.z __3
     sta SCREEN+$2f
     // [55] (byte~) testUnsignedVals::$4 ← (byte) testUnsignedVals::ubv1#0 + (const byte) testUnsignedVals::ubc1 -- vbuz1=vbuz2_plus_vbuc1 
     lax.z ubv1
     axs #-[ubc1]
-    stx.z _4
+    stx.z __4
     // [56] *((const byte*) SCREEN+(byte) $30) ← (byte~) testUnsignedVals::$4 -- _deref_pbuc1=vbuz1 
-    lda.z _4
+    lda.z __4
     sta SCREEN+$30
     // [57] (byte~) testUnsignedVals::$5 ← (const byte) testUnsignedVals::ubc1 + (byte) testUnsignedVals::ubv1#0 -- vbuz1=vbuc1_plus_vbuz2 
     lax.z ubv1
     axs #-[ubc1]
-    stx.z _5
+    stx.z __5
     // [58] *((const byte*) SCREEN+(byte) $31) ← (byte~) testUnsignedVals::$5 -- _deref_pbuc1=vbuz1 
-    lda.z _5
+    lda.z __5
     sta SCREEN+$31
     // [59] (byte~) testUnsignedVals::$6 ← (byte) testUnsignedVals::ubv1#0 + (byte) testUnsignedVals::ubv1#0 -- vbuz1=vbuz2_plus_vbuz2 
     lda.z ubv1
     asl
-    sta.z _6
+    sta.z __6
     // [60] *((const byte*) SCREEN+(byte) $32) ← (byte~) testUnsignedVals::$6 -- _deref_pbuc1=vbuz1 
-    lda.z _6
+    lda.z __6
     sta SCREEN+$32
-    jmp breturn
+    jmp __breturn
     // testUnsignedVals::@return
-  breturn:
+  __breturn:
     // [61] return 
     rts
 }
@@ -1451,9 +1451,9 @@ testUnsigned: {
     // [73] *((const byte*) SCREEN+(byte) $a) ← (const byte) TYPEID_BYTE -- _deref_pbuc1=vbuc2 
     lda #TYPEID_BYTE
     sta SCREEN+$a
-    jmp breturn
+    jmp __breturn
     // testUnsigned::@return
-  breturn:
+  __breturn:
     // [74] return 
     rts
 }
@@ -1557,7 +1557,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test that plus creates the expected type for all legal combinations of bytes (signed/unsigned - constant/variable)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const TYPEID_BYTE = 1
@@ -1565,49 +1565,49 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   .label SSCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call testUnsigned 
     jsr testUnsigned
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call testUnsignedVals 
     jsr testUnsignedVals
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] call testSigned 
     jsr testSigned
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] call testSignedVals 
     jsr testSignedVals
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
@@ -1665,9 +1665,9 @@ testSignedVals: {
     asl
     // [29] *((const signed byte*) SSCREEN+++++++++++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$6 -- _deref_pbsc1=vbsaa 
     sta SSCREEN+$28*3+1+1+1+1+1+1+1+1+1+1
-    jmp breturn
+    jmp __breturn
     // testSignedVals::@return
-  breturn:
+  __breturn:
     // [30] return 
     rts
 }
@@ -1710,9 +1710,9 @@ testSigned: {
     // [42] *((const byte*) SCREEN+++++++++++++++++++++(byte)(number) $28*(number) 2) ← (const byte) TYPEID_SIGNED_BYTE -- _deref_pbuc1=vbuc2 
     lda #TYPEID_SIGNED_BYTE
     sta SCREEN+$28*2+1+1+1+1+1+1+1+1+1+1
-    jmp breturn
+    jmp __breturn
     // testSigned::@return
-  breturn:
+  __breturn:
     // [43] return 
     rts
 }
@@ -1768,9 +1768,9 @@ testUnsignedVals: {
     asl
     // [60] *((const byte*) SCREEN+(byte) $32) ← (byte~) testUnsignedVals::$6 -- _deref_pbuc1=vbuaa 
     sta SCREEN+$32
-    jmp breturn
+    jmp __breturn
     // testUnsignedVals::@return
-  breturn:
+  __breturn:
     // [61] return 
     rts
 }
@@ -1813,25 +1813,25 @@ testUnsigned: {
     // [73] *((const byte*) SCREEN+(byte) $a) ← (const byte) TYPEID_BYTE -- _deref_pbuc1=vbuc2 
     lda #TYPEID_BYTE
     sta SCREEN+$a
-    jmp breturn
+    jmp __breturn
     // testUnsigned::@return
-  breturn:
+  __breturn:
     // [74] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #-$78
 Removing instruction lda #TYPEID_SIGNED_BYTE
@@ -1850,28 +1850,29 @@ Removing instruction lda #TYPEID_BYTE
 Removing instruction lda #TYPEID_BYTE
 Removing instruction lda #TYPEID_BYTE
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction b2_from_b1:
-Removing instruction b3_from_b2:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction __b2_from___b1:
+Removing instruction __b3_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1:
-Removing instruction b2:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

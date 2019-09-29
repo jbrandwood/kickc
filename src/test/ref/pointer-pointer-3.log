@@ -206,33 +206,33 @@ Target platform is c64basic / MOS6502X
 // Tests pointer to pointer in a more complex setup
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
   // @begin
-bbegin:
+__bbegin:
   // [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400
   sta.z screen
   lda #>$400
   sta.z screen+1
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call setscreen 
@@ -244,32 +244,32 @@ main: {
     lda #>screen1
     sta.z setscreen.val+1
     jsr setscreen
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     // [7] call setscreen 
     // [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
-  setscreen_from_b1:
+  setscreen_from___b1:
     // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta.z setscreen.val
     lda #>screen2
     sta.z setscreen.val+1
     jsr setscreen
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
@@ -282,9 +282,9 @@ setscreen: {
     sta.z screen
     lda.z val+1
     sta.z screen+1
-    jmp breturn
+    jmp __breturn
     // setscreen::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
@@ -312,33 +312,33 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests pointer to pointer in a more complex setup
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
   // @begin
-bbegin:
+__bbegin:
   // [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400
   sta.z screen
   lda #>$400
   sta.z screen+1
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call setscreen 
@@ -350,32 +350,32 @@ main: {
     lda #>screen1
     sta.z setscreen.val+1
     jsr setscreen
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     // [7] call setscreen 
     // [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
-  setscreen_from_b1:
+  setscreen_from___b1:
     // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta.z setscreen.val
     lda #>screen2
     sta.z setscreen.val+1
     jsr setscreen
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] *((byte*) screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
@@ -388,34 +388,34 @@ setscreen: {
     sta.z screen
     lda.z val+1
     sta.z screen+1
-    jmp breturn
+    jmp __breturn
     // setscreen::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b1:
-Removing instruction bend:
+Removing instruction __b1:
+Removing instruction __bend:
 Removing instruction setscreen_from_main:
-Removing instruction b1:
-Removing instruction setscreen_from_b1:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction setscreen_from___b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
@@ -449,14 +449,14 @@ Score: 98
 // Tests pointer to pointer in a more complex setup
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
   // @begin
-bbegin:
+__bbegin:
   // screen = $400
   // [0] (byte*) screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400

@@ -39,22 +39,22 @@ print_person: {
     sta SCREEN,x
     inx
     ldy #0
-  b1:
+  __b1:
     lda (person_name),y
     cmp #0
-    bne b2
+    bne __b2
     lda #' '
     sta SCREEN,x
     txa
     tay
     iny
     rts
-  b2:
+  __b2:
     lda (person_name),y
     sta SCREEN,x
     inx
     iny
-    jmp b1
+    jmp __b1
 }
   DIGIT: .text "0123456789"
   .byte 0

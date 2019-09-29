@@ -6,21 +6,21 @@
 main: {
     ldy #0
     ldx #0
-  b1:
+  __b1:
     lda MESSAGE,x
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda MESSAGE,x
     cmp #' '
-    beq b4
+    beq __b4
     lda MESSAGE,x
     sta SCREEN,y
     iny
-  b4:
+  __b4:
     inx
-    jmp b1
+    jmp __b1
 }
   MESSAGE: .text "hello brave new world!"
   .byte 0

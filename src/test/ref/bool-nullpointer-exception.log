@@ -148,50 +148,50 @@ Target platform is c64basic / MOS6502X
 // Some bool code that causes a NullPointerException
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label framedone = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (bool) framedone#2 = true [phi:main->main::@1#0] -- vboz1=vboc1 
     lda #1
     sta.z framedone
-    jmp b1
+    jmp __b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (bool) framedone#2 = false [phi:main::@2->main::@1#0] -- vboz1=vboc1 
     lda #0
     sta.z framedone
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [6] if((bool) framedone#2) goto main::@1 -- vboz1_then_la1 
     lda.z framedone
     cmp #0
-    bne b1_from_b2
-    jmp b2
+    bne __b1_from___b2
+    jmp __b2
 }
   // File Data
 
@@ -210,71 +210,72 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Some bool code that causes a NullPointerException
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (bool) framedone#2 = true [phi:main->main::@1#0] -- vboaa=vboc1 
     lda #1
-    jmp b1
+    jmp __b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (bool) framedone#2 = false [phi:main::@2->main::@1#0] -- vboaa=vboc1 
     lda #0
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [6] if((bool) framedone#2) goto main::@1 -- vboaa_then_la1 
     cmp #0
-    bne b1_from_b2
-    jmp b2
+    bne __b1_from___b2
+    jmp __b2
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1 with b2
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1:
+Replacing label __bbegin with __b1
+Replacing label __b1 with __b2
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Relabelling long label b1_from_b2 to b1
+Relabelling long label __b1_from___b2 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -312,19 +313,19 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (bool) framedone#2 = true [phi:main->main::@1#0] -- vboaa=vboc1 
     lda #1
-    jmp b2
+    jmp __b2
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   b1:
     // [5] phi (bool) framedone#2 = false [phi:main::@2->main::@1#0] -- vboaa=vboc1 
     lda #0
     // main::@1
     // main::@2
-  b2:
+  __b2:
     // while(!framedone)
     // [6] if((bool) framedone#2) goto main::@1 -- vboaa_then_la1 
     cmp #0
     bne b1
-    jmp b2
+    jmp __b2
 }
   // File Data
 

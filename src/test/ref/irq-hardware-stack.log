@@ -243,7 +243,7 @@ Target platform is c64basic / MOS6502X
 // A minimal working raster IRQ
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label HARDWARE_IRQ = $fffe
@@ -267,19 +267,19 @@ Target platform is c64basic / MOS6502X
   // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 // RAM in $A000, $E000 CHAR ROM in $D000
 main: {
@@ -316,12 +316,12 @@ main: {
     sta HARDWARE_IRQ+1
     // asm { cli  }
     cli
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [13] *((const byte*) FGCOL) ← ++ *((const byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
-    jmp b1
+    jmp __b1
 }
   // irq
 // Interrupt Routine
@@ -342,9 +342,9 @@ irq: {
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    jmp breturn
+    jmp __breturn
     // irq::@return
-  breturn:
+  __breturn:
     // [17] return  - exit interrupt(HARDWARE_STACK)
     pla
     tay
@@ -382,7 +382,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // A minimal working raster IRQ
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label HARDWARE_IRQ = $fffe
@@ -406,19 +406,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   // RAM in $A000, $E000 I/O in $D000
   .const PROCPORT_RAM_IO = $35
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 // RAM in $A000, $E000 CHAR ROM in $D000
 main: {
@@ -455,12 +455,12 @@ main: {
     sta HARDWARE_IRQ+1
     // asm { cli  }
     cli
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [13] *((const byte*) FGCOL) ← ++ *((const byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
-    jmp b1
+    jmp __b1
 }
   // irq
 // Interrupt Routine
@@ -481,9 +481,9 @@ irq: {
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    jmp breturn
+    jmp __breturn
     // irq::@return
-  breturn:
+  __breturn:
     // [17] return  - exit interrupt(HARDWARE_STACK)
     pla
     tay
@@ -495,22 +495,23 @@ irq: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -622,11 +623,11 @@ main: {
     // asm { cli  }
     cli
     // main::@1
-  b1:
+  __b1:
     // (*FGCOL)++;
     // [13] *((const byte*) FGCOL) ← ++ *((const byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
-    jmp b1
+    jmp __b1
 }
   // irq
 // Interrupt Routine

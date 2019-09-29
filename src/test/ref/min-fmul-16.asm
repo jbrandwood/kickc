@@ -15,10 +15,10 @@ main: {
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
-  b2:
+  __b2:
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     inc BORDERCOL
     jsr mulf16u
     dec BORDERCOL
@@ -28,7 +28,7 @@ main: {
     sta.z print_char_cursor
     lda #>SCREEN
     sta.z print_char_cursor+1
-    jmp b2
+    jmp __b2
 }
 // Set the screen to print on. Also resets current line/char cursor.
 print_set_screen: {
@@ -229,13 +229,13 @@ mulf_init: {
     sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta.z sqr1_lo+1
-  b1:
+  __b1:
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     lda #$ff
     sta.z dir
     lda #<mulf_sqr2_hi
@@ -247,20 +247,20 @@ mulf_init: {
     sta.z sqr2_lo
     lda #>mulf_sqr2_lo
     sta.z sqr2_lo+1
-  b5:
+  __b5:
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
     lda mulf_sqr1_hi+$100
     sta mulf_sqr2_hi+$1ff
     rts
-  b6:
+  __b6:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -275,27 +275,27 @@ mulf_init: {
     adc.z dir
     tax
     cpx #0
-    bne b8
+    bne __b8
     lda #1
     sta.z dir
-  b8:
+  __b8:
     inc.z sqr2_lo
     bne !+
     inc.z sqr2_lo+1
   !:
-    jmp b5
-  b2:
+    jmp __b5
+  __b2:
     inc.z c
     lda #1
     and.z c
     cmp #0
-    bne b3
+    bne __b3
     inx
     inc.z sqr
     bne !+
     inc.z sqr+1
   !:
-  b3:
+  __b3:
     lda.z sqr
     ldy #0
     sta (sqr1_lo),y
@@ -316,7 +316,7 @@ mulf_init: {
     bne !+
     inc.z sqr1_lo+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).

@@ -8,26 +8,26 @@
 main: {
     .label f = 2
     ldx #0
-  b2:
+  __b2:
     inx
     txa
     and #1
     cmp #0
-    beq b3
+    beq __b3
     lda #<fn2
     sta.z f
     lda #>fn2
     sta.z f+1
-    jmp b4
-  b3:
+    jmp __b4
+  __b3:
     lda #<fn1
     sta.z f
     lda #>fn1
     sta.z f+1
-  b4:
+  __b4:
     jsr ff
         
-    jmp b2
+    jmp __b2
 }
 fn2: {
     .label BGCOL = $d021

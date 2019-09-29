@@ -5,7 +5,7 @@
 main: {
     .label SCREEN = $400
     ldx #0
-  b1:
+  __b1:
     lda petscii_mixed,x
     sta SCREEN,x
     lda petscii_upper,x
@@ -22,7 +22,7 @@ main: {
     sta SCREEN+$28*6,x
     inx
     cpx #6
-    bne b1
+    bne __b1
     rts
 }
 .encoding "petscii_mixed"

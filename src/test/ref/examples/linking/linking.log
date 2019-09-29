@@ -320,37 +320,37 @@ Target platform is custom / MOS6502X
   .label BGCOL = $d021
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
 .segment Code
   // main
 main: {
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const byte[$100]) base + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
@@ -360,34 +360,34 @@ main: {
     // [8] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
     lda.z i
     cmp #0
-    bne b1_from_b1
-    jmp b2
+    bne __b1_from___b1
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (byte) fillscreen::c#0 ← *((const byte*) BGCOL) -- vbuz1=_deref_pbuc1 
     lda BGCOL
     sta.z fillscreen.c
     // [10] call fillscreen 
     // [12] phi from main::@2 to fillscreen [phi:main::@2->fillscreen]
-  fillscreen_from_b2:
+  fillscreen_from___b2:
     jsr fillscreen
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-    jmp b2
+    jmp __b2
 }
 .segment CodeHigh
   // fillscreen
 // fillscreen(byte zeropage(6) c)
 fillscreen: {
-    .label _2 = 7
+    .label __2 = 7
     .label c = 6
     .label i = 5
     .label screen = 3
     // [13] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-  b1_from_fillscreen:
+  __b1_from_fillscreen:
     // [13] phi (byte) fillscreen::i#2 = (byte) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -396,33 +396,33 @@ fillscreen: {
     sta.z screen
     lda #>SCREEN
     sta.z screen+1
-    jmp b1
+    jmp __b1
     // fillscreen::@1
-  b1:
+  __b1:
     // [14] if((byte*) fillscreen::screen#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z screen+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z screen
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
-    jmp breturn
+    jmp __breturn
     // fillscreen::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
     // fillscreen::@2
-  b2:
+  __b2:
     // [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base + (byte) fillscreen::i#2) -- vbuz1=vbuz2_plus_pbuc1_derefidx_vbuz3 
     lda.z c
     ldy.z i
     clc
     adc base,y
-    sta.z _2
+    sta.z __2
     // [17] *((byte*) fillscreen::screen#2) ← (byte~) fillscreen::$2 -- _deref_pbuz1=vbuz2 
-    lda.z _2
+    lda.z __2
     ldy #0
     sta (screen),y
     // [18] (byte) fillscreen::i#1 ← ++ (byte) fillscreen::i#2 -- vbuz1=_inc_vbuz1 
@@ -433,10 +433,10 @@ fillscreen: {
     inc.z screen+1
   !:
     // [13] phi from fillscreen::@2 to fillscreen::@1 [phi:fillscreen::@2->fillscreen::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [13] phi (byte) fillscreen::i#2 = (byte) fillscreen::i#1 [phi:fillscreen::@2->fillscreen::@1#0] -- register_copy 
     // [13] phi (byte*) fillscreen::screen#2 = (byte*) fillscreen::screen#1 [phi:fillscreen::@2->fillscreen::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 .segment DataHigh
@@ -495,35 +495,35 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BGCOL = $d021
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
 .segment Code
   // main
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const byte[$100]) base + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta base,x
@@ -531,23 +531,23 @@ main: {
     inx
     // [8] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1_from_b1
-    jmp b2
+    bne __b1_from___b1
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (byte) fillscreen::c#0 ← *((const byte*) BGCOL) -- vbuz1=_deref_pbuc1 
     lda BGCOL
     sta.z fillscreen.c
     // [10] call fillscreen 
     // [12] phi from main::@2 to fillscreen [phi:main::@2->fillscreen]
-  fillscreen_from_b2:
+  fillscreen_from___b2:
     jsr fillscreen
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-    jmp b2
+    jmp __b2
 }
 .segment CodeHigh
   // fillscreen
@@ -556,7 +556,7 @@ fillscreen: {
     .label c = 4
     .label screen = 2
     // [13] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-  b1_from_fillscreen:
+  __b1_from_fillscreen:
     // [13] phi (byte) fillscreen::i#2 = (byte) 0 [phi:fillscreen->fillscreen::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [13] phi (byte*) fillscreen::screen#2 = (const byte*) SCREEN [phi:fillscreen->fillscreen::@1#1] -- pbuz1=pbuc1 
@@ -564,25 +564,25 @@ fillscreen: {
     sta.z screen
     lda #>SCREEN
     sta.z screen+1
-    jmp b1
+    jmp __b1
     // fillscreen::@1
-  b1:
+  __b1:
     // [14] if((byte*) fillscreen::screen#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z screen+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z screen
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
-    jmp breturn
+    jmp __breturn
     // fillscreen::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
     // fillscreen::@2
-  b2:
+  __b2:
     // [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base + (byte) fillscreen::i#2) -- vbuaa=vbuz1_plus_pbuc1_derefidx_vbuxx 
     lda base,x
     clc
@@ -598,43 +598,43 @@ fillscreen: {
     inc.z screen+1
   !:
     // [13] phi from fillscreen::@2 to fillscreen::@1 [phi:fillscreen::@2->fillscreen::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [13] phi (byte) fillscreen::i#2 = (byte) fillscreen::i#1 [phi:fillscreen::@2->fillscreen::@1#0] -- register_copy 
     // [13] phi (byte*) fillscreen::screen#2 = (byte*) fillscreen::screen#1 [phi:fillscreen::@2->fillscreen::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 .segment DataHigh
   base: .fill $100, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bbegin:
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction fillscreen_from_b2:
-Removing instruction b3:
-Removing instruction b1_from_fillscreen:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
+Removing instruction __b1:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction fillscreen_from___b2:
+Removing instruction __b3:
+Removing instruction __b1_from_fillscreen:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
@@ -712,7 +712,7 @@ main: {
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // base[i] = i
     // [6] *((const byte[$100]) base + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
@@ -722,9 +722,9 @@ main: {
     inx
     // [8] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1
+    bne __b1
     // main::@2
-  b2:
+  __b2:
     // fillscreen(*BGCOL)
     // [9] (byte) fillscreen::c#0 ← *((const byte*) BGCOL) -- vbuz1=_deref_pbuc1 
     lda BGCOL
@@ -736,7 +736,7 @@ main: {
     // (*BGCOL)++;
     // [11] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-    jmp b2
+    jmp __b2
 }
 .segment CodeHigh
   // fillscreen
@@ -753,23 +753,23 @@ fillscreen: {
     lda #>SCREEN
     sta.z screen+1
     // fillscreen::@1
-  b1:
+  __b1:
     // for( char *screen = SCREEN; screen<SCREEN+1000; screen++)
     // [14] if((byte*) fillscreen::screen#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z screen+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z screen
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
     // fillscreen::@return
     // }
     // [15] return 
     rts
     // fillscreen::@2
-  b2:
+  __b2:
     // c+base[i++]
     // [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base + (byte) fillscreen::i#2) -- vbuaa=vbuz1_plus_pbuc1_derefidx_vbuxx 
     lda base,x
@@ -791,7 +791,7 @@ fillscreen: {
     // [13] phi from fillscreen::@2 to fillscreen::@1 [phi:fillscreen::@2->fillscreen::@1]
     // [13] phi (byte) fillscreen::i#2 = (byte) fillscreen::i#1 [phi:fillscreen::@2->fillscreen::@1#0] -- register_copy 
     // [13] phi (byte*) fillscreen::screen#2 = (byte*) fillscreen::screen#1 [phi:fillscreen::@2->fillscreen::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 .segment DataHigh

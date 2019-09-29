@@ -367,26 +367,26 @@ Target platform is c64basic / MOS6502X
 // Inline Strings in assignments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = 3
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call print_msg 
@@ -402,21 +402,21 @@ main: {
     sta.z print_msg.idx
     jsr print_msg
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call print_msg 
     // [9] phi from main::@1 to print_msg [phi:main::@1->print_msg]
-  print_msg_from_b1:
+  print_msg_from___b1:
     // [9] phi (byte*) screen#18 = (byte*) screen#14 [phi:main::@1->print_msg#0] -- register_copy 
     // [9] phi (byte) print_msg::idx#2 = (byte) 2 [phi:main::@1->print_msg#1] -- vbuz1=vbuc1 
     lda #2
     sta.z print_msg.idx
     jsr print_msg
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -428,30 +428,30 @@ print_msg: {
     // [10] if((byte) print_msg::idx#2==(byte) 1) goto print_msg::@1 -- vbuz1_eq_vbuc1_then_la1 
     lda #1
     cmp.z idx
-    beq b1_from_print_msg
+    beq __b1_from_print_msg
     // [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
-  b2_from_print_msg:
+  __b2_from_print_msg:
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_2
     sta.z msg
     lda #>msg_2
     sta.z msg+1
-    jmp b2
+    jmp __b2
     // [11] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
-  b1_from_print_msg:
-    jmp b1
+  __b1_from_print_msg:
+    jmp __b1
     // print_msg::@1
-  b1:
+  __b1:
     // [12] phi from print_msg::@1 to print_msg::@2 [phi:print_msg::@1->print_msg::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg::@1->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_1
     sta.z msg
     lda #>msg_1
     sta.z msg+1
-    jmp b2
+    jmp __b2
     // print_msg::@2
-  b2:
+  __b2:
     // [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3 -- pbuz1=pbuz2 
     lda.z msg
     sta.z print.msg
@@ -459,11 +459,11 @@ print_msg: {
     sta.z print.msg+1
     // [14] call print 
     // [16] phi from print_msg::@2 to print [phi:print_msg::@2->print]
-  print_from_b2:
+  print_from___b2:
     jsr print
-    jmp breturn
+    jmp __breturn
     // print_msg::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
     msg_1: .text "Hello "
@@ -476,25 +476,25 @@ print_msg: {
 print: {
     .label msg = 7
     // [17] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
-  b1_from_print:
-  b1_from_b2:
+  __b1_from_print:
+  __b1_from___b2:
     // [17] phi (byte*) screen#14 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
     // [17] phi (byte*) print::msg#2 = (byte*) print::msg#0 [phi:print/print::@2->print::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print::@1
-  b1:
+  __b1:
     // [18] if((byte) 0!=*((byte*) print::msg#2)) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
     // print::@2
-  b2:
+  __b2:
     // [20] *((byte*) screen#14) ← *((byte*) print::msg#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (msg),y
@@ -510,7 +510,7 @@ print: {
     bne !+
     inc.z msg+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
 
@@ -542,26 +542,26 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Inline Strings in assignments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call print_msg 
@@ -576,20 +576,20 @@ main: {
     ldx #1
     jsr print_msg
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call print_msg 
     // [9] phi from main::@1 to print_msg [phi:main::@1->print_msg]
-  print_msg_from_b1:
+  print_msg_from___b1:
     // [9] phi (byte*) screen#18 = (byte*) screen#14 [phi:main::@1->print_msg#0] -- register_copy 
     // [9] phi (byte) print_msg::idx#2 = (byte) 2 [phi:main::@1->print_msg#1] -- vbuxx=vbuc1 
     ldx #2
     jsr print_msg
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -599,38 +599,38 @@ print_msg: {
     .label msg = 4
     // [10] if((byte) print_msg::idx#2==(byte) 1) goto print_msg::@1 -- vbuxx_eq_vbuc1_then_la1 
     cpx #1
-    beq b1_from_print_msg
+    beq __b1_from_print_msg
     // [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
-  b2_from_print_msg:
+  __b2_from_print_msg:
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_2
     sta.z msg
     lda #>msg_2
     sta.z msg+1
-    jmp b2
+    jmp __b2
     // [11] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
-  b1_from_print_msg:
-    jmp b1
+  __b1_from_print_msg:
+    jmp __b1
     // print_msg::@1
-  b1:
+  __b1:
     // [12] phi from print_msg::@1 to print_msg::@2 [phi:print_msg::@1->print_msg::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg::@1->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_1
     sta.z msg
     lda #>msg_1
     sta.z msg+1
-    jmp b2
+    jmp __b2
     // print_msg::@2
-  b2:
+  __b2:
     // [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3
     // [14] call print 
     // [16] phi from print_msg::@2 to print [phi:print_msg::@2->print]
-  print_from_b2:
+  print_from___b2:
     jsr print
-    jmp breturn
+    jmp __breturn
     // print_msg::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
     msg_1: .text "Hello "
@@ -643,25 +643,25 @@ print_msg: {
 print: {
     .label msg = 4
     // [17] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
-  b1_from_print:
-  b1_from_b2:
+  __b1_from_print:
+  __b1_from___b2:
     // [17] phi (byte*) screen#14 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
     // [17] phi (byte*) print::msg#2 = (byte*) print::msg#0 [phi:print/print::@2->print::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print::@1
-  b1:
+  __b1:
     // [18] if((byte) 0!=*((byte*) print::msg#2)) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
     // print::@2
-  b2:
+  __b2:
     // [20] *((byte*) screen#14) ← *((byte*) print::msg#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (msg),y
@@ -677,49 +677,50 @@ print: {
     bne !+
     inc.z msg+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_print_msg with b1
-Replacing label b1_from_b2 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction print_msg_from_b1:
-Removing instruction b1_from_print_msg:
-Removing instruction b2_from_b1:
-Removing instruction print_from_b2:
-Removing instruction b1_from_print:
-Removing instruction b1_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b1_from_print_msg with __b1
+Replacing label __b1_from___b2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction print_msg_from___b1:
+Removing instruction __b1_from_print_msg:
+Removing instruction __b2_from___b1:
+Removing instruction print_from___b2:
+Removing instruction __b1_from_print:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction print_msg_from_main:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction b2_from_print_msg:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b2_from_print_msg:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -809,17 +810,17 @@ print_msg: {
     // if(idx==1)
     // [10] if((byte) print_msg::idx#2==(byte) 1) goto print_msg::@1 -- vbuxx_eq_vbuc1_then_la1 
     cpx #1
-    beq b1
+    beq __b1
     // [12] phi from print_msg to print_msg::@2 [phi:print_msg->print_msg::@2]
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#2 [phi:print_msg->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_2
     sta.z msg
     lda #>msg_2
     sta.z msg+1
-    jmp b2
+    jmp __b2
     // [11] phi from print_msg to print_msg::@1 [phi:print_msg->print_msg::@1]
     // print_msg::@1
-  b1:
+  __b1:
     // [12] phi from print_msg::@1 to print_msg::@2 [phi:print_msg::@1->print_msg::@2]
     // [12] phi (byte*) print_msg::msg#3 = (const byte*) print_msg::msg#1 [phi:print_msg::@1->print_msg::@2#0] -- pbuz1=pbuc1 
     lda #<msg_1
@@ -827,7 +828,7 @@ print_msg: {
     lda #>msg_1
     sta.z msg+1
     // print_msg::@2
-  b2:
+  __b2:
     // print(msg)
     // [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3
     // [14] call print 
@@ -850,19 +851,19 @@ print: {
     // [17] phi (byte*) screen#14 = (byte*) screen#18 [phi:print/print::@2->print::@1#0] -- register_copy 
     // [17] phi (byte*) print::msg#2 = (byte*) print::msg#0 [phi:print/print::@2->print::@1#1] -- register_copy 
     // print::@1
-  b1:
+  __b1:
     // while(*msg)
     // [18] if((byte) 0!=*((byte*) print::msg#2)) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
-    bne b2
+    bne __b2
     // print::@return
     // }
     // [19] return 
     rts
     // print::@2
-  b2:
+  __b2:
     // *(screen++) = *(msg++)
     // [20] *((byte*) screen#14) ← *((byte*) print::msg#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -879,7 +880,7 @@ print: {
     bne !+
     inc.z msg+1
   !:
-    jmp b1
+    jmp __b1
 }
   // File Data
 

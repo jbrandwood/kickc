@@ -243,22 +243,22 @@ Target platform is c64basic / MOS6502X
 // CallPath code must be rewritten to use @begin as the outermost call instead of main()
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label MEM = 2
   .label SCREEN_1 = 6
   .label SCREEN_2 = $a
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call malloc 
   // [14] phi from @1 to malloc [phi:@1->malloc]
-malloc_from_b1:
+malloc_from___b1:
   // [14] phi (byte*) MEM#5 = (byte*) 1024 [phi:@1->malloc#0] -- pbuz1=pbuc1 
   lda #<$400
   sta.z MEM
@@ -270,9 +270,9 @@ malloc_from_b1:
   sta.z malloc.return_2
   lda.z malloc.return+1
   sta.z malloc.return_2+1
-  jmp b3
+  jmp __b3
   // @3
-b3:
+__b3:
   // [4] (byte*) SCREEN_1#0 ← (byte*) malloc::return#2 -- pbuz1=pbuz2 
   lda.z malloc.return_2
   sta.z SCREEN_1
@@ -280,7 +280,7 @@ b3:
   sta.z SCREEN_1+1
   // [5] call malloc 
   // [14] phi from @3 to malloc [phi:@3->malloc]
-malloc_from_b3:
+malloc_from___b3:
   // [14] phi (byte*) MEM#5 = (byte*) MEM#1 [phi:@3->malloc#0] -- register_copy 
   jsr malloc
   // [6] (byte*) malloc::return#3 ← (byte*) malloc::return#0 -- pbuz1=pbuz2 
@@ -288,26 +288,26 @@ malloc_from_b3:
   sta.z malloc.return_3
   lda.z malloc.return+1
   sta.z malloc.return_3+1
-  jmp b4
+  jmp __b4
   // @4
-b4:
+__b4:
   // [7] (byte*) SCREEN_2#0 ← (byte*) malloc::return#3 -- pbuz1=pbuz2 
   lda.z malloc.return_3
   sta.z SCREEN_2
   lda.z malloc.return_3+1
   sta.z SCREEN_2+1
   // [8] phi from @4 to @2 [phi:@4->@2]
-b2_from_b4:
-  jmp b2
+__b2_from___b4:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [9] call main 
   jsr main
   // [10] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [11] *((byte*) SCREEN_1#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
@@ -318,9 +318,9 @@ main: {
     lda #0
     ldy #0
     sta (SCREEN_2),y
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -339,9 +339,9 @@ malloc: {
     sta.z return
     lda.z MEM+1
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // malloc::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
@@ -383,22 +383,22 @@ ASSEMBLER BEFORE OPTIMIZATION
 // CallPath code must be rewritten to use @begin as the outermost call instead of main()
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label MEM = 2
   .label SCREEN_1 = 4
   .label SCREEN_2 = 6
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call malloc 
   // [14] phi from @1 to malloc [phi:@1->malloc]
-malloc_from_b1:
+malloc_from___b1:
   // [14] phi (byte*) MEM#5 = (byte*) 1024 [phi:@1->malloc#0] -- pbuz1=pbuc1 
   lda #<$400
   sta.z MEM
@@ -410,32 +410,32 @@ malloc_from_b1:
   sta.z malloc.return_2
   lda.z malloc.return+1
   sta.z malloc.return_2+1
-  jmp b3
+  jmp __b3
   // @3
-b3:
+__b3:
   // [4] (byte*) SCREEN_1#0 ← (byte*) malloc::return#2
   // [5] call malloc 
   // [14] phi from @3 to malloc [phi:@3->malloc]
-malloc_from_b3:
+malloc_from___b3:
   // [14] phi (byte*) MEM#5 = (byte*) MEM#1 [phi:@3->malloc#0] -- register_copy 
   jsr malloc
   // [6] (byte*) malloc::return#3 ← (byte*) malloc::return#0
-  jmp b4
+  jmp __b4
   // @4
-b4:
+__b4:
   // [7] (byte*) SCREEN_2#0 ← (byte*) malloc::return#3
   // [8] phi from @4 to @2 [phi:@4->@2]
-b2_from_b4:
-  jmp b2
+__b2_from___b4:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [9] call main 
   jsr main
   // [10] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [11] *((byte*) SCREEN_1#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
@@ -446,9 +446,9 @@ main: {
     lda #0
     ldy #0
     sta (SCREEN_2),y
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -466,40 +466,41 @@ malloc: {
     sta.z return
     lda.z MEM+1
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // malloc::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b2
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b2
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldy #0 with TAY
 Removing instruction lda #0
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction malloc_from_b1:
-Removing instruction malloc_from_b3:
-Removing instruction b4:
-Removing instruction b2_from_b4:
-Removing instruction bend_from_b2:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction malloc_from___b1:
+Removing instruction malloc_from___b3:
+Removing instruction __b4:
+Removing instruction __b2_from___b4:
+Removing instruction __bend_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b3:
-Removing instruction b2:
-Removing instruction bend:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b3:
+Removing instruction __b2:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
@@ -542,16 +543,16 @@ Score: 98
 // CallPath code must be rewritten to use @begin as the outermost call instead of main()
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   // Global Constants & labels
   .label MEM = 2
   .label SCREEN_1 = 4
   .label SCREEN_2 = 6
   // @begin
-bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
+__b1:
   // malloc()
   // [2] call malloc 
   // [14] phi from @1 to malloc [phi:@1->malloc]

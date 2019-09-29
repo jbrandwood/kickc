@@ -5,19 +5,19 @@ main: {
     .label screen = $400
     ldy #0
     ldx #-$7f
-  b1:
+  __b1:
     txa
     sec
     sbc #$7f
     bvc !+
     eor #$80
   !:
-    bmi b2
+    bmi __b2
     rts
-  b2:
+  __b2:
     txa
     sta screen,y
     inx
     iny
-    jmp b1
+    jmp __b1
 }

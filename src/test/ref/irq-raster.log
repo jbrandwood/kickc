@@ -191,7 +191,7 @@ Target platform is c64basic / MOS6502X
 // A minimal working raster IRQ
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
@@ -206,19 +206,19 @@ Target platform is c64basic / MOS6502X
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // asm { sei  }
@@ -247,9 +247,9 @@ main: {
     sta KERNEL_IRQ+1
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
@@ -267,9 +267,9 @@ irq: {
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    jmp breturn
+    jmp __breturn
     // irq::@return
-  breturn:
+  __breturn:
     // [15] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
@@ -299,7 +299,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // A minimal working raster IRQ
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
@@ -314,19 +314,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // asm { sei  }
@@ -355,9 +355,9 @@ main: {
     sta KERNEL_IRQ+1
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
@@ -375,32 +375,33 @@ irq: {
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    jmp breturn
+    jmp __breturn
     // irq::@return
-  breturn:
+  __breturn:
     // [15] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

@@ -6,7 +6,7 @@ main: {
     .label screen = $400
     .label cols = $d800
     ldy #0
-  b1:
+  __b1:
     tya
     tax
     axs #-[$c]
@@ -16,6 +16,6 @@ main: {
     sta cols,x
     iny
     cpy #$b
-    bne b1
+    bne __b1
     rts
 }

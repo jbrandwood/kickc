@@ -19,18 +19,18 @@ main: {
     lda #>print_line_cursor
     sta.z print_char_cursor+1
     ldx #0
-  b1:
+  __b1:
     lda sintab2,x
     sec
     sbc sintabref,x
     sta.z sb
-    bmi b2
+    bmi __b2
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-  b2:
+  __b2:
     jsr print_sbyte
     lda #<str
     sta.z print_str.str
@@ -39,7 +39,7 @@ main: {
     jsr print_str
     inx
     cpx #$c0
-    bne b1
+    bne __b1
     rts
     str: .text "  "
     .byte 0
@@ -53,13 +53,13 @@ main: {
 // print_str(byte* zeropage(6) str)
 print_str: {
     .label str = 6
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -71,20 +71,20 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Print a signed byte as HEX
 // print_sbyte(signed byte zeropage(4) b)
 print_sbyte: {
     .label b = 4
     lda.z b
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_byte
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     lda.z b
@@ -92,7 +92,7 @@ print_sbyte: {
     clc
     adc #1
     sta.z b
-    jmp b2
+    jmp __b2
 }
 // Print a single char
 // print_char(byte register(A) ch)
@@ -140,15 +140,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -156,7 +156,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Generate signed byte sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
@@ -178,17 +178,17 @@ sin8s_gen: {
     sta.z i
     sta.z i+1
   // u[4.12]
-  b1:
+  __b1:
     lda.z i+1
     cmp #>main.wavelength
-    bcc b2
+    bcc __b2
     bne !+
     lda.z i
     cmp #<main.wavelength
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda.z x
     sta.z sin8s.x
     lda.z x+1
@@ -211,7 +211,7 @@ sin8s_gen: {
     bne !+
     inc.z i+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
@@ -220,7 +220,7 @@ sin8s_gen: {
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label _4 = 6
+    .label __4 = 6
     .label x = 6
     .label x1 = $10
     .label x3 = $11
@@ -228,11 +228,11 @@ sin8s: {
     .label isUpper = 4
     lda.z x+1
     cmp #>PI_u4f12
-    bcc b5
+    bcc b1
     bne !+
     lda.z x
     cmp #<PI_u4f12
-    bcc b5
+    bcc b1
   !:
     lda.z x
     sec
@@ -243,18 +243,18 @@ sin8s: {
     sta.z x+1
     lda #1
     sta.z isUpper
-    jmp b1
-  b5:
+    jmp __b1
+  b1:
     lda #0
     sta.z isUpper
-  b1:
+  __b1:
     lda.z x+1
     cmp #>PI_HALF_u4f12
-    bcc b2
+    bcc __b2
     bne !+
     lda.z x
     cmp #<PI_HALF_u4f12
-    bcc b2
+    bcc __b2
   !:
     sec
     lda #<PI_u4f12
@@ -263,14 +263,14 @@ sin8s: {
     lda #>PI_u4f12
     sbc.z x+1
     sta.z x+1
-  b2:
-    asl.z _4
-    rol.z _4+1
-    asl.z _4
-    rol.z _4+1
-    asl.z _4
-    rol.z _4+1
-    lda.z _4+1
+  __b2:
+    asl.z __4
+    rol.z __4+1
+    asl.z __4
+    rol.z __4+1
+    asl.z __4
+    rol.z __4+1
+    lda.z __4+1
     sta.z x1
     tax
     tay
@@ -310,18 +310,18 @@ sin8s: {
     adc.z usinx
     tax
     cpx #$80
-    bcc b3
+    bcc __b3
     dex
-  b3:
+  __b3:
     lda.z isUpper
     cmp #0
-    beq b14
+    beq __b14
     txa
     eor #$ff
     clc
     adc #1
     rts
-  b14:
+  __b14:
     txa
     rts
 }
@@ -329,20 +329,20 @@ sin8s: {
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
 // mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage(5) select)
 mulu8_sel: {
-    .label _0 = 6
-    .label _1 = 6
+    .label __0 = 6
+    .label __1 = 6
     .label select = 5
     tya
     jsr mul8u
     ldy.z select
     beq !e+
   !:
-    asl.z _1
-    rol.z _1+1
+    asl.z __1
+    rol.z __1+1
     dey
     bne !-
   !e:
-    lda.z _1+1
+    lda.z __1+1
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
@@ -356,15 +356,15 @@ mul8u: {
     sta.z mb+1
     sta.z res
     sta.z res+1
-  b1:
+  __b1:
     cpx #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     txa
     and #1
     cmp #0
-    beq b3
+    beq __b3
     lda.z res
     clc
     adc.z mb
@@ -372,13 +372,13 @@ mul8u: {
     lda.z res+1
     adc.z mb+1
     sta.z res+1
-  b3:
+  __b3:
     txa
     lsr
     tax
     asl.z mb
     rol.z mb+1
-    jmp b1
+    jmp __b1
 }
 // Performs division on two 16 bit unsigned words
 // Returns the quotient dividend/divisor.
@@ -410,28 +410,28 @@ divr16u: {
     txa
     sta.z rem
     sta.z rem+1
-  b1:
+  __b1:
     asl.z rem
     rol.z rem+1
     lda.z dividend+1
     and #$80
     cmp #0
-    beq b2
+    beq __b2
     lda #1
     ora.z rem
     sta.z rem
-  b2:
+  __b2:
     asl.z dividend
     rol.z dividend+1
     asl.z quotient
     rol.z quotient+1
     lda.z rem+1
     cmp #>main.wavelength
-    bcc b3
+    bcc __b3
     bne !+
     lda.z rem
     cmp #<main.wavelength
-    bcc b3
+    bcc __b3
   !:
     inc.z quotient
     bne !+
@@ -444,10 +444,10 @@ divr16u: {
     lda.z rem+1
     sbc #>main.wavelength
     sta.z rem+1
-  b3:
+  __b3:
     inx
     cpx #$10
-    bne b1
+    bne __b1
     rts
 }
   print_hextab: .text "0123456789abcdef"

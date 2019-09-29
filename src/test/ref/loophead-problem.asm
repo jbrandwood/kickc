@@ -17,13 +17,13 @@ main: {
 popup_selector: {
     lda #'a'
     ldx #0
-  b1:
+  __b1:
     cpx #2+1
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     lda #'b'
     sta screen,x
     inx
-    jmp b1
+    jmp __b1
 }

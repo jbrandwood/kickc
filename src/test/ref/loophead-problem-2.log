@@ -383,31 +383,31 @@ Target platform is c64basic / MOS6502X
 // Caused by constant loop head unroll
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
-    .label _1 = 9
-    .label _2 = $a
-    .label _4 = 8
+    .label __1 = 9
+    .label __2 = $a
+    .label __4 = 8
     .label hit_check = 7
     // [5] call scan_for_lowest 
     // [15] phi from main to scan_for_lowest [phi:main->scan_for_lowest]
@@ -416,9 +416,9 @@ main: {
     // [6] (byte) scan_for_lowest::return#0 ← (byte) scan_for_lowest::lowest#2 -- vbuz1=vbuz2 
     lda.z scan_for_lowest.lowest
     sta.z scan_for_lowest.return
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (byte) main::hit_check#0 ← (byte) scan_for_lowest::return#0 -- vbuz1=vbuz2 
     lda.z scan_for_lowest.return
     sta.z hit_check
@@ -428,37 +428,37 @@ main: {
     // [9] (byte~) main::$4 ← (byte) main::hit_check#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z hit_check
     asl
-    sta.z _4
+    sta.z __4
     // [10] (byte~) main::$1 ← < *((const signed word[8]) ball_y + (byte~) main::$4) -- vbuz1=_lo_pwsc1_derefidx_vbuz2 
-    ldy.z _4
+    ldy.z __4
     lda ball_y,y
-    sta.z _1
+    sta.z __1
     // [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
-    lda.z _1
+    lda.z __1
     sta screen+2
     // [12] (byte~) main::$2 ← > *((const signed word[8]) ball_y + (byte~) main::$4) -- vbuz1=_hi_pwsc1_derefidx_vbuz2 
-    ldy.z _4
+    ldy.z __4
     lda ball_y+1,y
-    sta.z _2
+    sta.z __2
     // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
-    lda.z _2
+    lda.z __2
     sta screen+3
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
   // scan_for_lowest
 scan_for_lowest: {
-    .label _3 = $b
-    .label _4 = $c
+    .label __3 = $b
+    .label __4 = $c
     .label return = 6
     .label i = 2
     .label height = 3
     .label lowest = 5
     // [16] phi from scan_for_lowest to scan_for_lowest::@1 [phi:scan_for_lowest->scan_for_lowest::@1]
-  b1_from_scan_for_lowest:
+  __b1_from_scan_for_lowest:
     // [16] phi (byte) scan_for_lowest::lowest#2 = (byte) $ff [phi:scan_for_lowest->scan_for_lowest::@1#0] -- vbuz1=vbuc1 
     lda #$ff
     sta.z lowest
@@ -470,26 +470,26 @@ scan_for_lowest: {
     // [16] phi (byte) scan_for_lowest::i#2 = (byte) 0 [phi:scan_for_lowest->scan_for_lowest::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // scan_for_lowest::@1
-  b1:
+  __b1:
     // [17] if((byte) scan_for_lowest::i#2<(byte) 8) goto scan_for_lowest::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #8
-    bcc b2
-    jmp breturn
+    bcc __b2
+    jmp __breturn
     // scan_for_lowest::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
     // scan_for_lowest::@2
-  b2:
+  __b2:
     // [19] (byte~) scan_for_lowest::$3 ← (byte) scan_for_lowest::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z _3
+    sta.z __3
     // [20] if(*((const signed word[8]) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3 -- pwsc1_derefidx_vbuz1_ge_vwsz2_then_la1 
-    ldy.z _3
+    ldy.z __3
     lda ball_y,y
     cmp.z height
     lda ball_y+1,y
@@ -497,16 +497,16 @@ scan_for_lowest: {
     bvc !+
     eor #$80
   !:
-    bpl b3_from_b2
-    jmp b4
+    bpl __b3_from___b2
+    jmp __b4
     // scan_for_lowest::@4
-  b4:
+  __b4:
     // [21] (byte~) scan_for_lowest::$4 ← (byte) scan_for_lowest::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z _4
+    sta.z __4
     // [22] (signed word) scan_for_lowest::height#1 ← *((const signed word[8]) ball_y + (byte~) scan_for_lowest::$4) -- vwsz1=pwsc1_derefidx_vbuz2 
-    ldy.z _4
+    ldy.z __4
     lda ball_y,y
     sta.z height
     lda ball_y+1,y
@@ -515,21 +515,21 @@ scan_for_lowest: {
     lda.z i
     sta.z lowest
     // [24] phi from scan_for_lowest::@2 scan_for_lowest::@4 to scan_for_lowest::@3 [phi:scan_for_lowest::@2/scan_for_lowest::@4->scan_for_lowest::@3]
-  b3_from_b2:
-  b3_from_b4:
+  __b3_from___b2:
+  __b3_from___b4:
     // [24] phi (byte) scan_for_lowest::lowest#4 = (byte) scan_for_lowest::lowest#2 [phi:scan_for_lowest::@2/scan_for_lowest::@4->scan_for_lowest::@3#0] -- register_copy 
     // [24] phi (signed word) scan_for_lowest::height#4 = (signed word) scan_for_lowest::height#2 [phi:scan_for_lowest::@2/scan_for_lowest::@4->scan_for_lowest::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // scan_for_lowest::@3
-  b3:
+  __b3:
     // [25] (byte) scan_for_lowest::i#1 ← ++ (byte) scan_for_lowest::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [16] phi from scan_for_lowest::@3 to scan_for_lowest::@1 [phi:scan_for_lowest::@3->scan_for_lowest::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [16] phi (byte) scan_for_lowest::lowest#2 = (byte) scan_for_lowest::lowest#4 [phi:scan_for_lowest::@3->scan_for_lowest::@1#0] -- register_copy 
     // [16] phi (signed word) scan_for_lowest::height#2 = (signed word) scan_for_lowest::height#4 [phi:scan_for_lowest::@3->scan_for_lowest::@1#1] -- register_copy 
     // [16] phi (byte) scan_for_lowest::i#2 = (byte) scan_for_lowest::i#1 [phi:scan_for_lowest::@3->scan_for_lowest::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   ball_y: .word $32, $64, -$c8, $c, -$64, $4b, 0, -$79
@@ -587,25 +587,25 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Caused by constant loop head unroll
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
@@ -615,9 +615,9 @@ main: {
     jsr scan_for_lowest
     // [6] (byte) scan_for_lowest::return#0 ← (byte) scan_for_lowest::lowest#2 -- vbuaa=vbuz1 
     lda.z scan_for_lowest.lowest
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (byte) main::hit_check#0 ← (byte) scan_for_lowest::return#0
     // [8] *((const byte*) main::screen) ← (byte) main::hit_check#0 -- _deref_pbuc1=vbuaa 
     sta screen
@@ -632,9 +632,9 @@ main: {
     lda ball_y+1,x
     // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+3
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -643,7 +643,7 @@ scan_for_lowest: {
     .label height = 2
     .label lowest = 4
     // [16] phi from scan_for_lowest to scan_for_lowest::@1 [phi:scan_for_lowest->scan_for_lowest::@1]
-  b1_from_scan_for_lowest:
+  __b1_from_scan_for_lowest:
     // [16] phi (byte) scan_for_lowest::lowest#2 = (byte) $ff [phi:scan_for_lowest->scan_for_lowest::@1#0] -- vbuz1=vbuc1 
     lda #$ff
     sta.z lowest
@@ -654,19 +654,19 @@ scan_for_lowest: {
     sta.z height+1
     // [16] phi (byte) scan_for_lowest::i#2 = (byte) 0 [phi:scan_for_lowest->scan_for_lowest::@1#2] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // scan_for_lowest::@1
-  b1:
+  __b1:
     // [17] if((byte) scan_for_lowest::i#2<(byte) 8) goto scan_for_lowest::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #8
-    bcc b2
-    jmp breturn
+    bcc __b2
+    jmp __breturn
     // scan_for_lowest::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
     // scan_for_lowest::@2
-  b2:
+  __b2:
     // [19] (byte~) scan_for_lowest::$3 ← (byte) scan_for_lowest::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
@@ -679,10 +679,10 @@ scan_for_lowest: {
     bvc !+
     eor #$80
   !:
-    bpl b3_from_b2
-    jmp b4
+    bpl __b3_from___b2
+    jmp __b4
     // scan_for_lowest::@4
-  b4:
+  __b4:
     // [21] (byte~) scan_for_lowest::$4 ← (byte) scan_for_lowest::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
@@ -695,56 +695,57 @@ scan_for_lowest: {
     // [23] (byte~) scan_for_lowest::lowest#8 ← (byte) scan_for_lowest::i#2 -- vbuz1=vbuxx 
     stx.z lowest
     // [24] phi from scan_for_lowest::@2 scan_for_lowest::@4 to scan_for_lowest::@3 [phi:scan_for_lowest::@2/scan_for_lowest::@4->scan_for_lowest::@3]
-  b3_from_b2:
-  b3_from_b4:
+  __b3_from___b2:
+  __b3_from___b4:
     // [24] phi (byte) scan_for_lowest::lowest#4 = (byte) scan_for_lowest::lowest#2 [phi:scan_for_lowest::@2/scan_for_lowest::@4->scan_for_lowest::@3#0] -- register_copy 
     // [24] phi (signed word) scan_for_lowest::height#4 = (signed word) scan_for_lowest::height#2 [phi:scan_for_lowest::@2/scan_for_lowest::@4->scan_for_lowest::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // scan_for_lowest::@3
-  b3:
+  __b3:
     // [25] (byte) scan_for_lowest::i#1 ← ++ (byte) scan_for_lowest::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [16] phi from scan_for_lowest::@3 to scan_for_lowest::@1 [phi:scan_for_lowest::@3->scan_for_lowest::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [16] phi (byte) scan_for_lowest::lowest#2 = (byte) scan_for_lowest::lowest#4 [phi:scan_for_lowest::@3->scan_for_lowest::@1#0] -- register_copy 
     // [16] phi (signed word) scan_for_lowest::height#2 = (signed word) scan_for_lowest::height#4 [phi:scan_for_lowest::@3->scan_for_lowest::@1#1] -- register_copy 
     // [16] phi (byte) scan_for_lowest::i#2 = (byte) scan_for_lowest::i#1 [phi:scan_for_lowest::@3->scan_for_lowest::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   ball_y: .word $32, $64, -$c8, $c, -$64, $4b, 0, -$79
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b4
-Removing instruction jmp b3
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b4
+Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b3_from_b2 with b3
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b3_from_b2:
-Removing instruction b3_from_b4:
+Replacing label __bbegin with __b1
+Replacing label __b3_from___b2 with __b3
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b3_from___b2:
+Removing instruction __b3_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction scan_for_lowest_from_main:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction b1_from_scan_for_lowest:
-Removing instruction breturn:
-Removing instruction b4:
-Removing instruction b1_from_b3:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b1_from_scan_for_lowest:
+Removing instruction __breturn:
+Removing instruction __b4:
+Removing instruction __b1_from___b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -866,17 +867,17 @@ scan_for_lowest: {
     // [16] phi (byte) scan_for_lowest::i#2 = (byte) 0 [phi:scan_for_lowest->scan_for_lowest::@1#2] -- vbuxx=vbuc1 
     ldx #0
     // scan_for_lowest::@1
-  b1:
+  __b1:
     // for (char i=0;i<8;i++)
     // [17] if((byte) scan_for_lowest::i#2<(byte) 8) goto scan_for_lowest::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #8
-    bcc b2
+    bcc __b2
     // scan_for_lowest::@return
     // }
     // [18] return 
     rts
     // scan_for_lowest::@2
-  b2:
+  __b2:
     // ball_y[i]<height
     // [19] (byte~) scan_for_lowest::$3 ← (byte) scan_for_lowest::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
@@ -891,7 +892,7 @@ scan_for_lowest: {
     bvc !+
     eor #$80
   !:
-    bpl b3
+    bpl __b3
     // scan_for_lowest::@4
     // height=ball_y[i]
     // [21] (byte~) scan_for_lowest::$4 ← (byte) scan_for_lowest::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
@@ -909,7 +910,7 @@ scan_for_lowest: {
     // [24] phi (byte) scan_for_lowest::lowest#4 = (byte) scan_for_lowest::lowest#2 [phi:scan_for_lowest::@2/scan_for_lowest::@4->scan_for_lowest::@3#0] -- register_copy 
     // [24] phi (signed word) scan_for_lowest::height#4 = (signed word) scan_for_lowest::height#2 [phi:scan_for_lowest::@2/scan_for_lowest::@4->scan_for_lowest::@3#1] -- register_copy 
     // scan_for_lowest::@3
-  b3:
+  __b3:
     // for (char i=0;i<8;i++)
     // [25] (byte) scan_for_lowest::i#1 ← ++ (byte) scan_for_lowest::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -917,7 +918,7 @@ scan_for_lowest: {
     // [16] phi (byte) scan_for_lowest::lowest#2 = (byte) scan_for_lowest::lowest#4 [phi:scan_for_lowest::@3->scan_for_lowest::@1#0] -- register_copy 
     // [16] phi (signed word) scan_for_lowest::height#2 = (signed word) scan_for_lowest::height#4 [phi:scan_for_lowest::@3->scan_for_lowest::@1#1] -- register_copy 
     // [16] phi (byte) scan_for_lowest::i#2 = (byte) scan_for_lowest::i#1 [phi:scan_for_lowest::@3->scan_for_lowest::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   ball_y: .word $32, $64, -$c8, $c, -$64, $4b, 0, -$79

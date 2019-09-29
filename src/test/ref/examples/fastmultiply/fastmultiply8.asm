@@ -28,7 +28,7 @@ main: {
     lda #>$400+4
     sta.z at+1
     ldx #0
-  b1:
+  __b1:
     lda vals,x
     sta.z print_sbyte_at.b
     lda.z at
@@ -45,14 +45,14 @@ main: {
   !:
     inx
     cpx #9
-    bne b1
+    bne __b1
     lda #0
     sta.z i
     lda #<$400
     sta.z at_line
     lda #>$400
     sta.z at_line+1
-  b2:
+  __b2:
     lda #$28
     clc
     adc.z at_2
@@ -74,7 +74,7 @@ main: {
     sta.z at_12+1
     lda #0
     sta.z j
-  b3:
+  __b3:
     lda #4
     clc
     adc.z at_3
@@ -96,10 +96,10 @@ main: {
     inc.z j
     lda #9
     cmp.z j
-    bne b3
+    bne __b3
     inc.z i
     cmp.z i
-    bne b2
+    bne __b2
     rts
 }
 // Print a signed byte as hex at a specific screen position
@@ -108,18 +108,18 @@ print_sbyte_at: {
     .label b = 8
     .label at = 6
     lda.z b
-    bmi b1
+    bmi __b1
     lda #' '
     sta.z print_char_at.ch
     jsr print_char_at
-  b2:
+  __b2:
     inc.z print_byte_at.at
     bne !+
     inc.z print_byte_at.at+1
   !:
     jsr print_byte_at
     rts
-  b1:
+  __b1:
     lda #'-'
     sta.z print_char_at.ch
     jsr print_char_at
@@ -128,7 +128,7 @@ print_sbyte_at: {
     clc
     adc #1
     sta.z b
-    jmp b2
+    jmp __b2
 }
 // Print a single char
 // print_char_at(byte zeropage(9) ch, byte* zeropage(6) at)
@@ -189,18 +189,18 @@ init_screen: {
     .label COLS = $a
     jsr print_cls
     ldx #0
-  b1:
+  __b1:
     lda #WHITE
     sta $d800,x
     inx
     cpx #$28
-    bne b1
+    bne __b1
     ldx #0
     lda #<$d800
     sta.z COLS
     lda #>$d800
     sta.z COLS+1
-  b2:
+  __b2:
     lda #WHITE
     ldy #0
     sta (COLS),y
@@ -219,7 +219,7 @@ init_screen: {
   !:
     inx
     cpx #$19
-    bne b2
+    bne __b2
     rts
 }
 // Clear the screen. Also resets current line/char cursor.
@@ -238,15 +238,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -254,7 +254,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"
   vals: .byte -$5f, -$40, -$20, -$10, 0, $10, $20, $40, $5f

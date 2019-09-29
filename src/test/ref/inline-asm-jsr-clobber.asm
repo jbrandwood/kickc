@@ -6,11 +6,11 @@ main: {
     .label i = 2
     lda #0
     sta.z i
-  b1:
+  __b1:
     jsr $e544
     inc.z i
     lda #$b
     cmp.z i
-    bne b1
+    bne __b1
     rts
 }

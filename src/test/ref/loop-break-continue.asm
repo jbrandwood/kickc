@@ -10,16 +10,16 @@ main: {
     lda #>$400
     sta.z screen+1
     ldx #0
-  b1:
+  __b1:
     lda str,x
     cmp #0
-    bne b2
-  breturn:
+    bne __b2
+  __breturn:
     rts
-  b2:
+  __b2:
     lda str,x
     cmp #' '
-    beq b4
+    beq __b4
     lda str,x
     ldy #0
     sta (screen),y
@@ -27,11 +27,11 @@ main: {
     bne !+
     inc.z screen+1
   !:
-  b4:
+  __b4:
     inx
     cpx #0
-    beq breturn
-    jmp b1
+    beq __breturn
+    jmp __b1
     str: .text "hello brave new world"
     .byte 0
 }

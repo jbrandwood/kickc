@@ -390,24 +390,24 @@ Target platform is c64basic / MOS6502X
 // Tests pointer to pointer in a more complex setup
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label textid = 4
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label text = 2
@@ -419,7 +419,7 @@ main: {
     lda #>0
     sta.z text+1
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#5 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -432,47 +432,47 @@ main: {
     lda #0
     sta.z textid
     // [5] phi (byte*) main::text#2 = (byte*) main::text#0 [phi:main->main::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [5] phi (byte) main::i#5 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::screen#4 = (byte*) main::screen#2 [phi:main::@4->main::@1#1] -- register_copy 
     // [5] phi (byte) textid#11 = (byte) textid#13 [phi:main::@4->main::@1#2] -- register_copy 
     // [5] phi (byte*) main::text#2 = (byte*) main::text#3 [phi:main::@4->main::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] call nexttext 
     jsr nexttext
     // [7] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
-  b2_from_b1:
-  b2_from_b3:
+  __b2_from___b1:
+  __b2_from___b3:
     // [7] phi (byte*) main::screen#2 = (byte*) main::screen#4 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
     // [7] phi (byte*) main::text#3 = (byte*) main::text#2 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (text),y
     cmp #0
-    bne b3
-    jmp b4
+    bne __b3
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [9] (byte) main::i#1 ← ++ (byte) main::i#5 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [10] if((byte) main::i#1!=(byte) $15) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$15
     cmp.z i
-    bne b1_from_b4
-    jmp breturn
+    bne __b1_from___b4
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
     // main::@3
-  b3:
+  __b3:
     // [12] *((byte*) main::screen#2) ← *((byte*) main::text#3) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (text),y
@@ -488,44 +488,44 @@ main: {
     bne !+
     inc.z text+1
   !:
-    jmp b2_from_b3
+    jmp __b2_from___b3
 }
   // nexttext
 // Choose the next text to show - by updating the text pointer pointed to by the passed pointer to a pointer
 nexttext: {
     .label textp = main.text
-    .label _0 = 8
+    .label __0 = 8
     // [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z textid
-    sta.z _0
+    sta.z __0
     // [16] (byte) textid#13 ← ++ (byte) textid#11 -- vbuz1=_inc_vbuz1 
     inc.z textid
     // [17] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1 -- vbuz1_eq_0_then_la1 
-    lda.z _0
+    lda.z __0
     cmp #0
-    beq b1
-    jmp b2
+    beq __b1
+    jmp __b2
     // nexttext::@2
-  b2:
+  __b2:
     // [18] *((const byte**) nexttext::textp#0) ← (const byte[]) text2 -- _deref_pptc1=pbuc2 
     lda #<text2
     sta.z textp
     lda #>text2
     sta.z textp+1
-    jmp breturn
+    jmp __breturn
     // nexttext::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
     // nexttext::@1
-  b1:
+  __b1:
     // [20] *((const byte**) nexttext::textp#0) ← (const byte[]) text1 -- _deref_pptc1=pbuc2 
     lda #<text1
     sta.z textp
     lda #>text1
     sta.z textp+1
-    jmp breturn
+    jmp __breturn
 }
   // File Data
   text1: .text "camelot "
@@ -572,24 +572,24 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests pointer to pointer in a more complex setup
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label textid = 4
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label text = 2
@@ -600,7 +600,7 @@ main: {
     lda #>0
     sta.z text+1
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#5 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [5] phi (byte*) main::screen#4 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
@@ -612,46 +612,46 @@ main: {
     lda #0
     sta.z textid
     // [5] phi (byte*) main::text#2 = (byte*) main::text#0 [phi:main->main::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [5] phi (byte) main::i#5 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::screen#4 = (byte*) main::screen#2 [phi:main::@4->main::@1#1] -- register_copy 
     // [5] phi (byte) textid#11 = (byte) textid#13 [phi:main::@4->main::@1#2] -- register_copy 
     // [5] phi (byte*) main::text#2 = (byte*) main::text#3 [phi:main::@4->main::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] call nexttext 
     jsr nexttext
     // [7] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
-  b2_from_b1:
-  b2_from_b3:
+  __b2_from___b1:
+  __b2_from___b3:
     // [7] phi (byte*) main::screen#2 = (byte*) main::screen#4 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
     // [7] phi (byte*) main::text#3 = (byte*) main::text#2 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (text),y
     cmp #0
-    bne b3
-    jmp b4
+    bne __b3
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [9] (byte) main::i#1 ← ++ (byte) main::i#5 -- vbuxx=_inc_vbuxx 
     inx
     // [10] if((byte) main::i#1!=(byte) $15) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
-    bne b1_from_b4
-    jmp breturn
+    bne __b1_from___b4
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
     // main::@3
-  b3:
+  __b3:
     // [12] *((byte*) main::screen#2) ← *((byte*) main::text#3) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (text),y
@@ -667,7 +667,7 @@ main: {
     bne !+
     inc.z text+1
   !:
-    jmp b2_from_b3
+    jmp __b2_from___b3
 }
   // nexttext
 // Choose the next text to show - by updating the text pointer pointed to by the passed pointer to a pointer
@@ -680,28 +680,28 @@ nexttext: {
     inc.z textid
     // [17] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b1
-    jmp b2
+    beq __b1
+    jmp __b2
     // nexttext::@2
-  b2:
+  __b2:
     // [18] *((const byte**) nexttext::textp#0) ← (const byte[]) text2 -- _deref_pptc1=pbuc2 
     lda #<text2
     sta.z textp
     lda #>text2
     sta.z textp+1
-    jmp breturn
+    jmp __breturn
     // nexttext::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
     // nexttext::@1
-  b1:
+  __b1:
     // [20] *((const byte**) nexttext::textp#0) ← (const byte[]) text1 -- _deref_pptc1=pbuc2 
     lda #<text1
     sta.z textp
     lda #>text1
     sta.z textp+1
-    jmp breturn
+    jmp __breturn
 }
   // File Data
   text1: .text "camelot "
@@ -710,44 +710,45 @@ nexttext: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b4
-Removing instruction jmp breturn
-Removing instruction jmp b2
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Replacing instruction lda #0 with TXA
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b4 with b1
-Replacing label b2_from_b3 with b2
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b4:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b3:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b4 with __b1
+Replacing label __b2_from___b3 with __b2
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b4:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b4:
-Removing instruction breturn:
-Removing instruction b2:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b4:
+Removing instruction __breturn:
+Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Replacing jump to rts with rts in jmp breturn
+Replacing jump to rts with rts in jmp __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldx #0 with TAX
-Removing instruction bbegin:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -836,7 +837,7 @@ main: {
     // [5] phi (byte) textid#11 = (byte) textid#13 [phi:main::@4->main::@1#2] -- register_copy 
     // [5] phi (byte*) main::text#2 = (byte*) main::text#3 [phi:main::@4->main::@1#3] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // nexttext(&text)
     // [6] call nexttext 
     jsr nexttext
@@ -844,26 +845,26 @@ main: {
     // [7] phi (byte*) main::screen#2 = (byte*) main::screen#4 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
     // [7] phi (byte*) main::text#3 = (byte*) main::text#2 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
     // main::@2
-  b2:
+  __b2:
     // while(*text)
     // [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (text),y
     cmp #0
-    bne b3
+    bne __b3
     // main::@4
     // for(byte i: 0..20)
     // [9] (byte) main::i#1 ← ++ (byte) main::i#5 -- vbuxx=_inc_vbuxx 
     inx
     // [10] if((byte) main::i#1!=(byte) $15) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$15
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [11] return 
     rts
     // main::@3
-  b3:
+  __b3:
     // *screen++ = *text++
     // [12] *((byte*) main::screen#2) ← *((byte*) main::text#3) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -880,7 +881,7 @@ main: {
     bne !+
     inc.z text+1
   !:
-    jmp b2
+    jmp __b2
 }
   // nexttext
 // Choose the next text to show - by updating the text pointer pointed to by the passed pointer to a pointer
@@ -895,7 +896,7 @@ nexttext: {
     inc.z textid
     // [17] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b1
+    beq __b1
     // nexttext::@2
     // *textp = text2
     // [18] *((const byte**) nexttext::textp#0) ← (const byte[]) text2 -- _deref_pptc1=pbuc2 
@@ -908,7 +909,7 @@ nexttext: {
     // [19] return 
     rts
     // nexttext::@1
-  b1:
+  __b1:
     // *textp = text1
     // [20] *((const byte**) nexttext::textp#0) ← (const byte[]) text1 -- _deref_pptc1=pbuc2 
     lda #<text1

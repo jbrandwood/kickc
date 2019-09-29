@@ -227,23 +227,23 @@ Target platform is c64basic / MOS6502X
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // constant byte array
@@ -262,24 +262,24 @@ main: {
     // [5] if(*((const byte*) main::pos)==(byte) 'm') goto main::@1 -- _deref_pbuc1_eq_vbuc2_then_la1 
     lda #'m'
     cmp pos
-    beq b1
-    jmp b2
+    beq __b1
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [6] *((const byte*) main::bgcol) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta bgcol
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@1
-  b1:
+  __b1:
     // [8] *((const byte*) main::bgcol) ← (byte) 5 -- _deref_pbuc1=vbuc2 
     lda #5
     sta bgcol
-    jmp breturn
+    jmp __breturn
     bs: .byte 'c', 'm'
 }
   // File Data
@@ -301,23 +301,23 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // constant byte array
@@ -336,48 +336,49 @@ main: {
     // [5] if(*((const byte*) main::pos)==(byte) 'm') goto main::@1 -- _deref_pbuc1_eq_vbuc2_then_la1 
     lda #'m'
     cmp pos
-    beq b1
-    jmp b2
+    beq __b1
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [6] *((const byte*) main::bgcol) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta bgcol
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@1
-  b1:
+  __b1:
     // [8] *((const byte*) main::bgcol) ← (byte) 5 -- _deref_pbuc1=vbuc2 
     lda #5
     sta bgcol
-    jmp breturn
+    jmp __breturn
     bs: .byte 'c', 'm'
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b2
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b2:
+Removing instruction __bend:
+Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Replacing jump to rts with rts in jmp breturn
+Replacing jump to rts with rts in jmp __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Removing instruction bbegin:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -436,7 +437,7 @@ main: {
     // [5] if(*((const byte*) main::pos)==(byte) 'm') goto main::@1 -- _deref_pbuc1_eq_vbuc2_then_la1 
     lda #'m'
     cmp pos
-    beq b1
+    beq __b1
     // main::@2
     // *bgcol = 2
     // [6] *((const byte*) main::bgcol) ← (byte) 2 -- _deref_pbuc1=vbuc2 
@@ -447,7 +448,7 @@ main: {
     // [7] return 
     rts
     // main::@1
-  b1:
+  __b1:
     // *bgcol = 5
     // [8] *((const byte*) main::bgcol) ← (byte) 5 -- _deref_pbuc1=vbuc2 
     lda #5

@@ -17,10 +17,10 @@
   .label SCREEN = $400
 main: {
     jsr clock_start
-  b1:
+  __b1:
     jsr clock
     jsr print_dword_at
-    jmp b1
+    jmp __b1
 }
 // Print a dword as HEX at a specific position
 // print_dword_at(dword zeropage(9) dw)

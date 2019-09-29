@@ -1,22 +1,22 @@
 // Experiments with malloc() - a byte array
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label BYTES = malloc.return
-bbegin:
+__b1:
   jsr malloc
   jsr main
   rts
 main: {
     ldx #0
-  b1:
+  __b1:
     txa
     sta BYTES,x
     inx
     cpx #0
-    bne b1
+    bne __b1
     rts
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.

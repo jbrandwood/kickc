@@ -5156,7 +5156,7 @@ Target platform is c64basic / MOS6502X
 // Test the binary division library
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label print_char_cursor = $a
@@ -5166,21 +5166,21 @@ Target platform is c64basic / MOS6502X
   .label rem16s = $16
   .label rem8u = $66
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call print_cls 
@@ -5188,78 +5188,78 @@ main: {
   print_cls_from_main:
     jsr print_cls
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call test_8u 
     // [258] phi from main::@1 to test_8u [phi:main::@1->test_8u]
-  test_8u_from_b1:
+  test_8u_from___b1:
     jsr test_8u
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] call test_16u 
     // [222] phi from main::@2 to test_16u [phi:main::@2->test_16u]
-  test_16u_from_b2:
+  test_16u_from___b2:
     jsr test_16u
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] call test_8s 
     // [134] phi from main::@3 to test_8s [phi:main::@3->test_8s]
-  test_8s_from_b3:
+  test_8s_from___b3:
     jsr test_8s
     // [12] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  b4_from_b3:
-    jmp b4
+  __b4_from___b3:
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [13] call test_16s 
     // [15] phi from main::@4 to test_16s [phi:main::@4->test_16s]
-  test_16s_from_b4:
+  test_16s_from___b4:
     jsr test_16s
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
   // test_16s
 test_16s: {
-    .label _11 = $32
+    .label __11 = $32
     .label dividend = $33
     .label divisor = $35
     .label res = $3d
     .label i = 2
     // [16] phi from test_16s to test_16s::@1 [phi:test_16s->test_16s::@1]
-  b1_from_test_16s:
+  __b1_from_test_16s:
     // [16] phi (byte) test_16s::i#10 = (byte) 0 [phi:test_16s->test_16s::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [16] phi from test_16s::@10 to test_16s::@1 [phi:test_16s::@10->test_16s::@1]
-  b1_from_b10:
+  __b1_from___b10:
     // [16] phi (byte) test_16s::i#10 = (byte) test_16s::i#1 [phi:test_16s::@10->test_16s::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // test_16s::@1
-  b1:
+  __b1:
     // [17] (byte~) test_16s::$11 ← (byte) test_16s::i#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z _11
+    sta.z __11
     // [18] (signed word) test_16s::dividend#0 ← *((const signed word[]) test_16s::dividends + (byte~) test_16s::$11) -- vwsz1=pwsc1_derefidx_vbuz2 
-    ldy.z _11
+    ldy.z __11
     lda dividends,y
     sta.z dividend
     lda dividends+1,y
     sta.z dividend+1
     // [19] (signed word) test_16s::divisor#0 ← *((const signed word[]) test_16s::divisors + (byte~) test_16s::$11) -- vwsz1=pwsc1_derefidx_vbuz2 
-    ldy.z _11
+    ldy.z __11
     lda divisors,y
     sta.z divisor
     lda divisors+1,y
@@ -5281,9 +5281,9 @@ test_16s: {
     sta.z div16s.return_2
     lda.z div16s.return+1
     sta.z div16s.return_2+1
-    jmp b2
+    jmp __b2
     // test_16s::@2
-  b2:
+  __b2:
     // [24] (signed word) test_16s::res#0 ← (signed word) div16s::return#2 -- vwsz1=vwsz2 
     lda.z div16s.return_2
     sta.z res
@@ -5301,27 +5301,27 @@ test_16s: {
     sta.z print_char_cursor+1
     // [27] call print_sword 
     // [50] phi from test_16s::@2 to print_sword [phi:test_16s::@2->print_sword]
-  print_sword_from_b2:
+  print_sword_from___b2:
     // [50] phi (byte*) print_char_cursor#132 = (byte*~) print_char_cursor#164 [phi:test_16s::@2->print_sword#0] -- register_copy 
     // [50] phi (signed word) print_sword::w#10 = (signed word) print_sword::w#1 [phi:test_16s::@2->print_sword#1] -- register_copy 
     jsr print_sword
     // [28] phi from test_16s::@2 to test_16s::@3 [phi:test_16s::@2->test_16s::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // test_16s::@3
-  b3:
+  __b3:
     // [29] call print_str 
     // [79] phi from test_16s::@3 to print_str [phi:test_16s::@3->print_str]
-  print_str_from_b3:
+  print_str_from___b3:
     // [79] phi (byte*) print_str::str#15 = (const string) str [phi:test_16s::@3->print_str#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    jmp b4
+    jmp __b4
     // test_16s::@4
-  b4:
+  __b4:
     // [30] (signed word) print_sword::w#2 ← (signed word) test_16s::divisor#0 -- vwsz1=vwsz2 
     lda.z divisor
     sta.z print_sword.w
@@ -5329,27 +5329,27 @@ test_16s: {
     sta.z print_sword.w+1
     // [31] call print_sword 
     // [50] phi from test_16s::@4 to print_sword [phi:test_16s::@4->print_sword]
-  print_sword_from_b4:
+  print_sword_from___b4:
     // [50] phi (byte*) print_char_cursor#132 = (byte*) print_char_cursor#130 [phi:test_16s::@4->print_sword#0] -- register_copy 
     // [50] phi (signed word) print_sword::w#10 = (signed word) print_sword::w#2 [phi:test_16s::@4->print_sword#1] -- register_copy 
     jsr print_sword
     // [32] phi from test_16s::@4 to test_16s::@5 [phi:test_16s::@4->test_16s::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // test_16s::@5
-  b5:
+  __b5:
     // [33] call print_str 
     // [79] phi from test_16s::@5 to print_str [phi:test_16s::@5->print_str]
-  print_str_from_b5:
+  print_str_from___b5:
     // [79] phi (byte*) print_str::str#15 = (const string) str1 [phi:test_16s::@5->print_str#0] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    jmp b6
+    jmp __b6
     // test_16s::@6
-  b6:
+  __b6:
     // [34] (signed word) print_sword::w#3 ← (signed word) test_16s::res#0 -- vwsz1=vwsz2 
     lda.z res
     sta.z print_sword.w
@@ -5357,27 +5357,27 @@ test_16s: {
     sta.z print_sword.w+1
     // [35] call print_sword 
     // [50] phi from test_16s::@6 to print_sword [phi:test_16s::@6->print_sword]
-  print_sword_from_b6:
+  print_sword_from___b6:
     // [50] phi (byte*) print_char_cursor#132 = (byte*) print_char_cursor#130 [phi:test_16s::@6->print_sword#0] -- register_copy 
     // [50] phi (signed word) print_sword::w#10 = (signed word) print_sword::w#3 [phi:test_16s::@6->print_sword#1] -- register_copy 
     jsr print_sword
     // [36] phi from test_16s::@6 to test_16s::@7 [phi:test_16s::@6->test_16s::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // test_16s::@7
-  b7:
+  __b7:
     // [37] call print_str 
     // [79] phi from test_16s::@7 to print_str [phi:test_16s::@7->print_str]
-  print_str_from_b7:
+  print_str_from___b7:
     // [79] phi (byte*) print_str::str#15 = (const string) str2 [phi:test_16s::@7->print_str#0] -- pbuz1=pbuc1 
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    jmp b8
+    jmp __b8
     // test_16s::@8
-  b8:
+  __b8:
     // [38] (signed word) print_sword::w#4 ← (signed word) rem16s#11 -- vwsz1=vwsz2 
     lda.z rem16s
     sta.z print_sword.w
@@ -5385,32 +5385,32 @@ test_16s: {
     sta.z print_sword.w+1
     // [39] call print_sword 
     // [50] phi from test_16s::@8 to print_sword [phi:test_16s::@8->print_sword]
-  print_sword_from_b8:
+  print_sword_from___b8:
     // [50] phi (byte*) print_char_cursor#132 = (byte*) print_char_cursor#130 [phi:test_16s::@8->print_sword#0] -- register_copy 
     // [50] phi (signed word) print_sword::w#10 = (signed word) print_sword::w#4 [phi:test_16s::@8->print_sword#1] -- register_copy 
     jsr print_sword
     // [40] phi from test_16s::@8 to test_16s::@9 [phi:test_16s::@8->test_16s::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // test_16s::@9
-  b9:
+  __b9:
     // [41] call print_ln 
     // [45] phi from test_16s::@9 to print_ln [phi:test_16s::@9->print_ln]
-  print_ln_from_b9:
+  print_ln_from___b9:
     // [45] phi (byte*) print_line_cursor#39 = (byte*) print_line_cursor#1 [phi:test_16s::@9->print_ln#0] -- register_copy 
     jsr print_ln
-    jmp b10
+    jmp __b10
     // test_16s::@10
-  b10:
+  __b10:
     // [42] (byte) test_16s::i#1 ← ++ (byte) test_16s::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [43] if((byte) test_16s::i#1!=(byte) 6) goto test_16s::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b1_from_b10
-    jmp breturn
+    bne __b1_from___b10
+    jmp __breturn
     // test_16s::@return
-  breturn:
+  __breturn:
     // [44] return 
     rts
     dividends: .word $7fff, $7fff, -$7fff, -$7fff, $7fff, -$7fff
@@ -5420,12 +5420,12 @@ test_16s: {
 // Print a newline
 print_ln: {
     // [46] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  b1_from_print_ln:
-  b1_from_b1:
+  __b1_from_print_ln:
+  __b1_from___b1:
     // [46] phi (byte*) print_line_cursor#20 = (byte*) print_line_cursor#39 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_ln::@1
-  b1:
+  __b1:
     // [47] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#20 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
@@ -5437,15 +5437,15 @@ print_ln: {
     // [48] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#19) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1_from_b1
+    bcc __b1_from___b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1_from_b1
+    bcc __b1_from___b1
   !:
-    jmp breturn
+    jmp __breturn
     // print_ln::@return
-  breturn:
+  __breturn:
     // [49] return 
     rts
 }
@@ -5456,27 +5456,27 @@ print_sword: {
     .label w = 5
     // [51] if((signed word) print_sword::w#10<(signed byte) 0) goto print_sword::@1 -- vwsz1_lt_0_then_la1 
     lda.z w+1
-    bmi b1_from_print_sword
+    bmi __b1_from_print_sword
     // [52] phi from print_sword to print_sword::@3 [phi:print_sword->print_sword::@3]
-  b3_from_print_sword:
-    jmp b3
+  __b3_from_print_sword:
+    jmp __b3
     // print_sword::@3
-  b3:
+  __b3:
     // [53] call print_char 
     // [61] phi from print_sword::@3 to print_char [phi:print_sword::@3->print_char]
-  print_char_from_b3:
+  print_char_from___b3:
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#132 [phi:print_sword::@3->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) ' ' [phi:print_sword::@3->print_char#1] -- vbuz1=vbuc1 
     lda #' '
     sta.z print_char.ch
     jsr print_char
     // [54] phi from print_sword::@3 print_sword::@4 to print_sword::@2 [phi:print_sword::@3/print_sword::@4->print_sword::@2]
-  b2_from_b3:
-  b2_from_b4:
+  __b2_from___b3:
+  __b2_from___b4:
     // [54] phi (signed word) print_sword::w#7 = (signed word) print_sword::w#10 [phi:print_sword::@3/print_sword::@4->print_sword::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // print_sword::@2
-  b2:
+  __b2:
     // [55] (word) print_word::w#0 ← (word)(signed word) print_sword::w#7 -- vwuz1=vwuz2 
     lda.z w
     sta.z print_word.w
@@ -5484,31 +5484,31 @@ print_sword: {
     sta.z print_word.w+1
     // [56] call print_word 
     // [65] phi from print_sword::@2 to print_word [phi:print_sword::@2->print_word]
-  print_word_from_b2:
+  print_word_from___b2:
     // [65] phi (byte*) print_char_cursor#138 = (byte*) print_char_cursor#19 [phi:print_sword::@2->print_word#0] -- register_copy 
     // [65] phi (word) print_word::w#5 = (word) print_word::w#0 [phi:print_sword::@2->print_word#1] -- register_copy 
     jsr print_word
-    jmp breturn
+    jmp __breturn
     // print_sword::@return
-  breturn:
+  __breturn:
     // [57] return 
     rts
     // [58] phi from print_sword to print_sword::@1 [phi:print_sword->print_sword::@1]
-  b1_from_print_sword:
-    jmp b1
+  __b1_from_print_sword:
+    jmp __b1
     // print_sword::@1
-  b1:
+  __b1:
     // [59] call print_char 
     // [61] phi from print_sword::@1 to print_char [phi:print_sword::@1->print_char]
-  print_char_from_b1:
+  print_char_from___b1:
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#132 [phi:print_sword::@1->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) '-' [phi:print_sword::@1->print_char#1] -- vbuz1=vbuc1 
     lda #'-'
     sta.z print_char.ch
     jsr print_char
-    jmp b4
+    jmp __b4
     // print_sword::@4
-  b4:
+  __b4:
     // [60] (signed word) print_sword::w#0 ← - (signed word) print_sword::w#10 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
@@ -5517,7 +5517,7 @@ print_sword: {
     lda #0
     sbc.z w+1
     sta.z w+1
-    jmp b2_from_b4
+    jmp __b2_from___b4
 }
   // print_char
 // Print a single char
@@ -5533,9 +5533,9 @@ print_char: {
     bne !+
     inc.z print_char_cursor+1
   !:
-    jmp breturn
+    jmp __breturn
     // print_char::@return
-  breturn:
+  __breturn:
     // [64] return 
     rts
 }
@@ -5553,21 +5553,21 @@ print_word: {
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#138 [phi:print_word->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#1 [phi:print_word->print_byte#1] -- register_copy 
     jsr print_byte
-    jmp b1
+    jmp __b1
     // print_word::@1
-  b1:
+  __b1:
     // [68] (byte) print_byte::b#2 ← < (word) print_word::w#5 -- vbuz1=_lo_vwuz2 
     lda.z w
     sta.z print_byte.b
     // [69] call print_byte 
     // [71] phi from print_word::@1 to print_byte [phi:print_word::@1->print_byte]
-  print_byte_from_b1:
+  print_byte_from___b1:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#19 [phi:print_word::@1->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#2 [phi:print_word::@1->print_byte#1] -- register_copy 
     jsr print_byte
-    jmp breturn
+    jmp __breturn
     // print_word::@return
-  breturn:
+  __breturn:
     // [70] return 
     rts
 }
@@ -5575,8 +5575,8 @@ print_word: {
 // Print a byte as HEX
 // print_byte(byte zeropage($c) b)
 print_byte: {
-    .label _0 = $3f
-    .label _2 = $40
+    .label __0 = $3f
+    .label __2 = $40
     .label b = $c
     // [72] (byte~) print_byte::$0 ← (byte) print_byte::b#7 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
     lda.z b
@@ -5584,9 +5584,9 @@ print_byte: {
     lsr
     lsr
     lsr
-    sta.z _0
+    sta.z __0
     // [73] (byte) print_char::ch#4 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z _0
+    ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
     // [74] call print_char 
@@ -5595,26 +5595,26 @@ print_byte: {
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#139 [phi:print_byte->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) print_char::ch#4 [phi:print_byte->print_char#1] -- register_copy 
     jsr print_char
-    jmp b1
+    jmp __b1
     // print_byte::@1
-  b1:
+  __b1:
     // [75] (byte~) print_byte::$2 ← (byte) print_byte::b#7 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and.z b
-    sta.z _2
+    sta.z __2
     // [76] (byte) print_char::ch#5 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z _2
+    ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
     // [77] call print_char 
     // [61] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
-  print_char_from_b1:
+  print_char_from___b1:
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#19 [phi:print_byte::@1->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) print_char::ch#5 [phi:print_byte::@1->print_char#1] -- register_copy 
     jsr print_char
-    jmp breturn
+    jmp __breturn
     // print_byte::@return
-  breturn:
+  __breturn:
     // [78] return 
     rts
 }
@@ -5624,25 +5624,25 @@ print_byte: {
 print_str: {
     .label str = $d
     // [80] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
-  b1_from_print_str:
-  b1_from_b2:
+  __b1_from_print_str:
+  __b1_from___b2:
     // [80] phi (byte*) print_char_cursor#130 = (byte*) print_char_cursor#19 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [80] phi (byte*) print_str::str#13 = (byte*) print_str::str#15 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_str::@1
-  b1:
+  __b1:
     // [81] if((byte) 0!=*((byte*) print_str::str#13)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print_str::@return
-  breturn:
+  __breturn:
     // [82] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // [83] *((byte*) print_char_cursor#130) ← *((byte*) print_str::str#13) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
@@ -5658,7 +5658,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // div16s
 // Perform division on two signed 16-bit numbers
@@ -5690,17 +5690,17 @@ div16s: {
     sta.z divr16s.return_3
     lda.z divr16s.return+1
     sta.z divr16s.return_3+1
-    jmp b1
+    jmp __b1
     // div16s::@1
-  b1:
+  __b1:
     // [90] (signed word) div16s::return#0 ← (signed word) divr16s::return#3 -- vwsz1=vwsz2 
     lda.z divr16s.return_3
     sta.z return
     lda.z divr16s.return_3+1
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // div16s::@return
-  breturn:
+  __breturn:
     // [91] return 
     rts
 }
@@ -5712,7 +5712,7 @@ div16s: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // divr16s(signed word zeropage($41) dividend, signed word zeropage($43) divisor)
 divr16s: {
-    .label _16 = $4d
+    .label __16 = $4d
     .label dividendu = $51
     .label divisoru = $4f
     .label neg = $13
@@ -5729,43 +5729,43 @@ divr16s: {
     .label divisoru_5 = $11
     // [92] if((signed word) divr16s::dividend#0<(signed byte) 0) goto divr16s::@1 -- vwsz1_lt_0_then_la1 
     lda.z dividend+1
-    bmi b1
-    jmp b6
+    bmi __b1
+    jmp __b6
     // divr16s::@6
-  b6:
+  __b6:
     // [93] (word~) divr16s::dividendu#8 ← (word)(signed word) divr16s::dividend#0 -- vwuz1=vwuz2 
     lda.z dividend
     sta.z dividendu_8
     lda.z dividend+1
     sta.z dividendu_8+1
     // [94] phi from divr16s::@6 to divr16s::@2 [phi:divr16s::@6->divr16s::@2]
-  b2_from_b6:
+  __b2_from___b6:
     // [94] phi (word) divr16s::dividendu#3 = (word~) divr16s::dividendu#8 [phi:divr16s::@6->divr16s::@2#0] -- register_copy 
     // [94] phi (byte) divr16s::neg#3 = (byte) 0 [phi:divr16s::@6->divr16s::@2#1] -- vbuz1=vbuc1 
     lda #0
     sta.z neg
-    jmp b2
+    jmp __b2
     // divr16s::@2
-  b2:
+  __b2:
     // [95] if((signed word) divr16s::divisor#0<(signed byte) 0) goto divr16s::@3 -- vwsz1_lt_0_then_la1 
     lda.z divisor+1
-    bmi b3
-    jmp b7
+    bmi __b3
+    jmp __b7
     // divr16s::@7
-  b7:
+  __b7:
     // [96] (word~) divr16s::divisoru#5 ← (word)(signed word) divr16s::divisor#0 -- vwuz1=vwuz2 
     lda.z divisor
     sta.z divisoru_5
     lda.z divisor+1
     sta.z divisoru_5+1
     // [97] phi from divr16s::@3 divr16s::@7 to divr16s::@4 [phi:divr16s::@3/divr16s::@7->divr16s::@4]
-  b4_from_b3:
-  b4_from_b7:
+  __b4_from___b3:
+  __b4_from___b7:
     // [97] phi (byte) divr16s::neg#4 = (byte) divr16s::neg#2 [phi:divr16s::@3/divr16s::@7->divr16s::@4#0] -- register_copy 
     // [97] phi (word) divr16s::divisoru#3 = (word~) divr16s::divisoru#4 [phi:divr16s::@3/divr16s::@7->divr16s::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // divr16s::@4
-  b4:
+  __b4:
     // [98] (word) divr16u::dividend#2 ← (word) divr16s::dividendu#3 -- vwuz1=vwuz2 
     lda.z dividendu_3
     sta.z divr16u.dividend
@@ -5778,7 +5778,7 @@ divr16s: {
     sta.z divr16u.divisor+1
     // [100] call divr16u 
     // [116] phi from divr16s::@4 to divr16u [phi:divr16s::@4->divr16u]
-  divr16u_from_b4:
+  divr16u_from___b4:
     // [116] phi (word) divr16u::divisor#6 = (word) divr16u::divisor#1 [phi:divr16s::@4->divr16u#0] -- register_copy 
     // [116] phi (word) divr16u::dividend#5 = (word) divr16u::dividend#2 [phi:divr16s::@4->divr16u#1] -- register_copy 
     jsr divr16u
@@ -5787,9 +5787,9 @@ divr16s: {
     sta.z divr16u.return_3
     lda.z divr16u.return+1
     sta.z divr16u.return_3+1
-    jmp b9
+    jmp __b9
     // divr16s::@9
-  b9:
+  __b9:
     // [102] (word) divr16s::resultu#0 ← (word) divr16u::return#3 -- vwuz1=vwuz2 
     lda.z divr16u.return_3
     sta.z resultu
@@ -5798,22 +5798,22 @@ divr16s: {
     // [103] if((byte) divr16s::neg#4==(byte) 0) goto divr16s::@5 -- vbuz1_eq_0_then_la1 
     lda.z neg
     cmp #0
-    beq b5
-    jmp b8
+    beq __b5
+    jmp __b8
     // divr16s::@8
-  b8:
+  __b8:
     // [104] (signed word~) divr16s::$16 ← (signed word)(word) rem16u#1 -- vwsz1=vwsz2 
     lda.z rem16u
-    sta.z _16
+    sta.z __16
     lda.z rem16u+1
-    sta.z _16+1
+    sta.z __16+1
     // [105] (signed word) rem16s#2 ← - (signed word~) divr16s::$16 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
-    sbc.z _16
+    sbc.z __16
     sta.z rem16s
     lda #0
-    sbc.z _16+1
+    sbc.z __16+1
     sta.z rem16s+1
     // [106] (signed word) divr16s::return#1 ← - (signed word)(word) divr16s::resultu#0 -- vwsz1=_neg_vwsz2 
     sec
@@ -5824,17 +5824,17 @@ divr16s: {
     sbc.z resultu+1
     sta.z return+1
     // [107] phi from divr16s::@5 divr16s::@8 to divr16s::@return [phi:divr16s::@5/divr16s::@8->divr16s::@return]
-  breturn_from_b5:
-  breturn_from_b8:
+  __breturn_from___b5:
+  __breturn_from___b8:
     // [107] phi (signed word) rem16s#11 = (signed word~) rem16s#37 [phi:divr16s::@5/divr16s::@8->divr16s::@return#0] -- register_copy 
     // [107] phi (signed word) divr16s::return#2 = (signed word~) divr16s::return#7 [phi:divr16s::@5/divr16s::@8->divr16s::@return#1] -- register_copy 
-    jmp breturn
+    jmp __breturn
     // divr16s::@return
-  breturn:
+  __breturn:
     // [108] return 
     rts
     // divr16s::@5
-  b5:
+  __b5:
     // [109] (signed word~) divr16s::return#7 ← (signed word)(word) divr16s::resultu#0 -- vwsz1=vwsz2 
     lda.z resultu
     sta.z return
@@ -5845,9 +5845,9 @@ divr16s: {
     sta.z rem16s
     lda.z rem16u+1
     sta.z rem16s+1
-    jmp breturn_from_b5
+    jmp __breturn_from___b5
     // divr16s::@3
-  b3:
+  __b3:
     // [111] (signed word) divr16s::divisoru#1 ← - (signed word) divr16s::divisor#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
@@ -5865,9 +5865,9 @@ divr16s: {
     sta.z divisoru_4
     lda.z divisoru+1
     sta.z divisoru_4+1
-    jmp b4_from_b3
+    jmp __b4_from___b3
     // divr16s::@1
-  b1:
+  __b1:
     // [114] (signed word) divr16s::dividendu#1 ← - (signed word) divr16s::dividend#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
@@ -5882,12 +5882,12 @@ divr16s: {
     lda.z dividendu+1
     sta.z dividendu_7+1
     // [94] phi from divr16s::@1 to divr16s::@2 [phi:divr16s::@1->divr16s::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [94] phi (word) divr16s::dividendu#3 = (word~) divr16s::dividendu#7 [phi:divr16s::@1->divr16s::@2#0] -- register_copy 
     // [94] phi (byte) divr16s::neg#3 = (byte) 1 [phi:divr16s::@1->divr16s::@2#1] -- vbuz1=vbuc1 
     lda #1
     sta.z neg
-    jmp b2
+    jmp __b2
 }
   // divr16u
 // Performs division on two 16 bit unsigned words and an initial remainder
@@ -5896,8 +5896,8 @@ divr16s: {
 // Implemented using simple binary division
 // divr16u(word zeropage($1c) dividend, word zeropage($18) divisor, word zeropage($1a) rem)
 divr16u: {
-    .label _1 = $53
-    .label _2 = $54
+    .label __1 = $53
+    .label __2 = $54
     .label rem = $1a
     .label dividend = $1c
     .label quotient = $1e
@@ -5907,7 +5907,7 @@ divr16u: {
     .label return_2 = $74
     .label return_3 = $49
     // [117] phi from divr16u to divr16u::@1 [phi:divr16u->divr16u::@1]
-  b1_from_divr16u:
+  __b1_from_divr16u:
     // [117] phi (byte) divr16u::i#2 = (byte) 0 [phi:divr16u->divr16u::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -5922,44 +5922,44 @@ divr16u: {
     sta.z rem
     lda #>0
     sta.z rem+1
-    jmp b1
+    jmp __b1
     // [117] phi from divr16u::@3 to divr16u::@1 [phi:divr16u::@3->divr16u::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [117] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
     // [117] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
     // [117] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
     // [117] phi (word) divr16u::rem#5 = (word) divr16u::rem#11 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // divr16u::@1
-  b1:
+  __b1:
     // [118] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z rem
     rol.z rem+1
     // [119] (byte~) divr16u::$1 ← > (word) divr16u::dividend#3 -- vbuz1=_hi_vwuz2 
     lda.z dividend+1
-    sta.z _1
+    sta.z __1
     // [120] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
-    and.z _1
-    sta.z _2
+    and.z __1
+    sta.z __2
     // [121] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuz1_eq_0_then_la1 
-    lda.z _2
+    lda.z __2
     cmp #0
-    beq b2_from_b1
-    jmp b4
+    beq __b2_from___b1
+    jmp __b4
     // divr16u::@4
-  b4:
+  __b4:
     // [122] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
     lda #1
     ora.z rem
     sta.z rem
     // [123] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
-  b2_from_b1:
-  b2_from_b4:
+  __b2_from___b1:
+  __b2_from___b4:
     // [123] phi (word) divr16u::rem#6 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // divr16u::@2
-  b2:
+  __b2:
     // [124] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z dividend
     rol.z dividend+1
@@ -5969,15 +5969,15 @@ divr16u: {
     // [126] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
     lda.z rem+1
     cmp.z divisor+1
-    bcc b3_from_b2
+    bcc __b3_from___b2
     bne !+
     lda.z rem
     cmp.z divisor
-    bcc b3_from_b2
+    bcc __b3_from___b2
   !:
-    jmp b5
+    jmp __b5
     // divr16u::@5
-  b5:
+  __b5:
     // [127] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
     inc.z quotient
     bne !+
@@ -5992,30 +5992,30 @@ divr16u: {
     sbc.z divisor+1
     sta.z rem+1
     // [129] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
-  b3_from_b2:
-  b3_from_b5:
+  __b3_from___b2:
+  __b3_from___b5:
     // [129] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
     // [129] phi (word) divr16u::rem#11 = (word) divr16u::rem#6 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // divr16u::@3
-  b3:
+  __b3:
     // [130] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [131] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z i
-    bne b1_from_b3
-    jmp b6
+    bne __b1_from___b3
+    jmp __b6
     // divr16u::@6
-  b6:
+  __b6:
     // [132] (word) rem16u#1 ← (word) divr16u::rem#11 -- vwuz1=vwuz2 
     lda.z rem
     sta.z rem16u
     lda.z rem+1
     sta.z rem16u+1
-    jmp breturn
+    jmp __breturn
     // divr16u::@return
-  breturn:
+  __breturn:
     // [133] return 
     rts
 }
@@ -6026,17 +6026,17 @@ test_8s: {
     .label res = $5c
     .label i = $21
     // [135] phi from test_8s to test_8s::@1 [phi:test_8s->test_8s::@1]
-  b1_from_test_8s:
+  __b1_from_test_8s:
     // [135] phi (byte) test_8s::i#10 = (byte) 0 [phi:test_8s->test_8s::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [135] phi from test_8s::@10 to test_8s::@1 [phi:test_8s::@10->test_8s::@1]
-  b1_from_b10:
+  __b1_from___b10:
     // [135] phi (byte) test_8s::i#10 = (byte) test_8s::i#1 [phi:test_8s::@10->test_8s::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // test_8s::@1
-  b1:
+  __b1:
     // [136] (signed byte) test_8s::dividend#0 ← *((const signed byte[]) test_8s::dividends + (byte) test_8s::i#10) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z i
     lda dividends,y
@@ -6056,9 +6056,9 @@ test_8s: {
     // [141] (signed byte) div8s::return#3 ← (signed byte) div8s::return#2 -- vbsz1=vbsz2 
     lda.z div8s.return
     sta.z div8s.return_3
-    jmp b2
+    jmp __b2
     // test_8s::@2
-  b2:
+  __b2:
     // [142] (signed byte) test_8s::res#0 ← (signed byte) div8s::return#3 -- vbsz1=vbsz2 
     lda.z div8s.return_3
     sta.z res
@@ -6072,110 +6072,110 @@ test_8s: {
     sta.z print_char_cursor+1
     // [145] call print_sbyte 
     // [163] phi from test_8s::@2 to print_sbyte [phi:test_8s::@2->print_sbyte]
-  print_sbyte_from_b2:
+  print_sbyte_from___b2:
     // [163] phi (byte*) print_char_cursor#135 = (byte*~) print_char_cursor#168 [phi:test_8s::@2->print_sbyte#0] -- register_copy 
     // [163] phi (signed byte) print_sbyte::b#10 = (signed byte) print_sbyte::b#1 [phi:test_8s::@2->print_sbyte#1] -- register_copy 
     jsr print_sbyte
     // [146] phi from test_8s::@2 to test_8s::@3 [phi:test_8s::@2->test_8s::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // test_8s::@3
-  b3:
+  __b3:
     // [147] call print_str 
     // [79] phi from test_8s::@3 to print_str [phi:test_8s::@3->print_str]
-  print_str_from_b3:
+  print_str_from___b3:
     // [79] phi (byte*) print_str::str#15 = (const string) str [phi:test_8s::@3->print_str#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    jmp b4
+    jmp __b4
     // test_8s::@4
-  b4:
+  __b4:
     // [148] (signed byte) print_sbyte::b#2 ← (signed byte) test_8s::divisor#0 -- vbsz1=vbsz2 
     lda.z divisor
     sta.z print_sbyte.b
     // [149] call print_sbyte 
     // [163] phi from test_8s::@4 to print_sbyte [phi:test_8s::@4->print_sbyte]
-  print_sbyte_from_b4:
+  print_sbyte_from___b4:
     // [163] phi (byte*) print_char_cursor#135 = (byte*) print_char_cursor#130 [phi:test_8s::@4->print_sbyte#0] -- register_copy 
     // [163] phi (signed byte) print_sbyte::b#10 = (signed byte) print_sbyte::b#2 [phi:test_8s::@4->print_sbyte#1] -- register_copy 
     jsr print_sbyte
     // [150] phi from test_8s::@4 to test_8s::@5 [phi:test_8s::@4->test_8s::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // test_8s::@5
-  b5:
+  __b5:
     // [151] call print_str 
     // [79] phi from test_8s::@5 to print_str [phi:test_8s::@5->print_str]
-  print_str_from_b5:
+  print_str_from___b5:
     // [79] phi (byte*) print_str::str#15 = (const string) str1 [phi:test_8s::@5->print_str#0] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    jmp b6
+    jmp __b6
     // test_8s::@6
-  b6:
+  __b6:
     // [152] (signed byte) print_sbyte::b#3 ← (signed byte) test_8s::res#0 -- vbsz1=vbsz2 
     lda.z res
     sta.z print_sbyte.b
     // [153] call print_sbyte 
     // [163] phi from test_8s::@6 to print_sbyte [phi:test_8s::@6->print_sbyte]
-  print_sbyte_from_b6:
+  print_sbyte_from___b6:
     // [163] phi (byte*) print_char_cursor#135 = (byte*) print_char_cursor#130 [phi:test_8s::@6->print_sbyte#0] -- register_copy 
     // [163] phi (signed byte) print_sbyte::b#10 = (signed byte) print_sbyte::b#3 [phi:test_8s::@6->print_sbyte#1] -- register_copy 
     jsr print_sbyte
     // [154] phi from test_8s::@6 to test_8s::@7 [phi:test_8s::@6->test_8s::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // test_8s::@7
-  b7:
+  __b7:
     // [155] call print_str 
     // [79] phi from test_8s::@7 to print_str [phi:test_8s::@7->print_str]
-  print_str_from_b7:
+  print_str_from___b7:
     // [79] phi (byte*) print_str::str#15 = (const string) str2 [phi:test_8s::@7->print_str#0] -- pbuz1=pbuc1 
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    jmp b8
+    jmp __b8
     // test_8s::@8
-  b8:
+  __b8:
     // [156] (signed byte) print_sbyte::b#4 ← (signed byte) rem8s#3 -- vbsz1=vbsz2 
     lda.z rem8s
     sta.z print_sbyte.b
     // [157] call print_sbyte 
     // [163] phi from test_8s::@8 to print_sbyte [phi:test_8s::@8->print_sbyte]
-  print_sbyte_from_b8:
+  print_sbyte_from___b8:
     // [163] phi (byte*) print_char_cursor#135 = (byte*) print_char_cursor#130 [phi:test_8s::@8->print_sbyte#0] -- register_copy 
     // [163] phi (signed byte) print_sbyte::b#10 = (signed byte) print_sbyte::b#4 [phi:test_8s::@8->print_sbyte#1] -- register_copy 
     jsr print_sbyte
     // [158] phi from test_8s::@8 to test_8s::@9 [phi:test_8s::@8->test_8s::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // test_8s::@9
-  b9:
+  __b9:
     // [159] call print_ln 
     // [45] phi from test_8s::@9 to print_ln [phi:test_8s::@9->print_ln]
-  print_ln_from_b9:
+  print_ln_from___b9:
     // [45] phi (byte*) print_line_cursor#39 = (byte*) print_line_cursor#1 [phi:test_8s::@9->print_ln#0] -- register_copy 
     jsr print_ln
-    jmp b10
+    jmp __b10
     // test_8s::@10
-  b10:
+  __b10:
     // [160] (byte) test_8s::i#1 ← ++ (byte) test_8s::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [161] if((byte) test_8s::i#1!=(byte) 6) goto test_8s::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b1_from_b10
-    jmp breturn
+    bne __b1_from___b10
+    jmp __breturn
     // test_8s::@return
-  breturn:
+  __breturn:
     // [162] return 
     rts
     dividends: .byte $7f, -$7f, -$7f, $7f, $7f, $7f
@@ -6188,64 +6188,64 @@ print_sbyte: {
     .label b = $22
     // [164] if((signed byte) print_sbyte::b#10<(signed byte) 0) goto print_sbyte::@1 -- vbsz1_lt_0_then_la1 
     lda.z b
-    bmi b1_from_print_sbyte
+    bmi __b1_from_print_sbyte
     // [165] phi from print_sbyte to print_sbyte::@3 [phi:print_sbyte->print_sbyte::@3]
-  b3_from_print_sbyte:
-    jmp b3
+  __b3_from_print_sbyte:
+    jmp __b3
     // print_sbyte::@3
-  b3:
+  __b3:
     // [166] call print_char 
     // [61] phi from print_sbyte::@3 to print_char [phi:print_sbyte::@3->print_char]
-  print_char_from_b3:
+  print_char_from___b3:
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#135 [phi:print_sbyte::@3->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) ' ' [phi:print_sbyte::@3->print_char#1] -- vbuz1=vbuc1 
     lda #' '
     sta.z print_char.ch
     jsr print_char
     // [167] phi from print_sbyte::@3 print_sbyte::@4 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2]
-  b2_from_b3:
-  b2_from_b4:
+  __b2_from___b3:
+  __b2_from___b4:
     // [167] phi (signed byte) print_sbyte::b#7 = (signed byte) print_sbyte::b#10 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // print_sbyte::@2
-  b2:
+  __b2:
     // [168] (byte) print_byte::b#0 ← (byte)(signed byte) print_sbyte::b#7 -- vbuz1=vbuz2 
     lda.z b
     sta.z print_byte.b
     // [169] call print_byte 
     // [71] phi from print_sbyte::@2 to print_byte [phi:print_sbyte::@2->print_byte]
-  print_byte_from_b2:
+  print_byte_from___b2:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#19 [phi:print_sbyte::@2->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#0 [phi:print_sbyte::@2->print_byte#1] -- register_copy 
     jsr print_byte
-    jmp breturn
+    jmp __breturn
     // print_sbyte::@return
-  breturn:
+  __breturn:
     // [170] return 
     rts
     // [171] phi from print_sbyte to print_sbyte::@1 [phi:print_sbyte->print_sbyte::@1]
-  b1_from_print_sbyte:
-    jmp b1
+  __b1_from_print_sbyte:
+    jmp __b1
     // print_sbyte::@1
-  b1:
+  __b1:
     // [172] call print_char 
     // [61] phi from print_sbyte::@1 to print_char [phi:print_sbyte::@1->print_char]
-  print_char_from_b1:
+  print_char_from___b1:
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#135 [phi:print_sbyte::@1->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) '-' [phi:print_sbyte::@1->print_char#1] -- vbuz1=vbuc1 
     lda #'-'
     sta.z print_char.ch
     jsr print_char
-    jmp b4
+    jmp __b4
     // print_sbyte::@4
-  b4:
+  __b4:
     // [173] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#10 -- vbsz1=_neg_vbsz1 
     lda.z b
     eor #$ff
     clc
     adc #1
     sta.z b
-    jmp b2_from_b4
+    jmp __b2_from___b4
 }
   // div8s
 // Perform division on two signed 8-bit numbers
@@ -6256,7 +6256,7 @@ print_sbyte: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // div8s(signed byte zeropage($59) dividend, signed byte zeropage($5a) divisor)
 div8s: {
-    .label _11 = $5f
+    .label __11 = $5f
     .label dividendu = $61
     .label divisoru = $60
     .label neg = $25
@@ -6273,39 +6273,39 @@ div8s: {
     .label divisoru_5 = $24
     // [174] if((signed byte) div8s::dividend#0<(signed byte) 0) goto div8s::@1 -- vbsz1_lt_0_then_la1 
     lda.z dividend
-    bmi b1
-    jmp b6
+    bmi __b1
+    jmp __b6
     // div8s::@6
-  b6:
+  __b6:
     // [175] (byte~) div8s::dividendu#8 ← (byte)(signed byte) div8s::dividend#0 -- vbuz1=vbuz2 
     lda.z dividend
     sta.z dividendu_8
     // [176] phi from div8s::@6 to div8s::@2 [phi:div8s::@6->div8s::@2]
-  b2_from_b6:
+  __b2_from___b6:
     // [176] phi (byte) div8s::dividendu#3 = (byte~) div8s::dividendu#8 [phi:div8s::@6->div8s::@2#0] -- register_copy 
     // [176] phi (byte) div8s::neg#3 = (byte) 0 [phi:div8s::@6->div8s::@2#1] -- vbuz1=vbuc1 
     lda #0
     sta.z neg
-    jmp b2
+    jmp __b2
     // div8s::@2
-  b2:
+  __b2:
     // [177] if((signed byte) div8s::divisor#0<(signed byte) 0) goto div8s::@3 -- vbsz1_lt_0_then_la1 
     lda.z divisor
-    bmi b3
-    jmp b7
+    bmi __b3
+    jmp __b7
     // div8s::@7
-  b7:
+  __b7:
     // [178] (byte~) div8s::divisoru#5 ← (byte)(signed byte) div8s::divisor#0 -- vbuz1=vbuz2 
     lda.z divisor
     sta.z divisoru_5
     // [179] phi from div8s::@3 div8s::@7 to div8s::@4 [phi:div8s::@3/div8s::@7->div8s::@4]
-  b4_from_b3:
-  b4_from_b7:
+  __b4_from___b3:
+  __b4_from___b7:
     // [179] phi (byte) div8s::neg#4 = (byte) div8s::neg#2 [phi:div8s::@3/div8s::@7->div8s::@4#0] -- register_copy 
     // [179] phi (byte) div8s::divisoru#3 = (byte~) div8s::divisoru#4 [phi:div8s::@3/div8s::@7->div8s::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // div8s::@4
-  b4:
+  __b4:
     // [180] (byte) div8u::dividend#0 ← (byte) div8s::dividendu#3 -- vbuz1=vbuz2 
     lda.z dividendu_3
     sta.z div8u.dividend
@@ -6314,31 +6314,31 @@ div8s: {
     sta.z div8u.divisor
     // [182] call div8u 
     // [198] phi from div8s::@4 to div8u [phi:div8s::@4->div8u]
-  div8u_from_b4:
+  div8u_from___b4:
     // [198] phi (byte) div8u::divisor#2 = (byte) div8u::divisor#0 [phi:div8s::@4->div8u#0] -- register_copy 
     // [198] phi (byte) div8u::dividend#2 = (byte) div8u::dividend#0 [phi:div8s::@4->div8u#1] -- register_copy 
     jsr div8u
     // [183] (byte) div8u::return#2 ← (byte) div8u::return#0 -- vbuz1=vbuz2 
     lda.z div8u.return
     sta.z div8u.return_2
-    jmp b9
+    jmp __b9
     // div8s::@9
-  b9:
+  __b9:
     // [184] (byte) div8s::resultu#0 ← (byte) div8u::return#2 -- vbuz1=vbuz2 
     lda.z div8u.return_2
     sta.z resultu
     // [185] if((byte) div8s::neg#4==(byte) 0) goto div8s::@5 -- vbuz1_eq_0_then_la1 
     lda.z neg
     cmp #0
-    beq b5
-    jmp b8
+    beq __b5
+    jmp __b8
     // div8s::@8
-  b8:
+  __b8:
     // [186] (signed byte~) div8s::$11 ← (signed byte)(byte) rem8u#17 -- vbsz1=vbsz2 
     lda.z rem8u
-    sta.z _11
+    sta.z __11
     // [187] (signed byte) rem8s#2 ← - (signed byte~) div8s::$11 -- vbsz1=_neg_vbsz2 
-    lda.z _11
+    lda.z __11
     eor #$ff
     clc
     adc #1
@@ -6350,26 +6350,26 @@ div8s: {
     adc #1
     sta.z return
     // [189] phi from div8s::@5 div8s::@8 to div8s::@return [phi:div8s::@5/div8s::@8->div8s::@return]
-  breturn_from_b5:
-  breturn_from_b8:
+  __breturn_from___b5:
+  __breturn_from___b8:
     // [189] phi (signed byte) rem8s#3 = (signed byte~) rem8s#33 [phi:div8s::@5/div8s::@8->div8s::@return#0] -- register_copy 
     // [189] phi (signed byte) div8s::return#2 = (signed byte~) div8s::return#7 [phi:div8s::@5/div8s::@8->div8s::@return#1] -- register_copy 
-    jmp breturn
+    jmp __breturn
     // div8s::@return
-  breturn:
+  __breturn:
     // [190] return 
     rts
     // div8s::@5
-  b5:
+  __b5:
     // [191] (signed byte~) div8s::return#7 ← (signed byte)(byte) div8s::resultu#0 -- vbsz1=vbsz2 
     lda.z resultu
     sta.z return
     // [192] (signed byte~) rem8s#33 ← (signed byte)(byte) rem8u#17 -- vbsz1=vbsz2 
     lda.z rem8u
     sta.z rem8s
-    jmp breturn_from_b5
+    jmp __breturn_from___b5
     // div8s::@3
-  b3:
+  __b3:
     // [193] (signed byte) div8s::divisoru#1 ← - (signed byte) div8s::divisor#0 -- vbsz1=_neg_vbsz2 
     lda.z divisor
     eor #$ff
@@ -6383,9 +6383,9 @@ div8s: {
     // [195] (byte~) div8s::divisoru#4 ← (byte)(signed byte) div8s::divisoru#1 -- vbuz1=vbuz2 
     lda.z divisoru
     sta.z divisoru_4
-    jmp b4_from_b3
+    jmp __b4_from___b3
     // div8s::@1
-  b1:
+  __b1:
     // [196] (signed byte) div8s::dividendu#1 ← - (signed byte) div8s::dividend#0 -- vbsz1=_neg_vbsz2 
     lda.z dividend
     eor #$ff
@@ -6396,12 +6396,12 @@ div8s: {
     lda.z dividendu
     sta.z dividendu_7
     // [176] phi from div8s::@1 to div8s::@2 [phi:div8s::@1->div8s::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [176] phi (byte) div8s::dividendu#3 = (byte~) div8s::dividendu#7 [phi:div8s::@1->div8s::@2#0] -- register_copy 
     // [176] phi (byte) div8s::neg#3 = (byte) 1 [phi:div8s::@1->div8s::@2#1] -- vbuz1=vbuc1 
     lda #1
     sta.z neg
-    jmp b2
+    jmp __b2
 }
   // div8u
 // Performs division on two 8 bit unsigned bytes
@@ -6428,15 +6428,15 @@ div8u: {
     // [202] (byte) divr8u::return#0 ← (byte) divr8u::return#1 -- vbuz1=vbuz2 
     lda.z divr8u.return_1
     sta.z divr8u.return
-    jmp b1
+    jmp __b1
     // div8u::@1
-  b1:
+  __b1:
     // [203] (byte) div8u::return#0 ← (byte) divr8u::return#0 -- vbuz1=vbuz2 
     lda.z divr8u.return
     sta.z return
-    jmp breturn
+    jmp __breturn
     // div8u::@return
-  breturn:
+  __breturn:
     // [204] return 
     rts
 }
@@ -6447,7 +6447,7 @@ div8u: {
 // Implemented using simple binary division
 // divr8u(byte zeropage($2b) dividend, byte zeropage($62) divisor, byte zeropage($2a) rem)
 divr8u: {
-    .label _1 = $65
+    .label __1 = $65
     .label dividend = $2b
     .label divisor = $62
     .label return = $63
@@ -6456,7 +6456,7 @@ divr8u: {
     .label i = $2d
     .label return_1 = $2c
     // [206] phi from divr8u to divr8u::@1 [phi:divr8u->divr8u::@1]
-  b1_from_divr8u:
+  __b1_from_divr8u:
     // [206] phi (byte) divr8u::i#2 = (byte) 0 [phi:divr8u->divr8u::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -6467,40 +6467,40 @@ divr8u: {
     // [206] phi (byte) divr8u::rem#4 = (byte) 0 [phi:divr8u->divr8u::@1#3] -- vbuz1=vbuc1 
     lda #0
     sta.z rem
-    jmp b1
+    jmp __b1
     // [206] phi from divr8u::@3 to divr8u::@1 [phi:divr8u::@3->divr8u::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [206] phi (byte) divr8u::i#2 = (byte) divr8u::i#1 [phi:divr8u::@3->divr8u::@1#0] -- register_copy 
     // [206] phi (byte) divr8u::quotient#3 = (byte) divr8u::return#1 [phi:divr8u::@3->divr8u::@1#1] -- register_copy 
     // [206] phi (byte) divr8u::dividend#2 = (byte) divr8u::dividend#1 [phi:divr8u::@3->divr8u::@1#2] -- register_copy 
     // [206] phi (byte) divr8u::rem#4 = (byte) divr8u::rem#10 [phi:divr8u::@3->divr8u::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // divr8u::@1
-  b1:
+  __b1:
     // [207] (byte) divr8u::rem#1 ← (byte) divr8u::rem#4 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl.z rem
     // [208] (byte~) divr8u::$1 ← (byte) divr8u::dividend#2 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
     and.z dividend
-    sta.z _1
+    sta.z __1
     // [209] if((byte~) divr8u::$1==(byte) 0) goto divr8u::@2 -- vbuz1_eq_0_then_la1 
-    lda.z _1
+    lda.z __1
     cmp #0
-    beq b2_from_b1
-    jmp b4
+    beq __b2_from___b1
+    jmp __b4
     // divr8u::@4
-  b4:
+  __b4:
     // [210] (byte) divr8u::rem#2 ← (byte) divr8u::rem#1 | (byte) 1 -- vbuz1=vbuz1_bor_vbuc1 
     lda #1
     ora.z rem
     sta.z rem
     // [211] phi from divr8u::@1 divr8u::@4 to divr8u::@2 [phi:divr8u::@1/divr8u::@4->divr8u::@2]
-  b2_from_b1:
-  b2_from_b4:
+  __b2_from___b1:
+  __b2_from___b4:
     // [211] phi (byte) divr8u::rem#5 = (byte) divr8u::rem#1 [phi:divr8u::@1/divr8u::@4->divr8u::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // divr8u::@2
-  b2:
+  __b2:
     // [212] (byte) divr8u::dividend#1 ← (byte) divr8u::dividend#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl.z dividend
     // [213] (byte) divr8u::quotient#1 ← (byte) divr8u::quotient#3 << (byte) 1 -- vbuz1=vbuz1_rol_1 
@@ -6508,10 +6508,10 @@ divr8u: {
     // [214] if((byte) divr8u::rem#5<(byte) divr8u::divisor#0) goto divr8u::@3 -- vbuz1_lt_vbuz2_then_la1 
     lda.z rem
     cmp.z divisor
-    bcc b3_from_b2
-    jmp b5
+    bcc __b3_from___b2
+    jmp __b5
     // divr8u::@5
-  b5:
+  __b5:
     // [215] (byte) divr8u::quotient#2 ← ++ (byte) divr8u::quotient#1 -- vbuz1=_inc_vbuz1 
     inc.z quotient
     // [216] (byte) divr8u::rem#3 ← (byte) divr8u::rem#5 - (byte) divr8u::divisor#0 -- vbuz1=vbuz1_minus_vbuz2 
@@ -6520,62 +6520,62 @@ divr8u: {
     sbc.z divisor
     sta.z rem
     // [217] phi from divr8u::@2 divr8u::@5 to divr8u::@3 [phi:divr8u::@2/divr8u::@5->divr8u::@3]
-  b3_from_b2:
-  b3_from_b5:
+  __b3_from___b2:
+  __b3_from___b5:
     // [217] phi (byte) divr8u::return#1 = (byte) divr8u::quotient#1 [phi:divr8u::@2/divr8u::@5->divr8u::@3#0] -- register_copy 
     // [217] phi (byte) divr8u::rem#10 = (byte) divr8u::rem#5 [phi:divr8u::@2/divr8u::@5->divr8u::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // divr8u::@3
-  b3:
+  __b3:
     // [218] (byte) divr8u::i#1 ← ++ (byte) divr8u::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [219] if((byte) divr8u::i#1!=(byte) 8) goto divr8u::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b1_from_b3
-    jmp b6
+    bne __b1_from___b3
+    jmp __b6
     // divr8u::@6
-  b6:
+  __b6:
     // [220] (byte) rem8u#17 ← (byte) divr8u::rem#10 -- vbuz1=vbuz2 
     lda.z rem
     sta.z rem8u
-    jmp breturn
+    jmp __breturn
     // divr8u::@return
-  breturn:
+  __breturn:
     // [221] return 
     rts
 }
   // test_16u
 test_16u: {
-    .label _11 = $67
+    .label __11 = $67
     .label dividend = $68
     .label divisor = $6a
     .label res = $72
     .label i = $2e
     // [223] phi from test_16u to test_16u::@1 [phi:test_16u->test_16u::@1]
-  b1_from_test_16u:
+  __b1_from_test_16u:
     // [223] phi (byte) test_16u::i#10 = (byte) 0 [phi:test_16u->test_16u::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [223] phi from test_16u::@10 to test_16u::@1 [phi:test_16u::@10->test_16u::@1]
-  b1_from_b10:
+  __b1_from___b10:
     // [223] phi (byte) test_16u::i#10 = (byte) test_16u::i#1 [phi:test_16u::@10->test_16u::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // test_16u::@1
-  b1:
+  __b1:
     // [224] (byte~) test_16u::$11 ← (byte) test_16u::i#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z _11
+    sta.z __11
     // [225] (word) test_16u::dividend#0 ← *((const word[]) test_16u::dividends + (byte~) test_16u::$11) -- vwuz1=pwuc1_derefidx_vbuz2 
-    ldy.z _11
+    ldy.z __11
     lda dividends,y
     sta.z dividend
     lda dividends+1,y
     sta.z dividend+1
     // [226] (word) test_16u::divisor#0 ← *((const word[]) test_16u::divisors + (byte~) test_16u::$11) -- vwuz1=pwuc1_derefidx_vbuz2 
-    ldy.z _11
+    ldy.z __11
     lda divisors,y
     sta.z divisor
     lda divisors+1,y
@@ -6597,9 +6597,9 @@ test_16u: {
     sta.z div16u.return_2
     lda.z div16u.return+1
     sta.z div16u.return_2+1
-    jmp b2
+    jmp __b2
     // test_16u::@2
-  b2:
+  __b2:
     // [231] (word) test_16u::res#0 ← (word) div16u::return#2 -- vwuz1=vwuz2 
     lda.z div16u.return_2
     sta.z res
@@ -6617,27 +6617,27 @@ test_16u: {
     sta.z print_char_cursor+1
     // [234] call print_word 
     // [65] phi from test_16u::@2 to print_word [phi:test_16u::@2->print_word]
-  print_word_from_b2:
+  print_word_from___b2:
     // [65] phi (byte*) print_char_cursor#138 = (byte*~) print_char_cursor#173 [phi:test_16u::@2->print_word#0] -- register_copy 
     // [65] phi (word) print_word::w#5 = (word) print_word::w#1 [phi:test_16u::@2->print_word#1] -- register_copy 
     jsr print_word
     // [235] phi from test_16u::@2 to test_16u::@3 [phi:test_16u::@2->test_16u::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // test_16u::@3
-  b3:
+  __b3:
     // [236] call print_str 
     // [79] phi from test_16u::@3 to print_str [phi:test_16u::@3->print_str]
-  print_str_from_b3:
+  print_str_from___b3:
     // [79] phi (byte*) print_str::str#15 = (const string) str [phi:test_16u::@3->print_str#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    jmp b4
+    jmp __b4
     // test_16u::@4
-  b4:
+  __b4:
     // [237] (word) print_word::w#2 ← (word) test_16u::divisor#0 -- vwuz1=vwuz2 
     lda.z divisor
     sta.z print_word.w
@@ -6645,27 +6645,27 @@ test_16u: {
     sta.z print_word.w+1
     // [238] call print_word 
     // [65] phi from test_16u::@4 to print_word [phi:test_16u::@4->print_word]
-  print_word_from_b4:
+  print_word_from___b4:
     // [65] phi (byte*) print_char_cursor#138 = (byte*) print_char_cursor#130 [phi:test_16u::@4->print_word#0] -- register_copy 
     // [65] phi (word) print_word::w#5 = (word) print_word::w#2 [phi:test_16u::@4->print_word#1] -- register_copy 
     jsr print_word
     // [239] phi from test_16u::@4 to test_16u::@5 [phi:test_16u::@4->test_16u::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // test_16u::@5
-  b5:
+  __b5:
     // [240] call print_str 
     // [79] phi from test_16u::@5 to print_str [phi:test_16u::@5->print_str]
-  print_str_from_b5:
+  print_str_from___b5:
     // [79] phi (byte*) print_str::str#15 = (const string) str1 [phi:test_16u::@5->print_str#0] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    jmp b6
+    jmp __b6
     // test_16u::@6
-  b6:
+  __b6:
     // [241] (word) print_word::w#3 ← (word) test_16u::res#0 -- vwuz1=vwuz2 
     lda.z res
     sta.z print_word.w
@@ -6673,27 +6673,27 @@ test_16u: {
     sta.z print_word.w+1
     // [242] call print_word 
     // [65] phi from test_16u::@6 to print_word [phi:test_16u::@6->print_word]
-  print_word_from_b6:
+  print_word_from___b6:
     // [65] phi (byte*) print_char_cursor#138 = (byte*) print_char_cursor#130 [phi:test_16u::@6->print_word#0] -- register_copy 
     // [65] phi (word) print_word::w#5 = (word) print_word::w#3 [phi:test_16u::@6->print_word#1] -- register_copy 
     jsr print_word
     // [243] phi from test_16u::@6 to test_16u::@7 [phi:test_16u::@6->test_16u::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // test_16u::@7
-  b7:
+  __b7:
     // [244] call print_str 
     // [79] phi from test_16u::@7 to print_str [phi:test_16u::@7->print_str]
-  print_str_from_b7:
+  print_str_from___b7:
     // [79] phi (byte*) print_str::str#15 = (const string) str2 [phi:test_16u::@7->print_str#0] -- pbuz1=pbuc1 
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    jmp b8
+    jmp __b8
     // test_16u::@8
-  b8:
+  __b8:
     // [245] (word) print_word::w#4 ← (word) rem16u#1 -- vwuz1=vwuz2 
     lda.z rem16u
     sta.z print_word.w
@@ -6701,32 +6701,32 @@ test_16u: {
     sta.z print_word.w+1
     // [246] call print_word 
     // [65] phi from test_16u::@8 to print_word [phi:test_16u::@8->print_word]
-  print_word_from_b8:
+  print_word_from___b8:
     // [65] phi (byte*) print_char_cursor#138 = (byte*) print_char_cursor#130 [phi:test_16u::@8->print_word#0] -- register_copy 
     // [65] phi (word) print_word::w#5 = (word) print_word::w#4 [phi:test_16u::@8->print_word#1] -- register_copy 
     jsr print_word
     // [247] phi from test_16u::@8 to test_16u::@9 [phi:test_16u::@8->test_16u::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // test_16u::@9
-  b9:
+  __b9:
     // [248] call print_ln 
     // [45] phi from test_16u::@9 to print_ln [phi:test_16u::@9->print_ln]
-  print_ln_from_b9:
+  print_ln_from___b9:
     // [45] phi (byte*) print_line_cursor#39 = (byte*) print_line_cursor#1 [phi:test_16u::@9->print_ln#0] -- register_copy 
     jsr print_ln
-    jmp b10
+    jmp __b10
     // test_16u::@10
-  b10:
+  __b10:
     // [249] (byte) test_16u::i#1 ← ++ (byte) test_16u::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [250] if((byte) test_16u::i#1!=(byte) 6) goto test_16u::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b1_from_b10
-    jmp breturn
+    bne __b1_from___b10
+    jmp __breturn
     // test_16u::@return
-  breturn:
+  __breturn:
     // [251] return 
     rts
     dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
@@ -6764,17 +6764,17 @@ div16u: {
     sta.z divr16u.return_2
     lda.z divr16u.return+1
     sta.z divr16u.return_2+1
-    jmp b1
+    jmp __b1
     // div16u::@1
-  b1:
+  __b1:
     // [256] (word) div16u::return#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
     lda.z divr16u.return_2
     sta.z return
     lda.z divr16u.return_2+1
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // div16u::@return
-  breturn:
+  __breturn:
     // [257] return 
     rts
 }
@@ -6785,7 +6785,7 @@ test_8u: {
     .label res = $7b
     .label i = $2f
     // [259] phi from test_8u to test_8u::@1 [phi:test_8u->test_8u::@1]
-  b1_from_test_8u:
+  __b1_from_test_8u:
     // [259] phi (byte*) print_line_cursor#41 = (byte*) 1024 [phi:test_8u->test_8u::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z print_line_cursor
@@ -6799,9 +6799,9 @@ test_8u: {
     // [259] phi (byte) test_8u::i#10 = (byte) 0 [phi:test_8u->test_8u::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // test_8u::@1
-  b1:
+  __b1:
     // [260] (byte) test_8u::dividend#0 ← *((const byte[]) test_8u::dividends + (byte) test_8u::i#10) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda dividends,y
@@ -6818,16 +6818,16 @@ test_8u: {
     sta.z div8u.divisor
     // [264] call div8u 
     // [198] phi from test_8u::@1 to div8u [phi:test_8u::@1->div8u]
-  div8u_from_b1:
+  div8u_from___b1:
     // [198] phi (byte) div8u::divisor#2 = (byte) div8u::divisor#1 [phi:test_8u::@1->div8u#0] -- register_copy 
     // [198] phi (byte) div8u::dividend#2 = (byte) div8u::dividend#1 [phi:test_8u::@1->div8u#1] -- register_copy 
     jsr div8u
     // [265] (byte) div8u::return#3 ← (byte) div8u::return#0 -- vbuz1=vbuz2 
     lda.z div8u.return
     sta.z div8u.return_3
-    jmp b2
+    jmp __b2
     // test_8u::@2
-  b2:
+  __b2:
     // [266] (byte) test_8u::res#0 ← (byte) div8u::return#3 -- vbuz1=vbuz2 
     lda.z div8u.return_3
     sta.z res
@@ -6836,125 +6836,125 @@ test_8u: {
     sta.z print_byte.b
     // [268] call print_byte 
     // [71] phi from test_8u::@2 to print_byte [phi:test_8u::@2->print_byte]
-  print_byte_from_b2:
+  print_byte_from___b2:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#141 [phi:test_8u::@2->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#3 [phi:test_8u::@2->print_byte#1] -- register_copy 
     jsr print_byte
     // [269] phi from test_8u::@2 to test_8u::@3 [phi:test_8u::@2->test_8u::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // test_8u::@3
-  b3:
+  __b3:
     // [270] call print_str 
     // [79] phi from test_8u::@3 to print_str [phi:test_8u::@3->print_str]
-  print_str_from_b3:
+  print_str_from___b3:
     // [79] phi (byte*) print_str::str#15 = (const string) str [phi:test_8u::@3->print_str#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    jmp b4
+    jmp __b4
     // test_8u::@4
-  b4:
+  __b4:
     // [271] (byte) print_byte::b#4 ← (byte) test_8u::divisor#0 -- vbuz1=vbuz2 
     lda.z divisor
     sta.z print_byte.b
     // [272] call print_byte 
     // [71] phi from test_8u::@4 to print_byte [phi:test_8u::@4->print_byte]
-  print_byte_from_b4:
+  print_byte_from___b4:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#130 [phi:test_8u::@4->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#4 [phi:test_8u::@4->print_byte#1] -- register_copy 
     jsr print_byte
     // [273] phi from test_8u::@4 to test_8u::@5 [phi:test_8u::@4->test_8u::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // test_8u::@5
-  b5:
+  __b5:
     // [274] call print_str 
     // [79] phi from test_8u::@5 to print_str [phi:test_8u::@5->print_str]
-  print_str_from_b5:
+  print_str_from___b5:
     // [79] phi (byte*) print_str::str#15 = (const string) str1 [phi:test_8u::@5->print_str#0] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    jmp b6
+    jmp __b6
     // test_8u::@6
-  b6:
+  __b6:
     // [275] (byte) print_byte::b#5 ← (byte) test_8u::res#0 -- vbuz1=vbuz2 
     lda.z res
     sta.z print_byte.b
     // [276] call print_byte 
     // [71] phi from test_8u::@6 to print_byte [phi:test_8u::@6->print_byte]
-  print_byte_from_b6:
+  print_byte_from___b6:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#130 [phi:test_8u::@6->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#5 [phi:test_8u::@6->print_byte#1] -- register_copy 
     jsr print_byte
     // [277] phi from test_8u::@6 to test_8u::@7 [phi:test_8u::@6->test_8u::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // test_8u::@7
-  b7:
+  __b7:
     // [278] call print_str 
     // [79] phi from test_8u::@7 to print_str [phi:test_8u::@7->print_str]
-  print_str_from_b7:
+  print_str_from___b7:
     // [79] phi (byte*) print_str::str#15 = (const string) str2 [phi:test_8u::@7->print_str#0] -- pbuz1=pbuc1 
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    jmp b8
+    jmp __b8
     // test_8u::@8
-  b8:
+  __b8:
     // [279] (byte) print_byte::b#6 ← (byte) rem8u#17 -- vbuz1=vbuz2 
     lda.z rem8u
     sta.z print_byte.b
     // [280] call print_byte 
     // [71] phi from test_8u::@8 to print_byte [phi:test_8u::@8->print_byte]
-  print_byte_from_b8:
+  print_byte_from___b8:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#130 [phi:test_8u::@8->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#6 [phi:test_8u::@8->print_byte#1] -- register_copy 
     jsr print_byte
     // [281] phi from test_8u::@8 to test_8u::@9 [phi:test_8u::@8->test_8u::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // test_8u::@9
-  b9:
+  __b9:
     // [282] call print_ln 
     // [45] phi from test_8u::@9 to print_ln [phi:test_8u::@9->print_ln]
-  print_ln_from_b9:
+  print_ln_from___b9:
     // [45] phi (byte*) print_line_cursor#39 = (byte*) print_line_cursor#41 [phi:test_8u::@9->print_ln#0] -- register_copy 
     jsr print_ln
-    jmp b10
+    jmp __b10
     // test_8u::@10
-  b10:
+  __b10:
     // [283] (byte) test_8u::i#1 ← ++ (byte) test_8u::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [284] if((byte) test_8u::i#1!=(byte) 6) goto test_8u::@11 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b11
-    jmp breturn
+    bne __b11
+    jmp __breturn
     // test_8u::@return
-  breturn:
+  __breturn:
     // [285] return 
     rts
     // test_8u::@11
-  b11:
+  __b11:
     // [286] (byte*~) print_char_cursor#190 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     // [259] phi from test_8u::@11 to test_8u::@1 [phi:test_8u::@11->test_8u::@1]
-  b1_from_b11:
+  __b1_from___b11:
     // [259] phi (byte*) print_line_cursor#41 = (byte*) print_line_cursor#1 [phi:test_8u::@11->test_8u::@1#0] -- register_copy 
     // [259] phi (byte*) print_char_cursor#141 = (byte*~) print_char_cursor#190 [phi:test_8u::@11->test_8u::@1#1] -- register_copy 
     // [259] phi (byte) test_8u::i#10 = (byte) test_8u::i#1 [phi:test_8u::@11->test_8u::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     dividends: .byte $ff, $ff, $ff, $ff, $ff, $ff
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
@@ -6965,9 +6965,9 @@ print_cls: {
     // [290] phi from print_cls to memset [phi:print_cls->memset]
   memset_from_print_cls:
     jsr memset
-    jmp breturn
+    jmp __breturn
     // print_cls::@return
-  breturn:
+  __breturn:
     // [289] return 
     rts
 }
@@ -6980,29 +6980,29 @@ memset: {
     .label end = str+num
     .label dst = $30
     // [291] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
+  __b1_from_memset:
     // [291] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [292] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [293] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // [294] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
@@ -7013,9 +7013,9 @@ memset: {
     inc.z dst+1
   !:
     // [291] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [291] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
@@ -7552,7 +7552,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test the binary division library
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label print_char_cursor = 5
@@ -7560,21 +7560,21 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label rem16u = $b
   .label rem16s = $b
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call print_cls 
@@ -7582,44 +7582,44 @@ main: {
   print_cls_from_main:
     jsr print_cls
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call test_8u 
     // [258] phi from main::@1 to test_8u [phi:main::@1->test_8u]
-  test_8u_from_b1:
+  test_8u_from___b1:
     jsr test_8u
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] call test_16u 
     // [222] phi from main::@2 to test_16u [phi:main::@2->test_16u]
-  test_16u_from_b2:
+  test_16u_from___b2:
     jsr test_16u
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] call test_8s 
     // [134] phi from main::@3 to test_8s [phi:main::@3->test_8s]
-  test_8s_from_b3:
+  test_8s_from___b3:
     jsr test_8s
     // [12] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  b4_from_b3:
-    jmp b4
+  __b4_from___b3:
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [13] call test_16s 
     // [15] phi from main::@4 to test_16s [phi:main::@4->test_16s]
-  test_16s_from_b4:
+  test_16s_from___b4:
     jsr test_16s
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -7630,17 +7630,17 @@ test_16s: {
     .label res = 9
     .label i = $d
     // [16] phi from test_16s to test_16s::@1 [phi:test_16s->test_16s::@1]
-  b1_from_test_16s:
+  __b1_from_test_16s:
     // [16] phi (byte) test_16s::i#10 = (byte) 0 [phi:test_16s->test_16s::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [16] phi from test_16s::@10 to test_16s::@1 [phi:test_16s::@10->test_16s::@1]
-  b1_from_b10:
+  __b1_from___b10:
     // [16] phi (byte) test_16s::i#10 = (byte) test_16s::i#1 [phi:test_16s::@10->test_16s::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // test_16s::@1
-  b1:
+  __b1:
     // [17] (byte~) test_16s::$11 ← (byte) test_16s::i#10 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z i
     asl
@@ -7660,9 +7660,9 @@ test_16s: {
     // [22] call div16s 
     jsr div16s
     // [23] (signed word) div16s::return#2 ← (signed word) div16s::return#0
-    jmp b2
+    jmp __b2
     // test_16s::@2
-  b2:
+  __b2:
     // [24] (signed word) test_16s::res#0 ← (signed word) div16s::return#2
     // [25] (signed word) print_sword::w#1 ← (signed word) test_16s::dividend#0
     // [26] (byte*~) print_char_cursor#164 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
@@ -7672,27 +7672,27 @@ test_16s: {
     sta.z print_char_cursor+1
     // [27] call print_sword 
     // [50] phi from test_16s::@2 to print_sword [phi:test_16s::@2->print_sword]
-  print_sword_from_b2:
+  print_sword_from___b2:
     // [50] phi (byte*) print_char_cursor#132 = (byte*~) print_char_cursor#164 [phi:test_16s::@2->print_sword#0] -- register_copy 
     // [50] phi (signed word) print_sword::w#10 = (signed word) print_sword::w#1 [phi:test_16s::@2->print_sword#1] -- register_copy 
     jsr print_sword
     // [28] phi from test_16s::@2 to test_16s::@3 [phi:test_16s::@2->test_16s::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // test_16s::@3
-  b3:
+  __b3:
     // [29] call print_str 
     // [79] phi from test_16s::@3 to print_str [phi:test_16s::@3->print_str]
-  print_str_from_b3:
+  print_str_from___b3:
     // [79] phi (byte*) print_str::str#15 = (const string) str [phi:test_16s::@3->print_str#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    jmp b4
+    jmp __b4
     // test_16s::@4
-  b4:
+  __b4:
     // [30] (signed word) print_sword::w#2 ← (signed word) test_16s::divisor#0 -- vwsz1=vwsz2 
     lda.z divisor
     sta.z print_sword.w
@@ -7700,27 +7700,27 @@ test_16s: {
     sta.z print_sword.w+1
     // [31] call print_sword 
     // [50] phi from test_16s::@4 to print_sword [phi:test_16s::@4->print_sword]
-  print_sword_from_b4:
+  print_sword_from___b4:
     // [50] phi (byte*) print_char_cursor#132 = (byte*) print_char_cursor#130 [phi:test_16s::@4->print_sword#0] -- register_copy 
     // [50] phi (signed word) print_sword::w#10 = (signed word) print_sword::w#2 [phi:test_16s::@4->print_sword#1] -- register_copy 
     jsr print_sword
     // [32] phi from test_16s::@4 to test_16s::@5 [phi:test_16s::@4->test_16s::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // test_16s::@5
-  b5:
+  __b5:
     // [33] call print_str 
     // [79] phi from test_16s::@5 to print_str [phi:test_16s::@5->print_str]
-  print_str_from_b5:
+  print_str_from___b5:
     // [79] phi (byte*) print_str::str#15 = (const string) str1 [phi:test_16s::@5->print_str#0] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    jmp b6
+    jmp __b6
     // test_16s::@6
-  b6:
+  __b6:
     // [34] (signed word) print_sword::w#3 ← (signed word) test_16s::res#0 -- vwsz1=vwsz2 
     lda.z res
     sta.z print_sword.w
@@ -7728,27 +7728,27 @@ test_16s: {
     sta.z print_sword.w+1
     // [35] call print_sword 
     // [50] phi from test_16s::@6 to print_sword [phi:test_16s::@6->print_sword]
-  print_sword_from_b6:
+  print_sword_from___b6:
     // [50] phi (byte*) print_char_cursor#132 = (byte*) print_char_cursor#130 [phi:test_16s::@6->print_sword#0] -- register_copy 
     // [50] phi (signed word) print_sword::w#10 = (signed word) print_sword::w#3 [phi:test_16s::@6->print_sword#1] -- register_copy 
     jsr print_sword
     // [36] phi from test_16s::@6 to test_16s::@7 [phi:test_16s::@6->test_16s::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // test_16s::@7
-  b7:
+  __b7:
     // [37] call print_str 
     // [79] phi from test_16s::@7 to print_str [phi:test_16s::@7->print_str]
-  print_str_from_b7:
+  print_str_from___b7:
     // [79] phi (byte*) print_str::str#15 = (const string) str2 [phi:test_16s::@7->print_str#0] -- pbuz1=pbuc1 
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    jmp b8
+    jmp __b8
     // test_16s::@8
-  b8:
+  __b8:
     // [38] (signed word) print_sword::w#4 ← (signed word) rem16s#11 -- vwsz1=vwsz2 
     lda.z rem16s
     sta.z print_sword.w
@@ -7756,32 +7756,32 @@ test_16s: {
     sta.z print_sword.w+1
     // [39] call print_sword 
     // [50] phi from test_16s::@8 to print_sword [phi:test_16s::@8->print_sword]
-  print_sword_from_b8:
+  print_sword_from___b8:
     // [50] phi (byte*) print_char_cursor#132 = (byte*) print_char_cursor#130 [phi:test_16s::@8->print_sword#0] -- register_copy 
     // [50] phi (signed word) print_sword::w#10 = (signed word) print_sword::w#4 [phi:test_16s::@8->print_sword#1] -- register_copy 
     jsr print_sword
     // [40] phi from test_16s::@8 to test_16s::@9 [phi:test_16s::@8->test_16s::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // test_16s::@9
-  b9:
+  __b9:
     // [41] call print_ln 
     // [45] phi from test_16s::@9 to print_ln [phi:test_16s::@9->print_ln]
-  print_ln_from_b9:
+  print_ln_from___b9:
     // [45] phi (byte*) print_line_cursor#39 = (byte*) print_line_cursor#1 [phi:test_16s::@9->print_ln#0] -- register_copy 
     jsr print_ln
-    jmp b10
+    jmp __b10
     // test_16s::@10
-  b10:
+  __b10:
     // [42] (byte) test_16s::i#1 ← ++ (byte) test_16s::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [43] if((byte) test_16s::i#1!=(byte) 6) goto test_16s::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b1_from_b10
-    jmp breturn
+    bne __b1_from___b10
+    jmp __breturn
     // test_16s::@return
-  breturn:
+  __breturn:
     // [44] return 
     rts
     dividends: .word $7fff, $7fff, -$7fff, -$7fff, $7fff, -$7fff
@@ -7791,12 +7791,12 @@ test_16s: {
 // Print a newline
 print_ln: {
     // [46] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  b1_from_print_ln:
-  b1_from_b1:
+  __b1_from_print_ln:
+  __b1_from___b1:
     // [46] phi (byte*) print_line_cursor#20 = (byte*) print_line_cursor#39 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_ln::@1
-  b1:
+  __b1:
     // [47] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#20 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
@@ -7808,15 +7808,15 @@ print_ln: {
     // [48] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#19) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1_from_b1
+    bcc __b1_from___b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1_from_b1
+    bcc __b1_from___b1
   !:
-    jmp breturn
+    jmp __breturn
     // print_ln::@return
-  breturn:
+  __breturn:
     // [49] return 
     rts
 }
@@ -7827,53 +7827,53 @@ print_sword: {
     .label w = 3
     // [51] if((signed word) print_sword::w#10<(signed byte) 0) goto print_sword::@1 -- vwsz1_lt_0_then_la1 
     lda.z w+1
-    bmi b1_from_print_sword
+    bmi __b1_from_print_sword
     // [52] phi from print_sword to print_sword::@3 [phi:print_sword->print_sword::@3]
-  b3_from_print_sword:
-    jmp b3
+  __b3_from_print_sword:
+    jmp __b3
     // print_sword::@3
-  b3:
+  __b3:
     // [53] call print_char 
     // [61] phi from print_sword::@3 to print_char [phi:print_sword::@3->print_char]
-  print_char_from_b3:
+  print_char_from___b3:
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#132 [phi:print_sword::@3->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) ' ' [phi:print_sword::@3->print_char#1] -- vbuaa=vbuc1 
     lda #' '
     jsr print_char
     // [54] phi from print_sword::@3 print_sword::@4 to print_sword::@2 [phi:print_sword::@3/print_sword::@4->print_sword::@2]
-  b2_from_b3:
-  b2_from_b4:
+  __b2_from___b3:
+  __b2_from___b4:
     // [54] phi (signed word) print_sword::w#7 = (signed word) print_sword::w#10 [phi:print_sword::@3/print_sword::@4->print_sword::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // print_sword::@2
-  b2:
+  __b2:
     // [55] (word) print_word::w#0 ← (word)(signed word) print_sword::w#7
     // [56] call print_word 
     // [65] phi from print_sword::@2 to print_word [phi:print_sword::@2->print_word]
-  print_word_from_b2:
+  print_word_from___b2:
     // [65] phi (byte*) print_char_cursor#138 = (byte*) print_char_cursor#19 [phi:print_sword::@2->print_word#0] -- register_copy 
     // [65] phi (word) print_word::w#5 = (word) print_word::w#0 [phi:print_sword::@2->print_word#1] -- register_copy 
     jsr print_word
-    jmp breturn
+    jmp __breturn
     // print_sword::@return
-  breturn:
+  __breturn:
     // [57] return 
     rts
     // [58] phi from print_sword to print_sword::@1 [phi:print_sword->print_sword::@1]
-  b1_from_print_sword:
-    jmp b1
+  __b1_from_print_sword:
+    jmp __b1
     // print_sword::@1
-  b1:
+  __b1:
     // [59] call print_char 
     // [61] phi from print_sword::@1 to print_char [phi:print_sword::@1->print_char]
-  print_char_from_b1:
+  print_char_from___b1:
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#132 [phi:print_sword::@1->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) '-' [phi:print_sword::@1->print_char#1] -- vbuaa=vbuc1 
     lda #'-'
     jsr print_char
-    jmp b4
+    jmp __b4
     // print_sword::@4
-  b4:
+  __b4:
     // [60] (signed word) print_sword::w#0 ← - (signed word) print_sword::w#10 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
@@ -7882,7 +7882,7 @@ print_sword: {
     lda #0
     sbc.z w+1
     sta.z w+1
-    jmp b2_from_b4
+    jmp __b2_from___b4
 }
   // print_char
 // Print a single char
@@ -7896,9 +7896,9 @@ print_char: {
     bne !+
     inc.z print_char_cursor+1
   !:
-    jmp breturn
+    jmp __breturn
     // print_char::@return
-  breturn:
+  __breturn:
     // [64] return 
     rts
 }
@@ -7916,21 +7916,21 @@ print_word: {
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#138 [phi:print_word->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#1 [phi:print_word->print_byte#1] -- register_copy 
     jsr print_byte
-    jmp b1
+    jmp __b1
     // print_word::@1
-  b1:
+  __b1:
     // [68] (byte) print_byte::b#2 ← < (word) print_word::w#5 -- vbuz1=_lo_vwuz2 
     lda.z w
     sta.z print_byte.b
     // [69] call print_byte 
     // [71] phi from print_word::@1 to print_byte [phi:print_word::@1->print_byte]
-  print_byte_from_b1:
+  print_byte_from___b1:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#19 [phi:print_word::@1->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#2 [phi:print_word::@1->print_byte#1] -- register_copy 
     jsr print_byte
-    jmp breturn
+    jmp __breturn
     // print_word::@return
-  breturn:
+  __breturn:
     // [70] return 
     rts
 }
@@ -7954,9 +7954,9 @@ print_byte: {
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#139 [phi:print_byte->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) print_char::ch#4 [phi:print_byte->print_char#1] -- register_copy 
     jsr print_char
-    jmp b1
+    jmp __b1
     // print_byte::@1
-  b1:
+  __b1:
     // [75] (byte~) print_byte::$2 ← (byte) print_byte::b#7 & (byte) $f -- vbuaa=vbuz1_band_vbuc1 
     lda #$f
     and.z b
@@ -7965,13 +7965,13 @@ print_byte: {
     lda print_hextab,y
     // [77] call print_char 
     // [61] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
-  print_char_from_b1:
+  print_char_from___b1:
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#19 [phi:print_byte::@1->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) print_char::ch#5 [phi:print_byte::@1->print_char#1] -- register_copy 
     jsr print_char
-    jmp breturn
+    jmp __breturn
     // print_byte::@return
-  breturn:
+  __breturn:
     // [78] return 
     rts
 }
@@ -7981,25 +7981,25 @@ print_byte: {
 print_str: {
     .label str = 3
     // [80] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
-  b1_from_print_str:
-  b1_from_b2:
+  __b1_from_print_str:
+  __b1_from___b2:
     // [80] phi (byte*) print_char_cursor#130 = (byte*) print_char_cursor#19 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [80] phi (byte*) print_str::str#13 = (byte*) print_str::str#15 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_str::@1
-  b1:
+  __b1:
     // [81] if((byte) 0!=*((byte*) print_str::str#13)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print_str::@return
-  breturn:
+  __breturn:
     // [82] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // [83] *((byte*) print_char_cursor#130) ← *((byte*) print_str::str#13) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
@@ -8015,7 +8015,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // div16s
 // Perform division on two signed 16-bit numbers
@@ -8042,13 +8042,13 @@ div16s: {
     // [88] call divr16s 
     jsr divr16s
     // [89] (signed word) divr16s::return#3 ← (signed word) divr16s::return#2
-    jmp b1
+    jmp __b1
     // div16s::@1
-  b1:
+  __b1:
     // [90] (signed word) div16s::return#0 ← (signed word) divr16s::return#3
-    jmp breturn
+    jmp __breturn
     // div16s::@return
-  breturn:
+  __breturn:
     // [91] return 
     rts
 }
@@ -8060,7 +8060,7 @@ div16s: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // divr16s(signed word zeropage(5) dividend, signed word zeropage(7) divisor)
 divr16s: {
-    .label _16 = $b
+    .label __16 = $b
     .label dividendu = 5
     .label divisoru = 7
     .label resultu = 9
@@ -8069,53 +8069,53 @@ divr16s: {
     .label divisor = 7
     // [92] if((signed word) divr16s::dividend#0<(signed byte) 0) goto divr16s::@1 -- vwsz1_lt_0_then_la1 
     lda.z dividend+1
-    bmi b1
-    jmp b6
+    bmi __b1
+    jmp __b6
     // divr16s::@6
-  b6:
+  __b6:
     // [93] (word~) divr16s::dividendu#8 ← (word)(signed word) divr16s::dividend#0
     // [94] phi from divr16s::@6 to divr16s::@2 [phi:divr16s::@6->divr16s::@2]
-  b2_from_b6:
+  __b2_from___b6:
     // [94] phi (word) divr16s::dividendu#3 = (word~) divr16s::dividendu#8 [phi:divr16s::@6->divr16s::@2#0] -- register_copy 
     // [94] phi (byte) divr16s::neg#3 = (byte) 0 [phi:divr16s::@6->divr16s::@2#1] -- vbuyy=vbuc1 
     ldy #0
-    jmp b2
+    jmp __b2
     // divr16s::@2
-  b2:
+  __b2:
     // [95] if((signed word) divr16s::divisor#0<(signed byte) 0) goto divr16s::@3 -- vwsz1_lt_0_then_la1 
     lda.z divisor+1
-    bmi b3
-    jmp b7
+    bmi __b3
+    jmp __b7
     // divr16s::@7
-  b7:
+  __b7:
     // [96] (word~) divr16s::divisoru#5 ← (word)(signed word) divr16s::divisor#0
     // [97] phi from divr16s::@3 divr16s::@7 to divr16s::@4 [phi:divr16s::@3/divr16s::@7->divr16s::@4]
-  b4_from_b3:
-  b4_from_b7:
+  __b4_from___b3:
+  __b4_from___b7:
     // [97] phi (byte) divr16s::neg#4 = (byte) divr16s::neg#2 [phi:divr16s::@3/divr16s::@7->divr16s::@4#0] -- register_copy 
     // [97] phi (word) divr16s::divisoru#3 = (word~) divr16s::divisoru#4 [phi:divr16s::@3/divr16s::@7->divr16s::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // divr16s::@4
-  b4:
+  __b4:
     // [98] (word) divr16u::dividend#2 ← (word) divr16s::dividendu#3
     // [99] (word) divr16u::divisor#1 ← (word) divr16s::divisoru#3
     // [100] call divr16u 
     // [116] phi from divr16s::@4 to divr16u [phi:divr16s::@4->divr16u]
-  divr16u_from_b4:
+  divr16u_from___b4:
     // [116] phi (word) divr16u::divisor#6 = (word) divr16u::divisor#1 [phi:divr16s::@4->divr16u#0] -- register_copy 
     // [116] phi (word) divr16u::dividend#5 = (word) divr16u::dividend#2 [phi:divr16s::@4->divr16u#1] -- register_copy 
     jsr divr16u
     // [101] (word) divr16u::return#3 ← (word) divr16u::return#0
-    jmp b9
+    jmp __b9
     // divr16s::@9
-  b9:
+  __b9:
     // [102] (word) divr16s::resultu#0 ← (word) divr16u::return#3
     // [103] if((byte) divr16s::neg#4==(byte) 0) goto divr16s::@5 -- vbuyy_eq_0_then_la1 
     cpy #0
-    beq b5
-    jmp b8
+    beq __b5
+    jmp __b8
     // divr16s::@8
-  b8:
+  __b8:
     // [104] (signed word~) divr16s::$16 ← (signed word)(word) rem16u#1
     // [105] (signed word) rem16s#2 ← - (signed word~) divr16s::$16 -- vwsz1=_neg_vwsz1 
     sec
@@ -8134,22 +8134,22 @@ divr16s: {
     sbc.z return+1
     sta.z return+1
     // [107] phi from divr16s::@5 divr16s::@8 to divr16s::@return [phi:divr16s::@5/divr16s::@8->divr16s::@return]
-  breturn_from_b5:
-  breturn_from_b8:
+  __breturn_from___b5:
+  __breturn_from___b8:
     // [107] phi (signed word) rem16s#11 = (signed word~) rem16s#37 [phi:divr16s::@5/divr16s::@8->divr16s::@return#0] -- register_copy 
     // [107] phi (signed word) divr16s::return#2 = (signed word~) divr16s::return#7 [phi:divr16s::@5/divr16s::@8->divr16s::@return#1] -- register_copy 
-    jmp breturn
+    jmp __breturn
     // divr16s::@return
-  breturn:
+  __breturn:
     // [108] return 
     rts
     // divr16s::@5
-  b5:
+  __b5:
     // [109] (signed word~) divr16s::return#7 ← (signed word)(word) divr16s::resultu#0
     // [110] (signed word~) rem16s#37 ← (signed word)(word) rem16u#1
-    jmp breturn_from_b5
+    jmp __breturn_from___b5
     // divr16s::@3
-  b3:
+  __b3:
     // [111] (signed word) divr16s::divisoru#1 ← - (signed word) divr16s::divisor#0 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
@@ -8163,9 +8163,9 @@ divr16s: {
     eor #1
     tay
     // [113] (word~) divr16s::divisoru#4 ← (word)(signed word) divr16s::divisoru#1
-    jmp b4_from_b3
+    jmp __b4_from___b3
     // divr16s::@1
-  b1:
+  __b1:
     // [114] (signed word) divr16s::dividendu#1 ← - (signed word) divr16s::dividend#0 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
@@ -8176,11 +8176,11 @@ divr16s: {
     sta.z dividendu+1
     // [115] (word~) divr16s::dividendu#7 ← (word)(signed word) divr16s::dividendu#1
     // [94] phi from divr16s::@1 to divr16s::@2 [phi:divr16s::@1->divr16s::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [94] phi (word) divr16s::dividendu#3 = (word~) divr16s::dividendu#7 [phi:divr16s::@1->divr16s::@2#0] -- register_copy 
     // [94] phi (byte) divr16s::neg#3 = (byte) 1 [phi:divr16s::@1->divr16s::@2#1] -- vbuyy=vbuc1 
     ldy #1
-    jmp b2
+    jmp __b2
 }
   // divr16u
 // Performs division on two 16 bit unsigned words and an initial remainder
@@ -8195,7 +8195,7 @@ divr16u: {
     .label return = 9
     .label divisor = 7
     // [117] phi from divr16u to divr16u::@1 [phi:divr16u->divr16u::@1]
-  b1_from_divr16u:
+  __b1_from_divr16u:
     // [117] phi (byte) divr16u::i#2 = (byte) 0 [phi:divr16u->divr16u::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [117] phi (word) divr16u::quotient#3 = (byte) 0 [phi:divr16u->divr16u::@1#1] -- vwuz1=vbuc1 
@@ -8209,16 +8209,16 @@ divr16u: {
     sta.z rem
     lda #>0
     sta.z rem+1
-    jmp b1
+    jmp __b1
     // [117] phi from divr16u::@3 to divr16u::@1 [phi:divr16u::@3->divr16u::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [117] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
     // [117] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
     // [117] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
     // [117] phi (word) divr16u::rem#5 = (word) divr16u::rem#11 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // divr16u::@1
-  b1:
+  __b1:
     // [118] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z rem
     rol.z rem+1
@@ -8228,21 +8228,21 @@ divr16u: {
     and #$80
     // [121] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b2_from_b1
-    jmp b4
+    beq __b2_from___b1
+    jmp __b4
     // divr16u::@4
-  b4:
+  __b4:
     // [122] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
     lda #1
     ora.z rem
     sta.z rem
     // [123] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
-  b2_from_b1:
-  b2_from_b4:
+  __b2_from___b1:
+  __b2_from___b4:
     // [123] phi (word) divr16u::rem#6 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // divr16u::@2
-  b2:
+  __b2:
     // [124] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z dividend
     rol.z dividend+1
@@ -8252,15 +8252,15 @@ divr16u: {
     // [126] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
     lda.z rem+1
     cmp.z divisor+1
-    bcc b3_from_b2
+    bcc __b3_from___b2
     bne !+
     lda.z rem
     cmp.z divisor
-    bcc b3_from_b2
+    bcc __b3_from___b2
   !:
-    jmp b5
+    jmp __b5
     // divr16u::@5
-  b5:
+  __b5:
     // [127] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
     inc.z quotient
     bne !+
@@ -8275,25 +8275,25 @@ divr16u: {
     sbc.z divisor+1
     sta.z rem+1
     // [129] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
-  b3_from_b2:
-  b3_from_b5:
+  __b3_from___b2:
+  __b3_from___b5:
     // [129] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
     // [129] phi (word) divr16u::rem#11 = (word) divr16u::rem#6 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // divr16u::@3
-  b3:
+  __b3:
     // [130] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [131] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
-    bne b1_from_b3
-    jmp b6
+    bne __b1_from___b3
+    jmp __b6
     // divr16u::@6
-  b6:
+  __b6:
     // [132] (word) rem16u#1 ← (word) divr16u::rem#11
-    jmp breturn
+    jmp __breturn
     // divr16u::@return
-  breturn:
+  __breturn:
     // [133] return 
     rts
 }
@@ -8304,17 +8304,17 @@ test_8s: {
     .label res = $14
     .label i = $d
     // [135] phi from test_8s to test_8s::@1 [phi:test_8s->test_8s::@1]
-  b1_from_test_8s:
+  __b1_from_test_8s:
     // [135] phi (byte) test_8s::i#10 = (byte) 0 [phi:test_8s->test_8s::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [135] phi from test_8s::@10 to test_8s::@1 [phi:test_8s::@10->test_8s::@1]
-  b1_from_b10:
+  __b1_from___b10:
     // [135] phi (byte) test_8s::i#10 = (byte) test_8s::i#1 [phi:test_8s::@10->test_8s::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // test_8s::@1
-  b1:
+  __b1:
     // [136] (signed byte) test_8s::dividend#0 ← *((const signed byte[]) test_8s::dividends + (byte) test_8s::i#10) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z i
     lda dividends,y
@@ -8330,9 +8330,9 @@ test_8s: {
     // [140] call div8s 
     jsr div8s
     // [141] (signed byte) div8s::return#3 ← (signed byte) div8s::return#2
-    jmp b2
+    jmp __b2
     // test_8s::@2
-  b2:
+  __b2:
     // [142] (signed byte) test_8s::res#0 ← (signed byte) div8s::return#3 -- vbsz1=vbsaa 
     sta.z res
     // [143] (signed byte) print_sbyte::b#1 ← (signed byte) test_8s::dividend#0
@@ -8343,109 +8343,109 @@ test_8s: {
     sta.z print_char_cursor+1
     // [145] call print_sbyte 
     // [163] phi from test_8s::@2 to print_sbyte [phi:test_8s::@2->print_sbyte]
-  print_sbyte_from_b2:
+  print_sbyte_from___b2:
     // [163] phi (byte*) print_char_cursor#135 = (byte*~) print_char_cursor#168 [phi:test_8s::@2->print_sbyte#0] -- register_copy 
     // [163] phi (signed byte) print_sbyte::b#10 = (signed byte) print_sbyte::b#1 [phi:test_8s::@2->print_sbyte#1] -- register_copy 
     jsr print_sbyte
     // [146] phi from test_8s::@2 to test_8s::@3 [phi:test_8s::@2->test_8s::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // test_8s::@3
-  b3:
+  __b3:
     // [147] call print_str 
     // [79] phi from test_8s::@3 to print_str [phi:test_8s::@3->print_str]
-  print_str_from_b3:
+  print_str_from___b3:
     // [79] phi (byte*) print_str::str#15 = (const string) str [phi:test_8s::@3->print_str#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    jmp b4
+    jmp __b4
     // test_8s::@4
-  b4:
+  __b4:
     // [148] (signed byte) print_sbyte::b#2 ← (signed byte) test_8s::divisor#0 -- vbsz1=vbsz2 
     lda.z divisor
     sta.z print_sbyte.b
     // [149] call print_sbyte 
     // [163] phi from test_8s::@4 to print_sbyte [phi:test_8s::@4->print_sbyte]
-  print_sbyte_from_b4:
+  print_sbyte_from___b4:
     // [163] phi (byte*) print_char_cursor#135 = (byte*) print_char_cursor#130 [phi:test_8s::@4->print_sbyte#0] -- register_copy 
     // [163] phi (signed byte) print_sbyte::b#10 = (signed byte) print_sbyte::b#2 [phi:test_8s::@4->print_sbyte#1] -- register_copy 
     jsr print_sbyte
     // [150] phi from test_8s::@4 to test_8s::@5 [phi:test_8s::@4->test_8s::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // test_8s::@5
-  b5:
+  __b5:
     // [151] call print_str 
     // [79] phi from test_8s::@5 to print_str [phi:test_8s::@5->print_str]
-  print_str_from_b5:
+  print_str_from___b5:
     // [79] phi (byte*) print_str::str#15 = (const string) str1 [phi:test_8s::@5->print_str#0] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    jmp b6
+    jmp __b6
     // test_8s::@6
-  b6:
+  __b6:
     // [152] (signed byte) print_sbyte::b#3 ← (signed byte) test_8s::res#0 -- vbsz1=vbsz2 
     lda.z res
     sta.z print_sbyte.b
     // [153] call print_sbyte 
     // [163] phi from test_8s::@6 to print_sbyte [phi:test_8s::@6->print_sbyte]
-  print_sbyte_from_b6:
+  print_sbyte_from___b6:
     // [163] phi (byte*) print_char_cursor#135 = (byte*) print_char_cursor#130 [phi:test_8s::@6->print_sbyte#0] -- register_copy 
     // [163] phi (signed byte) print_sbyte::b#10 = (signed byte) print_sbyte::b#3 [phi:test_8s::@6->print_sbyte#1] -- register_copy 
     jsr print_sbyte
     // [154] phi from test_8s::@6 to test_8s::@7 [phi:test_8s::@6->test_8s::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // test_8s::@7
-  b7:
+  __b7:
     // [155] call print_str 
     // [79] phi from test_8s::@7 to print_str [phi:test_8s::@7->print_str]
-  print_str_from_b7:
+  print_str_from___b7:
     // [79] phi (byte*) print_str::str#15 = (const string) str2 [phi:test_8s::@7->print_str#0] -- pbuz1=pbuc1 
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    jmp b8
+    jmp __b8
     // test_8s::@8
-  b8:
+  __b8:
     // [156] (signed byte) print_sbyte::b#4 ← (signed byte) rem8s#3 -- vbsz1=vbsxx 
     stx.z print_sbyte.b
     // [157] call print_sbyte 
     // [163] phi from test_8s::@8 to print_sbyte [phi:test_8s::@8->print_sbyte]
-  print_sbyte_from_b8:
+  print_sbyte_from___b8:
     // [163] phi (byte*) print_char_cursor#135 = (byte*) print_char_cursor#130 [phi:test_8s::@8->print_sbyte#0] -- register_copy 
     // [163] phi (signed byte) print_sbyte::b#10 = (signed byte) print_sbyte::b#4 [phi:test_8s::@8->print_sbyte#1] -- register_copy 
     jsr print_sbyte
     // [158] phi from test_8s::@8 to test_8s::@9 [phi:test_8s::@8->test_8s::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // test_8s::@9
-  b9:
+  __b9:
     // [159] call print_ln 
     // [45] phi from test_8s::@9 to print_ln [phi:test_8s::@9->print_ln]
-  print_ln_from_b9:
+  print_ln_from___b9:
     // [45] phi (byte*) print_line_cursor#39 = (byte*) print_line_cursor#1 [phi:test_8s::@9->print_ln#0] -- register_copy 
     jsr print_ln
-    jmp b10
+    jmp __b10
     // test_8s::@10
-  b10:
+  __b10:
     // [160] (byte) test_8s::i#1 ← ++ (byte) test_8s::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [161] if((byte) test_8s::i#1!=(byte) 6) goto test_8s::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b1_from_b10
-    jmp breturn
+    bne __b1_from___b10
+    jmp __breturn
     // test_8s::@return
-  breturn:
+  __breturn:
     // [162] return 
     rts
     dividends: .byte $7f, -$7f, -$7f, $7f, $7f, $7f
@@ -8458,60 +8458,60 @@ print_sbyte: {
     .label b = 2
     // [164] if((signed byte) print_sbyte::b#10<(signed byte) 0) goto print_sbyte::@1 -- vbsz1_lt_0_then_la1 
     lda.z b
-    bmi b1_from_print_sbyte
+    bmi __b1_from_print_sbyte
     // [165] phi from print_sbyte to print_sbyte::@3 [phi:print_sbyte->print_sbyte::@3]
-  b3_from_print_sbyte:
-    jmp b3
+  __b3_from_print_sbyte:
+    jmp __b3
     // print_sbyte::@3
-  b3:
+  __b3:
     // [166] call print_char 
     // [61] phi from print_sbyte::@3 to print_char [phi:print_sbyte::@3->print_char]
-  print_char_from_b3:
+  print_char_from___b3:
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#135 [phi:print_sbyte::@3->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) ' ' [phi:print_sbyte::@3->print_char#1] -- vbuaa=vbuc1 
     lda #' '
     jsr print_char
     // [167] phi from print_sbyte::@3 print_sbyte::@4 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2]
-  b2_from_b3:
-  b2_from_b4:
+  __b2_from___b3:
+  __b2_from___b4:
     // [167] phi (signed byte) print_sbyte::b#7 = (signed byte) print_sbyte::b#10 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // print_sbyte::@2
-  b2:
+  __b2:
     // [168] (byte) print_byte::b#0 ← (byte)(signed byte) print_sbyte::b#7
     // [169] call print_byte 
     // [71] phi from print_sbyte::@2 to print_byte [phi:print_sbyte::@2->print_byte]
-  print_byte_from_b2:
+  print_byte_from___b2:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#19 [phi:print_sbyte::@2->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#0 [phi:print_sbyte::@2->print_byte#1] -- register_copy 
     jsr print_byte
-    jmp breturn
+    jmp __breturn
     // print_sbyte::@return
-  breturn:
+  __breturn:
     // [170] return 
     rts
     // [171] phi from print_sbyte to print_sbyte::@1 [phi:print_sbyte->print_sbyte::@1]
-  b1_from_print_sbyte:
-    jmp b1
+  __b1_from_print_sbyte:
+    jmp __b1
     // print_sbyte::@1
-  b1:
+  __b1:
     // [172] call print_char 
     // [61] phi from print_sbyte::@1 to print_char [phi:print_sbyte::@1->print_char]
-  print_char_from_b1:
+  print_char_from___b1:
     // [61] phi (byte*) print_char_cursor#84 = (byte*) print_char_cursor#135 [phi:print_sbyte::@1->print_char#0] -- register_copy 
     // [61] phi (byte) print_char::ch#6 = (byte) '-' [phi:print_sbyte::@1->print_char#1] -- vbuaa=vbuc1 
     lda #'-'
     jsr print_char
-    jmp b4
+    jmp __b4
     // print_sbyte::@4
-  b4:
+  __b4:
     // [173] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#10 -- vbsz1=_neg_vbsz1 
     lda.z b
     eor #$ff
     clc
     adc #1
     sta.z b
-    jmp b2_from_b4
+    jmp __b2_from___b4
 }
   // div8s
 // Perform division on two signed 8-bit numbers
@@ -8525,57 +8525,57 @@ div8s: {
     .label neg = $e
     // [174] if((signed byte) div8s::dividend#0<(signed byte) 0) goto div8s::@1 -- vbsyy_lt_0_then_la1 
     cpy #0
-    bmi b1
-    jmp b6
+    bmi __b1
+    jmp __b6
     // div8s::@6
-  b6:
+  __b6:
     // [175] (byte~) div8s::dividendu#8 ← (byte)(signed byte) div8s::dividend#0
     // [176] phi from div8s::@6 to div8s::@2 [phi:div8s::@6->div8s::@2]
-  b2_from_b6:
+  __b2_from___b6:
     // [176] phi (byte) div8s::dividendu#3 = (byte~) div8s::dividendu#8 [phi:div8s::@6->div8s::@2#0] -- register_copy 
     // [176] phi (byte) div8s::neg#3 = (byte) 0 [phi:div8s::@6->div8s::@2#1] -- vbuz1=vbuc1 
     lda #0
     sta.z neg
-    jmp b2
+    jmp __b2
     // div8s::@2
-  b2:
+  __b2:
     // [177] if((signed byte) div8s::divisor#0<(signed byte) 0) goto div8s::@3 -- vbsxx_lt_0_then_la1 
     cpx #0
-    bmi b3
-    jmp b7
+    bmi __b3
+    jmp __b7
     // div8s::@7
-  b7:
+  __b7:
     // [178] (byte~) div8s::divisoru#5 ← (byte)(signed byte) div8s::divisor#0
     // [179] phi from div8s::@3 div8s::@7 to div8s::@4 [phi:div8s::@3/div8s::@7->div8s::@4]
-  b4_from_b3:
-  b4_from_b7:
+  __b4_from___b3:
+  __b4_from___b7:
     // [179] phi (byte) div8s::neg#4 = (byte) div8s::neg#2 [phi:div8s::@3/div8s::@7->div8s::@4#0] -- register_copy 
     // [179] phi (byte) div8s::divisoru#3 = (byte~) div8s::divisoru#4 [phi:div8s::@3/div8s::@7->div8s::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // div8s::@4
-  b4:
+  __b4:
     // [180] (byte) div8u::dividend#0 ← (byte) div8s::dividendu#3 -- vbuaa=vbuyy 
     tya
     // [181] (byte) div8u::divisor#0 ← (byte) div8s::divisoru#3
     // [182] call div8u 
     // [198] phi from div8s::@4 to div8u [phi:div8s::@4->div8u]
-  div8u_from_b4:
+  div8u_from___b4:
     // [198] phi (byte) div8u::divisor#2 = (byte) div8u::divisor#0 [phi:div8s::@4->div8u#0] -- register_copy 
     // [198] phi (byte) div8u::dividend#2 = (byte) div8u::dividend#0 [phi:div8s::@4->div8u#1] -- register_copy 
     jsr div8u
     // [183] (byte) div8u::return#2 ← (byte) div8u::return#0
-    jmp b9
+    jmp __b9
     // div8s::@9
-  b9:
+  __b9:
     // [184] (byte) div8s::resultu#0 ← (byte) div8u::return#2 -- vbuyy=vbuaa 
     tay
     // [185] if((byte) div8s::neg#4==(byte) 0) goto div8s::@5 -- vbuz1_eq_0_then_la1 
     lda.z neg
     cmp #0
-    beq b5
-    jmp b8
+    beq __b5
+    jmp __b8
     // div8s::@8
-  b8:
+  __b8:
     // [186] (signed byte~) div8s::$11 ← (signed byte)(byte) rem8u#17 -- vbsaa=vbsxx 
     txa
     // [187] (signed byte) rem8s#2 ← - (signed byte~) div8s::$11 -- vbsxx=_neg_vbsaa 
@@ -8589,23 +8589,23 @@ div8s: {
     clc
     adc #1
     // [189] phi from div8s::@5 div8s::@8 to div8s::@return [phi:div8s::@5/div8s::@8->div8s::@return]
-  breturn_from_b5:
-  breturn_from_b8:
+  __breturn_from___b5:
+  __breturn_from___b8:
     // [189] phi (signed byte) rem8s#3 = (signed byte~) rem8s#33 [phi:div8s::@5/div8s::@8->div8s::@return#0] -- register_copy 
     // [189] phi (signed byte) div8s::return#2 = (signed byte~) div8s::return#7 [phi:div8s::@5/div8s::@8->div8s::@return#1] -- register_copy 
-    jmp breturn
+    jmp __breturn
     // div8s::@return
-  breturn:
+  __breturn:
     // [190] return 
     rts
     // div8s::@5
-  b5:
+  __b5:
     // [191] (signed byte~) div8s::return#7 ← (signed byte)(byte) div8s::resultu#0 -- vbsaa=vbsyy 
     tya
     // [192] (signed byte~) rem8s#33 ← (signed byte)(byte) rem8u#17
-    jmp breturn_from_b5
+    jmp __breturn_from___b5
     // div8s::@3
-  b3:
+  __b3:
     // [193] (signed byte) div8s::divisoru#1 ← - (signed byte) div8s::divisor#0 -- vbsxx=_neg_vbsxx 
     txa
     eor #$ff
@@ -8617,9 +8617,9 @@ div8s: {
     eor.z neg
     sta.z neg
     // [195] (byte~) div8s::divisoru#4 ← (byte)(signed byte) div8s::divisoru#1
-    jmp b4_from_b3
+    jmp __b4_from___b3
     // div8s::@1
-  b1:
+  __b1:
     // [196] (signed byte) div8s::dividendu#1 ← - (signed byte) div8s::dividend#0 -- vbsaa=_neg_vbsyy 
     tya
     eor #$ff
@@ -8628,12 +8628,12 @@ div8s: {
     // [197] (byte~) div8s::dividendu#7 ← (byte)(signed byte) div8s::dividendu#1 -- vbuyy=vbuaa 
     tay
     // [176] phi from div8s::@1 to div8s::@2 [phi:div8s::@1->div8s::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [176] phi (byte) div8s::dividendu#3 = (byte~) div8s::dividendu#7 [phi:div8s::@1->div8s::@2#0] -- register_copy 
     // [176] phi (byte) div8s::neg#3 = (byte) 1 [phi:div8s::@1->div8s::@2#1] -- vbuz1=vbuc1 
     lda #1
     sta.z neg
-    jmp b2
+    jmp __b2
 }
   // div8u
 // Performs division on two 8 bit unsigned bytes
@@ -8652,13 +8652,13 @@ div8u: {
     jsr divr8u
     // [202] (byte) divr8u::return#0 ← (byte) divr8u::return#1 -- vbuaa=vbuz1 
     lda.z divr8u.return
-    jmp b1
+    jmp __b1
     // div8u::@1
-  b1:
+  __b1:
     // [203] (byte) div8u::return#0 ← (byte) divr8u::return#0
-    jmp breturn
+    jmp __breturn
     // div8u::@return
-  breturn:
+  __breturn:
     // [204] return 
     rts
 }
@@ -8674,7 +8674,7 @@ divr8u: {
     .label quotient = $16
     .label return = $16
     // [206] phi from divr8u to divr8u::@1 [phi:divr8u->divr8u::@1]
-  b1_from_divr8u:
+  __b1_from_divr8u:
     // [206] phi (byte) divr8u::i#2 = (byte) 0 [phi:divr8u->divr8u::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [206] phi (byte) divr8u::quotient#3 = (byte) 0 [phi:divr8u->divr8u::@1#1] -- vbuz1=vbuc1 
@@ -8683,16 +8683,16 @@ divr8u: {
     // [206] phi (byte) divr8u::dividend#2 = (byte) divr8u::dividend#0 [phi:divr8u->divr8u::@1#2] -- register_copy 
     // [206] phi (byte) divr8u::rem#4 = (byte) 0 [phi:divr8u->divr8u::@1#3] -- vbuyy=vbuc1 
     ldy #0
-    jmp b1
+    jmp __b1
     // [206] phi from divr8u::@3 to divr8u::@1 [phi:divr8u::@3->divr8u::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [206] phi (byte) divr8u::i#2 = (byte) divr8u::i#1 [phi:divr8u::@3->divr8u::@1#0] -- register_copy 
     // [206] phi (byte) divr8u::quotient#3 = (byte) divr8u::return#1 [phi:divr8u::@3->divr8u::@1#1] -- register_copy 
     // [206] phi (byte) divr8u::dividend#2 = (byte) divr8u::dividend#1 [phi:divr8u::@3->divr8u::@1#2] -- register_copy 
     // [206] phi (byte) divr8u::rem#4 = (byte) divr8u::rem#10 [phi:divr8u::@3->divr8u::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // divr8u::@1
-  b1:
+  __b1:
     // [207] (byte) divr8u::rem#1 ← (byte) divr8u::rem#4 << (byte) 1 -- vbuyy=vbuyy_rol_1 
     tya
     asl
@@ -8702,31 +8702,31 @@ divr8u: {
     and.z dividend
     // [209] if((byte~) divr8u::$1==(byte) 0) goto divr8u::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b2_from_b1
-    jmp b4
+    beq __b2_from___b1
+    jmp __b4
     // divr8u::@4
-  b4:
+  __b4:
     // [210] (byte) divr8u::rem#2 ← (byte) divr8u::rem#1 | (byte) 1 -- vbuyy=vbuyy_bor_vbuc1 
     tya
     ora #1
     tay
     // [211] phi from divr8u::@1 divr8u::@4 to divr8u::@2 [phi:divr8u::@1/divr8u::@4->divr8u::@2]
-  b2_from_b1:
-  b2_from_b4:
+  __b2_from___b1:
+  __b2_from___b4:
     // [211] phi (byte) divr8u::rem#5 = (byte) divr8u::rem#1 [phi:divr8u::@1/divr8u::@4->divr8u::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // divr8u::@2
-  b2:
+  __b2:
     // [212] (byte) divr8u::dividend#1 ← (byte) divr8u::dividend#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl.z dividend
     // [213] (byte) divr8u::quotient#1 ← (byte) divr8u::quotient#3 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl.z quotient
     // [214] if((byte) divr8u::rem#5<(byte) divr8u::divisor#0) goto divr8u::@3 -- vbuyy_lt_vbuz1_then_la1 
     cpy.z divisor
-    bcc b3_from_b2
-    jmp b5
+    bcc __b3_from___b2
+    jmp __b5
     // divr8u::@5
-  b5:
+  __b5:
     // [215] (byte) divr8u::quotient#2 ← ++ (byte) divr8u::quotient#1 -- vbuz1=_inc_vbuz1 
     inc.z quotient
     // [216] (byte) divr8u::rem#3 ← (byte) divr8u::rem#5 - (byte) divr8u::divisor#0 -- vbuyy=vbuyy_minus_vbuz1 
@@ -8735,27 +8735,27 @@ divr8u: {
     sbc.z divisor
     tay
     // [217] phi from divr8u::@2 divr8u::@5 to divr8u::@3 [phi:divr8u::@2/divr8u::@5->divr8u::@3]
-  b3_from_b2:
-  b3_from_b5:
+  __b3_from___b2:
+  __b3_from___b5:
     // [217] phi (byte) divr8u::return#1 = (byte) divr8u::quotient#1 [phi:divr8u::@2/divr8u::@5->divr8u::@3#0] -- register_copy 
     // [217] phi (byte) divr8u::rem#10 = (byte) divr8u::rem#5 [phi:divr8u::@2/divr8u::@5->divr8u::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // divr8u::@3
-  b3:
+  __b3:
     // [218] (byte) divr8u::i#1 ← ++ (byte) divr8u::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [219] if((byte) divr8u::i#1!=(byte) 8) goto divr8u::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
-    bne b1_from_b3
-    jmp b6
+    bne __b1_from___b3
+    jmp __b6
     // divr8u::@6
-  b6:
+  __b6:
     // [220] (byte) rem8u#17 ← (byte) divr8u::rem#10 -- vbuxx=vbuyy 
     tya
     tax
-    jmp breturn
+    jmp __breturn
     // divr8u::@return
-  breturn:
+  __breturn:
     // [221] return 
     rts
 }
@@ -8766,17 +8766,17 @@ test_16u: {
     .label res = 9
     .label i = $e
     // [223] phi from test_16u to test_16u::@1 [phi:test_16u->test_16u::@1]
-  b1_from_test_16u:
+  __b1_from_test_16u:
     // [223] phi (byte) test_16u::i#10 = (byte) 0 [phi:test_16u->test_16u::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [223] phi from test_16u::@10 to test_16u::@1 [phi:test_16u::@10->test_16u::@1]
-  b1_from_b10:
+  __b1_from___b10:
     // [223] phi (byte) test_16u::i#10 = (byte) test_16u::i#1 [phi:test_16u::@10->test_16u::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // test_16u::@1
-  b1:
+  __b1:
     // [224] (byte~) test_16u::$11 ← (byte) test_16u::i#10 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z i
     asl
@@ -8796,9 +8796,9 @@ test_16u: {
     // [229] call div16u 
     jsr div16u
     // [230] (word) div16u::return#2 ← (word) div16u::return#0
-    jmp b2
+    jmp __b2
     // test_16u::@2
-  b2:
+  __b2:
     // [231] (word) test_16u::res#0 ← (word) div16u::return#2
     // [232] (word) print_word::w#1 ← (word) test_16u::dividend#0
     // [233] (byte*~) print_char_cursor#173 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
@@ -8808,27 +8808,27 @@ test_16u: {
     sta.z print_char_cursor+1
     // [234] call print_word 
     // [65] phi from test_16u::@2 to print_word [phi:test_16u::@2->print_word]
-  print_word_from_b2:
+  print_word_from___b2:
     // [65] phi (byte*) print_char_cursor#138 = (byte*~) print_char_cursor#173 [phi:test_16u::@2->print_word#0] -- register_copy 
     // [65] phi (word) print_word::w#5 = (word) print_word::w#1 [phi:test_16u::@2->print_word#1] -- register_copy 
     jsr print_word
     // [235] phi from test_16u::@2 to test_16u::@3 [phi:test_16u::@2->test_16u::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // test_16u::@3
-  b3:
+  __b3:
     // [236] call print_str 
     // [79] phi from test_16u::@3 to print_str [phi:test_16u::@3->print_str]
-  print_str_from_b3:
+  print_str_from___b3:
     // [79] phi (byte*) print_str::str#15 = (const string) str [phi:test_16u::@3->print_str#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    jmp b4
+    jmp __b4
     // test_16u::@4
-  b4:
+  __b4:
     // [237] (word) print_word::w#2 ← (word) test_16u::divisor#0 -- vwuz1=vwuz2 
     lda.z divisor
     sta.z print_word.w
@@ -8836,27 +8836,27 @@ test_16u: {
     sta.z print_word.w+1
     // [238] call print_word 
     // [65] phi from test_16u::@4 to print_word [phi:test_16u::@4->print_word]
-  print_word_from_b4:
+  print_word_from___b4:
     // [65] phi (byte*) print_char_cursor#138 = (byte*) print_char_cursor#130 [phi:test_16u::@4->print_word#0] -- register_copy 
     // [65] phi (word) print_word::w#5 = (word) print_word::w#2 [phi:test_16u::@4->print_word#1] -- register_copy 
     jsr print_word
     // [239] phi from test_16u::@4 to test_16u::@5 [phi:test_16u::@4->test_16u::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // test_16u::@5
-  b5:
+  __b5:
     // [240] call print_str 
     // [79] phi from test_16u::@5 to print_str [phi:test_16u::@5->print_str]
-  print_str_from_b5:
+  print_str_from___b5:
     // [79] phi (byte*) print_str::str#15 = (const string) str1 [phi:test_16u::@5->print_str#0] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    jmp b6
+    jmp __b6
     // test_16u::@6
-  b6:
+  __b6:
     // [241] (word) print_word::w#3 ← (word) test_16u::res#0 -- vwuz1=vwuz2 
     lda.z res
     sta.z print_word.w
@@ -8864,27 +8864,27 @@ test_16u: {
     sta.z print_word.w+1
     // [242] call print_word 
     // [65] phi from test_16u::@6 to print_word [phi:test_16u::@6->print_word]
-  print_word_from_b6:
+  print_word_from___b6:
     // [65] phi (byte*) print_char_cursor#138 = (byte*) print_char_cursor#130 [phi:test_16u::@6->print_word#0] -- register_copy 
     // [65] phi (word) print_word::w#5 = (word) print_word::w#3 [phi:test_16u::@6->print_word#1] -- register_copy 
     jsr print_word
     // [243] phi from test_16u::@6 to test_16u::@7 [phi:test_16u::@6->test_16u::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // test_16u::@7
-  b7:
+  __b7:
     // [244] call print_str 
     // [79] phi from test_16u::@7 to print_str [phi:test_16u::@7->print_str]
-  print_str_from_b7:
+  print_str_from___b7:
     // [79] phi (byte*) print_str::str#15 = (const string) str2 [phi:test_16u::@7->print_str#0] -- pbuz1=pbuc1 
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    jmp b8
+    jmp __b8
     // test_16u::@8
-  b8:
+  __b8:
     // [245] (word) print_word::w#4 ← (word) rem16u#1 -- vwuz1=vwuz2 
     lda.z rem16u
     sta.z print_word.w
@@ -8892,32 +8892,32 @@ test_16u: {
     sta.z print_word.w+1
     // [246] call print_word 
     // [65] phi from test_16u::@8 to print_word [phi:test_16u::@8->print_word]
-  print_word_from_b8:
+  print_word_from___b8:
     // [65] phi (byte*) print_char_cursor#138 = (byte*) print_char_cursor#130 [phi:test_16u::@8->print_word#0] -- register_copy 
     // [65] phi (word) print_word::w#5 = (word) print_word::w#4 [phi:test_16u::@8->print_word#1] -- register_copy 
     jsr print_word
     // [247] phi from test_16u::@8 to test_16u::@9 [phi:test_16u::@8->test_16u::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // test_16u::@9
-  b9:
+  __b9:
     // [248] call print_ln 
     // [45] phi from test_16u::@9 to print_ln [phi:test_16u::@9->print_ln]
-  print_ln_from_b9:
+  print_ln_from___b9:
     // [45] phi (byte*) print_line_cursor#39 = (byte*) print_line_cursor#1 [phi:test_16u::@9->print_ln#0] -- register_copy 
     jsr print_ln
-    jmp b10
+    jmp __b10
     // test_16u::@10
-  b10:
+  __b10:
     // [249] (byte) test_16u::i#1 ← ++ (byte) test_16u::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [250] if((byte) test_16u::i#1!=(byte) 6) goto test_16u::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b1_from_b10
-    jmp breturn
+    bne __b1_from___b10
+    jmp __breturn
     // test_16u::@return
-  breturn:
+  __breturn:
     // [251] return 
     rts
     dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
@@ -8946,13 +8946,13 @@ div16u: {
     // [116] phi (word) divr16u::dividend#5 = (word) divr16u::dividend#1 [phi:div16u->divr16u#1] -- register_copy 
     jsr divr16u
     // [255] (word) divr16u::return#2 ← (word) divr16u::return#0
-    jmp b1
+    jmp __b1
     // div16u::@1
-  b1:
+  __b1:
     // [256] (word) div16u::return#0 ← (word) divr16u::return#2
-    jmp breturn
+    jmp __breturn
     // div16u::@return
-  breturn:
+  __breturn:
     // [257] return 
     rts
 }
@@ -8963,7 +8963,7 @@ test_8u: {
     .label res = $16
     .label i = $13
     // [259] phi from test_8u to test_8u::@1 [phi:test_8u->test_8u::@1]
-  b1_from_test_8u:
+  __b1_from_test_8u:
     // [259] phi (byte*) print_line_cursor#41 = (byte*) 1024 [phi:test_8u->test_8u::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z print_line_cursor
@@ -8977,9 +8977,9 @@ test_8u: {
     // [259] phi (byte) test_8u::i#10 = (byte) 0 [phi:test_8u->test_8u::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // test_8u::@1
-  b1:
+  __b1:
     // [260] (byte) test_8u::dividend#0 ← *((const byte[]) test_8u::dividends + (byte) test_8u::i#10) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda dividends,y
@@ -8994,137 +8994,137 @@ test_8u: {
     ldx.z divisor
     // [264] call div8u 
     // [198] phi from test_8u::@1 to div8u [phi:test_8u::@1->div8u]
-  div8u_from_b1:
+  div8u_from___b1:
     // [198] phi (byte) div8u::divisor#2 = (byte) div8u::divisor#1 [phi:test_8u::@1->div8u#0] -- register_copy 
     // [198] phi (byte) div8u::dividend#2 = (byte) div8u::dividend#1 [phi:test_8u::@1->div8u#1] -- register_copy 
     jsr div8u
     // [265] (byte) div8u::return#3 ← (byte) div8u::return#0
-    jmp b2
+    jmp __b2
     // test_8u::@2
-  b2:
+  __b2:
     // [266] (byte) test_8u::res#0 ← (byte) div8u::return#3 -- vbuz1=vbuaa 
     sta.z res
     // [267] (byte) print_byte::b#3 ← (byte) test_8u::dividend#0
     // [268] call print_byte 
     // [71] phi from test_8u::@2 to print_byte [phi:test_8u::@2->print_byte]
-  print_byte_from_b2:
+  print_byte_from___b2:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#141 [phi:test_8u::@2->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#3 [phi:test_8u::@2->print_byte#1] -- register_copy 
     jsr print_byte
     // [269] phi from test_8u::@2 to test_8u::@3 [phi:test_8u::@2->test_8u::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // test_8u::@3
-  b3:
+  __b3:
     // [270] call print_str 
     // [79] phi from test_8u::@3 to print_str [phi:test_8u::@3->print_str]
-  print_str_from_b3:
+  print_str_from___b3:
     // [79] phi (byte*) print_str::str#15 = (const string) str [phi:test_8u::@3->print_str#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    jmp b4
+    jmp __b4
     // test_8u::@4
-  b4:
+  __b4:
     // [271] (byte) print_byte::b#4 ← (byte) test_8u::divisor#0 -- vbuz1=vbuz2 
     lda.z divisor
     sta.z print_byte.b
     // [272] call print_byte 
     // [71] phi from test_8u::@4 to print_byte [phi:test_8u::@4->print_byte]
-  print_byte_from_b4:
+  print_byte_from___b4:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#130 [phi:test_8u::@4->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#4 [phi:test_8u::@4->print_byte#1] -- register_copy 
     jsr print_byte
     // [273] phi from test_8u::@4 to test_8u::@5 [phi:test_8u::@4->test_8u::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // test_8u::@5
-  b5:
+  __b5:
     // [274] call print_str 
     // [79] phi from test_8u::@5 to print_str [phi:test_8u::@5->print_str]
-  print_str_from_b5:
+  print_str_from___b5:
     // [79] phi (byte*) print_str::str#15 = (const string) str1 [phi:test_8u::@5->print_str#0] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    jmp b6
+    jmp __b6
     // test_8u::@6
-  b6:
+  __b6:
     // [275] (byte) print_byte::b#5 ← (byte) test_8u::res#0 -- vbuz1=vbuz2 
     lda.z res
     sta.z print_byte.b
     // [276] call print_byte 
     // [71] phi from test_8u::@6 to print_byte [phi:test_8u::@6->print_byte]
-  print_byte_from_b6:
+  print_byte_from___b6:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#130 [phi:test_8u::@6->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#5 [phi:test_8u::@6->print_byte#1] -- register_copy 
     jsr print_byte
     // [277] phi from test_8u::@6 to test_8u::@7 [phi:test_8u::@6->test_8u::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // test_8u::@7
-  b7:
+  __b7:
     // [278] call print_str 
     // [79] phi from test_8u::@7 to print_str [phi:test_8u::@7->print_str]
-  print_str_from_b7:
+  print_str_from___b7:
     // [79] phi (byte*) print_str::str#15 = (const string) str2 [phi:test_8u::@7->print_str#0] -- pbuz1=pbuc1 
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    jmp b8
+    jmp __b8
     // test_8u::@8
-  b8:
+  __b8:
     // [279] (byte) print_byte::b#6 ← (byte) rem8u#17 -- vbuz1=vbuxx 
     stx.z print_byte.b
     // [280] call print_byte 
     // [71] phi from test_8u::@8 to print_byte [phi:test_8u::@8->print_byte]
-  print_byte_from_b8:
+  print_byte_from___b8:
     // [71] phi (byte*) print_char_cursor#139 = (byte*) print_char_cursor#130 [phi:test_8u::@8->print_byte#0] -- register_copy 
     // [71] phi (byte) print_byte::b#7 = (byte) print_byte::b#6 [phi:test_8u::@8->print_byte#1] -- register_copy 
     jsr print_byte
     // [281] phi from test_8u::@8 to test_8u::@9 [phi:test_8u::@8->test_8u::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // test_8u::@9
-  b9:
+  __b9:
     // [282] call print_ln 
     // [45] phi from test_8u::@9 to print_ln [phi:test_8u::@9->print_ln]
-  print_ln_from_b9:
+  print_ln_from___b9:
     // [45] phi (byte*) print_line_cursor#39 = (byte*) print_line_cursor#41 [phi:test_8u::@9->print_ln#0] -- register_copy 
     jsr print_ln
-    jmp b10
+    jmp __b10
     // test_8u::@10
-  b10:
+  __b10:
     // [283] (byte) test_8u::i#1 ← ++ (byte) test_8u::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [284] if((byte) test_8u::i#1!=(byte) 6) goto test_8u::@11 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b11
-    jmp breturn
+    bne __b11
+    jmp __breturn
     // test_8u::@return
-  breturn:
+  __breturn:
     // [285] return 
     rts
     // test_8u::@11
-  b11:
+  __b11:
     // [286] (byte*~) print_char_cursor#190 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     // [259] phi from test_8u::@11 to test_8u::@1 [phi:test_8u::@11->test_8u::@1]
-  b1_from_b11:
+  __b1_from___b11:
     // [259] phi (byte*) print_line_cursor#41 = (byte*) print_line_cursor#1 [phi:test_8u::@11->test_8u::@1#0] -- register_copy 
     // [259] phi (byte*) print_char_cursor#141 = (byte*~) print_char_cursor#190 [phi:test_8u::@11->test_8u::@1#1] -- register_copy 
     // [259] phi (byte) test_8u::i#10 = (byte) test_8u::i#1 [phi:test_8u::@11->test_8u::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     dividends: .byte $ff, $ff, $ff, $ff, $ff, $ff
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
@@ -9135,9 +9135,9 @@ print_cls: {
     // [290] phi from print_cls to memset [phi:print_cls->memset]
   memset_from_print_cls:
     jsr memset
-    jmp breturn
+    jmp __breturn
     // print_cls::@return
-  breturn:
+  __breturn:
     // [289] return 
     rts
 }
@@ -9150,29 +9150,29 @@ memset: {
     .label end = str+num
     .label dst = $f
     // [291] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
+  __b1_from_memset:
     // [291] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [292] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [293] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // [294] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
@@ -9183,9 +9183,9 @@ memset: {
     inc.z dst+1
   !:
     // [291] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [291] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
@@ -9197,113 +9197,113 @@ memset: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp b7
-Removing instruction jmp b8
-Removing instruction jmp b9
-Removing instruction jmp b10
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b3
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b4
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b6
-Removing instruction jmp b2
-Removing instruction jmp b7
-Removing instruction jmp b4
-Removing instruction jmp b9
-Removing instruction jmp b8
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b4
-Removing instruction jmp b2
-Removing instruction jmp b5
-Removing instruction jmp b3
-Removing instruction jmp b6
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp b7
-Removing instruction jmp b8
-Removing instruction jmp b9
-Removing instruction jmp b10
-Removing instruction jmp breturn
-Removing instruction jmp b3
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b4
-Removing instruction jmp b6
-Removing instruction jmp b2
-Removing instruction jmp b7
-Removing instruction jmp b4
-Removing instruction jmp b9
-Removing instruction jmp b8
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b4
-Removing instruction jmp b2
-Removing instruction jmp b5
-Removing instruction jmp b3
-Removing instruction jmp b6
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp b7
-Removing instruction jmp b8
-Removing instruction jmp b9
-Removing instruction jmp b10
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp b7
-Removing instruction jmp b8
-Removing instruction jmp b9
-Removing instruction jmp b10
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __b7
+Removing instruction jmp __b8
+Removing instruction jmp __b9
+Removing instruction jmp __b10
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b6
+Removing instruction jmp __b2
+Removing instruction jmp __b7
+Removing instruction jmp __b4
+Removing instruction jmp __b9
+Removing instruction jmp __b8
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b4
+Removing instruction jmp __b2
+Removing instruction jmp __b5
+Removing instruction jmp __b3
+Removing instruction jmp __b6
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __b7
+Removing instruction jmp __b8
+Removing instruction jmp __b9
+Removing instruction jmp __b10
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b4
+Removing instruction jmp __b6
+Removing instruction jmp __b2
+Removing instruction jmp __b7
+Removing instruction jmp __b4
+Removing instruction jmp __b9
+Removing instruction jmp __b8
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b4
+Removing instruction jmp __b2
+Removing instruction jmp __b5
+Removing instruction jmp __b3
+Removing instruction jmp __b6
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __b7
+Removing instruction jmp __b8
+Removing instruction jmp __b9
+Removing instruction jmp __b10
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __b7
+Removing instruction jmp __b8
+Removing instruction jmp __b9
+Removing instruction jmp __b10
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Replacing instruction lda #<0 with TXA
@@ -9316,251 +9316,252 @@ Replacing instruction lda #0 with TXA
 Replacing instruction ldy #0 with TAY
 Removing instruction ldy.z i
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b10 with b1
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_print_sword with b1
-Replacing label b2_from_b4 with b2
-Replacing label b1_from_b2 with b1
-Replacing label breturn_from_b5 with breturn
-Replacing label b4_from_b3 with b4
-Replacing label b2_from_b1 with b2
-Replacing label b3_from_b2 with b3
-Replacing label b3_from_b2 with b3
-Replacing label b1_from_b3 with b1
-Replacing label b1_from_b10 with b1
-Replacing label b1_from_print_sbyte with b1
-Replacing label b2_from_b4 with b2
-Replacing label breturn_from_b5 with breturn
-Replacing label b4_from_b3 with b4
-Replacing label b2_from_b1 with b2
-Replacing label b3_from_b2 with b3
-Replacing label b1_from_b3 with b1
-Replacing label b1_from_b10 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction test_8u_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction test_16u_from_b2:
-Removing instruction b3_from_b2:
-Removing instruction test_8s_from_b3:
-Removing instruction b4_from_b3:
-Removing instruction test_16s_from_b4:
-Removing instruction b1_from_b10:
-Removing instruction b3_from_b2:
-Removing instruction print_str_from_b3:
-Removing instruction b5_from_b4:
-Removing instruction print_str_from_b5:
-Removing instruction b7_from_b6:
-Removing instruction print_str_from_b7:
-Removing instruction b9_from_b8:
-Removing instruction print_ln_from_b9:
-Removing instruction b1_from_print_ln:
-Removing instruction b1_from_b1:
-Removing instruction b3_from_print_sword:
-Removing instruction print_char_from_b3:
-Removing instruction b2_from_b3:
-Removing instruction b2_from_b4:
-Removing instruction print_word_from_b2:
-Removing instruction b1_from_print_sword:
-Removing instruction print_char_from_b1:
-Removing instruction b1_from_print_str:
-Removing instruction b1_from_b2:
-Removing instruction breturn:
-Removing instruction b2_from_b6:
-Removing instruction b7:
-Removing instruction b4_from_b3:
-Removing instruction b4_from_b7:
-Removing instruction divr16u_from_b4:
-Removing instruction breturn_from_b5:
-Removing instruction breturn_from_b8:
-Removing instruction b1_from_b3:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b4:
-Removing instruction b3_from_b2:
-Removing instruction b3_from_b5:
-Removing instruction breturn:
-Removing instruction b1_from_b10:
-Removing instruction b3_from_b2:
-Removing instruction print_str_from_b3:
-Removing instruction b5_from_b4:
-Removing instruction print_str_from_b5:
-Removing instruction b7_from_b6:
-Removing instruction print_str_from_b7:
-Removing instruction b9_from_b8:
-Removing instruction print_ln_from_b9:
-Removing instruction b3_from_print_sbyte:
-Removing instruction print_char_from_b3:
-Removing instruction b2_from_b3:
-Removing instruction b2_from_b4:
-Removing instruction print_byte_from_b2:
-Removing instruction b1_from_print_sbyte:
-Removing instruction print_char_from_b1:
-Removing instruction b2_from_b6:
-Removing instruction b7:
-Removing instruction b4_from_b3:
-Removing instruction b4_from_b7:
-Removing instruction breturn_from_b5:
-Removing instruction breturn_from_b8:
-Removing instruction breturn:
-Removing instruction b1_from_b3:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b4:
-Removing instruction b3_from_b2:
-Removing instruction b3_from_b5:
-Removing instruction b1_from_b10:
-Removing instruction b3_from_b2:
-Removing instruction print_str_from_b3:
-Removing instruction b5_from_b4:
-Removing instruction print_str_from_b5:
-Removing instruction b7_from_b6:
-Removing instruction print_str_from_b7:
-Removing instruction b9_from_b8:
-Removing instruction print_ln_from_b9:
-Removing instruction breturn:
-Removing instruction b3_from_b2:
-Removing instruction print_str_from_b3:
-Removing instruction b5_from_b4:
-Removing instruction print_str_from_b5:
-Removing instruction b7_from_b6:
-Removing instruction print_str_from_b7:
-Removing instruction b9_from_b8:
-Removing instruction print_ln_from_b9:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b10 with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from_print_sword with __b1
+Replacing label __b2_from___b4 with __b2
+Replacing label __b1_from___b2 with __b1
+Replacing label __breturn_from___b5 with __breturn
+Replacing label __b4_from___b3 with __b4
+Replacing label __b2_from___b1 with __b2
+Replacing label __b3_from___b2 with __b3
+Replacing label __b3_from___b2 with __b3
+Replacing label __b1_from___b3 with __b1
+Replacing label __b1_from___b10 with __b1
+Replacing label __b1_from_print_sbyte with __b1
+Replacing label __b2_from___b4 with __b2
+Replacing label __breturn_from___b5 with __breturn
+Replacing label __b4_from___b3 with __b4
+Replacing label __b2_from___b1 with __b2
+Replacing label __b3_from___b2 with __b3
+Replacing label __b1_from___b3 with __b1
+Replacing label __b1_from___b10 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction test_8u_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction test_16u_from___b2:
+Removing instruction __b3_from___b2:
+Removing instruction test_8s_from___b3:
+Removing instruction __b4_from___b3:
+Removing instruction test_16s_from___b4:
+Removing instruction __b1_from___b10:
+Removing instruction __b3_from___b2:
+Removing instruction print_str_from___b3:
+Removing instruction __b5_from___b4:
+Removing instruction print_str_from___b5:
+Removing instruction __b7_from___b6:
+Removing instruction print_str_from___b7:
+Removing instruction __b9_from___b8:
+Removing instruction print_ln_from___b9:
+Removing instruction __b1_from_print_ln:
+Removing instruction __b1_from___b1:
+Removing instruction __b3_from_print_sword:
+Removing instruction print_char_from___b3:
+Removing instruction __b2_from___b3:
+Removing instruction __b2_from___b4:
+Removing instruction print_word_from___b2:
+Removing instruction __b1_from_print_sword:
+Removing instruction print_char_from___b1:
+Removing instruction __b1_from_print_str:
+Removing instruction __b1_from___b2:
+Removing instruction __breturn:
+Removing instruction __b2_from___b6:
+Removing instruction __b7:
+Removing instruction __b4_from___b3:
+Removing instruction __b4_from___b7:
+Removing instruction divr16u_from___b4:
+Removing instruction __breturn_from___b5:
+Removing instruction __breturn_from___b8:
+Removing instruction __b1_from___b3:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b4:
+Removing instruction __b3_from___b2:
+Removing instruction __b3_from___b5:
+Removing instruction __breturn:
+Removing instruction __b1_from___b10:
+Removing instruction __b3_from___b2:
+Removing instruction print_str_from___b3:
+Removing instruction __b5_from___b4:
+Removing instruction print_str_from___b5:
+Removing instruction __b7_from___b6:
+Removing instruction print_str_from___b7:
+Removing instruction __b9_from___b8:
+Removing instruction print_ln_from___b9:
+Removing instruction __b3_from_print_sbyte:
+Removing instruction print_char_from___b3:
+Removing instruction __b2_from___b3:
+Removing instruction __b2_from___b4:
+Removing instruction print_byte_from___b2:
+Removing instruction __b1_from_print_sbyte:
+Removing instruction print_char_from___b1:
+Removing instruction __b2_from___b6:
+Removing instruction __b7:
+Removing instruction __b4_from___b3:
+Removing instruction __b4_from___b7:
+Removing instruction __breturn_from___b5:
+Removing instruction __breturn_from___b8:
+Removing instruction __breturn:
+Removing instruction __b1_from___b3:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b4:
+Removing instruction __b3_from___b2:
+Removing instruction __b3_from___b5:
+Removing instruction __b1_from___b10:
+Removing instruction __b3_from___b2:
+Removing instruction print_str_from___b3:
+Removing instruction __b5_from___b4:
+Removing instruction print_str_from___b5:
+Removing instruction __b7_from___b6:
+Removing instruction print_str_from___b7:
+Removing instruction __b9_from___b8:
+Removing instruction print_ln_from___b9:
+Removing instruction __breturn:
+Removing instruction __b3_from___b2:
+Removing instruction print_str_from___b3:
+Removing instruction __b5_from___b4:
+Removing instruction print_str_from___b5:
+Removing instruction __b7_from___b6:
+Removing instruction print_str_from___b7:
+Removing instruction __b9_from___b8:
+Removing instruction print_ln_from___b9:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction print_cls_from_main:
-Removing instruction b1:
-Removing instruction b2:
-Removing instruction b3:
-Removing instruction b4:
-Removing instruction breturn:
-Removing instruction b1_from_test_16s:
-Removing instruction b2:
-Removing instruction print_sword_from_b2:
-Removing instruction b3:
-Removing instruction b4:
-Removing instruction print_sword_from_b4:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction print_sword_from_b6:
-Removing instruction b7:
-Removing instruction b8:
-Removing instruction print_sword_from_b8:
-Removing instruction b9:
-Removing instruction b10:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction b4:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction __b3:
+Removing instruction __b4:
+Removing instruction __breturn:
+Removing instruction __b1_from_test_16s:
+Removing instruction __b2:
+Removing instruction print_sword_from___b2:
+Removing instruction __b3:
+Removing instruction __b4:
+Removing instruction print_sword_from___b4:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction print_sword_from___b6:
+Removing instruction __b7:
+Removing instruction __b8:
+Removing instruction print_sword_from___b8:
+Removing instruction __b9:
+Removing instruction __b10:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b4:
+Removing instruction __breturn:
 Removing instruction print_byte_from_print_word:
-Removing instruction b1:
-Removing instruction print_byte_from_b1:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction print_byte_from___b1:
+Removing instruction __breturn:
 Removing instruction print_char_from_print_byte:
-Removing instruction b1:
-Removing instruction print_char_from_b1:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction b1:
-Removing instruction b6:
-Removing instruction b9:
-Removing instruction b8:
-Removing instruction b2_from_b1:
-Removing instruction b1_from_divr16u:
-Removing instruction b4:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction b1_from_test_8s:
-Removing instruction b2:
-Removing instruction print_sbyte_from_b2:
-Removing instruction b3:
-Removing instruction b4:
-Removing instruction print_sbyte_from_b4:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction print_sbyte_from_b6:
-Removing instruction b7:
-Removing instruction b8:
-Removing instruction print_sbyte_from_b8:
-Removing instruction b9:
-Removing instruction b10:
-Removing instruction breturn:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction b4:
-Removing instruction b6:
-Removing instruction div8u_from_b4:
-Removing instruction b9:
-Removing instruction b8:
-Removing instruction b2_from_b1:
+Removing instruction __b1:
+Removing instruction print_char_from___b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __b1:
+Removing instruction __b6:
+Removing instruction __b9:
+Removing instruction __b8:
+Removing instruction __b2_from___b1:
+Removing instruction __b1_from_divr16u:
+Removing instruction __b4:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction __b1_from_test_8s:
+Removing instruction __b2:
+Removing instruction print_sbyte_from___b2:
+Removing instruction __b3:
+Removing instruction __b4:
+Removing instruction print_sbyte_from___b4:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction print_sbyte_from___b6:
+Removing instruction __b7:
+Removing instruction __b8:
+Removing instruction print_sbyte_from___b8:
+Removing instruction __b9:
+Removing instruction __b10:
+Removing instruction __breturn:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b4:
+Removing instruction __b6:
+Removing instruction div8u_from___b4:
+Removing instruction __b9:
+Removing instruction __b8:
+Removing instruction __b2_from___b1:
 Removing instruction divr8u_from_div8u:
-Removing instruction b1:
-Removing instruction b1_from_divr8u:
-Removing instruction b4:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction breturn:
-Removing instruction b1_from_test_16u:
-Removing instruction b2:
-Removing instruction print_word_from_b2:
-Removing instruction b3:
-Removing instruction b4:
-Removing instruction print_word_from_b4:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction print_word_from_b6:
-Removing instruction b7:
-Removing instruction b8:
-Removing instruction print_word_from_b8:
-Removing instruction b9:
-Removing instruction b10:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __b1_from_divr8u:
+Removing instruction __b4:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction __breturn:
+Removing instruction __b1_from_test_16u:
+Removing instruction __b2:
+Removing instruction print_word_from___b2:
+Removing instruction __b3:
+Removing instruction __b4:
+Removing instruction print_word_from___b4:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction print_word_from___b6:
+Removing instruction __b7:
+Removing instruction __b8:
+Removing instruction print_word_from___b8:
+Removing instruction __b9:
+Removing instruction __b10:
+Removing instruction __breturn:
 Removing instruction divr16u_from_div16u:
-Removing instruction b1:
-Removing instruction b1_from_test_8u:
-Removing instruction div8u_from_b1:
-Removing instruction b2:
-Removing instruction print_byte_from_b2:
-Removing instruction b3:
-Removing instruction b4:
-Removing instruction print_byte_from_b4:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction print_byte_from_b6:
-Removing instruction b7:
-Removing instruction b8:
-Removing instruction print_byte_from_b8:
-Removing instruction b9:
-Removing instruction b10:
-Removing instruction breturn:
-Removing instruction b1_from_b11:
+Removing instruction __b1:
+Removing instruction __b1_from_test_8u:
+Removing instruction div8u_from___b1:
+Removing instruction __b2:
+Removing instruction print_byte_from___b2:
+Removing instruction __b3:
+Removing instruction __b4:
+Removing instruction print_byte_from___b4:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction print_byte_from___b6:
+Removing instruction __b7:
+Removing instruction __b8:
+Removing instruction print_byte_from___b8:
+Removing instruction __b9:
+Removing instruction __b10:
+Removing instruction __breturn:
+Removing instruction __b1_from___b11:
 Removing instruction memset_from_print_cls:
-Removing instruction breturn:
-Removing instruction b1_from_memset:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
+Removing instruction __breturn:
+Removing instruction __b1_from_memset:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Skipping double jump to breturn in beq b5
-Replacing jump to rts with rts in jmp breturn
-Replacing jump to rts with rts in jmp breturn
+Skipping double jump to __breturn in beq __b5
+Replacing jump to rts with rts in jmp __breturn
+Replacing jump to rts with rts in jmp __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Removing instruction jmp b1
-Removing instruction jmp b1
-Removing instruction jmp b1
-Removing instruction jmp b1
-Removing instruction jmp b1
+Removing instruction jmp __b1
+Removing instruction jmp __b1
+Removing instruction jmp __b1
+Removing instruction jmp __b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
-Removing instruction b5:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __b5:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing unreachable instruction rts
 Succesful ASM optimization Pass5UnreachableCodeElimination
@@ -10094,7 +10095,7 @@ test_16s: {
     // [16] phi from test_16s::@10 to test_16s::@1 [phi:test_16s::@10->test_16s::@1]
     // [16] phi (byte) test_16s::i#10 = (byte) test_16s::i#1 [phi:test_16s::@10->test_16s::@1#0] -- register_copy 
     // test_16s::@1
-  b1:
+  __b1:
     // dividend = dividends[i]
     // [17] (byte~) test_16s::$11 ← (byte) test_16s::i#10 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z i
@@ -10216,7 +10217,7 @@ test_16s: {
     // [43] if((byte) test_16s::i#1!=(byte) 6) goto test_16s::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b1
+    bne __b1
     // test_16s::@return
     // }
     // [44] return 
@@ -10230,7 +10231,7 @@ print_ln: {
     // [46] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
     // [46] phi (byte*) print_line_cursor#20 = (byte*) print_line_cursor#39 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
     // print_ln::@1
-  b1:
+  __b1:
     // print_line_cursor + $28
     // [47] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#20 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
@@ -10244,11 +10245,11 @@ print_ln: {
     // [48] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#19) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     // print_ln::@return
     // }
@@ -10263,7 +10264,7 @@ print_sword: {
     // if(w<0)
     // [51] if((signed word) print_sword::w#10<(signed byte) 0) goto print_sword::@1 -- vwsz1_lt_0_then_la1 
     lda.z w+1
-    bmi b1
+    bmi __b1
     // [52] phi from print_sword to print_sword::@3 [phi:print_sword->print_sword::@3]
     // print_sword::@3
     // print_char(' ')
@@ -10276,7 +10277,7 @@ print_sword: {
     // [54] phi from print_sword::@3 print_sword::@4 to print_sword::@2 [phi:print_sword::@3/print_sword::@4->print_sword::@2]
     // [54] phi (signed word) print_sword::w#7 = (signed word) print_sword::w#10 [phi:print_sword::@3/print_sword::@4->print_sword::@2#0] -- register_copy 
     // print_sword::@2
-  b2:
+  __b2:
     // print_word((word)w)
     // [55] (word) print_word::w#0 ← (word)(signed word) print_sword::w#7
     // [56] call print_word 
@@ -10290,7 +10291,7 @@ print_sword: {
     rts
     // [58] phi from print_sword to print_sword::@1 [phi:print_sword->print_sword::@1]
     // print_sword::@1
-  b1:
+  __b1:
     // print_char('-')
     // [59] call print_char 
     // [61] phi from print_sword::@1 to print_char [phi:print_sword::@1->print_char]
@@ -10308,7 +10309,7 @@ print_sword: {
     lda #0
     sbc.z w+1
     sta.z w+1
-    jmp b2
+    jmp __b2
 }
   // print_char
 // Print a single char
@@ -10407,19 +10408,19 @@ print_str: {
     // [80] phi (byte*) print_char_cursor#130 = (byte*) print_char_cursor#19 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [80] phi (byte*) print_str::str#13 = (byte*) print_str::str#15 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
     // print_str::@1
-  b1:
+  __b1:
     // while(*str)
     // [81] if((byte) 0!=*((byte*) print_str::str#13)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     // print_str::@return
     // }
     // [82] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // *(print_char_cursor++) = *(str++)
     // [83] *((byte*) print_char_cursor#130) ← *((byte*) print_str::str#13) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -10436,7 +10437,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
   // div16s
 // Perform division on two signed 16-bit numbers
@@ -10479,7 +10480,7 @@ div16s: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // divr16s(signed word zeropage(5) dividend, signed word zeropage(7) divisor)
 divr16s: {
-    .label _16 = $b
+    .label __16 = $b
     .label dividendu = 5
     .label divisoru = 7
     .label resultu = 9
@@ -10489,7 +10490,7 @@ divr16s: {
     // if(dividend<0 || rem<0)
     // [92] if((signed word) divr16s::dividend#0<(signed byte) 0) goto divr16s::@1 -- vwsz1_lt_0_then_la1 
     lda.z dividend+1
-    bmi b1
+    bmi __b1
     // divr16s::@6
     // [93] (word~) divr16s::dividendu#8 ← (word)(signed word) divr16s::dividend#0
     // [94] phi from divr16s::@6 to divr16s::@2 [phi:divr16s::@6->divr16s::@2]
@@ -10497,18 +10498,18 @@ divr16s: {
     // [94] phi (byte) divr16s::neg#3 = (byte) 0 [phi:divr16s::@6->divr16s::@2#1] -- vbuyy=vbuc1 
     ldy #0
     // divr16s::@2
-  b2:
+  __b2:
     // if(divisor<0)
     // [95] if((signed word) divr16s::divisor#0<(signed byte) 0) goto divr16s::@3 -- vwsz1_lt_0_then_la1 
     lda.z divisor+1
-    bmi b3
+    bmi __b3
     // divr16s::@7
     // [96] (word~) divr16s::divisoru#5 ← (word)(signed word) divr16s::divisor#0
     // [97] phi from divr16s::@3 divr16s::@7 to divr16s::@4 [phi:divr16s::@3/divr16s::@7->divr16s::@4]
     // [97] phi (byte) divr16s::neg#4 = (byte) divr16s::neg#2 [phi:divr16s::@3/divr16s::@7->divr16s::@4#0] -- register_copy 
     // [97] phi (word) divr16s::divisoru#3 = (word~) divr16s::divisoru#4 [phi:divr16s::@3/divr16s::@7->divr16s::@4#1] -- register_copy 
     // divr16s::@4
-  b4:
+  __b4:
     // divr16u(dividendu, divisoru, remu)
     // [98] (word) divr16u::dividend#2 ← (word) divr16s::dividendu#3
     // [99] (word) divr16u::divisor#1 ← (word) divr16s::divisoru#3
@@ -10525,7 +10526,7 @@ divr16s: {
     // if(neg==0)
     // [103] if((byte) divr16s::neg#4==(byte) 0) goto divr16s::@5 -- vbuyy_eq_0_then_la1 
     cpy #0
-    beq breturn
+    beq __breturn
     // divr16s::@8
     // (signed word)rem16u
     // [104] (signed word~) divr16s::$16 ← (signed word)(word) rem16u#1
@@ -10551,7 +10552,7 @@ divr16s: {
     // [107] phi (signed word) rem16s#11 = (signed word~) rem16s#37 [phi:divr16s::@5/divr16s::@8->divr16s::@return#0] -- register_copy 
     // [107] phi (signed word) divr16s::return#2 = (signed word~) divr16s::return#7 [phi:divr16s::@5/divr16s::@8->divr16s::@return#1] -- register_copy 
     // divr16s::@return
-  breturn:
+  __breturn:
     // }
     // [108] return 
     rts
@@ -10559,7 +10560,7 @@ divr16s: {
     // [109] (signed word~) divr16s::return#7 ← (signed word)(word) divr16s::resultu#0
     // [110] (signed word~) rem16s#37 ← (signed word)(word) rem16u#1
     // divr16s::@3
-  b3:
+  __b3:
     // -divisor
     // [111] (signed word) divr16s::divisoru#1 ← - (signed word) divr16s::divisor#0 -- vwsz1=_neg_vwsz1 
     sec
@@ -10575,9 +10576,9 @@ divr16s: {
     eor #1
     tay
     // [113] (word~) divr16s::divisoru#4 ← (word)(signed word) divr16s::divisoru#1
-    jmp b4
+    jmp __b4
     // divr16s::@1
-  b1:
+  __b1:
     // -dividend
     // [114] (signed word) divr16s::dividendu#1 ← - (signed word) divr16s::dividend#0 -- vwsz1=_neg_vwsz1 
     sec
@@ -10592,7 +10593,7 @@ divr16s: {
     // [94] phi (word) divr16s::dividendu#3 = (word~) divr16s::dividendu#7 [phi:divr16s::@1->divr16s::@2#0] -- register_copy 
     // [94] phi (byte) divr16s::neg#3 = (byte) 1 [phi:divr16s::@1->divr16s::@2#1] -- vbuyy=vbuc1 
     ldy #1
-    jmp b2
+    jmp __b2
 }
   // divr16u
 // Performs division on two 16 bit unsigned words and an initial remainder
@@ -10623,7 +10624,7 @@ divr16u: {
     // [117] phi (word) divr16u::dividend#3 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
     // [117] phi (word) divr16u::rem#5 = (word) divr16u::rem#11 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
     // divr16u::@1
-  b1:
+  __b1:
     // rem = rem << 1
     // [118] (word) divr16u::rem#0 ← (word) divr16u::rem#5 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z rem
@@ -10637,7 +10638,7 @@ divr16u: {
     // if( (>dividend & $80) != 0 )
     // [121] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b2
+    beq __b2
     // divr16u::@4
     // rem = rem | 1
     // [122] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
@@ -10647,7 +10648,7 @@ divr16u: {
     // [123] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
     // [123] phi (word) divr16u::rem#6 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
     // divr16u::@2
-  b2:
+  __b2:
     // dividend = dividend << 1
     // [124] (word) divr16u::dividend#0 ← (word) divr16u::dividend#3 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z dividend
@@ -10660,11 +10661,11 @@ divr16u: {
     // [126] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
     lda.z rem+1
     cmp.z divisor+1
-    bcc b3
+    bcc __b3
     bne !+
     lda.z rem
     cmp.z divisor
-    bcc b3
+    bcc __b3
   !:
     // divr16u::@5
     // quotient++;
@@ -10686,13 +10687,13 @@ divr16u: {
     // [129] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
     // [129] phi (word) divr16u::rem#11 = (word) divr16u::rem#6 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
     // divr16u::@3
-  b3:
+  __b3:
     // for( byte i : 0..15)
     // [130] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [131] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
-    bne b1
+    bne __b1
     // divr16u::@6
     // rem16u = rem
     // [132] (word) rem16u#1 ← (word) divr16u::rem#11
@@ -10714,7 +10715,7 @@ test_8s: {
     // [135] phi from test_8s::@10 to test_8s::@1 [phi:test_8s::@10->test_8s::@1]
     // [135] phi (byte) test_8s::i#10 = (byte) test_8s::i#1 [phi:test_8s::@10->test_8s::@1#0] -- register_copy 
     // test_8s::@1
-  b1:
+  __b1:
     // dividend = dividends[i]
     // [136] (signed byte) test_8s::dividend#0 ← *((const signed byte[]) test_8s::dividends + (byte) test_8s::i#10) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z i
@@ -10825,7 +10826,7 @@ test_8s: {
     // [161] if((byte) test_8s::i#1!=(byte) 6) goto test_8s::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b1
+    bne __b1
     // test_8s::@return
     // }
     // [162] return 
@@ -10841,7 +10842,7 @@ print_sbyte: {
     // if(b<0)
     // [164] if((signed byte) print_sbyte::b#10<(signed byte) 0) goto print_sbyte::@1 -- vbsz1_lt_0_then_la1 
     lda.z b
-    bmi b1
+    bmi __b1
     // [165] phi from print_sbyte to print_sbyte::@3 [phi:print_sbyte->print_sbyte::@3]
     // print_sbyte::@3
     // print_char(' ')
@@ -10854,7 +10855,7 @@ print_sbyte: {
     // [167] phi from print_sbyte::@3 print_sbyte::@4 to print_sbyte::@2 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2]
     // [167] phi (signed byte) print_sbyte::b#7 = (signed byte) print_sbyte::b#10 [phi:print_sbyte::@3/print_sbyte::@4->print_sbyte::@2#0] -- register_copy 
     // print_sbyte::@2
-  b2:
+  __b2:
     // print_byte((byte)b)
     // [168] (byte) print_byte::b#0 ← (byte)(signed byte) print_sbyte::b#7
     // [169] call print_byte 
@@ -10868,7 +10869,7 @@ print_sbyte: {
     rts
     // [171] phi from print_sbyte to print_sbyte::@1 [phi:print_sbyte->print_sbyte::@1]
     // print_sbyte::@1
-  b1:
+  __b1:
     // print_char('-')
     // [172] call print_char 
     // [61] phi from print_sbyte::@1 to print_char [phi:print_sbyte::@1->print_char]
@@ -10884,7 +10885,7 @@ print_sbyte: {
     clc
     adc #1
     sta.z b
-    jmp b2
+    jmp __b2
 }
   // div8s
 // Perform division on two signed 8-bit numbers
@@ -10899,7 +10900,7 @@ div8s: {
     // if(dividend<0)
     // [174] if((signed byte) div8s::dividend#0<(signed byte) 0) goto div8s::@1 -- vbsyy_lt_0_then_la1 
     cpy #0
-    bmi b1
+    bmi __b1
     // div8s::@6
     // [175] (byte~) div8s::dividendu#8 ← (byte)(signed byte) div8s::dividend#0
     // [176] phi from div8s::@6 to div8s::@2 [phi:div8s::@6->div8s::@2]
@@ -10908,18 +10909,18 @@ div8s: {
     lda #0
     sta.z neg
     // div8s::@2
-  b2:
+  __b2:
     // if(divisor<0)
     // [177] if((signed byte) div8s::divisor#0<(signed byte) 0) goto div8s::@3 -- vbsxx_lt_0_then_la1 
     cpx #0
-    bmi b3
+    bmi __b3
     // div8s::@7
     // [178] (byte~) div8s::divisoru#5 ← (byte)(signed byte) div8s::divisor#0
     // [179] phi from div8s::@3 div8s::@7 to div8s::@4 [phi:div8s::@3/div8s::@7->div8s::@4]
     // [179] phi (byte) div8s::neg#4 = (byte) div8s::neg#2 [phi:div8s::@3/div8s::@7->div8s::@4#0] -- register_copy 
     // [179] phi (byte) div8s::divisoru#3 = (byte~) div8s::divisoru#4 [phi:div8s::@3/div8s::@7->div8s::@4#1] -- register_copy 
     // div8s::@4
-  b4:
+  __b4:
     // div8u(dividendu, divisoru)
     // [180] (byte) div8u::dividend#0 ← (byte) div8s::dividendu#3 -- vbuaa=vbuyy 
     tya
@@ -10939,7 +10940,7 @@ div8s: {
     // [185] if((byte) div8s::neg#4==(byte) 0) goto div8s::@5 -- vbuz1_eq_0_then_la1 
     lda.z neg
     cmp #0
-    beq b5
+    beq __b5
     // div8s::@8
     // (signed byte)rem8u
     // [186] (signed byte~) div8s::$11 ← (signed byte)(byte) rem8u#17 -- vbsaa=vbsxx 
@@ -10964,13 +10965,13 @@ div8s: {
     // [190] return 
     rts
     // div8s::@5
-  b5:
+  __b5:
     // [191] (signed byte~) div8s::return#7 ← (signed byte)(byte) div8s::resultu#0 -- vbsaa=vbsyy 
     tya
     // [192] (signed byte~) rem8s#33 ← (signed byte)(byte) rem8u#17
     rts
     // div8s::@3
-  b3:
+  __b3:
     // -divisor
     // [193] (signed byte) div8s::divisoru#1 ← - (signed byte) div8s::divisor#0 -- vbsxx=_neg_vbsxx 
     txa
@@ -10984,9 +10985,9 @@ div8s: {
     eor.z neg
     sta.z neg
     // [195] (byte~) div8s::divisoru#4 ← (byte)(signed byte) div8s::divisoru#1
-    jmp b4
+    jmp __b4
     // div8s::@1
-  b1:
+  __b1:
     // -dividend
     // [196] (signed byte) div8s::dividendu#1 ← - (signed byte) div8s::dividend#0 -- vbsaa=_neg_vbsyy 
     tya
@@ -11000,7 +11001,7 @@ div8s: {
     // [176] phi (byte) div8s::neg#3 = (byte) 1 [phi:div8s::@1->div8s::@2#1] -- vbuz1=vbuc1 
     lda #1
     sta.z neg
-    jmp b2
+    jmp __b2
 }
   // div8u
 // Performs division on two 8 bit unsigned bytes
@@ -11053,7 +11054,7 @@ divr8u: {
     // [206] phi (byte) divr8u::dividend#2 = (byte) divr8u::dividend#1 [phi:divr8u::@3->divr8u::@1#2] -- register_copy 
     // [206] phi (byte) divr8u::rem#4 = (byte) divr8u::rem#10 [phi:divr8u::@3->divr8u::@1#3] -- register_copy 
     // divr8u::@1
-  b1:
+  __b1:
     // rem = rem << 1
     // [207] (byte) divr8u::rem#1 ← (byte) divr8u::rem#4 << (byte) 1 -- vbuyy=vbuyy_rol_1 
     tya
@@ -11066,7 +11067,7 @@ divr8u: {
     // if( (dividend & $80) != 0 )
     // [209] if((byte~) divr8u::$1==(byte) 0) goto divr8u::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b2
+    beq __b2
     // divr8u::@4
     // rem = rem | 1
     // [210] (byte) divr8u::rem#2 ← (byte) divr8u::rem#1 | (byte) 1 -- vbuyy=vbuyy_bor_vbuc1 
@@ -11076,7 +11077,7 @@ divr8u: {
     // [211] phi from divr8u::@1 divr8u::@4 to divr8u::@2 [phi:divr8u::@1/divr8u::@4->divr8u::@2]
     // [211] phi (byte) divr8u::rem#5 = (byte) divr8u::rem#1 [phi:divr8u::@1/divr8u::@4->divr8u::@2#0] -- register_copy 
     // divr8u::@2
-  b2:
+  __b2:
     // dividend = dividend << 1
     // [212] (byte) divr8u::dividend#1 ← (byte) divr8u::dividend#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl.z dividend
@@ -11086,7 +11087,7 @@ divr8u: {
     // if(rem>=divisor)
     // [214] if((byte) divr8u::rem#5<(byte) divr8u::divisor#0) goto divr8u::@3 -- vbuyy_lt_vbuz1_then_la1 
     cpy.z divisor
-    bcc b3
+    bcc __b3
     // divr8u::@5
     // quotient++;
     // [215] (byte) divr8u::quotient#2 ← ++ (byte) divr8u::quotient#1 -- vbuz1=_inc_vbuz1 
@@ -11101,13 +11102,13 @@ divr8u: {
     // [217] phi (byte) divr8u::return#1 = (byte) divr8u::quotient#1 [phi:divr8u::@2/divr8u::@5->divr8u::@3#0] -- register_copy 
     // [217] phi (byte) divr8u::rem#10 = (byte) divr8u::rem#5 [phi:divr8u::@2/divr8u::@5->divr8u::@3#1] -- register_copy 
     // divr8u::@3
-  b3:
+  __b3:
     // for( byte i : 0..7)
     // [218] (byte) divr8u::i#1 ← ++ (byte) divr8u::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [219] if((byte) divr8u::i#1!=(byte) 8) goto divr8u::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
-    bne b1
+    bne __b1
     // divr8u::@6
     // rem8u = rem
     // [220] (byte) rem8u#17 ← (byte) divr8u::rem#10 -- vbuxx=vbuyy 
@@ -11131,7 +11132,7 @@ test_16u: {
     // [223] phi from test_16u::@10 to test_16u::@1 [phi:test_16u::@10->test_16u::@1]
     // [223] phi (byte) test_16u::i#10 = (byte) test_16u::i#1 [phi:test_16u::@10->test_16u::@1#0] -- register_copy 
     // test_16u::@1
-  b1:
+  __b1:
     // dividend = dividends[i]
     // [224] (byte~) test_16u::$11 ← (byte) test_16u::i#10 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z i
@@ -11253,7 +11254,7 @@ test_16u: {
     // [250] if((byte) test_16u::i#1!=(byte) 6) goto test_16u::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b1
+    bne __b1
     // test_16u::@return
     // }
     // [251] return 
@@ -11313,7 +11314,7 @@ test_8u: {
     lda #0
     sta.z i
     // test_8u::@1
-  b1:
+  __b1:
     // dividend = dividends[i]
     // [260] (byte) test_8u::dividend#0 ← *((const byte[]) test_8u::dividends + (byte) test_8u::i#10) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
@@ -11422,13 +11423,13 @@ test_8u: {
     // [284] if((byte) test_8u::i#1!=(byte) 6) goto test_8u::@11 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b11
+    bne __b11
     // test_8u::@return
     // }
     // [285] return 
     rts
     // test_8u::@11
-  b11:
+  __b11:
     // [286] (byte*~) print_char_cursor#190 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -11438,7 +11439,7 @@ test_8u: {
     // [259] phi (byte*) print_line_cursor#41 = (byte*) print_line_cursor#1 [phi:test_8u::@11->test_8u::@1#0] -- register_copy 
     // [259] phi (byte*) print_char_cursor#141 = (byte*~) print_char_cursor#190 [phi:test_8u::@11->test_8u::@1#1] -- register_copy 
     // [259] phi (byte) test_8u::i#10 = (byte) test_8u::i#1 [phi:test_8u::@11->test_8u::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     dividends: .byte $ff, $ff, $ff, $ff, $ff, $ff
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
@@ -11469,21 +11470,21 @@ memset: {
     lda #>str
     sta.z dst+1
     // memset::@1
-  b1:
+  __b1:
     // for(char* dst = str; dst!=end; dst++)
     // [292] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     // memset::@return
     // }
     // [293] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // *dst = c
     // [294] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
@@ -11497,7 +11498,7 @@ memset: {
   !:
     // [291] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
     // [291] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
   print_hextab: .text "0123456789abcdef"

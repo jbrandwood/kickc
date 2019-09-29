@@ -22,7 +22,7 @@ main: {
     sta.z cursor
     lda #>SCREEN+y0*$28+x0
     sta.z cursor+1
-  b1:
+  __b1:
     lda #STAR
     ldy #0
     sta (cursor),y
@@ -34,7 +34,7 @@ main: {
     txa
     axs #-[yd]
     cpx #xd
-    bcc b2
+    bcc __b2
     inc.z y
     lda #$28
     clc
@@ -45,9 +45,9 @@ main: {
   !:
     txa
     axs #xd
-  b2:
+  __b2:
     lda.z x
     cmp #x1+1
-    bcc b1
+    bcc __b1
     rts
 }

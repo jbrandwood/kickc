@@ -277,43 +277,43 @@ Target platform is c64basic / MOS6502X
 // http://8bitworkshop.com/blog/compilers/2019/03/17/cc65-optimization.html
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
-    .label _0 = 7
-    .label _2 = 9
+    .label __0 = 7
+    .label __2 = 9
     .label idx = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z idx
-    jmp b1
+    jmp __b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (word) getValue::index#0 ← (byte) main::idx#2 -- vwuz1=vbuz2 
     lda.z idx
     sta.z getValue.index
@@ -326,71 +326,71 @@ main: {
     sta.z getValue.return
     lda.z getValue.return_1+1
     sta.z getValue.return+1
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (word~) main::$0 ← (word) getValue::return#0 -- vwuz1=vwuz2 
     lda.z getValue.return
-    sta.z _0
+    sta.z __0
     lda.z getValue.return+1
-    sta.z _0+1
+    sta.z __0+1
     // [10] (byte~) main::$2 ← (byte) main::idx#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z idx
     asl
-    sta.z _2
+    sta.z __2
     // [11] *((const word*) main::SCREEN + (byte~) main::$2) ← (word~) main::$0 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy.z _2
-    lda.z _0
+    ldy.z __2
+    lda.z __0
     sta SCREEN,y
-    lda.z _0+1
+    lda.z __0+1
     sta SCREEN+1,y
     // [12] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz1 
     inc.z idx
     // [13] if((byte) main::idx#1!=(byte) $81) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$81
     cmp.z idx
-    bne b1_from_b2
-    jmp breturn
+    bne __b1_from___b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
   // getValue
 // getValue(word zeropage(3) index)
 getValue: {
-    .label _0 = $a
-    .label _1 = $c
-    .label _2 = $d
-    .label _4 = $b
+    .label __0 = $a
+    .label __1 = $c
+    .label __2 = $d
+    .label __4 = $b
     .label index = 3
     .label return = 5
     .label return_1 = $e
     // [15] (byte~) getValue::$0 ← (word) getValue::index#0 & (byte) $7f -- vbuz1=vwuz2_band_vbuc1 
     lda #$7f
     and.z index
-    sta.z _0
+    sta.z __0
     // [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda.z _0
+    lda.z __0
     asl
-    sta.z _4
+    sta.z __4
     // [17] (byte~) getValue::$1 ← *((const word[$80]) arr16 + (byte~) getValue::$4) & (byte) $ff -- vbuz1=pwuc1_derefidx_vbuz2_band_vbuc2 
     lda #$ff
-    ldy.z _4
+    ldy.z __4
     and arr16,y
-    sta.z _1
+    sta.z __1
     // [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
-    lda.z _1
+    lda.z __1
     lsr
-    sta.z _2
+    sta.z __2
     // [19] (word) getValue::return#1 ← (word)(byte~) getValue::$2 -- vwuz1=_word_vbuz2 
-    lda.z _2
+    lda.z __2
     sta.z return_1
     lda #0
     sta.z return_1+1
-    jmp breturn
+    jmp __breturn
     // getValue::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
 }
@@ -450,40 +450,40 @@ ASSEMBLER BEFORE OPTIMIZATION
 // http://8bitworkshop.com/blog/compilers/2019/03/17/cc65-optimization.html
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
-    .label _0 = 4
+    .label __0 = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (word) getValue::index#0 ← (byte) main::idx#2 -- vwuz1=vbuxx 
     txa
     sta.z getValue.index
@@ -492,27 +492,27 @@ main: {
     // [7] call getValue 
     jsr getValue
     // [8] (word) getValue::return#0 ← (word) getValue::return#1
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (word~) main::$0 ← (word) getValue::return#0
     // [10] (byte~) main::$2 ← (byte) main::idx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // [11] *((const word*) main::SCREEN + (byte~) main::$2) ← (word~) main::$0 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
-    lda.z _0
+    lda.z __0
     sta SCREEN,y
-    lda.z _0+1
+    lda.z __0+1
     sta SCREEN+1,y
     // [12] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
     inx
     // [13] if((byte) main::idx#1!=(byte) $81) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$81
-    bne b1_from_b2
-    jmp breturn
+    bne __b1_from___b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -536,9 +536,9 @@ getValue: {
     sta.z return
     lda #0
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // getValue::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
 }
@@ -546,32 +546,33 @@ getValue: {
   arr16: .fill 2*$80, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b2 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -632,14 +633,14 @@ Score: 502
   // main
 main: {
     .label SCREEN = $400
-    .label _0 = 4
+    .label __0 = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [5] phi (byte) main::idx#2 = (byte) main::idx#1 [phi:main::@2->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // getValue(idx)
     // [6] (word) getValue::index#0 ← (byte) main::idx#2 -- vwuz1=vbuxx 
     txa
@@ -657,16 +658,16 @@ main: {
     asl
     // [11] *((const word*) main::SCREEN + (byte~) main::$2) ← (word~) main::$0 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
-    lda.z _0
+    lda.z __0
     sta SCREEN,y
-    lda.z _0+1
+    lda.z __0+1
     sta SCREEN+1,y
     // for(unsigned char idx : 0..128)
     // [12] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
     inx
     // [13] if((byte) main::idx#1!=(byte) $81) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$81
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [14] return 

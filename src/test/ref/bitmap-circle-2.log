@@ -1316,7 +1316,7 @@ Target platform is c64basic / MOS6502X
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label BORDERCOL = $d020
@@ -1329,21 +1329,21 @@ Target platform is c64basic / MOS6502X
   .label SCREEN = $400
   .label BITMAP = $2000
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label i = 2
@@ -1365,13 +1365,13 @@ main: {
     sta.z fill.addr+1
     jsr fill
     // [6] phi from main to main::@4 [phi:main->main::@4]
-  b4_from_main:
-    jmp b4
+  __b4_from_main:
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [7] call fill 
     // [76] phi from main::@4 to fill [phi:main::@4->fill]
-  fill_from_b4:
+  fill_from___b4:
     // [76] phi (byte) fill::val#4 = (byte) $16 [phi:main::@4->fill#0] -- vbuz1=vbuc1 
     lda #$16
     sta.z fill.val
@@ -1386,9 +1386,9 @@ main: {
     lda #>SCREEN
     sta.z fill.addr+1
     jsr fill
-    jmp b5
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [8] *((const byte*) BORDERCOL) ← (const byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BORDERCOL
@@ -1399,15 +1399,15 @@ main: {
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VIC_MEMORY
     // [11] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [11] phi (signed word) main::i#2 = (signed byte) 1 [phi:main::@5->main::@1#0] -- vwsz1=vbsc1 
     lda #<1
     sta.z i
     lda #>1
     sta.z i+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [12] if((signed word) main::i#2<(signed word) $b4) goto main::@2 -- vwsz1_lt_vwsc1_then_la1 
     lda.z i
     cmp #<$b4
@@ -1416,16 +1416,16 @@ main: {
     bvc !+
     eor #$80
   !:
-    bmi b2
+    bmi __b2
     // [13] phi from main::@1 main::@3 to main::@3 [phi:main::@1/main::@3->main::@3]
-  b3_from_b1:
-  b3_from_b3:
-    jmp b3
+  __b3_from___b1:
+  __b3_from___b3:
+    jmp __b3
     // main::@3
-  b3:
-    jmp b3_from_b3
+  __b3:
+    jmp __b3_from___b3
     // main::@2
-  b2:
+  __b2:
     // [14] (signed word) circle::r#0 ← (signed word) main::i#2 -- vwsz1=vwsz2 
     lda.z i
     sta.z circle.r
@@ -1433,9 +1433,9 @@ main: {
     sta.z circle.r+1
     // [15] call circle 
     jsr circle
-    jmp b6
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [16] (signed word) main::i#1 ← (signed word) main::i#2 + (signed byte) 5 -- vwsz1=vwsz1_plus_vbsc1 
     lda.z i
     clc
@@ -1445,21 +1445,21 @@ main: {
     adc #>5
     sta.z i+1
     // [11] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
-  b1_from_b6:
+  __b1_from___b6:
     // [11] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@6->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // circle
 // circle(signed word zeropage(6) r)
 circle: {
     .const xc = $a0
     .const yc = $64
-    .label _0 = $13
-    .label _5 = $15
-    .label _6 = $17
-    .label _7 = $19
-    .label _9 = $1b
-    .label _10 = $1d
+    .label __0 = $13
+    .label __5 = $15
+    .label __6 = $17
+    .label __7 = $19
+    .label __9 = $1b
+    .label __10 = $1d
     .label r = 6
     .label p = 8
     .label y = 6
@@ -1467,20 +1467,20 @@ circle: {
     // [17] (signed word~) circle::$0 ← (signed word) circle::r#0 << (signed byte) 1 -- vwsz1=vwsz2_rol_1 
     lda.z r
     asl
-    sta.z _0
+    sta.z __0
     lda.z r+1
     rol
-    sta.z _0+1
+    sta.z __0+1
     // [18] (signed word) circle::p#0 ← (signed byte) 3 - (signed word~) circle::$0 -- vwsz1=vwuc1_minus_vwsz2 
     sec
     lda #<3
-    sbc.z _0
+    sbc.z __0
     sta.z p
     lda #>3
-    sbc.z _0+1
+    sbc.z __0+1
     sta.z p+1
     // [19] phi from circle to circle::@1 [phi:circle->circle::@1]
-  b1_from_circle:
+  __b1_from_circle:
     // [19] phi (signed word) circle::p#3 = (signed word) circle::p#0 [phi:circle->circle::@1#0] -- register_copy 
     // [19] phi (signed word) circle::y#13 = (signed word) circle::r#0 [phi:circle->circle::@1#1] -- register_copy 
     // [19] phi (signed word) circle::x1#10 = (signed byte) 0 [phi:circle->circle::@1#2] -- vwsz1=vbsc1 
@@ -1488,9 +1488,9 @@ circle: {
     sta.z x1
     lda #>0
     sta.z x1+1
-    jmp b1
+    jmp __b1
     // circle::@1
-  b1:
+  __b1:
     // [20] if((signed word) circle::x1#10<=(signed word) circle::y#13) goto circle::@2 -- vwsz1_le_vwsz2_then_la1 
     lda.z y
     cmp.z x1
@@ -1499,20 +1499,20 @@ circle: {
     bvc !+
     eor #$80
   !:
-    bpl b2
-    jmp breturn
+    bpl __b2
+    jmp __breturn
     // circle::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
     // circle::@2
-  b2:
+  __b2:
     // [22] if((signed word) circle::p#3<(signed byte) 0) goto circle::@3 -- vwsz1_lt_0_then_la1 
     lda.z p+1
-    bmi b3
-    jmp b5
+    bmi __b3
+    jmp __b5
     // circle::@5
-  b5:
+  __b5:
     // [23] (signed word) circle::y#1 ← (signed word) circle::y#13 - (signed byte) 1 -- vwsz1=vwsz1_minus_1 
     sec
     lda.z y
@@ -1525,43 +1525,43 @@ circle: {
     lda.z x1
     sec
     sbc.z y
-    sta.z _5
+    sta.z __5
     lda.z x1+1
     sbc.z y+1
-    sta.z _5+1
+    sta.z __5+1
     // [25] (signed word~) circle::$6 ← (signed word~) circle::$5 << (signed byte) 2 -- vwsz1=vwsz2_rol_2 
-    lda.z _5
+    lda.z __5
     asl
-    sta.z _6
-    lda.z _5+1
+    sta.z __6
+    lda.z __5+1
     rol
-    sta.z _6+1
-    asl.z _6
-    rol.z _6+1
+    sta.z __6+1
+    asl.z __6
+    rol.z __6+1
     // [26] (signed word~) circle::$7 ← (signed word) circle::p#3 + (signed word~) circle::$6 -- vwsz1=vwsz2_plus_vwsz3 
     lda.z p
     clc
-    adc.z _6
-    sta.z _7
+    adc.z __6
+    sta.z __7
     lda.z p+1
-    adc.z _6+1
-    sta.z _7+1
+    adc.z __6+1
+    sta.z __7+1
     // [27] (signed word) circle::p#2 ← (signed word~) circle::$7 + (signed byte) $a -- vwsz1=vwsz2_plus_vbsc1 
-    lda.z _7
+    lda.z __7
     clc
     adc #<$a
     sta.z p
-    lda.z _7+1
+    lda.z __7+1
     adc #>$a
     sta.z p+1
     // [28] phi from circle::@3 circle::@5 to circle::@4 [phi:circle::@3/circle::@5->circle::@4]
-  b4_from_b3:
-  b4_from_b5:
+  __b4_from___b3:
+  __b4_from___b5:
     // [28] phi (signed word) circle::p#10 = (signed word) circle::p#1 [phi:circle::@3/circle::@5->circle::@4#0] -- register_copy 
     // [28] phi (signed word) circle::y#10 = (signed word) circle::y#13 [phi:circle::@3/circle::@5->circle::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // circle::@4
-  b4:
+  __b4:
     // [29] (signed word) plot::x#0 ← (const signed word) circle::xc#0 + (signed word) circle::x1#10 -- vwsz1=vwsc1_plus_vwsz2 
     lda.z x1
     clc
@@ -1580,13 +1580,13 @@ circle: {
     sta.z plot.y+1
     // [31] call plot 
     // [57] phi from circle::@4 to plot [phi:circle::@4->plot]
-  plot_from_b4:
+  plot_from___b4:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#0 [phi:circle::@4->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#0 [phi:circle::@4->plot#1] -- register_copy 
     jsr plot
-    jmp b6
+    jmp __b6
     // circle::@6
-  b6:
+  __b6:
     // [32] (signed word) plot::x#1 ← (const signed word) circle::xc#0 - (signed word) circle::x1#10 -- vwsz1=vwsc1_minus_vwsz2 
     lda #<xc
     sec
@@ -1605,13 +1605,13 @@ circle: {
     sta.z plot.y+1
     // [34] call plot 
     // [57] phi from circle::@6 to plot [phi:circle::@6->plot]
-  plot_from_b6:
+  plot_from___b6:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#1 [phi:circle::@6->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#1 [phi:circle::@6->plot#1] -- register_copy 
     jsr plot
-    jmp b7
+    jmp __b7
     // circle::@7
-  b7:
+  __b7:
     // [35] (signed word) plot::x#2 ← (const signed word) circle::xc#0 + (signed word) circle::x1#10 -- vwsz1=vwsc1_plus_vwsz2 
     lda.z x1
     clc
@@ -1630,13 +1630,13 @@ circle: {
     sta.z plot.y+1
     // [37] call plot 
     // [57] phi from circle::@7 to plot [phi:circle::@7->plot]
-  plot_from_b7:
+  plot_from___b7:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#2 [phi:circle::@7->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#2 [phi:circle::@7->plot#1] -- register_copy 
     jsr plot
-    jmp b8
+    jmp __b8
     // circle::@8
-  b8:
+  __b8:
     // [38] (signed word) plot::x#3 ← (const signed word) circle::xc#0 - (signed word) circle::x1#10 -- vwsz1=vwsc1_minus_vwsz2 
     lda #<xc
     sec
@@ -1655,13 +1655,13 @@ circle: {
     sta.z plot.y+1
     // [40] call plot 
     // [57] phi from circle::@8 to plot [phi:circle::@8->plot]
-  plot_from_b8:
+  plot_from___b8:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#3 [phi:circle::@8->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#3 [phi:circle::@8->plot#1] -- register_copy 
     jsr plot
-    jmp b9
+    jmp __b9
     // circle::@9
-  b9:
+  __b9:
     // [41] (signed word) plot::x#4 ← (const signed word) circle::xc#0 + (signed word) circle::y#10 -- vwsz1=vwsc1_plus_vwsz2 
     lda.z y
     clc
@@ -1680,13 +1680,13 @@ circle: {
     sta.z plot.y+1
     // [43] call plot 
     // [57] phi from circle::@9 to plot [phi:circle::@9->plot]
-  plot_from_b9:
+  plot_from___b9:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#4 [phi:circle::@9->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#4 [phi:circle::@9->plot#1] -- register_copy 
     jsr plot
-    jmp b10
+    jmp __b10
     // circle::@10
-  b10:
+  __b10:
     // [44] (signed word) plot::x#5 ← (const signed word) circle::xc#0 - (signed word) circle::y#10 -- vwsz1=vwsc1_minus_vwsz2 
     lda #<xc
     sec
@@ -1705,13 +1705,13 @@ circle: {
     sta.z plot.y+1
     // [46] call plot 
     // [57] phi from circle::@10 to plot [phi:circle::@10->plot]
-  plot_from_b10:
+  plot_from___b10:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#5 [phi:circle::@10->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#5 [phi:circle::@10->plot#1] -- register_copy 
     jsr plot
-    jmp b11
+    jmp __b11
     // circle::@11
-  b11:
+  __b11:
     // [47] (signed word) plot::x#6 ← (const signed word) circle::xc#0 + (signed word) circle::y#10 -- vwsz1=vwsc1_plus_vwsz2 
     lda.z y
     clc
@@ -1730,13 +1730,13 @@ circle: {
     sta.z plot.y+1
     // [49] call plot 
     // [57] phi from circle::@11 to plot [phi:circle::@11->plot]
-  plot_from_b11:
+  plot_from___b11:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#6 [phi:circle::@11->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#6 [phi:circle::@11->plot#1] -- register_copy 
     jsr plot
-    jmp b12
+    jmp __b12
     // circle::@12
-  b12:
+  __b12:
     // [50] (signed word) plot::x#7 ← (const signed word) circle::xc#0 - (signed word) circle::y#10 -- vwsz1=vwsc1_minus_vwsz2 
     lda #<xc
     sec
@@ -1755,76 +1755,76 @@ circle: {
     sta.z plot.y+1
     // [52] call plot 
     // [57] phi from circle::@12 to plot [phi:circle::@12->plot]
-  plot_from_b12:
+  plot_from___b12:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#7 [phi:circle::@12->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#7 [phi:circle::@12->plot#1] -- register_copy 
     jsr plot
-    jmp b13
+    jmp __b13
     // circle::@13
-  b13:
+  __b13:
     // [53] (signed word) circle::x1#1 ← ++ (signed word) circle::x1#10 -- vwsz1=_inc_vwsz1 
     inc.z x1
     bne !+
     inc.z x1+1
   !:
     // [19] phi from circle::@13 to circle::@1 [phi:circle::@13->circle::@1]
-  b1_from_b13:
+  __b1_from___b13:
     // [19] phi (signed word) circle::p#3 = (signed word) circle::p#10 [phi:circle::@13->circle::@1#0] -- register_copy 
     // [19] phi (signed word) circle::y#13 = (signed word) circle::y#10 [phi:circle::@13->circle::@1#1] -- register_copy 
     // [19] phi (signed word) circle::x1#10 = (signed word) circle::x1#1 [phi:circle::@13->circle::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // circle::@3
-  b3:
+  __b3:
     // [54] (signed word~) circle::$9 ← (signed word) circle::x1#10 << (signed byte) 2 -- vwsz1=vwsz2_rol_2 
     lda.z x1
     asl
-    sta.z _9
+    sta.z __9
     lda.z x1+1
     rol
-    sta.z _9+1
-    asl.z _9
-    rol.z _9+1
+    sta.z __9+1
+    asl.z __9
+    rol.z __9+1
     // [55] (signed word~) circle::$10 ← (signed word) circle::p#3 + (signed word~) circle::$9 -- vwsz1=vwsz2_plus_vwsz3 
     lda.z p
     clc
-    adc.z _9
-    sta.z _10
+    adc.z __9
+    sta.z __10
     lda.z p+1
-    adc.z _9+1
-    sta.z _10+1
+    adc.z __9+1
+    sta.z __10+1
     // [56] (signed word) circle::p#1 ← (signed word~) circle::$10 + (signed byte) 6 -- vwsz1=vwsz2_plus_vbsc1 
-    lda.z _10
+    lda.z __10
     clc
     adc #<6
     sta.z p
-    lda.z _10+1
+    lda.z __10+1
     adc #>6
     sta.z p+1
-    jmp b4_from_b3
+    jmp __b4_from___b3
 }
   // plot
 // plot(signed word zeropage($a) x, signed word zeropage($c) y)
 plot: {
-    .label _8 = $1f
-    .label _9 = $23
-    .label _10 = $24
-    .label _11 = $27
-    .label _12 = $2d
-    .label _13 = $31
-    .label _14 = $32
+    .label __8 = $1f
+    .label __9 = $23
+    .label __10 = $24
+    .label __11 = $27
+    .label __12 = $2d
+    .label __13 = $31
+    .label __14 = $32
     .label x = $a
     .label y = $c
     .label location = $21
     .label location_2 = $25
     .label location_3 = $2f
-    .label _15 = $29
-    .label _16 = $2b
+    .label __15 = $29
+    .label __16 = $2b
     // [58] if((signed word) plot::x#8<(signed byte) 0) goto plot::@return -- vwsz1_lt_0_then_la1 
     lda.z x+1
-    bmi breturn
-    jmp b4
+    bmi __breturn
+    jmp __b4
     // plot::@4
-  b4:
+  __b4:
     // [59] if((signed word) plot::x#8>(signed word) $13f) goto plot::@return -- vwsz1_gt_vwsc1_then_la1 
     lda #<$13f
     cmp.z x
@@ -1833,16 +1833,16 @@ plot: {
     bvc !+
     eor #$80
   !:
-    bmi breturn
-    jmp b3
+    bmi __breturn
+    jmp __b3
     // plot::@3
-  b3:
+  __b3:
     // [60] if((signed word) plot::y#8<(signed byte) 0) goto plot::@return -- vwsz1_lt_0_then_la1 
     lda.z y+1
-    bmi breturn
-    jmp b2
+    bmi __breturn
+    jmp __b2
     // plot::@2
-  b2:
+  __b2:
     // [61] if((signed word) plot::y#8>=(signed word) $c7+(signed byte) 1) goto plot::@return -- vwsz1_ge_vwsc1_then_la1 
     lda.z y
     cmp #<$c7+1
@@ -1851,34 +1851,34 @@ plot: {
     bvc !+
     eor #$80
   !:
-    bpl breturn
-    jmp b1
+    bpl __breturn
+    jmp __b1
     // plot::@1
-  b1:
+  __b1:
     // [62] (signed word~) plot::$8 ← (signed word) plot::x#8 & (signed dword) $fff8 -- vwsz1=vwsz2_band_vdsc1 
     lda.z x
     and #<$fff8
-    sta.z _8
+    sta.z __8
     lda.z x+1
     and #>$fff8
-    sta.z _8+1
+    sta.z __8+1
     // [63] (byte*) plot::location#1 ← (const byte*) BITMAP + (signed word~) plot::$8 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<BITMAP
     clc
-    adc.z _8
+    adc.z __8
     sta.z location
     lda #>BITMAP
-    adc.z _8+1
+    adc.z __8+1
     sta.z location+1
     // [64] (byte~) plot::$9 ← < (signed word) plot::y#8 -- vbuz1=_lo_vwsz2 
     lda.z y
-    sta.z _9
+    sta.z __9
     // [65] (byte~) plot::$10 ← (byte~) plot::$9 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
-    and.z _9
-    sta.z _10
+    and.z __9
+    sta.z __10
     // [66] (byte*) plot::location#2 ← (byte*) plot::location#1 + (byte~) plot::$10 -- pbuz1=pbuz2_plus_vbuz3 
-    lda.z _10
+    lda.z __10
     clc
     adc.z location
     sta.z location_2
@@ -1889,77 +1889,77 @@ plot: {
     lda.z y+1
     cmp #$80
     ror
-    sta.z _11+1
+    sta.z __11+1
     lda.z y
     ror
-    sta.z _11
-    lda.z _11+1
+    sta.z __11
+    lda.z __11+1
     cmp #$80
-    ror.z _11+1
-    ror.z _11
-    lda.z _11+1
+    ror.z __11+1
+    ror.z __11
+    lda.z __11+1
     cmp #$80
-    ror.z _11+1
-    ror.z _11
+    ror.z __11+1
+    ror.z __11
     // [68] (signed word) plot::$15 ← (signed word~) plot::$11 << (byte) 2 -- vwsz1=vwsz2_rol_2 
-    lda.z _11
+    lda.z __11
     asl
-    sta.z _15
-    lda.z _11+1
+    sta.z __15
+    lda.z __11+1
     rol
-    sta.z _15+1
-    asl.z _15
-    rol.z _15+1
+    sta.z __15+1
+    asl.z __15
+    rol.z __15+1
     // [69] (signed word) plot::$16 ← (signed word) plot::$15 + (signed word~) plot::$11 -- vwsz1=vwsz2_plus_vwsz3 
-    lda.z _15
+    lda.z __15
     clc
-    adc.z _11
-    sta.z _16
-    lda.z _15+1
-    adc.z _11+1
-    sta.z _16+1
+    adc.z __11
+    sta.z __16
+    lda.z __15+1
+    adc.z __11+1
+    sta.z __16+1
     // [70] (signed word~) plot::$12 ← (signed word) plot::$16 << (byte) 6 -- vwsz1=vwsz2_rol_6 
-    lda.z _16
+    lda.z __16
     asl
-    sta.z _12
-    lda.z _16+1
+    sta.z __12
+    lda.z __16+1
     rol
-    sta.z _12+1
-    asl.z _12
-    rol.z _12+1
-    asl.z _12
-    rol.z _12+1
-    asl.z _12
-    rol.z _12+1
-    asl.z _12
-    rol.z _12+1
-    asl.z _12
-    rol.z _12+1
+    sta.z __12+1
+    asl.z __12
+    rol.z __12+1
+    asl.z __12
+    rol.z __12+1
+    asl.z __12
+    rol.z __12+1
+    asl.z __12
+    rol.z __12+1
+    asl.z __12
+    rol.z __12+1
     // [71] (byte*) plot::location#3 ← (byte*) plot::location#2 + (signed word~) plot::$12 -- pbuz1=pbuz2_plus_vwsz3 
     lda.z location_2
     clc
-    adc.z _12
+    adc.z __12
     sta.z location_3
     lda.z location_2+1
-    adc.z _12+1
+    adc.z __12+1
     sta.z location_3+1
     // [72] (signed byte~) plot::$13 ← (signed word) plot::x#8 & (signed byte) 7 -- vbsz1=vwsz2_band_vbsc1 
     lda #7
     and.z x
-    sta.z _13
+    sta.z __13
     // [73] (byte~) plot::$14 ← *((byte*) plot::location#3) | *((const byte[]) bitmask + (signed byte~) plot::$13) -- vbuz1=_deref_pbuz2_bor_pbuc1_derefidx_vbsz3 
     ldy #0
     lda (location_3),y
-    ldy.z _13
+    ldy.z __13
     ora bitmask,y
-    sta.z _14
+    sta.z __14
     // [74] *((byte*) plot::location#3) ← (byte~) plot::$14 -- _deref_pbuz1=vbuz2 
-    lda.z _14
+    lda.z __14
     ldy #0
     sta (location_3),y
-    jmp breturn
+    jmp __breturn
     // plot::@return
-  breturn:
+  __breturn:
     // [75] return 
     rts
 }
@@ -1980,26 +1980,26 @@ fill: {
     adc.z size+1
     sta.z end+1
     // [78] phi from fill fill::@2 to fill::@1 [phi:fill/fill::@2->fill::@1]
-  b1_from_fill:
-  b1_from_b2:
+  __b1_from_fill:
+  __b1_from___b2:
     // [78] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@2->fill::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // fill::@1
-  b1:
+  __b1:
     // [79] if((byte*) fill::addr#2!=(byte*) fill::end#0) goto fill::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z addr+1
     cmp.z end+1
-    bne b2
+    bne __b2
     lda.z addr
     cmp.z end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // fill::@return
-  breturn:
+  __breturn:
     // [80] return 
     rts
     // fill::@2
-  b2:
+  __b2:
     // [81] *((byte*) fill::addr#2) ← (byte) fill::val#4 -- _deref_pbuz1=vbuz2 
     lda.z val
     ldy #0
@@ -2009,7 +2009,7 @@ fill: {
     bne !+
     inc.z addr+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1
@@ -2193,7 +2193,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label BORDERCOL = $d020
@@ -2206,21 +2206,21 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   .label BITMAP = $2000
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label i = 6
@@ -2241,13 +2241,13 @@ main: {
     sta.z fill.addr+1
     jsr fill
     // [6] phi from main to main::@4 [phi:main->main::@4]
-  b4_from_main:
-    jmp b4
+  __b4_from_main:
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [7] call fill 
     // [76] phi from main::@4 to fill [phi:main::@4->fill]
-  fill_from_b4:
+  fill_from___b4:
     // [76] phi (byte) fill::val#4 = (byte) $16 [phi:main::@4->fill#0] -- vbuxx=vbuc1 
     ldx #$16
     // [76] phi (signed word) fill::size#2 = (signed word)(number) $28*(number) $19 [phi:main::@4->fill#1] -- vwsz1=vwsc1 
@@ -2261,9 +2261,9 @@ main: {
     lda #>SCREEN
     sta.z fill.addr+1
     jsr fill
-    jmp b5
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [8] *((const byte*) BORDERCOL) ← (const byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
     sta BORDERCOL
@@ -2274,15 +2274,15 @@ main: {
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VIC_MEMORY
     // [11] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [11] phi (signed word) main::i#2 = (signed byte) 1 [phi:main::@5->main::@1#0] -- vwsz1=vbsc1 
     lda #<1
     sta.z i
     lda #>1
     sta.z i+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [12] if((signed word) main::i#2<(signed word) $b4) goto main::@2 -- vwsz1_lt_vwsc1_then_la1 
     lda.z i
     cmp #<$b4
@@ -2291,16 +2291,16 @@ main: {
     bvc !+
     eor #$80
   !:
-    bmi b2
+    bmi __b2
     // [13] phi from main::@1 main::@3 to main::@3 [phi:main::@1/main::@3->main::@3]
-  b3_from_b1:
-  b3_from_b3:
-    jmp b3
+  __b3_from___b1:
+  __b3_from___b3:
+    jmp __b3
     // main::@3
-  b3:
-    jmp b3_from_b3
+  __b3:
+    jmp __b3_from___b3
     // main::@2
-  b2:
+  __b2:
     // [14] (signed word) circle::r#0 ← (signed word) main::i#2 -- vwsz1=vwsz2 
     lda.z i
     sta.z circle.r
@@ -2308,9 +2308,9 @@ main: {
     sta.z circle.r+1
     // [15] call circle 
     jsr circle
-    jmp b6
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [16] (signed word) main::i#1 ← (signed word) main::i#2 + (signed byte) 5 -- vwsz1=vwsz1_plus_vbsc1 
     lda.z i
     clc
@@ -2320,21 +2320,21 @@ main: {
     adc #>5
     sta.z i+1
     // [11] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
-  b1_from_b6:
+  __b1_from___b6:
     // [11] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@6->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // circle
 // circle(signed word zeropage(2) r)
 circle: {
     .const xc = $a0
     .const yc = $64
-    .label _0 = 4
-    .label _5 = $a
-    .label _6 = $a
-    .label _7 = 4
-    .label _9 = $c
-    .label _10 = 4
+    .label __0 = 4
+    .label __5 = $a
+    .label __6 = $a
+    .label __7 = 4
+    .label __9 = $c
+    .label __10 = 4
     .label r = 2
     .label p = 4
     .label y = 2
@@ -2342,10 +2342,10 @@ circle: {
     // [17] (signed word~) circle::$0 ← (signed word) circle::r#0 << (signed byte) 1 -- vwsz1=vwsz2_rol_1 
     lda.z r
     asl
-    sta.z _0
+    sta.z __0
     lda.z r+1
     rol
-    sta.z _0+1
+    sta.z __0+1
     // [18] (signed word) circle::p#0 ← (signed byte) 3 - (signed word~) circle::$0 -- vwsz1=vwuc1_minus_vwsz1 
     sec
     lda #<3
@@ -2355,7 +2355,7 @@ circle: {
     sbc.z p+1
     sta.z p+1
     // [19] phi from circle to circle::@1 [phi:circle->circle::@1]
-  b1_from_circle:
+  __b1_from_circle:
     // [19] phi (signed word) circle::p#3 = (signed word) circle::p#0 [phi:circle->circle::@1#0] -- register_copy 
     // [19] phi (signed word) circle::y#13 = (signed word) circle::r#0 [phi:circle->circle::@1#1] -- register_copy 
     // [19] phi (signed word) circle::x1#10 = (signed byte) 0 [phi:circle->circle::@1#2] -- vwsz1=vbsc1 
@@ -2363,9 +2363,9 @@ circle: {
     sta.z x1
     lda #>0
     sta.z x1+1
-    jmp b1
+    jmp __b1
     // circle::@1
-  b1:
+  __b1:
     // [20] if((signed word) circle::x1#10<=(signed word) circle::y#13) goto circle::@2 -- vwsz1_le_vwsz2_then_la1 
     lda.z y
     cmp.z x1
@@ -2374,20 +2374,20 @@ circle: {
     bvc !+
     eor #$80
   !:
-    bpl b2
-    jmp breturn
+    bpl __b2
+    jmp __breturn
     // circle::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
     // circle::@2
-  b2:
+  __b2:
     // [22] if((signed word) circle::p#3<(signed byte) 0) goto circle::@3 -- vwsz1_lt_0_then_la1 
     lda.z p+1
-    bmi b3
-    jmp b5
+    bmi __b3
+    jmp __b5
     // circle::@5
-  b5:
+  __b5:
     // [23] (signed word) circle::y#1 ← (signed word) circle::y#13 - (signed byte) 1 -- vwsz1=vwsz1_minus_1 
     sec
     lda.z y
@@ -2400,23 +2400,23 @@ circle: {
     lda.z x1
     sec
     sbc.z y
-    sta.z _5
+    sta.z __5
     lda.z x1+1
     sbc.z y+1
-    sta.z _5+1
+    sta.z __5+1
     // [25] (signed word~) circle::$6 ← (signed word~) circle::$5 << (signed byte) 2 -- vwsz1=vwsz1_rol_2 
-    asl.z _6
-    rol.z _6+1
-    asl.z _6
-    rol.z _6+1
+    asl.z __6
+    rol.z __6+1
+    asl.z __6
+    rol.z __6+1
     // [26] (signed word~) circle::$7 ← (signed word) circle::p#3 + (signed word~) circle::$6 -- vwsz1=vwsz1_plus_vwsz2 
-    lda.z _7
+    lda.z __7
     clc
-    adc.z _6
-    sta.z _7
-    lda.z _7+1
-    adc.z _6+1
-    sta.z _7+1
+    adc.z __6
+    sta.z __7
+    lda.z __7+1
+    adc.z __6+1
+    sta.z __7+1
     // [27] (signed word) circle::p#2 ← (signed word~) circle::$7 + (signed byte) $a -- vwsz1=vwsz1_plus_vbsc1 
     lda.z p
     clc
@@ -2426,13 +2426,13 @@ circle: {
     adc #>$a
     sta.z p+1
     // [28] phi from circle::@3 circle::@5 to circle::@4 [phi:circle::@3/circle::@5->circle::@4]
-  b4_from_b3:
-  b4_from_b5:
+  __b4_from___b3:
+  __b4_from___b5:
     // [28] phi (signed word) circle::p#10 = (signed word) circle::p#1 [phi:circle::@3/circle::@5->circle::@4#0] -- register_copy 
     // [28] phi (signed word) circle::y#10 = (signed word) circle::y#13 [phi:circle::@3/circle::@5->circle::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // circle::@4
-  b4:
+  __b4:
     // [29] (signed word) plot::x#0 ← (const signed word) circle::xc#0 + (signed word) circle::x1#10 -- vwsz1=vwsc1_plus_vwsz2 
     lda.z x1
     clc
@@ -2451,13 +2451,13 @@ circle: {
     sta.z plot.y+1
     // [31] call plot 
     // [57] phi from circle::@4 to plot [phi:circle::@4->plot]
-  plot_from_b4:
+  plot_from___b4:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#0 [phi:circle::@4->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#0 [phi:circle::@4->plot#1] -- register_copy 
     jsr plot
-    jmp b6
+    jmp __b6
     // circle::@6
-  b6:
+  __b6:
     // [32] (signed word) plot::x#1 ← (const signed word) circle::xc#0 - (signed word) circle::x1#10 -- vwsz1=vwsc1_minus_vwsz2 
     lda #<xc
     sec
@@ -2476,13 +2476,13 @@ circle: {
     sta.z plot.y+1
     // [34] call plot 
     // [57] phi from circle::@6 to plot [phi:circle::@6->plot]
-  plot_from_b6:
+  plot_from___b6:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#1 [phi:circle::@6->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#1 [phi:circle::@6->plot#1] -- register_copy 
     jsr plot
-    jmp b7
+    jmp __b7
     // circle::@7
-  b7:
+  __b7:
     // [35] (signed word) plot::x#2 ← (const signed word) circle::xc#0 + (signed word) circle::x1#10 -- vwsz1=vwsc1_plus_vwsz2 
     lda.z x1
     clc
@@ -2501,13 +2501,13 @@ circle: {
     sta.z plot.y+1
     // [37] call plot 
     // [57] phi from circle::@7 to plot [phi:circle::@7->plot]
-  plot_from_b7:
+  plot_from___b7:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#2 [phi:circle::@7->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#2 [phi:circle::@7->plot#1] -- register_copy 
     jsr plot
-    jmp b8
+    jmp __b8
     // circle::@8
-  b8:
+  __b8:
     // [38] (signed word) plot::x#3 ← (const signed word) circle::xc#0 - (signed word) circle::x1#10 -- vwsz1=vwsc1_minus_vwsz2 
     lda #<xc
     sec
@@ -2526,13 +2526,13 @@ circle: {
     sta.z plot.y+1
     // [40] call plot 
     // [57] phi from circle::@8 to plot [phi:circle::@8->plot]
-  plot_from_b8:
+  plot_from___b8:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#3 [phi:circle::@8->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#3 [phi:circle::@8->plot#1] -- register_copy 
     jsr plot
-    jmp b9
+    jmp __b9
     // circle::@9
-  b9:
+  __b9:
     // [41] (signed word) plot::x#4 ← (const signed word) circle::xc#0 + (signed word) circle::y#10 -- vwsz1=vwsc1_plus_vwsz2 
     lda.z y
     clc
@@ -2551,13 +2551,13 @@ circle: {
     sta.z plot.y+1
     // [43] call plot 
     // [57] phi from circle::@9 to plot [phi:circle::@9->plot]
-  plot_from_b9:
+  plot_from___b9:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#4 [phi:circle::@9->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#4 [phi:circle::@9->plot#1] -- register_copy 
     jsr plot
-    jmp b10
+    jmp __b10
     // circle::@10
-  b10:
+  __b10:
     // [44] (signed word) plot::x#5 ← (const signed word) circle::xc#0 - (signed word) circle::y#10 -- vwsz1=vwsc1_minus_vwsz2 
     lda #<xc
     sec
@@ -2576,13 +2576,13 @@ circle: {
     sta.z plot.y+1
     // [46] call plot 
     // [57] phi from circle::@10 to plot [phi:circle::@10->plot]
-  plot_from_b10:
+  plot_from___b10:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#5 [phi:circle::@10->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#5 [phi:circle::@10->plot#1] -- register_copy 
     jsr plot
-    jmp b11
+    jmp __b11
     // circle::@11
-  b11:
+  __b11:
     // [47] (signed word) plot::x#6 ← (const signed word) circle::xc#0 + (signed word) circle::y#10 -- vwsz1=vwsc1_plus_vwsz2 
     lda.z y
     clc
@@ -2601,13 +2601,13 @@ circle: {
     sta.z plot.y+1
     // [49] call plot 
     // [57] phi from circle::@11 to plot [phi:circle::@11->plot]
-  plot_from_b11:
+  plot_from___b11:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#6 [phi:circle::@11->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#6 [phi:circle::@11->plot#1] -- register_copy 
     jsr plot
-    jmp b12
+    jmp __b12
     // circle::@12
-  b12:
+  __b12:
     // [50] (signed word) plot::x#7 ← (const signed word) circle::xc#0 - (signed word) circle::y#10 -- vwsz1=vwsc1_minus_vwsz2 
     lda #<xc
     sec
@@ -2626,43 +2626,43 @@ circle: {
     sta.z plot.y+1
     // [52] call plot 
     // [57] phi from circle::@12 to plot [phi:circle::@12->plot]
-  plot_from_b12:
+  plot_from___b12:
     // [57] phi (signed word) plot::y#8 = (signed word) plot::y#7 [phi:circle::@12->plot#0] -- register_copy 
     // [57] phi (signed word) plot::x#8 = (signed word) plot::x#7 [phi:circle::@12->plot#1] -- register_copy 
     jsr plot
-    jmp b13
+    jmp __b13
     // circle::@13
-  b13:
+  __b13:
     // [53] (signed word) circle::x1#1 ← ++ (signed word) circle::x1#10 -- vwsz1=_inc_vwsz1 
     inc.z x1
     bne !+
     inc.z x1+1
   !:
     // [19] phi from circle::@13 to circle::@1 [phi:circle::@13->circle::@1]
-  b1_from_b13:
+  __b1_from___b13:
     // [19] phi (signed word) circle::p#3 = (signed word) circle::p#10 [phi:circle::@13->circle::@1#0] -- register_copy 
     // [19] phi (signed word) circle::y#13 = (signed word) circle::y#10 [phi:circle::@13->circle::@1#1] -- register_copy 
     // [19] phi (signed word) circle::x1#10 = (signed word) circle::x1#1 [phi:circle::@13->circle::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // circle::@3
-  b3:
+  __b3:
     // [54] (signed word~) circle::$9 ← (signed word) circle::x1#10 << (signed byte) 2 -- vwsz1=vwsz2_rol_2 
     lda.z x1
     asl
-    sta.z _9
+    sta.z __9
     lda.z x1+1
     rol
-    sta.z _9+1
-    asl.z _9
-    rol.z _9+1
+    sta.z __9+1
+    asl.z __9
+    rol.z __9+1
     // [55] (signed word~) circle::$10 ← (signed word) circle::p#3 + (signed word~) circle::$9 -- vwsz1=vwsz1_plus_vwsz2 
-    lda.z _10
+    lda.z __10
     clc
-    adc.z _9
-    sta.z _10
-    lda.z _10+1
-    adc.z _9+1
-    sta.z _10+1
+    adc.z __9
+    sta.z __10
+    lda.z __10+1
+    adc.z __9+1
+    sta.z __10+1
     // [56] (signed word) circle::p#1 ← (signed word~) circle::$10 + (signed byte) 6 -- vwsz1=vwsz1_plus_vbsc1 
     lda.z p
     clc
@@ -2671,25 +2671,25 @@ circle: {
     lda.z p+1
     adc #>6
     sta.z p+1
-    jmp b4_from_b3
+    jmp __b4_from___b3
 }
   // plot
 // plot(signed word zeropage($a) x, signed word zeropage($c) y)
 plot: {
-    .label _8 = $e
-    .label _11 = $c
-    .label _12 = $10
+    .label __8 = $e
+    .label __11 = $c
+    .label __12 = $10
     .label x = $a
     .label y = $c
     .label location = $e
-    .label _15 = $10
-    .label _16 = $10
+    .label __15 = $10
+    .label __16 = $10
     // [58] if((signed word) plot::x#8<(signed byte) 0) goto plot::@return -- vwsz1_lt_0_then_la1 
     lda.z x+1
-    bmi breturn
-    jmp b4
+    bmi __breturn
+    jmp __b4
     // plot::@4
-  b4:
+  __b4:
     // [59] if((signed word) plot::x#8>(signed word) $13f) goto plot::@return -- vwsz1_gt_vwsc1_then_la1 
     lda #<$13f
     cmp.z x
@@ -2698,16 +2698,16 @@ plot: {
     bvc !+
     eor #$80
   !:
-    bmi breturn
-    jmp b3
+    bmi __breturn
+    jmp __b3
     // plot::@3
-  b3:
+  __b3:
     // [60] if((signed word) plot::y#8<(signed byte) 0) goto plot::@return -- vwsz1_lt_0_then_la1 
     lda.z y+1
-    bmi breturn
-    jmp b2
+    bmi __breturn
+    jmp __b2
     // plot::@2
-  b2:
+  __b2:
     // [61] if((signed word) plot::y#8>=(signed word) $c7+(signed byte) 1) goto plot::@return -- vwsz1_ge_vwsc1_then_la1 
     lda.z y
     cmp #<$c7+1
@@ -2716,17 +2716,17 @@ plot: {
     bvc !+
     eor #$80
   !:
-    bpl breturn
-    jmp b1
+    bpl __breturn
+    jmp __b1
     // plot::@1
-  b1:
+  __b1:
     // [62] (signed word~) plot::$8 ← (signed word) plot::x#8 & (signed dword) $fff8 -- vwsz1=vwsz2_band_vdsc1 
     lda.z x
     and #<$fff8
-    sta.z _8
+    sta.z __8
     lda.z x+1
     and #>$fff8
-    sta.z _8+1
+    sta.z __8+1
     // [63] (byte*) plot::location#1 ← (const byte*) BITMAP + (signed word~) plot::$8 -- pbuz1=pbuc1_plus_vwsz1 
     clc
     lda.z location
@@ -2747,55 +2747,55 @@ plot: {
     inc.z location+1
   !:
     // [67] (signed word~) plot::$11 ← (signed word) plot::y#8 >> (signed byte) 3 -- vwsz1=vwsz1_ror_3 
-    lda.z _11+1
+    lda.z __11+1
     cmp #$80
-    ror.z _11+1
-    ror.z _11
-    lda.z _11+1
+    ror.z __11+1
+    ror.z __11
+    lda.z __11+1
     cmp #$80
-    ror.z _11+1
-    ror.z _11
-    lda.z _11+1
+    ror.z __11+1
+    ror.z __11
+    lda.z __11+1
     cmp #$80
-    ror.z _11+1
-    ror.z _11
+    ror.z __11+1
+    ror.z __11
     // [68] (signed word) plot::$15 ← (signed word~) plot::$11 << (byte) 2 -- vwsz1=vwsz2_rol_2 
-    lda.z _11
+    lda.z __11
     asl
-    sta.z _15
-    lda.z _11+1
+    sta.z __15
+    lda.z __11+1
     rol
-    sta.z _15+1
-    asl.z _15
-    rol.z _15+1
+    sta.z __15+1
+    asl.z __15
+    rol.z __15+1
     // [69] (signed word) plot::$16 ← (signed word) plot::$15 + (signed word~) plot::$11 -- vwsz1=vwsz1_plus_vwsz2 
-    lda.z _16
+    lda.z __16
     clc
-    adc.z _11
-    sta.z _16
-    lda.z _16+1
-    adc.z _11+1
-    sta.z _16+1
+    adc.z __11
+    sta.z __16
+    lda.z __16+1
+    adc.z __11+1
+    sta.z __16+1
     // [70] (signed word~) plot::$12 ← (signed word) plot::$16 << (byte) 6 -- vwsz1=vwsz1_rol_6 
-    lda.z _12+1
+    lda.z __12+1
     sta.z $ff
-    lda.z _12
-    sta.z _12+1
+    lda.z __12
+    sta.z __12+1
     lda #0
-    sta.z _12
+    sta.z __12
     lsr.z $ff
-    ror.z _12+1
-    ror.z _12
+    ror.z __12+1
+    ror.z __12
     lsr.z $ff
-    ror.z _12+1
-    ror.z _12
+    ror.z __12+1
+    ror.z __12
     // [71] (byte*) plot::location#3 ← (byte*) plot::location#2 + (signed word~) plot::$12 -- pbuz1=pbuz1_plus_vwsz2 
     lda.z location
     clc
-    adc.z _12
+    adc.z __12
     sta.z location
     lda.z location+1
-    adc.z _12+1
+    adc.z __12+1
     sta.z location+1
     // [72] (signed byte~) plot::$13 ← (signed word) plot::x#8 & (signed byte) 7 -- vbsaa=vwsz1_band_vbsc1 
     lda #7
@@ -2808,9 +2808,9 @@ plot: {
     // [74] *((byte*) plot::location#3) ← (byte~) plot::$14 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (location),y
-    jmp breturn
+    jmp __breturn
     // plot::@return
-  breturn:
+  __breturn:
     // [75] return 
     rts
 }
@@ -2830,26 +2830,26 @@ fill: {
     adc.z addr+1
     sta.z end+1
     // [78] phi from fill fill::@2 to fill::@1 [phi:fill/fill::@2->fill::@1]
-  b1_from_fill:
-  b1_from_b2:
+  __b1_from_fill:
+  __b1_from___b2:
     // [78] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@2->fill::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // fill::@1
-  b1:
+  __b1:
     // [79] if((byte*) fill::addr#2!=(byte*) fill::end#0) goto fill::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z addr+1
     cmp.z end+1
-    bne b2
+    bne __b2
     lda.z addr
     cmp.z end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // fill::@return
-  breturn:
+  __breturn:
     // [80] return 
     rts
     // fill::@2
-  b2:
+  __b2:
     // [81] *((byte*) fill::addr#2) ← (byte) fill::val#4 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
@@ -2859,101 +2859,102 @@ fill: {
     bne !+
     inc.z addr+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp b6
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b5
-Removing instruction jmp b4
-Removing instruction jmp b6
-Removing instruction jmp b7
-Removing instruction jmp b8
-Removing instruction jmp b9
-Removing instruction jmp b10
-Removing instruction jmp b11
-Removing instruction jmp b12
-Removing instruction jmp b13
-Removing instruction jmp b4
-Removing instruction jmp b3
-Removing instruction jmp b2
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b4
+Removing instruction jmp __b5
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __b6
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b5
+Removing instruction jmp __b4
+Removing instruction jmp __b6
+Removing instruction jmp __b7
+Removing instruction jmp __b8
+Removing instruction jmp __b9
+Removing instruction jmp __b10
+Removing instruction jmp __b11
+Removing instruction jmp __b12
+Removing instruction jmp __b13
+Removing instruction jmp __b4
+Removing instruction jmp __b3
+Removing instruction jmp __b2
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b3_from_b3 with b3
-Replacing label b4_from_b3 with b4
-Replacing label b1_from_b2 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b4_from_main:
-Removing instruction fill_from_b4:
-Removing instruction b3_from_b1:
-Removing instruction b3_from_b3:
-Removing instruction b4_from_b3:
-Removing instruction b4_from_b5:
-Removing instruction b1_from_fill:
-Removing instruction b1_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b3_from___b3 with __b3
+Replacing label __b4_from___b3 with __b4
+Replacing label __b1_from___b2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b4_from_main:
+Removing instruction fill_from___b4:
+Removing instruction __b3_from___b1:
+Removing instruction __b3_from___b3:
+Removing instruction __b4_from___b3:
+Removing instruction __b4_from___b5:
+Removing instruction __b1_from_fill:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction fill_from_main:
-Removing instruction b4:
-Removing instruction b5:
-Removing instruction b1_from_b5:
-Removing instruction b6:
-Removing instruction b1_from_b6:
-Removing instruction b1_from_circle:
-Removing instruction breturn:
-Removing instruction b5:
-Removing instruction plot_from_b4:
-Removing instruction b6:
-Removing instruction plot_from_b6:
-Removing instruction b7:
-Removing instruction plot_from_b7:
-Removing instruction b8:
-Removing instruction plot_from_b8:
-Removing instruction b9:
-Removing instruction plot_from_b9:
-Removing instruction b10:
-Removing instruction plot_from_b10:
-Removing instruction b11:
-Removing instruction plot_from_b11:
-Removing instruction b12:
-Removing instruction plot_from_b12:
-Removing instruction b13:
-Removing instruction b1_from_b13:
-Removing instruction b4:
-Removing instruction b3:
-Removing instruction b2:
-Removing instruction b1:
-Removing instruction breturn:
+Removing instruction __b4:
+Removing instruction __b5:
+Removing instruction __b1_from___b5:
+Removing instruction __b6:
+Removing instruction __b1_from___b6:
+Removing instruction __b1_from_circle:
+Removing instruction __breturn:
+Removing instruction __b5:
+Removing instruction plot_from___b4:
+Removing instruction __b6:
+Removing instruction plot_from___b6:
+Removing instruction __b7:
+Removing instruction plot_from___b7:
+Removing instruction __b8:
+Removing instruction plot_from___b8:
+Removing instruction __b9:
+Removing instruction plot_from___b9:
+Removing instruction __b10:
+Removing instruction plot_from___b10:
+Removing instruction __b11:
+Removing instruction plot_from___b11:
+Removing instruction __b12:
+Removing instruction plot_from___b12:
+Removing instruction __b13:
+Removing instruction __b1_from___b13:
+Removing instruction __b4:
+Removing instruction __b3:
+Removing instruction __b2:
+Removing instruction __b1:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [112] bmi b3 to bpl
-Fixing long branch [309] bmi breturn to bpl
-Fixing long branch [319] bmi breturn to bpl
-Fixing long branch [323] bmi breturn to bpl
-Fixing long branch [333] bpl breturn to bmi
+Fixing long branch [112] bmi __b3 to bpl
+Fixing long branch [309] bmi __breturn to bpl
+Fixing long branch [319] bmi __breturn to bpl
+Fixing long branch [323] bmi __breturn to bpl
+Fixing long branch [333] bpl __breturn to bmi
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -3171,7 +3172,7 @@ main: {
     lda #>1
     sta.z i+1
     // main::@1
-  b1:
+  __b1:
     // for (int i = 1; i < 180; i += 5)
     // [12] if((signed word) main::i#2<(signed word) $b4) goto main::@2 -- vwsz1_lt_vwsc1_then_la1 
     lda.z i
@@ -3181,13 +3182,13 @@ main: {
     bvc !+
     eor #$80
   !:
-    bmi b2
+    bmi __b2
     // [13] phi from main::@1 main::@3 to main::@3 [phi:main::@1/main::@3->main::@3]
     // main::@3
-  b3:
-    jmp b3
+  __b3:
+    jmp __b3
     // main::@2
-  b2:
+  __b2:
     // circle(160,100,i)
     // [14] (signed word) circle::r#0 ← (signed word) main::i#2 -- vwsz1=vwsz2 
     lda.z i
@@ -3208,19 +3209,19 @@ main: {
     sta.z i+1
     // [11] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
     // [11] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@6->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // circle
 // circle(signed word zeropage(2) r)
 circle: {
     .const xc = $a0
     .const yc = $64
-    .label _0 = 4
-    .label _5 = $a
-    .label _6 = $a
-    .label _7 = 4
-    .label _9 = $c
-    .label _10 = 4
+    .label __0 = 4
+    .label __5 = $a
+    .label __6 = $a
+    .label __7 = 4
+    .label __9 = $c
+    .label __10 = 4
     .label r = 2
     .label p = 4
     .label y = 2
@@ -3229,10 +3230,10 @@ circle: {
     // [17] (signed word~) circle::$0 ← (signed word) circle::r#0 << (signed byte) 1 -- vwsz1=vwsz2_rol_1 
     lda.z r
     asl
-    sta.z _0
+    sta.z __0
     lda.z r+1
     rol
-    sta.z _0+1
+    sta.z __0+1
     // p = 3-(r << 1)
     // [18] (signed word) circle::p#0 ← (signed byte) 3 - (signed word~) circle::$0 -- vwsz1=vwuc1_minus_vwsz1 
     sec
@@ -3250,7 +3251,7 @@ circle: {
     sta.z x1
     sta.z x1+1
     // circle::@1
-  b1:
+  __b1:
     // for(int x = 0; x <= y; x ++)
     // [20] if((signed word) circle::x1#10<=(signed word) circle::y#13) goto circle::@2 -- vwsz1_le_vwsz2_then_la1 
     lda.z y
@@ -3260,19 +3261,19 @@ circle: {
     bvc !+
     eor #$80
   !:
-    bpl b2
+    bpl __b2
     // circle::@return
     // }
     // [21] return 
     rts
     // circle::@2
-  b2:
+  __b2:
     // if(p < 0)
     // [22] if((signed word) circle::p#3<(signed byte) 0) goto circle::@3 -- vwsz1_lt_0_then_la1 
     lda.z p+1
-    bpl !b3+
-    jmp b3
-  !b3:
+    bpl !__b3+
+    jmp __b3
+  !__b3:
     // circle::@5
     // y=y-1
     // [23] (signed word) circle::y#1 ← (signed word) circle::y#13 - (signed byte) 1 -- vwsz1=vwsz1_minus_1 
@@ -3288,25 +3289,25 @@ circle: {
     lda.z x1
     sec
     sbc.z y
-    sta.z _5
+    sta.z __5
     lda.z x1+1
     sbc.z y+1
-    sta.z _5+1
+    sta.z __5+1
     // (x-y) << 2
     // [25] (signed word~) circle::$6 ← (signed word~) circle::$5 << (signed byte) 2 -- vwsz1=vwsz1_rol_2 
-    asl.z _6
-    rol.z _6+1
-    asl.z _6
-    rol.z _6+1
+    asl.z __6
+    rol.z __6+1
+    asl.z __6
+    rol.z __6+1
     // p + ((x-y) << 2)
     // [26] (signed word~) circle::$7 ← (signed word) circle::p#3 + (signed word~) circle::$6 -- vwsz1=vwsz1_plus_vwsz2 
-    lda.z _7
+    lda.z __7
     clc
-    adc.z _6
-    sta.z _7
-    lda.z _7+1
-    adc.z _6+1
-    sta.z _7+1
+    adc.z __6
+    sta.z __7
+    lda.z __7+1
+    adc.z __6+1
+    sta.z __7+1
     // p = p + ((x-y) << 2) + 10
     // [27] (signed word) circle::p#2 ← (signed word~) circle::$7 + (signed byte) $a -- vwsz1=vwsz1_plus_vbsc1 
     lda.z p
@@ -3320,7 +3321,7 @@ circle: {
     // [28] phi (signed word) circle::p#10 = (signed word) circle::p#1 [phi:circle::@3/circle::@5->circle::@4#0] -- register_copy 
     // [28] phi (signed word) circle::y#10 = (signed word) circle::y#13 [phi:circle::@3/circle::@5->circle::@4#1] -- register_copy 
     // circle::@4
-  b4:
+  __b4:
     // plot(xc+x,yc-y)
     // [29] (signed word) plot::x#0 ← (const signed word) circle::xc#0 + (signed word) circle::x1#10 -- vwsz1=vwsc1_plus_vwsz2 
     lda.z x1
@@ -3515,28 +3516,28 @@ circle: {
     // [19] phi (signed word) circle::p#3 = (signed word) circle::p#10 [phi:circle::@13->circle::@1#0] -- register_copy 
     // [19] phi (signed word) circle::y#13 = (signed word) circle::y#10 [phi:circle::@13->circle::@1#1] -- register_copy 
     // [19] phi (signed word) circle::x1#10 = (signed word) circle::x1#1 [phi:circle::@13->circle::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // circle::@3
-  b3:
+  __b3:
     // x << 2
     // [54] (signed word~) circle::$9 ← (signed word) circle::x1#10 << (signed byte) 2 -- vwsz1=vwsz2_rol_2 
     lda.z x1
     asl
-    sta.z _9
+    sta.z __9
     lda.z x1+1
     rol
-    sta.z _9+1
-    asl.z _9
-    rol.z _9+1
+    sta.z __9+1
+    asl.z __9
+    rol.z __9+1
     // p + (x << 2)
     // [55] (signed word~) circle::$10 ← (signed word) circle::p#3 + (signed word~) circle::$9 -- vwsz1=vwsz1_plus_vwsz2 
-    lda.z _10
+    lda.z __10
     clc
-    adc.z _9
-    sta.z _10
-    lda.z _10+1
-    adc.z _9+1
-    sta.z _10+1
+    adc.z __9
+    sta.z __10
+    lda.z __10+1
+    adc.z __9+1
+    sta.z __10+1
     // p = p + (x << 2) + 6
     // [56] (signed word) circle::p#1 ← (signed word~) circle::$10 + (signed byte) 6 -- vwsz1=vwsz1_plus_vbsc1 
     lda.z p
@@ -3546,25 +3547,25 @@ circle: {
     lda.z p+1
     adc #>6
     sta.z p+1
-    jmp b4
+    jmp __b4
 }
   // plot
 // plot(signed word zeropage($a) x, signed word zeropage($c) y)
 plot: {
-    .label _8 = $e
-    .label _11 = $c
-    .label _12 = $10
+    .label __8 = $e
+    .label __11 = $c
+    .label __12 = $10
     .label x = $a
     .label y = $c
     .label location = $e
-    .label _15 = $10
-    .label _16 = $10
+    .label __15 = $10
+    .label __16 = $10
     // if (x < 0 || x > 319 || y < 0 || y > 199)
     // [58] if((signed word) plot::x#8<(signed byte) 0) goto plot::@return -- vwsz1_lt_0_then_la1 
     lda.z x+1
-    bpl !breturn+
-    jmp breturn
-  !breturn:
+    bpl !__breturn+
+    jmp __breturn
+  !__breturn:
     // plot::@4
     // [59] if((signed word) plot::x#8>(signed word) $13f) goto plot::@return -- vwsz1_gt_vwsc1_then_la1 
     lda #<$13f
@@ -3574,15 +3575,15 @@ plot: {
     bvc !+
     eor #$80
   !:
-    bpl !breturn+
-    jmp breturn
-  !breturn:
+    bpl !__breturn+
+    jmp __breturn
+  !__breturn:
     // plot::@3
     // [60] if((signed word) plot::y#8<(signed byte) 0) goto plot::@return -- vwsz1_lt_0_then_la1 
     lda.z y+1
-    bpl !breturn+
-    jmp breturn
-  !breturn:
+    bpl !__breturn+
+    jmp __breturn
+  !__breturn:
     // plot::@2
     // [61] if((signed word) plot::y#8>=(signed word) $c7+(signed byte) 1) goto plot::@return -- vwsz1_ge_vwsc1_then_la1 
     lda.z y
@@ -3592,18 +3593,18 @@ plot: {
     bvc !+
     eor #$80
   !:
-    bmi !breturn+
-    jmp breturn
-  !breturn:
+    bmi !__breturn+
+    jmp __breturn
+  !__breturn:
     // plot::@1
     // x & $fff8
     // [62] (signed word~) plot::$8 ← (signed word) plot::x#8 & (signed dword) $fff8 -- vwsz1=vwsz2_band_vdsc1 
     lda.z x
     and #<$fff8
-    sta.z _8
+    sta.z __8
     lda.z x+1
     and #>$fff8
-    sta.z _8+1
+    sta.z __8+1
     // location += x & $fff8
     // [63] (byte*) plot::location#1 ← (const byte*) BITMAP + (signed word~) plot::$8 -- pbuz1=pbuc1_plus_vwsz1 
     clc
@@ -3629,57 +3630,57 @@ plot: {
   !:
     // y >> 3
     // [67] (signed word~) plot::$11 ← (signed word) plot::y#8 >> (signed byte) 3 -- vwsz1=vwsz1_ror_3 
-    lda.z _11+1
+    lda.z __11+1
     cmp #$80
-    ror.z _11+1
-    ror.z _11
-    lda.z _11+1
+    ror.z __11+1
+    ror.z __11
+    lda.z __11+1
     cmp #$80
-    ror.z _11+1
-    ror.z _11
-    lda.z _11+1
+    ror.z __11+1
+    ror.z __11
+    lda.z __11+1
     cmp #$80
-    ror.z _11+1
-    ror.z _11
+    ror.z __11+1
+    ror.z __11
     // (y >> 3) * 320
     // [68] (signed word) plot::$15 ← (signed word~) plot::$11 << (byte) 2 -- vwsz1=vwsz2_rol_2 
-    lda.z _11
+    lda.z __11
     asl
-    sta.z _15
-    lda.z _11+1
+    sta.z __15
+    lda.z __11+1
     rol
-    sta.z _15+1
-    asl.z _15
-    rol.z _15+1
+    sta.z __15+1
+    asl.z __15
+    rol.z __15+1
     // [69] (signed word) plot::$16 ← (signed word) plot::$15 + (signed word~) plot::$11 -- vwsz1=vwsz1_plus_vwsz2 
-    lda.z _16
+    lda.z __16
     clc
-    adc.z _11
-    sta.z _16
-    lda.z _16+1
-    adc.z _11+1
-    sta.z _16+1
+    adc.z __11
+    sta.z __16
+    lda.z __16+1
+    adc.z __11+1
+    sta.z __16+1
     // [70] (signed word~) plot::$12 ← (signed word) plot::$16 << (byte) 6 -- vwsz1=vwsz1_rol_6 
-    lda.z _12+1
+    lda.z __12+1
     sta.z $ff
-    lda.z _12
-    sta.z _12+1
+    lda.z __12
+    sta.z __12+1
     lda #0
-    sta.z _12
+    sta.z __12
     lsr.z $ff
-    ror.z _12+1
-    ror.z _12
+    ror.z __12+1
+    ror.z __12
     lsr.z $ff
-    ror.z _12+1
-    ror.z _12
+    ror.z __12+1
+    ror.z __12
     // location += ((y >> 3) * 320)
     // [71] (byte*) plot::location#3 ← (byte*) plot::location#2 + (signed word~) plot::$12 -- pbuz1=pbuz1_plus_vwsz2 
     lda.z location
     clc
-    adc.z _12
+    adc.z __12
     sta.z location
     lda.z location+1
-    adc.z _12+1
+    adc.z __12+1
     sta.z location+1
     // x & 7
     // [72] (signed byte~) plot::$13 ← (signed word) plot::x#8 & (signed byte) 7 -- vbsaa=vwsz1_band_vbsc1 
@@ -3695,7 +3696,7 @@ plot: {
     // [74] *((byte*) plot::location#3) ← (byte~) plot::$14 -- _deref_pbuz1=vbuaa 
     sta (location),y
     // plot::@return
-  breturn:
+  __breturn:
     // }
     // [75] return 
     rts
@@ -3719,21 +3720,21 @@ fill: {
     // [78] phi from fill fill::@2 to fill::@1 [phi:fill/fill::@2->fill::@1]
     // [78] phi (byte*) fill::addr#2 = (byte*) fill::addr#0 [phi:fill/fill::@2->fill::@1#0] -- register_copy 
     // fill::@1
-  b1:
+  __b1:
     // for(byte* addr = start; addr!=end; addr++)
     // [79] if((byte*) fill::addr#2!=(byte*) fill::end#0) goto fill::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z addr+1
     cmp.z end+1
-    bne b2
+    bne __b2
     lda.z addr
     cmp.z end
-    bne b2
+    bne __b2
     // fill::@return
     // }
     // [80] return 
     rts
     // fill::@2
-  b2:
+  __b2:
     // *addr = val
     // [81] *((byte*) fill::addr#2) ← (byte) fill::val#4 -- _deref_pbuz1=vbuxx 
     txa
@@ -3745,7 +3746,7 @@ fill: {
     bne !+
     inc.z addr+1
   !:
-    jmp b1
+    jmp __b1
 }
   // File Data
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1

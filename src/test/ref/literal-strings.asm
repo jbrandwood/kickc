@@ -5,14 +5,14 @@
   .label SCREEN = $400
 main: {
     ldx #0
-  b1:
+  __b1:
     lda msg,x
     sta SCREEN,x
     lda msgz,x
     sta SCREEN+$28,x
     inx
     cpx #4
-    bne b1
+    bne __b1
     rts
 }
   msgz: .text "cml"

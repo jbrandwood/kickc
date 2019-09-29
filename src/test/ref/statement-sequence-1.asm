@@ -5,23 +5,23 @@
 main: {
     .label SCREEN = $400
     ldy #0
-  b1:
+  __b1:
     tya
     tax
     axs #-[5]
     tya
     and #1
     cmp #0
-    beq b3
+    beq __b3
     cpy #5+1
-    bcc b2
-  b3:
+    bcc __b2
+  __b3:
     inx
-  b2:
+  __b2:
     txa
     sta SCREEN,y
     iny
     cpy #$b
-    bne b1
+    bne __b1
     rts
 }

@@ -4,15 +4,15 @@
 main: {
     lda #0
     ldx #$a
-  b1:
+  __b1:
     cpx #5+1
-    bcc b2
+    bcc __b2
     stx.z $ff
     clc
     adc.z $ff
-  b2:
+  __b2:
     dex
     cpx #0
-    bne b1
+    bne __b1
     rts
 }

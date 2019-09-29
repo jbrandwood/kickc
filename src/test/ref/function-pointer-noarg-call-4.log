@@ -225,73 +225,73 @@ Target platform is c64basic / MOS6502X
 // Tests creating, assigning returning and calling pointers to non-args no-return functions
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [7] call getfn 
     // [12] phi from main::@2 to getfn [phi:main::@2->getfn]
-  getfn_from_b2:
+  getfn_from___b2:
     jsr getfn
     // [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [9] call fn1 
     jsr fn1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // fn1
 fn1: {
     .label BORDERCOL = $d020
     // [10] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    jmp breturn
+    jmp __breturn
     // fn1::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
   // getfn
 getfn: {
-    jmp breturn
+    jmp __breturn
     // getfn::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -316,105 +316,106 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests creating, assigning returning and calling pointers to non-args no-return functions
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [7] call getfn 
     // [12] phi from main::@2 to getfn [phi:main::@2->getfn]
-  getfn_from_b2:
+  getfn_from___b2:
     jsr getfn
     // [8] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [9] call fn1 
     jsr fn1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // fn1
 fn1: {
     .label BORDERCOL = $d020
     // [10] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    jmp breturn
+    jmp __breturn
     // fn1::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
   // getfn
 getfn: {
-    jmp breturn
+    jmp __breturn
     // getfn::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1 with b2
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1:
-Removing instruction b3_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b1 with __b2
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1:
+Removing instruction __b3_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction getfn_from_b2:
-Removing instruction b3:
-Removing instruction b1_from_b3:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction getfn_from___b2:
+Removing instruction __b3:
+Removing instruction __b1_from___b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -463,7 +464,7 @@ main: {
     ldx #0
     // main::@1
     // main::@2
-  b2:
+  __b2:
     // (*getfn(++i))();
     // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -478,7 +479,7 @@ main: {
     jsr fn1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp b2
+    jmp __b2
 }
   // fn1
 fn1: {

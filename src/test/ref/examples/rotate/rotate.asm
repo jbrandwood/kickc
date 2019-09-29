@@ -38,13 +38,13 @@ main: {
     rts
 }
 anim: {
-    .label _6 = 3
-    .label _8 = 3
-    .label _11 = 3
-    .label _12 = 3
-    .label _13 = 3
-    .label _14 = 3
-    .label _29 = $13
+    .label __6 = 3
+    .label __8 = 3
+    .label __11 = 3
+    .label __12 = 3
+    .label __13 = 3
+    .label __14 = 3
+    .label __29 = $13
     .label x = $b
     .label y = $c
     .label xr = $d
@@ -56,16 +56,16 @@ anim: {
     .label cyclecount = $13
     lda #0
     sta.z angle
-  b2:
+  __b2:
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     inc BORDERCOL
     jsr clock_start
     lda #0
     sta.z sprite_msb
     sta.z i
-  b4:
+  __b4:
     ldy.z i
     lda xs,y
     sta.z x
@@ -77,18 +77,18 @@ anim: {
     jsr mulf8u_prepare
     ldy.z x
     jsr mulf8s_prepared
-    lda.z _6
+    lda.z __6
     asl
     sta.z xr
-    lda.z _6+1
+    lda.z __6+1
     rol
     sta.z xr+1
     ldy.z y
     jsr mulf8s_prepared
-    lda.z _8
+    lda.z __8
     asl
     sta.z yr
-    lda.z _8+1
+    lda.z __8+1
     rol
     sta.z yr+1
     ldy.z angle
@@ -96,26 +96,26 @@ anim: {
     jsr mulf8u_prepare
     ldy.z y
     jsr mulf8s_prepared
-    asl.z _12
-    rol.z _12+1
+    asl.z __12
+    rol.z __12+1
     lda.z xr
     sec
-    sbc.z _12
+    sbc.z __12
     sta.z xr
     lda.z xr+1
-    sbc.z _12+1
+    sbc.z __12+1
     sta.z xr+1
     ldy.z x
     jsr mulf8s_prepared
-    asl.z _14
-    rol.z _14+1
+    asl.z __14
+    rol.z __14+1
     // signed fixed[8.8]
     lda.z yr
     clc
-    adc.z _14
+    adc.z __14
     sta.z yr
     lda.z yr+1
-    adc.z _14+1
+    adc.z __14+1
     sta.z yr+1
     lda.z xr+1
     tax
@@ -131,11 +131,11 @@ anim: {
     sta.z xpos+1
     lsr.z sprite_msb
     cmp #0
-    beq b5
+    beq __b5
     lda #$80
     ora.z sprite_msb
     sta.z sprite_msb
-  b5:
+  __b5:
     lda.z yr+1
     clc
     adc #$59+$33
@@ -150,9 +150,9 @@ anim: {
     inc.z i
     lda #8
     cmp.z i
-    beq !b4+
-    jmp b4
-  !b4:
+    beq !__b4+
+    jmp __b4
+  !__b4:
     lda.z sprite_msb
     sta SPRITES_XMSB
     inc.z angle
@@ -173,7 +173,7 @@ anim: {
     jsr print_dword_at
     lda #LIGHT_BLUE
     sta BORDERCOL
-    jmp b2
+    jmp __b2
 }
 // Print a dword as HEX at a specific position
 // print_dword_at(dword zeropage($13) dw)
@@ -288,20 +288,20 @@ mulf8s_prepared: {
     jsr mulf8u_prepared
     lda memA
     cmp #0
-    bpl b1
+    bpl __b1
     lda.z m+1
     sty.z $ff
     sec
     sbc.z $ff
     sta.z m+1
-  b1:
+  __b1:
     cpy #0
-    bpl b2
+    bpl __b2
     lda.z m+1
     sec
     sbc memA
     sta.z m+1
-  b2:
+  __b2:
     rts
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
@@ -370,14 +370,14 @@ init: {
     lda #$ff
     sta SPRITES_ENABLE
     ldx #0
-  b1:
+  __b1:
     lda #SPRITE/$40
     sta sprites_ptr,x
     lda #GREEN
     sta SPRITES_COLS,x
     inx
     cpx #8
-    bne b1
+    bne __b1
     rts
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
@@ -402,13 +402,13 @@ mulf_init: {
     sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta.z sqr1_lo+1
-  b1:
+  __b1:
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     lda #$ff
     sta.z dir
     lda #<mulf_sqr2_hi
@@ -420,20 +420,20 @@ mulf_init: {
     sta.z sqr2_lo
     lda #>mulf_sqr2_lo
     sta.z sqr2_lo+1
-  b5:
+  __b5:
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
     lda mulf_sqr1_hi+$100
     sta mulf_sqr2_hi+$1ff
     rts
-  b6:
+  __b6:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -448,27 +448,27 @@ mulf_init: {
     adc.z dir
     tax
     cpx #0
-    bne b8
+    bne __b8
     lda #1
     sta.z dir
-  b8:
+  __b8:
     inc.z sqr2_lo
     bne !+
     inc.z sqr2_lo+1
   !:
-    jmp b5
-  b2:
+    jmp __b5
+  __b2:
     inc.z c
     lda #1
     and.z c
     cmp #0
-    bne b3
+    bne __b3
     inx
     inc.z sqr
     bne !+
     inc.z sqr+1
   !:
-  b3:
+  __b3:
     lda.z sqr
     ldy #0
     sta (sqr1_lo),y
@@ -489,7 +489,7 @@ mulf_init: {
     bne !+
     inc.z sqr1_lo+1
   !:
-    jmp b1
+    jmp __b1
 }
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // <f(x) = <(( x * x )/4)

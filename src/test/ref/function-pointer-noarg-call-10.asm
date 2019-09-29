@@ -1,10 +1,10 @@
 // Tests calling into different function pointers which call a common sub-method
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label idx = 7
-bbegin:
+__b1:
   lda #0
   sta.z idx
   jsr main
@@ -28,12 +28,12 @@ do10: {
     .label fn = 2
     lda #0
     sta.z i
-  b1:
+  __b1:
     jsr bi_fn
     inc.z i
     lda #$a
     cmp.z i
-    bne b1
+    bne __b1
     rts
   bi_fn:
     jmp (fn)
@@ -52,7 +52,7 @@ world: {
 print: {
     .label msg = 5
     ldy #0
-  b1:
+  __b1:
     lda (msg),y
     ldx.z idx
     sta SCREEN,x
@@ -60,7 +60,7 @@ print: {
     iny
     lda (msg),y
     cmp #0
-    bne b1
+    bne __b1
     rts
 }
 hello: {

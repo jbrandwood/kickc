@@ -12,30 +12,30 @@ main: {
 scrollup3: {
     .label l2 = 3
     .label line = 9
-    .label _3 = 5
-    .label _4 = 7
+    .label __3 = 5
+    .label __4 = 7
     lda #<0
     sta.z line
     sta.z line+1
-  b1:
+  __b1:
     lda.z line+1
     cmp #>$28*$18
-    bcc b2
+    bcc __b2
     bne !+
     lda.z line
     cmp #<$28*$18
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda.z line
     sta.z l2
     lda.z line+1
     sta.z l2+1
     ldx #0
-  b3:
+  __b3:
     cpx #$28
-    bcc b4
+    bcc __b4
     lda #$28
     clc
     adc.z line
@@ -43,31 +43,31 @@ scrollup3: {
     bcc !+
     inc.z line+1
   !:
-    jmp b1
-  b4:
+    jmp __b1
+  __b4:
     lda.z l2
     clc
     adc #<screen+$28
-    sta.z _3
+    sta.z __3
     lda.z l2+1
     adc #>screen+$28
-    sta.z _3+1
+    sta.z __3+1
     lda.z l2
     clc
     adc #<screen
-    sta.z _4
+    sta.z __4
     lda.z l2+1
     adc #>screen
-    sta.z _4+1
+    sta.z __4+1
     ldy #0
-    lda (_3),y
-    sta (_4),y
+    lda (__3),y
+    sta (__4),y
     inc.z l2
     bne !+
     inc.z l2+1
   !:
     inx
-    jmp b3
+    jmp __b3
 }
 scrollup2: {
     .label line1 = 3
@@ -83,9 +83,9 @@ scrollup2: {
     sta.z line2
     lda #>screen+$28
     sta.z line2+1
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     ldy #0
     lda (line2),y
     sta (line1),y
@@ -99,37 +99,37 @@ scrollup2: {
   !:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z l
     lda #$18
     cmp.z l
-    bne b1
+    bne __b1
     rts
 }
 scrollup1: {
-    .label _2 = 7
-    .label _4 = 9
+    .label __2 = 7
+    .label __4 = 9
     .label line = 5
-    .label _5 = 9
-    .label _6 = 7
+    .label __5 = 9
+    .label __6 = 7
     lda #<0
     sta.z line
     sta.z line+1
-  b1:
+  __b1:
     lda.z line+1
     cmp #>$28*$18
-    bcc b4
+    bcc b1
     bne !+
     lda.z line
     cmp #<$28*$18
-    bcc b4
+    bcc b1
   !:
     rts
-  b4:
+  b1:
     ldx #0
-  b2:
+  __b2:
     cpx #$28
-    bcc b3
+    bcc __b3
     lda #$28
     clc
     adc.z line
@@ -137,39 +137,39 @@ scrollup1: {
     bcc !+
     inc.z line+1
   !:
-    jmp b1
-  b3:
+    jmp __b1
+  __b3:
     txa
     clc
     adc.z line
-    sta.z _2
+    sta.z __2
     lda #0
     adc.z line+1
-    sta.z _2+1
+    sta.z __2+1
     txa
     clc
     adc.z line
-    sta.z _4
+    sta.z __4
     lda #0
     adc.z line+1
-    sta.z _4+1
+    sta.z __4+1
     clc
-    lda.z _5
+    lda.z __5
     adc #<screen+$28
-    sta.z _5
-    lda.z _5+1
+    sta.z __5
+    lda.z __5+1
     adc #>screen+$28
-    sta.z _5+1
+    sta.z __5+1
     clc
-    lda.z _6
+    lda.z __6
     adc #<screen
-    sta.z _6
-    lda.z _6+1
+    sta.z __6
+    lda.z __6+1
     adc #>screen
-    sta.z _6+1
+    sta.z __6+1
     ldy #0
-    lda (_5),y
-    sta (_6),y
+    lda (__5),y
+    sta (__6),y
     inx
-    jmp b2
+    jmp __b2
 }

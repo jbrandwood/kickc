@@ -7,47 +7,47 @@ main: {
     .label i = 2
     lda #$64
     sta.z i
-  b1:
+  __b1:
     lda #$64
     sta.z j
-  b2:
+  __b2:
     jsr nest1
     dec.z j
     lda.z j
-    bne b2
+    bne __b2
     dec.z i
     lda.z i
-    bne b1
+    bne __b1
     rts
 }
 nest1: {
     .label i = 4
     lda #$64
     sta.z i
-  b1:
+  __b1:
     lda #$64
-  b2:
+  __b2:
     jsr nest2
     sec
     sbc #1
     cmp #0
-    bne b2
+    bne __b2
     dec.z i
     lda.z i
-    bne b1
+    bne __b1
     rts
 }
 nest2: {
     ldx #$64
-  b1:
+  __b1:
     ldy #$64
-  b2:
+  __b2:
     sty SCREEN
     dey
     cpy #0
-    bne b2
+    bne __b2
     dex
     cpx #0
-    bne b1
+    bne __b1
     rts
 }

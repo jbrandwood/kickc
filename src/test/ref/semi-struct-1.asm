@@ -35,7 +35,7 @@ print_points: {
     sta.z print_char_cursor+1
     lda #0
     sta.z i
-  b1:
+  __b1:
     lda.z i
     asl
     tay
@@ -57,20 +57,20 @@ print_points: {
     inc.z i
     lda #NUM_POINTS-1+1
     cmp.z i
-    bne b7
+    bne __b7
     rts
-  b7:
+  __b7:
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    jmp b1
+    jmp __b1
     str: .text " "
     .byte 0
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -80,11 +80,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -124,13 +124,13 @@ print_str: {
     sta.z str
     lda #>print_points.str
     sta.z str+1
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -142,7 +142,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -160,15 +160,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -176,7 +176,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Initialize points
 init_points: {
@@ -185,7 +185,7 @@ init_points: {
     lda #$a
     sta.z pos
     ldx #0
-  b1:
+  __b1:
     txa
     asl
     tay
@@ -208,7 +208,7 @@ init_points: {
     sta.z pos
     inx
     cpx #NUM_POINTS-1+1
-    bne b1
+    bne __b1
     rts
 }
   print_hextab: .text "0123456789abcdef"

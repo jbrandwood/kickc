@@ -52,26 +52,26 @@ main: {
     sta.z msg
     lda #>MESSAGE
     sta.z msg+1
-  b1:
+  __b1:
     ldy #0
     lda (msg),y
     cmp #0
-    bne b2
-  b3:
+    bne __b2
+  __b3:
     lda #$36
     cmp RASTER
-    beq b4
+    beq __b4
     lda #$42
     cmp RASTER
-    beq b4
+    beq __b4
     lda #BLACK
     sta BGCOL
-    jmp b3
-  b4:
+    jmp __b3
+  __b4:
     lda #WHITE
     sta BGCOL
-    jmp b3
-  b2:
+    jmp __b3
+  __b2:
     ldy #0
     lda (msg),y
     sta (sc),y
@@ -83,7 +83,7 @@ main: {
     bne !+
     inc.z msg+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zeropage(4) str, byte register(X) c, word zeropage(2) num)
@@ -95,7 +95,7 @@ memset: {
     lda.z num
     bne !+
     lda.z num+1
-    beq breturn
+    beq __breturn
   !:
     lda.z end
     clc
@@ -104,16 +104,16 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-  b2:
+  __b2:
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
-  breturn:
+    bne __b3
+  __breturn:
     rts
-  b3:
+  __b3:
     txa
     ldy #0
     sta (dst),y
@@ -121,7 +121,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2
+    jmp __b2
 }
 syscall2: {
     lda #'<'

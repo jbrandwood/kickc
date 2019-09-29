@@ -10,14 +10,14 @@ main: {
     lda #num
     sta SCREEN+2
     ldx #0
-  b1:
+  __b1:
     lda str,x
     sta SCREEN+4,x
     lda nums,x
     sta SCREEN+9,x
     inx
     cpx #4
-    bne b1
+    bne __b1
     rts
 }
   str: .text "bcde"

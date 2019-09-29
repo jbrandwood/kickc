@@ -327,31 +327,31 @@ Target platform is c64basic / MOS6502X
 // Test address-of an array element
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
   .label idx = 3
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _7 = 6
+    .label __7 = 6
     .label i = 2
     // [5] call print 
     // [15] phi from main to print [phi:main->print]
@@ -366,13 +366,13 @@ main: {
     sta.z idx
     jsr print
     // [6] phi from main to main::@2 [phi:main->main::@2]
-  b2_from_main:
-    jmp b2
+  __b2_from_main:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [7] call print 
     // [15] phi from main::@2 to print [phi:main::@2->print]
-  print_from_b2:
+  print_from___b2:
     // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
     lda #<VALS+1*SIZEOF_SIGNED_WORD
     sta.z print.p
@@ -381,23 +381,23 @@ main: {
     // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
     jsr print
     // [8] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [8] phi (byte) main::i#2 = (byte) 2 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
     lda #2
     sta.z i
-    jmp b1
+    jmp __b1
     // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z _7
+    sta.z __7
     // [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$7 -- pwsz1=pwsc1_plus_vbuz2 
-    lda.z _7
+    lda.z __7
     clc
     adc #<VALS
     sta.z print.p
@@ -406,36 +406,36 @@ main: {
     sta.z print.p+1
     // [11] call print 
     // [15] phi from main::@1 to print [phi:main::@1->print]
-  print_from_b1:
+  print_from___b1:
     // [15] phi (signed word*) print::p#3 = (signed word*) print::p#2 [phi:main::@1->print#0] -- register_copy 
     // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
     jsr print
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [13] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z i
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
   // print
 // print(signed word* zeropage(4) p)
 print: {
-    .label _0 = 7
+    .label __0 = 7
     .label p = 4
     // [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z idx
     asl
-    sta.z _0
+    sta.z __0
     // [17] *((const signed word*) SCREEN + (byte~) print::$0) ← *((signed word*) print::p#3) -- pwsc1_derefidx_vbuz1=_deref_pwsz2 
-    ldx.z _0
+    ldx.z __0
     ldy #0
     lda (p),y
     sta SCREEN,x
@@ -444,9 +444,9 @@ print: {
     sta SCREEN+1,x
     // [18] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
     inc.z idx
-    jmp breturn
+    jmp __breturn
     // print::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
 }
@@ -490,28 +490,28 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test address-of an array element
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
   .label idx = 3
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label i = 2
@@ -528,13 +528,13 @@ main: {
     sta.z idx
     jsr print
     // [6] phi from main to main::@2 [phi:main->main::@2]
-  b2_from_main:
-    jmp b2
+  __b2_from_main:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [7] call print 
     // [15] phi from main::@2 to print [phi:main::@2->print]
-  print_from_b2:
+  print_from___b2:
     // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
     lda #<VALS+1*SIZEOF_SIGNED_WORD
     sta.z print.p
@@ -543,17 +543,17 @@ main: {
     // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@2->print#1] -- register_copy 
     jsr print
     // [8] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [8] phi (byte) main::i#2 = (byte) 2 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
     lda #2
     sta.z i
-    jmp b1
+    jmp __b1
     // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
@@ -566,22 +566,22 @@ main: {
     sta.z print.p+1
     // [11] call print 
     // [15] phi from main::@1 to print [phi:main::@1->print]
-  print_from_b1:
+  print_from___b1:
     // [15] phi (signed word*) print::p#3 = (signed word*) print::p#2 [phi:main::@1->print#0] -- register_copy 
     // [15] phi (byte) idx#12 = (byte) idx#13 [phi:main::@1->print#1] -- register_copy 
     jsr print
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [13] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z i
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -602,9 +602,9 @@ print: {
     sta SCREEN+1,x
     // [18] (byte) idx#13 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
     inc.z idx
-    jmp breturn
+    jmp __breturn
     // print::@return
-  breturn:
+  __breturn:
     // [19] return 
     rts
 }
@@ -612,38 +612,39 @@ print: {
   VALS: .word 1, 2, 3, 4
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b2
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b2
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b3 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b2_from_main:
-Removing instruction print_from_b2:
-Removing instruction b1_from_b3:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b3 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b2_from_main:
+Removing instruction print_from___b2:
+Removing instruction __b1_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction print_from_main:
-Removing instruction b2:
-Removing instruction b1_from_b2:
-Removing instruction print_from_b1:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b2:
+Removing instruction __b1_from___b2:
+Removing instruction print_from___b1:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -733,7 +734,7 @@ main: {
     // [8] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // &VALS[i]
     // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
@@ -758,7 +759,7 @@ main: {
     // [13] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z i
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [14] return 

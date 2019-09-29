@@ -1589,7 +1589,7 @@ Target platform is c64basic / MOS6502X
 // Point[NUM_POINTS] points;
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // The size of a point
@@ -1599,21 +1599,21 @@ Target platform is c64basic / MOS6502X
   .label print_char_cursor = 7
   .label print_line_cursor = 3
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 // Initialize some points and print them
 main: {
@@ -1622,24 +1622,24 @@ main: {
   init_points_from_main:
     jsr init_points
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call print_points 
     // [9] phi from main::@1 to print_points [phi:main::@1->print_points]
-  print_points_from_b1:
+  print_points_from___b1:
     jsr print_points
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
   // print_points
 // Print points
 print_points: {
-    .label getPoint1__0 = $f
+    .label getPoint1___0 = $f
     .label point = $10
     .label i = 2
     // [10] call print_cls 
@@ -1647,7 +1647,7 @@ print_points: {
   print_cls_from_print_points:
     jsr print_cls
     // [11] phi from print_points to print_points::@1 [phi:print_points->print_points::@1]
-  b1_from_print_points:
+  __b1_from_print_points:
     // [11] phi (byte*) print_line_cursor#24 = (byte*) 1024 [phi:print_points->print_points::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z print_line_cursor
@@ -1661,18 +1661,18 @@ print_points: {
     // [11] phi (byte) print_points::i#10 = (byte) 0 [phi:print_points->print_points::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // print_points::@1
-  b1:
+  __b1:
     jmp getPoint1
     // print_points::getPoint1
   getPoint1:
     // [12] (byte~) print_points::getPoint1_$0 ← (byte) print_points::i#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z getPoint1__0
+    sta.z getPoint1___0
     // [13] (byte*) print_points::point#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuz2 
-    lda.z getPoint1__0
+    lda.z getPoint1___0
     clc
     adc #<points
     sta.z point
@@ -1684,82 +1684,82 @@ print_points: {
     jmp pointXpos1
     // print_points::pointXpos1
   pointXpos1:
-    jmp b2
+    jmp __b2
     // print_points::@2
-  b2:
+  __b2:
     // [15] (byte) print_byte::b#0 ← *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z getPoint1__0
+    ldy.z getPoint1___0
     lda points,y
     sta.z print_byte.b
     // [16] call print_byte 
     // [33] phi from print_points::@2 to print_byte [phi:print_points::@2->print_byte]
-  print_byte_from_b2:
+  print_byte_from___b2:
     // [33] phi (byte*) print_char_cursor#42 = (byte*) print_char_cursor#45 [phi:print_points::@2->print_byte#0] -- register_copy 
     // [33] phi (byte) print_byte::b#2 = (byte) print_byte::b#0 [phi:print_points::@2->print_byte#1] -- register_copy 
     jsr print_byte
     // [17] phi from print_points::@2 to print_points::@4 [phi:print_points::@2->print_points::@4]
-  b4_from_b2:
-    jmp b4
+  __b4_from___b2:
+    jmp __b4
     // print_points::@4
-  b4:
+  __b4:
     // [18] call print_str 
     // [45] phi from print_points::@4 to print_str [phi:print_points::@4->print_str]
-  print_str_from_b4:
+  print_str_from___b4:
     jsr print_str
     // [19] phi from print_points::@4 to print_points::pointYpos1 [phi:print_points::@4->print_points::pointYpos1]
-  pointYpos1_from_b4:
+  pointYpos1_from___b4:
     jmp pointYpos1
     // print_points::pointYpos1
   pointYpos1:
-    jmp b3
+    jmp __b3
     // print_points::@3
-  b3:
+  __b3:
     // [20] (byte) print_byte::b#1 ← *((byte*) print_points::point#0 + (byte) 1) -- vbuz1=pbuz2_derefidx_vbuc1 
     ldy #1
     lda (point),y
     sta.z print_byte.b
     // [21] call print_byte 
     // [33] phi from print_points::@3 to print_byte [phi:print_points::@3->print_byte]
-  print_byte_from_b3:
+  print_byte_from___b3:
     // [33] phi (byte*) print_char_cursor#42 = (byte*) print_char_cursor#2 [phi:print_points::@3->print_byte#0] -- register_copy 
     // [33] phi (byte) print_byte::b#2 = (byte) print_byte::b#1 [phi:print_points::@3->print_byte#1] -- register_copy 
     jsr print_byte
     // [22] phi from print_points::@3 to print_points::@5 [phi:print_points::@3->print_points::@5]
-  b5_from_b3:
-    jmp b5
+  __b5_from___b3:
+    jmp __b5
     // print_points::@5
-  b5:
+  __b5:
     // [23] call print_ln 
     // [28] phi from print_points::@5 to print_ln [phi:print_points::@5->print_ln]
-  print_ln_from_b5:
+  print_ln_from___b5:
     jsr print_ln
-    jmp b6
+    jmp __b6
     // print_points::@6
-  b6:
+  __b6:
     // [24] (byte) print_points::i#1 ← ++ (byte) print_points::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [25] if((byte) print_points::i#1!=(const byte) NUM_POINTS-(byte) 1+(byte) 1) goto print_points::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_POINTS-1+1
     cmp.z i
-    bne b7
-    jmp breturn
+    bne __b7
+    jmp __breturn
     // print_points::@return
-  breturn:
+  __breturn:
     // [26] return 
     rts
     // print_points::@7
-  b7:
+  __b7:
     // [27] (byte*~) print_char_cursor#66 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     // [11] phi from print_points::@7 to print_points::@1 [phi:print_points::@7->print_points::@1]
-  b1_from_b7:
+  __b1_from___b7:
     // [11] phi (byte*) print_line_cursor#24 = (byte*) print_line_cursor#1 [phi:print_points::@7->print_points::@1#0] -- register_copy 
     // [11] phi (byte*) print_char_cursor#45 = (byte*~) print_char_cursor#66 [phi:print_points::@7->print_points::@1#1] -- register_copy 
     // [11] phi (byte) print_points::i#10 = (byte) print_points::i#1 [phi:print_points::@7->print_points::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     str: .text " "
     .byte 0
 }
@@ -1767,12 +1767,12 @@ print_points: {
 // Print a newline
 print_ln: {
     // [29] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  b1_from_print_ln:
-  b1_from_b1:
+  __b1_from_print_ln:
+  __b1_from___b1:
     // [29] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#24 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_ln::@1
-  b1:
+  __b1:
     // [30] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
@@ -1784,15 +1784,15 @@ print_ln: {
     // [31] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1_from_b1
+    bcc __b1_from___b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1_from_b1
+    bcc __b1_from___b1
   !:
-    jmp breturn
+    jmp __breturn
     // print_ln::@return
-  breturn:
+  __breturn:
     // [32] return 
     rts
 }
@@ -1800,8 +1800,8 @@ print_ln: {
 // Print a byte as HEX
 // print_byte(byte zeropage(5) b)
 print_byte: {
-    .label _0 = $12
-    .label _2 = $13
+    .label __0 = $12
+    .label __2 = $13
     .label b = 5
     // [34] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
     lda.z b
@@ -1809,9 +1809,9 @@ print_byte: {
     lsr
     lsr
     lsr
-    sta.z _0
+    sta.z __0
     // [35] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z _0
+    ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
     // [36] call print_char 
@@ -1820,26 +1820,26 @@ print_byte: {
     // [41] phi (byte*) print_char_cursor#28 = (byte*) print_char_cursor#42 [phi:print_byte->print_char#0] -- register_copy 
     // [41] phi (byte) print_char::ch#2 = (byte) print_char::ch#0 [phi:print_byte->print_char#1] -- register_copy 
     jsr print_char
-    jmp b1
+    jmp __b1
     // print_byte::@1
-  b1:
+  __b1:
     // [37] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and.z b
-    sta.z _2
+    sta.z __2
     // [38] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z _2
+    ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
     // [39] call print_char 
     // [41] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
-  print_char_from_b1:
+  print_char_from___b1:
     // [41] phi (byte*) print_char_cursor#28 = (byte*) print_char_cursor#29 [phi:print_byte::@1->print_char#0] -- register_copy 
     // [41] phi (byte) print_char::ch#2 = (byte) print_char::ch#1 [phi:print_byte::@1->print_char#1] -- register_copy 
     jsr print_char
-    jmp breturn
+    jmp __breturn
     // print_byte::@return
-  breturn:
+  __breturn:
     // [40] return 
     rts
 }
@@ -1857,9 +1857,9 @@ print_char: {
     bne !+
     inc.z print_char_cursor+1
   !:
-    jmp breturn
+    jmp __breturn
     // print_char::@return
-  breturn:
+  __breturn:
     // [44] return 
     rts
 }
@@ -1869,28 +1869,28 @@ print_char: {
 print_str: {
     .label str = 9
     // [46] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
-  b1_from_print_str:
+  __b1_from_print_str:
     // [46] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#29 [phi:print_str->print_str::@1#0] -- register_copy 
     // [46] phi (byte*) print_str::str#2 = (const string) print_points::str [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
     lda #<print_points.str
     sta.z str
     lda #>print_points.str
     sta.z str+1
-    jmp b1
+    jmp __b1
     // print_str::@1
-  b1:
+  __b1:
     // [47] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print_str::@return
-  breturn:
+  __breturn:
     // [48] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // [49] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
@@ -1907,10 +1907,10 @@ print_str: {
     inc.z str+1
   !:
     // [46] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [46] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#1 [phi:print_str::@2->print_str::@1#0] -- register_copy 
     // [46] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@2->print_str::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
@@ -1919,9 +1919,9 @@ print_cls: {
     // [55] phi from print_cls to memset [phi:print_cls->memset]
   memset_from_print_cls:
     jsr memset
-    jmp breturn
+    jmp __breturn
     // print_cls::@return
-  breturn:
+  __breturn:
     // [54] return 
     rts
 }
@@ -1934,29 +1934,29 @@ memset: {
     .label end = str+num
     .label dst = $b
     // [56] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
+  __b1_from_memset:
     // [56] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [57] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [58] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // [59] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
@@ -1967,44 +1967,44 @@ memset: {
     inc.z dst+1
   !:
     // [56] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [56] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // init_points
 // Initialize points
 init_points: {
-    .label getPoint1__0 = $14
+    .label getPoint1___0 = $14
     .label getPoint1_return = $15
     .label pos = $17
     .label pos_2 = $e
     .label i = $d
     .label pos_10 = $e
     // [62] phi from init_points to init_points::@1 [phi:init_points->init_points::@1]
-  b1_from_init_points:
+  __b1_from_init_points:
     // [62] phi (byte) init_points::pos#10 = (byte) $a [phi:init_points->init_points::@1#0] -- vbuz1=vbuc1 
     lda #$a
     sta.z pos_10
     // [62] phi (byte) init_points::i#10 = (byte) 0 [phi:init_points->init_points::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [62] phi from init_points::@3 to init_points::@1 [phi:init_points::@3->init_points::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [62] phi (byte) init_points::pos#10 = (byte) init_points::pos#2 [phi:init_points::@3->init_points::@1#0] -- register_copy 
     // [62] phi (byte) init_points::i#10 = (byte) init_points::i#1 [phi:init_points::@3->init_points::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // init_points::@1
-  b1:
+  __b1:
     jmp getPoint1
     // init_points::getPoint1
   getPoint1:
     // [63] (byte~) init_points::getPoint1_$0 ← (byte) init_points::i#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z getPoint1__0
+    sta.z getPoint1___0
     // [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuz2 
-    lda.z getPoint1__0
+    lda.z getPoint1___0
     clc
     adc #<points
     sta.z getPoint1_return
@@ -2016,25 +2016,25 @@ init_points: {
     jmp pointXpos1
     // init_points::pointXpos1
   pointXpos1:
-    jmp b2
+    jmp __b2
     // init_points::@2
-  b2:
+  __b2:
     // [66] *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z pos_10
-    ldy.z getPoint1__0
+    ldy.z getPoint1___0
     sta points,y
     // [67] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a -- vbuz1=vbuz2_plus_vbuc1 
     lax.z pos_10
     axs #-[$a]
     stx.z pos
     // [68] phi from init_points::@2 to init_points::pointYpos1 [phi:init_points::@2->init_points::pointYpos1]
-  pointYpos1_from_b2:
+  pointYpos1_from___b2:
     jmp pointYpos1
     // init_points::pointYpos1
   pointYpos1:
-    jmp b3
+    jmp __b3
     // init_points::@3
-  b3:
+  __b3:
     // [69] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 -- pbuz1_derefidx_vbuc1=vbuz2 
     lda.z pos
     ldy #1
@@ -2048,10 +2048,10 @@ init_points: {
     // [72] if((byte) init_points::i#1!=(const byte) NUM_POINTS-(byte) 1+(byte) 1) goto init_points::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_POINTS-1+1
     cmp.z i
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // init_points::@return
-  breturn:
+  __breturn:
     // [73] return 
     rts
 }
@@ -2172,7 +2172,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Point[NUM_POINTS] points;
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // The size of a point
@@ -2182,21 +2182,21 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_char_cursor = 9
   .label print_line_cursor = 4
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 // Initialize some points and print them
 main: {
@@ -2205,17 +2205,17 @@ main: {
   init_points_from_main:
     jsr init_points
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call print_points 
     // [9] phi from main::@1 to print_points [phi:main::@1->print_points]
-  print_points_from_b1:
+  print_points_from___b1:
     jsr print_points
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -2229,7 +2229,7 @@ print_points: {
   print_cls_from_print_points:
     jsr print_cls
     // [11] phi from print_points to print_points::@1 [phi:print_points->print_points::@1]
-  b1_from_print_points:
+  __b1_from_print_points:
     // [11] phi (byte*) print_line_cursor#24 = (byte*) 1024 [phi:print_points->print_points::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z print_line_cursor
@@ -2243,9 +2243,9 @@ print_points: {
     // [11] phi (byte) print_points::i#10 = (byte) 0 [phi:print_points->print_points::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // print_points::@1
-  b1:
+  __b1:
     jmp getPoint1
     // print_points::getPoint1
   getPoint1:
@@ -2266,80 +2266,80 @@ print_points: {
     jmp pointXpos1
     // print_points::pointXpos1
   pointXpos1:
-    jmp b2
+    jmp __b2
     // print_points::@2
-  b2:
+  __b2:
     // [15] (byte) print_byte::b#0 ← *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx points,y
     // [16] call print_byte 
     // [33] phi from print_points::@2 to print_byte [phi:print_points::@2->print_byte]
-  print_byte_from_b2:
+  print_byte_from___b2:
     // [33] phi (byte*) print_char_cursor#42 = (byte*) print_char_cursor#45 [phi:print_points::@2->print_byte#0] -- register_copy 
     // [33] phi (byte) print_byte::b#2 = (byte) print_byte::b#0 [phi:print_points::@2->print_byte#1] -- register_copy 
     jsr print_byte
     // [17] phi from print_points::@2 to print_points::@4 [phi:print_points::@2->print_points::@4]
-  b4_from_b2:
-    jmp b4
+  __b4_from___b2:
+    jmp __b4
     // print_points::@4
-  b4:
+  __b4:
     // [18] call print_str 
     // [45] phi from print_points::@4 to print_str [phi:print_points::@4->print_str]
-  print_str_from_b4:
+  print_str_from___b4:
     jsr print_str
     // [19] phi from print_points::@4 to print_points::pointYpos1 [phi:print_points::@4->print_points::pointYpos1]
-  pointYpos1_from_b4:
+  pointYpos1_from___b4:
     jmp pointYpos1
     // print_points::pointYpos1
   pointYpos1:
-    jmp b3
+    jmp __b3
     // print_points::@3
-  b3:
+  __b3:
     // [20] (byte) print_byte::b#1 ← *((byte*) print_points::point#0 + (byte) 1) -- vbuxx=pbuz1_derefidx_vbuc1 
     ldy #1
     lda (point),y
     tax
     // [21] call print_byte 
     // [33] phi from print_points::@3 to print_byte [phi:print_points::@3->print_byte]
-  print_byte_from_b3:
+  print_byte_from___b3:
     // [33] phi (byte*) print_char_cursor#42 = (byte*) print_char_cursor#2 [phi:print_points::@3->print_byte#0] -- register_copy 
     // [33] phi (byte) print_byte::b#2 = (byte) print_byte::b#1 [phi:print_points::@3->print_byte#1] -- register_copy 
     jsr print_byte
     // [22] phi from print_points::@3 to print_points::@5 [phi:print_points::@3->print_points::@5]
-  b5_from_b3:
-    jmp b5
+  __b5_from___b3:
+    jmp __b5
     // print_points::@5
-  b5:
+  __b5:
     // [23] call print_ln 
     // [28] phi from print_points::@5 to print_ln [phi:print_points::@5->print_ln]
-  print_ln_from_b5:
+  print_ln_from___b5:
     jsr print_ln
-    jmp b6
+    jmp __b6
     // print_points::@6
-  b6:
+  __b6:
     // [24] (byte) print_points::i#1 ← ++ (byte) print_points::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [25] if((byte) print_points::i#1!=(const byte) NUM_POINTS-(byte) 1+(byte) 1) goto print_points::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_POINTS-1+1
     cmp.z i
-    bne b7
-    jmp breturn
+    bne __b7
+    jmp __breturn
     // print_points::@return
-  breturn:
+  __breturn:
     // [26] return 
     rts
     // print_points::@7
-  b7:
+  __b7:
     // [27] (byte*~) print_char_cursor#66 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     // [11] phi from print_points::@7 to print_points::@1 [phi:print_points::@7->print_points::@1]
-  b1_from_b7:
+  __b1_from___b7:
     // [11] phi (byte*) print_line_cursor#24 = (byte*) print_line_cursor#1 [phi:print_points::@7->print_points::@1#0] -- register_copy 
     // [11] phi (byte*) print_char_cursor#45 = (byte*~) print_char_cursor#66 [phi:print_points::@7->print_points::@1#1] -- register_copy 
     // [11] phi (byte) print_points::i#10 = (byte) print_points::i#1 [phi:print_points::@7->print_points::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     str: .text " "
     .byte 0
 }
@@ -2347,12 +2347,12 @@ print_points: {
 // Print a newline
 print_ln: {
     // [29] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  b1_from_print_ln:
-  b1_from_b1:
+  __b1_from_print_ln:
+  __b1_from___b1:
     // [29] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#24 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_ln::@1
-  b1:
+  __b1:
     // [30] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
@@ -2364,15 +2364,15 @@ print_ln: {
     // [31] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1_from_b1
+    bcc __b1_from___b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1_from_b1
+    bcc __b1_from___b1
   !:
-    jmp breturn
+    jmp __breturn
     // print_ln::@return
-  breturn:
+  __breturn:
     // [32] return 
     rts
 }
@@ -2395,9 +2395,9 @@ print_byte: {
     // [41] phi (byte*) print_char_cursor#28 = (byte*) print_char_cursor#42 [phi:print_byte->print_char#0] -- register_copy 
     // [41] phi (byte) print_char::ch#2 = (byte) print_char::ch#0 [phi:print_byte->print_char#1] -- register_copy 
     jsr print_char
-    jmp b1
+    jmp __b1
     // print_byte::@1
-  b1:
+  __b1:
     // [37] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuxx=vbuxx_band_vbuc1 
     lda #$f
     axs #0
@@ -2405,13 +2405,13 @@ print_byte: {
     lda print_hextab,x
     // [39] call print_char 
     // [41] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
-  print_char_from_b1:
+  print_char_from___b1:
     // [41] phi (byte*) print_char_cursor#28 = (byte*) print_char_cursor#29 [phi:print_byte::@1->print_char#0] -- register_copy 
     // [41] phi (byte) print_char::ch#2 = (byte) print_char::ch#1 [phi:print_byte::@1->print_char#1] -- register_copy 
     jsr print_char
-    jmp breturn
+    jmp __breturn
     // print_byte::@return
-  breturn:
+  __breturn:
     // [40] return 
     rts
 }
@@ -2427,9 +2427,9 @@ print_char: {
     bne !+
     inc.z print_char_cursor+1
   !:
-    jmp breturn
+    jmp __breturn
     // print_char::@return
-  breturn:
+  __breturn:
     // [44] return 
     rts
 }
@@ -2439,28 +2439,28 @@ print_char: {
 print_str: {
     .label str = 2
     // [46] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
-  b1_from_print_str:
+  __b1_from_print_str:
     // [46] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#29 [phi:print_str->print_str::@1#0] -- register_copy 
     // [46] phi (byte*) print_str::str#2 = (const string) print_points::str [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
     lda #<print_points.str
     sta.z str
     lda #>print_points.str
     sta.z str+1
-    jmp b1
+    jmp __b1
     // print_str::@1
-  b1:
+  __b1:
     // [47] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print_str::@return
-  breturn:
+  __breturn:
     // [48] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // [49] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
@@ -2477,10 +2477,10 @@ print_str: {
     inc.z str+1
   !:
     // [46] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [46] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#1 [phi:print_str::@2->print_str::@1#0] -- register_copy 
     // [46] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@2->print_str::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
@@ -2489,9 +2489,9 @@ print_cls: {
     // [55] phi from print_cls to memset [phi:print_cls->memset]
   memset_from_print_cls:
     jsr memset
-    jmp breturn
+    jmp __breturn
     // print_cls::@return
-  breturn:
+  __breturn:
     // [54] return 
     rts
 }
@@ -2504,29 +2504,29 @@ memset: {
     .label end = str+num
     .label dst = 4
     // [56] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
+  __b1_from_memset:
     // [56] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [57] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [58] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // [59] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
@@ -2537,9 +2537,9 @@ memset: {
     inc.z dst+1
   !:
     // [56] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [56] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // init_points
 // Initialize points
@@ -2547,20 +2547,20 @@ init_points: {
     .label getPoint1_return = 9
     .label pos = 6
     // [62] phi from init_points to init_points::@1 [phi:init_points->init_points::@1]
-  b1_from_init_points:
+  __b1_from_init_points:
     // [62] phi (byte) init_points::pos#10 = (byte) $a [phi:init_points->init_points::@1#0] -- vbuz1=vbuc1 
     lda #$a
     sta.z pos
     // [62] phi (byte) init_points::i#10 = (byte) 0 [phi:init_points->init_points::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [62] phi from init_points::@3 to init_points::@1 [phi:init_points::@3->init_points::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [62] phi (byte) init_points::pos#10 = (byte) init_points::pos#2 [phi:init_points::@3->init_points::@1#0] -- register_copy 
     // [62] phi (byte) init_points::i#10 = (byte) init_points::i#1 [phi:init_points::@3->init_points::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // init_points::@1
-  b1:
+  __b1:
     jmp getPoint1
     // init_points::getPoint1
   getPoint1:
@@ -2581,9 +2581,9 @@ init_points: {
     jmp pointXpos1
     // init_points::pointXpos1
   pointXpos1:
-    jmp b2
+    jmp __b2
     // init_points::@2
-  b2:
+  __b2:
     // [66] *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuyy=vbuz1 
     lda.z pos
     sta points,y
@@ -2592,13 +2592,13 @@ init_points: {
     clc
     adc.z pos
     // [68] phi from init_points::@2 to init_points::pointYpos1 [phi:init_points::@2->init_points::pointYpos1]
-  pointYpos1_from_b2:
+  pointYpos1_from___b2:
     jmp pointYpos1
     // init_points::pointYpos1
   pointYpos1:
-    jmp b3
+    jmp __b3
     // init_points::@3
-  b3:
+  __b3:
     // [69] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 -- pbuz1_derefidx_vbuc1=vbuaa 
     ldy #1
     sta (getPoint1_return),y
@@ -2610,10 +2610,10 @@ init_points: {
     inx
     // [72] if((byte) init_points::i#1!=(const byte) NUM_POINTS-(byte) 1+(byte) 1) goto init_points::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #NUM_POINTS-1+1
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // init_points::@return
-  breturn:
+  __breturn:
     // [73] return 
     rts
 }
@@ -2623,107 +2623,108 @@ init_points: {
   points: .fill NUM_POINTS*SIZEOF_POINT, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp getPoint1
 Removing instruction jmp pointXpos1
-Removing instruction jmp b2
-Removing instruction jmp b4
+Removing instruction jmp __b2
+Removing instruction jmp __b4
 Removing instruction jmp pointYpos1
-Removing instruction jmp b3
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp getPoint1
 Removing instruction jmp pointXpos1
-Removing instruction jmp b2
+Removing instruction jmp __b2
 Removing instruction jmp pointYpos1
-Removing instruction jmp b3
-Removing instruction jmp breturn
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b3 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction print_points_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from___b3 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction print_points_from___b1:
 Removing instruction getPoint1:
 Removing instruction pointXpos1_from_getPoint1:
 Removing instruction pointXpos1:
-Removing instruction b4_from_b2:
-Removing instruction print_str_from_b4:
-Removing instruction pointYpos1_from_b4:
+Removing instruction __b4_from___b2:
+Removing instruction print_str_from___b4:
+Removing instruction pointYpos1_from___b4:
 Removing instruction pointYpos1:
-Removing instruction b5_from_b3:
-Removing instruction print_ln_from_b5:
-Removing instruction b1_from_print_ln:
-Removing instruction b1_from_b1:
-Removing instruction b1_from_b3:
+Removing instruction __b5_from___b3:
+Removing instruction print_ln_from___b5:
+Removing instruction __b1_from_print_ln:
+Removing instruction __b1_from___b1:
+Removing instruction __b1_from___b3:
 Removing instruction getPoint1:
 Removing instruction pointXpos1_from_getPoint1:
 Removing instruction pointXpos1:
-Removing instruction pointYpos1_from_b2:
+Removing instruction pointYpos1_from___b2:
 Removing instruction pointYpos1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction init_points_from_main:
-Removing instruction b1:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
 Removing instruction print_cls_from_print_points:
-Removing instruction b1_from_print_points:
-Removing instruction b2:
-Removing instruction print_byte_from_b2:
-Removing instruction b4:
-Removing instruction b3:
-Removing instruction print_byte_from_b3:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction breturn:
-Removing instruction b1_from_b7:
-Removing instruction breturn:
+Removing instruction __b1_from_print_points:
+Removing instruction __b2:
+Removing instruction print_byte_from___b2:
+Removing instruction __b4:
+Removing instruction __b3:
+Removing instruction print_byte_from___b3:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction __breturn:
+Removing instruction __b1_from___b7:
+Removing instruction __breturn:
 Removing instruction print_char_from_print_byte:
-Removing instruction b1:
-Removing instruction print_char_from_b1:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction b1_from_print_str:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
+Removing instruction __b1:
+Removing instruction print_char_from___b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __b1_from_print_str:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Removing instruction memset_from_print_cls:
-Removing instruction breturn:
-Removing instruction b1_from_memset:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
-Removing instruction b1_from_init_points:
-Removing instruction b2:
-Removing instruction b3:
-Removing instruction breturn:
+Removing instruction __breturn:
+Removing instruction __b1_from_memset:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Removing instruction __b1_from_init_points:
+Removing instruction __b2:
+Removing instruction __b3:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -2933,7 +2934,7 @@ print_points: {
     lda #0
     sta.z i
     // print_points::@1
-  b1:
+  __b1:
     // print_points::getPoint1
     // idx*SIZEOF_POINT
     // [12] (byte~) print_points::getPoint1_$0 ← (byte) print_points::i#10 << (byte) 1 -- vbuyy=vbuz1_rol_1 
@@ -2992,13 +2993,13 @@ print_points: {
     // [25] if((byte) print_points::i#1!=(const byte) NUM_POINTS-(byte) 1+(byte) 1) goto print_points::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_POINTS-1+1
     cmp.z i
-    bne b7
+    bne __b7
     // print_points::@return
     // }
     // [26] return 
     rts
     // print_points::@7
-  b7:
+  __b7:
     // [27] (byte*~) print_char_cursor#66 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -3008,7 +3009,7 @@ print_points: {
     // [11] phi (byte*) print_line_cursor#24 = (byte*) print_line_cursor#1 [phi:print_points::@7->print_points::@1#0] -- register_copy 
     // [11] phi (byte*) print_char_cursor#45 = (byte*~) print_char_cursor#66 [phi:print_points::@7->print_points::@1#1] -- register_copy 
     // [11] phi (byte) print_points::i#10 = (byte) print_points::i#1 [phi:print_points::@7->print_points::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     str: .text " "
     .byte 0
 }
@@ -3018,7 +3019,7 @@ print_ln: {
     // [29] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
     // [29] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#24 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
     // print_ln::@1
-  b1:
+  __b1:
     // print_line_cursor + $28
     // [30] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
@@ -3032,11 +3033,11 @@ print_ln: {
     // [31] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     // print_ln::@return
     // }
@@ -3113,19 +3114,19 @@ print_str: {
     lda #>print_points.str
     sta.z str+1
     // print_str::@1
-  b1:
+  __b1:
     // while(*str)
     // [47] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     // print_str::@return
     // }
     // [48] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // *(print_char_cursor++) = *(str++)
     // [49] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -3145,7 +3146,7 @@ print_str: {
     // [46] phi from print_str::@2 to print_str::@1 [phi:print_str::@2->print_str::@1]
     // [46] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#1 [phi:print_str::@2->print_str::@1#0] -- register_copy 
     // [46] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@2->print_str::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
@@ -3174,21 +3175,21 @@ memset: {
     lda #>str
     sta.z dst+1
     // memset::@1
-  b1:
+  __b1:
     // for(char* dst = str; dst!=end; dst++)
     // [57] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     // memset::@return
     // }
     // [58] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // *dst = c
     // [59] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
@@ -3202,7 +3203,7 @@ memset: {
   !:
     // [56] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
     // [56] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // init_points
 // Initialize points
@@ -3219,7 +3220,7 @@ init_points: {
     // [62] phi (byte) init_points::pos#10 = (byte) init_points::pos#2 [phi:init_points::@3->init_points::@1#0] -- register_copy 
     // [62] phi (byte) init_points::i#10 = (byte) init_points::i#1 [phi:init_points::@3->init_points::@1#1] -- register_copy 
     // init_points::@1
-  b1:
+  __b1:
     // init_points::getPoint1
     // idx*SIZEOF_POINT
     // [63] (byte~) init_points::getPoint1_$0 ← (byte) init_points::i#10 << (byte) 1 -- vbuyy=vbuxx_rol_1 
@@ -3264,7 +3265,7 @@ init_points: {
     inx
     // [72] if((byte) init_points::i#1!=(const byte) NUM_POINTS-(byte) 1+(byte) 1) goto init_points::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #NUM_POINTS-1+1
-    bne b1
+    bne __b1
     // init_points::@return
     // }
     // [73] return 

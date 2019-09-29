@@ -8,29 +8,29 @@
   .const STACK_BASE = $103
   .label current = 2
 main: {
-    .label _0 = 2
-    .label _1 = 4
+    .label __0 = 2
+    .label __1 = 4
     pha
     pha
     jsr next
     pla
-    sta.z _0
+    sta.z __0
     pla
-    sta.z _0+1
-    lda.z _0
+    sta.z __0+1
+    lda.z __0
     sta SCREEN
-    lda.z _0+1
+    lda.z __0+1
     sta SCREEN+1
     pha
     pha
     jsr next
     pla
-    sta.z _1
+    sta.z __1
     pla
-    sta.z _1+1
-    lda.z _1
+    sta.z __1+1
+    lda.z __1
     sta SCREEN+1*SIZEOF_SIGNED_WORD
-    lda.z _1+1
+    lda.z __1+1
     sta SCREEN+1*SIZEOF_SIGNED_WORD+1
     rts
 }

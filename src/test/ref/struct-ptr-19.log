@@ -308,7 +308,7 @@ Target platform is c64basic / MOS6502X
 // Demonstrates problem with passing struct pointer deref as parameter to call
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_POINT_Y = 1
@@ -317,19 +317,19 @@ Target platform is c64basic / MOS6502X
   .label idx_11 = 3
   .label idx_12 = 3
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label ptr = point_x
@@ -356,9 +356,9 @@ main: {
     sta.z idx_11
     // [13] phi (byte) print::p_x#2 = (byte) print::p_x#0 [phi:main->print#2] -- register_copy 
     jsr print
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [9] (byte) print::p_x#1 ← *((byte*)(const struct Point*) main::ptr#0) -- vbuz1=_deref_pbuc1 
     lda.z ptr
     sta.z print.p_x
@@ -367,14 +367,14 @@ main: {
     sta.z print.p_y
     // [11] call print 
     // [13] phi from main::@1 to print [phi:main::@1->print]
-  print_from_b1:
+  print_from___b1:
     // [13] phi (byte) print::p_y#2 = (byte) print::p_y#1 [phi:main::@1->print#0] -- register_copy 
     // [13] phi (byte) idx#11 = (byte) idx#12 [phi:main::@1->print#1] -- register_copy 
     // [13] phi (byte) print::p_x#2 = (byte) print::p_x#1 [phi:main::@1->print#2] -- register_copy 
     jsr print
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
@@ -399,9 +399,9 @@ print: {
     ldy.z idx
     iny
     sty.z idx_12
-    jmp breturn
+    jmp __breturn
     // print::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
@@ -442,26 +442,26 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Demonstrates problem with passing struct pointer deref as parameter to call
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
   .label idx = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label ptr = point_x
@@ -486,23 +486,23 @@ main: {
     sta.z idx
     // [13] phi (byte) print::p_x#2 = (byte) print::p_x#0 [phi:main->print#2] -- register_copy 
     jsr print
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [9] (byte) print::p_x#1 ← *((byte*)(const struct Point*) main::ptr#0) -- vbuyy=_deref_pbuc1 
     ldy.z ptr
     // [10] (byte) print::p_y#1 ← *((byte*)(const struct Point*) main::ptr#0+(const byte) OFFSET_STRUCT_POINT_Y) -- vbuxx=_deref_pbuc1 
     ldx ptr+OFFSET_STRUCT_POINT_Y
     // [11] call print 
     // [13] phi from main::@1 to print [phi:main::@1->print]
-  print_from_b1:
+  print_from___b1:
     // [13] phi (byte) print::p_y#2 = (byte) print::p_y#1 [phi:main::@1->print#0] -- register_copy 
     // [13] phi (byte) idx#11 = (byte) idx#12 [phi:main::@1->print#1] -- register_copy 
     // [13] phi (byte) print::p_x#2 = (byte) print::p_x#1 [phi:main::@1->print#2] -- register_copy 
     jsr print
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
@@ -522,39 +522,40 @@ print: {
     // [17] (byte) idx#12 ← ++ (byte) idx#4 -- vbuz1=_inc_vbuyy 
     iny
     sty.z idx
-    jmp breturn
+    jmp __breturn
     // print::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldx.z point_y with TAX
 Removing instruction ldy.z idx
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction print_from_main:
-Removing instruction b1:
-Removing instruction print_from_b1:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction print_from___b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

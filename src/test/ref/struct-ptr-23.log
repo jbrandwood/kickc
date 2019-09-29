@@ -345,7 +345,7 @@ Target platform is c64basic / MOS6502X
 // Example of a struct containing an array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_PERSON = 5
@@ -359,21 +359,21 @@ Target platform is c64basic / MOS6502X
   .label idx_10 = 4
   .label idx_15 = 4
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label person = persons+SIZEOF_STRUCT_PERSON
@@ -390,13 +390,13 @@ main: {
     sta.z print_person.person+1
     jsr print_person
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call print_person 
     // [9] phi from main::@1 to print_person [phi:main::@1->print_person]
-  print_person_from_b1:
+  print_person_from___b1:
     // [9] phi (byte) idx#15 = (byte) idx#10 [phi:main::@1->print_person#0] -- register_copy 
     // [9] phi (struct Person*) print_person::person#2 = (const struct Person*) main::person#1 [phi:main::@1->print_person#1] -- pssz1=pssc1 
     lda #<person
@@ -404,27 +404,27 @@ main: {
     lda #>person
     sta.z print_person.person+1
     jsr print_person
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
   // print_person
 // print_person(struct Person* zeropage(2) person)
 print_person: {
-    .label _0 = 5
-    .label _3 = 9
-    .label _4 = $c
+    .label __0 = 5
+    .label __3 = 9
+    .label __4 = $c
     .label person = 2
     // [10] (byte~) print_person::$0 ← (byte) '0' + *((byte*)(struct Person*) print_person::person#2) -- vbuz1=vbuc1_plus__deref_pbuz2 
     lda #'0'
     clc
     ldy #0
     adc (person),y
-    sta.z _0
+    sta.z __0
     // [11] *((const byte*) SCREEN + (byte) idx#15) ← (byte~) print_person::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _0
+    lda.z __0
     ldy.z idx_15
     sta SCREEN,y
     // [12] (byte) idx#4 ← ++ (byte) idx#15 -- vbuz1=_inc_vbuz2 
@@ -452,14 +452,14 @@ print_person: {
     lda #OFFSET_STRUCT_PERSON_INITIALS
     clc
     adc.z person
-    sta.z _3
+    sta.z __3
     lda #0
     adc.z person+1
-    sta.z _3+1
+    sta.z __3+1
     // [18] *((const byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
     ldx.z idx_6
     ldy #1
-    lda (_3),y
+    lda (__3),y
     sta SCREEN,x
     // [19] (byte) idx#7 ← ++ (byte) idx#6 -- vbuz1=_inc_vbuz2 
     ldy.z idx_6
@@ -469,14 +469,14 @@ print_person: {
     lda #OFFSET_STRUCT_PERSON_INITIALS
     clc
     adc.z person
-    sta.z _4
+    sta.z __4
     lda #0
     adc.z person+1
-    sta.z _4+1
+    sta.z __4+1
     // [21] *((const byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
     ldx.z idx_7
     ldy #2
-    lda (_4),y
+    lda (__4),y
     sta SCREEN,x
     // [22] (byte) idx#8 ← ++ (byte) idx#7 -- vbuz1=_inc_vbuz2 
     ldy.z idx_7
@@ -490,9 +490,9 @@ print_person: {
     ldy.z idx_8
     iny
     sty.z idx_10
-    jmp breturn
+    jmp __breturn
     // print_person::@return
-  breturn:
+  __breturn:
     // [25] return 
     rts
 }
@@ -562,28 +562,28 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Example of a struct containing an array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_PERSON = 5
   .const OFFSET_STRUCT_PERSON_INITIALS = 1
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label person = persons+SIZEOF_STRUCT_PERSON
@@ -599,13 +599,13 @@ main: {
     sta.z print_person.person+1
     jsr print_person
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call print_person 
     // [9] phi from main::@1 to print_person [phi:main::@1->print_person]
-  print_person_from_b1:
+  print_person_from___b1:
     // [9] phi (byte) idx#15 = (byte) idx#10 [phi:main::@1->print_person#0] -- register_copy 
     // [9] phi (struct Person*) print_person::person#2 = (const struct Person*) main::person#1 [phi:main::@1->print_person#1] -- pssz1=pssc1 
     lda #<person
@@ -613,17 +613,17 @@ main: {
     lda #>person
     sta.z print_person.person+1
     jsr print_person
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
   // print_person
 // print_person(struct Person* zeropage(2) person)
 print_person: {
-    .label _3 = 4
-    .label _4 = 2
+    .label __3 = 4
+    .label __4 = 2
     .label person = 2
     // [10] (byte~) print_person::$0 ← (byte) '0' + *((byte*)(struct Person*) print_person::person#2) -- vbuaa=vbuc1_plus__deref_pbuz1 
     lda #'0'
@@ -649,27 +649,27 @@ print_person: {
     lda #OFFSET_STRUCT_PERSON_INITIALS
     clc
     adc.z person
-    sta.z _3
+    sta.z __3
     lda #0
     adc.z person+1
-    sta.z _3+1
+    sta.z __3+1
     // [18] *((const byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #1
-    lda (_3),y
+    lda (__3),y
     sta SCREEN,x
     // [19] (byte) idx#7 ← ++ (byte) idx#6 -- vbuxx=_inc_vbuxx 
     inx
     // [20] (byte[4]) print_person::$4 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS -- pbuz1=pbuz1_plus_vbuc1 
     lda #OFFSET_STRUCT_PERSON_INITIALS
     clc
-    adc.z _4
-    sta.z _4
+    adc.z __4
+    sta.z __4
     bcc !+
-    inc.z _4+1
+    inc.z __4+1
   !:
     // [21] *((const byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #2
-    lda (_4),y
+    lda (__4),y
     sta SCREEN,x
     // [22] (byte) idx#8 ← ++ (byte) idx#7 -- vbuxx=_inc_vbuxx 
     inx
@@ -678,9 +678,9 @@ print_person: {
     sta SCREEN,x
     // [24] (byte) idx#10 ← ++ (byte) idx#8 -- vbuxx=_inc_vbuxx 
     inx
-    jmp breturn
+    jmp __breturn
     // print_person::@return
-  breturn:
+  __breturn:
     // [25] return 
     rts
 }
@@ -692,30 +692,31 @@ print_person: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction lda #OFFSET_STRUCT_PERSON_INITIALS with TYA
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction print_person_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction print_person_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction print_person_from_main:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -814,8 +815,8 @@ main: {
   // print_person
 // print_person(struct Person* zeropage(2) person)
 print_person: {
-    .label _3 = 4
-    .label _4 = 2
+    .label __3 = 4
+    .label __4 = 2
     .label person = 2
     // '0'+person->id
     // [10] (byte~) print_person::$0 ← (byte) '0' + *((byte*)(struct Person*) print_person::person#2) -- vbuaa=vbuc1_plus__deref_pbuz1 
@@ -849,13 +850,13 @@ print_person: {
     tya
     clc
     adc.z person
-    sta.z _3
+    sta.z __3
     lda #0
     adc.z person+1
-    sta.z _3+1
+    sta.z __3+1
     // [18] *((const byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (byte) 1) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #1
-    lda (_3),y
+    lda (__3),y
     sta SCREEN,x
     // SCREEN[idx++] = person->initials[1];
     // [19] (byte) idx#7 ← ++ (byte) idx#6 -- vbuxx=_inc_vbuxx 
@@ -864,14 +865,14 @@ print_person: {
     // [20] (byte[4]) print_person::$4 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS -- pbuz1=pbuz1_plus_vbuc1 
     lda #OFFSET_STRUCT_PERSON_INITIALS
     clc
-    adc.z _4
-    sta.z _4
+    adc.z __4
+    sta.z __4
     bcc !+
-    inc.z _4+1
+    inc.z __4+1
   !:
     // [21] *((const byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (byte) 2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #2
-    lda (_4),y
+    lda (__4),y
     sta SCREEN,x
     // SCREEN[idx++] = person->initials[2];
     // [22] (byte) idx#8 ← ++ (byte) idx#7 -- vbuxx=_inc_vbuxx 

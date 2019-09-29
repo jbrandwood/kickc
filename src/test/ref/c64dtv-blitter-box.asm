@@ -137,11 +137,11 @@ main: {
     lda #DTV_BLIT_DEST_CONT
     sta DTV_BLITTER_CONTROL2
   // wait til blitter is ready
-  b1:
+  __b1:
     lda #DTV_BLIT_STATUS_BUSY
     and DTV_BLITTER_CONTROL2
     cmp #0
-    bne b1
+    bne __b1
     rts
 }
   SRCA: .text "camelot rules!"

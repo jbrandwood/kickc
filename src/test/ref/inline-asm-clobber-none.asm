@@ -4,11 +4,11 @@
 .pc = $80d "Program"
 main: {
     lda #0
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     ldy #0
-  b3:
+  __b3:
     pha
     txa
     pha
@@ -22,13 +22,13 @@ main: {
     pla
     iny
     cpy #$b
-    bne b3
+    bne __b3
     inx
     cpx #$b
-    bne b2
+    bne __b2
     clc
     adc #1
     cmp #$b
-    bne b1
+    bne __b1
     rts
 }

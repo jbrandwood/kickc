@@ -305,33 +305,33 @@ Target platform is c64basic / MOS6502X
 // Minimal struct - accessing pointer to struct  in memory in a loop
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_POINT_Y = 1
   .label POINTS = $1000
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // Print points
     .label SCREEN = $400
-    .label _0 = 9
+    .label __0 = 9
     .label points = 2
     .label i = 4
     .label idx = $a
@@ -342,7 +342,7 @@ main: {
     .label points_5 = 5
     .label idx_4 = 7
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -351,14 +351,14 @@ main: {
     sta.z points
     lda #>POINTS
     sta.z points+1
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (struct Point*) main::points#4 = (struct Point*) main::points#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((byte*)(struct Point*) main::points#4) ← (byte) main::i#2 -- _deref_pbuz1=vbuz2 
     lda.z i
     ldy #0
@@ -366,9 +366,9 @@ main: {
     // [7] (byte~) main::$0 ← (byte) main::i#2 + (byte) 5 -- vbuz1=vbuz2_plus_vbuc1 
     lax.z i
     axs #-[5]
-    stx.z _0
+    stx.z __0
     // [8] *((byte*)(struct Point*) main::points#4 + (const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$0 -- pbuz1_derefidx_vbuc1=vbuz2 
-    lda.z _0
+    lda.z __0
     ldy #OFFSET_STRUCT_POINT_Y
     sta (points),y
     // [9] (struct Point*) main::points#1 ← (struct Point*) main::points#4 + (const byte) SIZEOF_STRUCT_POINT -- pssz1=pssz1_plus_vbuc1 
@@ -384,9 +384,9 @@ main: {
     // [11] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z i
-    bne b1_from_b1
+    bne __b1_from___b1
     // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [12] phi (byte) main::i1#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i1
@@ -398,15 +398,15 @@ main: {
     sta.z points_5
     lda #>POINTS
     sta.z points_5+1
-    jmp b2
+    jmp __b2
     // [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [12] phi (byte) main::i1#2 = (byte) main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
     // [12] phi (byte) main::idx#4 = (byte) main::idx#3 [phi:main::@2->main::@2#1] -- register_copy 
     // [12] phi (struct Point*) main::points#5 = (struct Point*) main::points#3 [phi:main::@2->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [13] *((const byte*) main::SCREEN + (byte) main::idx#4) ← *((byte*)(struct Point*) main::points#5) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
     ldx.z idx_4
     ldy #0
@@ -446,10 +446,10 @@ main: {
     // [21] if((byte) main::i1#1!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z i1
-    bne b2_from_b2
-    jmp breturn
+    bne __b2_from___b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [22] return 
     rts
 }
@@ -510,28 +510,28 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Minimal struct - accessing pointer to struct  in memory in a loop
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_POINT_Y = 1
   .label POINTS = $1000
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // Print points
@@ -541,7 +541,7 @@ main: {
     .label i1 = 6
     .label points_5 = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [5] phi (struct Point*) main::points#4 = (const struct Point*) POINTS [phi:main->main::@1#1] -- pssz1=pssc1 
@@ -549,14 +549,14 @@ main: {
     sta.z points
     lda #>POINTS
     sta.z points+1
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (struct Point*) main::points#4 = (struct Point*) main::points#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((byte*)(struct Point*) main::points#4) ← (byte) main::i#2 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
@@ -580,9 +580,9 @@ main: {
     inx
     // [11] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4
-    bne b1_from_b1
+    bne __b1_from___b1
     // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [12] phi (byte) main::i1#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i1
@@ -593,15 +593,15 @@ main: {
     sta.z points_5
     lda #>POINTS
     sta.z points_5+1
-    jmp b2
+    jmp __b2
     // [12] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [12] phi (byte) main::i1#2 = (byte) main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
     // [12] phi (byte) main::idx#4 = (byte) main::idx#3 [phi:main::@2->main::@2#1] -- register_copy 
     // [12] phi (struct Point*) main::points#5 = (struct Point*) main::points#3 [phi:main::@2->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [13] *((const byte*) main::SCREEN + (byte) main::idx#4) ← *((byte*)(struct Point*) main::points#5) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
     lda (points_5),y
@@ -632,44 +632,45 @@ main: {
     // [21] if((byte) main::i1#1!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z i1
-    bne b2_from_b2
-    jmp breturn
+    bne __b2_from___b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [22] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldx #0 with TAX
-Replacing label b1_from_b1 with b1
-Replacing label b2_from_b2 with b2
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
-Removing instruction b2_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b2_from___b2 with __b2
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
+Removing instruction __b2_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b2_from_b1:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b2_from___b1:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Removing instruction jmp b2
+Removing instruction jmp __b1
+Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -754,7 +755,7 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (struct Point*) main::points#4 = (struct Point*) main::points#1 [phi:main::@1->main::@1#1] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // (*points).x = i
     // [6] *((byte*)(struct Point*) main::points#4) ← (byte) main::i#2 -- _deref_pbuz1=vbuxx 
     txa
@@ -783,7 +784,7 @@ main: {
     inx
     // [11] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4
-    bne b1
+    bne __b1
     // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [12] phi (byte) main::i1#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
@@ -800,7 +801,7 @@ main: {
     // [12] phi (byte) main::idx#4 = (byte) main::idx#3 [phi:main::@2->main::@2#1] -- register_copy 
     // [12] phi (struct Point*) main::points#5 = (struct Point*) main::points#3 [phi:main::@2->main::@2#2] -- register_copy 
     // main::@2
-  b2:
+  __b2:
     // SCREEN[idx++] = (*points).x
     // [13] *((const byte*) main::SCREEN + (byte) main::idx#4) ← *((byte*)(struct Point*) main::points#5) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
@@ -839,7 +840,7 @@ main: {
     // [21] if((byte) main::i1#1!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z i1
-    bne b2
+    bne __b2
     // main::@return
     // }
     // [22] return 

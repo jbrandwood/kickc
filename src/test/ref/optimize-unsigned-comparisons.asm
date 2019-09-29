@@ -5,9 +5,9 @@
 .pc = $80d "Program"
 main: {
     ldx #0
-  b2:
+  __b2:
     inx
     cpx #8
-    bne b2
+    bne __b2
     rts
 }

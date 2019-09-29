@@ -187,64 +187,64 @@ Target platform is c64basic / MOS6502X
 // Test using some simple supported string escape characters in PETSCII
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label memA = $ff
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp MESSAGE,y
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda MESSAGE,y
     sta.z chrout.c
     // [9] call chrout 
     jsr chrout
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // chrout
 // chrout(byte zeropage(3) c)
@@ -256,9 +256,9 @@ chrout: {
     // asm { ldamemA jsr$ffd2  }
     lda memA
     jsr $ffd2
-    jmp breturn
+    jmp __breturn
     // chrout::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -295,63 +295,63 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test using some simple supported string escape characters in PETSCII
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label memA = $ff
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp MESSAGE,y
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z i
     lda MESSAGE,y
     // [9] call chrout 
     jsr chrout
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // chrout
 // chrout(byte register(A) c)
@@ -361,9 +361,9 @@ chrout: {
     // asm { ldamemA jsr$ffd2  }
     lda memA
     jsr $ffd2
-    jmp breturn
+    jmp __breturn
     // chrout::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -373,31 +373,32 @@ chrout: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b3
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda memA
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
-Removing instruction b3:
-Removing instruction b1_from_b3:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b3:
+Removing instruction __b1_from___b3:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -450,19 +451,19 @@ main: {
     lda #0
     sta.z i
     // main::@1
-  b1:
+  __b1:
     // while(MESSAGE[i])
     // [6] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp MESSAGE,y
-    bne b2
+    bne __b2
     // main::@return
     // }
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // chrout(MESSAGE[i++])
     // [8] (byte) chrout::c#0 ← *((const byte[]) MESSAGE + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z i
@@ -475,7 +476,7 @@ main: {
     inc.z i
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // chrout
 // chrout(byte register(A) c)

@@ -69,15 +69,15 @@ memcpy: {
     lda.z src_end+1
     adc.z source+1
     sta.z src_end+1
-  b1:
+  __b1:
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (src),y
     sta (dst),y
@@ -89,5 +89,5 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1
+    jmp __b1
 }

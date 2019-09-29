@@ -22,13 +22,13 @@ print: {
     sta.z string
     lda #>main.string
     sta.z string+1
-  b1:
+  __b1:
     ldy #0
     lda (string),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (string),y
     sta (screen),y
@@ -40,5 +40,5 @@ print: {
     bne !+
     inc.z string+1
   !:
-    jmp b1
+    jmp __b1
 }

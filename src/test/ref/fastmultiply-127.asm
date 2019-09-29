@@ -136,7 +136,7 @@ print_mulf8s127: {
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -146,11 +146,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -159,13 +159,13 @@ print_ln: {
 print_sword: {
     .label w = 2
     lda.z w+1
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_word
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     sec
@@ -175,7 +175,7 @@ print_sword: {
     lda #0
     sbc.z w+1
     sta.z w+1
-    jmp b2
+    jmp __b2
 }
 // Print a single char
 // print_char(byte register(A) ch)
@@ -221,13 +221,13 @@ print_byte: {
 // print_sbyte(signed byte register(X) b)
 print_sbyte: {
     cpx #0
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_byte
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     txa
@@ -235,14 +235,14 @@ print_sbyte: {
     clc
     adc #1
     tax
-    jmp b2
+    jmp __b2
 }
 // mulf8s127(signed byte register(Y) a, signed byte zeropage(4) b)
 mulf8s127: {
-    .label _12 = 7
-    .label _13 = 7
-    .label _14 = 9
-    .label _15 = 9
+    .label __12 = 7
+    .label __13 = 7
+    .label __14 = 9
+    .label __15 = 9
     .label b = 4
     .label return = 2
     .label c = 2
@@ -250,49 +250,49 @@ mulf8s127: {
     ldx.z b
     jsr mulf8u127
     cpy #0
-    bpl b1
+    bpl __b1
     lda.z b
-    sta.z _12
+    sta.z __12
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta.z _12+1
-    asl.z _13
-    rol.z _13+1
+    sta.z __12+1
+    asl.z __13
+    rol.z __13+1
     lda.z c
     sec
-    sbc.z _13
+    sbc.z __13
     sta.z c
     lda.z c+1
-    sbc.z _13+1
+    sbc.z __13+1
     sta.z c+1
-  b1:
+  __b1:
     lda.z b
     cmp #0
-    bpl b2
+    bpl __b2
     tya
-    sta.z _14
+    sta.z __14
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta.z _14+1
-    asl.z _15
-    rol.z _15+1
+    sta.z __14+1
+    asl.z __15
+    rol.z __15+1
     lda.z c
     sec
-    sbc.z _15
+    sbc.z __15
     sta.z c
     lda.z c+1
-    sbc.z _15+1
+    sbc.z __15+1
     sta.z c+1
-  b2:
+  __b2:
     cpy #0
-    bpl b3
+    bpl __b3
     lda.z b
     cmp #0
-    bpl b3
+    bpl __b3
     lda.z c
     sec
     sbc #<$200
@@ -301,7 +301,7 @@ mulf8s127: {
     sbc #>$200
     sta.z c+1
     rts
-  b3:
+  __b3:
     rts
 }
 // mulf8u127(byte register(A) a, byte register(X) b)
@@ -340,13 +340,13 @@ mulf8u127: {
 // print_str(byte* zeropage(2) str)
 print_str: {
     .label str = 2
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -358,7 +358,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // print_mulf8u127(byte register(Y) a, byte zeropage(4) b)
 print_mulf8u127: {
@@ -400,15 +400,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -416,7 +416,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).

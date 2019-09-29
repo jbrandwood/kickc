@@ -3545,7 +3545,7 @@ Target platform is c64basic / MOS6502X
 // Fill screen using a spiral based on distance-to-center / angle-to-center
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
@@ -3565,15 +3565,15 @@ Target platform is c64basic / MOS6502X
   .label heap_head = $35
   .label SQUARES = $7a
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call malloc 
   // [190] phi from @1 to malloc [phi:@1->malloc]
-malloc_from_b1:
+malloc_from___b1:
   // [190] phi (word) malloc::size#3 = (word) $3e8 [phi:@1->malloc#0] -- vwuz1=vwuc1 
   lda #<$3e8
   sta.z malloc.size
@@ -3585,9 +3585,9 @@ malloc_from_b1:
   lda #>HEAP_TOP
   sta.z heap_head+1
   jsr malloc
-  jmp b3
+  jmp __b3
   // @3
-b3:
+__b3:
   // [3] (void*) SCREEN_DIST ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
   lda.z malloc.mem
   sta.z SCREEN_DIST
@@ -3595,7 +3595,7 @@ b3:
   sta.z SCREEN_DIST+1
   // [4] call malloc 
   // [190] phi from @3 to malloc [phi:@3->malloc]
-malloc_from_b3:
+malloc_from___b3:
   // [190] phi (word) malloc::size#3 = (word) $3e8 [phi:@3->malloc#0] -- vwuz1=vwuc1 
   lda #<$3e8
   sta.z malloc.size
@@ -3603,26 +3603,26 @@ malloc_from_b3:
   sta.z malloc.size+1
   // [190] phi (byte*) heap_head#12 = (byte*) heap_head#1 [phi:@3->malloc#1] -- register_copy 
   jsr malloc
-  jmp b4
+  jmp __b4
   // @4
-b4:
+__b4:
   // [5] (void*) SCREEN_ANGLE ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
   lda.z malloc.mem
   sta.z SCREEN_ANGLE
   lda.z malloc.mem+1
   sta.z SCREEN_ANGLE+1
   // [6] phi from @4 to @2 [phi:@4->@2]
-b2_from_b4:
-  jmp b2
+__b2_from___b4:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [7] call main 
   jsr main
   // [8] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label dist = 4
@@ -3643,9 +3643,9 @@ main: {
     // [105] phi from main to init_dist_screen [phi:main->init_dist_screen]
   init_dist_screen_from_main:
     jsr init_dist_screen
-    jmp b8
+    jmp __b8
     // main::@8
-  b8:
+  __b8:
     // [11] (byte*) init_angle_screen::screen#0 ← (byte*)(void*) SCREEN_ANGLE -- pbuz1=pbuz2 
     lda.z SCREEN_ANGLE
     sta.z init_angle_screen.screen
@@ -3653,9 +3653,9 @@ main: {
     sta.z init_angle_screen.screen+1
     // [12] call init_angle_screen 
     jsr init_angle_screen
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [13] (byte*) main::dist#0 ← (byte*)(void*) SCREEN_DIST -- pbuz1=pbuz2 
     // Find the minimum dist/angle that is not already filled
     lda.z SCREEN_DIST
@@ -3668,7 +3668,7 @@ main: {
     lda.z SCREEN_ANGLE+1
     sta.z angle+1
     // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [15] phi (byte*) main::min_fill#5 = (const byte*) SCREEN_FILL [phi:main::@1->main::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN_FILL
     sta.z min_fill
@@ -3686,17 +3686,17 @@ main: {
     sta.z fill
     lda #>SCREEN_FILL
     sta.z fill+1
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [16] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@10 -- _deref_pbuz1_eq_vbuc1_then_la1 
     lda #FILL_CHAR
     ldy #0
     cmp (fill),y
-    beq b10
-    jmp b4
+    beq __b10
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [17] (word) main::dist_angle#0 ← *((byte*) main::dist#2) w= *((byte*) main::angle#2) -- vwuz1=_deref_pbuz2_word__deref_pbuz3 
     ldy #0
     lda (angle),y
@@ -3709,26 +3709,26 @@ main: {
     bne !+
     lda.z min_dist_angle
     cmp.z dist_angle
-    beq b11
+    beq __b11
   !:
-    bcc b11
-    jmp b5
+    bcc __b11
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [19] (byte*~) main::min_fill#10 ← (byte*) main::fill#2 -- pbuz1=pbuz2 
     lda.z fill
     sta.z min_fill
     lda.z fill+1
     sta.z min_fill+1
     // [20] phi from main::@10 main::@11 main::@5 to main::@3 [phi:main::@10/main::@11/main::@5->main::@3]
-  b3_from_b10:
-  b3_from_b11:
-  b3_from_b5:
+  __b3_from___b10:
+  __b3_from___b11:
+  __b3_from___b5:
     // [20] phi (byte*) main::min_fill#2 = (byte*) main::min_fill#5 [phi:main::@10/main::@11/main::@5->main::@3#0] -- register_copy 
     // [20] phi (word) main::min_dist_angle#3 = (word~) main::min_dist_angle#7 [phi:main::@10/main::@11/main::@5->main::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [21] (byte*) main::dist#1 ← ++ (byte*) main::dist#2 -- pbuz1=_inc_pbuz1 
     inc.z dist
     bne !+
@@ -3747,79 +3747,79 @@ main: {
     // [24] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@9 -- pbuz1_lt_pbuc1_then_la1 
     lda.z fill+1
     cmp #>SCREEN_FILL+$3e8
-    bcc b9
+    bcc __b9
     bne !+
     lda.z fill
     cmp #<SCREEN_FILL+$3e8
-    bcc b9
+    bcc __b9
   !:
-    jmp b6
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [25] if((word) main::min_dist_angle#3!=(word) $ffff) goto main::@7 -- vwuz1_neq_vwuc1_then_la1 
     lda.z min_dist_angle_3+1
     cmp #>$ffff
-    bne b7
+    bne __b7
     lda.z min_dist_angle_3
     cmp #<$ffff
-    bne b7
-    jmp breturn
+    bne __b7
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [26] return 
     rts
     // main::@7
-  b7:
+  __b7:
     // [27] *((byte*) main::min_fill#2) ← (const byte) FILL_CHAR -- _deref_pbuz1=vbuc1 
     // Fill the found location
     lda #FILL_CHAR
     ldy #0
     sta (min_fill),y
-    jmp b1
+    jmp __b1
     // main::@9
-  b9:
+  __b9:
     // [28] (word~) main::min_dist_angle#6 ← (word) main::min_dist_angle#3 -- vwuz1=vwuz2 
     lda.z min_dist_angle_3
     sta.z min_dist_angle
     lda.z min_dist_angle_3+1
     sta.z min_dist_angle+1
     // [15] phi from main::@9 to main::@2 [phi:main::@9->main::@2]
-  b2_from_b9:
+  __b2_from___b9:
     // [15] phi (byte*) main::min_fill#5 = (byte*) main::min_fill#2 [phi:main::@9->main::@2#0] -- register_copy 
     // [15] phi (word) main::min_dist_angle#2 = (word~) main::min_dist_angle#6 [phi:main::@9->main::@2#1] -- register_copy 
     // [15] phi (byte*) main::angle#2 = (byte*) main::angle#1 [phi:main::@9->main::@2#2] -- register_copy 
     // [15] phi (byte*) main::dist#2 = (byte*) main::dist#1 [phi:main::@9->main::@2#3] -- register_copy 
     // [15] phi (byte*) main::fill#2 = (byte*) main::fill#1 [phi:main::@9->main::@2#4] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@11
-  b11:
+  __b11:
     // [29] (word~) main::min_dist_angle#8 ← (word) main::min_dist_angle#2 -- vwuz1=vwuz2 
     lda.z min_dist_angle
     sta.z min_dist_angle_8
     lda.z min_dist_angle+1
     sta.z min_dist_angle_8+1
-    jmp b3_from_b11
+    jmp __b3_from___b11
     // main::@10
-  b10:
+  __b10:
     // [30] (word~) main::min_dist_angle#7 ← (word) main::min_dist_angle#2 -- vwuz1=vwuz2 
     lda.z min_dist_angle
     sta.z min_dist_angle_7
     lda.z min_dist_angle+1
     sta.z min_dist_angle_7+1
-    jmp b3_from_b10
+    jmp __b3_from___b10
 }
   // init_angle_screen
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zeropage($3d) screen)
 init_angle_screen: {
-    .label _3 = $3f
-    .label _4 = $40
-    .label _7 = $43
-    .label _11 = $4e
-    .label _13 = $51
-    .label _14 = $52
-    .label _15 = $53
+    .label __3 = $3f
+    .label __4 = $40
+    .label __7 = $43
+    .label __11 = $4e
+    .label __13 = $51
+    .label __14 = $52
+    .label __15 = $53
     .label screen = $3d
     .label screen_topline = $f
     .label screen_bottomline = $11
@@ -3847,39 +3847,39 @@ init_angle_screen: {
     adc #>$28*$c
     sta.z screen_bottomline+1
     // [33] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
-  b1_from_init_angle_screen:
+  __b1_from_init_angle_screen:
     // [33] phi (byte*) init_angle_screen::screen_bottomline#6 = (byte*) init_angle_screen::screen_bottomline#0 [phi:init_angle_screen->init_angle_screen::@1#0] -- register_copy 
     // [33] phi (byte*) init_angle_screen::screen_topline#6 = (byte*) init_angle_screen::screen_topline#0 [phi:init_angle_screen->init_angle_screen::@1#1] -- register_copy 
     // [33] phi (byte) init_angle_screen::y#5 = (byte) 0 [phi:init_angle_screen->init_angle_screen::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z y
-    jmp b1
+    jmp __b1
     // [33] phi from init_angle_screen::@4 to init_angle_screen::@1 [phi:init_angle_screen::@4->init_angle_screen::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [33] phi (byte*) init_angle_screen::screen_bottomline#6 = (byte*) init_angle_screen::screen_bottomline#1 [phi:init_angle_screen::@4->init_angle_screen::@1#0] -- register_copy 
     // [33] phi (byte*) init_angle_screen::screen_topline#6 = (byte*) init_angle_screen::screen_topline#1 [phi:init_angle_screen::@4->init_angle_screen::@1#1] -- register_copy 
     // [33] phi (byte) init_angle_screen::y#5 = (byte) init_angle_screen::y#1 [phi:init_angle_screen::@4->init_angle_screen::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // init_angle_screen::@1
-  b1:
+  __b1:
     // [34] phi from init_angle_screen::@1 to init_angle_screen::@2 [phi:init_angle_screen::@1->init_angle_screen::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [34] phi (byte) init_angle_screen::xb#2 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@2#0] -- vbuz1=vbuc1 
     lda #$27
     sta.z xb
     // [34] phi (byte) init_angle_screen::x#2 = (byte) 0 [phi:init_angle_screen::@1->init_angle_screen::@2#1] -- vbuz1=vbuc1 
     lda #0
     sta.z x
-    jmp b2
+    jmp __b2
     // init_angle_screen::@2
-  b2:
+  __b2:
     // [35] if((byte) init_angle_screen::x#2<(byte) $13+(byte) 1) goto init_angle_screen::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$13+1
-    bcc b3
-    jmp b4
+    bcc __b3
+    jmp __b4
     // init_angle_screen::@4
-  b4:
+  __b4:
     // [36] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#6 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
     lda.z screen_topline
     sec
@@ -3901,34 +3901,34 @@ init_angle_screen: {
     // [39] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
     cmp.z y
-    bne b1_from_b4
-    jmp breturn
+    bne __b1_from___b4
+    jmp __breturn
     // init_angle_screen::@return
-  breturn:
+  __breturn:
     // [40] return 
     rts
     // init_angle_screen::@3
-  b3:
+  __b3:
     // [41] (byte~) init_angle_screen::$3 ← (byte) init_angle_screen::x#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z x
     asl
-    sta.z _3
+    sta.z __3
     // [42] (byte~) init_angle_screen::$4 ← (byte) $27 - (byte~) init_angle_screen::$3 -- vbuz1=vbuc1_minus_vbuz2 
     lda #$27
     sec
-    sbc.z _3
-    sta.z _4
+    sbc.z __3
+    sta.z __4
     // [43] (word) init_angle_screen::xw#0 ← (byte~) init_angle_screen::$4 w= (byte) 0 -- vwuz1=vbuz2_word_vbuc1 
-    lda.z _4
+    lda.z __4
     ldy #0
     sta.z xw+1
     sty.z xw
     // [44] (byte~) init_angle_screen::$7 ← (byte) init_angle_screen::y#5 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z y
     asl
-    sta.z _7
+    sta.z __7
     // [45] (word) init_angle_screen::yw#0 ← (byte~) init_angle_screen::$7 w= (byte) 0 -- vwuz1=vbuz2_word_vbuc1 
-    lda.z _7
+    lda.z __7
     ldy #0
     sta.z yw+1
     sty.z yw
@@ -3949,9 +3949,9 @@ init_angle_screen: {
     sta.z atan2_16.return_2
     lda.z atan2_16.return+1
     sta.z atan2_16.return_2+1
-    jmp b5
+    jmp __b5
     // init_angle_screen::@5
-  b5:
+  __b5:
     // [50] (word) init_angle_screen::angle_w#0 ← (word) atan2_16::return#2 -- vwuz1=vwuz2 
     lda.z atan2_16.return_2
     sta.z angle_w
@@ -3961,12 +3961,12 @@ init_angle_screen: {
     lda #$80
     clc
     adc.z angle_w
-    sta.z _11
+    sta.z __11
     lda #0
     adc.z angle_w+1
-    sta.z _11+1
+    sta.z __11+1
     // [52] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$11 -- vbuz1=_hi_vwuz2 
-    lda.z _11+1
+    lda.z __11+1
     sta.z ang_w
     // [53] *((byte*) init_angle_screen::screen_bottomline#6 + (byte) init_angle_screen::xb#2) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z ang_w
@@ -3977,26 +3977,26 @@ init_angle_screen: {
     eor #$ff
     clc
     adc #1
-    sta.z _13
+    sta.z __13
     // [55] *((byte*) init_angle_screen::screen_topline#6 + (byte) init_angle_screen::xb#2) ← (byte~) init_angle_screen::$13 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda.z _13
+    lda.z __13
     ldy.z xb
     sta (screen_topline),y
     // [56] (byte~) init_angle_screen::$14 ← (byte) $80 + (byte) init_angle_screen::ang_w#0 -- vbuz1=vbuc1_plus_vbuz2 
     lax.z ang_w
     axs #-[$80]
-    stx.z _14
+    stx.z __14
     // [57] *((byte*) init_angle_screen::screen_topline#6 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$14 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda.z _14
+    lda.z __14
     ldy.z x
     sta (screen_topline),y
     // [58] (byte~) init_angle_screen::$15 ← (byte) $80 - (byte) init_angle_screen::ang_w#0 -- vbuz1=vbuc1_minus_vbuz2 
     lda #$80
     sec
     sbc.z ang_w
-    sta.z _15
+    sta.z __15
     // [59] *((byte*) init_angle_screen::screen_bottomline#6 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$15 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda.z _15
+    lda.z __15
     ldy.z x
     sta (screen_bottomline),y
     // [60] (byte) init_angle_screen::x#1 ← ++ (byte) init_angle_screen::x#2 -- vbuz1=_inc_vbuz1 
@@ -4004,10 +4004,10 @@ init_angle_screen: {
     // [61] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#2 -- vbuz1=_dec_vbuz1 
     dec.z xb
     // [34] phi from init_angle_screen::@5 to init_angle_screen::@2 [phi:init_angle_screen::@5->init_angle_screen::@2]
-  b2_from_b5:
+  __b2_from___b5:
     // [34] phi (byte) init_angle_screen::xb#2 = (byte) init_angle_screen::xb#1 [phi:init_angle_screen::@5->init_angle_screen::@2#0] -- register_copy 
     // [34] phi (byte) init_angle_screen::x#2 = (byte) init_angle_screen::x#1 [phi:init_angle_screen::@5->init_angle_screen::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
 }
   // atan2_16
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
@@ -4015,10 +4015,10 @@ init_angle_screen: {
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
 // atan2_16(signed word zeropage($46) x, signed word zeropage($48) y)
 atan2_16: {
-    .label _2 = $15
-    .label _7 = $17
-    .label _23 = $55
-    .label _24 = $54
+    .label __2 = $15
+    .label __7 = $17
+    .label __23 = $55
+    .label __24 = $54
     .label yi = $15
     .label xi = $17
     .label angle = $1c
@@ -4037,48 +4037,48 @@ atan2_16: {
     .label angle_13 = $1a
     // [62] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
     lda.z y+1
-    bpl b1
-    jmp b2
+    bpl __b1
+    jmp __b2
     // atan2_16::@2
-  b2:
+  __b2:
     // [63] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc.z y
-    sta.z _2
+    sta.z __2
     lda #0
     sbc.z y+1
-    sta.z _2+1
+    sta.z __2+1
     // [64] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
-  b3_from_b1:
-  b3_from_b2:
+  __b3_from___b1:
+  __b3_from___b2:
     // [64] phi (signed word) atan2_16::yi#0 = (signed word~) atan2_16::yi#16 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // atan2_16::@3
-  b3:
+  __b3:
     // [65] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
     lda.z x+1
-    bpl b4
-    jmp b5
+    bpl __b4
+    jmp __b5
     // atan2_16::@5
-  b5:
+  __b5:
     // [66] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc.z x
-    sta.z _7
+    sta.z __7
     lda #0
     sbc.z x+1
-    sta.z _7+1
+    sta.z __7+1
     // [67] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
-  b6_from_b4:
-  b6_from_b5:
+  __b6_from___b4:
+  __b6_from___b5:
     // [67] phi (signed word) atan2_16::xi#0 = (signed word~) atan2_16::xi#13 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6#0] -- register_copy 
-    jmp b6
+    jmp __b6
     // atan2_16::@6
-  b6:
+  __b6:
     // [68] phi from atan2_16::@6 to atan2_16::@10 [phi:atan2_16::@6->atan2_16::@10]
-  b10_from_b6:
+  __b10_from___b6:
     // [68] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z angle_12
@@ -4089,21 +4089,21 @@ atan2_16: {
     sta.z i
     // [68] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
     // [68] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#0 [phi:atan2_16::@6->atan2_16::@10#3] -- register_copy 
-    jmp b10
+    jmp __b10
     // atan2_16::@10
-  b10:
+  __b10:
     // [69] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
     lda.z yi+1
-    bne b11
+    bne __b11
     lda.z yi
-    bne b11
+    bne __b11
     // [70] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
-  b12_from_b10:
-  b12_from_b19:
+  __b12_from___b10:
+  __b12_from___b19:
     // [70] phi (word) atan2_16::angle#6 = (word) atan2_16::angle#12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12#0] -- register_copy 
-    jmp b12
+    jmp __b12
     // atan2_16::@12
-  b12:
+  __b12:
     // [71] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
     lda.z angle_6+1
     lsr
@@ -4113,10 +4113,10 @@ atan2_16: {
     sta.z angle
     // [72] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
     lda.z x+1
-    bpl b7_from_b12
-    jmp b21
+    bpl __b7_from___b12
+    jmp __b21
     // atan2_16::@21
-  b21:
+  __b21:
     // [73] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
     sec
     lda #<$8000
@@ -4126,18 +4126,18 @@ atan2_16: {
     sbc.z angle+1
     sta.z angle+1
     // [74] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
-  b7_from_b12:
-  b7_from_b21:
+  __b7_from___b12:
+  __b7_from___b21:
     // [74] phi (word) atan2_16::angle#11 = (word) atan2_16::angle#1 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7#0] -- register_copy 
-    jmp b7
+    jmp __b7
     // atan2_16::@7
-  b7:
+  __b7:
     // [75] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
     lda.z y+1
-    bpl b8_from_b7
-    jmp b9
+    bpl __b8_from___b7
+    jmp __b9
     // atan2_16::@9
-  b9:
+  __b9:
     // [76] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
     sec
     lda #0
@@ -4147,19 +4147,19 @@ atan2_16: {
     sbc.z angle+1
     sta.z angle+1
     // [77] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
-  b8_from_b7:
-  b8_from_b9:
+  __b8_from___b7:
+  __b8_from___b9:
     // [77] phi (word) atan2_16::return#0 = (word) atan2_16::angle#11 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8#0] -- register_copy 
-    jmp b8
+    jmp __b8
     // atan2_16::@8
-  b8:
-    jmp breturn
+  __b8:
+    jmp __breturn
     // atan2_16::@return
-  breturn:
+  __breturn:
     // [78] return 
     rts
     // atan2_16::@11
-  b11:
+  __b11:
     // [79] (byte~) atan2_16::shift#5 ← (byte) atan2_16::i#2 -- vbuz1=vbuz2 
     lda.z i
     sta.z shift
@@ -4174,28 +4174,28 @@ atan2_16: {
     lda.z yi+1
     sta.z yd+1
     // [82] phi from atan2_16::@11 atan2_16::@14 to atan2_16::@13 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13]
-  b13_from_b11:
-  b13_from_b14:
+  __b13_from___b11:
+  __b13_from___b14:
     // [82] phi (signed word) atan2_16::yd#3 = (signed word~) atan2_16::yd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#0] -- register_copy 
     // [82] phi (signed word) atan2_16::xd#3 = (signed word~) atan2_16::xd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#1] -- register_copy 
     // [82] phi (byte) atan2_16::shift#2 = (byte~) atan2_16::shift#5 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#2] -- register_copy 
-    jmp b13
+    jmp __b13
     // atan2_16::@13
-  b13:
+  __b13:
     // [83] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14 -- vbuz1_ge_vbuc1_then_la1 
     lda.z shift
     cmp #2
-    bcs b14
-    jmp b15
+    bcs __b14
+    jmp __b15
     // atan2_16::@15
-  b15:
+  __b15:
     // [84] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp.z shift
-    beq b17_from_b15
-    jmp b16
+    beq __b17_from___b15
+    jmp __b16
     // atan2_16::@16
-  b16:
+  __b16:
     // [85] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
     lda.z xd+1
     cmp #$80
@@ -4207,19 +4207,19 @@ atan2_16: {
     ror.z yd+1
     ror.z yd
     // [87] phi from atan2_16::@15 atan2_16::@16 to atan2_16::@17 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17]
-  b17_from_b15:
-  b17_from_b16:
+  __b17_from___b15:
+  __b17_from___b16:
     // [87] phi (signed word) atan2_16::xd#5 = (signed word) atan2_16::xd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#0] -- register_copy 
     // [87] phi (signed word) atan2_16::yd#5 = (signed word) atan2_16::yd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#1] -- register_copy 
-    jmp b17
+    jmp __b17
     // atan2_16::@17
-  b17:
+  __b17:
     // [88] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
     lda.z yi+1
-    bpl b18
-    jmp b20
+    bpl __b18
+    jmp __b20
     // atan2_16::@20
-  b20:
+  __b20:
     // [89] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
     lda.z xi
     sec
@@ -4239,9 +4239,9 @@ atan2_16: {
     // [91] (byte~) atan2_16::$24 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z _24
+    sta.z __24
     // [92] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$24) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
-    ldy.z _24
+    ldy.z __24
     sec
     lda.z angle_3
     sbc CORDIC_ATAN2_ANGLES_16,y
@@ -4250,29 +4250,29 @@ atan2_16: {
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle_3+1
     // [93] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
-  b19_from_b18:
-  b19_from_b20:
+  __b19_from___b18:
+  __b19_from___b20:
     // [93] phi (signed word) atan2_16::xi#8 = (signed word) atan2_16::xi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#0] -- register_copy 
     // [93] phi (word) atan2_16::angle#13 = (word) atan2_16::angle#2 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#1] -- register_copy 
     // [93] phi (signed word) atan2_16::yi#8 = (signed word) atan2_16::yi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#2] -- register_copy 
-    jmp b19
+    jmp __b19
     // atan2_16::@19
-  b19:
+  __b19:
     // [94] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [95] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuz1_eq_vbuc1_then_la1 
     lda #CORDIC_ITERATIONS_16-1+1
     cmp.z i
-    beq b12_from_b19
+    beq __b12_from___b19
     // [68] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
-  b10_from_b19:
+  __b10_from___b19:
     // [68] phi (word) atan2_16::angle#12 = (word) atan2_16::angle#13 [phi:atan2_16::@19->atan2_16::@10#0] -- register_copy 
     // [68] phi (byte) atan2_16::i#2 = (byte) atan2_16::i#1 [phi:atan2_16::@19->atan2_16::@10#1] -- register_copy 
     // [68] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#8 [phi:atan2_16::@19->atan2_16::@10#2] -- register_copy 
     // [68] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#8 [phi:atan2_16::@19->atan2_16::@10#3] -- register_copy 
-    jmp b10
+    jmp __b10
     // atan2_16::@18
-  b18:
+  __b18:
     // [96] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z xi
     clc
@@ -4292,9 +4292,9 @@ atan2_16: {
     // [98] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z _23
+    sta.z __23
     // [99] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuz2 
-    ldy.z _23
+    ldy.z __23
     clc
     lda.z angle_2
     adc CORDIC_ATAN2_ANGLES_16,y
@@ -4302,9 +4302,9 @@ atan2_16: {
     lda.z angle_2+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle_2+1
-    jmp b19_from_b18
+    jmp __b19_from___b18
     // atan2_16::@14
-  b14:
+  __b14:
     // [100] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
     lda.z xd+1
     cmp #$80
@@ -4326,33 +4326,33 @@ atan2_16: {
     // [102] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuz1=vbuz1_minus_2 
     dec.z shift
     dec.z shift
-    jmp b13_from_b14
+    jmp __b13_from___b14
     // atan2_16::@4
-  b4:
+  __b4:
     // [103] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
     lda.z x
     sta.z xi
     lda.z x+1
     sta.z xi+1
-    jmp b6_from_b4
+    jmp __b6_from___b4
     // atan2_16::@1
-  b1:
+  __b1:
     // [104] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
     lda.z y
     sta.z yi
     lda.z y+1
     sta.z yi+1
-    jmp b3_from_b1
+    jmp __b3_from___b1
 }
   // init_dist_screen
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
 // init_dist_screen(byte* zeropage($24) screen)
 init_dist_screen: {
-    .label _5 = $28
-    .label _7 = $28
-    .label _14 = $2b
-    .label _16 = $2b
+    .label __5 = $28
+    .label __7 = $28
+    .label __14 = $2b
+    .label __16 = $2b
     .label screen = $24
     .label screen_bottomline = $26
     .label y2 = $56
@@ -4371,9 +4371,9 @@ init_dist_screen: {
     // [177] phi from init_dist_screen to init_squares [phi:init_dist_screen->init_squares]
   init_squares_from_init_dist_screen:
     jsr init_squares
-    jmp b11
+    jmp __b11
     // init_dist_screen::@11
-  b11:
+  __b11:
     // [107] (byte*) init_dist_screen::screen_bottomline#0 ← (byte*) init_dist_screen::screen#0 + (word)(number) $28*(number) $18 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z screen
     clc
@@ -4383,21 +4383,21 @@ init_dist_screen: {
     adc #>$28*$18
     sta.z screen_bottomline+1
     // [108] phi from init_dist_screen::@11 to init_dist_screen::@1 [phi:init_dist_screen::@11->init_dist_screen::@1]
-  b1_from_b11:
+  __b1_from___b11:
     // [108] phi (byte*) init_dist_screen::screen_bottomline#11 = (byte*) init_dist_screen::screen_bottomline#0 [phi:init_dist_screen::@11->init_dist_screen::@1#0] -- register_copy 
     // [108] phi (byte*) init_dist_screen::screen_topline#11 = (byte*) init_dist_screen::screen#0 [phi:init_dist_screen::@11->init_dist_screen::@1#1] -- register_copy 
     // [108] phi (byte) init_dist_screen::y#10 = (byte) 0 [phi:init_dist_screen::@11->init_dist_screen::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z y
-    jmp b1
+    jmp __b1
     // [108] phi from init_dist_screen::@7 to init_dist_screen::@1 [phi:init_dist_screen::@7->init_dist_screen::@1]
-  b1_from_b7:
+  __b1_from___b7:
     // [108] phi (byte*) init_dist_screen::screen_bottomline#11 = (byte*) init_dist_screen::screen_bottomline#1 [phi:init_dist_screen::@7->init_dist_screen::@1#0] -- register_copy 
     // [108] phi (byte*) init_dist_screen::screen_topline#11 = (byte*) init_dist_screen::screen_topline#1 [phi:init_dist_screen::@7->init_dist_screen::@1#1] -- register_copy 
     // [108] phi (byte) init_dist_screen::y#10 = (byte) init_dist_screen::y#1 [phi:init_dist_screen::@7->init_dist_screen::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // init_dist_screen::@1
-  b1:
+  __b1:
     // [109] (byte) init_dist_screen::y2#0 ← (byte) init_dist_screen::y#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z y
     asl
@@ -4405,28 +4405,28 @@ init_dist_screen: {
     // [110] if((byte) init_dist_screen::y2#0>=(byte) $18) goto init_dist_screen::@2 -- vbuz1_ge_vbuc1_then_la1 
     lda.z y2
     cmp #$18
-    bcs b2
-    jmp b3
+    bcs __b2
+    jmp __b3
     // init_dist_screen::@3
-  b3:
+  __b3:
     // [111] (byte~) init_dist_screen::$5 ← (byte) $18 - (byte) init_dist_screen::y2#0 -- vbuz1=vbuc1_minus_vbuz2 
     lda #$18
     sec
     sbc.z y2
-    sta.z _5
+    sta.z __5
     // [112] phi from init_dist_screen::@2 init_dist_screen::@3 to init_dist_screen::@4 [phi:init_dist_screen::@2/init_dist_screen::@3->init_dist_screen::@4]
-  b4_from_b2:
-  b4_from_b3:
+  __b4_from___b2:
+  __b4_from___b3:
     // [112] phi (byte) init_dist_screen::yd#0 = (byte~) init_dist_screen::$7 [phi:init_dist_screen::@2/init_dist_screen::@3->init_dist_screen::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // init_dist_screen::@4
-  b4:
+  __b4:
     // [113] (byte) sqr::val#0 ← (byte) init_dist_screen::yd#0 -- vbuz1=vbuz2 
     lda.z yd
     sta.z sqr.val
     // [114] call sqr 
     // [173] phi from init_dist_screen::@4 to sqr [phi:init_dist_screen::@4->sqr]
-  sqr_from_b4:
+  sqr_from___b4:
     // [173] phi (byte) sqr::val#2 = (byte) sqr::val#0 [phi:init_dist_screen::@4->sqr#0] -- register_copy 
     jsr sqr
     // [115] (word) sqr::return#2 ← (word) sqr::return#0 -- vwuz1=vwuz2 
@@ -4434,32 +4434,32 @@ init_dist_screen: {
     sta.z sqr.return_2
     lda.z sqr.return+1
     sta.z sqr.return_2+1
-    jmp b12
+    jmp __b12
     // init_dist_screen::@12
-  b12:
+  __b12:
     // [116] (word) init_dist_screen::yds#0 ← (word) sqr::return#2 -- vwuz1=vwuz2 
     lda.z sqr.return_2
     sta.z yds
     lda.z sqr.return_2+1
     sta.z yds+1
     // [117] phi from init_dist_screen::@12 to init_dist_screen::@5 [phi:init_dist_screen::@12->init_dist_screen::@5]
-  b5_from_b12:
+  __b5_from___b12:
     // [117] phi (byte) init_dist_screen::xb#2 = (byte) $27 [phi:init_dist_screen::@12->init_dist_screen::@5#0] -- vbuz1=vbuc1 
     lda #$27
     sta.z xb
     // [117] phi (byte) init_dist_screen::x#2 = (byte) 0 [phi:init_dist_screen::@12->init_dist_screen::@5#1] -- vbuz1=vbuc1 
     lda #0
     sta.z x
-    jmp b5
+    jmp __b5
     // init_dist_screen::@5
-  b5:
+  __b5:
     // [118] if((byte) init_dist_screen::x#2<(byte) $13+(byte) 1) goto init_dist_screen::@6 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$13+1
-    bcc b6
-    jmp b7
+    bcc __b6
+    jmp __b7
     // init_dist_screen::@7
-  b7:
+  __b7:
     // [119] (byte*) init_dist_screen::screen_topline#1 ← (byte*) init_dist_screen::screen_topline#11 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
@@ -4481,14 +4481,14 @@ init_dist_screen: {
     // [122] if((byte) init_dist_screen::y#1!=(byte) $d) goto init_dist_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
     cmp.z y
-    bne b1_from_b7
-    jmp breturn
+    bne __b1_from___b7
+    jmp __breturn
     // init_dist_screen::@return
-  breturn:
+  __breturn:
     // [123] return 
     rts
     // init_dist_screen::@6
-  b6:
+  __b6:
     // [124] (byte) init_dist_screen::x2#0 ← (byte) init_dist_screen::x#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z x
     asl
@@ -4496,28 +4496,28 @@ init_dist_screen: {
     // [125] if((byte) init_dist_screen::x2#0>=(byte) $27) goto init_dist_screen::@8 -- vbuz1_ge_vbuc1_then_la1 
     lda.z x2
     cmp #$27
-    bcs b8
-    jmp b9
+    bcs __b8
+    jmp __b9
     // init_dist_screen::@9
-  b9:
+  __b9:
     // [126] (byte~) init_dist_screen::$14 ← (byte) $27 - (byte) init_dist_screen::x2#0 -- vbuz1=vbuc1_minus_vbuz2 
     lda #$27
     sec
     sbc.z x2
-    sta.z _14
+    sta.z __14
     // [127] phi from init_dist_screen::@8 init_dist_screen::@9 to init_dist_screen::@10 [phi:init_dist_screen::@8/init_dist_screen::@9->init_dist_screen::@10]
-  b10_from_b8:
-  b10_from_b9:
+  __b10_from___b8:
+  __b10_from___b9:
     // [127] phi (byte) init_dist_screen::xd#0 = (byte~) init_dist_screen::$16 [phi:init_dist_screen::@8/init_dist_screen::@9->init_dist_screen::@10#0] -- register_copy 
-    jmp b10
+    jmp __b10
     // init_dist_screen::@10
-  b10:
+  __b10:
     // [128] (byte) sqr::val#1 ← (byte) init_dist_screen::xd#0 -- vbuz1=vbuz2 
     lda.z xd
     sta.z sqr.val
     // [129] call sqr 
     // [173] phi from init_dist_screen::@10 to sqr [phi:init_dist_screen::@10->sqr]
-  sqr_from_b10:
+  sqr_from___b10:
     // [173] phi (byte) sqr::val#2 = (byte) sqr::val#1 [phi:init_dist_screen::@10->sqr#0] -- register_copy 
     jsr sqr
     // [130] (word) sqr::return#3 ← (word) sqr::return#0 -- vwuz1=vwuz2 
@@ -4525,9 +4525,9 @@ init_dist_screen: {
     sta.z sqr.return_3
     lda.z sqr.return+1
     sta.z sqr.return_3+1
-    jmp b13
+    jmp __b13
     // init_dist_screen::@13
-  b13:
+  __b13:
     // [131] (word) init_dist_screen::xds#0 ← (word) sqr::return#3 -- vwuz1=vwuz2 
     lda.z sqr.return_3
     sta.z xds
@@ -4551,9 +4551,9 @@ init_dist_screen: {
     // [135] (byte) sqrt::return#2 ← (byte) sqrt::return#0 -- vbuz1=vbuz2 
     lda.z sqrt.return
     sta.z sqrt.return_2
-    jmp b14
+    jmp __b14
     // init_dist_screen::@14
-  b14:
+  __b14:
     // [136] (byte) init_dist_screen::d#0 ← (byte) sqrt::return#2 -- vbuz1=vbuz2 
     lda.z sqrt.return_2
     sta.z d
@@ -4578,24 +4578,24 @@ init_dist_screen: {
     // [142] (byte) init_dist_screen::xb#1 ← -- (byte) init_dist_screen::xb#2 -- vbuz1=_dec_vbuz1 
     dec.z xb
     // [117] phi from init_dist_screen::@14 to init_dist_screen::@5 [phi:init_dist_screen::@14->init_dist_screen::@5]
-  b5_from_b14:
+  __b5_from___b14:
     // [117] phi (byte) init_dist_screen::xb#2 = (byte) init_dist_screen::xb#1 [phi:init_dist_screen::@14->init_dist_screen::@5#0] -- register_copy 
     // [117] phi (byte) init_dist_screen::x#2 = (byte) init_dist_screen::x#1 [phi:init_dist_screen::@14->init_dist_screen::@5#1] -- register_copy 
-    jmp b5
+    jmp __b5
     // init_dist_screen::@8
-  b8:
+  __b8:
     // [143] (byte~) init_dist_screen::$16 ← (byte) init_dist_screen::x2#0 - (byte) $27 -- vbuz1=vbuz2_minus_vbuc1 
     lax.z x2
     axs #$27
-    stx.z _16
-    jmp b10_from_b8
+    stx.z __16
+    jmp __b10_from___b8
     // init_dist_screen::@2
-  b2:
+  __b2:
     // [144] (byte~) init_dist_screen::$7 ← (byte) init_dist_screen::y2#0 - (byte) $18 -- vbuz1=vbuz2_minus_vbuc1 
     lax.z y2
     axs #$18
-    stx.z _7
-    jmp b4_from_b2
+    stx.z __7
+    jmp __b4_from___b2
 }
   // sqrt
 // Find the (integer) square root of a word value
@@ -4603,8 +4603,8 @@ init_dist_screen: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zeropage($62) val)
 sqrt: {
-    .label _1 = $6e
-    .label _3 = $6c
+    .label __1 = $6e
+    .label __3 = $6c
     .label found = $6a
     .label return = $70
     .label val = $62
@@ -4628,9 +4628,9 @@ sqrt: {
     sta.z bsearch16u.return_3
     lda.z bsearch16u.return+1
     sta.z bsearch16u.return_3+1
-    jmp b1
+    jmp __b1
     // sqrt::@1
-  b1:
+  __b1:
     // [149] (word*) sqrt::found#0 ← (word*) bsearch16u::return#3 -- pwuz1=pwuz2 
     lda.z bsearch16u.return_3
     sta.z found
@@ -4640,23 +4640,23 @@ sqrt: {
     lda.z found
     sec
     sbc.z SQUARES
-    sta.z _3
+    sta.z __3
     lda.z found+1
     sbc.z SQUARES+1
-    sta.z _3+1
+    sta.z __3+1
     // [151] (word~) sqrt::$1 ← (word~) sqrt::$3 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
-    lda.z _3+1
+    lda.z __3+1
     lsr
-    sta.z _1+1
-    lda.z _3
+    sta.z __1+1
+    lda.z __3
     ror
-    sta.z _1
+    sta.z __1
     // [152] (byte) sqrt::return#0 ← (byte)(word~) sqrt::$1 -- vbuz1=_byte_vwuz2 
-    lda.z _1
+    lda.z __1
     sta.z return
-    jmp breturn
+    jmp __breturn
     // sqrt::@return
-  breturn:
+  __breturn:
     // [153] return 
     rts
 }
@@ -4668,9 +4668,9 @@ sqrt: {
 // Returns pointer to an entry in the array that matches the search key
 // bsearch16u(word zeropage($66) key, word* zeropage($2c) items, byte zeropage($2e) num)
 bsearch16u: {
-    .label _2 = $2c
-    .label _6 = $71
-    .label _16 = $72
+    .label __2 = $2c
+    .label __6 = $71
+    .label __16 = $72
     .label pivot = $73
     .label result = $75
     .label return = $2c
@@ -4679,20 +4679,20 @@ bsearch16u: {
     .label key = $66
     .label return_3 = $68
     // [155] phi from bsearch16u to bsearch16u::@3 [phi:bsearch16u->bsearch16u::@3]
-  b3_from_bsearch16u:
+  __b3_from_bsearch16u:
     // [155] phi (word*) bsearch16u::items#2 = (word*) bsearch16u::items#1 [phi:bsearch16u->bsearch16u::@3#0] -- register_copy 
     // [155] phi (byte) bsearch16u::num#3 = (const byte) NUM_SQUARES#3 [phi:bsearch16u->bsearch16u::@3#1] -- vbuz1=vbuc1 
     lda #NUM_SQUARES
     sta.z num
-    jmp b3
+    jmp __b3
     // bsearch16u::@3
-  b3:
+  __b3:
     // [156] if((byte) bsearch16u::num#3>(byte) 0) goto bsearch16u::@4 -- vbuz1_gt_0_then_la1 
     lda.z num
-    bne b4
-    jmp b5
+    bne __b4
+    jmp __b5
     // bsearch16u::@5
-  b5:
+  __b5:
     // [157] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@2 -- _deref_pwuz1_le_vwuz2_then_la1 
     ldy #1
     lda (items),y
@@ -4701,48 +4701,48 @@ bsearch16u: {
     dey
     lda (items),y
     cmp.z key
-    beq b2_from_b5
+    beq __b2_from___b5
   !:
-    bcc b2_from_b5
-    jmp b1
+    bcc __b2_from___b5
+    jmp __b1
     // bsearch16u::@1
-  b1:
+  __b1:
     // [158] (word*~) bsearch16u::$2 ← (word*) bsearch16u::items#2 - (byte) 1*(const byte) SIZEOF_WORD -- pwuz1=pwuz1_minus_vwuc1 
-    lda.z _2
+    lda.z __2
     sec
     sbc #<1*SIZEOF_WORD
-    sta.z _2
-    lda.z _2+1
+    sta.z __2
+    lda.z __2+1
     sbc #>1*SIZEOF_WORD
-    sta.z _2+1
+    sta.z __2+1
     // [159] phi from bsearch16u::@1 bsearch16u::@5 to bsearch16u::@2 [phi:bsearch16u::@1/bsearch16u::@5->bsearch16u::@2]
-  b2_from_b1:
-  b2_from_b5:
+  __b2_from___b1:
+  __b2_from___b5:
     // [159] phi (word*) bsearch16u::return#2 = (word*~) bsearch16u::$2 [phi:bsearch16u::@1/bsearch16u::@5->bsearch16u::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // bsearch16u::@2
-  b2:
+  __b2:
     // [160] phi from bsearch16u::@2 bsearch16u::@8 to bsearch16u::@return [phi:bsearch16u::@2/bsearch16u::@8->bsearch16u::@return]
-  breturn_from_b2:
-  breturn_from_b8:
+  __breturn_from___b2:
+  __breturn_from___b8:
     // [160] phi (word*) bsearch16u::return#1 = (word*) bsearch16u::return#2 [phi:bsearch16u::@2/bsearch16u::@8->bsearch16u::@return#0] -- register_copy 
-    jmp breturn
+    jmp __breturn
     // bsearch16u::@return
-  breturn:
+  __breturn:
     // [161] return 
     rts
     // bsearch16u::@4
-  b4:
+  __b4:
     // [162] (byte~) bsearch16u::$6 ← (byte) bsearch16u::num#3 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
     lda.z num
     lsr
-    sta.z _6
+    sta.z __6
     // [163] (byte~) bsearch16u::$16 ← (byte~) bsearch16u::$6 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda.z _6
+    lda.z __6
     asl
-    sta.z _16
+    sta.z __16
     // [164] (word*) bsearch16u::pivot#0 ← (word*) bsearch16u::items#2 + (byte~) bsearch16u::$16 -- pwuz1=pwuz2_plus_vbuz3 
-    lda.z _16
+    lda.z __16
     clc
     adc.z items
     sta.z pivot
@@ -4761,30 +4761,30 @@ bsearch16u: {
     sta.z result+1
     // [166] if((signed word) bsearch16u::result#0!=(signed byte) 0) goto bsearch16u::@6 -- vwsz1_neq_0_then_la1 
     lda.z result+1
-    bne b6
+    bne __b6
     lda.z result
-    bne b6
-    jmp b8
+    bne __b6
+    jmp __b8
     // bsearch16u::@8
-  b8:
+  __b8:
     // [167] (word*~) bsearch16u::return#6 ← (word*) bsearch16u::pivot#0 -- pwuz1=pwuz2 
     lda.z pivot
     sta.z return
     lda.z pivot+1
     sta.z return+1
-    jmp breturn_from_b8
+    jmp __breturn_from___b8
     // bsearch16u::@6
-  b6:
+  __b6:
     // [168] if((signed word) bsearch16u::result#0<=(signed byte) 0) goto bsearch16u::@7 -- vwsz1_le_0_then_la1 
     lda.z result+1
-    bmi b7_from_b6
+    bmi __b7_from___b6
     bne !+
     lda.z result
-    beq b7_from_b6
+    beq __b7_from___b6
   !:
-    jmp b9
+    jmp __b9
     // bsearch16u::@9
-  b9:
+  __b9:
     // [169] (word*) bsearch16u::items#0 ← (word*) bsearch16u::pivot#0 + (byte) 1*(const byte) SIZEOF_WORD -- pwuz1=pwuz2_plus_vbuc1 
     lda #1*SIZEOF_WORD
     clc
@@ -4796,27 +4796,27 @@ bsearch16u: {
     // [170] (byte) bsearch16u::num#1 ← -- (byte) bsearch16u::num#3 -- vbuz1=_dec_vbuz1 
     dec.z num
     // [171] phi from bsearch16u::@6 bsearch16u::@9 to bsearch16u::@7 [phi:bsearch16u::@6/bsearch16u::@9->bsearch16u::@7]
-  b7_from_b6:
-  b7_from_b9:
+  __b7_from___b6:
+  __b7_from___b9:
     // [171] phi (word*) bsearch16u::items#8 = (word*) bsearch16u::items#2 [phi:bsearch16u::@6/bsearch16u::@9->bsearch16u::@7#0] -- register_copy 
     // [171] phi (byte) bsearch16u::num#5 = (byte) bsearch16u::num#3 [phi:bsearch16u::@6/bsearch16u::@9->bsearch16u::@7#1] -- register_copy 
-    jmp b7
+    jmp __b7
     // bsearch16u::@7
-  b7:
+  __b7:
     // [172] (byte) bsearch16u::num#0 ← (byte) bsearch16u::num#5 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
     lsr.z num
     // [155] phi from bsearch16u::@7 to bsearch16u::@3 [phi:bsearch16u::@7->bsearch16u::@3]
-  b3_from_b7:
+  __b3_from___b7:
     // [155] phi (word*) bsearch16u::items#2 = (word*) bsearch16u::items#8 [phi:bsearch16u::@7->bsearch16u::@3#0] -- register_copy 
     // [155] phi (byte) bsearch16u::num#3 = (byte) bsearch16u::num#0 [phi:bsearch16u::@7->bsearch16u::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
 }
   // sqr
 // Find the square of a byte value
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte zeropage($2f) val)
 sqr: {
-    .label _0 = $77
+    .label __0 = $77
     .label return = $78
     .label val = $2f
     .label return_2 = $57
@@ -4824,17 +4824,17 @@ sqr: {
     // [174] (byte~) sqr::$0 ← (byte) sqr::val#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z val
     asl
-    sta.z _0
+    sta.z __0
     // [175] (word) sqr::return#0 ← *((word*)(void*) SQUARES#1 + (byte~) sqr::$0) -- vwuz1=pwuz2_derefidx_vbuz3 
-    ldy.z _0
+    ldy.z __0
     lda (SQUARES),y
     sta.z return
     iny
     lda (SQUARES),y
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // sqr::@return
-  breturn:
+  __breturn:
     // [176] return 
     rts
 }
@@ -4842,8 +4842,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label _3 = $7c
-    .label _4 = $7d
+    .label __3 = $7c
+    .label __4 = $7d
     .label squares = $32
     .label sqr = $30
     .label i = $34
@@ -4857,9 +4857,9 @@ init_squares: {
     sta.z malloc.size+1
     // [190] phi (byte*) heap_head#12 = (byte*) heap_head#1 [phi:init_squares->malloc#1] -- register_copy 
     jsr malloc
-    jmp b2
+    jmp __b2
     // init_squares::@2
-  b2:
+  __b2:
     // [179] (void*) SQUARES#1 ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
     lda.z malloc.mem
     sta.z SQUARES
@@ -4871,7 +4871,7 @@ init_squares: {
     lda.z SQUARES+1
     sta.z squares+1
     // [181] phi from init_squares::@2 to init_squares::@1 [phi:init_squares::@2->init_squares::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [181] phi (byte) init_squares::i#2 = (byte) 0 [phi:init_squares::@2->init_squares::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -4881,15 +4881,15 @@ init_squares: {
     sta.z sqr
     lda #>0
     sta.z sqr+1
-    jmp b1
+    jmp __b1
     // [181] phi from init_squares::@1 to init_squares::@1 [phi:init_squares::@1->init_squares::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [181] phi (byte) init_squares::i#2 = (byte) init_squares::i#1 [phi:init_squares::@1->init_squares::@1#0] -- register_copy 
     // [181] phi (word*) init_squares::squares#2 = (word*) init_squares::squares#1 [phi:init_squares::@1->init_squares::@1#1] -- register_copy 
     // [181] phi (word) init_squares::sqr#2 = (word) init_squares::sqr#1 [phi:init_squares::@1->init_squares::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // init_squares::@1
-  b1:
+  __b1:
     // [182] *((word*) init_squares::squares#2) ← (word) init_squares::sqr#2 -- _deref_pwuz1=vwuz2 
     ldy #0
     lda.z sqr
@@ -4908,13 +4908,13 @@ init_squares: {
     // [184] (byte~) init_squares::$3 ← (byte) init_squares::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z _3
+    sta.z __3
     // [185] (byte~) init_squares::$4 ← (byte~) init_squares::$3 + (byte) 1 -- vbuz1=vbuz2_plus_1 
-    ldy.z _3
+    ldy.z __3
     iny
-    sty.z _4
+    sty.z __4
     // [186] (word) init_squares::sqr#1 ← (word) init_squares::sqr#2 + (byte~) init_squares::$4 -- vwuz1=vwuz1_plus_vbuz2 
-    lda.z _4
+    lda.z __4
     clc
     adc.z sqr
     sta.z sqr
@@ -4926,10 +4926,10 @@ init_squares: {
     // [188] if((byte) init_squares::i#1!=(const byte) NUM_SQUARES#3-(byte) 1+(byte) 1) goto init_squares::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #NUM_SQUARES-1+1
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // init_squares::@return
-  breturn:
+  __breturn:
     // [189] return 
     rts
 }
@@ -4953,9 +4953,9 @@ malloc: {
     sta.z heap_head
     lda.z mem+1
     sta.z heap_head+1
-    jmp breturn
+    jmp __breturn
     // malloc::@return
-  breturn:
+  __breturn:
     // [193] return 
     rts
 }
@@ -5502,7 +5502,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Fill screen using a spiral based on distance-to-center / angle-to-center
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
@@ -5522,15 +5522,15 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label heap_head = $f
   .label SQUARES = $11
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call malloc 
   // [190] phi from @1 to malloc [phi:@1->malloc]
-malloc_from_b1:
+malloc_from___b1:
   // [190] phi (word) malloc::size#3 = (word) $3e8 [phi:@1->malloc#0] -- vwuz1=vwuc1 
   lda #<$3e8
   sta.z malloc.size
@@ -5542,9 +5542,9 @@ malloc_from_b1:
   lda #>HEAP_TOP
   sta.z heap_head+1
   jsr malloc
-  jmp b3
+  jmp __b3
   // @3
-b3:
+__b3:
   // [3] (void*) SCREEN_DIST ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
   lda.z malloc.mem
   sta.z SCREEN_DIST
@@ -5552,7 +5552,7 @@ b3:
   sta.z SCREEN_DIST+1
   // [4] call malloc 
   // [190] phi from @3 to malloc [phi:@3->malloc]
-malloc_from_b3:
+malloc_from___b3:
   // [190] phi (word) malloc::size#3 = (word) $3e8 [phi:@3->malloc#0] -- vwuz1=vwuc1 
   lda #<$3e8
   sta.z malloc.size
@@ -5560,26 +5560,26 @@ malloc_from_b3:
   sta.z malloc.size+1
   // [190] phi (byte*) heap_head#12 = (byte*) heap_head#1 [phi:@3->malloc#1] -- register_copy 
   jsr malloc
-  jmp b4
+  jmp __b4
   // @4
-b4:
+__b4:
   // [5] (void*) SCREEN_ANGLE ← (void*)(byte*) malloc::mem#0 -- pvoz1=pvoz2 
   lda.z malloc.mem
   sta.z SCREEN_ANGLE
   lda.z malloc.mem+1
   sta.z SCREEN_ANGLE+1
   // [6] phi from @4 to @2 [phi:@4->@2]
-b2_from_b4:
-  jmp b2
+__b2_from___b4:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [7] call main 
   jsr main
   // [8] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label dist = 9
@@ -5600,9 +5600,9 @@ main: {
     // [105] phi from main to init_dist_screen [phi:main->init_dist_screen]
   init_dist_screen_from_main:
     jsr init_dist_screen
-    jmp b8
+    jmp __b8
     // main::@8
-  b8:
+  __b8:
     // [11] (byte*) init_angle_screen::screen#0 ← (byte*)(void*) SCREEN_ANGLE -- pbuz1=pbuz2 
     lda.z SCREEN_ANGLE
     sta.z init_angle_screen.screen
@@ -5610,9 +5610,9 @@ main: {
     sta.z init_angle_screen.screen+1
     // [12] call init_angle_screen 
     jsr init_angle_screen
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [13] (byte*) main::dist#0 ← (byte*)(void*) SCREEN_DIST -- pbuz1=pbuz2 
     // Find the minimum dist/angle that is not already filled
     lda.z SCREEN_DIST
@@ -5625,7 +5625,7 @@ main: {
     lda.z SCREEN_ANGLE+1
     sta.z angle+1
     // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [15] phi (byte*) main::min_fill#5 = (const byte*) SCREEN_FILL [phi:main::@1->main::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN_FILL
     sta.z min_fill
@@ -5643,17 +5643,17 @@ main: {
     sta.z fill
     lda #>SCREEN_FILL
     sta.z fill+1
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [16] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@10 -- _deref_pbuz1_eq_vbuc1_then_la1 
     lda #FILL_CHAR
     ldy #0
     cmp (fill),y
-    beq b10
-    jmp b4
+    beq __b10
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [17] (word) main::dist_angle#0 ← *((byte*) main::dist#2) w= *((byte*) main::angle#2) -- vwuz1=_deref_pbuz2_word__deref_pbuz3 
     ldy #0
     lda (angle),y
@@ -5666,26 +5666,26 @@ main: {
     bne !+
     lda.z min_dist_angle
     cmp.z dist_angle
-    beq b11
+    beq __b11
   !:
-    bcc b11
-    jmp b5
+    bcc __b11
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [19] (byte*~) main::min_fill#10 ← (byte*) main::fill#2 -- pbuz1=pbuz2 
     lda.z fill
     sta.z min_fill
     lda.z fill+1
     sta.z min_fill+1
     // [20] phi from main::@10 main::@11 main::@5 to main::@3 [phi:main::@10/main::@11/main::@5->main::@3]
-  b3_from_b10:
-  b3_from_b11:
-  b3_from_b5:
+  __b3_from___b10:
+  __b3_from___b11:
+  __b3_from___b5:
     // [20] phi (byte*) main::min_fill#2 = (byte*) main::min_fill#5 [phi:main::@10/main::@11/main::@5->main::@3#0] -- register_copy 
     // [20] phi (word) main::min_dist_angle#3 = (word~) main::min_dist_angle#7 [phi:main::@10/main::@11/main::@5->main::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [21] (byte*) main::dist#1 ← ++ (byte*) main::dist#2 -- pbuz1=_inc_pbuz1 
     inc.z dist
     bne !+
@@ -5704,73 +5704,73 @@ main: {
     // [24] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@9 -- pbuz1_lt_pbuc1_then_la1 
     lda.z fill+1
     cmp #>SCREEN_FILL+$3e8
-    bcc b9
+    bcc __b9
     bne !+
     lda.z fill
     cmp #<SCREEN_FILL+$3e8
-    bcc b9
+    bcc __b9
   !:
-    jmp b6
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [25] if((word) main::min_dist_angle#3!=(word) $ffff) goto main::@7 -- vwuz1_neq_vwuc1_then_la1 
     lda.z min_dist_angle_3+1
     cmp #>$ffff
-    bne b7
+    bne __b7
     lda.z min_dist_angle_3
     cmp #<$ffff
-    bne b7
-    jmp breturn
+    bne __b7
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [26] return 
     rts
     // main::@7
-  b7:
+  __b7:
     // [27] *((byte*) main::min_fill#2) ← (const byte) FILL_CHAR -- _deref_pbuz1=vbuc1 
     // Fill the found location
     lda #FILL_CHAR
     ldy #0
     sta (min_fill),y
-    jmp b1
+    jmp __b1
     // main::@9
-  b9:
+  __b9:
     // [28] (word~) main::min_dist_angle#6 ← (word) main::min_dist_angle#3 -- vwuz1=vwuz2 
     lda.z min_dist_angle_3
     sta.z min_dist_angle
     lda.z min_dist_angle_3+1
     sta.z min_dist_angle+1
     // [15] phi from main::@9 to main::@2 [phi:main::@9->main::@2]
-  b2_from_b9:
+  __b2_from___b9:
     // [15] phi (byte*) main::min_fill#5 = (byte*) main::min_fill#2 [phi:main::@9->main::@2#0] -- register_copy 
     // [15] phi (word) main::min_dist_angle#2 = (word~) main::min_dist_angle#6 [phi:main::@9->main::@2#1] -- register_copy 
     // [15] phi (byte*) main::angle#2 = (byte*) main::angle#1 [phi:main::@9->main::@2#2] -- register_copy 
     // [15] phi (byte*) main::dist#2 = (byte*) main::dist#1 [phi:main::@9->main::@2#3] -- register_copy 
     // [15] phi (byte*) main::fill#2 = (byte*) main::fill#1 [phi:main::@9->main::@2#4] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@11
-  b11:
+  __b11:
     // [29] (word~) main::min_dist_angle#8 ← (word) main::min_dist_angle#2 -- vwuz1=vwuz2 
     lda.z min_dist_angle
     sta.z min_dist_angle_8
     lda.z min_dist_angle+1
     sta.z min_dist_angle_8+1
-    jmp b3_from_b11
+    jmp __b3_from___b11
     // main::@10
-  b10:
+  __b10:
     // [30] (word~) main::min_dist_angle#7 ← (word) main::min_dist_angle#2 -- vwuz1=vwuz2 
     lda.z min_dist_angle
     sta.z min_dist_angle_7
     lda.z min_dist_angle+1
     sta.z min_dist_angle_7+1
-    jmp b3_from_b10
+    jmp __b3_from___b10
 }
   // init_angle_screen
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zeropage(9) screen)
 init_angle_screen: {
-    .label _11 = $18
+    .label __11 = $18
     .label screen = 9
     .label screen_topline = 7
     .label screen_bottomline = 9
@@ -5798,39 +5798,39 @@ init_angle_screen: {
     adc #>$28*$c
     sta.z screen_bottomline+1
     // [33] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
-  b1_from_init_angle_screen:
+  __b1_from_init_angle_screen:
     // [33] phi (byte*) init_angle_screen::screen_bottomline#6 = (byte*) init_angle_screen::screen_bottomline#0 [phi:init_angle_screen->init_angle_screen::@1#0] -- register_copy 
     // [33] phi (byte*) init_angle_screen::screen_topline#6 = (byte*) init_angle_screen::screen_topline#0 [phi:init_angle_screen->init_angle_screen::@1#1] -- register_copy 
     // [33] phi (byte) init_angle_screen::y#5 = (byte) 0 [phi:init_angle_screen->init_angle_screen::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z y
-    jmp b1
+    jmp __b1
     // [33] phi from init_angle_screen::@4 to init_angle_screen::@1 [phi:init_angle_screen::@4->init_angle_screen::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [33] phi (byte*) init_angle_screen::screen_bottomline#6 = (byte*) init_angle_screen::screen_bottomline#1 [phi:init_angle_screen::@4->init_angle_screen::@1#0] -- register_copy 
     // [33] phi (byte*) init_angle_screen::screen_topline#6 = (byte*) init_angle_screen::screen_topline#1 [phi:init_angle_screen::@4->init_angle_screen::@1#1] -- register_copy 
     // [33] phi (byte) init_angle_screen::y#5 = (byte) init_angle_screen::y#1 [phi:init_angle_screen::@4->init_angle_screen::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // init_angle_screen::@1
-  b1:
+  __b1:
     // [34] phi from init_angle_screen::@1 to init_angle_screen::@2 [phi:init_angle_screen::@1->init_angle_screen::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [34] phi (byte) init_angle_screen::xb#2 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@2#0] -- vbuz1=vbuc1 
     lda #$27
     sta.z xb
     // [34] phi (byte) init_angle_screen::x#2 = (byte) 0 [phi:init_angle_screen::@1->init_angle_screen::@2#1] -- vbuz1=vbuc1 
     lda #0
     sta.z x
-    jmp b2
+    jmp __b2
     // init_angle_screen::@2
-  b2:
+  __b2:
     // [35] if((byte) init_angle_screen::x#2<(byte) $13+(byte) 1) goto init_angle_screen::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$13+1
-    bcc b3
-    jmp b4
+    bcc __b3
+    jmp __b4
     // init_angle_screen::@4
-  b4:
+  __b4:
     // [36] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#6 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
     lda.z screen_topline
     sec
@@ -5852,14 +5852,14 @@ init_angle_screen: {
     // [39] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
     cmp.z y
-    bne b1_from_b4
-    jmp breturn
+    bne __b1_from___b4
+    jmp __breturn
     // init_angle_screen::@return
-  breturn:
+  __breturn:
     // [40] return 
     rts
     // init_angle_screen::@3
-  b3:
+  __b3:
     // [41] (byte~) init_angle_screen::$3 ← (byte) init_angle_screen::x#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z x
     asl
@@ -5883,20 +5883,20 @@ init_angle_screen: {
     // [48] call atan2_16 
     jsr atan2_16
     // [49] (word) atan2_16::return#2 ← (word) atan2_16::return#0
-    jmp b5
+    jmp __b5
     // init_angle_screen::@5
-  b5:
+  __b5:
     // [50] (word) init_angle_screen::angle_w#0 ← (word) atan2_16::return#2
     // [51] (word~) init_angle_screen::$11 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$80
     clc
-    adc.z _11
-    sta.z _11
+    adc.z __11
+    sta.z __11
     bcc !+
-    inc.z _11+1
+    inc.z __11+1
   !:
     // [52] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$11 -- vbuz1=_hi_vwuz2 
-    lda.z _11+1
+    lda.z __11+1
     sta.z ang_w
     // [53] *((byte*) init_angle_screen::screen_bottomline#6 + (byte) init_angle_screen::xb#2) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z ang_w
@@ -5929,10 +5929,10 @@ init_angle_screen: {
     // [61] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#2 -- vbuz1=_dec_vbuz1 
     dec.z xb
     // [34] phi from init_angle_screen::@5 to init_angle_screen::@2 [phi:init_angle_screen::@5->init_angle_screen::@2]
-  b2_from_b5:
+  __b2_from___b5:
     // [34] phi (byte) init_angle_screen::xb#2 = (byte) init_angle_screen::xb#1 [phi:init_angle_screen::@5->init_angle_screen::@2#0] -- register_copy 
     // [34] phi (byte) init_angle_screen::x#2 = (byte) init_angle_screen::x#1 [phi:init_angle_screen::@5->init_angle_screen::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
 }
   // atan2_16
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
@@ -5940,8 +5940,8 @@ init_angle_screen: {
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
 // atan2_16(signed word zeropage($f) x, signed word zeropage($11) y)
 atan2_16: {
-    .label _2 = $14
-    .label _7 = $16
+    .label __2 = $14
+    .label __7 = $16
     .label yi = $14
     .label xi = $16
     .label angle = $18
@@ -5952,48 +5952,48 @@ atan2_16: {
     .label y = $11
     // [62] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
     lda.z y+1
-    bpl b1
-    jmp b2
+    bpl __b1
+    jmp __b2
     // atan2_16::@2
-  b2:
+  __b2:
     // [63] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc.z y
-    sta.z _2
+    sta.z __2
     lda #0
     sbc.z y+1
-    sta.z _2+1
+    sta.z __2+1
     // [64] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
-  b3_from_b1:
-  b3_from_b2:
+  __b3_from___b1:
+  __b3_from___b2:
     // [64] phi (signed word) atan2_16::yi#0 = (signed word~) atan2_16::yi#16 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // atan2_16::@3
-  b3:
+  __b3:
     // [65] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
     lda.z x+1
-    bpl b4
-    jmp b5
+    bpl __b4
+    jmp __b5
     // atan2_16::@5
-  b5:
+  __b5:
     // [66] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc.z x
-    sta.z _7
+    sta.z __7
     lda #0
     sbc.z x+1
-    sta.z _7+1
+    sta.z __7+1
     // [67] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
-  b6_from_b4:
-  b6_from_b5:
+  __b6_from___b4:
+  __b6_from___b5:
     // [67] phi (signed word) atan2_16::xi#0 = (signed word~) atan2_16::xi#13 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6#0] -- register_copy 
-    jmp b6
+    jmp __b6
     // atan2_16::@6
-  b6:
+  __b6:
     // [68] phi from atan2_16::@6 to atan2_16::@10 [phi:atan2_16::@6->atan2_16::@10]
-  b10_from_b6:
+  __b10_from___b6:
     // [68] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z angle
@@ -6003,30 +6003,30 @@ atan2_16: {
     ldx #0
     // [68] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
     // [68] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#0 [phi:atan2_16::@6->atan2_16::@10#3] -- register_copy 
-    jmp b10
+    jmp __b10
     // atan2_16::@10
-  b10:
+  __b10:
     // [69] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
     lda.z yi+1
-    bne b11
+    bne __b11
     lda.z yi
-    bne b11
+    bne __b11
     // [70] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
-  b12_from_b10:
-  b12_from_b19:
+  __b12_from___b10:
+  __b12_from___b19:
     // [70] phi (word) atan2_16::angle#6 = (word) atan2_16::angle#12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12#0] -- register_copy 
-    jmp b12
+    jmp __b12
     // atan2_16::@12
-  b12:
+  __b12:
     // [71] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
     lsr.z angle+1
     ror.z angle
     // [72] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
     lda.z x+1
-    bpl b7_from_b12
-    jmp b21
+    bpl __b7_from___b12
+    jmp __b21
     // atan2_16::@21
-  b21:
+  __b21:
     // [73] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
     sec
     lda #<$8000
@@ -6036,18 +6036,18 @@ atan2_16: {
     sbc.z angle+1
     sta.z angle+1
     // [74] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
-  b7_from_b12:
-  b7_from_b21:
+  __b7_from___b12:
+  __b7_from___b21:
     // [74] phi (word) atan2_16::angle#11 = (word) atan2_16::angle#1 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7#0] -- register_copy 
-    jmp b7
+    jmp __b7
     // atan2_16::@7
-  b7:
+  __b7:
     // [75] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
     lda.z y+1
-    bpl b8_from_b7
-    jmp b9
+    bpl __b8_from___b7
+    jmp __b9
     // atan2_16::@9
-  b9:
+  __b9:
     // [76] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
     sec
     lda #0
@@ -6057,19 +6057,19 @@ atan2_16: {
     sbc.z angle+1
     sta.z angle+1
     // [77] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
-  b8_from_b7:
-  b8_from_b9:
+  __b8_from___b7:
+  __b8_from___b9:
     // [77] phi (word) atan2_16::return#0 = (word) atan2_16::angle#11 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8#0] -- register_copy 
-    jmp b8
+    jmp __b8
     // atan2_16::@8
-  b8:
-    jmp breturn
+  __b8:
+    jmp __breturn
     // atan2_16::@return
-  breturn:
+  __breturn:
     // [78] return 
     rts
     // atan2_16::@11
-  b11:
+  __b11:
     // [79] (byte~) atan2_16::shift#5 ← (byte) atan2_16::i#2 -- vbuyy=vbuxx 
     txa
     tay
@@ -6084,26 +6084,26 @@ atan2_16: {
     lda.z yi+1
     sta.z yd+1
     // [82] phi from atan2_16::@11 atan2_16::@14 to atan2_16::@13 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13]
-  b13_from_b11:
-  b13_from_b14:
+  __b13_from___b11:
+  __b13_from___b14:
     // [82] phi (signed word) atan2_16::yd#3 = (signed word~) atan2_16::yd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#0] -- register_copy 
     // [82] phi (signed word) atan2_16::xd#3 = (signed word~) atan2_16::xd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#1] -- register_copy 
     // [82] phi (byte) atan2_16::shift#2 = (byte~) atan2_16::shift#5 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#2] -- register_copy 
-    jmp b13
+    jmp __b13
     // atan2_16::@13
-  b13:
+  __b13:
     // [83] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14 -- vbuyy_ge_vbuc1_then_la1 
     cpy #2
-    bcs b14
-    jmp b15
+    bcs __b14
+    jmp __b15
     // atan2_16::@15
-  b15:
+  __b15:
     // [84] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17 -- vbuc1_eq_vbuyy_then_la1 
     cpy #0
-    beq b17_from_b15
-    jmp b16
+    beq __b17_from___b15
+    jmp __b16
     // atan2_16::@16
-  b16:
+  __b16:
     // [85] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
     lda.z xd+1
     cmp #$80
@@ -6115,19 +6115,19 @@ atan2_16: {
     ror.z yd+1
     ror.z yd
     // [87] phi from atan2_16::@15 atan2_16::@16 to atan2_16::@17 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17]
-  b17_from_b15:
-  b17_from_b16:
+  __b17_from___b15:
+  __b17_from___b16:
     // [87] phi (signed word) atan2_16::xd#5 = (signed word) atan2_16::xd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#0] -- register_copy 
     // [87] phi (signed word) atan2_16::yd#5 = (signed word) atan2_16::yd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#1] -- register_copy 
-    jmp b17
+    jmp __b17
     // atan2_16::@17
-  b17:
+  __b17:
     // [88] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
     lda.z yi+1
-    bpl b18
-    jmp b20
+    bpl __b18
+    jmp __b20
     // atan2_16::@20
-  b20:
+  __b20:
     // [89] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
     lda.z xi
     sec
@@ -6157,28 +6157,28 @@ atan2_16: {
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
     // [93] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
-  b19_from_b18:
-  b19_from_b20:
+  __b19_from___b18:
+  __b19_from___b20:
     // [93] phi (signed word) atan2_16::xi#8 = (signed word) atan2_16::xi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#0] -- register_copy 
     // [93] phi (word) atan2_16::angle#13 = (word) atan2_16::angle#2 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#1] -- register_copy 
     // [93] phi (signed word) atan2_16::yi#8 = (signed word) atan2_16::yi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#2] -- register_copy 
-    jmp b19
+    jmp __b19
     // atan2_16::@19
-  b19:
+  __b19:
     // [94] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [95] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
     cpx #CORDIC_ITERATIONS_16-1+1
-    beq b12_from_b19
+    beq __b12_from___b19
     // [68] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
-  b10_from_b19:
+  __b10_from___b19:
     // [68] phi (word) atan2_16::angle#12 = (word) atan2_16::angle#13 [phi:atan2_16::@19->atan2_16::@10#0] -- register_copy 
     // [68] phi (byte) atan2_16::i#2 = (byte) atan2_16::i#1 [phi:atan2_16::@19->atan2_16::@10#1] -- register_copy 
     // [68] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#8 [phi:atan2_16::@19->atan2_16::@10#2] -- register_copy 
     // [68] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#8 [phi:atan2_16::@19->atan2_16::@10#3] -- register_copy 
-    jmp b10
+    jmp __b10
     // atan2_16::@18
-  b18:
+  __b18:
     // [96] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z xi
     clc
@@ -6207,9 +6207,9 @@ atan2_16: {
     lda.z angle+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
-    jmp b19_from_b18
+    jmp __b19_from___b18
     // atan2_16::@14
-  b14:
+  __b14:
     // [100] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
     lda.z xd+1
     cmp #$80
@@ -6231,23 +6231,23 @@ atan2_16: {
     // [102] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuyy=vbuyy_minus_2 
     dey
     dey
-    jmp b13_from_b14
+    jmp __b13_from___b14
     // atan2_16::@4
-  b4:
+  __b4:
     // [103] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
     lda.z x
     sta.z xi
     lda.z x+1
     sta.z xi+1
-    jmp b6_from_b4
+    jmp __b6_from___b4
     // atan2_16::@1
-  b1:
+  __b1:
     // [104] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
     lda.z y
     sta.z yi
     lda.z y+1
     sta.z yi+1
-    jmp b3_from_b1
+    jmp __b3_from___b1
 }
   // init_dist_screen
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
@@ -6267,9 +6267,9 @@ init_dist_screen: {
     // [177] phi from init_dist_screen to init_squares [phi:init_dist_screen->init_squares]
   init_squares_from_init_dist_screen:
     jsr init_squares
-    jmp b11
+    jmp __b11
     // init_dist_screen::@11
-  b11:
+  __b11:
     // [107] (byte*) init_dist_screen::screen_bottomline#0 ← (byte*) init_dist_screen::screen#0 + (word)(number) $28*(number) $18 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z screen
     clc
@@ -6279,45 +6279,45 @@ init_dist_screen: {
     adc #>$28*$18
     sta.z screen_bottomline+1
     // [108] phi from init_dist_screen::@11 to init_dist_screen::@1 [phi:init_dist_screen::@11->init_dist_screen::@1]
-  b1_from_b11:
+  __b1_from___b11:
     // [108] phi (byte*) init_dist_screen::screen_bottomline#11 = (byte*) init_dist_screen::screen_bottomline#0 [phi:init_dist_screen::@11->init_dist_screen::@1#0] -- register_copy 
     // [108] phi (byte*) init_dist_screen::screen_topline#11 = (byte*) init_dist_screen::screen#0 [phi:init_dist_screen::@11->init_dist_screen::@1#1] -- register_copy 
     // [108] phi (byte) init_dist_screen::y#10 = (byte) 0 [phi:init_dist_screen::@11->init_dist_screen::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z y
-    jmp b1
+    jmp __b1
     // [108] phi from init_dist_screen::@7 to init_dist_screen::@1 [phi:init_dist_screen::@7->init_dist_screen::@1]
-  b1_from_b7:
+  __b1_from___b7:
     // [108] phi (byte*) init_dist_screen::screen_bottomline#11 = (byte*) init_dist_screen::screen_bottomline#1 [phi:init_dist_screen::@7->init_dist_screen::@1#0] -- register_copy 
     // [108] phi (byte*) init_dist_screen::screen_topline#11 = (byte*) init_dist_screen::screen_topline#1 [phi:init_dist_screen::@7->init_dist_screen::@1#1] -- register_copy 
     // [108] phi (byte) init_dist_screen::y#10 = (byte) init_dist_screen::y#1 [phi:init_dist_screen::@7->init_dist_screen::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // init_dist_screen::@1
-  b1:
+  __b1:
     // [109] (byte) init_dist_screen::y2#0 ← (byte) init_dist_screen::y#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z y
     asl
     // [110] if((byte) init_dist_screen::y2#0>=(byte) $18) goto init_dist_screen::@2 -- vbuaa_ge_vbuc1_then_la1 
     cmp #$18
-    bcs b2
-    jmp b3
+    bcs __b2
+    jmp __b3
     // init_dist_screen::@3
-  b3:
+  __b3:
     // [111] (byte~) init_dist_screen::$5 ← (byte) $18 - (byte) init_dist_screen::y2#0 -- vbuaa=vbuc1_minus_vbuaa 
     eor #$ff
     clc
     adc #$18+1
     // [112] phi from init_dist_screen::@2 init_dist_screen::@3 to init_dist_screen::@4 [phi:init_dist_screen::@2/init_dist_screen::@3->init_dist_screen::@4]
-  b4_from_b2:
-  b4_from_b3:
+  __b4_from___b2:
+  __b4_from___b3:
     // [112] phi (byte) init_dist_screen::yd#0 = (byte~) init_dist_screen::$7 [phi:init_dist_screen::@2/init_dist_screen::@3->init_dist_screen::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // init_dist_screen::@4
-  b4:
+  __b4:
     // [113] (byte) sqr::val#0 ← (byte) init_dist_screen::yd#0
     // [114] call sqr 
     // [173] phi from init_dist_screen::@4 to sqr [phi:init_dist_screen::@4->sqr]
-  sqr_from_b4:
+  sqr_from___b4:
     // [173] phi (byte) sqr::val#2 = (byte) sqr::val#0 [phi:init_dist_screen::@4->sqr#0] -- register_copy 
     jsr sqr
     // [115] (word) sqr::return#2 ← (word) sqr::return#0 -- vwuz1=vwuz2 
@@ -6325,28 +6325,28 @@ init_dist_screen: {
     sta.z sqr.return_2
     lda.z sqr.return+1
     sta.z sqr.return_2+1
-    jmp b12
+    jmp __b12
     // init_dist_screen::@12
-  b12:
+  __b12:
     // [116] (word) init_dist_screen::yds#0 ← (word) sqr::return#2
     // [117] phi from init_dist_screen::@12 to init_dist_screen::@5 [phi:init_dist_screen::@12->init_dist_screen::@5]
-  b5_from_b12:
+  __b5_from___b12:
     // [117] phi (byte) init_dist_screen::xb#2 = (byte) $27 [phi:init_dist_screen::@12->init_dist_screen::@5#0] -- vbuz1=vbuc1 
     lda #$27
     sta.z xb
     // [117] phi (byte) init_dist_screen::x#2 = (byte) 0 [phi:init_dist_screen::@12->init_dist_screen::@5#1] -- vbuz1=vbuc1 
     lda #0
     sta.z x
-    jmp b5
+    jmp __b5
     // init_dist_screen::@5
-  b5:
+  __b5:
     // [118] if((byte) init_dist_screen::x#2<(byte) $13+(byte) 1) goto init_dist_screen::@6 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$13+1
-    bcc b6
-    jmp b7
+    bcc __b6
+    jmp __b7
     // init_dist_screen::@7
-  b7:
+  __b7:
     // [119] (byte*) init_dist_screen::screen_topline#1 ← (byte*) init_dist_screen::screen_topline#11 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
@@ -6368,44 +6368,44 @@ init_dist_screen: {
     // [122] if((byte) init_dist_screen::y#1!=(byte) $d) goto init_dist_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
     cmp.z y
-    bne b1_from_b7
-    jmp breturn
+    bne __b1_from___b7
+    jmp __breturn
     // init_dist_screen::@return
-  breturn:
+  __breturn:
     // [123] return 
     rts
     // init_dist_screen::@6
-  b6:
+  __b6:
     // [124] (byte) init_dist_screen::x2#0 ← (byte) init_dist_screen::x#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z x
     asl
     // [125] if((byte) init_dist_screen::x2#0>=(byte) $27) goto init_dist_screen::@8 -- vbuaa_ge_vbuc1_then_la1 
     cmp #$27
-    bcs b8
-    jmp b9
+    bcs __b8
+    jmp __b9
     // init_dist_screen::@9
-  b9:
+  __b9:
     // [126] (byte~) init_dist_screen::$14 ← (byte) $27 - (byte) init_dist_screen::x2#0 -- vbuaa=vbuc1_minus_vbuaa 
     eor #$ff
     clc
     adc #$27+1
     // [127] phi from init_dist_screen::@8 init_dist_screen::@9 to init_dist_screen::@10 [phi:init_dist_screen::@8/init_dist_screen::@9->init_dist_screen::@10]
-  b10_from_b8:
-  b10_from_b9:
+  __b10_from___b8:
+  __b10_from___b9:
     // [127] phi (byte) init_dist_screen::xd#0 = (byte~) init_dist_screen::$16 [phi:init_dist_screen::@8/init_dist_screen::@9->init_dist_screen::@10#0] -- register_copy 
-    jmp b10
+    jmp __b10
     // init_dist_screen::@10
-  b10:
+  __b10:
     // [128] (byte) sqr::val#1 ← (byte) init_dist_screen::xd#0
     // [129] call sqr 
     // [173] phi from init_dist_screen::@10 to sqr [phi:init_dist_screen::@10->sqr]
-  sqr_from_b10:
+  sqr_from___b10:
     // [173] phi (byte) sqr::val#2 = (byte) sqr::val#1 [phi:init_dist_screen::@10->sqr#0] -- register_copy 
     jsr sqr
     // [130] (word) sqr::return#3 ← (word) sqr::return#0
-    jmp b13
+    jmp __b13
     // init_dist_screen::@13
-  b13:
+  __b13:
     // [131] (word) init_dist_screen::xds#0 ← (word) sqr::return#3
     // [132] (word) init_dist_screen::ds#0 ← (word) init_dist_screen::xds#0 + (word) init_dist_screen::yds#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z ds
@@ -6419,9 +6419,9 @@ init_dist_screen: {
     // [134] call sqrt 
     jsr sqrt
     // [135] (byte) sqrt::return#2 ← (byte) sqrt::return#0
-    jmp b14
+    jmp __b14
     // init_dist_screen::@14
-  b14:
+  __b14:
     // [136] (byte) init_dist_screen::d#0 ← (byte) sqrt::return#2
     // [137] *((byte*) init_dist_screen::screen_topline#11 + (byte) init_dist_screen::x#2) ← (byte) init_dist_screen::d#0 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldy.z x
@@ -6440,22 +6440,22 @@ init_dist_screen: {
     // [142] (byte) init_dist_screen::xb#1 ← -- (byte) init_dist_screen::xb#2 -- vbuz1=_dec_vbuz1 
     dec.z xb
     // [117] phi from init_dist_screen::@14 to init_dist_screen::@5 [phi:init_dist_screen::@14->init_dist_screen::@5]
-  b5_from_b14:
+  __b5_from___b14:
     // [117] phi (byte) init_dist_screen::xb#2 = (byte) init_dist_screen::xb#1 [phi:init_dist_screen::@14->init_dist_screen::@5#0] -- register_copy 
     // [117] phi (byte) init_dist_screen::x#2 = (byte) init_dist_screen::x#1 [phi:init_dist_screen::@14->init_dist_screen::@5#1] -- register_copy 
-    jmp b5
+    jmp __b5
     // init_dist_screen::@8
-  b8:
+  __b8:
     // [143] (byte~) init_dist_screen::$16 ← (byte) init_dist_screen::x2#0 - (byte) $27 -- vbuaa=vbuaa_minus_vbuc1 
     sec
     sbc #$27
-    jmp b10_from_b8
+    jmp __b10_from___b8
     // init_dist_screen::@2
-  b2:
+  __b2:
     // [144] (byte~) init_dist_screen::$7 ← (byte) init_dist_screen::y2#0 - (byte) $18 -- vbuaa=vbuaa_minus_vbuc1 
     sec
     sbc #$18
-    jmp b4_from_b2
+    jmp __b4_from___b2
 }
   // sqrt
 // Find the (integer) square root of a word value
@@ -6463,8 +6463,8 @@ init_dist_screen: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zeropage($16) val)
 sqrt: {
-    .label _1 = 9
-    .label _3 = 9
+    .label __1 = 9
+    .label __3 = 9
     .label found = 9
     .label val = $16
     // [145] (word) bsearch16u::key#0 ← (word) sqrt::val#0
@@ -6478,26 +6478,26 @@ sqrt: {
   bsearch16u_from_sqrt:
     jsr bsearch16u
     // [148] (word*) bsearch16u::return#3 ← (word*) bsearch16u::return#1
-    jmp b1
+    jmp __b1
     // sqrt::@1
-  b1:
+  __b1:
     // [149] (word*) sqrt::found#0 ← (word*) bsearch16u::return#3
     // [150] (word~) sqrt::$3 ← (word*) sqrt::found#0 - (word*)(void*) SQUARES#1 -- vwuz1=pwuz1_minus_pwuz2 
-    lda.z _3
+    lda.z __3
     sec
     sbc.z SQUARES
-    sta.z _3
-    lda.z _3+1
+    sta.z __3
+    lda.z __3+1
     sbc.z SQUARES+1
-    sta.z _3+1
+    sta.z __3+1
     // [151] (word~) sqrt::$1 ← (word~) sqrt::$3 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
-    lsr.z _1+1
-    ror.z _1
+    lsr.z __1+1
+    ror.z __1
     // [152] (byte) sqrt::return#0 ← (byte)(word~) sqrt::$1 -- vbuaa=_byte_vwuz1 
-    lda.z _1
-    jmp breturn
+    lda.z __1
+    jmp __breturn
     // sqrt::@return
-  breturn:
+  __breturn:
     // [153] return 
     rts
 }
@@ -6509,26 +6509,26 @@ sqrt: {
 // Returns pointer to an entry in the array that matches the search key
 // bsearch16u(word zeropage($16) key, word* zeropage(9) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = 9
+    .label __2 = 9
     .label pivot = $18
     .label result = $1a
     .label return = 9
     .label items = 9
     .label key = $16
     // [155] phi from bsearch16u to bsearch16u::@3 [phi:bsearch16u->bsearch16u::@3]
-  b3_from_bsearch16u:
+  __b3_from_bsearch16u:
     // [155] phi (word*) bsearch16u::items#2 = (word*) bsearch16u::items#1 [phi:bsearch16u->bsearch16u::@3#0] -- register_copy 
     // [155] phi (byte) bsearch16u::num#3 = (const byte) NUM_SQUARES#3 [phi:bsearch16u->bsearch16u::@3#1] -- vbuxx=vbuc1 
     ldx #NUM_SQUARES
-    jmp b3
+    jmp __b3
     // bsearch16u::@3
-  b3:
+  __b3:
     // [156] if((byte) bsearch16u::num#3>(byte) 0) goto bsearch16u::@4 -- vbuxx_gt_0_then_la1 
     cpx #0
-    bne b4
-    jmp b5
+    bne __b4
+    jmp __b5
     // bsearch16u::@5
-  b5:
+  __b5:
     // [157] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@2 -- _deref_pwuz1_le_vwuz2_then_la1 
     ldy #1
     lda (items),y
@@ -6537,38 +6537,38 @@ bsearch16u: {
     dey
     lda (items),y
     cmp.z key
-    beq b2_from_b5
+    beq __b2_from___b5
   !:
-    bcc b2_from_b5
-    jmp b1
+    bcc __b2_from___b5
+    jmp __b1
     // bsearch16u::@1
-  b1:
+  __b1:
     // [158] (word*~) bsearch16u::$2 ← (word*) bsearch16u::items#2 - (byte) 1*(const byte) SIZEOF_WORD -- pwuz1=pwuz1_minus_vwuc1 
-    lda.z _2
+    lda.z __2
     sec
     sbc #<1*SIZEOF_WORD
-    sta.z _2
-    lda.z _2+1
+    sta.z __2
+    lda.z __2+1
     sbc #>1*SIZEOF_WORD
-    sta.z _2+1
+    sta.z __2+1
     // [159] phi from bsearch16u::@1 bsearch16u::@5 to bsearch16u::@2 [phi:bsearch16u::@1/bsearch16u::@5->bsearch16u::@2]
-  b2_from_b1:
-  b2_from_b5:
+  __b2_from___b1:
+  __b2_from___b5:
     // [159] phi (word*) bsearch16u::return#2 = (word*~) bsearch16u::$2 [phi:bsearch16u::@1/bsearch16u::@5->bsearch16u::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // bsearch16u::@2
-  b2:
+  __b2:
     // [160] phi from bsearch16u::@2 bsearch16u::@8 to bsearch16u::@return [phi:bsearch16u::@2/bsearch16u::@8->bsearch16u::@return]
-  breturn_from_b2:
-  breturn_from_b8:
+  __breturn_from___b2:
+  __breturn_from___b8:
     // [160] phi (word*) bsearch16u::return#1 = (word*) bsearch16u::return#2 [phi:bsearch16u::@2/bsearch16u::@8->bsearch16u::@return#0] -- register_copy 
-    jmp breturn
+    jmp __breturn
     // bsearch16u::@return
-  breturn:
+  __breturn:
     // [161] return 
     rts
     // bsearch16u::@4
-  b4:
+  __b4:
     // [162] (byte~) bsearch16u::$6 ← (byte) bsearch16u::num#3 >> (byte) 1 -- vbuaa=vbuxx_ror_1 
     txa
     lsr
@@ -6593,30 +6593,30 @@ bsearch16u: {
     sta.z result+1
     // [166] if((signed word) bsearch16u::result#0!=(signed byte) 0) goto bsearch16u::@6 -- vwsz1_neq_0_then_la1 
     lda.z result+1
-    bne b6
+    bne __b6
     lda.z result
-    bne b6
-    jmp b8
+    bne __b6
+    jmp __b8
     // bsearch16u::@8
-  b8:
+  __b8:
     // [167] (word*~) bsearch16u::return#6 ← (word*) bsearch16u::pivot#0 -- pwuz1=pwuz2 
     lda.z pivot
     sta.z return
     lda.z pivot+1
     sta.z return+1
-    jmp breturn_from_b8
+    jmp __breturn_from___b8
     // bsearch16u::@6
-  b6:
+  __b6:
     // [168] if((signed word) bsearch16u::result#0<=(signed byte) 0) goto bsearch16u::@7 -- vwsz1_le_0_then_la1 
     lda.z result+1
-    bmi b7_from_b6
+    bmi __b7_from___b6
     bne !+
     lda.z result
-    beq b7_from_b6
+    beq __b7_from___b6
   !:
-    jmp b9
+    jmp __b9
     // bsearch16u::@9
-  b9:
+  __b9:
     // [169] (word*) bsearch16u::items#0 ← (word*) bsearch16u::pivot#0 + (byte) 1*(const byte) SIZEOF_WORD -- pwuz1=pwuz2_plus_vbuc1 
     lda #1*SIZEOF_WORD
     clc
@@ -6628,22 +6628,22 @@ bsearch16u: {
     // [170] (byte) bsearch16u::num#1 ← -- (byte) bsearch16u::num#3 -- vbuxx=_dec_vbuxx 
     dex
     // [171] phi from bsearch16u::@6 bsearch16u::@9 to bsearch16u::@7 [phi:bsearch16u::@6/bsearch16u::@9->bsearch16u::@7]
-  b7_from_b6:
-  b7_from_b9:
+  __b7_from___b6:
+  __b7_from___b9:
     // [171] phi (word*) bsearch16u::items#8 = (word*) bsearch16u::items#2 [phi:bsearch16u::@6/bsearch16u::@9->bsearch16u::@7#0] -- register_copy 
     // [171] phi (byte) bsearch16u::num#5 = (byte) bsearch16u::num#3 [phi:bsearch16u::@6/bsearch16u::@9->bsearch16u::@7#1] -- register_copy 
-    jmp b7
+    jmp __b7
     // bsearch16u::@7
-  b7:
+  __b7:
     // [172] (byte) bsearch16u::num#0 ← (byte) bsearch16u::num#5 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
     txa
     lsr
     tax
     // [155] phi from bsearch16u::@7 to bsearch16u::@3 [phi:bsearch16u::@7->bsearch16u::@3]
-  b3_from_b7:
+  __b3_from___b7:
     // [155] phi (word*) bsearch16u::items#2 = (word*) bsearch16u::items#8 [phi:bsearch16u::@7->bsearch16u::@3#0] -- register_copy 
     // [155] phi (byte) bsearch16u::num#3 = (byte) bsearch16u::num#0 [phi:bsearch16u::@7->bsearch16u::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
 }
   // sqr
 // Find the square of a byte value
@@ -6661,9 +6661,9 @@ sqr: {
     iny
     lda (SQUARES),y
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // sqr::@return
-  breturn:
+  __breturn:
     // [176] return 
     rts
 }
@@ -6683,9 +6683,9 @@ init_squares: {
     sta.z malloc.size+1
     // [190] phi (byte*) heap_head#12 = (byte*) heap_head#1 [phi:init_squares->malloc#1] -- register_copy 
     jsr malloc
-    jmp b2
+    jmp __b2
     // init_squares::@2
-  b2:
+  __b2:
     // [179] (void*) SQUARES#1 ← (void*)(byte*) malloc::mem#0
     // [180] (word*) init_squares::squares#0 ← (word*)(void*) SQUARES#1 -- pwuz1=pwuz2 
     lda.z SQUARES
@@ -6693,7 +6693,7 @@ init_squares: {
     lda.z SQUARES+1
     sta.z squares+1
     // [181] phi from init_squares::@2 to init_squares::@1 [phi:init_squares::@2->init_squares::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [181] phi (byte) init_squares::i#2 = (byte) 0 [phi:init_squares::@2->init_squares::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [181] phi (word*) init_squares::squares#2 = (word*) init_squares::squares#0 [phi:init_squares::@2->init_squares::@1#1] -- register_copy 
@@ -6702,15 +6702,15 @@ init_squares: {
     sta.z sqr
     lda #>0
     sta.z sqr+1
-    jmp b1
+    jmp __b1
     // [181] phi from init_squares::@1 to init_squares::@1 [phi:init_squares::@1->init_squares::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [181] phi (byte) init_squares::i#2 = (byte) init_squares::i#1 [phi:init_squares::@1->init_squares::@1#0] -- register_copy 
     // [181] phi (word*) init_squares::squares#2 = (word*) init_squares::squares#1 [phi:init_squares::@1->init_squares::@1#1] -- register_copy 
     // [181] phi (word) init_squares::sqr#2 = (word) init_squares::sqr#1 [phi:init_squares::@1->init_squares::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // init_squares::@1
-  b1:
+  __b1:
     // [182] *((word*) init_squares::squares#2) ← (word) init_squares::sqr#2 -- _deref_pwuz1=vwuz2 
     ldy #0
     lda.z sqr
@@ -6743,10 +6743,10 @@ init_squares: {
     inx
     // [188] if((byte) init_squares::i#1!=(const byte) NUM_SQUARES#3-(byte) 1+(byte) 1) goto init_squares::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #NUM_SQUARES-1+1
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // init_squares::@return
-  breturn:
+  __breturn:
     // [189] return 
     rts
 }
@@ -6770,9 +6770,9 @@ malloc: {
     sta.z heap_head
     lda.z mem+1
     sta.z heap_head+1
-    jmp breturn
+    jmp __breturn
     // malloc::@return
-  breturn:
+  __breturn:
     // [193] return 
     rts
 }
@@ -6784,68 +6784,68 @@ CORDIC_ATAN2_ANGLES_16:
 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b2
-Removing instruction jmp bend
-Removing instruction jmp b8
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp b3
-Removing instruction jmp b6
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b4
-Removing instruction jmp breturn
-Removing instruction jmp b5
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp b10
-Removing instruction jmp b12
-Removing instruction jmp b21
-Removing instruction jmp b7
-Removing instruction jmp b9
-Removing instruction jmp b8
-Removing instruction jmp breturn
-Removing instruction jmp b13
-Removing instruction jmp b15
-Removing instruction jmp b16
-Removing instruction jmp b17
-Removing instruction jmp b20
-Removing instruction jmp b19
-Removing instruction jmp b11
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b12
-Removing instruction jmp b5
-Removing instruction jmp b7
-Removing instruction jmp breturn
-Removing instruction jmp b9
-Removing instruction jmp b10
-Removing instruction jmp b13
-Removing instruction jmp b14
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b3
-Removing instruction jmp b5
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp b8
-Removing instruction jmp b9
-Removing instruction jmp b7
-Removing instruction jmp breturn
-Removing instruction jmp b2
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b2
+Removing instruction jmp __bend
+Removing instruction jmp __b8
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b4
+Removing instruction jmp __b5
+Removing instruction jmp __b3
+Removing instruction jmp __b6
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
+Removing instruction jmp __b5
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __b10
+Removing instruction jmp __b12
+Removing instruction jmp __b21
+Removing instruction jmp __b7
+Removing instruction jmp __b9
+Removing instruction jmp __b8
+Removing instruction jmp __breturn
+Removing instruction jmp __b13
+Removing instruction jmp __b15
+Removing instruction jmp __b16
+Removing instruction jmp __b17
+Removing instruction jmp __b20
+Removing instruction jmp __b19
+Removing instruction jmp __b11
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b12
+Removing instruction jmp __b5
+Removing instruction jmp __b7
+Removing instruction jmp __breturn
+Removing instruction jmp __b9
+Removing instruction jmp __b10
+Removing instruction jmp __b13
+Removing instruction jmp __b14
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b8
+Removing instruction jmp __b9
+Removing instruction jmp __b7
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Removing instruction lda.z ang_w
@@ -6860,137 +6860,138 @@ Removing instruction lda.z result+1
 Replacing instruction lda #<0 with TXA
 Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b3_from_b11 with b3
-Replacing label b3_from_b10 with b3
-Replacing label b1_from_b4 with b1
-Replacing label b7_from_b12 with b7
-Replacing label b8_from_b7 with b8
-Replacing label b17_from_b15 with b17
-Replacing label b12_from_b19 with b12
-Replacing label b19_from_b18 with b19
-Replacing label b13_from_b14 with b13
-Replacing label b6_from_b4 with b6
-Replacing label b3_from_b1 with b3
-Replacing label b1_from_b7 with b1
-Replacing label b10_from_b8 with b10
-Replacing label b4_from_b2 with b4
-Replacing label b2_from_b5 with b2
-Replacing label b2_from_b5 with b2
-Replacing label breturn_from_b8 with b2
-Replacing label b7_from_b6 with b7
-Replacing label b7_from_b6 with b7
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction malloc_from_b1:
-Removing instruction b2_from_b4:
-Removing instruction bend_from_b2:
-Removing instruction b3_from_b10:
-Removing instruction b3_from_b11:
-Removing instruction b3_from_b5:
-Removing instruction b1_from_b4:
-Removing instruction b2_from_b1:
-Removing instruction b3_from_b1:
-Removing instruction b3_from_b2:
-Removing instruction b6_from_b4:
-Removing instruction b6_from_b5:
-Removing instruction b10_from_b6:
-Removing instruction b12_from_b10:
-Removing instruction b12_from_b19:
-Removing instruction b7_from_b12:
-Removing instruction b7_from_b21:
-Removing instruction b8_from_b7:
-Removing instruction b8_from_b9:
-Removing instruction breturn:
-Removing instruction b13_from_b11:
-Removing instruction b13_from_b14:
-Removing instruction b17_from_b15:
-Removing instruction b17_from_b16:
-Removing instruction b19_from_b18:
-Removing instruction b19_from_b20:
-Removing instruction b1_from_b7:
-Removing instruction b4_from_b2:
-Removing instruction b4_from_b3:
-Removing instruction sqr_from_b4:
-Removing instruction b5_from_b12:
-Removing instruction b10_from_b8:
-Removing instruction b10_from_b9:
-Removing instruction sqr_from_b10:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b5:
-Removing instruction breturn_from_b2:
-Removing instruction breturn_from_b8:
-Removing instruction breturn:
-Removing instruction b7_from_b6:
-Removing instruction b7_from_b9:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b3_from___b11 with __b3
+Replacing label __b3_from___b10 with __b3
+Replacing label __b1_from___b4 with __b1
+Replacing label __b7_from___b12 with __b7
+Replacing label __b8_from___b7 with __b8
+Replacing label __b17_from___b15 with __b17
+Replacing label __b12_from___b19 with __b12
+Replacing label __b19_from___b18 with __b19
+Replacing label __b13_from___b14 with __b13
+Replacing label __b6_from___b4 with __b6
+Replacing label __b3_from___b1 with __b3
+Replacing label __b1_from___b7 with __b1
+Replacing label __b10_from___b8 with __b10
+Replacing label __b4_from___b2 with __b4
+Replacing label __b2_from___b5 with __b2
+Replacing label __b2_from___b5 with __b2
+Replacing label __breturn_from___b8 with __b2
+Replacing label __b7_from___b6 with __b7
+Replacing label __b7_from___b6 with __b7
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction malloc_from___b1:
+Removing instruction __b2_from___b4:
+Removing instruction __bend_from___b2:
+Removing instruction __b3_from___b10:
+Removing instruction __b3_from___b11:
+Removing instruction __b3_from___b5:
+Removing instruction __b1_from___b4:
+Removing instruction __b2_from___b1:
+Removing instruction __b3_from___b1:
+Removing instruction __b3_from___b2:
+Removing instruction __b6_from___b4:
+Removing instruction __b6_from___b5:
+Removing instruction __b10_from___b6:
+Removing instruction __b12_from___b10:
+Removing instruction __b12_from___b19:
+Removing instruction __b7_from___b12:
+Removing instruction __b7_from___b21:
+Removing instruction __b8_from___b7:
+Removing instruction __b8_from___b9:
+Removing instruction __breturn:
+Removing instruction __b13_from___b11:
+Removing instruction __b13_from___b14:
+Removing instruction __b17_from___b15:
+Removing instruction __b17_from___b16:
+Removing instruction __b19_from___b18:
+Removing instruction __b19_from___b20:
+Removing instruction __b1_from___b7:
+Removing instruction __b4_from___b2:
+Removing instruction __b4_from___b3:
+Removing instruction sqr_from___b4:
+Removing instruction __b5_from___b12:
+Removing instruction __b10_from___b8:
+Removing instruction __b10_from___b9:
+Removing instruction sqr_from___b10:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b5:
+Removing instruction __breturn_from___b2:
+Removing instruction __breturn_from___b8:
+Removing instruction __breturn:
+Removing instruction __b7_from___b6:
+Removing instruction __b7_from___b9:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b3:
-Removing instruction malloc_from_b3:
-Removing instruction b4:
-Removing instruction b2:
-Removing instruction bend:
+Removing instruction __b3:
+Removing instruction malloc_from___b3:
+Removing instruction __b4:
+Removing instruction __b2:
+Removing instruction __bend:
 Removing instruction init_dist_screen_from_main:
-Removing instruction b8:
-Removing instruction b2_from_b1:
-Removing instruction b4:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction breturn:
-Removing instruction b2_from_b9:
-Removing instruction b1_from_init_angle_screen:
-Removing instruction b4:
-Removing instruction breturn:
-Removing instruction b5:
-Removing instruction b2_from_b5:
-Removing instruction b2:
-Removing instruction b5:
-Removing instruction b21:
-Removing instruction b9:
-Removing instruction b15:
-Removing instruction b16:
-Removing instruction b20:
-Removing instruction b10_from_b19:
+Removing instruction __b8:
+Removing instruction __b2_from___b1:
+Removing instruction __b4:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction __breturn:
+Removing instruction __b2_from___b9:
+Removing instruction __b1_from_init_angle_screen:
+Removing instruction __b4:
+Removing instruction __breturn:
+Removing instruction __b5:
+Removing instruction __b2_from___b5:
+Removing instruction __b2:
+Removing instruction __b5:
+Removing instruction __b21:
+Removing instruction __b9:
+Removing instruction __b15:
+Removing instruction __b16:
+Removing instruction __b20:
+Removing instruction __b10_from___b19:
 Removing instruction init_squares_from_init_dist_screen:
-Removing instruction b11:
-Removing instruction b1_from_b11:
-Removing instruction b3:
-Removing instruction b12:
-Removing instruction b7:
-Removing instruction breturn:
-Removing instruction b9:
-Removing instruction b13:
-Removing instruction b14:
-Removing instruction b5_from_b14:
+Removing instruction __b11:
+Removing instruction __b1_from___b11:
+Removing instruction __b3:
+Removing instruction __b12:
+Removing instruction __b7:
+Removing instruction __breturn:
+Removing instruction __b9:
+Removing instruction __b13:
+Removing instruction __b14:
+Removing instruction __b5_from___b14:
 Removing instruction bsearch16u_from_sqrt:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction b3_from_bsearch16u:
-Removing instruction b5:
-Removing instruction b1:
-Removing instruction b8:
-Removing instruction b9:
-Removing instruction b3_from_b7:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b3_from_bsearch16u:
+Removing instruction __b5:
+Removing instruction __b1:
+Removing instruction __b8:
+Removing instruction __b9:
+Removing instruction __b3_from___b7:
+Removing instruction __breturn:
 Removing instruction malloc_from_init_squares:
-Removing instruction b2:
-Removing instruction b1_from_b2:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b2:
+Removing instruction __b1_from___b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Replacing jump to rts with rts in jmp b2
+Replacing jump to rts with rts in jmp __b2
 Succesful ASM optimization Pass5DoubleJumpElimination
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
-Removing instruction jmp b1
-Removing instruction jmp b1
-Removing instruction jmp b1
+Removing instruction jmp __b1
+Removing instruction jmp __b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Fixing long branch [384] beq b12 to bne
-Fixing long branch [278] bpl b1 to bmi
-Fixing long branch [290] bpl b4 to bmi
+Fixing long branch [384] beq __b12 to bne
+Fixing long branch [278] bpl __b1 to bmi
+Fixing long branch [290] bpl __b4 to bmi
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -7360,7 +7361,7 @@ Score: 1112746
 // Fill screen using a spiral based on distance-to-center / angle-to-center
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
@@ -7380,9 +7381,9 @@ Score: 1112746
   .label heap_head = $f
   .label SQUARES = $11
   // @begin
-bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
+__b1:
   // malloc(1000)
   // [2] call malloc 
   // [190] phi from @1 to malloc [phi:@1->malloc]
@@ -7457,7 +7458,7 @@ main: {
     // [12] call init_angle_screen 
     jsr init_angle_screen
     // main::@1
-  b1:
+  __b1:
     // dist = SCREEN_DIST
     // [13] (byte*) main::dist#0 ← (byte*)(void*) SCREEN_DIST -- pbuz1=pbuz2 
     // Find the minimum dist/angle that is not already filled
@@ -7490,13 +7491,13 @@ main: {
     lda #>SCREEN_FILL
     sta.z fill+1
     // main::@2
-  b2:
+  __b2:
     // if(*fill!=FILL_CHAR)
     // [16] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@10 -- _deref_pbuz1_eq_vbuc1_then_la1 
     lda #FILL_CHAR
     ldy #0
     cmp (fill),y
-    beq b10
+    beq __b10
     // main::@4
     // dist_angle = { *dist, *angle }
     // [17] (word) main::dist_angle#0 ← *((byte*) main::dist#2) w= *((byte*) main::angle#2) -- vwuz1=_deref_pbuz2_word__deref_pbuz3 
@@ -7511,9 +7512,9 @@ main: {
     bne !+
     lda.z min_dist_angle
     cmp.z dist_angle
-    beq b11
+    beq __b11
   !:
-    bcc b11
+    bcc __b11
     // main::@5
     // [19] (byte*~) main::min_fill#10 ← (byte*) main::fill#2 -- pbuz1=pbuz2 
     lda.z fill
@@ -7524,7 +7525,7 @@ main: {
     // [20] phi (byte*) main::min_fill#2 = (byte*) main::min_fill#5 [phi:main::@10/main::@11/main::@5->main::@3#0] -- register_copy 
     // [20] phi (word) main::min_dist_angle#3 = (word~) main::min_dist_angle#7 [phi:main::@10/main::@11/main::@5->main::@3#1] -- register_copy 
     // main::@3
-  b3:
+  __b3:
     // dist++;
     // [21] (byte*) main::dist#1 ← ++ (byte*) main::dist#2 -- pbuz1=_inc_pbuz1 
     inc.z dist
@@ -7547,36 +7548,36 @@ main: {
     // [24] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@9 -- pbuz1_lt_pbuc1_then_la1 
     lda.z fill+1
     cmp #>SCREEN_FILL+$3e8
-    bcc b9
+    bcc __b9
     bne !+
     lda.z fill
     cmp #<SCREEN_FILL+$3e8
-    bcc b9
+    bcc __b9
   !:
     // main::@6
     // if(min_dist_angle==0xffff)
     // [25] if((word) main::min_dist_angle#3!=(word) $ffff) goto main::@7 -- vwuz1_neq_vwuc1_then_la1 
     lda.z min_dist_angle_3+1
     cmp #>$ffff
-    bne b7
+    bne __b7
     lda.z min_dist_angle_3
     cmp #<$ffff
-    bne b7
+    bne __b7
     // main::@return
     // }
     // [26] return 
     rts
     // main::@7
-  b7:
+  __b7:
     // *min_fill = FILL_CHAR
     // [27] *((byte*) main::min_fill#2) ← (const byte) FILL_CHAR -- _deref_pbuz1=vbuc1 
     // Fill the found location
     lda #FILL_CHAR
     ldy #0
     sta (min_fill),y
-    jmp b1
+    jmp __b1
     // main::@9
-  b9:
+  __b9:
     // [28] (word~) main::min_dist_angle#6 ← (word) main::min_dist_angle#3 -- vwuz1=vwuz2 
     lda.z min_dist_angle_3
     sta.z min_dist_angle
@@ -7588,30 +7589,30 @@ main: {
     // [15] phi (byte*) main::angle#2 = (byte*) main::angle#1 [phi:main::@9->main::@2#2] -- register_copy 
     // [15] phi (byte*) main::dist#2 = (byte*) main::dist#1 [phi:main::@9->main::@2#3] -- register_copy 
     // [15] phi (byte*) main::fill#2 = (byte*) main::fill#1 [phi:main::@9->main::@2#4] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@11
-  b11:
+  __b11:
     // [29] (word~) main::min_dist_angle#8 ← (word) main::min_dist_angle#2 -- vwuz1=vwuz2 
     lda.z min_dist_angle
     sta.z min_dist_angle_8
     lda.z min_dist_angle+1
     sta.z min_dist_angle_8+1
-    jmp b3
+    jmp __b3
     // main::@10
-  b10:
+  __b10:
     // [30] (word~) main::min_dist_angle#7 ← (word) main::min_dist_angle#2 -- vwuz1=vwuz2 
     lda.z min_dist_angle
     sta.z min_dist_angle_7
     lda.z min_dist_angle+1
     sta.z min_dist_angle_7+1
-    jmp b3
+    jmp __b3
 }
   // init_angle_screen
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zeropage(9) screen)
 init_angle_screen: {
-    .label _11 = $18
+    .label __11 = $18
     .label screen = 9
     .label screen_topline = 7
     .label screen_bottomline = 9
@@ -7651,7 +7652,7 @@ init_angle_screen: {
     // [33] phi (byte*) init_angle_screen::screen_topline#6 = (byte*) init_angle_screen::screen_topline#1 [phi:init_angle_screen::@4->init_angle_screen::@1#1] -- register_copy 
     // [33] phi (byte) init_angle_screen::y#5 = (byte) init_angle_screen::y#1 [phi:init_angle_screen::@4->init_angle_screen::@1#2] -- register_copy 
     // init_angle_screen::@1
-  b1:
+  __b1:
     // [34] phi from init_angle_screen::@1 to init_angle_screen::@2 [phi:init_angle_screen::@1->init_angle_screen::@2]
     // [34] phi (byte) init_angle_screen::xb#2 = (byte) $27 [phi:init_angle_screen::@1->init_angle_screen::@2#0] -- vbuz1=vbuc1 
     lda #$27
@@ -7660,12 +7661,12 @@ init_angle_screen: {
     lda #0
     sta.z x
     // init_angle_screen::@2
-  b2:
+  __b2:
     // for( byte x=0,xb=39; x<=19; x++, xb--)
     // [35] if((byte) init_angle_screen::x#2<(byte) $13+(byte) 1) goto init_angle_screen::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$13+1
-    bcc b3
+    bcc __b3
     // init_angle_screen::@4
     // screen_topline -= 40
     // [36] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#6 - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
@@ -7691,13 +7692,13 @@ init_angle_screen: {
     // [39] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
     cmp.z y
-    bne b1
+    bne __b1
     // init_angle_screen::@return
     // }
     // [40] return 
     rts
     // init_angle_screen::@3
-  b3:
+  __b3:
     // x*2
     // [41] (byte~) init_angle_screen::$3 ← (byte) init_angle_screen::x#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z x
@@ -7733,14 +7734,14 @@ init_angle_screen: {
     // [51] (word~) init_angle_screen::$11 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$80
     clc
-    adc.z _11
-    sta.z _11
+    adc.z __11
+    sta.z __11
     bcc !+
-    inc.z _11+1
+    inc.z __11+1
   !:
     // ang_w = >(angle_w+0x0080)
     // [52] (byte) init_angle_screen::ang_w#0 ← > (word~) init_angle_screen::$11 -- vbuz1=_hi_vwuz2 
-    lda.z _11+1
+    lda.z __11+1
     sta.z ang_w
     // screen_bottomline[xb] = ang_w
     // [53] *((byte*) init_angle_screen::screen_bottomline#6 + (byte) init_angle_screen::xb#2) ← (byte) init_angle_screen::ang_w#0 -- pbuz1_derefidx_vbuz2=vbuz3 
@@ -7779,7 +7780,7 @@ init_angle_screen: {
     // [34] phi from init_angle_screen::@5 to init_angle_screen::@2 [phi:init_angle_screen::@5->init_angle_screen::@2]
     // [34] phi (byte) init_angle_screen::xb#2 = (byte) init_angle_screen::xb#1 [phi:init_angle_screen::@5->init_angle_screen::@2#0] -- register_copy 
     // [34] phi (byte) init_angle_screen::x#2 = (byte) init_angle_screen::x#1 [phi:init_angle_screen::@5->init_angle_screen::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
 }
   // atan2_16
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
@@ -7787,8 +7788,8 @@ init_angle_screen: {
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
 // atan2_16(signed word zeropage($f) x, signed word zeropage($11) y)
 atan2_16: {
-    .label _2 = $14
-    .label _7 = $16
+    .label __2 = $14
+    .label __7 = $16
     .label yi = $14
     .label xi = $16
     .label angle = $18
@@ -7800,41 +7801,41 @@ atan2_16: {
     // (y>=0)?y:-y
     // [62] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
     lda.z y+1
-    bmi !b1+
-    jmp b1
-  !b1:
+    bmi !__b1+
+    jmp __b1
+  !__b1:
     // atan2_16::@2
     // [63] (signed word~) atan2_16::$2 ← - (signed word) atan2_16::y#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc.z y
-    sta.z _2
+    sta.z __2
     lda #0
     sbc.z y+1
-    sta.z _2+1
+    sta.z __2+1
     // [64] phi from atan2_16::@1 atan2_16::@2 to atan2_16::@3 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3]
     // [64] phi (signed word) atan2_16::yi#0 = (signed word~) atan2_16::yi#16 [phi:atan2_16::@1/atan2_16::@2->atan2_16::@3#0] -- register_copy 
     // atan2_16::@3
-  b3:
+  __b3:
     // (x>=0)?x:-x
     // [65] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4 -- vwsz1_ge_0_then_la1 
     lda.z x+1
-    bmi !b4+
-    jmp b4
-  !b4:
+    bmi !__b4+
+    jmp __b4
+  !__b4:
     // atan2_16::@5
     // [66] (signed word~) atan2_16::$7 ← - (signed word) atan2_16::x#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
     sbc.z x
-    sta.z _7
+    sta.z __7
     lda #0
     sbc.z x+1
-    sta.z _7+1
+    sta.z __7+1
     // [67] phi from atan2_16::@4 atan2_16::@5 to atan2_16::@6 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6]
     // [67] phi (signed word) atan2_16::xi#0 = (signed word~) atan2_16::xi#13 [phi:atan2_16::@4/atan2_16::@5->atan2_16::@6#0] -- register_copy 
     // atan2_16::@6
-  b6:
+  __b6:
     // [68] phi from atan2_16::@6 to atan2_16::@10 [phi:atan2_16::@6->atan2_16::@10]
     // [68] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
     lda #<0
@@ -7845,17 +7846,17 @@ atan2_16: {
     // [68] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#0 [phi:atan2_16::@6->atan2_16::@10#2] -- register_copy 
     // [68] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#0 [phi:atan2_16::@6->atan2_16::@10#3] -- register_copy 
     // atan2_16::@10
-  b10:
+  __b10:
     // if(yi==0)
     // [69] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11 -- vwsz1_neq_0_then_la1 
     lda.z yi+1
-    bne b11
+    bne __b11
     lda.z yi
-    bne b11
+    bne __b11
     // [70] phi from atan2_16::@10 atan2_16::@19 to atan2_16::@12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12]
     // [70] phi (word) atan2_16::angle#6 = (word) atan2_16::angle#12 [phi:atan2_16::@10/atan2_16::@19->atan2_16::@12#0] -- register_copy 
     // atan2_16::@12
-  b12:
+  __b12:
     // angle /=2
     // [71] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
     lsr.z angle+1
@@ -7863,7 +7864,7 @@ atan2_16: {
     // if(x<0)
     // [72] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
     lda.z x+1
-    bpl b7
+    bpl __b7
     // atan2_16::@21
     // angle = 0x8000-angle
     // [73] (word) atan2_16::angle#4 ← (word) $8000 - (word) atan2_16::angle#1 -- vwuz1=vwuc1_minus_vwuz1 
@@ -7877,11 +7878,11 @@ atan2_16: {
     // [74] phi from atan2_16::@12 atan2_16::@21 to atan2_16::@7 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7]
     // [74] phi (word) atan2_16::angle#11 = (word) atan2_16::angle#1 [phi:atan2_16::@12/atan2_16::@21->atan2_16::@7#0] -- register_copy 
     // atan2_16::@7
-  b7:
+  __b7:
     // if(y<0)
     // [75] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8 -- vwsz1_ge_0_then_la1 
     lda.z y+1
-    bpl b8
+    bpl __b8
     // atan2_16::@9
     // angle = -angle
     // [76] (word) atan2_16::angle#5 ← - (word) atan2_16::angle#11 -- vwuz1=_neg_vwuz1 
@@ -7895,13 +7896,13 @@ atan2_16: {
     // [77] phi from atan2_16::@7 atan2_16::@9 to atan2_16::@8 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8]
     // [77] phi (word) atan2_16::return#0 = (word) atan2_16::angle#11 [phi:atan2_16::@7/atan2_16::@9->atan2_16::@8#0] -- register_copy 
     // atan2_16::@8
-  b8:
+  __b8:
     // atan2_16::@return
     // }
     // [78] return 
     rts
     // atan2_16::@11
-  b11:
+  __b11:
     // [79] (byte~) atan2_16::shift#5 ← (byte) atan2_16::i#2 -- vbuyy=vbuxx 
     txa
     tay
@@ -7920,16 +7921,16 @@ atan2_16: {
     // [82] phi (signed word) atan2_16::xd#3 = (signed word~) atan2_16::xd#10 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#1] -- register_copy 
     // [82] phi (byte) atan2_16::shift#2 = (byte~) atan2_16::shift#5 [phi:atan2_16::@11/atan2_16::@14->atan2_16::@13#2] -- register_copy 
     // atan2_16::@13
-  b13:
+  __b13:
     // while(shift>=2)
     // [83] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14 -- vbuyy_ge_vbuc1_then_la1 
     cpy #2
-    bcs b14
+    bcs __b14
     // atan2_16::@15
     // if(shift)
     // [84] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17 -- vbuc1_eq_vbuyy_then_la1 
     cpy #0
-    beq b17
+    beq __b17
     // atan2_16::@16
     // xd >>= 1
     // [85] (signed word) atan2_16::xd#2 ← (signed word) atan2_16::xd#3 >> (signed byte) 1 -- vwsz1=vwsz1_ror_1 
@@ -7947,11 +7948,11 @@ atan2_16: {
     // [87] phi (signed word) atan2_16::xd#5 = (signed word) atan2_16::xd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#0] -- register_copy 
     // [87] phi (signed word) atan2_16::yd#5 = (signed word) atan2_16::yd#3 [phi:atan2_16::@15/atan2_16::@16->atan2_16::@17#1] -- register_copy 
     // atan2_16::@17
-  b17:
+  __b17:
     // if(yi>=0)
     // [88] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18 -- vwsz1_ge_0_then_la1 
     lda.z yi+1
-    bpl b18
+    bpl __b18
     // atan2_16::@20
     // xi -= yd
     // [89] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_minus_vwsz2 
@@ -7989,23 +7990,23 @@ atan2_16: {
     // [93] phi (word) atan2_16::angle#13 = (word) atan2_16::angle#2 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#1] -- register_copy 
     // [93] phi (signed word) atan2_16::yi#8 = (signed word) atan2_16::yi#1 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19#2] -- register_copy 
     // atan2_16::@19
-  b19:
+  __b19:
     // for( byte i: 0..CORDIC_ITERATIONS_16-1)
     // [94] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [95] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
     cpx #CORDIC_ITERATIONS_16-1+1
-    bne !b12+
-    jmp b12
-  !b12:
+    bne !__b12+
+    jmp __b12
+  !__b12:
     // [68] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
     // [68] phi (word) atan2_16::angle#12 = (word) atan2_16::angle#13 [phi:atan2_16::@19->atan2_16::@10#0] -- register_copy 
     // [68] phi (byte) atan2_16::i#2 = (byte) atan2_16::i#1 [phi:atan2_16::@19->atan2_16::@10#1] -- register_copy 
     // [68] phi (signed word) atan2_16::xi#3 = (signed word) atan2_16::xi#8 [phi:atan2_16::@19->atan2_16::@10#2] -- register_copy 
     // [68] phi (signed word) atan2_16::yi#3 = (signed word) atan2_16::yi#8 [phi:atan2_16::@19->atan2_16::@10#3] -- register_copy 
-    jmp b10
+    jmp __b10
     // atan2_16::@18
-  b18:
+  __b18:
     // xi += yd
     // [96] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z xi
@@ -8037,9 +8038,9 @@ atan2_16: {
     lda.z angle+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
-    jmp b19
+    jmp __b19
     // atan2_16::@14
-  b14:
+  __b14:
     // xd >>= 2
     // [100] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 -- vwsz1=vwsz1_ror_2 
     lda.z xd+1
@@ -8064,23 +8065,23 @@ atan2_16: {
     // [102] (byte) atan2_16::shift#1 ← (byte) atan2_16::shift#2 - (byte) 2 -- vbuyy=vbuyy_minus_2 
     dey
     dey
-    jmp b13
+    jmp __b13
     // atan2_16::@4
-  b4:
+  __b4:
     // [103] (signed word~) atan2_16::xi#13 ← (signed word) atan2_16::x#0 -- vwsz1=vwsz2 
     lda.z x
     sta.z xi
     lda.z x+1
     sta.z xi+1
-    jmp b6
+    jmp __b6
     // atan2_16::@1
-  b1:
+  __b1:
     // [104] (signed word~) atan2_16::yi#16 ← (signed word) atan2_16::y#0 -- vwsz1=vwsz2 
     lda.z y
     sta.z yi
     lda.z y+1
     sta.z yi+1
-    jmp b3
+    jmp __b3
 }
   // init_dist_screen
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
@@ -8121,7 +8122,7 @@ init_dist_screen: {
     // [108] phi (byte*) init_dist_screen::screen_topline#11 = (byte*) init_dist_screen::screen_topline#1 [phi:init_dist_screen::@7->init_dist_screen::@1#1] -- register_copy 
     // [108] phi (byte) init_dist_screen::y#10 = (byte) init_dist_screen::y#1 [phi:init_dist_screen::@7->init_dist_screen::@1#2] -- register_copy 
     // init_dist_screen::@1
-  b1:
+  __b1:
     // y2 = y*2
     // [109] (byte) init_dist_screen::y2#0 ← (byte) init_dist_screen::y#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z y
@@ -8129,7 +8130,7 @@ init_dist_screen: {
     // (y2>=24)?(y2-24):(24-y2)
     // [110] if((byte) init_dist_screen::y2#0>=(byte) $18) goto init_dist_screen::@2 -- vbuaa_ge_vbuc1_then_la1 
     cmp #$18
-    bcs b2
+    bcs __b2
     // init_dist_screen::@3
     // [111] (byte~) init_dist_screen::$5 ← (byte) $18 - (byte) init_dist_screen::y2#0 -- vbuaa=vbuc1_minus_vbuaa 
     eor #$ff
@@ -8138,7 +8139,7 @@ init_dist_screen: {
     // [112] phi from init_dist_screen::@2 init_dist_screen::@3 to init_dist_screen::@4 [phi:init_dist_screen::@2/init_dist_screen::@3->init_dist_screen::@4]
     // [112] phi (byte) init_dist_screen::yd#0 = (byte~) init_dist_screen::$7 [phi:init_dist_screen::@2/init_dist_screen::@3->init_dist_screen::@4#0] -- register_copy 
     // init_dist_screen::@4
-  b4:
+  __b4:
     // sqr(yd)
     // [113] (byte) sqr::val#0 ← (byte) init_dist_screen::yd#0
     // [114] call sqr 
@@ -8162,12 +8163,12 @@ init_dist_screen: {
     lda #0
     sta.z x
     // init_dist_screen::@5
-  b5:
+  __b5:
     // for( byte x=0,xb=39; x<=19; x++, xb--)
     // [118] if((byte) init_dist_screen::x#2<(byte) $13+(byte) 1) goto init_dist_screen::@6 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$13+1
-    bcc b6
+    bcc __b6
     // init_dist_screen::@7
     // screen_topline += 40
     // [119] (byte*) init_dist_screen::screen_topline#1 ← (byte*) init_dist_screen::screen_topline#11 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
@@ -8193,13 +8194,13 @@ init_dist_screen: {
     // [122] if((byte) init_dist_screen::y#1!=(byte) $d) goto init_dist_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$d
     cmp.z y
-    bne b1
+    bne __b1
     // init_dist_screen::@return
     // }
     // [123] return 
     rts
     // init_dist_screen::@6
-  b6:
+  __b6:
     // x2 = x*2
     // [124] (byte) init_dist_screen::x2#0 ← (byte) init_dist_screen::x#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z x
@@ -8207,7 +8208,7 @@ init_dist_screen: {
     // (x2>=39)?(x2-39):(39-x2)
     // [125] if((byte) init_dist_screen::x2#0>=(byte) $27) goto init_dist_screen::@8 -- vbuaa_ge_vbuc1_then_la1 
     cmp #$27
-    bcs b8
+    bcs __b8
     // init_dist_screen::@9
     // [126] (byte~) init_dist_screen::$14 ← (byte) $27 - (byte) init_dist_screen::x2#0 -- vbuaa=vbuc1_minus_vbuaa 
     eor #$ff
@@ -8216,7 +8217,7 @@ init_dist_screen: {
     // [127] phi from init_dist_screen::@8 init_dist_screen::@9 to init_dist_screen::@10 [phi:init_dist_screen::@8/init_dist_screen::@9->init_dist_screen::@10]
     // [127] phi (byte) init_dist_screen::xd#0 = (byte~) init_dist_screen::$16 [phi:init_dist_screen::@8/init_dist_screen::@9->init_dist_screen::@10#0] -- register_copy 
     // init_dist_screen::@10
-  b10:
+  __b10:
     // sqr(xd)
     // [128] (byte) sqr::val#1 ← (byte) init_dist_screen::xd#0
     // [129] call sqr 
@@ -8267,21 +8268,21 @@ init_dist_screen: {
     // [117] phi from init_dist_screen::@14 to init_dist_screen::@5 [phi:init_dist_screen::@14->init_dist_screen::@5]
     // [117] phi (byte) init_dist_screen::xb#2 = (byte) init_dist_screen::xb#1 [phi:init_dist_screen::@14->init_dist_screen::@5#0] -- register_copy 
     // [117] phi (byte) init_dist_screen::x#2 = (byte) init_dist_screen::x#1 [phi:init_dist_screen::@14->init_dist_screen::@5#1] -- register_copy 
-    jmp b5
+    jmp __b5
     // init_dist_screen::@8
-  b8:
+  __b8:
     // (x2>=39)?(x2-39):(39-x2)
     // [143] (byte~) init_dist_screen::$16 ← (byte) init_dist_screen::x2#0 - (byte) $27 -- vbuaa=vbuaa_minus_vbuc1 
     sec
     sbc #$27
-    jmp b10
+    jmp __b10
     // init_dist_screen::@2
-  b2:
+  __b2:
     // (y2>=24)?(y2-24):(24-y2)
     // [144] (byte~) init_dist_screen::$7 ← (byte) init_dist_screen::y2#0 - (byte) $18 -- vbuaa=vbuaa_minus_vbuc1 
     sec
     sbc #$18
-    jmp b4
+    jmp __b4
 }
   // sqrt
 // Find the (integer) square root of a word value
@@ -8289,8 +8290,8 @@ init_dist_screen: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zeropage($16) val)
 sqrt: {
-    .label _1 = 9
-    .label _3 = 9
+    .label __1 = 9
+    .label __3 = 9
     .label found = 9
     .label val = $16
     // bsearch16u(val, SQUARES, NUM_SQUARES)
@@ -8310,19 +8311,19 @@ sqrt: {
     // [149] (word*) sqrt::found#0 ← (word*) bsearch16u::return#3
     // found-SQUARES
     // [150] (word~) sqrt::$3 ← (word*) sqrt::found#0 - (word*)(void*) SQUARES#1 -- vwuz1=pwuz1_minus_pwuz2 
-    lda.z _3
+    lda.z __3
     sec
     sbc.z SQUARES
-    sta.z _3
-    lda.z _3+1
+    sta.z __3
+    lda.z __3+1
     sbc.z SQUARES+1
-    sta.z _3+1
+    sta.z __3+1
     // [151] (word~) sqrt::$1 ← (word~) sqrt::$3 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
-    lsr.z _1+1
-    ror.z _1
+    lsr.z __1+1
+    ror.z __1
     // (byte)(found-SQUARES)
     // [152] (byte) sqrt::return#0 ← (byte)(word~) sqrt::$1 -- vbuaa=_byte_vwuz1 
-    lda.z _1
+    lda.z __1
     // sqrt::@return
     // }
     // [153] return 
@@ -8336,7 +8337,7 @@ sqrt: {
 // Returns pointer to an entry in the array that matches the search key
 // bsearch16u(word zeropage($16) key, word* zeropage(9) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = 9
+    .label __2 = 9
     .label pivot = $18
     .label result = $1a
     .label return = 9
@@ -8347,11 +8348,11 @@ bsearch16u: {
     // [155] phi (byte) bsearch16u::num#3 = (const byte) NUM_SQUARES#3 [phi:bsearch16u->bsearch16u::@3#1] -- vbuxx=vbuc1 
     ldx #NUM_SQUARES
     // bsearch16u::@3
-  b3:
+  __b3:
     // while (num > 0)
     // [156] if((byte) bsearch16u::num#3>(byte) 0) goto bsearch16u::@4 -- vbuxx_gt_0_then_la1 
     cpx #0
-    bne b4
+    bne __b4
     // bsearch16u::@5
     // *items<=key?items:items-1
     // [157] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@2 -- _deref_pwuz1_le_vwuz2_then_la1 
@@ -8362,22 +8363,22 @@ bsearch16u: {
     dey
     lda (items),y
     cmp.z key
-    beq b2
+    beq __b2
   !:
-    bcc b2
+    bcc __b2
     // bsearch16u::@1
     // [158] (word*~) bsearch16u::$2 ← (word*) bsearch16u::items#2 - (byte) 1*(const byte) SIZEOF_WORD -- pwuz1=pwuz1_minus_vwuc1 
-    lda.z _2
+    lda.z __2
     sec
     sbc #<1*SIZEOF_WORD
-    sta.z _2
-    lda.z _2+1
+    sta.z __2
+    lda.z __2+1
     sbc #>1*SIZEOF_WORD
-    sta.z _2+1
+    sta.z __2+1
     // [159] phi from bsearch16u::@1 bsearch16u::@5 to bsearch16u::@2 [phi:bsearch16u::@1/bsearch16u::@5->bsearch16u::@2]
     // [159] phi (word*) bsearch16u::return#2 = (word*~) bsearch16u::$2 [phi:bsearch16u::@1/bsearch16u::@5->bsearch16u::@2#0] -- register_copy 
     // bsearch16u::@2
-  b2:
+  __b2:
     // [160] phi from bsearch16u::@2 bsearch16u::@8 to bsearch16u::@return [phi:bsearch16u::@2/bsearch16u::@8->bsearch16u::@return]
     // [160] phi (word*) bsearch16u::return#1 = (word*) bsearch16u::return#2 [phi:bsearch16u::@2/bsearch16u::@8->bsearch16u::@return#0] -- register_copy 
     // bsearch16u::@return
@@ -8385,7 +8386,7 @@ bsearch16u: {
     // [161] return 
     rts
     // bsearch16u::@4
-  b4:
+  __b4:
     // num >> 1
     // [162] (byte~) bsearch16u::$6 ← (byte) bsearch16u::num#3 >> (byte) 1 -- vbuaa=vbuxx_ror_1 
     txa
@@ -8413,9 +8414,9 @@ bsearch16u: {
     sta.z result+1
     // if (result == 0)
     // [166] if((signed word) bsearch16u::result#0!=(signed byte) 0) goto bsearch16u::@6 -- vwsz1_neq_0_then_la1 
-    bne b6
+    bne __b6
     lda.z result
-    bne b6
+    bne __b6
     // bsearch16u::@8
     // [167] (word*~) bsearch16u::return#6 ← (word*) bsearch16u::pivot#0 -- pwuz1=pwuz2 
     lda.z pivot
@@ -8424,14 +8425,14 @@ bsearch16u: {
     sta.z return+1
     rts
     // bsearch16u::@6
-  b6:
+  __b6:
     // if (result > 0)
     // [168] if((signed word) bsearch16u::result#0<=(signed byte) 0) goto bsearch16u::@7 -- vwsz1_le_0_then_la1 
     lda.z result+1
-    bmi b7
+    bmi __b7
     bne !+
     lda.z result
-    beq b7
+    beq __b7
   !:
     // bsearch16u::@9
     // items = pivot+1
@@ -8450,7 +8451,7 @@ bsearch16u: {
     // [171] phi (word*) bsearch16u::items#8 = (word*) bsearch16u::items#2 [phi:bsearch16u::@6/bsearch16u::@9->bsearch16u::@7#0] -- register_copy 
     // [171] phi (byte) bsearch16u::num#5 = (byte) bsearch16u::num#3 [phi:bsearch16u::@6/bsearch16u::@9->bsearch16u::@7#1] -- register_copy 
     // bsearch16u::@7
-  b7:
+  __b7:
     // num >>= 1
     // [172] (byte) bsearch16u::num#0 ← (byte) bsearch16u::num#5 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
     txa
@@ -8459,7 +8460,7 @@ bsearch16u: {
     // [155] phi from bsearch16u::@7 to bsearch16u::@3 [phi:bsearch16u::@7->bsearch16u::@3]
     // [155] phi (word*) bsearch16u::items#2 = (word*) bsearch16u::items#8 [phi:bsearch16u::@7->bsearch16u::@3#0] -- register_copy 
     // [155] phi (byte) bsearch16u::num#3 = (byte) bsearch16u::num#0 [phi:bsearch16u::@7->bsearch16u::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
 }
   // sqr
 // Find the square of a byte value
@@ -8521,7 +8522,7 @@ init_squares: {
     // [181] phi (word*) init_squares::squares#2 = (word*) init_squares::squares#1 [phi:init_squares::@1->init_squares::@1#1] -- register_copy 
     // [181] phi (word) init_squares::sqr#2 = (word) init_squares::sqr#1 [phi:init_squares::@1->init_squares::@1#2] -- register_copy 
     // init_squares::@1
-  b1:
+  __b1:
     // *squares++ = sqr
     // [182] *((word*) init_squares::squares#2) ← (word) init_squares::sqr#2 -- _deref_pwuz1=vwuz2 
     ldy #0
@@ -8560,7 +8561,7 @@ init_squares: {
     inx
     // [188] if((byte) init_squares::i#1!=(const byte) NUM_SQUARES#3-(byte) 1+(byte) 1) goto init_squares::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #NUM_SQUARES-1+1
-    bne b1
+    bne __b1
     // init_squares::@return
     // }
     // [189] return 

@@ -18,7 +18,7 @@ main: {
     lda #0
     sta.z idx
     tax
-  b1:
+  __b1:
     txa
     asl
     tay
@@ -29,7 +29,7 @@ main: {
     jsr print
     inx
     cpx #2
-    bne b1
+    bne __b1
     rts
 }
 // print(byte zeropage(3) p_x, byte zeropage(4) p_y)

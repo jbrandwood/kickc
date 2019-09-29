@@ -1,11 +1,11 @@
 // Tests that long branch fixing works with interrupt exits (to $ea81)
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-bbegin:
+__bbegin:
   lda #0
   sta.z col
   jsr main
@@ -15,13 +15,13 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  b2:
+  __b2:
     lda.z col
     cmp #$a+1
-    bcc b2
+    bcc __b2
     lda #0
     sta.z col
-    jmp b2
+    jmp __b2
 }
 irq: {
     lda $dc0d
@@ -29,9 +29,9 @@ irq: {
     sta BGCOL
     lda.z col
     cmp #0
-    bne !_ea81+
+    bne !__ea81+
     jmp $ea81
-  !_ea81:
+  !__ea81:
     inc.z col
     jmp $ea81
 }

@@ -16,23 +16,23 @@ main: {
     sta.z idx
     sta.z x
     sta.z line
-  b1:
+  __b1:
     lda.z line
     cmp #8
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     inc.z x
     ldy #0
-  b3:
+  __b3:
     cpy #8
-    bcc b4
+    bcc __b4
     lax.z y
     axs #-[YSPACE]
     stx.z y
     inc.z line
-    jmp b1
-  b4:
+    jmp __b1
+  __b4:
     lda.z idx
     asl
     tax
@@ -45,6 +45,6 @@ main: {
     axs #-[XSPACE]
     stx.z x
     iny
-    jmp b3
+    jmp __b3
 }
   p: .fill 2*$40, 0

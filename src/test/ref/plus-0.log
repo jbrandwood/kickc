@@ -358,25 +358,25 @@ Target platform is c64basic / MOS6502X
 // Tests elimination of plus 0
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call fill 
@@ -392,13 +392,13 @@ main: {
     sta.z fill.screen+1
     jsr fill
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call fill 
     // [9] phi from main::@1 to fill [phi:main::@1->fill]
-  fill_from_b1:
+  fill_from___b1:
     // [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuz1=vbuc1 
     lda #'b'
     sta.z fill.ch
@@ -408,9 +408,9 @@ main: {
     lda #>$2000
     sta.z fill.screen+1
     jsr fill
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -420,69 +420,69 @@ fill: {
     .label i = 5
     .label screen = 2
     .label ch = 4
-    .label _5 = 6
-    .label _7 = 8
+    .label __5 = 6
+    .label __7 = 8
     // [10] phi from fill to fill::@1 [phi:fill->fill::@1]
-  b1_from_fill:
+  __b1_from_fill:
     // [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // fill::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // fill::@2
-  b2:
+  __b2:
     // [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z ch
     ldy.z i
     sta (screen),y
-    jmp b2_1
+    jmp __b2_1
     // fill::@2_1
-  b2_1:
+  __b2_1:
     // [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
     adc.z screen
-    sta.z _5
+    sta.z __5
     lda #0
     adc.z screen+1
-    sta.z _5+1
+    sta.z __5+1
     // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z ch
     ldy.z i
-    sta (_5),y
-    jmp b2_2
+    sta (__5),y
+    jmp __b2_2
     // fill::@2_2
-  b2_2:
+  __b2_2:
     // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc.z screen
-    sta.z _7
+    sta.z __7
     lda #0
     adc.z screen+1
-    sta.z _7+1
+    sta.z __7+1
     // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z ch
     ldy.z i
-    sta (_7),y
-    jmp b3
+    sta (__7),y
+    jmp __b3
     // fill::@3
-  b3:
+  __b3:
     // [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp.z i
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // fill::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
@@ -522,25 +522,25 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests elimination of plus 0
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call fill 
@@ -555,13 +555,13 @@ main: {
     sta.z fill.screen+1
     jsr fill
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call fill 
     // [9] phi from main::@1 to fill [phi:main::@1->fill]
-  fill_from_b1:
+  fill_from___b1:
     // [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
     ldx #'b'
     // [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
@@ -570,9 +570,9 @@ main: {
     lda #>$2000
     sta.z fill.screen+1
     jsr fill
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -580,108 +580,109 @@ main: {
 // fill(byte* zeropage(2) screen, byte register(X) ch)
 fill: {
     .label screen = 2
-    .label _5 = 4
-    .label _7 = 6
+    .label __5 = 4
+    .label __7 = 6
     // [10] phi from fill to fill::@1 [phi:fill->fill::@1]
-  b1_from_fill:
+  __b1_from_fill:
     // [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
     ldy #0
-    jmp b1
+    jmp __b1
     // [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // fill::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // fill::@2
-  b2:
+  __b2:
     // [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (screen),y
-    jmp b2_1
+    jmp __b2_1
     // fill::@2_1
-  b2_1:
+  __b2_1:
     // [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
     adc.z screen
-    sta.z _5
+    sta.z __5
     lda #0
     adc.z screen+1
-    sta.z _5+1
+    sta.z __5+1
     // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_5),y
-    jmp b2_2
+    sta (__5),y
+    jmp __b2_2
     // fill::@2_2
-  b2_2:
+  __b2_2:
     // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc.z screen
-    sta.z _7
+    sta.z __7
     lda #0
     adc.z screen+1
-    sta.z _7+1
+    sta.z __7+1
     // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_7),y
-    jmp b3
+    sta (__7),y
+    jmp __b3
     // fill::@3
-  b3:
+  __b3:
     // [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
     iny
     // [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$28
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // fill::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b2_1
-Removing instruction jmp b2_2
-Removing instruction jmp b3
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b2_1
+Removing instruction jmp __b2_2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1 with b2
-Replacing label b1_from_b3 with b2
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction fill_from_b1:
-Removing instruction b1_from_b3:
-Removing instruction b1:
+Replacing label __bbegin with __b1
+Replacing label __b1 with __b2
+Replacing label __b1_from___b3 with __b2
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction fill_from___b1:
+Removing instruction __b1_from___b3:
+Removing instruction __b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction fill_from_main:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction b1_from_fill:
-Removing instruction b2_1:
-Removing instruction b2_2:
-Removing instruction b3:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b1_from_fill:
+Removing instruction __b2_1:
+Removing instruction __b2_2:
+Removing instruction __b3:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b2
+Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -768,8 +769,8 @@ main: {
 // fill(byte* zeropage(2) screen, byte register(X) ch)
 fill: {
     .label screen = 2
-    .label _5 = 4
-    .label _7 = 6
+    .label __5 = 4
+    .label __7 = 6
     // [10] phi from fill to fill::@1 [phi:fill->fill::@1]
     // [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
     ldy #0
@@ -777,7 +778,7 @@ fill: {
     // [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
     // fill::@1
     // fill::@2
-  b2:
+  __b2:
     // (screen+j*40)[i] = ch
     // [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
@@ -788,35 +789,35 @@ fill: {
     lda #1*$28
     clc
     adc.z screen
-    sta.z _5
+    sta.z __5
     lda #0
     adc.z screen+1
-    sta.z _5+1
+    sta.z __5+1
     // (screen+j*40)[i] = ch
     // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_5),y
+    sta (__5),y
     // fill::@2_2
     // screen+j*40
     // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc.z screen
-    sta.z _7
+    sta.z __7
     lda #0
     adc.z screen+1
-    sta.z _7+1
+    sta.z __7+1
     // (screen+j*40)[i] = ch
     // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_7),y
+    sta (__7),y
     // fill::@3
     // for(byte i: 0..39)
     // [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
     iny
     // [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$28
-    bne b2
+    bne __b2
     // fill::@return
     // }
     // [18] return 

@@ -8,7 +8,7 @@
   .label SCREEN = $400
   .const STACK_BASE = $103
 main: {
-    .label _0 = 2
+    .label __0 = 2
     lda #>'0'
     pha
     lda #<'0'
@@ -21,12 +21,12 @@ main: {
     pla
     pla
     pla
-    sta.z _0
+    sta.z __0
     pla
-    sta.z _0+1
-    lda.z _0
+    sta.z __0+1
+    lda.z __0
     sta SCREEN
-    lda.z _0+1
+    lda.z __0+1
     sta SCREEN+1
     rts
 }

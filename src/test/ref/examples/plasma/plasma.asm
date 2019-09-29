@@ -40,7 +40,7 @@ main: {
     sta.z col
     lda #>COLS
     sta.z col+1
-  b1:
+  __b1:
     lda #BLACK
     ldy #0
     sta (col),y
@@ -50,10 +50,10 @@ main: {
   !:
     lda.z col+1
     cmp #>COLS+$3e8+1
-    bne b1
+    bne __b1
     lda.z col
     cmp #<COLS+$3e8+1
-    bne b1
+    bne __b1
     jsr makecharset
     lda #0
     sta.z c2B
@@ -61,7 +61,7 @@ main: {
     sta.z c1B
     sta.z c1A
   // Show double-buffered plasma
-  b4:
+  __b4:
     lda #<SCREEN1
     sta.z doplasma.screen
     lda #>SCREEN1
@@ -76,7 +76,7 @@ main: {
     jsr doplasma
     lda #toD0182_return
     sta D018
-    jmp b4
+    jmp __b4
 }
 // Render plasma to the passed screen
 // doplasma(byte* zeropage(9) screen)
@@ -94,10 +94,10 @@ doplasma: {
     sta.z c1b
     lda #0
     sta.z i
-  b1:
+  __b1:
     lda.z i
     cmp #$19
-    bcc b2
+    bcc __b2
     lax.z c1A
     axs #-[3]
     stx.z c1A
@@ -110,10 +110,10 @@ doplasma: {
     sta.z c2b
     lda #0
     sta.z i1
-  b4:
+  __b4:
     lda.z i1
     cmp #$28
-    bcc b5
+    bcc __b5
     lda.z c2A
     clc
     adc #2
@@ -122,15 +122,15 @@ doplasma: {
     axs #3
     stx.z c2B
     ldx #0
-  b7:
+  __b7:
     cpx #$19
-    bcc b3
+    bcc b1
     rts
-  b3:
+  b1:
     ldy #0
-  b8:
+  __b8:
     cpy #$28
-    bcc b9
+    bcc __b9
     lda #$28
     clc
     adc.z screen
@@ -139,15 +139,15 @@ doplasma: {
     inc.z screen+1
   !:
     inx
-    jmp b7
-  b9:
+    jmp __b7
+  __b9:
     lda xbuf,y
     clc
     adc ybuf,x
     sta (screen),y
     iny
-    jmp b8
-  b5:
+    jmp __b8
+  __b5:
     ldy.z c2a
     lda SINTABLE,y
     ldy.z c2b
@@ -162,8 +162,8 @@ doplasma: {
     axs #-[7]
     stx.z c2b
     inc.z i1
-    jmp b4
-  b2:
+    jmp __b4
+  __b2:
     ldy.z c1a
     lda SINTABLE,y
     ldy.z c1b
@@ -178,19 +178,19 @@ doplasma: {
     axs #-[9]
     stx.z c1b
     inc.z i
-    jmp b1
+    jmp __b1
     xbuf: .fill $28, 0
     ybuf: .fill $19, 0
 }
 // Make a plasma-friendly charset where the chars are randomly filled
 makecharset: {
-    .label _7 = $11
-    .label _10 = $f
-    .label _11 = $f
+    .label __7 = $11
+    .label __10 = $f
+    .label __11 = $f
     .label s = $e
     .label i = $b
     .label c = $c
-    .label _16 = $f
+    .label __16 = $f
     jsr sid_rnd_init
     jsr print_cls
     lda #<print_line_cursor
@@ -200,86 +200,86 @@ makecharset: {
     lda #<0
     sta.z c
     sta.z c+1
-  b1:
+  __b1:
     lda.z c+1
     cmp #>$100
-    bcc b2
+    bcc __b2
     bne !+
     lda.z c
     cmp #<$100
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda.z c
     tay
     lda SINTABLE,y
     sta.z s
     lda #0
     sta.z i
-  b3:
+  __b3:
     lda.z i
     cmp #8
-    bcc b4
+    bcc b1
     lda #7
     and.z c
     cmp #0
-    bne b11
+    bne __b11
     jsr print_char
-  b11:
+  __b11:
     inc.z c
     bne !+
     inc.z c+1
   !:
-    jmp b1
-  b4:
+    jmp __b1
+  b1:
     ldy #0
     ldx #0
-  b5:
+  __b5:
     cpx #8
-    bcc b6
+    bcc __b6
     lda.z c
     asl
-    sta.z _10
+    sta.z __10
     lda.z c+1
     rol
-    sta.z _10+1
-    asl.z _10
-    rol.z _10+1
-    asl.z _10
-    rol.z _10+1
+    sta.z __10+1
+    asl.z __10
+    rol.z __10+1
+    asl.z __10
+    rol.z __10+1
     lda.z i
     clc
-    adc.z _11
-    sta.z _11
+    adc.z __11
+    sta.z __11
     bcc !+
-    inc.z _11+1
+    inc.z __11+1
   !:
     clc
-    lda.z _16
+    lda.z __16
     adc #<CHARSET
-    sta.z _16
-    lda.z _16+1
+    sta.z __16
+    lda.z __16+1
     adc #>CHARSET
-    sta.z _16+1
+    sta.z __16+1
     tya
     ldy #0
-    sta (_16),y
+    sta (__16),y
     inc.z i
-    jmp b3
-  b6:
+    jmp __b3
+  __b6:
     jsr sid_rnd
     and #$ff
-    sta.z _7
+    sta.z __7
     lda.z s
-    cmp.z _7
-    bcs b8
+    cmp.z __7
+    bcs __b8
     tya
     ora bittab,x
     tay
-  b8:
+  __b8:
     inx
-    jmp b5
+    jmp __b5
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
 // Get a random number from the SID voice 3,
@@ -316,15 +316,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -332,7 +332,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {

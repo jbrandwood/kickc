@@ -806,7 +806,7 @@ Target platform is c64basic / MOS6502X
 // Adding a missing word-fragment for Travis Fisher
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const READY_FRAMES = 5
@@ -814,27 +814,27 @@ Target platform is c64basic / MOS6502X
   .label print_line_cursor = 5
   .label action_count = $b
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _0 = $d
+    .label __0 = $d
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -851,27 +851,27 @@ main: {
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] call game_ready 
     jsr game_ready
     // [7] (bool) game_ready::return#0 ← (bool) game_ready::return#1 -- vboz1=vboz2 
     lda.z game_ready.return_1
     sta.z game_ready.return
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [8] (bool~) main::$0 ← (bool) game_ready::return#0 -- vboz1=vboz2 
     lda.z game_ready.return
-    sta.z _0
+    sta.z __0
     // [9] if((bool~) main::$0) goto main::@3 -- vboz1_then_la1 
-    lda.z _0
+    lda.z __0
     cmp #0
-    bne b3
-    jmp b2
+    bne __b3
+    jmp __b2
     // main::@3
-  b3:
+  __b3:
     // [10] (byte*~) print_char_cursor#41 ← (byte*) print_line_cursor#14 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -879,7 +879,7 @@ main: {
     sta.z print_char_cursor+1
     // [11] call print_str_ln 
     // [16] phi from main::@3 to print_str_ln [phi:main::@3->print_str_ln]
-  print_str_ln_from_b3:
+  print_str_ln_from___b3:
     // [16] phi (byte*) print_line_cursor#22 = (byte*) print_line_cursor#14 [phi:main::@3->print_str_ln#0] -- register_copy 
     // [16] phi (byte*) print_char_cursor#27 = (byte*~) print_char_cursor#41 [phi:main::@3->print_str_ln#1] -- register_copy 
     // [16] phi (byte*) print_str_ln::str#2 = (const string) main::str [phi:main::@3->print_str_ln#2] -- pbuz1=pbuc1 
@@ -888,34 +888,34 @@ main: {
     lda #>str
     sta.z print_str_ln.str+1
     jsr print_str_ln
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [13] if((byte) main::i#1!=(byte) 6) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b5
-    jmp breturn
+    bne __b5
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
     // main::@5
-  b5:
+  __b5:
     // [15] (byte*~) print_char_cursor#44 ← (byte*) print_line_cursor#14 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@5->main::@1#0] -- register_copy 
     // [5] phi (byte) action_count#13 = (byte) action_count#11 [phi:main::@5->main::@1#1] -- register_copy 
     // [5] phi (byte*) print_line_cursor#24 = (byte*) print_line_cursor#14 [phi:main::@5->main::@1#2] -- register_copy 
     // [5] phi (byte*) print_char_cursor#30 = (byte*~) print_char_cursor#44 [phi:main::@5->main::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     str: .text "ready!"
     .byte 0
 }
@@ -934,17 +934,17 @@ print_str_ln: {
   print_str_from_print_str_ln:
     jsr print_str
     // [19] phi from print_str_ln to print_str_ln::@1 [phi:print_str_ln->print_str_ln::@1]
-  b1_from_print_str_ln:
-    jmp b1
+  __b1_from_print_str_ln:
+    jmp __b1
     // print_str_ln::@1
-  b1:
+  __b1:
     // [20] call print_ln 
     // [22] phi from print_str_ln::@1 to print_ln [phi:print_str_ln::@1->print_ln]
-  print_ln_from_b1:
+  print_ln_from___b1:
     jsr print_ln
-    jmp breturn
+    jmp __breturn
     // print_str_ln::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
 }
@@ -952,12 +952,12 @@ print_str_ln: {
 // Print a newline
 print_ln: {
     // [23] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  b1_from_print_ln:
-  b1_from_b1:
+  __b1_from_print_ln:
+  __b1_from___b1:
     // [23] phi (byte*) print_line_cursor#13 = (byte*) print_line_cursor#22 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_ln::@1
-  b1:
+  __b1:
     // [24] (byte*) print_line_cursor#14 ← (byte*) print_line_cursor#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
@@ -969,15 +969,15 @@ print_ln: {
     // [25] if((byte*) print_line_cursor#14<(byte*) print_char_cursor#17) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1_from_b1
+    bcc __b1_from___b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1_from_b1
+    bcc __b1_from___b1
   !:
-    jmp breturn
+    jmp __breturn
     // print_ln::@return
-  breturn:
+  __breturn:
     // [26] return 
     rts
 }
@@ -987,25 +987,25 @@ print_ln: {
 print_str: {
     .label str = 7
     // [28] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
-  b1_from_print_str:
-  b1_from_b2:
+  __b1_from_print_str:
+  __b1_from___b2:
     // [28] phi (byte*) print_char_cursor#17 = (byte*) print_char_cursor#27 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [28] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_str::@1
-  b1:
+  __b1:
     // [29] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print_str::@return
-  breturn:
+  __breturn:
     // [30] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // [31] *((byte*) print_char_cursor#17) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
@@ -1021,7 +1021,7 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // game_ready
 game_ready: {
@@ -1030,27 +1030,27 @@ game_ready: {
     // [34] if((byte) action_count#13!=(byte) 0) goto game_ready::@3 -- vbuz1_neq_0_then_la1 
     lda.z action_count
     cmp #0
-    bne b3_from_game_ready
+    bne __b3_from_game_ready
     // [36] phi from game_ready to game_ready::@1 [phi:game_ready->game_ready::@1]
-  b1_from_game_ready:
+  __b1_from_game_ready:
     // [36] phi (byte) action_count#10 = (const byte) READY_FRAMES [phi:game_ready->game_ready::@1#0] -- vbuz1=vbuc1 
     lda #READY_FRAMES
     sta.z action_count
-    jmp b1
+    jmp __b1
     // [35] phi from game_ready to game_ready::@3 [phi:game_ready->game_ready::@3]
-  b3_from_game_ready:
-    jmp b3
+  __b3_from_game_ready:
+    jmp __b3
     // game_ready::@3
-  b3:
+  __b3:
     // [36] phi from game_ready::@3 to game_ready::@1 [phi:game_ready::@3->game_ready::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [36] phi (byte) action_count#10 = (byte) action_count#13 [phi:game_ready::@3->game_ready::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // game_ready::@1
-  b1:
+  __b1:
     // [37] call print_str_ln 
     // [16] phi from game_ready::@1 to print_str_ln [phi:game_ready::@1->print_str_ln]
-  print_str_ln_from_b1:
+  print_str_ln_from___b1:
     // [16] phi (byte*) print_line_cursor#22 = (byte*) print_line_cursor#24 [phi:game_ready::@1->print_str_ln#0] -- register_copy 
     // [16] phi (byte*) print_char_cursor#27 = (byte*) print_char_cursor#30 [phi:game_ready::@1->print_str_ln#1] -- register_copy 
     // [16] phi (byte*) print_str_ln::str#2 = (const string) game_ready::str [phi:game_ready::@1->print_str_ln#2] -- pbuz1=pbuc1 
@@ -1059,9 +1059,9 @@ game_ready: {
     lda #>str
     sta.z print_str_ln.str+1
     jsr print_str_ln
-    jmp b2
+    jmp __b2
     // game_ready::@2
-  b2:
+  __b2:
     // [38] (byte) action_count#11 ← -- (byte) action_count#10 -- vbuz1=_dec_vbuz1 
     dec.z action_count
     // [39] (bool) game_ready::return#1 ← (byte) action_count#11 == (byte) 0 -- vboz1=vbuz2_eq_vbuc1 
@@ -1072,9 +1072,9 @@ game_ready: {
   !:
     eor #1
     sta.z return_1
-    jmp breturn
+    jmp __breturn
     // game_ready::@return
-  breturn:
+  __breturn:
     // [40] return 
     rts
     str: .text "ready"
@@ -1139,33 +1139,33 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Adding a missing word-fragment for Travis Fisher
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const READY_FRAMES = 5
   .label print_char_cursor = 7
   .label print_line_cursor = 5
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -1181,22 +1181,22 @@ main: {
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] call game_ready 
     jsr game_ready
     // [7] (bool) game_ready::return#0 ← (bool) game_ready::return#1
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [8] (bool~) main::$0 ← (bool) game_ready::return#0
     // [9] if((bool~) main::$0) goto main::@3 -- vboaa_then_la1 
     cmp #0
-    bne b3
-    jmp b2
+    bne __b3
+    jmp __b2
     // main::@3
-  b3:
+  __b3:
     // [10] (byte*~) print_char_cursor#41 ← (byte*) print_line_cursor#14 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -1204,7 +1204,7 @@ main: {
     sta.z print_char_cursor+1
     // [11] call print_str_ln 
     // [16] phi from main::@3 to print_str_ln [phi:main::@3->print_str_ln]
-  print_str_ln_from_b3:
+  print_str_ln_from___b3:
     // [16] phi (byte*) print_line_cursor#22 = (byte*) print_line_cursor#14 [phi:main::@3->print_str_ln#0] -- register_copy 
     // [16] phi (byte*) print_char_cursor#27 = (byte*~) print_char_cursor#41 [phi:main::@3->print_str_ln#1] -- register_copy 
     // [16] phi (byte*) print_str_ln::str#2 = (const string) main::str [phi:main::@3->print_str_ln#2] -- pbuz1=pbuc1 
@@ -1213,34 +1213,34 @@ main: {
     lda #>str
     sta.z print_str_ln.str+1
     jsr print_str_ln
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [13] if((byte) main::i#1!=(byte) 6) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b5
-    jmp breturn
+    bne __b5
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
     // main::@5
-  b5:
+  __b5:
     // [15] (byte*~) print_char_cursor#44 ← (byte*) print_line_cursor#14 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@5->main::@1#0] -- register_copy 
     // [5] phi (byte) action_count#13 = (byte) action_count#11 [phi:main::@5->main::@1#1] -- register_copy 
     // [5] phi (byte*) print_line_cursor#24 = (byte*) print_line_cursor#14 [phi:main::@5->main::@1#2] -- register_copy 
     // [5] phi (byte*) print_char_cursor#30 = (byte*~) print_char_cursor#44 [phi:main::@5->main::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     str: .text "ready!"
     .byte 0
 }
@@ -1255,17 +1255,17 @@ print_str_ln: {
   print_str_from_print_str_ln:
     jsr print_str
     // [19] phi from print_str_ln to print_str_ln::@1 [phi:print_str_ln->print_str_ln::@1]
-  b1_from_print_str_ln:
-    jmp b1
+  __b1_from_print_str_ln:
+    jmp __b1
     // print_str_ln::@1
-  b1:
+  __b1:
     // [20] call print_ln 
     // [22] phi from print_str_ln::@1 to print_ln [phi:print_str_ln::@1->print_ln]
-  print_ln_from_b1:
+  print_ln_from___b1:
     jsr print_ln
-    jmp breturn
+    jmp __breturn
     // print_str_ln::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
 }
@@ -1273,12 +1273,12 @@ print_str_ln: {
 // Print a newline
 print_ln: {
     // [23] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-  b1_from_print_ln:
-  b1_from_b1:
+  __b1_from_print_ln:
+  __b1_from___b1:
     // [23] phi (byte*) print_line_cursor#13 = (byte*) print_line_cursor#22 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_ln::@1
-  b1:
+  __b1:
     // [24] (byte*) print_line_cursor#14 ← (byte*) print_line_cursor#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
@@ -1290,15 +1290,15 @@ print_ln: {
     // [25] if((byte*) print_line_cursor#14<(byte*) print_char_cursor#17) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1_from_b1
+    bcc __b1_from___b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1_from_b1
+    bcc __b1_from___b1
   !:
-    jmp breturn
+    jmp __breturn
     // print_ln::@return
-  breturn:
+  __breturn:
     // [26] return 
     rts
 }
@@ -1308,25 +1308,25 @@ print_ln: {
 print_str: {
     .label str = 3
     // [28] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
-  b1_from_print_str:
-  b1_from_b2:
+  __b1_from_print_str:
+  __b1_from___b2:
     // [28] phi (byte*) print_char_cursor#17 = (byte*) print_char_cursor#27 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [28] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_str::@1
-  b1:
+  __b1:
     // [29] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print_str::@return
-  breturn:
+  __breturn:
     // [30] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // [31] *((byte*) print_char_cursor#17) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
@@ -1342,32 +1342,32 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // game_ready
 game_ready: {
     // [34] if((byte) action_count#13!=(byte) 0) goto game_ready::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b3_from_game_ready
+    bne __b3_from_game_ready
     // [36] phi from game_ready to game_ready::@1 [phi:game_ready->game_ready::@1]
-  b1_from_game_ready:
+  __b1_from_game_ready:
     // [36] phi (byte) action_count#10 = (const byte) READY_FRAMES [phi:game_ready->game_ready::@1#0] -- vbuxx=vbuc1 
     ldx #READY_FRAMES
-    jmp b1
+    jmp __b1
     // [35] phi from game_ready to game_ready::@3 [phi:game_ready->game_ready::@3]
-  b3_from_game_ready:
-    jmp b3
+  __b3_from_game_ready:
+    jmp __b3
     // game_ready::@3
-  b3:
+  __b3:
     // [36] phi from game_ready::@3 to game_ready::@1 [phi:game_ready::@3->game_ready::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [36] phi (byte) action_count#10 = (byte) action_count#13 [phi:game_ready::@3->game_ready::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // game_ready::@1
-  b1:
+  __b1:
     // [37] call print_str_ln 
     // [16] phi from game_ready::@1 to print_str_ln [phi:game_ready::@1->print_str_ln]
-  print_str_ln_from_b1:
+  print_str_ln_from___b1:
     // [16] phi (byte*) print_line_cursor#22 = (byte*) print_line_cursor#24 [phi:game_ready::@1->print_str_ln#0] -- register_copy 
     // [16] phi (byte*) print_char_cursor#27 = (byte*) print_char_cursor#30 [phi:game_ready::@1->print_str_ln#1] -- register_copy 
     // [16] phi (byte*) print_str_ln::str#2 = (const string) game_ready::str [phi:game_ready::@1->print_str_ln#2] -- pbuz1=pbuc1 
@@ -1376,9 +1376,9 @@ game_ready: {
     lda #>str
     sta.z print_str_ln.str+1
     jsr print_str_ln
-    jmp b2
+    jmp __b2
     // game_ready::@2
-  b2:
+  __b2:
     // [38] (byte) action_count#11 ← -- (byte) action_count#10 -- vbuxx=_dec_vbuxx 
     dex
     // [39] (bool) game_ready::return#1 ← (byte) action_count#11 == (byte) 0 -- vboaa=vbuxx_eq_vbuc1 
@@ -1387,9 +1387,9 @@ game_ready: {
     beq !+
     lda #0
   !:
-    jmp breturn
+    jmp __breturn
     // game_ready::@return
-  breturn:
+  __breturn:
     // [40] return 
     rts
     str: .text "ready"
@@ -1398,66 +1398,67 @@ game_ready: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b4
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b3
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b4
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldx #0 with TAX
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b2 with b1
-Replacing label b3_from_game_ready with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_print_str_ln:
-Removing instruction print_ln_from_b1:
-Removing instruction b1_from_print_ln:
-Removing instruction b1_from_b1:
-Removing instruction b1_from_print_str:
-Removing instruction b1_from_b2:
-Removing instruction b3_from_game_ready:
-Removing instruction b3:
-Removing instruction b1_from_b3:
-Removing instruction print_str_ln_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from___b2 with __b1
+Replacing label __b3_from_game_ready with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_print_str_ln:
+Removing instruction print_ln_from___b1:
+Removing instruction __b1_from_print_ln:
+Removing instruction __b1_from___b1:
+Removing instruction __b1_from_print_str:
+Removing instruction __b1_from___b2:
+Removing instruction __b3_from_game_ready:
+Removing instruction __b3:
+Removing instruction __b1_from___b3:
+Removing instruction print_str_ln_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b4:
-Removing instruction print_str_ln_from_b3:
-Removing instruction breturn:
-Removing instruction b1_from_b5:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b4:
+Removing instruction print_str_ln_from___b3:
+Removing instruction __breturn:
+Removing instruction __b1_from___b5:
 Removing instruction print_str_from_print_str_ln:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction b1_from_game_ready:
-Removing instruction b2:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __b1_from_game_ready:
+Removing instruction __b2:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -1574,7 +1575,7 @@ main: {
     lda #>$400
     sta.z print_char_cursor+1
     // main::@1
-  b1:
+  __b1:
     // game_ready()
     // [6] call game_ready 
     jsr game_ready
@@ -1584,10 +1585,10 @@ main: {
     // if(game_ready())
     // [9] if((bool~) main::$0) goto main::@3 -- vboaa_then_la1 
     cmp #0
-    bne b3
-    jmp b2
+    bne __b3
+    jmp __b2
     // main::@3
-  b3:
+  __b3:
     // [10] (byte*~) print_char_cursor#41 ← (byte*) print_line_cursor#14 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -1605,20 +1606,20 @@ main: {
     sta.z print_str_ln.str+1
     jsr print_str_ln
     // main::@2
-  b2:
+  __b2:
     // for(byte i:0..5)
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [13] if((byte) main::i#1!=(byte) 6) goto main::@5 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne b5
+    bne __b5
     // main::@return
     // }
     // [14] return 
     rts
     // main::@5
-  b5:
+  __b5:
     // [15] (byte*~) print_char_cursor#44 ← (byte*) print_line_cursor#14 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -1629,7 +1630,7 @@ main: {
     // [5] phi (byte) action_count#13 = (byte) action_count#11 [phi:main::@5->main::@1#1] -- register_copy 
     // [5] phi (byte*) print_line_cursor#24 = (byte*) print_line_cursor#14 [phi:main::@5->main::@1#2] -- register_copy 
     // [5] phi (byte*) print_char_cursor#30 = (byte*~) print_char_cursor#44 [phi:main::@5->main::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     str: .text "ready!"
     .byte 0
 }
@@ -1660,7 +1661,7 @@ print_ln: {
     // [23] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
     // [23] phi (byte*) print_line_cursor#13 = (byte*) print_line_cursor#22 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
     // print_ln::@1
-  b1:
+  __b1:
     // print_line_cursor + $28
     // [24] (byte*) print_line_cursor#14 ← (byte*) print_line_cursor#13 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
@@ -1674,11 +1675,11 @@ print_ln: {
     // [25] if((byte*) print_line_cursor#14<(byte*) print_char_cursor#17) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     // print_ln::@return
     // }
@@ -1694,19 +1695,19 @@ print_str: {
     // [28] phi (byte*) print_char_cursor#17 = (byte*) print_char_cursor#27 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [28] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
     // print_str::@1
-  b1:
+  __b1:
     // while(*str)
     // [29] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     // print_str::@return
     // }
     // [30] return 
     rts
     // print_str::@2
-  b2:
+  __b2:
     // *(print_char_cursor++) = *(str++)
     // [31] *((byte*) print_char_cursor#17) ← *((byte*) print_str::str#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -1723,14 +1724,14 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
   // game_ready
 game_ready: {
     // if (action_count == 0)
     // [34] if((byte) action_count#13!=(byte) 0) goto game_ready::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1
+    bne __b1
     // [36] phi from game_ready to game_ready::@1 [phi:game_ready->game_ready::@1]
     // [36] phi (byte) action_count#10 = (const byte) READY_FRAMES [phi:game_ready->game_ready::@1#0] -- vbuxx=vbuc1 
     ldx #READY_FRAMES
@@ -1739,7 +1740,7 @@ game_ready: {
     // [36] phi from game_ready::@3 to game_ready::@1 [phi:game_ready::@3->game_ready::@1]
     // [36] phi (byte) action_count#10 = (byte) action_count#13 [phi:game_ready::@3->game_ready::@1#0] -- register_copy 
     // game_ready::@1
-  b1:
+  __b1:
     // print_str_ln("ready")
     // [37] call print_str_ln 
     // [16] phi from game_ready::@1 to print_str_ln [phi:game_ready::@1->print_str_ln]

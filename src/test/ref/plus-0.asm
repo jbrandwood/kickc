@@ -20,32 +20,32 @@ main: {
 // fill(byte* zeropage(2) screen, byte register(X) ch)
 fill: {
     .label screen = 2
-    .label _5 = 4
-    .label _7 = 6
+    .label __5 = 4
+    .label __7 = 6
     ldy #0
-  b2:
+  __b2:
     txa
     sta (screen),y
     lda #1*$28
     clc
     adc.z screen
-    sta.z _5
+    sta.z __5
     lda #0
     adc.z screen+1
-    sta.z _5+1
+    sta.z __5+1
     txa
-    sta (_5),y
+    sta (__5),y
     lda #2*$28
     clc
     adc.z screen
-    sta.z _7
+    sta.z __7
     lda #0
     adc.z screen+1
-    sta.z _7+1
+    sta.z __7+1
     txa
-    sta (_7),y
+    sta (__7),y
     iny
     cpy #$28
-    bne b2
+    bne __b2
     rts
 }

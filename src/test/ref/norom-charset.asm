@@ -14,14 +14,14 @@ main: {
     sta.z charset+1
     lda #0
     sta.z c
-  b1:
+  __b1:
     lda #4
     cmp.z c
-    bne b2
+    bne __b2
     lda #SCREEN/$40|CHARSET/$400
     sta VIC_MEMORY
     rts
-  b2:
+  __b2:
     lda.z c
     asl
     tax
@@ -38,7 +38,7 @@ main: {
     inc.z charset+1
   !:
     inc.z c
-    jmp b1
+    jmp __b1
 }
 // Generate one 5x3 character from a 16-bit char spec
 // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
@@ -49,18 +49,18 @@ gen_char3: {
     .label r = 5
     lda #0
     sta.z r
-  b1:
+  __b1:
     ldx #0
     ldy #0
-  b2:
+  __b2:
     lda.z spec+1
     and #$80
     cmp #0
-    beq b3
+    beq __b3
     tya
     ora #1
     tay
-  b3:
+  __b3:
     tya
     asl
     tay
@@ -68,14 +68,14 @@ gen_char3: {
     rol.z spec+1
     inx
     cpx #3
-    bne b2
+    bne __b2
     tya
     ldy.z r
     sta (dst),y
     inc.z r
     lda #5
     cmp.z r
-    bne b1
+    bne __b1
     rts
 }
   // Stores chars as 15 bits (in 2 bytes) specifying the 3x5

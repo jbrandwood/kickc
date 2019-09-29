@@ -136,40 +136,40 @@ Target platform is c64basic / MOS6502X
 // Test inline KickAssembler code with PC location specification
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label TABLE = $2000
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm(location (const byte*) TABLE) {{ .byte 1, 2, 3  }}
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label BORDERCOL = $d020
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [6] *((const byte*) main::BORDERCOL) ← *((const byte*) TABLE + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda TABLE,y
@@ -177,9 +177,9 @@ main: {
     // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 .pc = TABLE "TABLE"
@@ -204,47 +204,47 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test inline KickAssembler code with PC location specification
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label TABLE = $2000
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm(location (const byte*) TABLE) {{ .byte 1, 2, 3  }}
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label BORDERCOL = $d020
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [6] *((const byte*) main::BORDERCOL) ← *((const byte*) TABLE + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda TABLE,x
     sta BORDERCOL
     // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // File Data
 .pc = TABLE "TABLE"
@@ -252,25 +252,26 @@ main: {
 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1 with b2
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1:
+Replacing label __bbegin with __b1
+Replacing label __b1 with __b2
+Removing instruction __bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b1_from_b2:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -316,7 +317,7 @@ main: {
     ldx #0
     // main::@1
     // main::@2
-  b2:
+  __b2:
     // *BORDERCOL = TABLE[i++]
     // [6] *((const byte*) main::BORDERCOL) ← *((const byte*) TABLE + (byte) main::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda TABLE,x
@@ -326,7 +327,7 @@ main: {
     inx
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b2
+    jmp __b2
 }
   // File Data
 .pc = TABLE "TABLE"

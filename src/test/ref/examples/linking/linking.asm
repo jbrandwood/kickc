@@ -19,18 +19,18 @@
 .segment Code
 main: {
     ldx #0
-  b1:
+  __b1:
     txa
     sta base,x
     inx
     cpx #0
-    bne b1
-  b2:
+    bne __b1
+  __b2:
     lda BGCOL
     sta.z fillscreen.c
     jsr fillscreen
     inc BGCOL
-    jmp b2
+    jmp __b2
 }
 .segment CodeHigh
 // fillscreen(byte zeropage(4) c)
@@ -42,17 +42,17 @@ fillscreen: {
     sta.z screen
     lda #>SCREEN
     sta.z screen+1
-  b1:
+  __b1:
     lda.z screen+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z screen
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda base,x
     clc
     adc.z c
@@ -63,7 +63,7 @@ fillscreen: {
     bne !+
     inc.z screen+1
   !:
-    jmp b1
+    jmp __b1
 }
 .segment DataHigh
   base: .fill $100, 0

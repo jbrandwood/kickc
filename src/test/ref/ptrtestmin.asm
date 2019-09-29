@@ -7,13 +7,13 @@ main: {
     .label SCREEN = $400
     lda #0
     ldx #2
-  b1:
+  __b1:
     cpx #$a
-    bcc b2
+    bcc __b2
     sta SCREEN+$3e7
     rts
-  b2:
+  __b2:
     lda SCREEN,x
     inx
-    jmp b1
+    jmp __b1
 }

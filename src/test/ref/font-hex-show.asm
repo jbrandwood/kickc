@@ -12,18 +12,18 @@ main: {
     jsr init_font_hex
     ldx #0
   // Show all chars on screen
-  b1:
+  __b1:
     txa
     sta SCREEN,x
     inx
     cpx #0
-    bne b1
+    bne __b1
     rts
 }
 // Make charset from proto chars
 // init_font_hex(byte* zeropage(5) charset)
 init_font_hex: {
-    .label _0 = $b
+    .label __0 = $b
     .label idx = $a
     .label proto_lo = 7
     .label charset = 5
@@ -40,21 +40,21 @@ init_font_hex: {
     sta.z charset
     lda #>CHARSET
     sta.z charset+1
-  b1:
+  __b1:
     lda #0
     sta.z c1
     lda #<FONT_HEX_PROTO
     sta.z proto_lo
     lda #>FONT_HEX_PROTO
     sta.z proto_lo+1
-  b2:
+  __b2:
     lda #0
     tay
     sta (charset),y
     lda #1
     sta.z idx
     ldx #0
-  b3:
+  __b3:
     txa
     tay
     lda (proto_hi),y
@@ -62,18 +62,18 @@ init_font_hex: {
     asl
     asl
     asl
-    sta.z _0
+    sta.z __0
     txa
     tay
     lda (proto_lo),y
     asl
-    ora.z _0
+    ora.z __0
     ldy.z idx
     sta (charset),y
     inc.z idx
     inx
     cpx #5
-    bne b3
+    bne __b3
     lda #0
     ldy.z idx
     sta (charset),y
@@ -96,7 +96,7 @@ init_font_hex: {
     inc.z c1
     lda #$10
     cmp.z c1
-    bne b2
+    bne __b2
     lda #5
     clc
     adc.z proto_hi
@@ -107,7 +107,7 @@ init_font_hex: {
     inc.z c
     lda #$10
     cmp.z c
-    bne b1
+    bne __b1
     rts
 }
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex

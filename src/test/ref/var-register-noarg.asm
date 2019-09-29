@@ -5,18 +5,18 @@
   .label SCREEN = $400
 main: {
     ldx #0
-  b1:
+  __b1:
     cpx #$28*4
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     txa
     and #7
     tay
     lda MSG,y
     sta SCREEN,x
     inx
-    jmp b1
+    jmp __b1
 }
 .encoding "screencode_upper"
   MSG: .text "CAMELOT!"

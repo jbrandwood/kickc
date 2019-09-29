@@ -9,7 +9,7 @@ main: {
     .label i1 = 3
     lda #0
     sta.z i
-  b1:
+  __b1:
     lax.z i
     axs #-[2]
     lda.z i
@@ -24,11 +24,11 @@ main: {
     inc.z i
     lda #2
     cmp.z i
-    bne b1
+    bne __b1
     ldx #0
     txa
     sta.z i1
-  b2:
+  __b2:
     lda.z i1
     asl
     tay
@@ -44,7 +44,7 @@ main: {
     inc.z i1
     lda #2
     cmp.z i1
-    bne b2
+    bne __b2
     rts
 }
   points: .fill 2*2, 0

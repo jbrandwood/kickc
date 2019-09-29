@@ -5,22 +5,22 @@
 main: {
     .label bscreen = $400
     .label wscreen = bscreen
-    .label _1 = 2
+    .label __1 = 2
     ldx #0
-  b1:
+  __b1:
     txa
-    sta.z _1
+    sta.z __1
     lda #0
-    sta.z _1+1
+    sta.z __1+1
     txa
     asl
     tay
-    lda.z _1
+    lda.z __1
     sta wscreen,y
-    lda.z _1+1
+    lda.z __1+1
     sta wscreen+1,y
     inx
     cpx #3
-    bne b1
+    bne __b1
     rts
 }

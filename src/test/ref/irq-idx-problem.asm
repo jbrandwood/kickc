@@ -1,6 +1,6 @@
 // Test interrupt routine using a variable between calls (irq_idx)
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -21,7 +21,7 @@
   .const VIC_SIZE = $30
   .const IRQ_CHANGE_NEXT = $7f
   .label irq_idx = 2
-bbegin:
+__b1:
   lda #0
   sta.z irq_idx
   jsr main
@@ -51,37 +51,37 @@ main: {
     rts
 }
 table_driven_irq: {
-  b1:
+  __b1:
     ldy.z irq_idx
     lda IRQ_CHANGE_IDX,y
     ldx IRQ_CHANGE_VAL,y
     inc.z irq_idx
     cmp #VIC_SIZE
-    bcc b2
+    bcc __b2
     cmp #VIC_SIZE+8
-    bcc b3
+    bcc __b3
     lda #IRQ_RASTER
     sta IRQ_STATUS
     stx RASTER
     ldy RASTER
     sty.z $ff
     cpx.z $ff
-    bcc !_ea81+
+    bcc !__ea81+
     jmp $ea81
-  !_ea81:
+  !__ea81:
     lda #0
     sta.z irq_idx
     jmp $ea81
-  b3:
+  __b3:
     tay
     txa
     sta SCREEN+-VIC_SIZE+$3f8,y
-    jmp b1
-  b2:
+    jmp __b1
+  __b2:
     tay
     txa
     sta VIC_BASE,y
-    jmp b1
+    jmp __b1
 }
   IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT

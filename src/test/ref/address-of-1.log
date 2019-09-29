@@ -272,23 +272,23 @@ Target platform is c64basic / MOS6502X
 // Test address-of - pass the pointer as parameter
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
@@ -317,13 +317,13 @@ main: {
     sta.z setByte.b
     jsr setByte
     // [8] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [9] call setByte 
     // [16] phi from main::@1 to setByte [phi:main::@1->setByte]
-  setByte_from_b1:
+  setByte_from___b1:
     // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b2#0 [phi:main::@1->setByte#0] -- pbuz1=pbuc1 
     lda #<b2
     sta.z setByte.ptr
@@ -334,13 +334,13 @@ main: {
     sta.z setByte.b
     jsr setByte
     // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [11] call setByte 
     // [16] phi from main::@2 to setByte [phi:main::@2->setByte]
-  setByte_from_b2:
+  setByte_from___b2:
     // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b3#0 [phi:main::@2->setByte#0] -- pbuz1=pbuc1 
     lda #<b3
     sta.z setByte.ptr
@@ -350,9 +350,9 @@ main: {
     lda #'l'
     sta.z setByte.b
     jsr setByte
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [12] *((const byte*) main::SCREEN) ← (byte) main::b1#0 -- _deref_pbuc1=vbuz1 
     lda.z b1
     sta SCREEN
@@ -362,9 +362,9 @@ main: {
     // [14] *((const byte*) main::SCREEN+(byte) 2) ← (byte) main::b3#0 -- _deref_pbuc1=vbuz1 
     lda.z b3
     sta SCREEN+2
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
 }
@@ -377,9 +377,9 @@ setByte: {
     lda.z b
     ldy #0
     sta (ptr),y
-    jmp breturn
+    jmp __breturn
     // setByte::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
@@ -423,23 +423,23 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test address-of - pass the pointer as parameter
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
@@ -467,13 +467,13 @@ main: {
     ldx #'c'
     jsr setByte
     // [8] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [9] call setByte 
     // [16] phi from main::@1 to setByte [phi:main::@1->setByte]
-  setByte_from_b1:
+  setByte_from___b1:
     // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b2#0 [phi:main::@1->setByte#0] -- pbuz1=pbuc1 
     lda #<b2
     sta.z setByte.ptr
@@ -483,13 +483,13 @@ main: {
     ldx #'m'
     jsr setByte
     // [10] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [11] call setByte 
     // [16] phi from main::@2 to setByte [phi:main::@2->setByte]
-  setByte_from_b2:
+  setByte_from___b2:
     // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b3#0 [phi:main::@2->setByte#0] -- pbuz1=pbuc1 
     lda #<b3
     sta.z setByte.ptr
@@ -498,9 +498,9 @@ main: {
     // [16] phi (byte) setByte::b#3 = (byte) 'l' [phi:main::@2->setByte#1] -- vbuxx=vbuc1 
     ldx #'l'
     jsr setByte
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [12] *((const byte*) main::SCREEN) ← (byte) main::b1#0 -- _deref_pbuc1=vbuz1 
     lda.z b1
     sta SCREEN
@@ -510,9 +510,9 @@ main: {
     // [14] *((const byte*) main::SCREEN+(byte) 2) ← (byte) main::b3#0 -- _deref_pbuc1=vbuz1 
     lda.z b3
     sta SCREEN+2
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
 }
@@ -524,46 +524,47 @@ setByte: {
     txa
     ldy #0
     sta (ptr),y
-    jmp breturn
+    jmp __breturn
     // setByte::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction setByte_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction setByte_from_b2:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction setByte_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction setByte_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction setByte_from_main:
-Removing instruction b1:
-Removing instruction b2:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

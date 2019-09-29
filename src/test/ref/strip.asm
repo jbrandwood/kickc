@@ -35,7 +35,7 @@ main: {
 // print(byte* zeropage(4) msg)
 print: {
     .label msg = 4
-  b1:
+  __b1:
     ldy #0
     lda (msg),y
     sta (screen),y
@@ -50,7 +50,7 @@ print: {
     ldy #0
     lda (msg),y
     cmp #0
-    bne b1
+    bne __b1
     rts
 }
 // strip(byte* zeropage(8) p, byte register(X) c)
@@ -64,18 +64,18 @@ strip: {
     sta.z p_7
     lda.z dest+1
     sta.z p_7+1
-  b1:
+  __b1:
     txa
     ldy #0
     cmp (p_4),y
-    beq b2
+    beq __b2
     lda (p_4),y
     sta (dest),y
     inc.z dest
     bne !+
     inc.z dest+1
   !:
-  b2:
+  __b2:
     lda.z p_4
     clc
     adc #1
@@ -86,14 +86,14 @@ strip: {
     ldy #0
     lda (p_4),y
     cmp #0
-    bne b4
+    bne __b4
     rts
-  b4:
+  __b4:
     lda.z p
     sta.z p_8
     lda.z p+1
     sta.z p_8+1
-    jmp b1
+    jmp __b1
 }
   msg1: .text "hello world!"
   .byte 0

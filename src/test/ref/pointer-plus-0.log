@@ -236,30 +236,30 @@ Target platform is c64basic / MOS6502X
 // Tests pointer plus 0 elimination
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
-    .label _0 = 6
-    .label _2 = $a
+    .label __0 = 6
+    .label __2 = $a
     // [5] call first 
     // [14] phi from main to first [phi:main->first]
   first_from_main:
@@ -274,21 +274,21 @@ main: {
     sta.z first.return
     lda.z first.return_2+1
     sta.z first.return+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (byte*~) main::$0 ← (byte*) first::return#0 -- pbuz1=pbuz2 
     lda.z first.return
-    sta.z _0
+    sta.z __0
     lda.z first.return+1
-    sta.z _0+1
+    sta.z __0+1
     // [8] *((const byte*) main::SCREEN) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
-    lda (_0),y
+    lda (__0),y
     sta SCREEN
     // [9] call first 
     // [14] phi from main::@1 to first [phi:main::@1->first]
-  first_from_b1:
+  first_from___b1:
     // [14] phi (byte*) first::return#2 = (const byte[]) msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z first.return_2
@@ -300,21 +300,21 @@ main: {
     sta.z first.return_1
     lda.z first.return_2+1
     sta.z first.return_1+1
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [11] (byte*~) main::$2 ← (byte*) first::return#1 -- pbuz1=pbuz2 
     lda.z first.return_1
-    sta.z _2
+    sta.z __2
     lda.z first.return_1+1
-    sta.z _2+1
+    sta.z __2+1
     // [12] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
-    lda (_2),y
+    lda (__2),y
     sta SCREEN+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -323,9 +323,9 @@ first: {
     .label return = 4
     .label return_1 = 8
     .label return_2 = 2
-    jmp breturn
+    jmp __breturn
     // first::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
 }
@@ -366,30 +366,30 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests pointer plus 0 elimination
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
-    .label _0 = 2
-    .label _2 = 2
+    .label __0 = 2
+    .label __2 = 2
     // [5] call first 
     // [14] phi from main to first [phi:main->first]
   first_from_main:
@@ -400,17 +400,17 @@ main: {
     sta.z first.return+1
     jsr first
     // [6] (byte*) first::return#0 ← (byte*) first::return#2
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (byte*~) main::$0 ← (byte*) first::return#0
     // [8] *((const byte*) main::SCREEN) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
-    lda (_0),y
+    lda (__0),y
     sta SCREEN
     // [9] call first 
     // [14] phi from main::@1 to first [phi:main::@1->first]
-  first_from_b1:
+  first_from___b1:
     // [14] phi (byte*) first::return#2 = (const byte[]) msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z first.return
@@ -418,26 +418,26 @@ main: {
     sta.z first.return+1
     jsr first
     // [10] (byte*) first::return#1 ← (byte*) first::return#2
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [11] (byte*~) main::$2 ← (byte*) first::return#1
     // [12] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
-    lda (_2),y
+    lda (__2),y
     sta SCREEN+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
   // first
 first: {
     .label return = 2
-    jmp breturn
+    jmp __breturn
     // first::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
 }
@@ -448,30 +448,31 @@ first: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction first_from_main:
-Removing instruction b1:
-Removing instruction first_from_b1:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction first_from___b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -518,8 +519,8 @@ Score: 66
   // main
 main: {
     .label SCREEN = $400
-    .label _0 = 2
-    .label _2 = 2
+    .label __0 = 2
+    .label __2 = 2
     // first(msg1)
     // [5] call first 
     // [14] phi from main to first [phi:main->first]
@@ -536,7 +537,7 @@ main: {
     // SCREEN[0] = *(first(msg1)+0)
     // [8] *((const byte*) main::SCREEN) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
-    lda (_0),y
+    lda (__0),y
     sta SCREEN
     // first(msg2)
     // [9] call first 
@@ -554,7 +555,7 @@ main: {
     // SCREEN[1] = *(first(msg2)+0)
     // [12] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
-    lda (_2),y
+    lda (__2),y
     sta SCREEN+1
     // main::@return
     // }

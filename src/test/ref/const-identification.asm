@@ -5,30 +5,30 @@
   .label SCREEN = $400
 main: {
     ldx #0
-  b1:
+  __b1:
     txa
     sta plots,x
     lda #0
     sta SCREEN,x
     inx
     cpx #$28
-    bne b1
-  b2:
+    bne __b1
+  __b2:
     jsr line
-    jmp b2
+    jmp __b2
 }
 line: {
     .const x0 = 0
     .const x1 = $a
     ldy #x0
-  b1:
+  __b1:
     cpy #x1+1
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     jsr plot
     iny
-    jmp b1
+    jmp __b1
 }
 // plot(byte register(Y) x)
 plot: {

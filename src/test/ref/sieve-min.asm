@@ -15,7 +15,7 @@ main: {
     .label s = 6
     .label i_3 = 2
     .label i_10 = 2
-    .label _19 = $c
+    .label __19 = $c
     jsr memset
     lda #<sieve+2
     sta.z sieve_i
@@ -25,14 +25,14 @@ main: {
     sta.z i
     lda #>2
     sta.z i+1
-  b1:
+  __b1:
     lda.z i+1
     cmp #>SQRT_COUNT
-    bcc b2
+    bcc __b2
     bne !+
     lda.z i
     cmp #<SQRT_COUNT
-    bcc b2
+    bcc __b2
   !:
     lda #<$400
     sta.z print_char_cursor
@@ -42,44 +42,44 @@ main: {
     sta.z i_10
     lda #>2
     sta.z i_10+1
-  b7:
+  __b7:
     lda.z i_10+1
     cmp #>$4c7
-    bcc b8
+    bcc __b8
     bne !+
     lda.z i_10
     cmp #<$4c7
-    bcc b8
+    bcc __b8
   !:
-  b11:
+  __b11:
     inc SCREEN+$3e7
-    jmp b11
-  b8:
+    jmp __b11
+  __b8:
     lda.z i_10
     clc
     adc #<sieve
-    sta.z _19
+    sta.z __19
     lda.z i_10+1
     adc #>sieve
-    sta.z _19+1
+    sta.z __19+1
     ldy #0
-    lda (_19),y
+    lda (__19),y
     cmp #0
-    bne b9
+    bne __b9
     jsr print_word
     lda #' '
     jsr print_char
-  b9:
+  __b9:
     inc.z i_3
     bne !+
     inc.z i_3+1
   !:
-    jmp b7
-  b2:
+    jmp __b7
+  __b2:
     ldy #0
     lda (sieve_i),y
     cmp #0
-    bne b3
+    bne __b3
     lda.z i
     asl
     sta.z j
@@ -93,16 +93,16 @@ main: {
     lda.z j+1
     adc #>sieve
     sta.z s+1
-  b4:
+  __b4:
     lda.z j+1
     cmp #>COUNT
-    bcc b5
+    bcc __b5
     bne !+
     lda.z j
     cmp #<COUNT
-    bcc b5
+    bcc __b5
   !:
-  b3:
+  __b3:
     inc.z i
     bne !+
     inc.z i+1
@@ -111,8 +111,8 @@ main: {
     bne !+
     inc.z sieve_i+1
   !:
-    jmp b1
-  b5:
+    jmp __b1
+  __b5:
     lda #1
     ldy #0
     sta (s),y
@@ -130,7 +130,7 @@ main: {
     lda.z j+1
     adc.z i+1
     sta.z j+1
-    jmp b4
+    jmp __b4
 }
 // Print a single char
 // print_char(byte register(A) ch)
@@ -182,15 +182,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -198,6 +198,6 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"

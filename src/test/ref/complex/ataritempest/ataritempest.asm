@@ -30,12 +30,12 @@ nmiHandler: {
 }
 entryPoint: {
     ldx #0
-  b1:
+  __b1:
     lda MESSAGE,x
     sta SCREEN,x
     inx
     cpx #$32
-    bne b1
+    bne __b1
     rts
 }
 .segment RomData

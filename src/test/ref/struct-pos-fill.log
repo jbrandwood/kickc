@@ -457,7 +457,7 @@ Target platform is c64basic / MOS6502X
 // https://cc65.github.io/mailarchive/2010-09/8593.html?fbclid=IwAR1IF_cTdyWcFeKU93VfL2Un1EuLjkGh7O7dQ4EVj4kpJzJAj01dbmEFQt8
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_POS_Y = 1
@@ -469,26 +469,26 @@ Target platform is c64basic / MOS6502X
   .label y = 5
   .label line = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _3 = 7
+    .label __3 = 7
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) y#12 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z y
@@ -501,39 +501,39 @@ main: {
     // [5] phi (byte) line#11 = (byte) 0 [phi:main->main::@1#3] -- vbuz1=vbuc1 
     lda #0
     sta.z line
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) line#11<(byte) 8) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z line
     cmp #8
-    bcc b2
-    jmp breturn
+    bcc __b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [8] (byte) x#1 ← ++ (byte) x#3 -- vbuz1=_inc_vbuz1 
     inc.z x
     // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [9] phi (byte) x#10 = (byte) x#1 [phi:main::@2->main::@3#0] -- register_copy 
     // [9] phi (byte) idx#11 = (byte) idx#12 [phi:main::@2->main::@3#1] -- register_copy 
     // [9] phi (byte) row#12 = (byte) 0 [phi:main::@2->main::@3#2] -- vbuz1=vbuc1 
     lda #0
     sta.z row
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [10] if((byte) row#12<(byte) 8) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
     lda.z row
     cmp #8
-    bcc b4
-    jmp b5
+    bcc __b4
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [11] (byte) y#1 ← (byte) y#12 + (const byte) YSPACE -- vbuz1=vbuz1_plus_vbuc1 
     lax.z y
     axs #-[YSPACE]
@@ -541,25 +541,25 @@ main: {
     // [12] (byte) line#2 ← ++ (byte) line#11 -- vbuz1=_inc_vbuz1 
     inc.z line
     // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [5] phi (byte) y#12 = (byte) y#1 [phi:main::@5->main::@1#0] -- register_copy 
     // [5] phi (byte) idx#12 = (byte) idx#11 [phi:main::@5->main::@1#1] -- register_copy 
     // [5] phi (byte) x#3 = (byte) x#10 [phi:main::@5->main::@1#2] -- register_copy 
     // [5] phi (byte) line#11 = (byte) line#2 [phi:main::@5->main::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@4
-  b4:
+  __b4:
     // [13] (byte~) main::$3 ← (byte) idx#11 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z idx
     asl
-    sta.z _3
+    sta.z __3
     // [14] *((byte*)(const struct pos[$40]) p+(const byte) OFFSET_STRUCT_POS_Y + (byte~) main::$3) ← (byte) y#12 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z y
-    ldy.z _3
+    ldy.z __3
     sta p+OFFSET_STRUCT_POS_Y,y
     // [15] *((byte*)(const struct pos[$40]) p + (byte~) main::$3) ← (byte) x#10 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z x
-    ldy.z _3
+    ldy.z __3
     sta p,y
     // [16] (byte) idx#1 ← ++ (byte) idx#11 -- vbuz1=_inc_vbuz1 
     inc.z idx
@@ -570,11 +570,11 @@ main: {
     // [18] (byte) row#2 ← ++ (byte) row#12 -- vbuz1=_inc_vbuz1 
     inc.z row
     // [9] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [9] phi (byte) x#10 = (byte) x#2 [phi:main::@4->main::@3#0] -- register_copy 
     // [9] phi (byte) idx#11 = (byte) idx#1 [phi:main::@4->main::@3#1] -- register_copy 
     // [9] phi (byte) row#12 = (byte) row#2 [phi:main::@4->main::@3#2] -- register_copy 
-    jmp b3
+    jmp __b3
 }
   // File Data
   p: .fill 2*$40, 0
@@ -629,7 +629,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // https://cc65.github.io/mailarchive/2010-09/8593.html?fbclid=IwAR1IF_cTdyWcFeKU93VfL2Un1EuLjkGh7O7dQ4EVj4kpJzJAj01dbmEFQt8
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_POS_Y = 1
@@ -640,25 +640,25 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label y = 5
   .label line = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) y#12 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z y
@@ -671,37 +671,37 @@ main: {
     // [5] phi (byte) line#11 = (byte) 0 [phi:main->main::@1#3] -- vbuz1=vbuc1 
     lda #0
     sta.z line
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) line#11<(byte) 8) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z line
     cmp #8
-    bcc b2
-    jmp breturn
+    bcc __b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [8] (byte) x#1 ← ++ (byte) x#3 -- vbuz1=_inc_vbuz1 
     inc.z x
     // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [9] phi (byte) x#10 = (byte) x#1 [phi:main::@2->main::@3#0] -- register_copy 
     // [9] phi (byte) idx#11 = (byte) idx#12 [phi:main::@2->main::@3#1] -- register_copy 
     // [9] phi (byte) row#12 = (byte) 0 [phi:main::@2->main::@3#2] -- vbuyy=vbuc1 
     ldy #0
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [10] if((byte) row#12<(byte) 8) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
     cpy #8
-    bcc b4
-    jmp b5
+    bcc __b4
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [11] (byte) y#1 ← (byte) y#12 + (const byte) YSPACE -- vbuz1=vbuz1_plus_vbuc1 
     lax.z y
     axs #-[YSPACE]
@@ -709,14 +709,14 @@ main: {
     // [12] (byte) line#2 ← ++ (byte) line#11 -- vbuz1=_inc_vbuz1 
     inc.z line
     // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [5] phi (byte) y#12 = (byte) y#1 [phi:main::@5->main::@1#0] -- register_copy 
     // [5] phi (byte) idx#12 = (byte) idx#11 [phi:main::@5->main::@1#1] -- register_copy 
     // [5] phi (byte) x#3 = (byte) x#10 [phi:main::@5->main::@1#2] -- register_copy 
     // [5] phi (byte) line#11 = (byte) line#2 [phi:main::@5->main::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@4
-  b4:
+  __b4:
     // [13] (byte~) main::$3 ← (byte) idx#11 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z idx
     asl
@@ -736,44 +736,45 @@ main: {
     // [18] (byte) row#2 ← ++ (byte) row#12 -- vbuyy=_inc_vbuyy 
     iny
     // [9] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [9] phi (byte) x#10 = (byte) x#2 [phi:main::@4->main::@3#0] -- register_copy 
     // [9] phi (byte) idx#11 = (byte) idx#1 [phi:main::@4->main::@3#1] -- register_copy 
     // [9] phi (byte) row#12 = (byte) row#2 [phi:main::@4->main::@3#2] -- register_copy 
-    jmp b3
+    jmp __b3
 }
   // File Data
   p: .fill 2*$40, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b3
-Removing instruction jmp b5
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b5
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
 Removing instruction lda #0
 Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
-Removing instruction b3_from_b2:
-Removing instruction b5:
-Removing instruction b1_from_b5:
-Removing instruction b3_from_b4:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b3_from___b2:
+Removing instruction __b5:
+Removing instruction __b1_from___b5:
+Removing instruction __b3_from___b4:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -859,18 +860,18 @@ main: {
     // [5] phi (byte) line#11 = (byte) 0 [phi:main->main::@1#3] -- vbuz1=vbuc1 
     sta.z line
     // main::@1
-  b1:
+  __b1:
     // for (line=0;line<8;++line)
     // [6] if((byte) line#11<(byte) 8) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z line
     cmp #8
-    bcc b2
+    bcc __b2
     // main::@return
     // }
     // [7] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // ++x;
     // [8] (byte) x#1 ← ++ (byte) x#3 -- vbuz1=_inc_vbuz1 
     inc.z x
@@ -880,11 +881,11 @@ main: {
     // [9] phi (byte) row#12 = (byte) 0 [phi:main::@2->main::@3#2] -- vbuyy=vbuc1 
     ldy #0
     // main::@3
-  b3:
+  __b3:
     // for (row=0;row<8;++row)
     // [10] if((byte) row#12<(byte) 8) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
     cpy #8
-    bcc b4
+    bcc __b4
     // main::@5
     // y+=YSPACE
     // [11] (byte) y#1 ← (byte) y#12 + (const byte) YSPACE -- vbuz1=vbuz1_plus_vbuc1 
@@ -899,9 +900,9 @@ main: {
     // [5] phi (byte) idx#12 = (byte) idx#11 [phi:main::@5->main::@1#1] -- register_copy 
     // [5] phi (byte) x#3 = (byte) x#10 [phi:main::@5->main::@1#2] -- register_copy 
     // [5] phi (byte) line#11 = (byte) line#2 [phi:main::@5->main::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@4
-  b4:
+  __b4:
     // p[idx].y=y
     // [13] (byte~) main::$3 ← (byte) idx#11 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z idx
@@ -929,7 +930,7 @@ main: {
     // [9] phi (byte) x#10 = (byte) x#2 [phi:main::@4->main::@3#0] -- register_copy 
     // [9] phi (byte) idx#11 = (byte) idx#1 [phi:main::@4->main::@3#1] -- register_copy 
     // [9] phi (byte) row#12 = (byte) row#2 [phi:main::@4->main::@3#2] -- register_copy 
-    jmp b3
+    jmp __b3
 }
   // File Data
   p: .fill 2*$40, 0

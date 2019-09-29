@@ -286,49 +286,49 @@ Target platform is c64basic / MOS6502X
 // Test a function taking boolean parameter and returning boolean result
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
-    .label _0 = 3
-    .label _2 = 7
+    .label __0 = 3
+    .label __2 = 7
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z i
-    sta.z _0
+    sta.z __0
     // [7] (bool) isSet::b#0 ← (byte~) main::$0 == (byte) 0 -- vboz1=vbuz2_eq_vbuc1 
-    lda.z _0
+    lda.z __0
     eor #0
     beq !+
     lda #1
@@ -343,52 +343,52 @@ main: {
     // [10] (bool) isSet::return#0 ← (bool) isSet::return#1 -- vboz1=vboz2 
     lda.z isSet.return_1
     sta.z isSet.return
-    jmp b5
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [11] (bool~) main::$2 ← (bool) isSet::return#0 -- vboz1=vboz2 
     lda.z isSet.return
-    sta.z _2
+    sta.z __2
     // [12] if((bool~) main::$2) goto main::@2 -- vboz1_then_la1 
-    lda.z _2
+    lda.z __2
     cmp #0
-    bne b2
-    jmp b4
+    bne __b2
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [13] *((const byte*) main::screen + (byte) main::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z i
     sta screen,y
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [15] if((byte) main::i#1!=(byte) $65) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$65
     cmp.z i
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [16] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [17] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'*'
     ldy.z i
     sta screen,y
-    jmp b3
+    jmp __b3
 }
   // isSet
 // Determine whether to set a char to '*.
 // Returns true if i&8!=0 or b=true
 // isSet(byte zeropage(5) i, bool zeropage(4) b)
 isSet: {
-    .label _0 = 8
-    .label _1 = 9
+    .label __0 = 8
+    .label __1 = 9
     .label i = 5
     .label b = 4
     .label return = 6
@@ -396,21 +396,21 @@ isSet: {
     // [18] (byte~) isSet::$0 ← (byte) isSet::i#0 & (byte) 8 -- vbuz1=vbuz2_band_vbuc1 
     lda #8
     and.z i
-    sta.z _0
+    sta.z __0
     // [19] (bool~) isSet::$1 ← (byte~) isSet::$0 != (byte) 0 -- vboz1=vbuz2_neq_vbuc1 
-    lda.z _0
+    lda.z __0
     eor #0
     beq !+
     lda #1
   !:
-    sta.z _1
+    sta.z __1
     // [20] (bool) isSet::return#1 ← (bool) isSet::b#0 || (bool~) isSet::$1 -- vboz1=vboz2_or_vboz3 
     lda.z b
-    ora.z _1
+    ora.z __1
     sta.z return_1
-    jmp breturn
+    jmp __breturn
     // isSet::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
 }
@@ -456,39 +456,39 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test a function taking boolean parameter and returning boolean result
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label screen = $400
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
@@ -503,38 +503,38 @@ main: {
     // [9] call isSet 
     jsr isSet
     // [10] (bool) isSet::return#0 ← (bool) isSet::return#1
-    jmp b5
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [11] (bool~) main::$2 ← (bool) isSet::return#0
     // [12] if((bool~) main::$2) goto main::@2 -- vboaa_then_la1 
     cmp #0
-    bne b2
-    jmp b4
+    bne __b2
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [13] *((const byte*) main::screen + (byte) main::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [15] if((byte) main::i#1!=(byte) $65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$65
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [16] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [17] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
-    jmp b3
+    jmp __b3
 }
   // isSet
 // Determine whether to set a char to '*.
@@ -552,44 +552,45 @@ isSet: {
   !:
     // [20] (bool) isSet::return#1 ← (bool) isSet::b#0 || (bool~) isSet::$1 -- vboaa=vboz1_or_vboaa 
     ora.z b
-    jmp breturn
+    jmp __breturn
     // isSet::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b5
-Removing instruction jmp b4
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b5
+Removing instruction jmp __b4
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b3 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b3:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b3 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b5:
-Removing instruction b4:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b5:
+Removing instruction __b4:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -658,7 +659,7 @@ main: {
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // i&1
     // [6] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
@@ -680,31 +681,31 @@ main: {
     // if( isSet(i, (i&1)==0))
     // [12] if((bool~) main::$2) goto main::@2 -- vboaa_then_la1 
     cmp #0
-    bne b2
+    bne __b2
     // main::@4
     // screen[i] = ' '
     // [13] *((const byte*) main::screen + (byte) main::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     // main::@3
-  b3:
+  __b3:
     // for(byte i: 0..100)
     // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [15] if((byte) main::i#1!=(byte) $65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$65
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [16] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // screen[i] = '*'
     // [17] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
-    jmp b3
+    jmp __b3
 }
   // isSet
 // Determine whether to set a char to '*.

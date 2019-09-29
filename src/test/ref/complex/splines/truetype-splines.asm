@@ -40,25 +40,25 @@ main: {
     sta D011
     lda #0
     sta.z angle
-  b2:
+  __b2:
     jsr bitmap_clear
     jsr show_letter
     ldx #0
-  b3:
+  __b3:
     lda #$fe
     cmp RASTER
-    bne b3
-  b4:
+    bne __b3
+  __b4:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne __b4
     inx
     cpx #$3d
-    bne b3
+    bne __b3
     lax.z angle
     axs #-[9]
     stx.z angle
-    jmp b2
+    jmp __b2
 }
 // show_letter(byte zeropage($12) angle)
 show_letter: {
@@ -84,7 +84,7 @@ show_letter: {
     sta.z current_x
     sta.z current_x+1
     sta.z i
-  b1:
+  __b1:
     lda.z i
     asl
     asl
@@ -184,9 +184,9 @@ show_letter: {
     tay
     lda letter_c,y
     cmp #MOVE_TO
-    beq b3
+    beq __b3
     cmp #SPLINE_TO
-    beq b2
+    beq __b2
     lda.z current_x_10
     sta.z bitmap_line.x2
     lda.z current_x_10+1
@@ -196,13 +196,13 @@ show_letter: {
     lda.z current_y_10+1
     sta.z bitmap_line.y2+1
     jsr bitmap_line
-  b3:
+  __b3:
     inc.z i
     lda #$16
     cmp.z i
-    bne b9
+    bne __b9
     rts
-  b9:
+  __b9:
     lda.z current_x_10
     sta.z current_x
     lda.z current_x_10+1
@@ -211,11 +211,11 @@ show_letter: {
     sta.z current_y
     lda.z current_y_10+1
     sta.z current_y+1
-    jmp b1
-  b2:
+    jmp __b1
+  __b2:
     jsr spline_8segB
     jsr bitmap_plot_spline_8seg
-    jmp b3
+    jmp __b3
 }
 // Plot the spline in the SPLINE_8SEG array
 bitmap_plot_spline_8seg: {
@@ -232,7 +232,7 @@ bitmap_plot_spline_8seg: {
     sta.z current_y+1
     lda #1
     sta.z n
-  b1:
+  __b1:
     lda.z n
     asl
     asl
@@ -261,7 +261,7 @@ bitmap_plot_spline_8seg: {
     inc.z n
     lda #9
     cmp.z n
-    bne b1
+    bne __b1
     rts
 }
 // Draw a line on the bitmap using bresenhams algorithm
@@ -300,17 +300,17 @@ bitmap_line: {
     sta.z abs_u16.w+1
     jsr abs_u16
     lda.z dx
-    bne b1
+    bne __b1
     lda.z dx+1
-    bne b1
+    bne __b1
     lda.z dy
     bne !+
     lda.z dy+1
-    bne !b4+
-    jmp b4
-  !b4:
+    bne !__b4+
+    jmp __b4
+  !__b4:
   !:
-  b1:
+  __b1:
     lda.z x2
     sec
     sbc.z x
@@ -333,11 +333,11 @@ bitmap_line: {
     jsr sgn_u16
     lda.z dy+1
     cmp.z dx+1
-    bcc b2
+    bcc __b2
     bne !+
     lda.z dy
     cmp.z dx
-    bcc b2
+    bcc __b2
   !:
     lda.z dx+1
     lsr
@@ -345,7 +345,7 @@ bitmap_line: {
     lda.z dx
     ror
     sta.z e
-  b6:
+  __b6:
     lda.z y
     tax
     jsr bitmap_plot
@@ -367,9 +367,9 @@ bitmap_line: {
     bne !+
     lda.z e
     cmp.z dy
-    beq b7
+    beq __b7
   !:
-    bcc b7
+    bcc __b7
     lda.z x
     clc
     adc.z sx
@@ -384,26 +384,26 @@ bitmap_line: {
     lda.z e+1
     sbc.z dy+1
     sta.z e+1
-  b7:
+  __b7:
     lda.z y+1
     cmp.z y2+1
-    bne b6
+    bne __b6
     lda.z y
     cmp.z y2
-    bne b6
-  b3:
+    bne __b6
+  __b3:
     lda.z y
     tax
     jsr bitmap_plot
     rts
-  b2:
+  __b2:
     lda.z dy+1
     lsr
     sta.z e1+1
     lda.z dy
     ror
     sta.z e1
-  b9:
+  __b9:
     lda.z y
     tax
     jsr bitmap_plot
@@ -425,9 +425,9 @@ bitmap_line: {
     bne !+
     lda.z e1
     cmp.z dx
-    beq b10
+    beq __b10
   !:
-    bcc b10
+    bcc __b10
     lda.z y
     clc
     adc.z sy
@@ -442,15 +442,15 @@ bitmap_line: {
     lda.z e1+1
     sbc.z dx+1
     sta.z e1+1
-  b10:
+  __b10:
     lda.z x+1
     cmp.z x2+1
-    bne b9
+    bne __b9
     lda.z x
     cmp.z x2
-    bne b9
-    jmp b3
-  b4:
+    bne __b9
+    jmp __b3
+  __b4:
     lda.z y
     tax
     jsr bitmap_plot
@@ -459,7 +459,7 @@ bitmap_line: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage($c) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $1e
+    .label __1 = $1e
     .label plotter = $1c
     .label x = $c
     lda bitmap_plot_yhi,x
@@ -468,16 +468,16 @@ bitmap_plot: {
     sta.z plotter
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter+1
     lda.z x
     tay
@@ -496,13 +496,13 @@ sgn_u16: {
     lda.z w+1
     and #$80
     cmp #0
-    bne b1
+    bne __b1
     lda #<1
     sta.z return
     lda #>1
     sta.z return+1
     rts
-  b1:
+  __b1:
     lda #<-1
     sta.z return
     lda #>-1
@@ -517,9 +517,9 @@ abs_u16: {
     lda.z w+1
     and #$80
     cmp #0
-    bne b1
+    bne __b1
     rts
-  b1:
+  __b1:
     sec
     lda #0
     sbc.z return
@@ -536,22 +536,22 @@ abs_u16: {
 // The curve connects P0 to P2 through a smooth curve that moves towards P1, but does usually not touch it.
 // spline_8segB(signed word zeropage($c) p0_x, signed word zeropage($e) p0_y, signed word zeropage($20) p1_x, signed word zeropage($22) p1_y, signed word zeropage($14) p2_x, signed word zeropage($16) p2_y)
 spline_8segB: {
-    .label _0 = $1e
-    .label _1 = $1e
-    .label _3 = $18
-    .label _4 = $18
-    .label _6 = $20
-    .label _8 = $22
-    .label _10 = $20
-    .label _12 = $22
-    .label _18 = $c
-    .label _19 = $c
-    .label _20 = $e
-    .label _21 = $e
-    .label _22 = $1a
-    .label _23 = $1a
-    .label _24 = $1c
-    .label _25 = $1c
+    .label __0 = $1e
+    .label __1 = $1e
+    .label __3 = $18
+    .label __4 = $18
+    .label __6 = $20
+    .label __8 = $22
+    .label __10 = $20
+    .label __12 = $22
+    .label __18 = $c
+    .label __19 = $c
+    .label __20 = $e
+    .label __21 = $e
+    .label __22 = $1a
+    .label __23 = $1a
+    .label __24 = $1c
+    .label __25 = $1c
     .label a_x = $1e
     .label a_y = $18
     .label b_x = $20
@@ -570,17 +570,17 @@ spline_8segB: {
     .label p2_y = $16
     lda.z p1_x
     asl
-    sta.z _0
+    sta.z __0
     lda.z p1_x+1
     rol
-    sta.z _0+1
+    sta.z __0+1
     lda.z p2_x
     sec
-    sbc.z _1
-    sta.z _1
+    sbc.z __1
+    sta.z __1
     lda.z p2_x+1
-    sbc.z _1+1
-    sta.z _1+1
+    sbc.z __1+1
+    sta.z __1+1
     lda.z a_x
     clc
     adc.z p0_x
@@ -590,17 +590,17 @@ spline_8segB: {
     sta.z a_x+1
     lda.z p1_y
     asl
-    sta.z _3
+    sta.z __3
     lda.z p1_y+1
     rol
-    sta.z _3+1
+    sta.z __3+1
     lda.z p2_y
     sec
-    sbc.z _4
-    sta.z _4
+    sbc.z __4
+    sta.z __4
     lda.z p2_y+1
-    sbc.z _4+1
-    sta.z _4+1
+    sbc.z __4+1
+    sta.z __4+1
     lda.z a_y
     clc
     adc.z p0_y
@@ -608,30 +608,30 @@ spline_8segB: {
     lda.z a_y+1
     adc.z p0_y+1
     sta.z a_y+1
-    lda.z _6
+    lda.z __6
     sec
     sbc.z p0_x
-    sta.z _6
-    lda.z _6+1
+    sta.z __6
+    lda.z __6+1
     sbc.z p0_x+1
-    sta.z _6+1
+    sta.z __6+1
     asl.z b_x
     rol.z b_x+1
-    lda.z _8
+    lda.z __8
     sec
     sbc.z p0_y
-    sta.z _8
-    lda.z _8+1
+    sta.z __8
+    lda.z __8+1
     sbc.z p0_y+1
-    sta.z _8+1
+    sta.z __8+1
     asl.z b_y
     rol.z b_y+1
-    asl.z _10
-    rol.z _10+1
-    asl.z _10
-    rol.z _10+1
-    asl.z _10
-    rol.z _10+1
+    asl.z __10
+    rol.z __10+1
+    asl.z __10
+    rol.z __10+1
+    asl.z __10
+    rol.z __10+1
     lda.z i_x
     clc
     adc.z a_x
@@ -639,12 +639,12 @@ spline_8segB: {
     lda.z i_x+1
     adc.z a_x+1
     sta.z i_x+1
-    asl.z _12
-    rol.z _12+1
-    asl.z _12
-    rol.z _12+1
-    asl.z _12
-    rol.z _12+1
+    asl.z __12
+    rol.z __12+1
+    asl.z __12
+    rol.z __12+1
+    asl.z __12
+    rol.z __12+1
     lda.z i_y
     clc
     adc.z a_y
@@ -681,64 +681,64 @@ spline_8segB: {
     ror.z p_y+1
     ror.z p_y
     tay
-  b1:
+  __b1:
     lda.z p_x
     clc
     adc #<$20
-    sta.z _22
+    sta.z __22
     lda.z p_x+1
     adc #>$20
-    sta.z _22+1
-    lda.z _23
+    sta.z __22+1
+    lda.z __23
     sta.z $ff
-    lda.z _23+1
-    sta.z _23
+    lda.z __23+1
+    sta.z __23
     lda #0
-    bit.z _23+1
+    bit.z __23+1
     bpl !+
     lda #$ff
   !:
-    sta.z _23+1
+    sta.z __23+1
     rol.z $ff
-    rol.z _23
-    rol.z _23+1
+    rol.z __23
+    rol.z __23+1
     rol.z $ff
-    rol.z _23
-    rol.z _23+1
+    rol.z __23
+    rol.z __23+1
     lda.z p_y
     clc
     adc #<$20
-    sta.z _24
+    sta.z __24
     lda.z p_y+1
     adc #>$20
-    sta.z _24+1
-    lda.z _25
+    sta.z __24+1
+    lda.z __25
     sta.z $ff
-    lda.z _25+1
-    sta.z _25
+    lda.z __25+1
+    sta.z __25
     lda #0
-    bit.z _25+1
+    bit.z __25+1
     bpl !+
     lda #$ff
   !:
-    sta.z _25+1
+    sta.z __25+1
     rol.z $ff
-    rol.z _25
-    rol.z _25+1
+    rol.z __25
+    rol.z __25+1
     rol.z $ff
-    rol.z _25
-    rol.z _25+1
+    rol.z __25
+    rol.z __25+1
     tya
     asl
     asl
     tax
-    lda.z _23
+    lda.z __23
     sta SPLINE_8SEG,x
-    lda.z _23+1
+    lda.z __23+1
     sta SPLINE_8SEG+1,x
-    lda.z _25
+    lda.z __25
     sta SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
-    lda.z _25+1
+    lda.z __25+1
     sta SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
     lda.z p_x
     clc
@@ -770,78 +770,78 @@ spline_8segB: {
     sta.z i_y+1
     iny
     cpy #8
-    beq !b1+
-    jmp b1
-  !b1:
-    lda.z _18
+    beq !__b1+
+    jmp __b1
+  !__b1:
+    lda.z __18
     clc
     adc #<$20
-    sta.z _18
-    lda.z _18+1
+    sta.z __18
+    lda.z __18+1
     adc #>$20
-    sta.z _18+1
-    lda.z _19
+    sta.z __18+1
+    lda.z __19
     sta.z $ff
-    lda.z _19+1
-    sta.z _19
+    lda.z __19+1
+    sta.z __19
     lda #0
-    bit.z _19+1
+    bit.z __19+1
     bpl !+
     lda #$ff
   !:
-    sta.z _19+1
+    sta.z __19+1
     rol.z $ff
-    rol.z _19
-    rol.z _19+1
+    rol.z __19
+    rol.z __19+1
     rol.z $ff
-    rol.z _19
-    rol.z _19+1
-    lda.z _20
+    rol.z __19
+    rol.z __19+1
+    lda.z __20
     clc
     adc #<$20
-    sta.z _20
-    lda.z _20+1
+    sta.z __20
+    lda.z __20+1
     adc #>$20
-    sta.z _20+1
-    lda.z _21
+    sta.z __20+1
+    lda.z __21
     sta.z $ff
-    lda.z _21+1
-    sta.z _21
+    lda.z __21+1
+    sta.z __21
     lda #0
-    bit.z _21+1
+    bit.z __21+1
     bpl !+
     lda #$ff
   !:
-    sta.z _21+1
+    sta.z __21+1
     rol.z $ff
-    rol.z _21
-    rol.z _21+1
+    rol.z __21
+    rol.z __21+1
     rol.z $ff
-    rol.z _21
-    rol.z _21+1
-    lda.z _19
+    rol.z __21
+    rol.z __21+1
+    lda.z __19
     sta SPLINE_8SEG+8*SIZEOF_STRUCT_SPLINEVECTOR16
-    lda.z _19+1
+    lda.z __19+1
     sta SPLINE_8SEG+8*SIZEOF_STRUCT_SPLINEVECTOR16+1
-    lda.z _21
+    lda.z __21
     sta SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+8*SIZEOF_STRUCT_SPLINEVECTOR16
-    lda.z _21+1
+    lda.z __21+1
     sta SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+8*SIZEOF_STRUCT_SPLINEVECTOR16+1
     rts
 }
 // 2D-rotate a vector by an angle
 // rotate(signed word zeropage(2) vector_x, signed word zeropage(4) vector_y, byte register(Y) angle)
 rotate: {
-    .label _1 = 8
-    .label _2 = $18
-    .label _4 = 8
-    .label _5 = $1a
-    .label _8 = 8
-    .label _9 = $1c
-    .label _10 = $1c
-    .label _11 = 8
-    .label _12 = $1e
-    .label _13 = $1e
+    .label __1 = 8
+    .label __2 = $18
+    .label __4 = 8
+    .label __5 = $1a
+    .label __8 = 8
+    .label __9 = $1c
+    .label __10 = $1c
+    .label __11 = 8
+    .label __12 = $1e
+    .label __13 = $1e
     .label vector_x = 2
     .label vector_y = 4
     .label return_x = $20
@@ -862,10 +862,10 @@ rotate: {
     lda.z vector_x+1
     sta.z mulf16s.b+1
     jsr mulf16s
-    lda.z _1
-    sta.z _2
-    lda.z _1+1
-    sta.z _2+1
+    lda.z __1
+    sta.z __2
+    lda.z __1+1
+    sta.z __2+1
     asl.z xr
     rol.z xr+1
     lda.z vector_y
@@ -873,10 +873,10 @@ rotate: {
     lda.z vector_y+1
     sta.z mulf16s.b+1
     jsr mulf16s
-    lda.z _4
-    sta.z _5
-    lda.z _4+1
-    sta.z _5+1
+    lda.z __4
+    sta.z __5
+    lda.z __4+1
+    sta.z __5+1
     asl.z yr
     rol.z yr+1
     lda SIN,y
@@ -891,38 +891,38 @@ rotate: {
     lda.z vector_y+1
     sta.z mulf16s.b+1
     jsr mulf16s
-    lda.z _8
-    sta.z _9
-    lda.z _8+1
-    sta.z _9+1
-    asl.z _10
-    rol.z _10+1
+    lda.z __8
+    sta.z __9
+    lda.z __8+1
+    sta.z __9+1
+    asl.z __10
+    rol.z __10+1
     // signed fixed[0.7]
     lda.z xr
     sec
-    sbc.z _10
+    sbc.z __10
     sta.z xr
     lda.z xr+1
-    sbc.z _10+1
+    sbc.z __10+1
     sta.z xr+1
     lda.z vector_x
     sta.z mulf16s.b
     lda.z vector_x+1
     sta.z mulf16s.b+1
     jsr mulf16s
-    lda.z _11
-    sta.z _12
-    lda.z _11+1
-    sta.z _12+1
-    asl.z _13
-    rol.z _13+1
+    lda.z __11
+    sta.z __12
+    lda.z __11+1
+    sta.z __12+1
+    asl.z __13
+    rol.z __13+1
     // signed fixed[8.8]
     lda.z yr
     clc
-    adc.z _13
+    adc.z __13
     sta.z yr
     lda.z yr+1
-    adc.z _13+1
+    adc.z __13+1
     sta.z yr+1
     lda.z xr+1
     sta.z return_x
@@ -944,10 +944,10 @@ rotate: {
 // Fixes offsets introduced by using unsigned multiplication
 // mulf16s(signed word zeropage(6) a, signed word zeropage($10) b)
 mulf16s: {
-    .label _9 = $20
-    .label _13 = $22
-    .label _16 = $20
-    .label _17 = $22
+    .label __9 = $20
+    .label __13 = $22
+    .label __16 = $20
+    .label __17 = $22
     .label m = 8
     .label return = 8
     .label a = 6
@@ -962,41 +962,41 @@ mulf16s: {
     sta.z mulf16u.b+1
     jsr mulf16u
     lda.z a+1
-    bpl b1
+    bpl __b1
     lda.z m+2
-    sta.z _9
+    sta.z __9
     lda.z m+3
-    sta.z _9+1
-    lda.z _16
+    sta.z __9+1
+    lda.z __16
     sec
     sbc.z b
-    sta.z _16
-    lda.z _16+1
+    sta.z __16
+    lda.z __16+1
     sbc.z b+1
-    sta.z _16+1
-    lda.z _16
+    sta.z __16+1
+    lda.z __16
     sta.z m+2
-    lda.z _16+1
+    lda.z __16+1
     sta.z m+3
-  b1:
+  __b1:
     lda.z b+1
-    bpl b2
+    bpl __b2
     lda.z m+2
-    sta.z _13
+    sta.z __13
     lda.z m+3
-    sta.z _13+1
-    lda.z _17
+    sta.z __13+1
+    lda.z __17
     sec
     sbc.z a
-    sta.z _17
-    lda.z _17+1
+    sta.z __17
+    lda.z __17+1
     sbc.z a+1
-    sta.z _17+1
-    lda.z _17
+    sta.z __17+1
+    lda.z __17
     sta.z m+2
-    lda.z _17+1
+    lda.z __17+1
     sta.z m+3
-  b2:
+  __b2:
     rts
 }
 // Fast multiply two unsigned words to a double word result
@@ -1156,7 +1156,7 @@ memset: {
     lda.z num
     bne !+
     lda.z num+1
-    beq breturn
+    beq __breturn
   !:
     lda.z end
     clc
@@ -1165,16 +1165,16 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-  b2:
+  __b2:
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
-  breturn:
+    bne __b3
+  __breturn:
     rts
-  b3:
+  __b3:
     txa
     ldy #0
     sta (dst),y
@@ -1182,40 +1182,40 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2
+    jmp __b2
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _7 = $24
+    .label __7 = $24
     .label yoffs = $10
     ldx #0
     lda #$80
-  b1:
+  __b1:
     sta bitmap_plot_bit,x
     lsr
     cmp #0
-    bne b2
+    bne __b2
     lda #$80
-  b2:
+  __b2:
     inx
     cpx #0
-    bne b1
+    bne __b1
     lda #<BITMAP_GRAPHICS
     sta.z yoffs
     lda #>BITMAP_GRAPHICS
     sta.z yoffs+1
     ldx #0
-  b3:
+  __b3:
     lda #7
-    sax.z _7
+    sax.z __7
     lda.z yoffs
-    ora.z _7
+    ora.z __7
     sta bitmap_plot_ylo,x
     lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp.z _7
-    bne b4
+    cmp.z __7
+    bne __b4
     clc
     lda.z yoffs
     adc #<$28*8
@@ -1223,10 +1223,10 @@ bitmap_init: {
     lda.z yoffs+1
     adc #>$28*8
     sta.z yoffs+1
-  b4:
+  __b4:
     inx
     cpx #0
-    bne b3
+    bne __b3
     rts
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
@@ -1251,13 +1251,13 @@ mulf_init: {
     sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
     sta.z sqr1_lo+1
-  b1:
+  __b1:
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     lda.z sqr1_lo
     cmp #<mulf_sqr1_lo+$200
-    bne b2
+    bne __b2
     lda #$ff
     sta.z dir
     lda #<mulf_sqr2_hi
@@ -1269,20 +1269,20 @@ mulf_init: {
     sta.z sqr2_lo
     lda #>mulf_sqr2_lo
     sta.z sqr2_lo+1
-  b5:
+  __b5:
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     lda.z sqr2_lo
     cmp #<mulf_sqr2_lo+$1ff
-    bne b6
+    bne __b6
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
     lda mulf_sqr1_hi+$100
     sta mulf_sqr2_hi+$1ff
     rts
-  b6:
+  __b6:
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
@@ -1297,27 +1297,27 @@ mulf_init: {
     adc.z dir
     tax
     cpx #0
-    bne b8
+    bne __b8
     lda #1
     sta.z dir
-  b8:
+  __b8:
     inc.z sqr2_lo
     bne !+
     inc.z sqr2_lo+1
   !:
-    jmp b5
-  b2:
+    jmp __b5
+  __b2:
     inc.z c
     lda #1
     and.z c
     cmp #0
-    bne b3
+    bne __b3
     inx
     inc.z sqr
     bne !+
     inc.z sqr+1
   !:
-  b3:
+  __b3:
     lda.z sqr
     ldy #0
     sta (sqr1_lo),y
@@ -1338,7 +1338,7 @@ mulf_init: {
     bne !+
     inc.z sqr1_lo+1
   !:
-    jmp b1
+    jmp __b1
 }
   // Array filled with spline segment points by splinePlot_8()
   SPLINE_8SEG: .fill 4*9, 0

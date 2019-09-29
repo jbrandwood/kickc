@@ -2526,7 +2526,7 @@ Target platform is c64basic / MOS6502X
 // Plots a few lines using the bresenham line algorithm
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label D011 = $d011
@@ -2539,26 +2539,26 @@ Target platform is c64basic / MOS6502X
   .label SCREEN = $400
   .label COSTAB = SINTAB+$40
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label _7 = $21
-    .label _11 = $23
+    .label __7 = $21
+    .label __11 = $23
     .label a = 3
     .label i = 2
     // [5] call bitmap_init 
@@ -2566,67 +2566,67 @@ main: {
   bitmap_init_from_main:
     jsr bitmap_init
     // [6] phi from main to main::@5 [phi:main->main::@5]
-  b5_from_main:
-    jmp b5
+  __b5_from_main:
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [7] call bitmap_clear 
     // [95] phi from main::@5 to bitmap_clear [phi:main::@5->bitmap_clear]
-  bitmap_clear_from_b5:
+  bitmap_clear_from___b5:
     jsr bitmap_clear
-    jmp b6
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [8] *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3 -- _deref_pbuc1=vbuc2 
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta D011
     // [9] phi from main::@6 to main::toD0181 [phi:main::@6->main::toD0181]
-  toD0181_from_b6:
+  toD0181_from___b6:
     jmp toD0181
     // main::toD0181
   toD0181:
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [10] *((const byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // [11] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [11] phi (byte) main::a#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z a
     // [11] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [12] if((byte) main::i#2!=(byte) 8) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [13] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
-    jmp b3
+    jmp __b3
     // main::@2
-  b2:
+  __b2:
     // [14] (word~) main::$7 ← (word)*((const byte*) COSTAB#0 + (byte) main::a#2) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z a
     lda COSTAB,y
-    sta.z _7
+    sta.z __7
     lda #0
-    sta.z _7+1
+    sta.z __7+1
     // [15] (word) bitmap_line::x1#0 ← (word~) main::$7 + (byte) $78 -- vwuz1=vwuz2_plus_vbuc1 
     lda #$78
     clc
-    adc.z _7
+    adc.z __7
     sta.z bitmap_line.x1
     lda #0
-    adc.z _7+1
+    adc.z __7+1
     sta.z bitmap_line.x1+1
     // [16] (word) bitmap_line::y1#0 ← (word)*((const byte[$180]) SINTAB + (byte) main::a#2) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z a
@@ -2637,16 +2637,16 @@ main: {
     // [17] (word~) main::$11 ← (word)*((const byte*) COSTAB#0+(byte) $20 + (byte) main::a#2) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z a
     lda COSTAB+$20,y
-    sta.z _11
+    sta.z __11
     lda #0
-    sta.z _11+1
+    sta.z __11+1
     // [18] (word) bitmap_line::x2#0 ← (word~) main::$11 + (byte) $78 -- vwuz1=vwuz2_plus_vbuc1 
     lda #$78
     clc
-    adc.z _11
+    adc.z __11
     sta.z bitmap_line.x2
     lda #0
-    adc.z _11+1
+    adc.z __11+1
     sta.z bitmap_line.x2+1
     // [19] (word) bitmap_line::y2#0 ← (word)*((const byte[$180]) SINTAB+(byte) $20 + (byte) main::a#2) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z a
@@ -2656,9 +2656,9 @@ main: {
     sta.z bitmap_line.y2+1
     // [20] call bitmap_line 
     jsr bitmap_line
-    jmp b7
+    jmp __b7
     // main::@7
-  b7:
+  __b7:
     // [21] (byte) main::a#1 ← (byte) main::a#2 + (byte) $20 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z a
     axs #-[$20]
@@ -2666,10 +2666,10 @@ main: {
     // [22] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [11] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
-  b1_from_b7:
+  __b1_from___b7:
     // [11] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@7->main::@1#0] -- register_copy 
     // [11] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // bitmap_line
 // Draw a line on the bitmap using bresenhams algorithm
@@ -2705,9 +2705,9 @@ bitmap_line: {
     sta.z abs_u16.return
     lda.z abs_u16.return_4+1
     sta.z abs_u16.return+1
-    jmp b12
+    jmp __b12
     // bitmap_line::@12
-  b12:
+  __b12:
     // [26] (word) bitmap_line::dx#0 ← (word) abs_u16::return#0 -- vwuz1=vwuz2 
     lda.z abs_u16.return
     sta.z dx
@@ -2723,7 +2723,7 @@ bitmap_line: {
     sta.z abs_u16.w+1
     // [28] call abs_u16 
     // [88] phi from bitmap_line::@12 to abs_u16 [phi:bitmap_line::@12->abs_u16]
-  abs_u16_from_b12:
+  abs_u16_from___b12:
     // [88] phi (word) abs_u16::w#2 = (word) abs_u16::w#1 [phi:bitmap_line::@12->abs_u16#0] -- register_copy 
     jsr abs_u16
     // [29] (word) abs_u16::return#1 ← (word) abs_u16::return#4 -- vwuz1=vwuz2 
@@ -2731,9 +2731,9 @@ bitmap_line: {
     sta.z abs_u16.return_1
     lda.z abs_u16.return_4+1
     sta.z abs_u16.return_1+1
-    jmp b13
+    jmp __b13
     // bitmap_line::@13
-  b13:
+  __b13:
     // [30] (word) bitmap_line::dy#0 ← (word) abs_u16::return#1 -- vwuz1=vwuz2 
     lda.z abs_u16.return_1
     sta.z dy
@@ -2741,21 +2741,21 @@ bitmap_line: {
     sta.z dy+1
     // [31] if((word) bitmap_line::dx#0!=(byte) 0) goto bitmap_line::@1 -- vwuz1_neq_0_then_la1 
     lda.z dx
-    bne b1
+    bne __b1
     lda.z dx+1
-    bne b1
-    jmp b18
+    bne __b1
+    jmp __b18
     // bitmap_line::@18
-  b18:
+  __b18:
     // [32] if((word) bitmap_line::dy#0==(byte) 0) goto bitmap_line::@4 -- vwuz1_eq_0_then_la1 
     lda.z dy
     bne !+
     lda.z dy+1
-    beq b4
+    beq __b4
   !:
-    jmp b1
+    jmp __b1
     // bitmap_line::@1
-  b1:
+  __b1:
     // [33] (word) sgn_u16::w#0 ← (word) bitmap_line::x2#0 - (word) bitmap_line::x1#0 -- vwuz1=vwuz2_minus_vwuz3 
     lda.z x2
     sec
@@ -2766,7 +2766,7 @@ bitmap_line: {
     sta.z sgn_u16.w+1
     // [34] call sgn_u16 
     // [81] phi from bitmap_line::@1 to sgn_u16 [phi:bitmap_line::@1->sgn_u16]
-  sgn_u16_from_b1:
+  sgn_u16_from___b1:
     // [81] phi (word) sgn_u16::w#2 = (word) sgn_u16::w#0 [phi:bitmap_line::@1->sgn_u16#0] -- register_copy 
     jsr sgn_u16
     // [35] (word) sgn_u16::return#0 ← (word) sgn_u16::return#4 -- vwuz1=vwuz2 
@@ -2774,9 +2774,9 @@ bitmap_line: {
     sta.z sgn_u16.return
     lda.z sgn_u16.return_4+1
     sta.z sgn_u16.return+1
-    jmp b14
+    jmp __b14
     // bitmap_line::@14
-  b14:
+  __b14:
     // [36] (word) bitmap_line::sx#0 ← (word) sgn_u16::return#0 -- vwuz1=vwuz2 
     lda.z sgn_u16.return
     sta.z sx
@@ -2792,7 +2792,7 @@ bitmap_line: {
     sta.z sgn_u16.w+1
     // [38] call sgn_u16 
     // [81] phi from bitmap_line::@14 to sgn_u16 [phi:bitmap_line::@14->sgn_u16]
-  sgn_u16_from_b14:
+  sgn_u16_from___b14:
     // [81] phi (word) sgn_u16::w#2 = (word) sgn_u16::w#1 [phi:bitmap_line::@14->sgn_u16#0] -- register_copy 
     jsr sgn_u16
     // [39] (word) sgn_u16::return#1 ← (word) sgn_u16::return#4 -- vwuz1=vwuz2 
@@ -2800,9 +2800,9 @@ bitmap_line: {
     sta.z sgn_u16.return_1
     lda.z sgn_u16.return_4+1
     sta.z sgn_u16.return_1+1
-    jmp b15
+    jmp __b15
     // bitmap_line::@15
-  b15:
+  __b15:
     // [40] (word) bitmap_line::sy#0 ← (word) sgn_u16::return#1 -- vwuz1=vwuz2 
     lda.z sgn_u16.return_1
     sta.z sy
@@ -2811,15 +2811,15 @@ bitmap_line: {
     // [41] if((word) bitmap_line::dx#0>(word) bitmap_line::dy#0) goto bitmap_line::@2 -- vwuz1_gt_vwuz2_then_la1 
     lda.z dy+1
     cmp.z dx+1
-    bcc b2
+    bcc __b2
     bne !+
     lda.z dy
     cmp.z dx
-    bcc b2
+    bcc __b2
   !:
-    jmp b5
+    jmp __b5
     // bitmap_line::@5
-  b5:
+  __b5:
     // [42] (word) bitmap_line::e#0 ← (word) bitmap_line::dx#0 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
     lda.z dx+1
     lsr
@@ -2828,14 +2828,14 @@ bitmap_line: {
     ror
     sta.z e
     // [43] phi from bitmap_line::@5 bitmap_line::@7 to bitmap_line::@6 [phi:bitmap_line::@5/bitmap_line::@7->bitmap_line::@6]
-  b6_from_b5:
-  b6_from_b7:
+  __b6_from___b5:
+  __b6_from___b7:
     // [43] phi (word) bitmap_line::e#3 = (word) bitmap_line::e#0 [phi:bitmap_line::@5/bitmap_line::@7->bitmap_line::@6#0] -- register_copy 
     // [43] phi (word) bitmap_line::x#13 = (word) bitmap_line::x1#0 [phi:bitmap_line::@5/bitmap_line::@7->bitmap_line::@6#1] -- register_copy 
     // [43] phi (word) bitmap_line::y#4 = (word) bitmap_line::y1#0 [phi:bitmap_line::@5/bitmap_line::@7->bitmap_line::@6#2] -- register_copy 
-    jmp b6
+    jmp __b6
     // bitmap_line::@6
-  b6:
+  __b6:
     // [44] (byte) bitmap_plot::y#1 ← (byte)(word) bitmap_line::y#4 -- vbuz1=_byte_vwuz2 
     lda.z y
     sta.z bitmap_plot.y
@@ -2846,13 +2846,13 @@ bitmap_line: {
     sta.z bitmap_plot.x+1
     // [46] call bitmap_plot 
     // [74] phi from bitmap_line::@6 to bitmap_plot [phi:bitmap_line::@6->bitmap_plot]
-  bitmap_plot_from_b6:
+  bitmap_plot_from___b6:
     // [74] phi (word) bitmap_plot::x#4 = (word) bitmap_plot::x#1 [phi:bitmap_line::@6->bitmap_plot#0] -- register_copy 
     // [74] phi (byte) bitmap_plot::y#4 = (byte) bitmap_plot::y#1 [phi:bitmap_line::@6->bitmap_plot#1] -- register_copy 
     jsr bitmap_plot
-    jmp b16
+    jmp __b16
     // bitmap_line::@16
-  b16:
+  __b16:
     // [47] (word) bitmap_line::y#1 ← (word) bitmap_line::y#4 + (word) bitmap_line::sy#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z y
     clc
@@ -2875,12 +2875,12 @@ bitmap_line: {
     bne !+
     lda.z e
     cmp.z dy
-    beq b7_from_b16
+    beq __b7_from___b16
   !:
-    bcc b7_from_b16
-    jmp b8
+    bcc __b7_from___b16
+    jmp __b8
     // bitmap_line::@8
-  b8:
+  __b8:
     // [50] (word) bitmap_line::x#1 ← (word) bitmap_line::x#13 + (word) bitmap_line::sx#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z x
     clc
@@ -2898,28 +2898,28 @@ bitmap_line: {
     sbc.z dy+1
     sta.z e+1
     // [52] phi from bitmap_line::@16 bitmap_line::@8 to bitmap_line::@7 [phi:bitmap_line::@16/bitmap_line::@8->bitmap_line::@7]
-  b7_from_b16:
-  b7_from_b8:
+  __b7_from___b16:
+  __b7_from___b8:
     // [52] phi (word) bitmap_line::e#6 = (word) bitmap_line::e#1 [phi:bitmap_line::@16/bitmap_line::@8->bitmap_line::@7#0] -- register_copy 
     // [52] phi (word) bitmap_line::x#12 = (word) bitmap_line::x#13 [phi:bitmap_line::@16/bitmap_line::@8->bitmap_line::@7#1] -- register_copy 
-    jmp b7
+    jmp __b7
     // bitmap_line::@7
-  b7:
+  __b7:
     // [53] if((word) bitmap_line::y#1!=(word) bitmap_line::y2#0) goto bitmap_line::@6 -- vwuz1_neq_vwuz2_then_la1 
     lda.z y+1
     cmp.z y2+1
-    bne b6_from_b7
+    bne __b6_from___b7
     lda.z y
     cmp.z y2
-    bne b6_from_b7
+    bne __b6_from___b7
     // [54] phi from bitmap_line::@10 bitmap_line::@7 to bitmap_line::@3 [phi:bitmap_line::@10/bitmap_line::@7->bitmap_line::@3]
-  b3_from_b10:
-  b3_from_b7:
+  __b3_from___b10:
+  __b3_from___b7:
     // [54] phi (word) bitmap_line::x#6 = (word) bitmap_line::x#15 [phi:bitmap_line::@10/bitmap_line::@7->bitmap_line::@3#0] -- register_copy 
     // [54] phi (word) bitmap_line::y#7 = (word) bitmap_line::y#13 [phi:bitmap_line::@10/bitmap_line::@7->bitmap_line::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // bitmap_line::@3
-  b3:
+  __b3:
     // [55] (byte) bitmap_plot::y#2 ← (byte)(word) bitmap_line::y#7 -- vbuz1=_byte_vwuz2 
     lda.z y
     sta.z bitmap_plot.y
@@ -2930,17 +2930,17 @@ bitmap_line: {
     sta.z bitmap_plot.x+1
     // [57] call bitmap_plot 
     // [74] phi from bitmap_line::@3 to bitmap_plot [phi:bitmap_line::@3->bitmap_plot]
-  bitmap_plot_from_b3:
+  bitmap_plot_from___b3:
     // [74] phi (word) bitmap_plot::x#4 = (word) bitmap_plot::x#2 [phi:bitmap_line::@3->bitmap_plot#0] -- register_copy 
     // [74] phi (byte) bitmap_plot::y#4 = (byte) bitmap_plot::y#2 [phi:bitmap_line::@3->bitmap_plot#1] -- register_copy 
     jsr bitmap_plot
-    jmp breturn
+    jmp __breturn
     // bitmap_line::@return
-  breturn:
+  __breturn:
     // [58] return 
     rts
     // bitmap_line::@2
-  b2:
+  __b2:
     // [59] (word) bitmap_line::e1#0 ← (word) bitmap_line::dy#0 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
     lda.z dy+1
     lsr
@@ -2949,14 +2949,14 @@ bitmap_line: {
     ror
     sta.z e1
     // [60] phi from bitmap_line::@10 bitmap_line::@2 to bitmap_line::@9 [phi:bitmap_line::@10/bitmap_line::@2->bitmap_line::@9]
-  b9_from_b10:
-  b9_from_b2:
+  __b9_from___b10:
+  __b9_from___b2:
     // [60] phi (word) bitmap_line::e1#3 = (word) bitmap_line::e1#6 [phi:bitmap_line::@10/bitmap_line::@2->bitmap_line::@9#0] -- register_copy 
     // [60] phi (word) bitmap_line::x#7 = (word) bitmap_line::x#15 [phi:bitmap_line::@10/bitmap_line::@2->bitmap_line::@9#1] -- register_copy 
     // [60] phi (word) bitmap_line::y#15 = (word) bitmap_line::y#13 [phi:bitmap_line::@10/bitmap_line::@2->bitmap_line::@9#2] -- register_copy 
-    jmp b9
+    jmp __b9
     // bitmap_line::@9
-  b9:
+  __b9:
     // [61] (byte) bitmap_plot::y#3 ← (byte)(word) bitmap_line::y#15 -- vbuz1=_byte_vwuz2 
     lda.z y
     sta.z bitmap_plot.y
@@ -2967,13 +2967,13 @@ bitmap_line: {
     sta.z bitmap_plot.x+1
     // [63] call bitmap_plot 
     // [74] phi from bitmap_line::@9 to bitmap_plot [phi:bitmap_line::@9->bitmap_plot]
-  bitmap_plot_from_b9:
+  bitmap_plot_from___b9:
     // [74] phi (word) bitmap_plot::x#4 = (word) bitmap_plot::x#3 [phi:bitmap_line::@9->bitmap_plot#0] -- register_copy 
     // [74] phi (byte) bitmap_plot::y#4 = (byte) bitmap_plot::y#3 [phi:bitmap_line::@9->bitmap_plot#1] -- register_copy 
     jsr bitmap_plot
-    jmp b17
+    jmp __b17
     // bitmap_line::@17
-  b17:
+  __b17:
     // [64] (word) bitmap_line::x#15 ← (word) bitmap_line::x#7 + (word) bitmap_line::sx#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z x
     clc
@@ -2996,12 +2996,12 @@ bitmap_line: {
     bne !+
     lda.z e1
     cmp.z dx
-    beq b10_from_b17
+    beq __b10_from___b17
   !:
-    bcc b10_from_b17
-    jmp b11
+    bcc __b10_from___b17
+    jmp __b11
     // bitmap_line::@11
-  b11:
+  __b11:
     // [67] (word) bitmap_line::y#2 ← (word) bitmap_line::y#15 + (word) bitmap_line::sy#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z y
     clc
@@ -3019,23 +3019,23 @@ bitmap_line: {
     sbc.z dx+1
     sta.z e1+1
     // [69] phi from bitmap_line::@11 bitmap_line::@17 to bitmap_line::@10 [phi:bitmap_line::@11/bitmap_line::@17->bitmap_line::@10]
-  b10_from_b11:
-  b10_from_b17:
+  __b10_from___b11:
+  __b10_from___b17:
     // [69] phi (word) bitmap_line::e1#6 = (word) bitmap_line::e1#2 [phi:bitmap_line::@11/bitmap_line::@17->bitmap_line::@10#0] -- register_copy 
     // [69] phi (word) bitmap_line::y#13 = (word) bitmap_line::y#2 [phi:bitmap_line::@11/bitmap_line::@17->bitmap_line::@10#1] -- register_copy 
-    jmp b10
+    jmp __b10
     // bitmap_line::@10
-  b10:
+  __b10:
     // [70] if((word) bitmap_line::x#15!=(word) bitmap_line::x2#0) goto bitmap_line::@9 -- vwuz1_neq_vwuz2_then_la1 
     lda.z x+1
     cmp.z x2+1
-    bne b9_from_b10
+    bne __b9_from___b10
     lda.z x
     cmp.z x2
-    bne b9_from_b10
-    jmp b3_from_b10
+    bne __b9_from___b10
+    jmp __b3_from___b10
     // bitmap_line::@4
-  b4:
+  __b4:
     // [71] (byte) bitmap_plot::y#0 ← (byte)(word) bitmap_line::y1#0 -- vbuz1=_byte_vwuz2 
     lda.z y1
     sta.z bitmap_plot.y
@@ -3046,18 +3046,18 @@ bitmap_line: {
     sta.z bitmap_plot.x+1
     // [73] call bitmap_plot 
     // [74] phi from bitmap_line::@4 to bitmap_plot [phi:bitmap_line::@4->bitmap_plot]
-  bitmap_plot_from_b4:
+  bitmap_plot_from___b4:
     // [74] phi (word) bitmap_plot::x#4 = (word) bitmap_plot::x#0 [phi:bitmap_line::@4->bitmap_plot#0] -- register_copy 
     // [74] phi (byte) bitmap_plot::y#4 = (byte) bitmap_plot::y#0 [phi:bitmap_line::@4->bitmap_plot#1] -- register_copy 
     jsr bitmap_plot
-    jmp breturn
+    jmp __breturn
 }
   // bitmap_plot
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage($d) x, byte zeropage($c) y)
 bitmap_plot: {
-    .label _1 = $3b
-    .label _2 = $3f
+    .label __1 = $3b
+    .label __2 = $3f
     .label plotter = $39
     .label plotter_1 = $3d
     .label x = $d
@@ -3071,31 +3071,31 @@ bitmap_plot: {
     // [76] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#4 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     // [77] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz2_plus_vwuz3 
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter_1
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter_1+1
     // [78] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#4 -- vbuz1=_lo_vwuz2 
     lda.z x
-    sta.z _2
+    sta.z __2
     // [79] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
     ldy #0
     lda (plotter_1),y
-    ldy.z _2
+    ldy.z __2
     ora bitmap_plot_bit,y
     ldy #0
     sta (plotter_1),y
-    jmp breturn
+    jmp __breturn
     // bitmap_plot::@return
-  breturn:
+  __breturn:
     // [80] return 
     rts
 }
@@ -3104,46 +3104,46 @@ bitmap_plot: {
 // Returns unsigned -1 if the number is
 // sgn_u16(word zeropage($f) w)
 sgn_u16: {
-    .label _0 = $40
-    .label _1 = $41
+    .label __0 = $40
+    .label __1 = $41
     .label w = $f
     .label return = $31
     .label return_1 = $35
     .label return_4 = $11
     // [82] (byte~) sgn_u16::$0 ← > (word) sgn_u16::w#2 -- vbuz1=_hi_vwuz2 
     lda.z w+1
-    sta.z _0
+    sta.z __0
     // [83] (byte~) sgn_u16::$1 ← (byte~) sgn_u16::$0 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
-    and.z _0
-    sta.z _1
+    and.z __0
+    sta.z __1
     // [84] if((byte) 0!=(byte~) sgn_u16::$1) goto sgn_u16::@1 -- vbuc1_neq_vbuz1_then_la1 
     lda #0
-    cmp.z _1
-    bne b1_from_sgn_u16
+    cmp.z __1
+    bne __b1_from_sgn_u16
     // [86] phi from sgn_u16 to sgn_u16::@return [phi:sgn_u16->sgn_u16::@return]
-  breturn_from_sgn_u16:
+  __breturn_from_sgn_u16:
     // [86] phi (word) sgn_u16::return#4 = (byte) 1 [phi:sgn_u16->sgn_u16::@return#0] -- vwuz1=vbuc1 
     lda #<1
     sta.z return_4
     lda #>1
     sta.z return_4+1
-    jmp breturn
+    jmp __breturn
     // [85] phi from sgn_u16 to sgn_u16::@1 [phi:sgn_u16->sgn_u16::@1]
-  b1_from_sgn_u16:
-    jmp b1
+  __b1_from_sgn_u16:
+    jmp __b1
     // sgn_u16::@1
-  b1:
+  __b1:
     // [86] phi from sgn_u16::@1 to sgn_u16::@return [phi:sgn_u16::@1->sgn_u16::@return]
-  breturn_from_b1:
+  __breturn_from___b1:
     // [86] phi (word) sgn_u16::return#4 = (byte) -1 [phi:sgn_u16::@1->sgn_u16::@return#0] -- vwuz1=vbuc1 
     lda #<-1
     sta.z return_4
     lda #>-1
     sta.z return_4+1
-    jmp breturn
+    jmp __breturn
     // sgn_u16::@return
-  breturn:
+  __breturn:
     // [87] return 
     rts
 }
@@ -3151,8 +3151,8 @@ sgn_u16: {
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
 // abs_u16(word zeropage($13) w)
 abs_u16: {
-    .label _0 = $42
-    .label _1 = $43
+    .label __0 = $42
+    .label __1 = $43
     .label w = $13
     .label return = $29
     .label return_1 = $2d
@@ -3160,22 +3160,22 @@ abs_u16: {
     .label return_4 = $13
     // [89] (byte~) abs_u16::$0 ← > (word) abs_u16::w#2 -- vbuz1=_hi_vwuz2 
     lda.z w+1
-    sta.z _0
+    sta.z __0
     // [90] (byte~) abs_u16::$1 ← (byte~) abs_u16::$0 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
-    and.z _0
-    sta.z _1
+    and.z __0
+    sta.z __1
     // [91] if((byte) 0!=(byte~) abs_u16::$1) goto abs_u16::@1 -- vbuc1_neq_vbuz1_then_la1 
     lda #0
-    cmp.z _1
-    bne b1
+    cmp.z __1
+    bne __b1
     // [93] phi from abs_u16 abs_u16::@1 to abs_u16::@return [phi:abs_u16/abs_u16::@1->abs_u16::@return]
-  breturn_from_abs_u16:
-  breturn_from_b1:
+  __breturn_from_abs_u16:
+  __breturn_from___b1:
     // [93] phi (word) abs_u16::return#4 = (word) abs_u16::w#2 [phi:abs_u16/abs_u16::@1->abs_u16::@return#0] -- register_copy 
-    jmp breturn
+    jmp __breturn
     // abs_u16::@1
-  b1:
+  __b1:
     // [92] (word) abs_u16::return#2 ← - (word) abs_u16::w#2 -- vwuz1=_neg_vwuz1 
     sec
     lda #0
@@ -3184,9 +3184,9 @@ abs_u16: {
     lda #0
     sbc.z return_2+1
     sta.z return_2+1
-    jmp breturn_from_b1
+    jmp __breturn_from___b1
     // abs_u16::@return
-  breturn:
+  __breturn:
     // [94] return 
     rts
 }
@@ -3214,13 +3214,13 @@ bitmap_clear: {
     sta.z memset.num+1
     jsr memset
     // [97] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
-  b1_from_bitmap_clear:
-    jmp b1
+  __b1_from_bitmap_clear:
+    jmp __b1
     // bitmap_clear::@1
-  b1:
+  __b1:
     // [98] call memset 
     // [100] phi from bitmap_clear::@1 to memset [phi:bitmap_clear::@1->memset]
-  memset_from_b1:
+  memset_from___b1:
     // [100] phi (byte) memset::c#4 = (byte) 0 [phi:bitmap_clear::@1->memset#0] -- vbuz1=vbuc1 
     lda #0
     sta.z memset.c
@@ -3235,9 +3235,9 @@ bitmap_clear: {
     lda #>$1f40
     sta.z memset.num+1
     jsr memset
-    jmp breturn
+    jmp __breturn
     // bitmap_clear::@return
-  breturn:
+  __breturn:
     // [99] return 
     rts
 }
@@ -3254,11 +3254,11 @@ memset: {
     lda.z num
     bne !+
     lda.z num+1
-    beq breturn
+    beq __breturn
   !:
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [102] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 -- pbuz1=pbuz2_plus_vwuz3 
     lda.z str
     clc
@@ -3273,26 +3273,26 @@ memset: {
     lda.z str+1
     sta.z dst+1
     // [104] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
-  b2_from_b1:
-  b2_from_b3:
+  __b2_from___b1:
+  __b2_from___b3:
     // [104] phi (byte*) memset::dst#2 = (byte*~) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // memset::@2
-  b2:
+  __b2:
     // [105] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
-    jmp breturn
+    bne __b3
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [106] return 
     rts
     // memset::@3
-  b3:
+  __b3:
     // [107] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuz2 
     lda.z c
     ldy #0
@@ -3302,35 +3302,35 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2_from_b3
+    jmp __b2_from___b3
 }
   // bitmap_init
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _4 = $47
-    .label _5 = $48
-    .label _6 = $49
-    .label _7 = $46
+    .label __4 = $47
+    .label __5 = $48
+    .label __6 = $49
+    .label __7 = $46
     .label bits = $1c
     .label x = $1d
     .label y = $1e
     .label yoffs = $1f
     // [110] phi from bitmap_init to bitmap_init::@1 [phi:bitmap_init->bitmap_init::@1]
-  b1_from_bitmap_init:
+  __b1_from_bitmap_init:
     // [110] phi (byte) bitmap_init::x#2 = (byte) 0 [phi:bitmap_init->bitmap_init::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z x
     // [110] phi (byte) bitmap_init::bits#3 = (byte) $80 [phi:bitmap_init->bitmap_init::@1#1] -- vbuz1=vbuc1 
     lda #$80
     sta.z bits
-    jmp b1
+    jmp __b1
     // [110] phi from bitmap_init::@2 to bitmap_init::@1 [phi:bitmap_init::@2->bitmap_init::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [110] phi (byte) bitmap_init::x#2 = (byte) bitmap_init::x#1 [phi:bitmap_init::@2->bitmap_init::@1#0] -- register_copy 
     // [110] phi (byte) bitmap_init::bits#3 = (byte) bitmap_init::bits#4 [phi:bitmap_init::@2->bitmap_init::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // bitmap_init::@1
-  b1:
+  __b1:
     // [111] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z bits
     ldy.z x
@@ -3340,32 +3340,32 @@ bitmap_init: {
     // [113] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@6 -- vbuz1_neq_0_then_la1 
     lda.z bits
     cmp #0
-    bne b6_from_b1
+    bne __b6_from___b1
     // [115] phi from bitmap_init::@1 to bitmap_init::@2 [phi:bitmap_init::@1->bitmap_init::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [115] phi (byte) bitmap_init::bits#4 = (byte) $80 [phi:bitmap_init::@1->bitmap_init::@2#0] -- vbuz1=vbuc1 
     lda #$80
     sta.z bits
-    jmp b2
+    jmp __b2
     // [114] phi from bitmap_init::@1 to bitmap_init::@6 [phi:bitmap_init::@1->bitmap_init::@6]
-  b6_from_b1:
-    jmp b6
+  __b6_from___b1:
+    jmp __b6
     // bitmap_init::@6
-  b6:
+  __b6:
     // [115] phi from bitmap_init::@6 to bitmap_init::@2 [phi:bitmap_init::@6->bitmap_init::@2]
-  b2_from_b6:
+  __b2_from___b6:
     // [115] phi (byte) bitmap_init::bits#4 = (byte) bitmap_init::bits#1 [phi:bitmap_init::@6->bitmap_init::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // bitmap_init::@2
-  b2:
+  __b2:
     // [116] (byte) bitmap_init::x#1 ← ++ (byte) bitmap_init::x#2 -- vbuz1=_inc_vbuz1 
     inc.z x
     // [117] if((byte) bitmap_init::x#1!=(byte) 0) goto bitmap_init::@1 -- vbuz1_neq_0_then_la1 
     lda.z x
     cmp #0
-    bne b1_from_b2
+    bne __b1_from___b2
     // [118] phi from bitmap_init::@2 to bitmap_init::@3 [phi:bitmap_init::@2->bitmap_init::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [118] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
     lda #<BITMAP
     sta.z yoffs
@@ -3374,43 +3374,43 @@ bitmap_init: {
     // [118] phi (byte) bitmap_init::y#2 = (byte) 0 [phi:bitmap_init::@2->bitmap_init::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta.z y
-    jmp b3
+    jmp __b3
     // [118] phi from bitmap_init::@4 to bitmap_init::@3 [phi:bitmap_init::@4->bitmap_init::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [118] phi (byte*) bitmap_init::yoffs#2 = (byte*) bitmap_init::yoffs#4 [phi:bitmap_init::@4->bitmap_init::@3#0] -- register_copy 
     // [118] phi (byte) bitmap_init::y#2 = (byte) bitmap_init::y#1 [phi:bitmap_init::@4->bitmap_init::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // bitmap_init::@3
-  b3:
+  __b3:
     // [119] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and.z y
-    sta.z _7
+    sta.z __7
     // [120] (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2 -- vbuz1=_lo_pbuz2 
     lda.z yoffs
-    sta.z _4
+    sta.z __4
     // [121] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuz1=vbuz2_bor_vbuz3 
-    lda.z _7
-    ora.z _4
-    sta.z _5
+    lda.z __7
+    ora.z __4
+    sta.z __5
     // [122] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _5
+    lda.z __5
     ldy.z y
     sta bitmap_plot_ylo,y
     // [123] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuz1=_hi_pbuz2 
     lda.z yoffs+1
-    sta.z _6
+    sta.z __6
     // [124] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _6
+    lda.z __6
     ldy.z y
     sta bitmap_plot_yhi,y
     // [125] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp.z _7
-    bne b4_from_b3
-    jmp b5
+    cmp.z __7
+    bne __b4_from___b3
+    jmp __b5
     // bitmap_init::@5
-  b5:
+  __b5:
     // [126] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda.z yoffs
@@ -3420,21 +3420,21 @@ bitmap_init: {
     adc #>$28*8
     sta.z yoffs+1
     // [127] phi from bitmap_init::@3 bitmap_init::@5 to bitmap_init::@4 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4]
-  b4_from_b3:
-  b4_from_b5:
+  __b4_from___b3:
+  __b4_from___b5:
     // [127] phi (byte*) bitmap_init::yoffs#4 = (byte*) bitmap_init::yoffs#2 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // bitmap_init::@4
-  b4:
+  __b4:
     // [128] (byte) bitmap_init::y#1 ← ++ (byte) bitmap_init::y#2 -- vbuz1=_inc_vbuz1 
     inc.z y
     // [129] if((byte) bitmap_init::y#1!=(byte) 0) goto bitmap_init::@3 -- vbuz1_neq_0_then_la1 
     lda.z y
     cmp #0
-    bne b3_from_b4
-    jmp breturn
+    bne __b3_from___b4
+    jmp __breturn
     // bitmap_init::@return
-  breturn:
+  __breturn:
     // [130] return 
     rts
 }
@@ -3757,7 +3757,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Plots a few lines using the bresenham line algorithm
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label D011 = $d011
@@ -3770,26 +3770,26 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   .label COSTAB = SINTAB+$40
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label _7 = $b
-    .label _11 = $f
+    .label __7 = $b
+    .label __11 = $f
     .label a = 2
     .label i = $1b
     // [5] call bitmap_init 
@@ -3797,60 +3797,60 @@ main: {
   bitmap_init_from_main:
     jsr bitmap_init
     // [6] phi from main to main::@5 [phi:main->main::@5]
-  b5_from_main:
-    jmp b5
+  __b5_from_main:
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [7] call bitmap_clear 
     // [95] phi from main::@5 to bitmap_clear [phi:main::@5->bitmap_clear]
-  bitmap_clear_from_b5:
+  bitmap_clear_from___b5:
     jsr bitmap_clear
-    jmp b6
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [8] *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3 -- _deref_pbuc1=vbuc2 
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta D011
     // [9] phi from main::@6 to main::toD0181 [phi:main::@6->main::toD0181]
-  toD0181_from_b6:
+  toD0181_from___b6:
     jmp toD0181
     // main::toD0181
   toD0181:
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [10] *((const byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // [11] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [11] phi (byte) main::a#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z a
     // [11] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [12] if((byte) main::i#2!=(byte) 8) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [13] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
-    jmp b3
+    jmp __b3
     // main::@2
-  b2:
+  __b2:
     // [14] (word~) main::$7 ← (word)*((const byte*) COSTAB#0 + (byte) main::a#2) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z a
     lda COSTAB,y
-    sta.z _7
+    sta.z __7
     lda #0
-    sta.z _7+1
+    sta.z __7+1
     // [15] (word) bitmap_line::x1#0 ← (word~) main::$7 + (byte) $78 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$78
     clc
@@ -3868,9 +3868,9 @@ main: {
     // [17] (word~) main::$11 ← (word)*((const byte*) COSTAB#0+(byte) $20 + (byte) main::a#2) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z a
     lda COSTAB+$20,y
-    sta.z _11
+    sta.z __11
     lda #0
-    sta.z _11+1
+    sta.z __11+1
     // [18] (word) bitmap_line::x2#0 ← (word~) main::$11 + (byte) $78 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$78
     clc
@@ -3887,9 +3887,9 @@ main: {
     sta.z bitmap_line.y2+1
     // [20] call bitmap_line 
     jsr bitmap_line
-    jmp b7
+    jmp __b7
     // main::@7
-  b7:
+  __b7:
     // [21] (byte) main::a#1 ← (byte) main::a#2 + (byte) $20 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z a
     axs #-[$20]
@@ -3897,10 +3897,10 @@ main: {
     // [22] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [11] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
-  b1_from_b7:
+  __b1_from___b7:
     // [11] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@7->main::@1#0] -- register_copy 
     // [11] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // bitmap_line
 // Draw a line on the bitmap using bresenhams algorithm
@@ -3932,9 +3932,9 @@ bitmap_line: {
     // [88] phi (word) abs_u16::w#2 = (word) abs_u16::w#0 [phi:bitmap_line->abs_u16#0] -- register_copy 
     jsr abs_u16
     // [25] (word) abs_u16::return#0 ← (word) abs_u16::return#4
-    jmp b12
+    jmp __b12
     // bitmap_line::@12
-  b12:
+  __b12:
     // [26] (word) bitmap_line::dx#0 ← (word) abs_u16::return#0 -- vwuz1=vwuz2 
     lda.z abs_u16.return
     sta.z dx
@@ -3950,31 +3950,31 @@ bitmap_line: {
     sta.z abs_u16.w+1
     // [28] call abs_u16 
     // [88] phi from bitmap_line::@12 to abs_u16 [phi:bitmap_line::@12->abs_u16]
-  abs_u16_from_b12:
+  abs_u16_from___b12:
     // [88] phi (word) abs_u16::w#2 = (word) abs_u16::w#1 [phi:bitmap_line::@12->abs_u16#0] -- register_copy 
     jsr abs_u16
     // [29] (word) abs_u16::return#1 ← (word) abs_u16::return#4
-    jmp b13
+    jmp __b13
     // bitmap_line::@13
-  b13:
+  __b13:
     // [30] (word) bitmap_line::dy#0 ← (word) abs_u16::return#1
     // [31] if((word) bitmap_line::dx#0!=(byte) 0) goto bitmap_line::@1 -- vwuz1_neq_0_then_la1 
     lda.z dx
-    bne b1
+    bne __b1
     lda.z dx+1
-    bne b1
-    jmp b18
+    bne __b1
+    jmp __b18
     // bitmap_line::@18
-  b18:
+  __b18:
     // [32] if((word) bitmap_line::dy#0==(byte) 0) goto bitmap_line::@4 -- vwuz1_eq_0_then_la1 
     lda.z dy
     bne !+
     lda.z dy+1
-    beq b4
+    beq __b4
   !:
-    jmp b1
+    jmp __b1
     // bitmap_line::@1
-  b1:
+  __b1:
     // [33] (word) sgn_u16::w#0 ← (word) bitmap_line::x2#0 - (word) bitmap_line::x1#0 -- vwuz1=vwuz2_minus_vwuz3 
     lda.z x2
     sec
@@ -3985,13 +3985,13 @@ bitmap_line: {
     sta.z sgn_u16.w+1
     // [34] call sgn_u16 
     // [81] phi from bitmap_line::@1 to sgn_u16 [phi:bitmap_line::@1->sgn_u16]
-  sgn_u16_from_b1:
+  sgn_u16_from___b1:
     // [81] phi (word) sgn_u16::w#2 = (word) sgn_u16::w#0 [phi:bitmap_line::@1->sgn_u16#0] -- register_copy 
     jsr sgn_u16
     // [35] (word) sgn_u16::return#0 ← (word) sgn_u16::return#4
-    jmp b14
+    jmp __b14
     // bitmap_line::@14
-  b14:
+  __b14:
     // [36] (word) bitmap_line::sx#0 ← (word) sgn_u16::return#0 -- vwuz1=vwuz2 
     lda.z sgn_u16.return
     sta.z sx
@@ -4007,26 +4007,26 @@ bitmap_line: {
     sta.z sgn_u16.w+1
     // [38] call sgn_u16 
     // [81] phi from bitmap_line::@14 to sgn_u16 [phi:bitmap_line::@14->sgn_u16]
-  sgn_u16_from_b14:
+  sgn_u16_from___b14:
     // [81] phi (word) sgn_u16::w#2 = (word) sgn_u16::w#1 [phi:bitmap_line::@14->sgn_u16#0] -- register_copy 
     jsr sgn_u16
     // [39] (word) sgn_u16::return#1 ← (word) sgn_u16::return#4
-    jmp b15
+    jmp __b15
     // bitmap_line::@15
-  b15:
+  __b15:
     // [40] (word) bitmap_line::sy#0 ← (word) sgn_u16::return#1
     // [41] if((word) bitmap_line::dx#0>(word) bitmap_line::dy#0) goto bitmap_line::@2 -- vwuz1_gt_vwuz2_then_la1 
     lda.z dy+1
     cmp.z dx+1
-    bcc b2
+    bcc __b2
     bne !+
     lda.z dy
     cmp.z dx
-    bcc b2
+    bcc __b2
   !:
-    jmp b5
+    jmp __b5
     // bitmap_line::@5
-  b5:
+  __b5:
     // [42] (word) bitmap_line::e#0 ← (word) bitmap_line::dx#0 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
     lda.z dx+1
     lsr
@@ -4035,27 +4035,27 @@ bitmap_line: {
     ror
     sta.z e
     // [43] phi from bitmap_line::@5 bitmap_line::@7 to bitmap_line::@6 [phi:bitmap_line::@5/bitmap_line::@7->bitmap_line::@6]
-  b6_from_b5:
-  b6_from_b7:
+  __b6_from___b5:
+  __b6_from___b7:
     // [43] phi (word) bitmap_line::e#3 = (word) bitmap_line::e#0 [phi:bitmap_line::@5/bitmap_line::@7->bitmap_line::@6#0] -- register_copy 
     // [43] phi (word) bitmap_line::x#13 = (word) bitmap_line::x1#0 [phi:bitmap_line::@5/bitmap_line::@7->bitmap_line::@6#1] -- register_copy 
     // [43] phi (word) bitmap_line::y#4 = (word) bitmap_line::y1#0 [phi:bitmap_line::@5/bitmap_line::@7->bitmap_line::@6#2] -- register_copy 
-    jmp b6
+    jmp __b6
     // bitmap_line::@6
-  b6:
+  __b6:
     // [44] (byte) bitmap_plot::y#1 ← (byte)(word) bitmap_line::y#4 -- vbuxx=_byte_vwuz1 
     lda.z y
     tax
     // [45] (word) bitmap_plot::x#1 ← (word) bitmap_line::x#13
     // [46] call bitmap_plot 
     // [74] phi from bitmap_line::@6 to bitmap_plot [phi:bitmap_line::@6->bitmap_plot]
-  bitmap_plot_from_b6:
+  bitmap_plot_from___b6:
     // [74] phi (word) bitmap_plot::x#4 = (word) bitmap_plot::x#1 [phi:bitmap_line::@6->bitmap_plot#0] -- register_copy 
     // [74] phi (byte) bitmap_plot::y#4 = (byte) bitmap_plot::y#1 [phi:bitmap_line::@6->bitmap_plot#1] -- register_copy 
     jsr bitmap_plot
-    jmp b16
+    jmp __b16
     // bitmap_line::@16
-  b16:
+  __b16:
     // [47] (word) bitmap_line::y#1 ← (word) bitmap_line::y#4 + (word) bitmap_line::sy#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z y
     clc
@@ -4078,12 +4078,12 @@ bitmap_line: {
     bne !+
     lda.z e
     cmp.z dy
-    beq b7_from_b16
+    beq __b7_from___b16
   !:
-    bcc b7_from_b16
-    jmp b8
+    bcc __b7_from___b16
+    jmp __b8
     // bitmap_line::@8
-  b8:
+  __b8:
     // [50] (word) bitmap_line::x#1 ← (word) bitmap_line::x#13 + (word) bitmap_line::sx#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z x
     clc
@@ -4101,45 +4101,45 @@ bitmap_line: {
     sbc.z dy+1
     sta.z e+1
     // [52] phi from bitmap_line::@16 bitmap_line::@8 to bitmap_line::@7 [phi:bitmap_line::@16/bitmap_line::@8->bitmap_line::@7]
-  b7_from_b16:
-  b7_from_b8:
+  __b7_from___b16:
+  __b7_from___b8:
     // [52] phi (word) bitmap_line::e#6 = (word) bitmap_line::e#1 [phi:bitmap_line::@16/bitmap_line::@8->bitmap_line::@7#0] -- register_copy 
     // [52] phi (word) bitmap_line::x#12 = (word) bitmap_line::x#13 [phi:bitmap_line::@16/bitmap_line::@8->bitmap_line::@7#1] -- register_copy 
-    jmp b7
+    jmp __b7
     // bitmap_line::@7
-  b7:
+  __b7:
     // [53] if((word) bitmap_line::y#1!=(word) bitmap_line::y2#0) goto bitmap_line::@6 -- vwuz1_neq_vwuz2_then_la1 
     lda.z y+1
     cmp.z y2+1
-    bne b6_from_b7
+    bne __b6_from___b7
     lda.z y
     cmp.z y2
-    bne b6_from_b7
+    bne __b6_from___b7
     // [54] phi from bitmap_line::@10 bitmap_line::@7 to bitmap_line::@3 [phi:bitmap_line::@10/bitmap_line::@7->bitmap_line::@3]
-  b3_from_b10:
-  b3_from_b7:
+  __b3_from___b10:
+  __b3_from___b7:
     // [54] phi (word) bitmap_line::x#6 = (word) bitmap_line::x#15 [phi:bitmap_line::@10/bitmap_line::@7->bitmap_line::@3#0] -- register_copy 
     // [54] phi (word) bitmap_line::y#7 = (word) bitmap_line::y#13 [phi:bitmap_line::@10/bitmap_line::@7->bitmap_line::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // bitmap_line::@3
-  b3:
+  __b3:
     // [55] (byte) bitmap_plot::y#2 ← (byte)(word) bitmap_line::y#7 -- vbuxx=_byte_vwuz1 
     lda.z y
     tax
     // [56] (word) bitmap_plot::x#2 ← (word) bitmap_line::x#6
     // [57] call bitmap_plot 
     // [74] phi from bitmap_line::@3 to bitmap_plot [phi:bitmap_line::@3->bitmap_plot]
-  bitmap_plot_from_b3:
+  bitmap_plot_from___b3:
     // [74] phi (word) bitmap_plot::x#4 = (word) bitmap_plot::x#2 [phi:bitmap_line::@3->bitmap_plot#0] -- register_copy 
     // [74] phi (byte) bitmap_plot::y#4 = (byte) bitmap_plot::y#2 [phi:bitmap_line::@3->bitmap_plot#1] -- register_copy 
     jsr bitmap_plot
-    jmp breturn
+    jmp __breturn
     // bitmap_line::@return
-  breturn:
+  __breturn:
     // [58] return 
     rts
     // bitmap_line::@2
-  b2:
+  __b2:
     // [59] (word) bitmap_line::e1#0 ← (word) bitmap_line::dy#0 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
     lda.z dy+1
     lsr
@@ -4148,27 +4148,27 @@ bitmap_line: {
     ror
     sta.z e1
     // [60] phi from bitmap_line::@10 bitmap_line::@2 to bitmap_line::@9 [phi:bitmap_line::@10/bitmap_line::@2->bitmap_line::@9]
-  b9_from_b10:
-  b9_from_b2:
+  __b9_from___b10:
+  __b9_from___b2:
     // [60] phi (word) bitmap_line::e1#3 = (word) bitmap_line::e1#6 [phi:bitmap_line::@10/bitmap_line::@2->bitmap_line::@9#0] -- register_copy 
     // [60] phi (word) bitmap_line::x#7 = (word) bitmap_line::x#15 [phi:bitmap_line::@10/bitmap_line::@2->bitmap_line::@9#1] -- register_copy 
     // [60] phi (word) bitmap_line::y#15 = (word) bitmap_line::y#13 [phi:bitmap_line::@10/bitmap_line::@2->bitmap_line::@9#2] -- register_copy 
-    jmp b9
+    jmp __b9
     // bitmap_line::@9
-  b9:
+  __b9:
     // [61] (byte) bitmap_plot::y#3 ← (byte)(word) bitmap_line::y#15 -- vbuxx=_byte_vwuz1 
     lda.z y
     tax
     // [62] (word) bitmap_plot::x#3 ← (word) bitmap_line::x#7
     // [63] call bitmap_plot 
     // [74] phi from bitmap_line::@9 to bitmap_plot [phi:bitmap_line::@9->bitmap_plot]
-  bitmap_plot_from_b9:
+  bitmap_plot_from___b9:
     // [74] phi (word) bitmap_plot::x#4 = (word) bitmap_plot::x#3 [phi:bitmap_line::@9->bitmap_plot#0] -- register_copy 
     // [74] phi (byte) bitmap_plot::y#4 = (byte) bitmap_plot::y#3 [phi:bitmap_line::@9->bitmap_plot#1] -- register_copy 
     jsr bitmap_plot
-    jmp b17
+    jmp __b17
     // bitmap_line::@17
-  b17:
+  __b17:
     // [64] (word) bitmap_line::x#15 ← (word) bitmap_line::x#7 + (word) bitmap_line::sx#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z x
     clc
@@ -4191,12 +4191,12 @@ bitmap_line: {
     bne !+
     lda.z e1
     cmp.z dx
-    beq b10_from_b17
+    beq __b10_from___b17
   !:
-    bcc b10_from_b17
-    jmp b11
+    bcc __b10_from___b17
+    jmp __b11
     // bitmap_line::@11
-  b11:
+  __b11:
     // [67] (word) bitmap_line::y#2 ← (word) bitmap_line::y#15 + (word) bitmap_line::sy#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z y
     clc
@@ -4214,40 +4214,40 @@ bitmap_line: {
     sbc.z dx+1
     sta.z e1+1
     // [69] phi from bitmap_line::@11 bitmap_line::@17 to bitmap_line::@10 [phi:bitmap_line::@11/bitmap_line::@17->bitmap_line::@10]
-  b10_from_b11:
-  b10_from_b17:
+  __b10_from___b11:
+  __b10_from___b17:
     // [69] phi (word) bitmap_line::e1#6 = (word) bitmap_line::e1#2 [phi:bitmap_line::@11/bitmap_line::@17->bitmap_line::@10#0] -- register_copy 
     // [69] phi (word) bitmap_line::y#13 = (word) bitmap_line::y#2 [phi:bitmap_line::@11/bitmap_line::@17->bitmap_line::@10#1] -- register_copy 
-    jmp b10
+    jmp __b10
     // bitmap_line::@10
-  b10:
+  __b10:
     // [70] if((word) bitmap_line::x#15!=(word) bitmap_line::x2#0) goto bitmap_line::@9 -- vwuz1_neq_vwuz2_then_la1 
     lda.z x+1
     cmp.z x2+1
-    bne b9_from_b10
+    bne __b9_from___b10
     lda.z x
     cmp.z x2
-    bne b9_from_b10
-    jmp b3_from_b10
+    bne __b9_from___b10
+    jmp __b3_from___b10
     // bitmap_line::@4
-  b4:
+  __b4:
     // [71] (byte) bitmap_plot::y#0 ← (byte)(word) bitmap_line::y1#0 -- vbuxx=_byte_vwuz1 
     lda.z y1
     tax
     // [72] (word) bitmap_plot::x#0 ← (word) bitmap_line::x1#0
     // [73] call bitmap_plot 
     // [74] phi from bitmap_line::@4 to bitmap_plot [phi:bitmap_line::@4->bitmap_plot]
-  bitmap_plot_from_b4:
+  bitmap_plot_from___b4:
     // [74] phi (word) bitmap_plot::x#4 = (word) bitmap_plot::x#0 [phi:bitmap_line::@4->bitmap_plot#0] -- register_copy 
     // [74] phi (byte) bitmap_plot::y#4 = (byte) bitmap_plot::y#0 [phi:bitmap_line::@4->bitmap_plot#1] -- register_copy 
     jsr bitmap_plot
-    jmp breturn
+    jmp __breturn
 }
   // bitmap_plot
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage($b) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $19
+    .label __1 = $19
     .label plotter = $17
     .label x = $b
     // [75] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#4) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
@@ -4258,17 +4258,17 @@ bitmap_plot: {
     // [76] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#4 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     // [77] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter+1
     // [78] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#4 -- vbuaa=_lo_vwuz1 
     lda.z x
@@ -4279,9 +4279,9 @@ bitmap_plot: {
     ora (plotter),y
     ldy #0
     sta (plotter),y
-    jmp breturn
+    jmp __breturn
     // bitmap_plot::@return
-  breturn:
+  __breturn:
     // [80] return 
     rts
 }
@@ -4298,30 +4298,30 @@ sgn_u16: {
     and #$80
     // [84] if((byte) 0!=(byte~) sgn_u16::$1) goto sgn_u16::@1 -- vbuc1_neq_vbuaa_then_la1 
     cmp #0
-    bne b1_from_sgn_u16
+    bne __b1_from_sgn_u16
     // [86] phi from sgn_u16 to sgn_u16::@return [phi:sgn_u16->sgn_u16::@return]
-  breturn_from_sgn_u16:
+  __breturn_from_sgn_u16:
     // [86] phi (word) sgn_u16::return#4 = (byte) 1 [phi:sgn_u16->sgn_u16::@return#0] -- vwuz1=vbuc1 
     lda #<1
     sta.z return
     lda #>1
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // [85] phi from sgn_u16 to sgn_u16::@1 [phi:sgn_u16->sgn_u16::@1]
-  b1_from_sgn_u16:
-    jmp b1
+  __b1_from_sgn_u16:
+    jmp __b1
     // sgn_u16::@1
-  b1:
+  __b1:
     // [86] phi from sgn_u16::@1 to sgn_u16::@return [phi:sgn_u16::@1->sgn_u16::@return]
-  breturn_from_b1:
+  __breturn_from___b1:
     // [86] phi (word) sgn_u16::return#4 = (byte) -1 [phi:sgn_u16::@1->sgn_u16::@return#0] -- vwuz1=vbuc1 
     lda #<-1
     sta.z return
     lda #>-1
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // sgn_u16::@return
-  breturn:
+  __breturn:
     // [87] return 
     rts
 }
@@ -4337,14 +4337,14 @@ abs_u16: {
     and #$80
     // [91] if((byte) 0!=(byte~) abs_u16::$1) goto abs_u16::@1 -- vbuc1_neq_vbuaa_then_la1 
     cmp #0
-    bne b1
+    bne __b1
     // [93] phi from abs_u16 abs_u16::@1 to abs_u16::@return [phi:abs_u16/abs_u16::@1->abs_u16::@return]
-  breturn_from_abs_u16:
-  breturn_from_b1:
+  __breturn_from_abs_u16:
+  __breturn_from___b1:
     // [93] phi (word) abs_u16::return#4 = (word) abs_u16::w#2 [phi:abs_u16/abs_u16::@1->abs_u16::@return#0] -- register_copy 
-    jmp breturn
+    jmp __breturn
     // abs_u16::@1
-  b1:
+  __b1:
     // [92] (word) abs_u16::return#2 ← - (word) abs_u16::w#2 -- vwuz1=_neg_vwuz1 
     sec
     lda #0
@@ -4353,9 +4353,9 @@ abs_u16: {
     lda #0
     sbc.z return+1
     sta.z return+1
-    jmp breturn_from_b1
+    jmp __breturn_from___b1
     // abs_u16::@return
-  breturn:
+  __breturn:
     // [94] return 
     rts
 }
@@ -4382,13 +4382,13 @@ bitmap_clear: {
     sta.z memset.num+1
     jsr memset
     // [97] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
-  b1_from_bitmap_clear:
-    jmp b1
+  __b1_from_bitmap_clear:
+    jmp __b1
     // bitmap_clear::@1
-  b1:
+  __b1:
     // [98] call memset 
     // [100] phi from bitmap_clear::@1 to memset [phi:bitmap_clear::@1->memset]
-  memset_from_b1:
+  memset_from___b1:
     // [100] phi (byte) memset::c#4 = (byte) 0 [phi:bitmap_clear::@1->memset#0] -- vbuxx=vbuc1 
     ldx #0
     // [100] phi (void*) memset::str#3 = (void*)(const byte*) BITMAP [phi:bitmap_clear::@1->memset#1] -- pvoz1=pvoc1 
@@ -4402,9 +4402,9 @@ bitmap_clear: {
     lda #>$1f40
     sta.z memset.num+1
     jsr memset
-    jmp breturn
+    jmp __breturn
     // bitmap_clear::@return
-  breturn:
+  __breturn:
     // [99] return 
     rts
 }
@@ -4420,11 +4420,11 @@ memset: {
     lda.z num
     bne !+
     lda.z num+1
-    beq breturn
+    beq __breturn
   !:
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [102] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z end
     clc
@@ -4435,26 +4435,26 @@ memset: {
     sta.z end+1
     // [103] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3
     // [104] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
-  b2_from_b1:
-  b2_from_b3:
+  __b2_from___b1:
+  __b2_from___b3:
     // [104] phi (byte*) memset::dst#2 = (byte*~) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // memset::@2
-  b2:
+  __b2:
     // [105] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
-    jmp breturn
+    bne __b3
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [106] return 
     rts
     // memset::@3
-  b3:
+  __b3:
     // [107] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
@@ -4464,57 +4464,57 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2_from_b3
+    jmp __b2_from___b3
 }
   // bitmap_init
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _7 = $1b
+    .label __7 = $1b
     .label yoffs = $d
     // [110] phi from bitmap_init to bitmap_init::@1 [phi:bitmap_init->bitmap_init::@1]
-  b1_from_bitmap_init:
+  __b1_from_bitmap_init:
     // [110] phi (byte) bitmap_init::x#2 = (byte) 0 [phi:bitmap_init->bitmap_init::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [110] phi (byte) bitmap_init::bits#3 = (byte) $80 [phi:bitmap_init->bitmap_init::@1#1] -- vbuaa=vbuc1 
     lda #$80
-    jmp b1
+    jmp __b1
     // [110] phi from bitmap_init::@2 to bitmap_init::@1 [phi:bitmap_init::@2->bitmap_init::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [110] phi (byte) bitmap_init::x#2 = (byte) bitmap_init::x#1 [phi:bitmap_init::@2->bitmap_init::@1#0] -- register_copy 
     // [110] phi (byte) bitmap_init::bits#3 = (byte) bitmap_init::bits#4 [phi:bitmap_init::@2->bitmap_init::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // bitmap_init::@1
-  b1:
+  __b1:
     // [111] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_bit,x
     // [112] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
     // [113] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@6 -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne b6_from_b1
+    bne __b6_from___b1
     // [115] phi from bitmap_init::@1 to bitmap_init::@2 [phi:bitmap_init::@1->bitmap_init::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [115] phi (byte) bitmap_init::bits#4 = (byte) $80 [phi:bitmap_init::@1->bitmap_init::@2#0] -- vbuaa=vbuc1 
     lda #$80
-    jmp b2
+    jmp __b2
     // [114] phi from bitmap_init::@1 to bitmap_init::@6 [phi:bitmap_init::@1->bitmap_init::@6]
-  b6_from_b1:
-    jmp b6
+  __b6_from___b1:
+    jmp __b6
     // bitmap_init::@6
-  b6:
+  __b6:
     // [115] phi from bitmap_init::@6 to bitmap_init::@2 [phi:bitmap_init::@6->bitmap_init::@2]
-  b2_from_b6:
+  __b2_from___b6:
     // [115] phi (byte) bitmap_init::bits#4 = (byte) bitmap_init::bits#1 [phi:bitmap_init::@6->bitmap_init::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // bitmap_init::@2
-  b2:
+  __b2:
     // [116] (byte) bitmap_init::x#1 ← ++ (byte) bitmap_init::x#2 -- vbuxx=_inc_vbuxx 
     inx
     // [117] if((byte) bitmap_init::x#1!=(byte) 0) goto bitmap_init::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1_from_b2
+    bne __b1_from___b2
     // [118] phi from bitmap_init::@2 to bitmap_init::@3 [phi:bitmap_init::@2->bitmap_init::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [118] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
     lda #<BITMAP
     sta.z yoffs
@@ -4522,21 +4522,21 @@ bitmap_init: {
     sta.z yoffs+1
     // [118] phi (byte) bitmap_init::y#2 = (byte) 0 [phi:bitmap_init::@2->bitmap_init::@3#1] -- vbuxx=vbuc1 
     ldx #0
-    jmp b3
+    jmp __b3
     // [118] phi from bitmap_init::@4 to bitmap_init::@3 [phi:bitmap_init::@4->bitmap_init::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [118] phi (byte*) bitmap_init::yoffs#2 = (byte*) bitmap_init::yoffs#4 [phi:bitmap_init::@4->bitmap_init::@3#0] -- register_copy 
     // [118] phi (byte) bitmap_init::y#2 = (byte) bitmap_init::y#1 [phi:bitmap_init::@4->bitmap_init::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // bitmap_init::@3
-  b3:
+  __b3:
     // [119] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
-    sax.z _7
+    sax.z __7
     // [120] (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2 -- vbuaa=_lo_pbuz1 
     lda.z yoffs
     // [121] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
-    ora.z _7
+    ora.z __7
     // [122] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // [123] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
@@ -4545,11 +4545,11 @@ bitmap_init: {
     sta bitmap_plot_yhi,x
     // [125] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp.z _7
-    bne b4_from_b3
-    jmp b5
+    cmp.z __7
+    bne __b4_from___b3
+    jmp __b5
     // bitmap_init::@5
-  b5:
+  __b5:
     // [126] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda.z yoffs
@@ -4559,20 +4559,20 @@ bitmap_init: {
     adc #>$28*8
     sta.z yoffs+1
     // [127] phi from bitmap_init::@3 bitmap_init::@5 to bitmap_init::@4 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4]
-  b4_from_b3:
-  b4_from_b5:
+  __b4_from___b3:
+  __b4_from___b5:
     // [127] phi (byte*) bitmap_init::yoffs#4 = (byte*) bitmap_init::yoffs#2 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // bitmap_init::@4
-  b4:
+  __b4:
     // [128] (byte) bitmap_init::y#1 ← ++ (byte) bitmap_init::y#2 -- vbuxx=_inc_vbuxx 
     inx
     // [129] if((byte) bitmap_init::y#1!=(byte) 0) goto bitmap_init::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b3_from_b4
-    jmp breturn
+    bne __b3_from___b4
+    jmp __breturn
     // bitmap_init::@return
-  breturn:
+  __breturn:
     // [130] return 
     rts
 }
@@ -4586,47 +4586,47 @@ SINTAB:
 .fill $180, 99.5+99.5*sin(i*2*PI/256) 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b5
-Removing instruction jmp b6
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b5
+Removing instruction jmp __b6
 Removing instruction jmp toD0181
-Removing instruction jmp b4
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp b7
-Removing instruction jmp b12
-Removing instruction jmp b13
-Removing instruction jmp b18
-Removing instruction jmp b1
-Removing instruction jmp b14
-Removing instruction jmp b15
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp b16
-Removing instruction jmp b8
-Removing instruction jmp b7
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b9
-Removing instruction jmp b17
-Removing instruction jmp b11
-Removing instruction jmp b10
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b6
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b5
-Removing instruction jmp b4
-Removing instruction jmp breturn
+Removing instruction jmp __b4
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __b7
+Removing instruction jmp __b12
+Removing instruction jmp __b13
+Removing instruction jmp __b18
+Removing instruction jmp __b1
+Removing instruction jmp __b14
+Removing instruction jmp __b15
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __b16
+Removing instruction jmp __b8
+Removing instruction jmp __b7
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b9
+Removing instruction jmp __b17
+Removing instruction jmp __b11
+Removing instruction jmp __b10
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b6
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
 Removing instruction ldy.z a
@@ -4634,114 +4634,115 @@ Removing instruction lda.z e+1
 Removing instruction lda.z e1+1
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b7_from_b16 with b7
-Replacing label b7_from_b16 with b7
-Replacing label b6_from_b7 with b6
-Replacing label b6_from_b7 with b6
-Replacing label b10_from_b17 with b10
-Replacing label b10_from_b17 with b10
-Replacing label b9_from_b10 with b9
-Replacing label b9_from_b10 with b9
-Replacing label b3_from_b10 with b3
-Replacing label b1_from_sgn_u16 with b1
-Replacing label b2_from_b3 with b2
-Replacing label b6_from_b1 with b2
-Replacing label b1_from_b2 with b1
-Replacing label b4_from_b3 with b4
-Replacing label b3_from_b4 with b3
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b5_from_main:
-Removing instruction bitmap_clear_from_b5:
-Removing instruction toD0181_from_b6:
+Replacing label __bbegin with __b1
+Replacing label __b7_from___b16 with __b7
+Replacing label __b7_from___b16 with __b7
+Replacing label __b6_from___b7 with __b6
+Replacing label __b6_from___b7 with __b6
+Replacing label __b10_from___b17 with __b10
+Replacing label __b10_from___b17 with __b10
+Replacing label __b9_from___b10 with __b9
+Replacing label __b9_from___b10 with __b9
+Replacing label __b3_from___b10 with __b3
+Replacing label __b1_from_sgn_u16 with __b1
+Replacing label __b2_from___b3 with __b2
+Replacing label __b6_from___b1 with __b2
+Replacing label __b1_from___b2 with __b1
+Replacing label __b4_from___b3 with __b4
+Replacing label __b3_from___b4 with __b3
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b5_from_main:
+Removing instruction bitmap_clear_from___b5:
+Removing instruction toD0181_from___b6:
 Removing instruction toD0181:
-Removing instruction b6_from_b5:
-Removing instruction b6_from_b7:
-Removing instruction b7_from_b16:
-Removing instruction b7_from_b8:
-Removing instruction b3_from_b10:
-Removing instruction b3_from_b7:
-Removing instruction b9_from_b10:
-Removing instruction b9_from_b2:
-Removing instruction b10_from_b11:
-Removing instruction b10_from_b17:
-Removing instruction b1_from_sgn_u16:
-Removing instruction breturn_from_b1:
-Removing instruction breturn_from_abs_u16:
-Removing instruction b1_from_bitmap_clear:
-Removing instruction memset_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b3:
-Removing instruction b1_from_b2:
-Removing instruction b6_from_b1:
-Removing instruction b6:
-Removing instruction b2_from_b6:
-Removing instruction b3_from_b4:
-Removing instruction b4_from_b3:
-Removing instruction b4_from_b5:
+Removing instruction __b6_from___b5:
+Removing instruction __b6_from___b7:
+Removing instruction __b7_from___b16:
+Removing instruction __b7_from___b8:
+Removing instruction __b3_from___b10:
+Removing instruction __b3_from___b7:
+Removing instruction __b9_from___b10:
+Removing instruction __b9_from___b2:
+Removing instruction __b10_from___b11:
+Removing instruction __b10_from___b17:
+Removing instruction __b1_from_sgn_u16:
+Removing instruction __breturn_from___b1:
+Removing instruction __breturn_from_abs_u16:
+Removing instruction __b1_from_bitmap_clear:
+Removing instruction memset_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b3:
+Removing instruction __b1_from___b2:
+Removing instruction __b6_from___b1:
+Removing instruction __b6:
+Removing instruction __b2_from___b6:
+Removing instruction __b3_from___b4:
+Removing instruction __b4_from___b3:
+Removing instruction __b4_from___b5:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction bitmap_init_from_main:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction b4:
-Removing instruction b1_from_b4:
-Removing instruction b7:
-Removing instruction b1_from_b7:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction __b4:
+Removing instruction __b1_from___b4:
+Removing instruction __b7:
+Removing instruction __b1_from___b7:
 Removing instruction abs_u16_from_bitmap_line:
-Removing instruction b12:
-Removing instruction abs_u16_from_b12:
-Removing instruction b13:
-Removing instruction b18:
-Removing instruction sgn_u16_from_b1:
-Removing instruction b14:
-Removing instruction sgn_u16_from_b14:
-Removing instruction b15:
-Removing instruction b5:
-Removing instruction bitmap_plot_from_b6:
-Removing instruction b16:
-Removing instruction b8:
-Removing instruction bitmap_plot_from_b3:
-Removing instruction bitmap_plot_from_b9:
-Removing instruction b17:
-Removing instruction b11:
-Removing instruction bitmap_plot_from_b4:
-Removing instruction breturn:
-Removing instruction breturn_from_sgn_u16:
+Removing instruction __b12:
+Removing instruction abs_u16_from___b12:
+Removing instruction __b13:
+Removing instruction __b18:
+Removing instruction sgn_u16_from___b1:
+Removing instruction __b14:
+Removing instruction sgn_u16_from___b14:
+Removing instruction __b15:
+Removing instruction __b5:
+Removing instruction bitmap_plot_from___b6:
+Removing instruction __b16:
+Removing instruction __b8:
+Removing instruction bitmap_plot_from___b3:
+Removing instruction bitmap_plot_from___b9:
+Removing instruction __b17:
+Removing instruction __b11:
+Removing instruction bitmap_plot_from___b4:
+Removing instruction __breturn:
+Removing instruction __breturn_from_sgn_u16:
 Removing instruction memset_from_bitmap_clear:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction b1:
-Removing instruction b1_from_bitmap_init:
-Removing instruction b2_from_b1:
-Removing instruction b3_from_b2:
-Removing instruction b5:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b1:
+Removing instruction __b1_from_bitmap_init:
+Removing instruction __b2_from___b1:
+Removing instruction __b3_from___b2:
+Removing instruction __b5:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Replacing jump to rts with rts in jmp breturn
-Replacing jump to rts with rts in jmp breturn
-Replacing jump to rts with rts in jmp breturn
-Skipping double jump to breturn in jmp breturn_from_b1
+Replacing jump to rts with rts in jmp __breturn
+Replacing jump to rts with rts in jmp __breturn
+Replacing jump to rts with rts in jmp __breturn
+Skipping double jump to __breturn in jmp __breturn_from___b1
 Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label breturn_from_b1 to b2
+Relabelling long label __breturn_from___b1 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction b2:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction b1:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [119] beq b4 to bne
+Fixing long branch [119] beq __b4 to bne
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -5009,8 +5010,8 @@ Score: 27289
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label _7 = $b
-    .label _11 = $f
+    .label __7 = $b
+    .label __11 = $f
     .label a = 2
     .label i = $1b
     // bitmap_init(BITMAP, SCREEN)
@@ -5042,27 +5043,27 @@ main: {
     // [11] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#1] -- vbuz1=vbuc1 
     sta.z i
     // main::@1
-  b1:
+  __b1:
     // for( byte i=0, a=0; i!=8; i++, a+=32)
     // [12] if((byte) main::i#2!=(byte) 8) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b2
+    bne __b2
     // main::@3
-  b3:
+  __b3:
     // (*(SCREEN+999))++;
     // [13] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
-    jmp b3
+    jmp __b3
     // main::@2
-  b2:
+  __b2:
     // (word)COSTAB[a]
     // [14] (word~) main::$7 ← (word)*((const byte*) COSTAB#0 + (byte) main::a#2) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z a
     lda COSTAB,y
-    sta.z _7
+    sta.z __7
     lda #0
-    sta.z _7+1
+    sta.z __7+1
     // bitmap_line( (word)COSTAB[a]+120, (word)SINTAB[a], (word)COSTAB[a+32]+120, (word)SINTAB[a+32])
     // [15] (word) bitmap_line::x1#0 ← (word~) main::$7 + (byte) $78 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$78
@@ -5081,9 +5082,9 @@ main: {
     // (word)COSTAB[a+32]
     // [17] (word~) main::$11 ← (word)*((const byte*) COSTAB#0+(byte) $20 + (byte) main::a#2) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     lda COSTAB+$20,y
-    sta.z _11
+    sta.z __11
     lda #0
-    sta.z _11+1
+    sta.z __11+1
     // bitmap_line( (word)COSTAB[a]+120, (word)SINTAB[a], (word)COSTAB[a+32]+120, (word)SINTAB[a+32])
     // [18] (word) bitmap_line::x2#0 ← (word~) main::$11 + (byte) $78 -- vwuz1=vwuz1_plus_vbuc1 
     lda #$78
@@ -5113,7 +5114,7 @@ main: {
     // [11] phi from main::@7 to main::@1 [phi:main::@7->main::@1]
     // [11] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@7->main::@1#0] -- register_copy 
     // [11] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@7->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // bitmap_line
 // Draw a line on the bitmap using bresenhams algorithm
@@ -5174,20 +5175,20 @@ bitmap_line: {
     // if(dx==0 && dy==0)
     // [31] if((word) bitmap_line::dx#0!=(byte) 0) goto bitmap_line::@1 -- vwuz1_neq_0_then_la1 
     lda.z dx
-    bne b1
+    bne __b1
     lda.z dx+1
-    bne b1
+    bne __b1
     // bitmap_line::@18
     // [32] if((word) bitmap_line::dy#0==(byte) 0) goto bitmap_line::@4 -- vwuz1_eq_0_then_la1 
     lda.z dy
     bne !+
     lda.z dy+1
-    bne !b4+
-    jmp b4
-  !b4:
+    bne !__b4+
+    jmp __b4
+  !__b4:
   !:
     // bitmap_line::@1
-  b1:
+  __b1:
     // sgn_u16(x2-x1)
     // [33] (word) sgn_u16::w#0 ← (word) bitmap_line::x2#0 - (word) bitmap_line::x1#0 -- vwuz1=vwuz2_minus_vwuz3 
     lda.z x2
@@ -5232,11 +5233,11 @@ bitmap_line: {
     // [41] if((word) bitmap_line::dx#0>(word) bitmap_line::dy#0) goto bitmap_line::@2 -- vwuz1_gt_vwuz2_then_la1 
     lda.z dy+1
     cmp.z dx+1
-    bcc b2
+    bcc __b2
     bne !+
     lda.z dy
     cmp.z dx
-    bcc b2
+    bcc __b2
   !:
     // bitmap_line::@5
     // e = dx/2
@@ -5252,7 +5253,7 @@ bitmap_line: {
     // [43] phi (word) bitmap_line::x#13 = (word) bitmap_line::x1#0 [phi:bitmap_line::@5/bitmap_line::@7->bitmap_line::@6#1] -- register_copy 
     // [43] phi (word) bitmap_line::y#4 = (word) bitmap_line::y1#0 [phi:bitmap_line::@5/bitmap_line::@7->bitmap_line::@6#2] -- register_copy 
     // bitmap_line::@6
-  b6:
+  __b6:
     // bitmap_plot(x,(byte)y)
     // [44] (byte) bitmap_plot::y#1 ← (byte)(word) bitmap_line::y#4 -- vbuxx=_byte_vwuz1 
     lda.z y
@@ -5288,9 +5289,9 @@ bitmap_line: {
     bne !+
     lda.z e
     cmp.z dy
-    beq b7
+    beq __b7
   !:
-    bcc b7
+    bcc __b7
     // bitmap_line::@8
     // x += sx
     // [50] (word) bitmap_line::x#1 ← (word) bitmap_line::x#13 + (word) bitmap_line::sx#0 -- vwuz1=vwuz1_plus_vwuz2 
@@ -5314,20 +5315,20 @@ bitmap_line: {
     // [52] phi (word) bitmap_line::e#6 = (word) bitmap_line::e#1 [phi:bitmap_line::@16/bitmap_line::@8->bitmap_line::@7#0] -- register_copy 
     // [52] phi (word) bitmap_line::x#12 = (word) bitmap_line::x#13 [phi:bitmap_line::@16/bitmap_line::@8->bitmap_line::@7#1] -- register_copy 
     // bitmap_line::@7
-  b7:
+  __b7:
     // while (y != y2)
     // [53] if((word) bitmap_line::y#1!=(word) bitmap_line::y2#0) goto bitmap_line::@6 -- vwuz1_neq_vwuz2_then_la1 
     lda.z y+1
     cmp.z y2+1
-    bne b6
+    bne __b6
     lda.z y
     cmp.z y2
-    bne b6
+    bne __b6
     // [54] phi from bitmap_line::@10 bitmap_line::@7 to bitmap_line::@3 [phi:bitmap_line::@10/bitmap_line::@7->bitmap_line::@3]
     // [54] phi (word) bitmap_line::x#6 = (word) bitmap_line::x#15 [phi:bitmap_line::@10/bitmap_line::@7->bitmap_line::@3#0] -- register_copy 
     // [54] phi (word) bitmap_line::y#7 = (word) bitmap_line::y#13 [phi:bitmap_line::@10/bitmap_line::@7->bitmap_line::@3#1] -- register_copy 
     // bitmap_line::@3
-  b3:
+  __b3:
     // bitmap_plot(x,(byte)y)
     // [55] (byte) bitmap_plot::y#2 ← (byte)(word) bitmap_line::y#7 -- vbuxx=_byte_vwuz1 
     lda.z y
@@ -5343,7 +5344,7 @@ bitmap_line: {
     // [58] return 
     rts
     // bitmap_line::@2
-  b2:
+  __b2:
     // e = dy/2
     // [59] (word) bitmap_line::e1#0 ← (word) bitmap_line::dy#0 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
     lda.z dy+1
@@ -5357,7 +5358,7 @@ bitmap_line: {
     // [60] phi (word) bitmap_line::x#7 = (word) bitmap_line::x#15 [phi:bitmap_line::@10/bitmap_line::@2->bitmap_line::@9#1] -- register_copy 
     // [60] phi (word) bitmap_line::y#15 = (word) bitmap_line::y#13 [phi:bitmap_line::@10/bitmap_line::@2->bitmap_line::@9#2] -- register_copy 
     // bitmap_line::@9
-  b9:
+  __b9:
     // bitmap_plot(x,(byte)y)
     // [61] (byte) bitmap_plot::y#3 ← (byte)(word) bitmap_line::y#15 -- vbuxx=_byte_vwuz1 
     lda.z y
@@ -5393,9 +5394,9 @@ bitmap_line: {
     bne !+
     lda.z e1
     cmp.z dx
-    beq b10
+    beq __b10
   !:
-    bcc b10
+    bcc __b10
     // bitmap_line::@11
     // y += sy
     // [67] (word) bitmap_line::y#2 ← (word) bitmap_line::y#15 + (word) bitmap_line::sy#0 -- vwuz1=vwuz1_plus_vwuz2 
@@ -5419,18 +5420,18 @@ bitmap_line: {
     // [69] phi (word) bitmap_line::e1#6 = (word) bitmap_line::e1#2 [phi:bitmap_line::@11/bitmap_line::@17->bitmap_line::@10#0] -- register_copy 
     // [69] phi (word) bitmap_line::y#13 = (word) bitmap_line::y#2 [phi:bitmap_line::@11/bitmap_line::@17->bitmap_line::@10#1] -- register_copy 
     // bitmap_line::@10
-  b10:
+  __b10:
     // while (x != x2)
     // [70] if((word) bitmap_line::x#15!=(word) bitmap_line::x2#0) goto bitmap_line::@9 -- vwuz1_neq_vwuz2_then_la1 
     lda.z x+1
     cmp.z x2+1
-    bne b9
+    bne __b9
     lda.z x
     cmp.z x2
-    bne b9
-    jmp b3
+    bne __b9
+    jmp __b3
     // bitmap_line::@4
-  b4:
+  __b4:
     // bitmap_plot(x,(byte)y)
     // [71] (byte) bitmap_plot::y#0 ← (byte)(word) bitmap_line::y1#0 -- vbuxx=_byte_vwuz1 
     lda.z y1
@@ -5447,7 +5448,7 @@ bitmap_line: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage($b) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $19
+    .label __1 = $19
     .label plotter = $17
     .label x = $b
     // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
@@ -5460,18 +5461,18 @@ bitmap_plot: {
     // [76] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#4 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     // plotter += ( x & $fff8 )
     // [77] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter+1
     // <x
     // [78] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#4 -- vbuaa=_lo_vwuz1 
@@ -5504,7 +5505,7 @@ sgn_u16: {
     // if(>w&0x80)
     // [84] if((byte) 0!=(byte~) sgn_u16::$1) goto sgn_u16::@1 -- vbuc1_neq_vbuaa_then_la1 
     cmp #0
-    bne b1
+    bne __b1
     // [86] phi from sgn_u16 to sgn_u16::@return [phi:sgn_u16->sgn_u16::@return]
     // [86] phi (word) sgn_u16::return#4 = (byte) 1 [phi:sgn_u16->sgn_u16::@return#0] -- vwuz1=vbuc1 
     lda #<1
@@ -5514,7 +5515,7 @@ sgn_u16: {
     rts
     // [85] phi from sgn_u16 to sgn_u16::@1 [phi:sgn_u16->sgn_u16::@1]
     // sgn_u16::@1
-  b1:
+  __b1:
     // [86] phi from sgn_u16::@1 to sgn_u16::@return [phi:sgn_u16::@1->sgn_u16::@return]
     // [86] phi (word) sgn_u16::return#4 = (byte) -1 [phi:sgn_u16::@1->sgn_u16::@return#0] -- vwuz1=vbuc1 
     lda #<-1
@@ -5541,12 +5542,12 @@ abs_u16: {
     // if(>w&0x80)
     // [91] if((byte) 0!=(byte~) abs_u16::$1) goto abs_u16::@1 -- vbuc1_neq_vbuaa_then_la1 
     cmp #0
-    bne b1
+    bne __b1
     // [93] phi from abs_u16 abs_u16::@1 to abs_u16::@return [phi:abs_u16/abs_u16::@1->abs_u16::@return]
     // [93] phi (word) abs_u16::return#4 = (word) abs_u16::w#2 [phi:abs_u16/abs_u16::@1->abs_u16::@return#0] -- register_copy 
     rts
     // abs_u16::@1
-  b1:
+  __b1:
     // return -w;
     // [92] (word) abs_u16::return#2 ← - (word) abs_u16::w#2 -- vwuz1=_neg_vwuz1 
     sec
@@ -5619,7 +5620,7 @@ memset: {
     lda.z num
     bne !+
     lda.z num+1
-    beq breturn
+    beq __breturn
   !:
     // memset::@1
     // end = (char*)str + num
@@ -5635,22 +5636,22 @@ memset: {
     // [104] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
     // [104] phi (byte*) memset::dst#2 = (byte*~) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     // memset::@2
-  b2:
+  __b2:
     // for(char* dst = str; dst!=end; dst++)
     // [105] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
+    bne __b3
     // memset::@return
-  breturn:
+  __breturn:
     // }
     // [106] return 
     rts
     // memset::@3
-  b3:
+  __b3:
     // *dst = c
     // [107] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
     txa
@@ -5662,12 +5663,12 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2
+    jmp __b2
 }
   // bitmap_init
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _7 = $1b
+    .label __7 = $1b
     .label yoffs = $d
     // [110] phi from bitmap_init to bitmap_init::@1 [phi:bitmap_init->bitmap_init::@1]
     // [110] phi (byte) bitmap_init::x#2 = (byte) 0 [phi:bitmap_init->bitmap_init::@1#0] -- vbuxx=vbuc1 
@@ -5678,7 +5679,7 @@ bitmap_init: {
     // [110] phi (byte) bitmap_init::x#2 = (byte) bitmap_init::x#1 [phi:bitmap_init::@2->bitmap_init::@1#0] -- register_copy 
     // [110] phi (byte) bitmap_init::bits#3 = (byte) bitmap_init::bits#4 [phi:bitmap_init::@2->bitmap_init::@1#1] -- register_copy 
     // bitmap_init::@1
-  b1:
+  __b1:
     // bitmap_plot_bit[x] = bits
     // [111] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_bit,x
@@ -5688,7 +5689,7 @@ bitmap_init: {
     // if(bits==0)
     // [113] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@6 -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne b2
+    bne __b2
     // [115] phi from bitmap_init::@1 to bitmap_init::@2 [phi:bitmap_init::@1->bitmap_init::@2]
     // [115] phi (byte) bitmap_init::bits#4 = (byte) $80 [phi:bitmap_init::@1->bitmap_init::@2#0] -- vbuaa=vbuc1 
     lda #$80
@@ -5697,13 +5698,13 @@ bitmap_init: {
     // [115] phi from bitmap_init::@6 to bitmap_init::@2 [phi:bitmap_init::@6->bitmap_init::@2]
     // [115] phi (byte) bitmap_init::bits#4 = (byte) bitmap_init::bits#1 [phi:bitmap_init::@6->bitmap_init::@2#0] -- register_copy 
     // bitmap_init::@2
-  b2:
+  __b2:
     // for(byte x : 0..255)
     // [116] (byte) bitmap_init::x#1 ← ++ (byte) bitmap_init::x#2 -- vbuxx=_inc_vbuxx 
     inx
     // [117] if((byte) bitmap_init::x#1!=(byte) 0) goto bitmap_init::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1
+    bne __b1
     // [118] phi from bitmap_init::@2 to bitmap_init::@3 [phi:bitmap_init::@2->bitmap_init::@3]
     // [118] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
     lda #<BITMAP
@@ -5716,17 +5717,17 @@ bitmap_init: {
     // [118] phi (byte*) bitmap_init::yoffs#2 = (byte*) bitmap_init::yoffs#4 [phi:bitmap_init::@4->bitmap_init::@3#0] -- register_copy 
     // [118] phi (byte) bitmap_init::y#2 = (byte) bitmap_init::y#1 [phi:bitmap_init::@4->bitmap_init::@3#1] -- register_copy 
     // bitmap_init::@3
-  b3:
+  __b3:
     // y&$7
     // [119] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
-    sax.z _7
+    sax.z __7
     // <yoffs
     // [120] (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2 -- vbuaa=_lo_pbuz1 
     lda.z yoffs
     // y&$7 | <yoffs
     // [121] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
-    ora.z _7
+    ora.z __7
     // bitmap_plot_ylo[y] = y&$7 | <yoffs
     // [122] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
@@ -5739,8 +5740,8 @@ bitmap_init: {
     // if((y&$7)==7)
     // [125] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp.z _7
-    bne b4
+    cmp.z __7
+    bne __b4
     // bitmap_init::@5
     // yoffs = yoffs + 40*8
     // [126] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
@@ -5754,13 +5755,13 @@ bitmap_init: {
     // [127] phi from bitmap_init::@3 bitmap_init::@5 to bitmap_init::@4 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4]
     // [127] phi (byte*) bitmap_init::yoffs#4 = (byte*) bitmap_init::yoffs#2 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4#0] -- register_copy 
     // bitmap_init::@4
-  b4:
+  __b4:
     // for(byte y : 0..255)
     // [128] (byte) bitmap_init::y#1 ← ++ (byte) bitmap_init::y#2 -- vbuxx=_inc_vbuxx 
     inx
     // [129] if((byte) bitmap_init::y#1!=(byte) 0) goto bitmap_init::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b3
+    bne __b3
     // bitmap_init::@return
     // }
     // [130] return 

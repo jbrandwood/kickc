@@ -207,38 +207,38 @@ Target platform is c64basic / MOS6502X
 // Test binary ANDing pointers by Clay Cowgill
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _2 = 7
-    .label _3 = 9
-    .label _4 = $c
+    .label __2 = 7
+    .label __3 = 9
+    .label __4 = $c
     .label vram_ptr = $a
     .label vram_ptr_2 = 4
     .label pos_ptr = 2
     .label i = 6
     .label vram_ptr_3 = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -252,15 +252,15 @@ main: {
     sta.z pos_ptr
     lda #>$400
     sta.z pos_ptr+1
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::vram_ptr#3 = (byte*) main::vram_ptr#2 [phi:main::@1->main::@1#1] -- register_copy 
     // [5] phi (signed word*) main::pos_ptr#2 = (signed word*) main::pos_ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((signed word*) main::pos_ptr#2) ← (signed word) $55aa -- _deref_pwsz1=vwsc1 
     ldy #0
     lda #<$55aa
@@ -272,16 +272,16 @@ main: {
     ldy #0
     lda (pos_ptr),y
     and #<$aa55
-    sta.z _2
+    sta.z __2
     iny
     lda (pos_ptr),y
     and #>$aa55
-    sta.z _2+1
+    sta.z __2+1
     // [8] (byte~) main::$3 ← < (signed word~) main::$2 -- vbuz1=_lo_vwsz2 
-    lda.z _2
-    sta.z _3
+    lda.z __2
+    sta.z __3
     // [9] *((byte*) main::vram_ptr#3) ← (byte~) main::$3 -- _deref_pbuz1=vbuz2 
-    lda.z _3
+    lda.z __3
     ldy #0
     sta (vram_ptr_3),y
     // [10] (byte*) main::vram_ptr#1 ← ++ (byte*) main::vram_ptr#3 -- pbuz1=_inc_pbuz2 
@@ -295,10 +295,10 @@ main: {
     // [11] (byte~) main::$4 ← > *((signed word*) main::pos_ptr#2) -- vbuz1=_hi__deref_pwsz2 
     ldy #1
     lda (pos_ptr),y
-    sta.z _4
+    sta.z __4
     // [12] *((byte*) main::vram_ptr#1) ← (byte~) main::$4 -- _deref_pbuz1=vbuz2 
     // stores 0x00
-    lda.z _4
+    lda.z __4
     ldy #0
     sta (vram_ptr),y
     // [13] (byte*) main::vram_ptr#2 ← ++ (byte*) main::vram_ptr#1 -- pbuz1=_inc_pbuz2 
@@ -322,10 +322,10 @@ main: {
     // [16] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
@@ -374,33 +374,33 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test binary ANDing pointers by Clay Cowgill
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _2 = 6
+    .label __2 = 6
     .label vram_ptr = 4
     .label pos_ptr = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [5] phi (byte*) main::vram_ptr#3 = (byte*) 1064 [phi:main->main::@1#1] -- pbuz1=pbuc1 
@@ -413,15 +413,15 @@ main: {
     sta.z pos_ptr
     lda #>$400
     sta.z pos_ptr+1
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::vram_ptr#3 = (byte*) main::vram_ptr#2 [phi:main::@1->main::@1#1] -- register_copy 
     // [5] phi (signed word*) main::pos_ptr#2 = (signed word*) main::pos_ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((signed word*) main::pos_ptr#2) ← (signed word) $55aa -- _deref_pwsz1=vwsc1 
     ldy #0
     lda #<$55aa
@@ -433,13 +433,13 @@ main: {
     ldy #0
     lda (pos_ptr),y
     and #<$aa55
-    sta.z _2
+    sta.z __2
     iny
     lda (pos_ptr),y
     and #>$aa55
-    sta.z _2+1
+    sta.z __2+1
     // [8] (byte~) main::$3 ← < (signed word~) main::$2 -- vbuaa=_lo_vwsz1 
-    lda.z _2
+    lda.z __2
     // [9] *((byte*) main::vram_ptr#3) ← (byte~) main::$3 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (vram_ptr),y
@@ -472,38 +472,39 @@ main: {
     inx
     // [16] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -556,7 +557,7 @@ Score: 1431
   // @end
   // main
 main: {
-    .label _2 = 6
+    .label __2 = 6
     .label vram_ptr = 4
     .label pos_ptr = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
@@ -577,7 +578,7 @@ main: {
     // [5] phi (byte*) main::vram_ptr#3 = (byte*) main::vram_ptr#2 [phi:main::@1->main::@1#1] -- register_copy 
     // [5] phi (signed word*) main::pos_ptr#2 = (signed word*) main::pos_ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // *pos_ptr=(int)0x55AA
     // [6] *((signed word*) main::pos_ptr#2) ← (signed word) $55aa -- _deref_pwsz1=vwsc1 
     ldy #0
@@ -591,14 +592,14 @@ main: {
     ldy #0
     lda (pos_ptr),y
     and #<$aa55
-    sta.z _2
+    sta.z __2
     iny
     lda (pos_ptr),y
     and #>$aa55
-    sta.z _2+1
+    sta.z __2+1
     // <(*pos_ptr&(int)0xAA55)
     // [8] (byte~) main::$3 ← < (signed word~) main::$2 -- vbuaa=_lo_vwsz1 
-    lda.z _2
+    lda.z __2
     // *vram_ptr++=<(*pos_ptr&(int)0xAA55)
     // [9] *((byte*) main::vram_ptr#3) ← (byte~) main::$3 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -638,7 +639,7 @@ main: {
     inx
     // [16] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [17] return 

@@ -6,8 +6,8 @@
   .label RASTER = $d012
 main: {
     sei
-  b1:
+  __b1:
     lda RASTER
     sta BGCOL
-    jmp b1
+    jmp __b1
 }

@@ -24,7 +24,7 @@ main: {
     sta.z a
     lda #>-$3ff
     sta.z a+1
-  b1:
+  __b1:
     lda.z a
     clc
     adc #<-7
@@ -54,18 +54,18 @@ main: {
     jsr print_ln
     inx
     cpx #6
-    bne b6
+    bne __b6
     rts
-  b6:
+  __b6:
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    jmp b1
+    jmp __b1
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -75,11 +75,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -130,13 +130,13 @@ print_char: {
 print_sword: {
     .label w = 8
     lda.z w+1
-    bmi b1
+    bmi __b1
     lda #' '
     jsr print_char
-  b2:
+  __b2:
     jsr print_word
     rts
-  b1:
+  __b1:
     lda #'-'
     jsr print_char
     sec
@@ -146,6 +146,6 @@ print_sword: {
     lda #0
     sbc.z w+1
     sta.z w+1
-    jmp b2
+    jmp __b2
 }
   print_hextab: .text "0123456789abcdef"

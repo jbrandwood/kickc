@@ -147,45 +147,45 @@ Target platform is c64basic / MOS6502X
 // Fragment pbuz1=pbuc1_plus_vwsz1.asm supplied by Richard-William Loerakker
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400+$28*$a
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _1 = 6
+    .label __1 = 6
     .label sc = 4
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (signed word) main::i#2 = (signed word) -$a [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<-$a
     sta.z i
     lda #>-$a
     sta.z i+1
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<SCREEN
     clc
@@ -196,9 +196,9 @@ main: {
     sta.z sc+1
     // [7] (byte~) main::$1 ← (byte)(signed word) main::i#2 -- vbuz1=_byte_vwsz2 
     lda.z i
-    sta.z _1
+    sta.z __1
     // [8] *((byte*) main::sc#0) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
-    lda.z _1
+    lda.z __1
     ldy #0
     sta (sc),y
     // [9] (signed word) main::i#1 ← ++ (signed word) main::i#2 -- vwsz1=_inc_vwsz1 
@@ -209,13 +209,13 @@ main: {
     // [10] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 -- vwsz1_neq_vwuc1_then_la1 
     lda.z i+1
     cmp #>$b
-    bne b1_from_b1
+    bne __b1_from___b1
     lda.z i
     cmp #<$b
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
@@ -243,44 +243,44 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Fragment pbuz1=pbuc1_plus_vwsz1.asm supplied by Richard-William Loerakker
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400+$28*$a
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label sc = 4
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (signed word) main::i#2 = (signed word) -$a [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<-$a
     sta.z i
     lda #>-$a
     sta.z i+1
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<SCREEN
     clc
@@ -302,42 +302,43 @@ main: {
     // [10] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 -- vwsz1_neq_vwuc1_then_la1 
     lda.z i+1
     cmp #>$b
-    bne b1_from_b1
+    bne __b1_from___b1
     lda.z i
     cmp #<$b
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -392,7 +393,7 @@ main: {
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [5] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // sc = SCREEN + i
     // [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<SCREEN
@@ -418,10 +419,10 @@ main: {
     // [10] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 -- vwsz1_neq_vwuc1_then_la1 
     lda.z i+1
     cmp #>$b
-    bne b1
+    bne __b1
     lda.z i
     cmp #<$b
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [11] return 

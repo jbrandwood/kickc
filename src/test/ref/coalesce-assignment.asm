@@ -9,9 +9,9 @@ main: {
     ldx #0
     txa
     sta.z a
-  b1:
+  __b1:
     ldy #0
-  b2:
+  __b2:
     tya
     clc
     adc.z a
@@ -25,10 +25,10 @@ main: {
     inx
     iny
     cpy #6
-    bne b2
+    bne __b2
     inc.z a
     lda #6
     cmp.z a
-    bne b1
+    bne __b1
     rts
 }

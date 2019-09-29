@@ -4,12 +4,12 @@
 main: {
     .label a = 2
     ldy #0
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda #0
     sta.z a
-  b3:
+  __b3:
     tya
     clc
     adc.z a
@@ -17,13 +17,13 @@ main: {
     inc.z a
     lda #$65
     cmp.z a
-    bne b3
+    bne __b3
     inx
     cpx #$65
-    bne b2
+    bne __b2
     iny
     cpy #$65
-    bne b1
+    bne __b1
     rts
 }
 // print(byte register(X) idx, byte register(A) val)

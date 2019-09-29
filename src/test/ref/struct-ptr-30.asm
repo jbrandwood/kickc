@@ -9,7 +9,7 @@ main: {
     lda #0
     sta.z idx
     tax
-  b1:
+  __b1:
     txa
     asl
     stx.z $ff
@@ -25,7 +25,7 @@ main: {
     jsr print
     inx
     cpx #4
-    bne b1
+    bne __b1
     rts
 }
 // print(byte zeropage(3) p_x, signed word zeropage(4) p_y)

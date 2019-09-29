@@ -18,21 +18,21 @@ main: {
     sta.z sc+1
     lda #0
     sta.z y
-  b1:
+  __b1:
     ldy.z y
     lda CHAR_A,y
     sta.z bits
     ldx #0
-  b2:
+  __b2:
     lda #$80
     and.z bits
     cmp #0
-    beq b4
+    beq b1
     lda #'*'
-    jmp b3
-  b4:
+    jmp __b3
+  b1:
     lda #'.'
-  b3:
+  __b3:
     ldy #0
     sta (sc),y
     inc.z sc
@@ -42,7 +42,7 @@ main: {
     asl.z bits
     inx
     cpx #8
-    bne b2
+    bne __b2
     lda #$20
     clc
     adc.z sc
@@ -53,7 +53,7 @@ main: {
     inc.z y
     lda #8
     cmp.z y
-    bne b1
+    bne __b1
     lda #$37
     sta PROCPORT
     cli

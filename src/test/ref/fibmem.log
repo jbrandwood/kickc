@@ -168,26 +168,26 @@ Target platform is c64basic / MOS6502X
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _2 = 3
+    .label __2 = 3
     .label i = 2
     // [4] *((const byte[$f]) fibs) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
@@ -196,25 +196,25 @@ main: {
     lda #1
     sta fibs+1
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (byte~) main::$2 ← *((const byte[$f]) fibs + (byte) main::i#2) + *((const byte[$f]) fibs+(byte) 1 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2_plus_pbuc2_derefidx_vbuz2 
     ldy.z i
     lda fibs,y
     clc
     adc fibs+1,y
-    sta.z _2
+    sta.z __2
     // [8] *((const byte[$f]) fibs+(byte) 2 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _2
+    lda.z __2
     ldy.z i
     sta fibs+2,y
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
@@ -222,10 +222,10 @@ main: {
     // [10] if((byte) main::i#1<(byte) $f) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #$f
-    bcc b1_from_b1
-    jmp breturn
+    bcc __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
@@ -254,23 +254,23 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [4] *((const byte[$f]) fibs) ← (byte) 0 -- _deref_pbuc1=vbuc2 
@@ -280,16 +280,16 @@ main: {
     lda #1
     sta fibs+1
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (byte~) main::$2 ← *((const byte[$f]) fibs + (byte) main::i#2) + *((const byte[$f]) fibs+(byte) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
     lda fibs,x
     clc
@@ -300,10 +300,10 @@ main: {
     inx
     // [10] if((byte) main::i#1<(byte) $f) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$f
-    bcc b1_from_b1
-    jmp breturn
+    bcc __b1_from___b1
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
@@ -311,27 +311,28 @@ main: {
   fibs: .fill $f, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -382,7 +383,7 @@ main: {
     // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // fibs[i]+fibs[i+1]
     // [7] (byte~) main::$2 ← *((const byte[$f]) fibs + (byte) main::i#2) + *((const byte[$f]) fibs+(byte) 1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
     lda fibs,x
@@ -396,7 +397,7 @@ main: {
     inx
     // [10] if((byte) main::i#1<(byte) $f) goto main::@1 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$f
-    bcc b1
+    bcc __b1
     // main::@return
     // }
     // [11] return 

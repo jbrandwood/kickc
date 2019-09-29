@@ -1,10 +1,10 @@
 // Tests calling into a function pointer with local variables
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label idx = 3
-bbegin:
+__b1:
   lda #0
   sta.z idx
   jsr main
@@ -17,17 +17,17 @@ do10: {
     .label i = 2
     lda #0
     sta.z i
-  b1:
+  __b1:
     jsr hello
     inc.z i
     lda #$a
     cmp.z i
-    bne b1
+    bne __b1
     rts
 }
 hello: {
     ldx #0
-  b1:
+  __b1:
     lda msg,x
     ldy.z idx
     sta SCREEN,y
@@ -35,7 +35,7 @@ hello: {
     inx
     lda msg,x
     cmp #0
-    bne b1
+    bne __b1
     rts
 }
   msg: .text "hello "

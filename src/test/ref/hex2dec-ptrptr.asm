@@ -84,11 +84,11 @@ utoa16w: {
 // utoa16n(byte register(A) nybble, byte register(X) started)
 utoa16n: {
     cmp #0
-    beq b1
+    beq __b1
     ldx #1
-  b1:
+  __b1:
     cpx #0
-    beq breturn
+    beq __breturn
     tay
     lda DIGITS,y
     ldy.z utoa16w.dst
@@ -101,7 +101,7 @@ utoa16n: {
     bne !+
     inc.z utoa16w.dst+1
   !:
-  breturn:
+  __breturn:
     rts
 }
 cls: {
@@ -111,7 +111,7 @@ cls: {
     sta.z sc
     lda #>screen
     sta.z sc+1
-  b1:
+  __b1:
     lda #' '
     ldy #0
     sta (sc),y
@@ -121,10 +121,10 @@ cls: {
   !:
     lda.z sc+1
     cmp #>screen+$3e7+1
-    bne b1
+    bne __b1
     lda.z sc
     cmp #<screen+$3e7+1
-    bne b1
+    bne __b1
     rts
 }
   // Digits used for utoa()

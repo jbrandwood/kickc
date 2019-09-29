@@ -86,7 +86,7 @@ public class Pass4CodeGeneration {
          useSegments = false;
          if(programPc == null) programPc = 0x080d;
          asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
-         asm.addLine(new AsmBasicUpstart("bbegin"));
+         asm.addLine(new AsmBasicUpstart("__bbegin"));
          asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
       } else if(TargetPlatform.ASM6502.equals(program.getTargetPlatform())) {
          useSegments = false;

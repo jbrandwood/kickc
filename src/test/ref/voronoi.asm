@@ -9,10 +9,10 @@
   .const numpoints = 6
 main: {
     jsr initscreen
-  b1:
+  __b1:
     jsr render
     jsr animate
-    jmp b1
+    jmp __b1
 }
 animate: {
     ldx XPOS
@@ -20,45 +20,45 @@ animate: {
     stx XPOS
     lda #$28
     cmp XPOS
-    bne b1
+    bne __b1
     lda #0
     sta XPOS
-  b1:
+  __b1:
     ldx YPOS
     inx
     stx YPOS
     lda #$19
     cmp YPOS
-    bne b2
+    bne __b2
     lda #0
     sta YPOS
-  b2:
+  __b2:
     lda XPOS+1
     sec
     sbc #1
     sta XPOS+1
     lda #$ff
     cmp XPOS+1
-    bne b3
+    bne __b3
     lda #$28
     sta XPOS+1
-  b3:
+  __b3:
     lda YPOS+2
     clc
     adc #1
     sta YPOS+2
     lda #$19
     cmp YPOS+2
-    bne b4
+    bne __b4
     lda #0
     sta YPOS+2
-  b4:
+  __b4:
     ldx YPOS+3
     dex
     stx YPOS+3
     lda #$ff
     cmp YPOS+3
-    bne breturn
+    bne __breturn
     lda #$19
     sta YPOS+3
     lda #7
@@ -66,11 +66,11 @@ animate: {
     adc XPOS+3
     sta XPOS+3
     cmp #$28
-    bcc breturn
+    bcc __breturn
     sec
     sbc #$28
     sta XPOS+3
-  breturn:
+  __breturn:
     rts
 }
 render: {
@@ -83,10 +83,10 @@ render: {
     sta.z colline+1
     lda #0
     sta.z y
-  b1:
+  __b1:
     lda #0
     sta.z x
-  b2:
+  __b2:
     jsr findcol
     txa
     ldy.z x
@@ -94,7 +94,7 @@ render: {
     inc.z x
     lda #$28
     cmp.z x
-    bne b2
+    bne __b2
     clc
     adc.z colline
     sta.z colline
@@ -104,7 +104,7 @@ render: {
     inc.z y
     lda #$19
     cmp.z y
-    bne b1
+    bne __b1
     rts
 }
 // findcol(byte zeropage(3) x, byte zeropage(2) y)
@@ -120,12 +120,12 @@ findcol: {
     ldx #0
     txa
     sta.z i
-  b1:
+  __b1:
     lda.z i
     cmp #numpoints
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     ldy.z i
     lda XPOS,y
     sta.z xp
@@ -133,54 +133,54 @@ findcol: {
     sta.z yp
     lda.z x
     cmp.z xp
-    bne b3
+    bne __b3
     lda.z y
     cmp.z yp
-    bne b3
+    bne __b3
     ldx #0
     rts
-  b3:
+  __b3:
     lda.z x
     cmp.z xp
-    bcc b4
+    bcc __b4
     sec
     sbc.z xp
     tay
-  b5:
+  __b5:
     lda.z y
     cmp.z yp
-    bcc b6
+    bcc __b6
     sec
     sbc.z yp
     sty.z $ff
     clc
     adc.z $ff
-  b7:
+  __b7:
     cmp.z mindiff
-    bcs b13
+    bcs __b13
     ldy.z i
     ldx COLS,y
-  b8:
+  __b8:
     inc.z i
     sta.z mindiff
-    jmp b1
-  b13:
+    jmp __b1
+  __b13:
     lda.z mindiff
-    jmp b8
-  b6:
+    jmp __b8
+  __b6:
     lda.z yp
     sec
     sbc.z y
     sty.z $ff
     clc
     adc.z $ff
-    jmp b7
-  b4:
+    jmp __b7
+  __b4:
     lda.z xp
     sec
     sbc.z x
     tay
-    jmp b5
+    jmp __b5
 }
 initscreen: {
     .label screen = 6
@@ -188,17 +188,17 @@ initscreen: {
     sta.z screen
     lda #>SCREEN
     sta.z screen+1
-  b1:
+  __b1:
     lda.z screen+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z screen
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda #FILL
     ldy #0
     sta (screen),y
@@ -206,7 +206,7 @@ initscreen: {
     bne !+
     inc.z screen+1
   !:
-    jmp b1
+    jmp __b1
 }
   // Points to create the Voronoi from
   XPOS: .byte 5, $f, 6, $22, $15, $1f

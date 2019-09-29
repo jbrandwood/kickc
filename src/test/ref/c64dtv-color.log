@@ -318,7 +318,7 @@ Target platform is c64basic / MOS6502X
 // Test C64DTV v2 256-colors and the 16-color redefinable palette
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label RASTER = $d012
@@ -334,19 +334,19 @@ Target platform is c64basic / MOS6502X
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label r = 2
@@ -359,32 +359,32 @@ main: {
     // [6] *((const byte*) DTV_CONTROL) ← (const byte) DTV_HIGHCOLOR|(const byte) DTV_BORDER_OFF|(const byte) DTV_BADLINE_OFF -- _deref_pbuc1=vbuc2 
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] if(*((const byte*) RASTER)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$40
     cmp RASTER
-    bne b1
-    jmp b2
+    bne __b1
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Create rasterbars
     lda #0
     sta BGCOL
     // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
     lda #$31
     sta.z r
-    jmp b3
+    jmp __b3
     // [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
-  b3_from_b3:
+  __b3_from___b3:
     // [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
@@ -418,20 +418,20 @@ main: {
     // [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuz1_neq_0_then_la1 
     lda.z r
     cmp #0
-    bne b3_from_b3
+    bne __b3_from___b3
     // [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  b4_from_b3:
+  __b4_from___b3:
     // [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta.z c
-    jmp b4
+    jmp __b4
   // Rotate palette
     // [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
-  b4_from_b4:
+  __b4_from___b4:
     // [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [15] *((const byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte[$10]) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z c
     lda palette,y
@@ -444,8 +444,8 @@ main: {
     // [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z c
-    bne b4_from_b4
-    jmp b1
+    bne __b4_from___b4
+    jmp __b1
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }
   // File Data
@@ -477,7 +477,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test C64DTV v2 256-colors and the 16-color redefinable palette
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label RASTER = $d012
@@ -493,19 +493,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // asm { sei  }
@@ -516,31 +516,31 @@ main: {
     // [6] *((const byte*) DTV_CONTROL) ← (const byte) DTV_HIGHCOLOR|(const byte) DTV_BORDER_OFF|(const byte) DTV_BADLINE_OFF -- _deref_pbuc1=vbuc2 
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] if(*((const byte*) RASTER)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$40
     cmp RASTER
-    bne b1
-    jmp b2
+    bne __b1
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Create rasterbars
     lda #0
     sta BGCOL
     // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
     ldx #$31
-    jmp b3
+    jmp __b3
     // [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
-  b3_from_b3:
+  __b3_from___b3:
     // [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
     nop
@@ -573,19 +573,19 @@ main: {
     inx
     // [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b3_from_b3
+    bne __b3_from___b3
     // [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  b4_from_b3:
+  __b4_from___b3:
     // [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b4
+    jmp __b4
   // Rotate palette
     // [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
-  b4_from_b4:
+  __b4_from___b4:
     // [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [15] *((const byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte[$10]) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda palette,x
     sta DTV_PALETTE,x
@@ -595,40 +595,41 @@ main: {
     inx
     // [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
-    bne b4_from_b4
-    jmp b1
+    bne __b4_from___b4
+    jmp __b1
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b3_from_b3 with b3
-Replacing label b4_from_b4 with b4
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction b3_from_b3:
-Removing instruction b4_from_b4:
+Replacing label __bbegin with __b1
+Replacing label __b3_from___b3 with __b3
+Replacing label __b4_from___b4 with __b4
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __b3_from___b3:
+Removing instruction __b4_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b2:
-Removing instruction b3_from_b2:
-Removing instruction b4_from_b3:
+Removing instruction __bend:
+Removing instruction __b2:
+Removing instruction __b3_from___b2:
+Removing instruction __b4_from___b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b3
-Removing instruction jmp b4
+Removing instruction jmp __b3
+Removing instruction jmp __b4
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -703,12 +704,12 @@ main: {
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
     // main::@1
-  b1:
+  __b1:
     // while(*RASTER!=$40)
     // [7] if(*((const byte*) RASTER)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$40
     cmp RASTER
-    bne b1
+    bne __b1
     // main::@2
     // *BGCOL = 0
     // [8] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
@@ -721,7 +722,7 @@ main: {
     // [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
     // [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
     // main::@3
-  b3:
+  __b3:
     // asm
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
@@ -757,7 +758,7 @@ main: {
     inx
     // [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b3
+    bne __b3
     // [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
     // [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuxx=vbuc1 
     ldx #0
@@ -765,7 +766,7 @@ main: {
     // [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
     // [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
     // main::@4
-  b4:
+  __b4:
     // DTV_PALETTE[c] = palette[c]
     // [15] *((const byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte[$10]) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda palette,x
@@ -778,8 +779,8 @@ main: {
     inx
     // [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
-    bne b4
-    jmp b1
+    bne __b4
+    jmp __b1
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }
   // File Data

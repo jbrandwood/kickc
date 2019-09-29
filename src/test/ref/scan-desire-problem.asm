@@ -32,22 +32,22 @@ main: {
     jsr init
     lda #0
     sta.z x
-  b1:
+  __b1:
     lda.z x
     cmp #$10
-    bcc b4
-  b5:
-    jmp b5
-  b4:
+    bcc b1
+  __b5:
+    jmp __b5
+  b1:
     lda #0
     sta.z y
-  b2:
+  __b2:
     lda.z y
     cmp #9
-    bcc b3
+    bcc __b3
     inc.z x
-    jmp b1
-  b3:
+    jmp __b1
+  __b3:
     lda.z x
     clc
     adc.z y
@@ -57,7 +57,7 @@ main: {
     ldx.z y
     jsr draw_block
     inc.z y
-    jmp b2
+    jmp __b2
 }
 // draw_block(byte register(A) tileno, byte register(Y) x, byte register(X) y)
 draw_block: {
@@ -65,14 +65,14 @@ draw_block: {
     .label x1 = $15
     .label z = 4
     .label z_1 = $15
-    .label _11 = 7
-    .label _12 = 9
-    .label _13 = $b
-    .label _14 = $d
-    .label _15 = $f
-    .label _16 = $11
-    .label _17 = $13
-    .label _18 = $15
+    .label __11 = 7
+    .label __12 = 9
+    .label __13 = $b
+    .label __14 = $d
+    .label __15 = $f
+    .label __16 = $11
+    .label __17 = $13
+    .label __18 = $15
     asl
     asl
     sta.z tileno
@@ -98,76 +98,76 @@ draw_block: {
     lda.z z_1
     clc
     adc #<screen
-    sta.z _11
+    sta.z __11
     lda.z z_1+1
     adc #>screen
-    sta.z _11+1
+    sta.z __11+1
     txa
     ldy #0
-    sta (_11),y
+    sta (__11),y
     lda.z z_1
     clc
     adc #<colors
-    sta.z _12
+    sta.z __12
     lda.z z_1+1
     adc #>colors
-    sta.z _12+1
+    sta.z __12+1
     lda #YELLOW
-    sta (_12),y
+    sta (__12),y
     lda.z z_1
     clc
     adc #<screen+1
-    sta.z _13
+    sta.z __13
     lda.z z_1+1
     adc #>screen+1
-    sta.z _13+1
+    sta.z __13+1
     lda #1
-    sta (_13),y
+    sta (__13),y
     lda.z z_1
     clc
     adc #<colors+1
-    sta.z _14
+    sta.z __14
     lda.z z_1+1
     adc #>colors+1
-    sta.z _14+1
+    sta.z __14+1
     lda #YELLOW
-    sta (_14),y
+    sta (__14),y
     lda.z z_1
     clc
     adc #<screen+$28
-    sta.z _15
+    sta.z __15
     lda.z z_1+1
     adc #>screen+$28
-    sta.z _15+1
+    sta.z __15+1
     lda #2
-    sta (_15),y
+    sta (__15),y
     lda.z z_1
     clc
     adc #<colors+$28
-    sta.z _16
+    sta.z __16
     lda.z z_1+1
     adc #>colors+$28
-    sta.z _16+1
+    sta.z __16+1
     lda #YELLOW
-    sta (_16),y
+    sta (__16),y
     lda.z z_1
     clc
     adc #<screen+$29
-    sta.z _17
+    sta.z __17
     lda.z z_1+1
     adc #>screen+$29
-    sta.z _17+1
+    sta.z __17+1
     lda #3
-    sta (_17),y
+    sta (__17),y
     clc
-    lda.z _18
+    lda.z __18
     adc #<colors+$29
-    sta.z _18
-    lda.z _18+1
+    sta.z __18
+    lda.z __18+1
     adc #>colors+$29
-    sta.z _18+1
+    sta.z __18+1
     lda #YELLOW
-    sta (_18),y
+    sta (__18),y
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
@@ -184,15 +184,15 @@ mul8u: {
     lda #<0
     sta.z res
     sta.z res+1
-  b1:
+  __b1:
     cpx #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     txa
     and #1
     cmp #0
-    beq b3
+    beq __b3
     lda.z res
     clc
     adc.z mb
@@ -200,13 +200,13 @@ mul8u: {
     lda.z res+1
     adc.z mb+1
     sta.z res+1
-  b3:
+  __b3:
     txa
     lsr
     tax
     asl.z mb
     rol.z mb+1
-    jmp b1
+    jmp __b1
 }
 init: {
     .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
@@ -251,15 +251,15 @@ memset: {
     lda.z str+1
     adc #>$3e8
     sta.z end+1
-  b2:
+  __b2:
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
+    bne __b3
     rts
-  b3:
+  __b3:
     txa
     ldy #0
     sta (dst),y
@@ -267,7 +267,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2
+    jmp __b2
 }
 init_sprites: {
     lda #1

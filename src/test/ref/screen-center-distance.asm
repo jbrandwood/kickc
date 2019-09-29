@@ -30,7 +30,7 @@ main: {
     .label BASE_CHARSET = $1000
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
-    .label _4 = $d
+    .label __4 = $d
     .label cyclecount = $d
     jsr init_font_hex
     lda #toD0181_return
@@ -181,15 +181,15 @@ init_dist_screen: {
     sta.z screen_topline+1
     lda #0
     sta.z y
-  b1:
+  __b1:
     lda.z y
     asl
     cmp #$18
-    bcs b2
+    bcs __b2
     eor #$ff
     clc
     adc #$18+1
-  b4:
+  __b4:
     jsr sqr
     lda.z sqr.return
     sta.z sqr.return_2
@@ -199,10 +199,10 @@ init_dist_screen: {
     sta.z xb
     lda #0
     sta.z x
-  b5:
+  __b5:
     lda.z x
     cmp #$13+1
-    bcc b6
+    bcc __b6
     lda #$28
     clc
     adc.z screen_topline
@@ -220,17 +220,17 @@ init_dist_screen: {
     inc.z y
     lda #$d
     cmp.z y
-    bne b1
+    bne __b1
     rts
-  b6:
+  __b6:
     lda.z x
     asl
     cmp #$27
-    bcs b8
+    bcs __b8
     eor #$ff
     clc
     adc #$27+1
-  b10:
+  __b10:
     jsr sqr
     lda.z ds
     clc
@@ -248,36 +248,36 @@ init_dist_screen: {
     sta (screen_bottomline),y
     inc.z x
     dec.z xb
-    jmp b5
-  b8:
+    jmp __b5
+  __b8:
     sec
     sbc #$27
-    jmp b10
-  b2:
+    jmp __b10
+  __b2:
     sec
     sbc #$18
-    jmp b4
+    jmp __b4
 }
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zeropage($13) val)
 sqrt: {
-    .label _1 = 2
-    .label _3 = 2
+    .label __1 = 2
+    .label __3 = 2
     .label found = 2
     .label val = $13
     jsr bsearch16u
-    lda.z _3
+    lda.z __3
     sec
     sbc #<SQUARES
-    sta.z _3
-    lda.z _3+1
+    sta.z __3
+    lda.z __3+1
     sbc #>SQUARES
-    sta.z _3+1
-    lsr.z _1+1
-    ror.z _1
-    lda.z _1
+    sta.z __3+1
+    lsr.z __1+1
+    ror.z __1
+    lda.z __1
     rts
 }
 // Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
@@ -287,7 +287,7 @@ sqrt: {
 // Returns pointer to an entry in the array that matches the search key
 // bsearch16u(word zeropage($13) key, word* zeropage(2) items, byte register(X) num)
 bsearch16u: {
-    .label _2 = 2
+    .label __2 = 2
     .label pivot = $15
     .label result = $17
     .label return = 2
@@ -298,9 +298,9 @@ bsearch16u: {
     lda #>SQUARES
     sta.z items+1
     ldx #NUM_SQUARES
-  b3:
+  __b3:
     cpx #0
-    bne b4
+    bne __b4
     ldy #1
     lda (items),y
     cmp.z key+1
@@ -308,19 +308,19 @@ bsearch16u: {
     dey
     lda (items),y
     cmp.z key
-    beq b2
+    beq __b2
   !:
-    bcc b2
-    lda.z _2
+    bcc __b2
+    lda.z __2
     sec
     sbc #<1*SIZEOF_WORD
-    sta.z _2
-    lda.z _2+1
+    sta.z __2
+    lda.z __2+1
     sbc #>1*SIZEOF_WORD
-    sta.z _2+1
-  b2:
+    sta.z __2+1
+  __b2:
     rts
-  b4:
+  __b4:
     txa
     lsr
     asl
@@ -339,20 +339,20 @@ bsearch16u: {
     iny
     sbc (pivot),y
     sta.z result+1
-    bne b6
+    bne __b6
     lda.z result
-    bne b6
+    bne __b6
     lda.z pivot
     sta.z return
     lda.z pivot+1
     sta.z return+1
     rts
-  b6:
+  __b6:
     lda.z result+1
-    bmi b7
+    bmi __b7
     bne !+
     lda.z result
-    beq b7
+    beq __b7
   !:
     lda #1*SIZEOF_WORD
     clc
@@ -362,11 +362,11 @@ bsearch16u: {
     adc.z pivot+1
     sta.z items+1
     dex
-  b7:
+  __b7:
     txa
     lsr
     tax
-    jmp b3
+    jmp __b3
 }
 // Find the square of a byte value
 // Uses a table of squares that must be initialized by calling init_squares()
@@ -396,7 +396,7 @@ init_squares: {
     txa
     sta.z sqr
     sta.z sqr+1
-  b1:
+  __b1:
     ldy #0
     lda.z sqr
     sta (squares),y
@@ -422,7 +422,7 @@ init_squares: {
   !:
     inx
     cpx #NUM_SQUARES-1+1
-    bne b1
+    bne __b1
     rts
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
@@ -458,7 +458,7 @@ clock_start: {
 // Make charset from proto chars
 // init_font_hex(byte* zeropage(9) charset)
 init_font_hex: {
-    .label _0 = $19
+    .label __0 = $19
     .label idx = $c
     .label proto_lo = $11
     .label charset = 9
@@ -475,21 +475,21 @@ init_font_hex: {
     sta.z charset
     lda #>CHARSET
     sta.z charset+1
-  b1:
+  __b1:
     lda #0
     sta.z c1
     lda #<FONT_HEX_PROTO
     sta.z proto_lo
     lda #>FONT_HEX_PROTO
     sta.z proto_lo+1
-  b2:
+  __b2:
     lda #0
     tay
     sta (charset),y
     lda #1
     sta.z idx
     ldx #0
-  b3:
+  __b3:
     txa
     tay
     lda (proto_hi),y
@@ -497,18 +497,18 @@ init_font_hex: {
     asl
     asl
     asl
-    sta.z _0
+    sta.z __0
     txa
     tay
     lda (proto_lo),y
     asl
-    ora.z _0
+    ora.z __0
     ldy.z idx
     sta (charset),y
     inc.z idx
     inx
     cpx #5
-    bne b3
+    bne __b3
     lda #0
     ldy.z idx
     sta (charset),y
@@ -531,7 +531,7 @@ init_font_hex: {
     inc.z c1
     lda #$10
     cmp.z c1
-    bne b2
+    bne __b2
     lda #5
     clc
     adc.z proto_hi
@@ -542,7 +542,7 @@ init_font_hex: {
     inc.z c
     lda #$10
     cmp.z c
-    bne b1
+    bne __b1
     rts
 }
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex

@@ -32,13 +32,13 @@ main: {
 // print(byte* zeropage(4) msg)
 print: {
     .label msg = 4
-  b1:
+  __b1:
     ldy #0
     lda (msg),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (msg),y
     sta (screen),y
@@ -50,7 +50,7 @@ print: {
     bne !+
     inc.z msg+1
   !:
-    jmp b1
+    jmp __b1
 }
   msg1: .text "message 1 "
   .byte 0

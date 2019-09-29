@@ -58,15 +58,15 @@ main: {
     jsr bitmap_clear
     jsr sin16s_gen2
     jsr render_sine
-  b1:
+  __b1:
     inc BGCOL
-    jmp b1
+    jmp __b1
 }
 render_sine: {
-    .label _1 = $16
-    .label _4 = $16
-    .label _10 = $16
-    .label _11 = $16
+    .label __1 = $16
+    .label __4 = $16
+    .label __10 = $16
+    .label __11 = $16
     .label sin_val = $16
     .label sin2_val = $16
     .label xpos = 6
@@ -76,30 +76,30 @@ render_sine: {
     sta.z xpos+1
     sta.z sin_idx
     sta.z sin_idx+1
-  b1:
+  __b1:
     lda.z sin_idx+1
     cmp #>SIN_SIZE
-    bcc b2
+    bcc __b2
     bne !+
     lda.z sin_idx
     cmp #<SIN_SIZE
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda.z sin_idx
     asl
-    sta.z _10
+    sta.z __10
     lda.z sin_idx+1
     rol
-    sta.z _10+1
+    sta.z __10+1
     clc
-    lda.z _1
+    lda.z __1
     adc #<sin
-    sta.z _1
-    lda.z _1+1
+    sta.z __1
+    lda.z __1+1
     adc #>sin
-    sta.z _1+1
+    sta.z __1+1
     ldy #0
     lda (sin_val),y
     tax
@@ -112,17 +112,17 @@ render_sine: {
     jsr bitmap_plot
     lda.z sin_idx
     asl
-    sta.z _11
+    sta.z __11
     lda.z sin_idx+1
     rol
-    sta.z _11+1
+    sta.z __11+1
     clc
-    lda.z _4
+    lda.z __4
     adc #<sin2
-    sta.z _4
-    lda.z _4+1
+    sta.z __4
+    lda.z __4+1
     adc #>sin2
-    sta.z _4+1
+    sta.z __4+1
     ldy #0
     lda (sin2_val),y
     tax
@@ -146,24 +146,24 @@ render_sine: {
   !:
     lda.z xpos+1
     cmp #>$140
-    bne b3
+    bne __b3
     lda.z xpos
     cmp #<$140
-    bne b3
+    bne __b3
     lda #<0
     sta.z xpos
     sta.z xpos+1
-  b3:
+  __b3:
     inc.z sin_idx
     bne !+
     inc.z sin_idx+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage(6) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $1c
+    .label __1 = $1c
     .label plotter = $16
     .label x = 6
     lda bitmap_plot_yhi,x
@@ -172,16 +172,16 @@ bitmap_plot: {
     sta.z plotter
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter+1
     lda.z x
     tay
@@ -194,7 +194,7 @@ bitmap_plot: {
 // wrap_y(signed word zeropage($16) y)
 wrap_y: {
     .label y = $16
-  b1:
+  __b1:
     lda.z y
     cmp #<$c8
     lda.z y+1
@@ -202,13 +202,13 @@ wrap_y: {
     bvc !+
     eor #$80
   !:
-    bpl b2
-  b3:
+    bpl __b2
+  __b3:
     lda.z y+1
-    bmi b4
+    bmi __b4
     lda.z y
     rts
-  b4:
+  __b4:
     clc
     lda.z y
     adc #<$c8
@@ -216,8 +216,8 @@ wrap_y: {
     lda.z y+1
     adc #>$c8
     sta.z y+1
-    jmp b3
-  b2:
+    jmp __b3
+  __b2:
     lda.z y
     sec
     sbc #<$c8
@@ -225,7 +225,7 @@ wrap_y: {
     lda.z y+1
     sbc #>$c8
     sta.z y+1
-    jmp b1
+    jmp __b1
 }
 // Generate signed word sinus table - with values in the range min-max.
 // sintab - the table to generate into
@@ -235,8 +235,8 @@ sin16s_gen2: {
     .const min = -$140
     .const max = $140
     .label ampl = max-min
-    .label _6 = $c
-    .label _9 = $1c
+    .label __6 = $c
+    .label __9 = $1c
     .label step = $18
     .label sintab = 6
     .label x = 2
@@ -254,17 +254,17 @@ sin16s_gen2: {
     sta.z i
     sta.z i+1
   // u[4.28]
-  b1:
+  __b1:
     lda.z i+1
     cmp #>SIN_SIZE
-    bcc b2
+    bcc __b2
     bne !+
     lda.z i
     cmp #<SIN_SIZE
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda.z x
     sta.z sin16s.x
     lda.z x+1
@@ -275,15 +275,15 @@ sin16s_gen2: {
     sta.z sin16s.x+3
     jsr sin16s
     jsr mul16s
-    lda.z _6+2
-    sta.z _9
-    lda.z _6+3
-    sta.z _9+1
+    lda.z __6+2
+    sta.z __9
+    lda.z __6+3
+    sta.z __9+1
     ldy #0
-    lda.z _9
+    lda.z __9
     sta (sintab),y
     iny
-    lda.z _9+1
+    lda.z __9+1
     sta (sintab),y
     lda #SIZEOF_SIGNED_WORD
     clc
@@ -309,14 +309,14 @@ sin16s_gen2: {
     bne !+
     inc.z i+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zeropage($10) a)
 mul16s: {
-    .label _9 = $1e
-    .label _16 = $1e
+    .label __9 = $1e
+    .label __16 = $1e
     .label m = $c
     .label return = $c
     .label a = $10
@@ -334,23 +334,23 @@ mul16s: {
     sta.z mul16u.mb+3
     jsr mul16u
     lda.z a+1
-    bpl b2
+    bpl __b2
     lda.z m+2
-    sta.z _9
+    sta.z __9
     lda.z m+3
-    sta.z _9+1
-    lda.z _16
+    sta.z __9+1
+    lda.z __16
     sec
     sbc #<sin16s_gen2.ampl
-    sta.z _16
-    lda.z _16+1
+    sta.z __16
+    lda.z __16+1
     sbc #>sin16s_gen2.ampl
-    sta.z _16+1
-    lda.z _16
+    sta.z __16+1
+    lda.z __16
     sta.z m+2
-    lda.z _16+1
+    lda.z __16+1
     sta.z m+3
-  b2:
+  __b2:
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
@@ -366,17 +366,17 @@ mul16u: {
     sta.z res+1
     sta.z res+2
     sta.z res+3
-  b1:
+  __b1:
     lda.z a
-    bne b2
+    bne __b2
     lda.z a+1
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #1
     and.z a
     cmp #0
-    beq b3
+    beq __b3
     lda.z res
     clc
     adc.z mb
@@ -390,21 +390,21 @@ mul16u: {
     lda.z res+3
     adc.z mb+3
     sta.z res+3
-  b3:
+  __b3:
     lsr.z a+1
     ror.z a
     asl.z mb
     rol.z mb+1
     rol.z mb+2
     rol.z mb+3
-    jmp b1
+    jmp __b1
 }
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zeropage($c) x)
 sin16s: {
-    .label _4 = $c
+    .label __4 = $c
     .label x = $c
     .label return = $10
     .label x1 = $1e
@@ -419,19 +419,19 @@ sin16s: {
     .label isUpper = $22
     lda.z x+3
     cmp #>PI_u4f28>>$10
-    bcc b4
+    bcc b1
     bne !+
     lda.z x+2
     cmp #<PI_u4f28>>$10
-    bcc b4
+    bcc b1
     bne !+
     lda.z x+1
     cmp #>PI_u4f28
-    bcc b4
+    bcc b1
     bne !+
     lda.z x
     cmp #<PI_u4f28
-    bcc b4
+    bcc b1
   !:
     lda.z x
     sec
@@ -448,26 +448,26 @@ sin16s: {
     sta.z x+3
     lda #1
     sta.z isUpper
-    jmp b1
-  b4:
+    jmp __b1
+  b1:
     lda #0
     sta.z isUpper
-  b1:
+  __b1:
     lda.z x+3
     cmp #>PI_HALF_u4f28>>$10
-    bcc b2
+    bcc __b2
     bne !+
     lda.z x+2
     cmp #<PI_HALF_u4f28>>$10
-    bcc b2
+    bcc __b2
     bne !+
     lda.z x+1
     cmp #>PI_HALF_u4f28
-    bcc b2
+    bcc __b2
     bne !+
     lda.z x
     cmp #<PI_HALF_u4f28
-    bcc b2
+    bcc __b2
   !:
     lda #<PI_u4f28
     sec
@@ -482,18 +482,18 @@ sin16s: {
     lda #>PI_u4f28>>$10
     sbc.z x+3
     sta.z x+3
-  b2:
+  __b2:
     ldy #3
   !:
-    asl.z _4
-    rol.z _4+1
-    rol.z _4+2
-    rol.z _4+3
+    asl.z __4
+    rol.z __4+1
+    rol.z __4+2
+    rol.z __4+3
     dey
     bne !-
-    lda.z _4+2
+    lda.z __4+2
     sta.z x1
-    lda.z _4+3
+    lda.z __4+3
     sta.z x1+1
     lda.z x1
     sta.z mulu16_sel.v1
@@ -565,7 +565,7 @@ sin16s: {
     sta.z usinx+1
     lda.z isUpper
     cmp #0
-    beq b3
+    beq __b3
     sec
     lda #0
     sbc.z sinx
@@ -573,15 +573,15 @@ sin16s: {
     lda #0
     sbc.z sinx+1
     sta.z sinx+1
-  b3:
+  __b3:
     rts
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
 // mulu16_sel(word zeropage($12) v1, word zeropage($16) v2, byte register(X) select)
 mulu16_sel: {
-    .label _0 = $c
-    .label _1 = $c
+    .label __0 = $c
+    .label __1 = $c
     .label v1 = $12
     .label v2 = $16
     .label return = $20
@@ -602,16 +602,16 @@ mulu16_sel: {
     cpx #0
     beq !e+
   !:
-    asl.z _1
-    rol.z _1+1
-    rol.z _1+2
-    rol.z _1+3
+    asl.z __1
+    rol.z __1+1
+    rol.z __1+2
+    rol.z __1+3
     dex
     bne !-
   !e:
-    lda.z _1+2
+    lda.z __1+2
     sta.z return
-    lda.z _1+3
+    lda.z __1+3
     sta.z return+1
     rts
 }
@@ -662,28 +662,28 @@ divr16u: {
     txa
     sta.z quotient
     sta.z quotient+1
-  b1:
+  __b1:
     asl.z rem
     rol.z rem+1
     lda.z dividend+1
     and #$80
     cmp #0
-    beq b2
+    beq __b2
     lda #1
     ora.z rem
     sta.z rem
-  b2:
+  __b2:
     asl.z dividend
     rol.z dividend+1
     asl.z quotient
     rol.z quotient+1
     lda.z rem+1
     cmp #>SIN_SIZE
-    bcc b3
+    bcc __b3
     bne !+
     lda.z rem
     cmp #<SIN_SIZE
-    bcc b3
+    bcc __b3
   !:
     inc.z quotient
     bne !+
@@ -696,10 +696,10 @@ divr16u: {
     lda.z rem+1
     sbc #>SIN_SIZE
     sta.z rem+1
-  b3:
+  __b3:
     inx
     cpx #$10
-    bne b1
+    bne __b1
     rts
 }
 // Clear all graphics on the bitmap
@@ -739,7 +739,7 @@ memset: {
     lda.z num
     bne !+
     lda.z num+1
-    beq breturn
+    beq __breturn
   !:
     lda.z end
     clc
@@ -748,16 +748,16 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-  b2:
+  __b2:
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
-  breturn:
+    bne __b3
+  __breturn:
     rts
-  b3:
+  __b3:
     txa
     ldy #0
     sta (dst),y
@@ -765,40 +765,40 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2
+    jmp __b2
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label _7 = $22
+    .label __7 = $22
     .label yoffs = $14
     ldx #0
     lda #$80
-  b1:
+  __b1:
     sta bitmap_plot_bit,x
     lsr
     cmp #0
-    bne b2
+    bne __b2
     lda #$80
-  b2:
+  __b2:
     inx
     cpx #0
-    bne b1
+    bne __b1
     lda #<BITMAP
     sta.z yoffs
     lda #>BITMAP
     sta.z yoffs+1
     ldx #0
-  b3:
+  __b3:
     lda #7
-    sax.z _7
+    sax.z __7
     lda.z yoffs
-    ora.z _7
+    ora.z __7
     sta bitmap_plot_ylo,x
     lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp.z _7
-    bne b4
+    cmp.z __7
+    bne __b4
     clc
     lda.z yoffs
     adc #<$28*8
@@ -806,10 +806,10 @@ bitmap_init: {
     lda.z yoffs+1
     adc #>$28*8
     sta.z yoffs+1
-  b4:
+  __b4:
     inx
     cpx #0
-    bne b3
+    bne __b3
     rts
 }
   // Tables for the plotter - initialized by calling bitmap_init();

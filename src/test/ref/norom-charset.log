@@ -573,35 +573,35 @@ Target platform is c64basic / MOS6502X
 // Generate a charset based on a 5x3 pattern stored in 2 bytes
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label CHARSET = $3000
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _10 = $a
+    .label __10 = $a
     .label charset = 3
     .label c = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::charset#2 = (const byte*) CHARSET+(byte) 8 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<CHARSET+8
     sta.z charset
@@ -610,48 +610,48 @@ main: {
     // [5] phi (byte) main::c#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z c
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) main::c#2!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z c
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [7] *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const byte*) CHARSET/(word) $400 -- _deref_pbuc1=vbuc2 
     lda #SCREEN/$40|CHARSET/$400
     sta VIC_MEMORY
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z c
     asl
-    sta.z _10
+    sta.z __10
     // [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2 -- pbuz1=pbuz2 
     lda.z charset
     sta.z gen_char3.dst
     lda.z charset+1
     sta.z gen_char3.dst+1
     // [11] (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuz2 
-    ldy.z _10
+    ldy.z __10
     lda charset_spec_row,y
     sta.z gen_char3.spec
     lda charset_spec_row+1,y
     sta.z gen_char3.spec+1
     // [12] call gen_char3 
     // [15] phi from main::@2 to gen_char3 [phi:main::@2->gen_char3]
-  gen_char3_from_b2:
+  gen_char3_from___b2:
     jsr gen_char3
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [13] (byte*) main::charset#1 ← (byte*) main::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
@@ -663,39 +663,39 @@ main: {
     // [14] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuz1=_inc_vbuz1 
     inc.z c
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [5] phi (byte*) main::charset#2 = (byte*) main::charset#1 [phi:main::@4->main::@1#0] -- register_copy 
     // [5] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // gen_char3
 // Generate one 5x3 character from a 16-bit char spec
 // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
 // gen_char3(byte* zeropage($b) dst, word zeropage(6) spec)
 gen_char3: {
-    .label _0 = $d
-    .label _1 = $e
+    .label __0 = $d
+    .label __1 = $e
     .label dst = $b
     .label spec = 6
     .label b = 9
     .label c = 8
     .label r = 5
     // [16] phi from gen_char3 to gen_char3::@1 [phi:gen_char3->gen_char3::@1]
-  b1_from_gen_char3:
+  __b1_from_gen_char3:
     // [16] phi (byte) gen_char3::r#6 = (byte) 0 [phi:gen_char3->gen_char3::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z r
     // [16] phi (word) gen_char3::spec#4 = (word) gen_char3::spec#0 [phi:gen_char3->gen_char3::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // [16] phi from gen_char3::@5 to gen_char3::@1 [phi:gen_char3::@5->gen_char3::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [16] phi (byte) gen_char3::r#6 = (byte) gen_char3::r#1 [phi:gen_char3::@5->gen_char3::@1#0] -- register_copy 
     // [16] phi (word) gen_char3::spec#4 = (word) gen_char3::spec#1 [phi:gen_char3::@5->gen_char3::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // gen_char3::@1
-  b1:
+  __b1:
     // [17] phi from gen_char3::@1 to gen_char3::@2 [phi:gen_char3::@1->gen_char3::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [17] phi (byte) gen_char3::c#2 = (byte) 0 [phi:gen_char3::@1->gen_char3::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z c
@@ -703,40 +703,40 @@ gen_char3: {
     lda #0
     sta.z b
     // [17] phi (word) gen_char3::spec#2 = (word) gen_char3::spec#4 [phi:gen_char3::@1->gen_char3::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // [17] phi from gen_char3::@3 to gen_char3::@2 [phi:gen_char3::@3->gen_char3::@2]
-  b2_from_b3:
+  __b2_from___b3:
     // [17] phi (byte) gen_char3::c#2 = (byte) gen_char3::c#1 [phi:gen_char3::@3->gen_char3::@2#0] -- register_copy 
     // [17] phi (byte) gen_char3::b#4 = (byte) gen_char3::b#1 [phi:gen_char3::@3->gen_char3::@2#1] -- register_copy 
     // [17] phi (word) gen_char3::spec#2 = (word) gen_char3::spec#1 [phi:gen_char3::@3->gen_char3::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // gen_char3::@2
-  b2:
+  __b2:
     // [18] (byte~) gen_char3::$0 ← > (word) gen_char3::spec#2 -- vbuz1=_hi_vwuz2 
     lda.z spec+1
-    sta.z _0
+    sta.z __0
     // [19] (byte~) gen_char3::$1 ← (byte~) gen_char3::$0 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
-    and.z _0
-    sta.z _1
+    and.z __0
+    sta.z __1
     // [20] if((byte~) gen_char3::$1==(byte) 0) goto gen_char3::@3 -- vbuz1_eq_0_then_la1 
-    lda.z _1
+    lda.z __1
     cmp #0
-    beq b3_from_b2
-    jmp b4
+    beq __b3_from___b2
+    jmp __b4
     // gen_char3::@4
-  b4:
+  __b4:
     // [21] (byte) gen_char3::b#2 ← (byte) gen_char3::b#4 | (byte) 1 -- vbuz1=vbuz1_bor_vbuc1 
     lda #1
     ora.z b
     sta.z b
     // [22] phi from gen_char3::@2 gen_char3::@4 to gen_char3::@3 [phi:gen_char3::@2/gen_char3::@4->gen_char3::@3]
-  b3_from_b2:
-  b3_from_b4:
+  __b3_from___b2:
+  __b3_from___b4:
     // [22] phi (byte) gen_char3::b#3 = (byte) gen_char3::b#4 [phi:gen_char3::@2/gen_char3::@4->gen_char3::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // gen_char3::@3
-  b3:
+  __b3:
     // [23] (byte) gen_char3::b#1 ← (byte) gen_char3::b#3 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl.z b
     // [24] (word) gen_char3::spec#1 ← (word) gen_char3::spec#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
@@ -747,10 +747,10 @@ gen_char3: {
     // [26] if((byte) gen_char3::c#1!=(byte) 3) goto gen_char3::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #3
     cmp.z c
-    bne b2_from_b3
-    jmp b5
+    bne __b2_from___b3
+    jmp __b5
     // gen_char3::@5
-  b5:
+  __b5:
     // [27] *((byte*) gen_char3::dst#0 + (byte) gen_char3::r#6) ← (byte) gen_char3::b#1 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z b
     ldy.z r
@@ -760,10 +760,10 @@ gen_char3: {
     // [29] if((byte) gen_char3::r#1!=(byte) 5) goto gen_char3::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #5
     cmp.z r
-    bne b1_from_b5
-    jmp breturn
+    bne __b1_from___b5
+    jmp __breturn
     // gen_char3::@return
-  breturn:
+  __breturn:
     // [30] return 
     rts
 }
@@ -825,34 +825,34 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Generate a charset based on a 5x3 pattern stored in 2 bytes
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label CHARSET = $3000
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label charset = 3
     .label c = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::charset#2 = (const byte*) CHARSET+(byte) 8 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<CHARSET+8
     sta.z charset
@@ -861,26 +861,26 @@ main: {
     // [5] phi (byte) main::c#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z c
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) main::c#2!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z c
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [7] *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const byte*) CHARSET/(word) $400 -- _deref_pbuc1=vbuc2 
     lda #SCREEN/$40|CHARSET/$400
     sta VIC_MEMORY
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z c
     asl
@@ -893,11 +893,11 @@ main: {
     sta.z gen_char3.spec+1
     // [12] call gen_char3 
     // [15] phi from main::@2 to gen_char3 [phi:main::@2->gen_char3]
-  gen_char3_from_b2:
+  gen_char3_from___b2:
     jsr gen_char3
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [13] (byte*) main::charset#1 ← (byte*) main::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
@@ -909,10 +909,10 @@ main: {
     // [14] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuz1=_inc_vbuz1 
     inc.z c
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [5] phi (byte*) main::charset#2 = (byte*) main::charset#1 [phi:main::@4->main::@1#0] -- register_copy 
     // [5] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // gen_char3
 // Generate one 5x3 character from a 16-bit char spec
@@ -923,56 +923,56 @@ gen_char3: {
     .label spec = 6
     .label r = 5
     // [16] phi from gen_char3 to gen_char3::@1 [phi:gen_char3->gen_char3::@1]
-  b1_from_gen_char3:
+  __b1_from_gen_char3:
     // [16] phi (byte) gen_char3::r#6 = (byte) 0 [phi:gen_char3->gen_char3::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z r
     // [16] phi (word) gen_char3::spec#4 = (word) gen_char3::spec#0 [phi:gen_char3->gen_char3::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // [16] phi from gen_char3::@5 to gen_char3::@1 [phi:gen_char3::@5->gen_char3::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [16] phi (byte) gen_char3::r#6 = (byte) gen_char3::r#1 [phi:gen_char3::@5->gen_char3::@1#0] -- register_copy 
     // [16] phi (word) gen_char3::spec#4 = (word) gen_char3::spec#1 [phi:gen_char3::@5->gen_char3::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // gen_char3::@1
-  b1:
+  __b1:
     // [17] phi from gen_char3::@1 to gen_char3::@2 [phi:gen_char3::@1->gen_char3::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [17] phi (byte) gen_char3::c#2 = (byte) 0 [phi:gen_char3::@1->gen_char3::@2#0] -- vbuxx=vbuc1 
     ldx #0
     // [17] phi (byte) gen_char3::b#4 = (byte) 0 [phi:gen_char3::@1->gen_char3::@2#1] -- vbuyy=vbuc1 
     ldy #0
     // [17] phi (word) gen_char3::spec#2 = (word) gen_char3::spec#4 [phi:gen_char3::@1->gen_char3::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // [17] phi from gen_char3::@3 to gen_char3::@2 [phi:gen_char3::@3->gen_char3::@2]
-  b2_from_b3:
+  __b2_from___b3:
     // [17] phi (byte) gen_char3::c#2 = (byte) gen_char3::c#1 [phi:gen_char3::@3->gen_char3::@2#0] -- register_copy 
     // [17] phi (byte) gen_char3::b#4 = (byte) gen_char3::b#1 [phi:gen_char3::@3->gen_char3::@2#1] -- register_copy 
     // [17] phi (word) gen_char3::spec#2 = (word) gen_char3::spec#1 [phi:gen_char3::@3->gen_char3::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // gen_char3::@2
-  b2:
+  __b2:
     // [18] (byte~) gen_char3::$0 ← > (word) gen_char3::spec#2 -- vbuaa=_hi_vwuz1 
     lda.z spec+1
     // [19] (byte~) gen_char3::$1 ← (byte~) gen_char3::$0 & (byte) $80 -- vbuaa=vbuaa_band_vbuc1 
     and #$80
     // [20] if((byte~) gen_char3::$1==(byte) 0) goto gen_char3::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b3_from_b2
-    jmp b4
+    beq __b3_from___b2
+    jmp __b4
     // gen_char3::@4
-  b4:
+  __b4:
     // [21] (byte) gen_char3::b#2 ← (byte) gen_char3::b#4 | (byte) 1 -- vbuyy=vbuyy_bor_vbuc1 
     tya
     ora #1
     tay
     // [22] phi from gen_char3::@2 gen_char3::@4 to gen_char3::@3 [phi:gen_char3::@2/gen_char3::@4->gen_char3::@3]
-  b3_from_b2:
-  b3_from_b4:
+  __b3_from___b2:
+  __b3_from___b4:
     // [22] phi (byte) gen_char3::b#3 = (byte) gen_char3::b#4 [phi:gen_char3::@2/gen_char3::@4->gen_char3::@3#0] -- register_copy 
-    jmp b3
+    jmp __b3
     // gen_char3::@3
-  b3:
+  __b3:
     // [23] (byte) gen_char3::b#1 ← (byte) gen_char3::b#3 << (byte) 1 -- vbuyy=vbuyy_rol_1 
     tya
     asl
@@ -984,10 +984,10 @@ gen_char3: {
     inx
     // [26] if((byte) gen_char3::c#1!=(byte) 3) goto gen_char3::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
-    bne b2_from_b3
-    jmp b5
+    bne __b2_from___b3
+    jmp __b5
     // gen_char3::@5
-  b5:
+  __b5:
     // [27] *((byte*) gen_char3::dst#0 + (byte) gen_char3::r#6) ← (byte) gen_char3::b#1 -- pbuz1_derefidx_vbuz2=vbuyy 
     tya
     ldy.z r
@@ -997,10 +997,10 @@ gen_char3: {
     // [29] if((byte) gen_char3::r#1!=(byte) 5) goto gen_char3::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #5
     cmp.z r
-    bne b1_from_b5
-    jmp breturn
+    bne __b1_from___b5
+    jmp __breturn
     // gen_char3::@return
-  breturn:
+  __breturn:
     // [30] return 
     rts
 }
@@ -1010,51 +1010,52 @@ gen_char3: {
   charset_spec_row: .word $f7da, $f7de, $f24e, $d6de
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b4
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b4
-Removing instruction jmp b3
-Removing instruction jmp b5
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b4
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b4
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b3_from_b2 with b3
-Replacing label b2_from_b3 with b2
-Replacing label b1_from_b5 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b5:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b3:
-Removing instruction b3_from_b2:
-Removing instruction b3_from_b4:
+Replacing label __bbegin with __b1
+Replacing label __b3_from___b2 with __b3
+Replacing label __b2_from___b3 with __b2
+Replacing label __b1_from___b5 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b5:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b3:
+Removing instruction __b3_from___b2:
+Removing instruction __b3_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction gen_char3_from_b2:
-Removing instruction b4:
-Removing instruction b1_from_b4:
-Removing instruction b1_from_gen_char3:
-Removing instruction b4:
-Removing instruction b5:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction gen_char3_from___b2:
+Removing instruction __b4:
+Removing instruction __b1_from___b4:
+Removing instruction __b1_from_gen_char3:
+Removing instruction __b4:
+Removing instruction __b5:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Removing instruction jmp b2
+Removing instruction jmp __b1
+Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -1151,12 +1152,12 @@ main: {
     lda #0
     sta.z c
     // main::@1
-  b1:
+  __b1:
     // for(byte c=0;c!=4;c++)
     // [6] if((byte) main::c#2!=(byte) 4) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z c
-    bne b2
+    bne __b2
     // main::@3
     // *VIC_MEMORY = (byte)(((word)SCREEN/$40)|((word)CHARSET/$400))
     // [7] *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const byte*) CHARSET/(word) $400 -- _deref_pbuc1=vbuc2 
@@ -1167,7 +1168,7 @@ main: {
     // [8] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // gen_char3(charset, charset_spec_row[c])
     // [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z c
@@ -1198,7 +1199,7 @@ main: {
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [5] phi (byte*) main::charset#2 = (byte*) main::charset#1 [phi:main::@4->main::@1#0] -- register_copy 
     // [5] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // gen_char3
 // Generate one 5x3 character from a 16-bit char spec
@@ -1217,7 +1218,7 @@ gen_char3: {
     // [16] phi (byte) gen_char3::r#6 = (byte) gen_char3::r#1 [phi:gen_char3::@5->gen_char3::@1#0] -- register_copy 
     // [16] phi (word) gen_char3::spec#4 = (word) gen_char3::spec#1 [phi:gen_char3::@5->gen_char3::@1#1] -- register_copy 
     // gen_char3::@1
-  b1:
+  __b1:
     // [17] phi from gen_char3::@1 to gen_char3::@2 [phi:gen_char3::@1->gen_char3::@2]
     // [17] phi (byte) gen_char3::c#2 = (byte) 0 [phi:gen_char3::@1->gen_char3::@2#0] -- vbuxx=vbuc1 
     ldx #0
@@ -1229,7 +1230,7 @@ gen_char3: {
     // [17] phi (byte) gen_char3::b#4 = (byte) gen_char3::b#1 [phi:gen_char3::@3->gen_char3::@2#1] -- register_copy 
     // [17] phi (word) gen_char3::spec#2 = (word) gen_char3::spec#1 [phi:gen_char3::@3->gen_char3::@2#2] -- register_copy 
     // gen_char3::@2
-  b2:
+  __b2:
     // >spec
     // [18] (byte~) gen_char3::$0 ← > (word) gen_char3::spec#2 -- vbuaa=_hi_vwuz1 
     lda.z spec+1
@@ -1239,7 +1240,7 @@ gen_char3: {
     // if((>spec&$80)!=0)
     // [20] if((byte~) gen_char3::$1==(byte) 0) goto gen_char3::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b3
+    beq __b3
     // gen_char3::@4
     // b = b|1
     // [21] (byte) gen_char3::b#2 ← (byte) gen_char3::b#4 | (byte) 1 -- vbuyy=vbuyy_bor_vbuc1 
@@ -1249,7 +1250,7 @@ gen_char3: {
     // [22] phi from gen_char3::@2 gen_char3::@4 to gen_char3::@3 [phi:gen_char3::@2/gen_char3::@4->gen_char3::@3]
     // [22] phi (byte) gen_char3::b#3 = (byte) gen_char3::b#4 [phi:gen_char3::@2/gen_char3::@4->gen_char3::@3#0] -- register_copy 
     // gen_char3::@3
-  b3:
+  __b3:
     // b = b*2
     // [23] (byte) gen_char3::b#1 ← (byte) gen_char3::b#3 << (byte) 1 -- vbuyy=vbuyy_rol_1 
     tya
@@ -1264,7 +1265,7 @@ gen_char3: {
     inx
     // [26] if((byte) gen_char3::c#1!=(byte) 3) goto gen_char3::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #3
-    bne b2
+    bne __b2
     // gen_char3::@5
     // dst[r] = b
     // [27] *((byte*) gen_char3::dst#0 + (byte) gen_char3::r#6) ← (byte) gen_char3::b#1 -- pbuz1_derefidx_vbuz2=vbuyy 
@@ -1277,7 +1278,7 @@ gen_char3: {
     // [29] if((byte) gen_char3::r#1!=(byte) 5) goto gen_char3::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #5
     cmp.z r
-    bne b1
+    bne __b1
     // gen_char3::@return
     // }
     // [30] return 

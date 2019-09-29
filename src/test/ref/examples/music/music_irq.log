@@ -202,7 +202,7 @@ Target platform is c64basic / MOS6502X
 // A simple SID music player using RASTER IRQ
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label RASTER = $d012
@@ -222,10 +222,10 @@ Target platform is c64basic / MOS6502X
   .label KERNEL_IRQ = $314
   .label MUSIC = $1000
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")  }}
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
@@ -233,17 +233,17 @@ b1:
   // kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
   // [3] phi from @1 to @2 [phi:@1->@2]
-b2_from_b1:
-  jmp b2
+__b2_from___b1:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [4] call main 
   jsr main
   // [5] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 // Setup Raster IRQ and initialize SID player
 main: {
@@ -274,9 +274,9 @@ main: {
     sta KERNEL_IRQ+1
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -295,9 +295,9 @@ irq_play: {
     sta IRQ_STATUS
     // [17] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
-    jmp breturn
+    jmp __breturn
     // irq_play::@return
-  breturn:
+  __breturn:
     // [18] return  - exit interrupt(KERNEL_KEYBOARD)
     jmp $ea31
 }
@@ -330,7 +330,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // A simple SID music player using RASTER IRQ
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label RASTER = $d012
@@ -350,10 +350,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label KERNEL_IRQ = $314
   .label MUSIC = $1000
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")  }}
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
@@ -361,17 +361,17 @@ b1:
   // kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
   // [3] phi from @1 to @2 [phi:@1->@2]
-b2_from_b1:
-  jmp b2
+__b2_from___b1:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [4] call main 
   jsr main
   // [5] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 // Setup Raster IRQ and initialize SID player
 main: {
@@ -402,9 +402,9 @@ main: {
     sta KERNEL_IRQ+1
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [13] return 
     rts
 }
@@ -423,9 +423,9 @@ irq_play: {
     sta IRQ_STATUS
     // [17] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
-    jmp breturn
+    jmp __breturn
     // irq_play::@return
-  breturn:
+  __breturn:
     // [18] return  - exit interrupt(KERNEL_KEYBOARD)
     jmp $ea31
 }
@@ -435,25 +435,26 @@ irq_play: {
 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1:
-Removing instruction b2_from_b1:
-Removing instruction bend_from_b2:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b2_from___b1:
+Removing instruction __bend_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
-Removing instruction bend:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b2:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

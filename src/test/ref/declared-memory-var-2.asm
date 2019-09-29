@@ -1,11 +1,11 @@
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 // Test a memory variable containing a pointer
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label cursor_ptr = cursor
   .label SCREEN = $400
-bbegin:
+__bbegin:
   lda #<SCREEN
   sta cursor_ptr
   lda #>SCREEN
@@ -14,7 +14,7 @@ bbegin:
   rts
 main: {
     ldx #0
-  b1:
+  __b1:
     lda #'*'
     ldy cursor_ptr
     sty.z $fe
@@ -31,7 +31,7 @@ main: {
     sta cursor_ptr+1
     inx
     cpx #$19
-    bne b1
+    bne __b1
     rts
 }
   cursor: .word 0

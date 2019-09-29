@@ -14,7 +14,7 @@ bool_complex: {
     .label o1 = 2
     .label o2 = 3
     ldx #0
-  b1:
+  __b1:
     cpx #$a
     lda #0
     rol
@@ -30,96 +30,96 @@ bool_complex: {
     sta.z o2
     lda.z o1
     cmp #0
-    bne b6
-    jmp b5
-  b6:
+    bne __b6
+    jmp __b5
+  __b6:
     lda.z o2
     cmp #0
-    bne b2
-  b5:
+    bne __b2
+  __b5:
     lda.z o1
     cmp #0
-    bne b4
+    bne __b4
     lda.z o2
     cmp #0
-    bne b4
-  b2:
+    bne __b4
+  __b2:
     lda #'*'
     sta screen,x
-  b3:
+  __b3:
     inx
     cpx #$15
-    bne b1
+    bne __b1
     rts
-  b4:
+  __b4:
     lda #' '
     sta screen,x
-    jmp b3
+    jmp __b3
 }
 bool_not: {
     .label screen = $450
     ldx #0
-  b1:
+  __b1:
     txa
     and #1
     cpx #$a
-    bcc b4
+    bcc __b4
     cmp #0
-    beq b4
+    beq __b4
     lda #'*'
     sta screen,x
-  b3:
+  __b3:
     inx
     cpx #$15
-    bne b1
+    bne __b1
     rts
-  b4:
+  __b4:
     lda #' '
     sta screen,x
-    jmp b3
+    jmp __b3
 }
 bool_or: {
     .label screen = $428
     ldx #0
-  b1:
+  __b1:
     txa
     and #1
     cpx #$a
-    bcc b2
+    bcc __b2
     cmp #0
-    beq b2
+    beq __b2
     lda #' '
     sta screen,x
-  b3:
+  __b3:
     inx
     cpx #$15
-    bne b1
+    bne __b1
     rts
-  b2:
+  __b2:
     lda #'*'
     sta screen,x
-    jmp b3
+    jmp __b3
 }
 bool_and: {
     .label screen = $400
     ldx #0
-  b1:
+  __b1:
     txa
     and #1
     cpx #$a
-    bcs b4
+    bcs __b4
     cmp #0
-    beq b2
-  b4:
+    beq __b2
+  __b4:
     lda #' '
     sta screen,x
-  b3:
+  __b3:
     inx
     cpx #$15
-    bne b1
+    bne __b1
     rts
-  b2:
+  __b2:
     lda #'*'
     sta screen,x
-    jmp b3
+    jmp __b3
 }

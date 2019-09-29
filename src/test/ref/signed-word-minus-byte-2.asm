@@ -10,7 +10,7 @@ main: {
     sta.z w1
     lda #>$4d2
     sta.z w1+1
-  b1:
+  __b1:
     lda.z w1
     sec
     sbc #$29
@@ -27,6 +27,6 @@ main: {
     sta screen+1,y
     inx
     cpx #$b
-    bne b1
+    bne __b1
     rts
 }

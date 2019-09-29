@@ -5,27 +5,27 @@
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
 main: {
-    .label _1_x = 2
+    .label __1_x = 2
     lda #0
     jsr get
     sta SCREEN
     lda #get.p_y
     sta SCREEN+OFFSET_STRUCT_POINT_Y
     ldy #1
-  b1:
+  __b1:
     tya
     jsr get
-    sta.z _1_x
+    sta.z __1_x
     tya
     asl
     tax
-    lda.z _1_x
+    lda.z __1_x
     sta SCREEN,x
     lda #get.p_y
     sta SCREEN+OFFSET_STRUCT_POINT_Y,x
     iny
     cpy #3
-    bne b1
+    bne __b1
     rts
 }
 // get(byte register(A) i)

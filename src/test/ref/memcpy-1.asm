@@ -17,7 +17,7 @@ main: {
     sta.z camelot
     lda #>CAMELOT
     sta.z camelot+1
-  b1:
+  __b1:
     ldy #0
     lda (camelot),y
     sta (sc),y
@@ -31,7 +31,7 @@ main: {
   !:
     inx
     cpx #7
-    bne b1
+    bne __b1
     ldx #0
     lda #<SCREEN+$28
     sta.z sc2
@@ -41,7 +41,7 @@ main: {
     sta.z reigns
     lda #>reigns_0
     sta.z reigns+1
-  b2:
+  __b2:
     ldy #0
     lda (reigns),y
     sta (sc2),y
@@ -55,7 +55,7 @@ main: {
   !:
     inx
     cpx #6
-    bne b2
+    bne __b2
     lda #<7
     sta.z memcpy.num
     lda #>7
@@ -77,13 +77,13 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN+$32
     sta.z memcpy.destination+1
-    lda #<_8
+    lda #<__8
     sta.z memcpy.source
-    lda #>_8
+    lda #>__8
     sta.z memcpy.source+1
     jsr memcpy
     rts
-    _8: .text "rules"
+    __8: .text "rules"
     .byte 0
     reigns_0: .text "reigns"
     .byte 0
@@ -105,15 +105,15 @@ memcpy: {
     lda.z src_end+1
     adc.z source+1
     sta.z src_end+1
-  b1:
+  __b1:
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (src),y
     sta (dst),y
@@ -125,7 +125,7 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1
+    jmp __b1
 }
   CAMELOT: .text "camelot"
   .byte 0

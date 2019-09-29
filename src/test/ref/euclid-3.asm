@@ -92,7 +92,7 @@ print_euclid: {
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -102,11 +102,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -141,25 +141,25 @@ print_char: {
 // euclid(byte zeropage(2) a, byte register(X) b)
 euclid: {
     .label a = 2
-  b1:
+  __b1:
     cpx.z a
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     cpx.z a
-    bcc b3
+    bcc __b3
     txa
     sec
     sbc.z a
     tax
-    jmp b1
-  b3:
+    jmp __b1
+  __b3:
     txa
     eor #$ff
     sec
     adc.z a
     sta.z a
-    jmp b1
+    jmp __b1
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -177,15 +177,15 @@ memset: {
     sta.z dst
     lda #>str
     sta.z dst+1
-  b1:
+  __b1:
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #c
     ldy #0
     sta (dst),y
@@ -193,6 +193,6 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"

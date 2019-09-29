@@ -526,26 +526,26 @@ Target platform is c64basic / MOS6502X
 // Test memcpy on strings (
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label sc = 4
@@ -555,7 +555,7 @@ main: {
     .label reigns = 7
     .label i1 = $b
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -569,15 +569,15 @@ main: {
     sta.z camelot
     lda #>CAMELOT
     sta.z camelot+1
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#1] -- register_copy 
     // [5] phi (byte*) main::camelot#2 = (byte*) main::camelot#1 [phi:main::@1->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((byte*) main::sc#2) ← *((byte*) main::camelot#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (camelot),y
@@ -598,9 +598,9 @@ main: {
     // [10] if((byte) main::i#1!=(byte) 7) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
     cmp.z i
-    bne b1_from_b1
+    bne __b1_from___b1
     // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [11] phi (byte) main::i1#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i1
@@ -614,15 +614,15 @@ main: {
     sta.z reigns
     lda #>reigns_0
     sta.z reigns+1
-    jmp b2
+    jmp __b2
     // [11] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [11] phi (byte) main::i1#2 = (byte) main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
     // [11] phi (byte*) main::sc2#2 = (byte*) main::sc2#1 [phi:main::@2->main::@2#1] -- register_copy 
     // [11] phi (byte*) main::reigns#2 = (byte*) main::reigns#1 [phi:main::@2->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [12] *((byte*) main::sc2#2) ← *((byte*) main::reigns#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (reigns),y
@@ -643,15 +643,15 @@ main: {
     // [16] if((byte) main::i1#1!=(byte) 6) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i1
-    bne b2_from_b2
+    bne __b2_from___b2
     // [17] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [18] call memcpy 
     // [22] phi from main::@3 to memcpy [phi:main::@3->memcpy]
-  memcpy_from_b3:
+  memcpy_from___b3:
     // [22] phi (word) memcpy::num#2 = (byte) 7 [phi:main::@3->memcpy#0] -- vwuz1=vbuc1 
     lda #<7
     sta.z memcpy.num
@@ -669,13 +669,13 @@ main: {
     sta.z memcpy.source+1
     jsr memcpy
     // [19] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  b4_from_b3:
-    jmp b4
+  __b4_from___b3:
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [20] call memcpy 
     // [22] phi from main::@4 to memcpy [phi:main::@4->memcpy]
-  memcpy_from_b4:
+  memcpy_from___b4:
     // [22] phi (word) memcpy::num#2 = (byte) 5 [phi:main::@4->memcpy#0] -- vwuz1=vbuc1 
     lda #<5
     sta.z memcpy.num
@@ -687,17 +687,17 @@ main: {
     lda #>SCREEN+$32
     sta.z memcpy.destination+1
     // [22] phi (void*) memcpy::source#2 = (void*)(const string) main::$8 [phi:main::@4->memcpy#2] -- pvoz1=pvoc1 
-    lda #<_8
+    lda #<__8
     sta.z memcpy.source
-    lda #>_8
+    lda #>__8
     sta.z memcpy.source+1
     jsr memcpy
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
-    _8: .text "rules"
+    __8: .text "rules"
     .byte 0
     reigns_0: .text "reigns"
     .byte 0
@@ -732,27 +732,27 @@ memcpy: {
     lda.z destination+1
     sta.z dst+1
     // [26] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
-  b1_from_memcpy:
-  b1_from_b2:
+  __b1_from_memcpy:
+  __b1_from___b2:
     // [26] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
     // [26] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // memcpy::@1
-  b1:
+  __b1:
     // [27] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memcpy::@return
-  breturn:
+  __breturn:
     // [28] return 
     rts
     // memcpy::@2
-  b2:
+  __b2:
     // [29] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
@@ -768,7 +768,7 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
   CAMELOT: .text "camelot"
@@ -830,26 +830,26 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test memcpy on strings (
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label sc = 6
@@ -857,7 +857,7 @@ main: {
     .label sc2 = 2
     .label reigns = 8
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [5] phi (byte*) main::sc#2 = (const byte*) SCREEN [phi:main->main::@1#1] -- pbuz1=pbuc1 
@@ -870,15 +870,15 @@ main: {
     sta.z camelot
     lda #>CAMELOT
     sta.z camelot+1
-    jmp b1
+    jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#1] -- register_copy 
     // [5] phi (byte*) main::camelot#2 = (byte*) main::camelot#1 [phi:main::@1->main::@1#2] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((byte*) main::sc#2) ← *((byte*) main::camelot#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (camelot),y
@@ -898,9 +898,9 @@ main: {
     inx
     // [10] if((byte) main::i#1!=(byte) 7) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #7
-    bne b1_from_b1
+    bne __b1_from___b1
     // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [11] phi (byte) main::i1#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
     // [11] phi (byte*) main::sc2#2 = (const byte*) SCREEN+(byte) $28 [phi:main::@1->main::@2#1] -- pbuz1=pbuc1 
@@ -913,15 +913,15 @@ main: {
     sta.z reigns
     lda #>reigns_0
     sta.z reigns+1
-    jmp b2
+    jmp __b2
     // [11] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [11] phi (byte) main::i1#2 = (byte) main::i1#1 [phi:main::@2->main::@2#0] -- register_copy 
     // [11] phi (byte*) main::sc2#2 = (byte*) main::sc2#1 [phi:main::@2->main::@2#1] -- register_copy 
     // [11] phi (byte*) main::reigns#2 = (byte*) main::reigns#1 [phi:main::@2->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [12] *((byte*) main::sc2#2) ← *((byte*) main::reigns#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (reigns),y
@@ -941,15 +941,15 @@ main: {
     inx
     // [16] if((byte) main::i1#1!=(byte) 6) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #6
-    bne b2_from_b2
+    bne __b2_from___b2
     // [17] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [18] call memcpy 
     // [22] phi from main::@3 to memcpy [phi:main::@3->memcpy]
-  memcpy_from_b3:
+  memcpy_from___b3:
     // [22] phi (word) memcpy::num#2 = (byte) 7 [phi:main::@3->memcpy#0] -- vwuz1=vbuc1 
     lda #<7
     sta.z memcpy.num
@@ -967,13 +967,13 @@ main: {
     sta.z memcpy.source+1
     jsr memcpy
     // [19] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  b4_from_b3:
-    jmp b4
+  __b4_from___b3:
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [20] call memcpy 
     // [22] phi from main::@4 to memcpy [phi:main::@4->memcpy]
-  memcpy_from_b4:
+  memcpy_from___b4:
     // [22] phi (word) memcpy::num#2 = (byte) 5 [phi:main::@4->memcpy#0] -- vwuz1=vbuc1 
     lda #<5
     sta.z memcpy.num
@@ -985,17 +985,17 @@ main: {
     lda #>SCREEN+$32
     sta.z memcpy.destination+1
     // [22] phi (void*) memcpy::source#2 = (void*)(const string) main::$8 [phi:main::@4->memcpy#2] -- pvoz1=pvoc1 
-    lda #<_8
+    lda #<__8
     sta.z memcpy.source
-    lda #>_8
+    lda #>__8
     sta.z memcpy.source+1
     jsr memcpy
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [21] return 
     rts
-    _8: .text "rules"
+    __8: .text "rules"
     .byte 0
     reigns_0: .text "reigns"
     .byte 0
@@ -1022,27 +1022,27 @@ memcpy: {
     // [24] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
     // [25] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
     // [26] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
-  b1_from_memcpy:
-  b1_from_b2:
+  __b1_from_memcpy:
+  __b1_from___b2:
     // [26] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
     // [26] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // memcpy::@1
-  b1:
+  __b1:
     // [27] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memcpy::@return
-  breturn:
+  __breturn:
     // [28] return 
     rts
     // memcpy::@2
-  b2:
+  __b2:
     // [29] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
@@ -1058,58 +1058,59 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // File Data
   CAMELOT: .text "camelot"
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Removing instruction ldy #0
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b1 with b1
-Replacing label b2_from_b2 with b2
-Replacing label b1_from_b2 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b1:
-Removing instruction b2_from_b2:
-Removing instruction b3_from_b2:
-Removing instruction memcpy_from_b3:
-Removing instruction b4_from_b3:
-Removing instruction memcpy_from_b4:
-Removing instruction b1_from_memcpy:
-Removing instruction b1_from_b2:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b2_from___b2 with __b2
+Replacing label __b1_from___b2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
+Removing instruction __b2_from___b2:
+Removing instruction __b3_from___b2:
+Removing instruction memcpy_from___b3:
+Removing instruction __b4_from___b3:
+Removing instruction memcpy_from___b4:
+Removing instruction __b1_from_memcpy:
+Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b2_from_b1:
-Removing instruction b3:
-Removing instruction b4:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b2_from___b1:
+Removing instruction __b3:
+Removing instruction __b4:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Removing instruction jmp b2
+Removing instruction jmp __b1
+Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -1216,7 +1217,7 @@ main: {
     // [5] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@1->main::@1#1] -- register_copy 
     // [5] phi (byte*) main::camelot#2 = (byte*) main::camelot#1 [phi:main::@1->main::@1#2] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // *sc++ = *camelot++
     // [6] *((byte*) main::sc#2) ← *((byte*) main::camelot#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -1238,7 +1239,7 @@ main: {
     inx
     // [10] if((byte) main::i#1!=(byte) 7) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #7
-    bne b1
+    bne __b1
     // [11] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [11] phi (byte) main::i1#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
@@ -1257,7 +1258,7 @@ main: {
     // [11] phi (byte*) main::sc2#2 = (byte*) main::sc2#1 [phi:main::@2->main::@2#1] -- register_copy 
     // [11] phi (byte*) main::reigns#2 = (byte*) main::reigns#1 [phi:main::@2->main::@2#2] -- register_copy 
     // main::@2
-  b2:
+  __b2:
     // *sc2++ = *reigns++
     // [12] *((byte*) main::sc2#2) ← *((byte*) main::reigns#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -1279,7 +1280,7 @@ main: {
     inx
     // [16] if((byte) main::i1#1!=(byte) 6) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #6
-    bne b2
+    bne __b2
     // [17] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // main::@3
     // memcpy(SCREEN+10, CAMELOT, 7)
@@ -1317,16 +1318,16 @@ main: {
     lda #>SCREEN+$32
     sta.z memcpy.destination+1
     // [22] phi (void*) memcpy::source#2 = (void*)(const string) main::$8 [phi:main::@4->memcpy#2] -- pvoz1=pvoc1 
-    lda #<_8
+    lda #<__8
     sta.z memcpy.source
-    lda #>_8
+    lda #>__8
     sta.z memcpy.source+1
     jsr memcpy
     // main::@return
     // }
     // [21] return 
     rts
-    _8: .text "rules"
+    __8: .text "rules"
     .byte 0
     reigns_0: .text "reigns"
     .byte 0
@@ -1357,21 +1358,21 @@ memcpy: {
     // [26] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
     // [26] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     // memcpy::@1
-  b1:
+  __b1:
     // while(src!=src_end)
     // [27] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
+    bne __b2
     // memcpy::@return
     // }
     // [28] return 
     rts
     // memcpy::@2
-  b2:
+  __b2:
     // *dst++ = *src++
     // [29] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -1388,7 +1389,7 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1
+    jmp __b1
 }
   // File Data
   CAMELOT: .text "camelot"

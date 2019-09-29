@@ -56,7 +56,7 @@ main: {
     jsr fillscreen
     jsr sid_rnd_init
     jsr makecharset
-  b1:
+  __b1:
     lda #<SCREEN1
     sta.z fire.screen
     lda #>SCREEN1
@@ -71,7 +71,7 @@ main: {
     jsr fire
     lda #toD0182_return
     sta D018
-    jmp b1
+    jmp __b1
 }
 // Animate the fire on the passed screen. Uses BUFFER to store the current values.
 fire: {
@@ -90,13 +90,13 @@ fire: {
     sta.z buffer
     lda #>BUFFER
     sta.z buffer+1
-  b1:
+  __b1:
     lda.z buffer+1
     cmp #>BUFFER+$18*$28
-    bne b2
+    bne __b2
     lda.z buffer
     cmp #<BUFFER+$18*$28
-    bne b2
+    bne __b2
     clc
     lda.z screen
     adc #<$18*$28
@@ -108,15 +108,15 @@ fire: {
     sta.z buffer_10
     lda #>BUFFER+$18*$28
     sta.z buffer_10+1
-  b6:
+  __b6:
     lda.z buffer_10+1
     cmp #>BUFFER+$19*$28
-    bne b7
+    bne __b7
     lda.z buffer_10
     cmp #<BUFFER+$19*$28
-    bne b7
+    bne __b7
     rts
-  b7:
+  __b7:
     jsr sid_rnd
     lsr
     lsr
@@ -136,8 +136,8 @@ fire: {
     bne !+
     inc.z buffer_3+1
   !:
-    jmp b6
-  b2:
+    jmp __b6
+  __b2:
     ldy #$28-1
     clc
     lda (buffer),y
@@ -151,10 +151,10 @@ fire: {
     lsr
     lsr
     cmp #2+1
-    bcc b4
+    bcc __b4
     sec
     sbc #3
-  b4:
+  __b4:
     ldy #0
     sta (buffer),y
     lda (buffer),y
@@ -167,7 +167,7 @@ fire: {
     bne !+
     inc.z buffer+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
@@ -177,107 +177,107 @@ sid_rnd: {
 }
 // Make a fire-friendly charset in chars $00-$3f of the passed charset
 makecharset: {
-    .label _13 = $d
-    .label _15 = $b
-    .label _16 = $b
-    .label _17 = $b
+    .label __13 = $d
+    .label __15 = $b
+    .label __16 = $b
+    .label __17 = $b
     .label font = 2
     .label font1 = 4
     .label c = 6
     .label i = 7
     .label ii = 8
-    .label _18 = $b
+    .label __18 = $b
     lda #<CHARSET
     sta.z font
     lda #>CHARSET
     sta.z font+1
-  b1:
+  __b1:
     lda.z font+1
     cmp #>CHARSET+1*8
-    beq !b2+
-    jmp b2
-  !b2:
+    beq !__b2+
+    jmp __b2
+  !__b2:
     lda.z font
     cmp #<CHARSET+1*8
-    beq !b2+
-    jmp b2
-  !b2:
+    beq !__b2+
+    jmp __b2
+  !__b2:
     lda #<CHARSET+$40*8
     sta.z font1
     lda #>CHARSET+$40*8
     sta.z font1+1
-  b3:
+  __b3:
     lda.z font1+1
     cmp #>CHARSET+$100*8
-    beq !b4+
-    jmp b4
-  !b4:
+    beq !__b4+
+    jmp __b4
+  !__b4:
     lda.z font1
     cmp #<CHARSET+$100*8
-    beq !b4+
-    jmp b4
-  !b4:
+    beq !__b4+
+    jmp __b4
+  !__b4:
     lda #0
     sta.z c
-  b5:
+  __b5:
     lda.z c
     cmp #$40
-    bcc b7
+    bcc b1
     rts
-  b7:
+  b1:
     ldx #0
     txa
     sta.z i
-  b6:
+  __b6:
     lda.z i
     cmp #8
-    bcc b10
+    bcc b2
     inc.z c
-    jmp b5
-  b10:
+    jmp __b5
+  b2:
     ldy #0
     tya
     sta.z ii
-  b8:
+  __b8:
     lda.z ii
     cmp #8
-    bcc b9
+    bcc __b9
     lda.z c
-    sta.z _15
+    sta.z __15
     lda #0
-    sta.z _15+1
-    asl.z _16
-    rol.z _16+1
-    asl.z _16
-    rol.z _16+1
-    asl.z _16
-    rol.z _16+1
+    sta.z __15+1
+    asl.z __16
+    rol.z __16+1
+    asl.z __16
+    rol.z __16+1
+    asl.z __16
+    rol.z __16+1
     lda.z i
     clc
-    adc.z _17
-    sta.z _17
+    adc.z __17
+    sta.z __17
     bcc !+
-    inc.z _17+1
+    inc.z __17+1
   !:
     clc
-    lda.z _18
+    lda.z __18
     adc #<CHARSET+1*8
-    sta.z _18
-    lda.z _18+1
+    sta.z __18
+    lda.z __18+1
     adc #>CHARSET+1*8
-    sta.z _18+1
+    sta.z __18+1
     tya
     ldy #0
-    sta (_18),y
+    sta (__18),y
     inc.z i
-    jmp b6
-  b9:
+    jmp __b6
+  __b9:
     txa
     clc
     adc.z c
     tax
     cpx #$3f+1
-    bcc b11
+    bcc __b11
     txa
     axs #$40
     lda #1
@@ -285,16 +285,16 @@ makecharset: {
     clc
     adc.z ii
     and #7
-    sta.z _13
+    sta.z __13
     tya
-    ldy.z _13
+    ldy.z __13
     clc
     adc bittab,y
     tay
-  b11:
+  __b11:
     inc.z ii
-    jmp b8
-  b4:
+    jmp __b8
+  __b4:
     lda #$ff
     ldy #0
     sta (font1),y
@@ -302,8 +302,8 @@ makecharset: {
     bne !+
     inc.z font1+1
   !:
-    jmp b3
-  b2:
+    jmp __b3
+  __b2:
     lda #0
     tay
     sta (font),y
@@ -311,7 +311,7 @@ makecharset: {
     bne !+
     inc.z font+1
   !:
-    jmp b1
+    jmp __b1
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
 // Initialize SID voice 3 for random number generation
@@ -332,7 +332,7 @@ fillscreen: {
     lda #<0
     sta.z i
     sta.z i+1
-  b1:
+  __b1:
     txa
     ldy #0
     sta (screen),y
@@ -346,9 +346,9 @@ fillscreen: {
   !:
     lda.z i+1
     cmp #>$3e8
-    bne b1
+    bne __b1
     lda.z i
     cmp #<$3e8
-    bne b1
+    bne __b1
     rts
 }

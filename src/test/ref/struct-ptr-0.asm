@@ -5,12 +5,12 @@
   .const OFFSET_STRUCT_POINT_Y = 1
 main: {
     .label SCREEN = $400
-    .label _5 = 2
+    .label __5 = 2
     ldx #0
-  b1:
+  __b1:
     txa
     asl
-    sta.z _5
+    sta.z __5
     tay
     txa
     sta points,y
@@ -18,13 +18,13 @@ main: {
     tay
     iny
     tya
-    ldy.z _5
+    ldy.z __5
     sta points+OFFSET_STRUCT_POINT_Y,y
     inx
     cpx #5
-    bne b1
+    bne __b1
     ldy #0
-  b2:
+  __b2:
     tya
     asl
     tax
@@ -34,7 +34,7 @@ main: {
     sta SCREEN+$28,y
     iny
     cpy #5
-    bne b2
+    bne __b2
     rts
 }
   points: .fill 2*4, 0

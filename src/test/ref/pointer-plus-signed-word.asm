@@ -11,7 +11,7 @@ main: {
     sta.z i
     lda #>-$a
     sta.z i+1
-  b1:
+  __b1:
     lda #<SCREEN
     clc
     adc.z i
@@ -28,9 +28,9 @@ main: {
   !:
     lda.z i+1
     cmp #>$b
-    bne b1
+    bne __b1
     lda.z i
     cmp #<$b
-    bne b1
+    bne __b1
     rts
 }

@@ -11,11 +11,11 @@ main: {
     lda #RED
     sta VIC+$10*2+1
     ldx #$28
-  b1:
+  __b1:
     lda #STAR+1
     sta SCREEN,x
     inx
     cpx #$50
-    bne b1
+    bne __b1
     rts
 }

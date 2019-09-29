@@ -8,38 +8,38 @@ main: {
     ldy #0
     ldx #2
   // for()
-  b1:
+  __b1:
     cpx #0
-    bne b2
+    bne __b2
     lda #' '
     sta SCREEN,y
     iny
     lda #3
-  b4:
+  __b4:
     sec
     sbc #1
     cmp #0
-    bne b5
+    bne __b5
     lda #' '
     sta SCREEN,y
     iny
     lda #2
-  b7:
+  __b7:
     sta SCREEN,y
     iny
     sec
     sbc #1
     cmp #0
-    bne b7
+    bne __b7
     rts
-  b5:
+  __b5:
     sta SCREEN,y
     iny
-    jmp b4
-  b2:
+    jmp __b4
+  __b2:
     txa
     sta SCREEN,y
     iny
     dex
-    jmp b1
+    jmp __b1
 }

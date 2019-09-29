@@ -18,18 +18,18 @@ main: {
 print_msg: {
     .label msg = 4
     cpx #1
-    beq b1
+    beq __b1
     lda #<msg_2
     sta.z msg
     lda #>msg_2
     sta.z msg+1
-    jmp b2
-  b1:
+    jmp __b2
+  __b1:
     lda #<msg_1
     sta.z msg
     lda #>msg_1
     sta.z msg+1
-  b2:
+  __b2:
     jsr print
     rts
     msg_1: .text "Hello "
@@ -40,13 +40,13 @@ print_msg: {
 // print(byte* zeropage(4) msg)
 print: {
     .label msg = 4
-  b1:
+  __b1:
     ldy #0
     lda (msg),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (msg),y
     sta (screen),y
@@ -58,5 +58,5 @@ print: {
     bne !+
     inc.z msg+1
   !:
-    jmp b1
+    jmp __b1
 }

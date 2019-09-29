@@ -5,20 +5,20 @@
 main: {
     .label SCREEN = $400
     ldy #0
-  b1:
+  __b1:
     jsr cond
     cmp #0
-    bne b2
+    bne __b2
     jsr m2
-  b4:
+  __b4:
     sta SCREEN,y
     iny
     cpy #$a
-    bne b1
+    bne __b1
     rts
-  b2:
+  __b2:
     jsr m1
-    jmp b4
+    jmp __b4
 }
 // m1(byte register(Y) i)
 m1: {

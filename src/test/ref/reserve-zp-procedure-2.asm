@@ -7,7 +7,7 @@ main: {
     .label i = 8
     lda #0
     sta.z i
-  b1:
+  __b1:
     lda.z i
     jsr sub1
     ldy.z i
@@ -19,7 +19,7 @@ main: {
     inc.z i
     lda #3
     cmp.z i
-    bne b1
+    bne __b1
     rts
 }
 // sub2(byte register(X) i)

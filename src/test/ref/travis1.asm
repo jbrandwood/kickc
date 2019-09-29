@@ -18,12 +18,12 @@ main: {
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
-  b1:
+  __b1:
     jsr game_ready
     cmp #0
-    bne b3
-    jmp b2
-  b3:
+    bne __b3
+    jmp __b2
+  __b3:
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -33,18 +33,18 @@ main: {
     lda #>str
     sta.z print_str_ln.str+1
     jsr print_str_ln
-  b2:
+  __b2:
     inc.z i
     lda #6
     cmp.z i
-    bne b5
+    bne __b5
     rts
-  b5:
+  __b5:
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    jmp b1
+    jmp __b1
     str: .text "ready!"
     .byte 0
 }
@@ -58,7 +58,7 @@ print_str_ln: {
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -68,11 +68,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -80,13 +80,13 @@ print_ln: {
 // print_str(byte* zeropage(3) str)
 print_str: {
     .label str = 3
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
@@ -98,13 +98,13 @@ print_str: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 game_ready: {
     cpx #0
-    bne b1
+    bne __b1
     ldx #READY_FRAMES
-  b1:
+  __b1:
     lda #<str
     sta.z print_str_ln.str
     lda #>str

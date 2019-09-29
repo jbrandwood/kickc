@@ -12,7 +12,7 @@ main: {
     ldy #0
     ldx #0
   // Do some sums
-  b1:
+  __b1:
     txa
     jsr sum
     // Output the result on the screen
@@ -20,7 +20,7 @@ main: {
     iny
     inx
     cpx #$b
-    bne b1
+    bne __b1
     rts
 }
 // Adds up two bytes and returns the result

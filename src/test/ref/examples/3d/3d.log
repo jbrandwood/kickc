@@ -4663,7 +4663,7 @@ Target platform is c64basic / MOS6502X
 // - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SPRITES_XPOS = $d000
@@ -4696,27 +4696,27 @@ Target platform is c64basic / MOS6502X
   .label sx = 2
   .label sy = 3
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm(location (const byte*) SPRITE) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // asm { sei  }
     sei
     // [5] call sprites_init 
     jsr sprites_init
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const word*) psp1) ← (word)(const byte[$200]) mulf_sqr1 -- _deref_pwuc1=vwuc2 
     //mulf_init();
     lda #<mulf_sqr1
@@ -4730,66 +4730,66 @@ main: {
     sta psp2+1
     // [8] call debug_print_init 
     // [181] phi from main::@1 to debug_print_init [phi:main::@1->debug_print_init]
-  debug_print_init_from_b1:
+  debug_print_init_from___b1:
     jsr debug_print_init
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [10] call anim 
     // [12] phi from main::@2 to anim [phi:main::@2->anim]
-  anim_from_b2:
+  anim_from___b2:
     jsr anim
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
   // anim
 anim: {
-    .label _10 = $1d
-    .label _12 = $1e
+    .label __10 = $1d
+    .label __12 = $1e
     .label i2 = $1c
     .label i = 4
     // [13] phi from anim to anim::@1 [phi:anim->anim::@1]
-  b1_from_anim:
+  __b1_from_anim:
     // [13] phi (signed byte) sy#10 = (signed byte) 0 [phi:anim->anim::@1#0] -- vbsz1=vbsc1 
     lda #0
     sta.z sy
     // [13] phi (signed byte) sx#10 = (signed byte) 0 [phi:anim->anim::@1#1] -- vbsz1=vbsc1 
     lda #0
     sta.z sx
-    jmp b1
+    jmp __b1
   //signed byte xmin = 0;
   //signed byte xmax = 0;
     // anim::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // anim::@2
-  b2:
+  __b2:
     // [14] if(*((const byte*) RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // anim::@3
-  b3:
+  __b3:
     // [15] if(*((const byte*) RASTER)!=(byte) $fe) goto anim::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
-    bne b3
-    jmp b4
+    bne __b3
+    jmp __b4
     // anim::@4
-  b4:
+  __b4:
     // [16] if(*((const byte*) RASTER)!=(byte) $fd) goto anim::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
-    bne b4
-    jmp b5
+    bne __b4
+    jmp __b5
     // anim::@5
-  b5:
+  __b5:
     // [17] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // [18] (signed byte) calculate_matrix::sx#0 ← (signed byte) sx#10 -- vbsz1=vbsz2 
@@ -4801,24 +4801,24 @@ anim: {
     // [20] call calculate_matrix 
     jsr calculate_matrix
     // [21] phi from anim::@5 to anim::@8 [phi:anim::@5->anim::@8]
-  b8_from_b5:
-    jmp b8
+  __b8_from___b5:
+    jmp __b8
     // anim::@8
-  b8:
+  __b8:
     // [22] call store_matrix 
     jsr store_matrix
     // [23] phi from anim::@8 to anim::@6 [phi:anim::@8->anim::@6]
-  b6_from_b8:
+  __b6_from___b8:
     // [23] phi (byte) anim::i#2 = (byte) 0 [phi:anim::@8->anim::@6#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b6
+    jmp __b6
     // [23] phi from anim::@9 to anim::@6 [phi:anim::@9->anim::@6]
-  b6_from_b9:
+  __b6_from___b9:
     // [23] phi (byte) anim::i#2 = (byte) anim::i#1 [phi:anim::@9->anim::@6#0] -- register_copy 
-    jmp b6
+    jmp __b6
     // anim::@6
-  b6:
+  __b6:
     // [24] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // [25] (signed byte) rotate_matrix::x#0 ← *((const signed byte[8]) xs + (byte) anim::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
@@ -4835,9 +4835,9 @@ anim: {
     sta.z rotate_matrix.z
     // [28] call rotate_matrix 
     jsr rotate_matrix
-    jmp b9
+    jmp __b9
     // anim::@9
-  b9:
+  __b9:
     // [29] *((const signed byte[8]) xrs + (byte) anim::i#2) ← *((const signed byte*) xr) -- pbsc1_derefidx_vbuz1=_deref_pbsc2 
     //if(*xr<xmin) xmin = *xr;
     //if(*xr>xmax) xmax = *xr;
@@ -4872,18 +4872,18 @@ anim: {
     lda #$80
     clc
     adc xp
-    sta.z _10
+    sta.z __10
     // [37] *((const byte*) SPRITES_XPOS + (byte) anim::i2#0) ← (byte~) anim::$10 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _10
+    lda.z __10
     ldy.z i2
     sta SPRITES_XPOS,y
     // [38] (byte~) anim::$12 ← (byte) $80 + (byte)*((const signed byte*) yp) -- vbuz1=vbuc1_plus__deref_pbuc2 
     lda #$80
     clc
     adc yp
-    sta.z _12
+    sta.z __12
     // [39] *((const byte*) SPRITES_YPOS + (byte) anim::i2#0) ← (byte~) anim::$12 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _12
+    lda.z __12
     ldy.z i2
     sta SPRITES_YPOS,y
     // [40] (byte) anim::i#1 ← ++ (byte) anim::i#2 -- vbuz1=_inc_vbuz1 
@@ -4891,18 +4891,18 @@ anim: {
     // [41] if((byte) anim::i#1!=(byte) 8) goto anim::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b6_from_b9
-    jmp b7
+    bne __b6_from___b9
+    jmp __b7
     // anim::@7
-  b7:
+  __b7:
     // [42] *((const byte*) BORDERCOL) ← (const byte) LIGHT_GREY -- _deref_pbuc1=vbuc2 
     lda #LIGHT_GREY
     sta BORDERCOL
     // [43] call debug_print 
     jsr debug_print
-    jmp b10
+    jmp __b10
     // anim::@10
-  b10:
+  __b10:
     // [44] *((const byte*) BORDERCOL) ← (const byte) LIGHT_BLUE -- _deref_pbuc1=vbuc2 
     lda #LIGHT_BLUE
     sta BORDERCOL
@@ -4915,10 +4915,10 @@ anim: {
     axs #3
     stx.z sy
     // [13] phi from anim::@10 to anim::@1 [phi:anim::@10->anim::@1]
-  b1_from_b10:
+  __b1_from___b10:
     // [13] phi (signed byte) sy#10 = (signed byte) sy#3 [phi:anim::@10->anim::@1#0] -- register_copy 
     // [13] phi (signed byte) sx#10 = (signed byte) sx#3 [phi:anim::@10->anim::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // debug_print
 debug_print: {
@@ -4978,9 +4978,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#4 [phi:debug_print::print_sbyte_pos1->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b2
+    jmp __b2
     // debug_print::@2
-  b2:
+  __b2:
     // [50] (signed byte) debug_print::print_sbyte_pos2_sb#0 ← (signed byte) sy#10 -- vbsz1=vbsz2 
     lda.z sy
     sta.z print_sbyte_pos2_sb
@@ -5017,9 +5017,9 @@ debug_print: {
     lda #sz
     sta.z print_sbyte_at.b
     jsr print_sbyte_at
-    jmp b3
+    jmp __b3
     // debug_print::@3
-  b3:
+  __b3:
     // [55] (signed byte) debug_print::print_sbyte_pos4_sb#0 ← *((const signed byte[9]) rotation_matrix) -- vbsz1=_deref_pbsc1 
     lda rotation_matrix
     sta.z print_sbyte_pos4_sb
@@ -5039,9 +5039,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#7 [phi:debug_print::print_sbyte_pos4->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b4
+    jmp __b4
     // debug_print::@4
-  b4:
+  __b4:
     // [58] (signed byte) debug_print::print_sbyte_pos5_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 1) -- vbsz1=_deref_pbsc1 
     lda rotation_matrix+1
     sta.z print_sbyte_pos5_sb
@@ -5061,9 +5061,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#8 [phi:debug_print::print_sbyte_pos5->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b5
+    jmp __b5
     // debug_print::@5
-  b5:
+  __b5:
     // [61] (signed byte) debug_print::print_sbyte_pos6_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 2) -- vbsz1=_deref_pbsc1 
     lda rotation_matrix+2
     sta.z print_sbyte_pos6_sb
@@ -5083,9 +5083,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#9 [phi:debug_print::print_sbyte_pos6->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b6
+    jmp __b6
     // debug_print::@6
-  b6:
+  __b6:
     // [64] (signed byte) debug_print::print_sbyte_pos7_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 3) -- vbsz1=_deref_pbsc1 
     lda rotation_matrix+3
     sta.z print_sbyte_pos7_sb
@@ -5105,9 +5105,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#10 [phi:debug_print::print_sbyte_pos7->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b7
+    jmp __b7
     // debug_print::@7
-  b7:
+  __b7:
     // [67] (signed byte) debug_print::print_sbyte_pos8_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 4) -- vbsz1=_deref_pbsc1 
     lda rotation_matrix+4
     sta.z print_sbyte_pos8_sb
@@ -5127,9 +5127,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#11 [phi:debug_print::print_sbyte_pos8->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b8
+    jmp __b8
     // debug_print::@8
-  b8:
+  __b8:
     // [70] (signed byte) debug_print::print_sbyte_pos9_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 5) -- vbsz1=_deref_pbsc1 
     lda rotation_matrix+5
     sta.z print_sbyte_pos9_sb
@@ -5149,9 +5149,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#12 [phi:debug_print::print_sbyte_pos9->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b9
+    jmp __b9
     // debug_print::@9
-  b9:
+  __b9:
     // [73] (signed byte) debug_print::print_sbyte_pos10_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 6) -- vbsz1=_deref_pbsc1 
     lda rotation_matrix+6
     sta.z print_sbyte_pos10_sb
@@ -5171,9 +5171,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#13 [phi:debug_print::print_sbyte_pos10->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b10
+    jmp __b10
     // debug_print::@10
-  b10:
+  __b10:
     // [76] (signed byte) debug_print::print_sbyte_pos11_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 7) -- vbsz1=_deref_pbsc1 
     lda rotation_matrix+7
     sta.z print_sbyte_pos11_sb
@@ -5193,9 +5193,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#14 [phi:debug_print::print_sbyte_pos11->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b11
+    jmp __b11
     // debug_print::@11
-  b11:
+  __b11:
     // [79] (signed byte) debug_print::print_sbyte_pos12_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 8) -- vbsz1=_deref_pbsc1 
     lda rotation_matrix+8
     sta.z print_sbyte_pos12_sb
@@ -5216,21 +5216,21 @@ debug_print: {
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#15 [phi:debug_print::print_sbyte_pos12->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
     // [82] phi from debug_print::print_sbyte_pos12 to debug_print::@1 [phi:debug_print::print_sbyte_pos12->debug_print::@1]
-  b1_from_print_sbyte_pos12:
+  __b1_from_print_sbyte_pos12:
     // [82] phi (byte) debug_print::i#2 = (byte) 0 [phi:debug_print::print_sbyte_pos12->debug_print::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // [82] phi (byte) debug_print::c#2 = (byte) 4 [phi:debug_print::print_sbyte_pos12->debug_print::@1#1] -- vbuz1=vbuc1 
     lda #4
     sta.z c
-    jmp b1
+    jmp __b1
     // [82] phi from debug_print::@17 to debug_print::@1 [phi:debug_print::@17->debug_print::@1]
-  b1_from_b17:
+  __b1_from___b17:
     // [82] phi (byte) debug_print::i#2 = (byte) debug_print::i#1 [phi:debug_print::@17->debug_print::@1#0] -- register_copy 
     // [82] phi (byte) debug_print::c#2 = (byte) debug_print::c#1 [phi:debug_print::@17->debug_print::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // debug_print::@1
-  b1:
+  __b1:
     // [83] (byte*) print_sbyte_at::at#15 ← (const byte*) debug_print::at_line#0 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -5245,13 +5245,13 @@ debug_print: {
     sta.z print_sbyte_at.b
     // [85] call print_sbyte_at 
     // [105] phi from debug_print::@1 to print_sbyte_at [phi:debug_print::@1->print_sbyte_at]
-  print_sbyte_at_from_b1:
+  print_sbyte_at_from___b1:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#15 [phi:debug_print::@1->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#16 [phi:debug_print::@1->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b12
+    jmp __b12
     // debug_print::@12
-  b12:
+  __b12:
     // [86] (byte*) print_sbyte_at::at#16 ← (const byte*) debug_print::at_line#0+(byte)(number) $28*(number) 1 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -5266,13 +5266,13 @@ debug_print: {
     sta.z print_sbyte_at.b
     // [88] call print_sbyte_at 
     // [105] phi from debug_print::@12 to print_sbyte_at [phi:debug_print::@12->print_sbyte_at]
-  print_sbyte_at_from_b12:
+  print_sbyte_at_from___b12:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#16 [phi:debug_print::@12->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#17 [phi:debug_print::@12->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b13
+    jmp __b13
     // debug_print::@13
-  b13:
+  __b13:
     // [89] (byte*) print_sbyte_at::at#17 ← (const byte*) debug_print::at_line#0+(byte)(number) $28*(number) 2 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -5287,13 +5287,13 @@ debug_print: {
     sta.z print_sbyte_at.b
     // [91] call print_sbyte_at 
     // [105] phi from debug_print::@13 to print_sbyte_at [phi:debug_print::@13->print_sbyte_at]
-  print_sbyte_at_from_b13:
+  print_sbyte_at_from___b13:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#17 [phi:debug_print::@13->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#18 [phi:debug_print::@13->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b14
+    jmp __b14
     // debug_print::@14
-  b14:
+  __b14:
     // [92] (byte*) print_sbyte_at::at#18 ← (const byte*) debug_print::at_line#0+(byte)(number) $28*(number) 3 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -5308,13 +5308,13 @@ debug_print: {
     sta.z print_sbyte_at.b
     // [94] call print_sbyte_at 
     // [105] phi from debug_print::@14 to print_sbyte_at [phi:debug_print::@14->print_sbyte_at]
-  print_sbyte_at_from_b14:
+  print_sbyte_at_from___b14:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#18 [phi:debug_print::@14->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#19 [phi:debug_print::@14->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b15
+    jmp __b15
     // debug_print::@15
-  b15:
+  __b15:
     // [95] (byte*) print_sbyte_at::at#19 ← (const byte*) debug_print::at_line#0+(byte)(number) $28*(number) 4 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -5329,13 +5329,13 @@ debug_print: {
     sta.z print_sbyte_at.b
     // [97] call print_sbyte_at 
     // [105] phi from debug_print::@15 to print_sbyte_at [phi:debug_print::@15->print_sbyte_at]
-  print_sbyte_at_from_b15:
+  print_sbyte_at_from___b15:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#19 [phi:debug_print::@15->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#20 [phi:debug_print::@15->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b16
+    jmp __b16
     // debug_print::@16
-  b16:
+  __b16:
     // [98] (byte*) print_sbyte_at::at#20 ← (const byte*) debug_print::at_line#0+(byte)(number) $28*(number) 5 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -5350,13 +5350,13 @@ debug_print: {
     sta.z print_sbyte_at.b
     // [100] call print_sbyte_at 
     // [105] phi from debug_print::@16 to print_sbyte_at [phi:debug_print::@16->print_sbyte_at]
-  print_sbyte_at_from_b16:
+  print_sbyte_at_from___b16:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#20 [phi:debug_print::@16->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#21 [phi:debug_print::@16->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b17
+    jmp __b17
     // debug_print::@17
-  b17:
+  __b17:
     // [101] (byte) debug_print::c#1 ← (byte) debug_print::c#2 + (byte) 4 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z c
     axs #-[4]
@@ -5366,10 +5366,10 @@ debug_print: {
     // [103] if((byte) debug_print::i#1!=(byte) 8) goto debug_print::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b1_from_b17
-    jmp breturn
+    bne __b1_from___b17
+    jmp __breturn
     // debug_print::@return
-  breturn:
+  __breturn:
     // [104] return 
     rts
 }
@@ -5381,10 +5381,10 @@ print_sbyte_at: {
     .label at = 7
     // [106] if((signed byte) print_sbyte_at::b#22<(signed byte) 0) goto print_sbyte_at::@1 -- vbsz1_lt_0_then_la1 
     lda.z b
-    bmi b1
-    jmp b3
+    bmi __b1
+    jmp __b3
     // print_sbyte_at::@3
-  b3:
+  __b3:
     // [107] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#21 -- pbuz1=pbuz2 
     lda.z at
     sta.z print_char_at.at
@@ -5392,19 +5392,19 @@ print_sbyte_at: {
     sta.z print_char_at.at+1
     // [108] call print_char_at 
     // [117] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
-  print_char_at_from_b3:
+  print_char_at_from___b3:
     // [117] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#1 [phi:print_sbyte_at::@3->print_char_at#0] -- register_copy 
     // [117] phi (byte) print_char_at::ch#4 = (byte) ' ' [phi:print_sbyte_at::@3->print_char_at#1] -- vbuz1=vbuc1 
     lda #' '
     sta.z print_char_at.ch
     jsr print_char_at
     // [109] phi from print_sbyte_at::@3 print_sbyte_at::@4 to print_sbyte_at::@2 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2]
-  b2_from_b3:
-  b2_from_b4:
+  __b2_from___b3:
+  __b2_from___b4:
     // [109] phi (signed byte) print_sbyte_at::b#24 = (signed byte) print_sbyte_at::b#22 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // print_sbyte_at::@2
-  b2:
+  __b2:
     // [110] (byte) print_byte_at::b#0 ← (byte)(signed byte) print_sbyte_at::b#24 -- vbuz1=vbuz2 
     lda.z b
     sta.z print_byte_at.b
@@ -5418,13 +5418,13 @@ print_sbyte_at: {
     sta.z print_byte_at.at+1
     // [112] call print_byte_at 
     jsr print_byte_at
-    jmp breturn
+    jmp __breturn
     // print_sbyte_at::@return
-  breturn:
+  __breturn:
     // [113] return 
     rts
     // print_sbyte_at::@1
-  b1:
+  __b1:
     // [114] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#21 -- pbuz1=pbuz2 
     lda.z at
     sta.z print_char_at.at
@@ -5432,22 +5432,22 @@ print_sbyte_at: {
     sta.z print_char_at.at+1
     // [115] call print_char_at 
     // [117] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
-  print_char_at_from_b1:
+  print_char_at_from___b1:
     // [117] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#0 [phi:print_sbyte_at::@1->print_char_at#0] -- register_copy 
     // [117] phi (byte) print_char_at::ch#4 = (byte) '-' [phi:print_sbyte_at::@1->print_char_at#1] -- vbuz1=vbuc1 
     lda #'-'
     sta.z print_char_at.ch
     jsr print_char_at
-    jmp b4
+    jmp __b4
     // print_sbyte_at::@4
-  b4:
+  __b4:
     // [116] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#22 -- vbsz1=_neg_vbsz1 
     lda.z b
     eor #$ff
     clc
     adc #1
     sta.z b
-    jmp b2_from_b4
+    jmp __b2_from___b4
 }
   // print_char_at
 // Print a single char
@@ -5459,9 +5459,9 @@ print_char_at: {
     lda.z ch
     ldy #0
     sta (at),y
-    jmp breturn
+    jmp __breturn
     // print_char_at::@return
-  breturn:
+  __breturn:
     // [119] return 
     rts
 }
@@ -5469,8 +5469,8 @@ print_char_at: {
 // Print a byte as HEX at a specific position
 // print_byte_at(byte zeropage($2a) b, byte* zeropage($2b) at)
 print_byte_at: {
-    .label _0 = $2d
-    .label _2 = $2e
+    .label __0 = $2d
+    .label __2 = $2e
     .label b = $2a
     .label at = $2b
     // [120] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
@@ -5479,9 +5479,9 @@ print_byte_at: {
     lsr
     lsr
     lsr
-    sta.z _0
+    sta.z __0
     // [121] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z _0
+    ldy.z __0
     lda print_hextab,y
     sta.z print_char_at.ch
     // [122] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0 -- pbuz1=pbuz2 
@@ -5495,13 +5495,13 @@ print_byte_at: {
     // [117] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#2 [phi:print_byte_at->print_char_at#0] -- register_copy 
     // [117] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#2 [phi:print_byte_at->print_char_at#1] -- register_copy 
     jsr print_char_at
-    jmp b1
+    jmp __b1
     // print_byte_at::@1
-  b1:
+  __b1:
     // [124] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and.z b
-    sta.z _2
+    sta.z __2
     // [125] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda.z at
     clc
@@ -5511,18 +5511,18 @@ print_byte_at: {
     adc #0
     sta.z print_char_at.at+1
     // [126] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z _2
+    ldy.z __2
     lda print_hextab,y
     sta.z print_char_at.ch
     // [127] call print_char_at 
     // [117] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
-  print_char_at_from_b1:
+  print_char_at_from___b1:
     // [117] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#3 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
     // [117] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#3 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
-    jmp breturn
+    jmp __breturn
     // print_byte_at::@return
-  breturn:
+  __breturn:
     // [128] return 
     rts
 }
@@ -5632,9 +5632,9 @@ rotate_matrix: {
     sec
     sbc (psp2),y
     sta xp
-    jmp breturn
+    jmp __breturn
     // rotate_matrix::@return
-  breturn:
+  __breturn:
     // [133] return 
     rts
 }
@@ -5680,9 +5680,9 @@ store_matrix: {
     sta rotate_matrix.I1+1
     eor #$ff
     sta rotate_matrix.I2+1
-    jmp breturn
+    jmp __breturn
     // store_matrix::@return
-  breturn:
+  __breturn:
     // [135] return 
     rts
 }
@@ -5692,31 +5692,31 @@ store_matrix: {
 // Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
 // calculate_matrix(signed byte zeropage($17) sx, signed byte zeropage($18) sy)
 calculate_matrix: {
-    .label _10 = $39
-    .label _11 = $3a
-    .label _12 = $3b
-    .label _13 = $3c
-    .label _14 = $3d
-    .label _15 = $3e
-    .label _16 = $3f
-    .label _17 = $40
-    .label _18 = $41
-    .label _19 = $42
-    .label _20 = $43
-    .label _21 = $44
-    .label _22 = $45
-    .label _23 = $46
-    .label _24 = $47
-    .label _25 = $48
-    .label _26 = $49
-    .label _27 = $4a
-    .label _28 = $4b
-    .label _29 = $4c
-    .label _30 = $4d
-    .label _31 = $4e
-    .label _32 = $4f
-    .label _33 = $50
-    .label _34 = $51
+    .label __10 = $39
+    .label __11 = $3a
+    .label __12 = $3b
+    .label __13 = $3c
+    .label __14 = $3d
+    .label __15 = $3e
+    .label __16 = $3f
+    .label __17 = $40
+    .label __18 = $41
+    .label __19 = $42
+    .label __20 = $43
+    .label __21 = $44
+    .label __22 = $45
+    .label __23 = $46
+    .label __24 = $47
+    .label __25 = $48
+    .label __26 = $49
+    .label __27 = $4a
+    .label __28 = $4b
+    .label __29 = $4c
+    .label __30 = $4d
+    .label __31 = $4e
+    .label __32 = $4f
+    .label __33 = $50
+    .label __34 = $51
     .label sx = $17
     .label sy = $18
     .label t1 = $2f
@@ -5777,9 +5777,9 @@ calculate_matrix: {
     ldy.z t2
     clc
     adc COSH,y
-    sta.z _10
+    sta.z __10
     // [147] *((const signed byte[9]) rotation_matrix) ← (signed byte~) calculate_matrix::$10 -- _deref_pbsc1=vbsz1 
-    lda.z _10
+    lda.z __10
     sta rotation_matrix
     // [148] (signed byte~) calculate_matrix::$11 ← *((const signed byte[$140]) SINH + (signed byte) calculate_matrix::t1#0) - *((const signed byte[$140]) SINH + (signed byte) calculate_matrix::t2#0) -- vbsz1=pbsc1_derefidx_vbsz2_minus_pbsc1_derefidx_vbsz3 
     ldy.z t1
@@ -5787,18 +5787,18 @@ calculate_matrix: {
     ldy.z t2
     sec
     sbc SINH,y
-    sta.z _11
+    sta.z __11
     // [149] *((const signed byte[9]) rotation_matrix+(byte) 1) ← (signed byte~) calculate_matrix::$11 -- _deref_pbsc1=vbsz1 
-    lda.z _11
+    lda.z __11
     sta rotation_matrix+1
     // [150] (signed byte~) calculate_matrix::$12 ← *((const signed byte[$140]) SINH + (signed byte) calculate_matrix::sy#0) + *((const signed byte[$140]) SINH + (signed byte) calculate_matrix::sy#0) -- vbsz1=pbsc1_derefidx_vbsz2_plus_pbsc1_derefidx_vbsz2 
     ldy.z sy
     clc
     lda SINH,y
     adc SINH,y
-    sta.z _12
+    sta.z __12
     // [151] *((const signed byte[9]) rotation_matrix+(byte) 2) ← (signed byte~) calculate_matrix::$12 -- _deref_pbsc1=vbsz1 
-    lda.z _12
+    lda.z __12
     sta rotation_matrix+2
     // [152] (signed byte~) calculate_matrix::$13 ← *((const signed byte[$140]) SINH + (signed byte) calculate_matrix::t3#0) - *((const signed byte[$140]) SINH + (signed byte) calculate_matrix::t4#0) -- vbsz1=pbsc1_derefidx_vbsz2_minus_pbsc1_derefidx_vbsz3 
     ldy.z t3
@@ -5806,33 +5806,33 @@ calculate_matrix: {
     ldy.z t4
     sec
     sbc SINH,y
-    sta.z _13
+    sta.z __13
     // [153] (signed byte~) calculate_matrix::$14 ← (signed byte~) calculate_matrix::$13 + *((const signed byte*) COSQ#0 + (signed byte) calculate_matrix::t6#0) -- vbsz1=vbsz2_plus_pbsc1_derefidx_vbsz3 
-    lda.z _13
+    lda.z __13
     ldy.z t6
     clc
     adc COSQ,y
-    sta.z _14
+    sta.z __14
     // [154] (signed byte~) calculate_matrix::$15 ← (signed byte~) calculate_matrix::$14 - *((const signed byte*) COSQ#0 + (signed byte) calculate_matrix::t5#0) -- vbsz1=vbsz2_minus_pbsc1_derefidx_vbsz3 
-    lda.z _14
+    lda.z __14
     ldy.z t5
     sec
     sbc COSQ,y
-    sta.z _15
+    sta.z __15
     // [155] (signed byte~) calculate_matrix::$16 ← (signed byte~) calculate_matrix::$15 + *((const signed byte*) COSQ#0 + (signed byte) calculate_matrix::t8#0) -- vbsz1=vbsz2_plus_pbsc1_derefidx_vbsz3 
-    lda.z _15
+    lda.z __15
     ldy.z t8
     clc
     adc COSQ,y
-    sta.z _16
+    sta.z __16
     // [156] (signed byte~) calculate_matrix::$17 ← (signed byte~) calculate_matrix::$16 - *((const signed byte*) COSQ#0 + (signed byte) calculate_matrix::t7#0) -- vbsz1=vbsz2_minus_pbsc1_derefidx_vbsz3 
-    lda.z _16
+    lda.z __16
     ldy.z t7
     sec
     sbc COSQ,y
-    sta.z _17
+    sta.z __17
     // [157] *((const signed byte[9]) rotation_matrix+(byte) 3) ← (signed byte~) calculate_matrix::$17 -- _deref_pbsc1=vbsz1 
-    lda.z _17
+    lda.z __17
     sta rotation_matrix+3
     // [158] (signed byte~) calculate_matrix::$18 ← *((const signed byte*) COSH#0 + (signed byte) calculate_matrix::t3#0) + *((const signed byte*) COSH#0 + (signed byte) calculate_matrix::t4#0) -- vbsz1=pbsc1_derefidx_vbsz2_plus_pbsc1_derefidx_vbsz3 
     ldy.z t3
@@ -5840,33 +5840,33 @@ calculate_matrix: {
     ldy.z t4
     clc
     adc COSH,y
-    sta.z _18
+    sta.z __18
     // [159] (signed byte~) calculate_matrix::$19 ← (signed byte~) calculate_matrix::$18 + *((const signed byte[$140]) SINQ + (signed byte) calculate_matrix::t5#0) -- vbsz1=vbsz2_plus_pbsc1_derefidx_vbsz3 
-    lda.z _18
+    lda.z __18
     ldy.z t5
     clc
     adc SINQ,y
-    sta.z _19
+    sta.z __19
     // [160] (signed byte~) calculate_matrix::$20 ← (signed byte~) calculate_matrix::$19 - *((const signed byte[$140]) SINQ + (signed byte) calculate_matrix::t6#0) -- vbsz1=vbsz2_minus_pbsc1_derefidx_vbsz3 
-    lda.z _19
+    lda.z __19
     ldy.z t6
     sec
     sbc SINQ,y
-    sta.z _20
+    sta.z __20
     // [161] (signed byte~) calculate_matrix::$21 ← (signed byte~) calculate_matrix::$20 - *((const signed byte[$140]) SINQ + (signed byte) calculate_matrix::t7#0) -- vbsz1=vbsz2_minus_pbsc1_derefidx_vbsz3 
-    lda.z _20
+    lda.z __20
     ldy.z t7
     sec
     sbc SINQ,y
-    sta.z _21
+    sta.z __21
     // [162] (signed byte~) calculate_matrix::$22 ← (signed byte~) calculate_matrix::$21 - *((const signed byte[$140]) SINQ + (signed byte) calculate_matrix::t8#0) -- vbsz1=vbsz2_minus_pbsc1_derefidx_vbsz3 
-    lda.z _21
+    lda.z __21
     ldy.z t8
     sec
     sbc SINQ,y
-    sta.z _22
+    sta.z __22
     // [163] *((const signed byte[9]) rotation_matrix+(byte) 4) ← (signed byte~) calculate_matrix::$22 -- _deref_pbsc1=vbsz1 
-    lda.z _22
+    lda.z __22
     sta rotation_matrix+4
     // [164] (signed byte~) calculate_matrix::$23 ← *((const signed byte[$140]) SINH + (signed byte) calculate_matrix::t9#0) - *((const signed byte[$140]) SINH + (signed byte) calculate_matrix::t10#0) -- vbsz1=pbsc1_derefidx_vbsz2_minus_pbsc1_derefidx_vbsz3 
     ldy.z t9
@@ -5874,9 +5874,9 @@ calculate_matrix: {
     ldy.z t10
     sec
     sbc SINH,y
-    sta.z _23
+    sta.z __23
     // [165] *((const signed byte[9]) rotation_matrix+(byte) 5) ← (signed byte~) calculate_matrix::$23 -- _deref_pbsc1=vbsz1 
-    lda.z _23
+    lda.z __23
     sta rotation_matrix+5
     // [166] (signed byte~) calculate_matrix::$24 ← *((const signed byte*) COSH#0 + (signed byte) calculate_matrix::t4#0) - *((const signed byte*) COSH#0 + (signed byte) calculate_matrix::t3#0) -- vbsz1=pbsc1_derefidx_vbsz2_minus_pbsc1_derefidx_vbsz3 
     ldy.z t4
@@ -5884,33 +5884,33 @@ calculate_matrix: {
     ldy.z t3
     sec
     sbc COSH,y
-    sta.z _24
+    sta.z __24
     // [167] (signed byte~) calculate_matrix::$25 ← (signed byte~) calculate_matrix::$24 + *((const signed byte[$140]) SINQ + (signed byte) calculate_matrix::t6#0) -- vbsz1=vbsz2_plus_pbsc1_derefidx_vbsz3 
-    lda.z _24
+    lda.z __24
     ldy.z t6
     clc
     adc SINQ,y
-    sta.z _25
+    sta.z __25
     // [168] (signed byte~) calculate_matrix::$26 ← (signed byte~) calculate_matrix::$25 - *((const signed byte[$140]) SINQ + (signed byte) calculate_matrix::t5#0) -- vbsz1=vbsz2_minus_pbsc1_derefidx_vbsz3 
-    lda.z _25
+    lda.z __25
     ldy.z t5
     sec
     sbc SINQ,y
-    sta.z _26
+    sta.z __26
     // [169] (signed byte~) calculate_matrix::$27 ← (signed byte~) calculate_matrix::$26 - *((const signed byte[$140]) SINQ + (signed byte) calculate_matrix::t8#0) -- vbsz1=vbsz2_minus_pbsc1_derefidx_vbsz3 
-    lda.z _26
+    lda.z __26
     ldy.z t8
     sec
     sbc SINQ,y
-    sta.z _27
+    sta.z __27
     // [170] (signed byte~) calculate_matrix::$28 ← (signed byte~) calculate_matrix::$27 - *((const signed byte[$140]) SINQ + (signed byte) calculate_matrix::t7#0) -- vbsz1=vbsz2_minus_pbsc1_derefidx_vbsz3 
-    lda.z _27
+    lda.z __27
     ldy.z t7
     sec
     sbc SINQ,y
-    sta.z _28
+    sta.z __28
     // [171] *((const signed byte[9]) rotation_matrix+(byte) 6) ← (signed byte~) calculate_matrix::$28 -- _deref_pbsc1=vbsz1 
-    lda.z _28
+    lda.z __28
     sta rotation_matrix+6
     // [172] (signed byte~) calculate_matrix::$29 ← *((const signed byte[$140]) SINH + (signed byte) calculate_matrix::t3#0) + *((const signed byte[$140]) SINH + (signed byte) calculate_matrix::t4#0) -- vbsz1=pbsc1_derefidx_vbsz2_plus_pbsc1_derefidx_vbsz3 
     ldy.z t3
@@ -5918,33 +5918,33 @@ calculate_matrix: {
     ldy.z t4
     clc
     adc SINH,y
-    sta.z _29
+    sta.z __29
     // [173] (signed byte~) calculate_matrix::$30 ← (signed byte~) calculate_matrix::$29 + *((const signed byte*) COSQ#0 + (signed byte) calculate_matrix::t6#0) -- vbsz1=vbsz2_plus_pbsc1_derefidx_vbsz3 
-    lda.z _29
+    lda.z __29
     ldy.z t6
     clc
     adc COSQ,y
-    sta.z _30
+    sta.z __30
     // [174] (signed byte~) calculate_matrix::$31 ← (signed byte~) calculate_matrix::$30 - *((const signed byte*) COSQ#0 + (signed byte) calculate_matrix::t5#0) -- vbsz1=vbsz2_minus_pbsc1_derefidx_vbsz3 
-    lda.z _30
+    lda.z __30
     ldy.z t5
     sec
     sbc COSQ,y
-    sta.z _31
+    sta.z __31
     // [175] (signed byte~) calculate_matrix::$32 ← (signed byte~) calculate_matrix::$31 + *((const signed byte*) COSQ#0 + (signed byte) calculate_matrix::t7#0) -- vbsz1=vbsz2_plus_pbsc1_derefidx_vbsz3 
-    lda.z _31
+    lda.z __31
     ldy.z t7
     clc
     adc COSQ,y
-    sta.z _32
+    sta.z __32
     // [176] (signed byte~) calculate_matrix::$33 ← (signed byte~) calculate_matrix::$32 - *((const signed byte*) COSQ#0 + (signed byte) calculate_matrix::t8#0) -- vbsz1=vbsz2_minus_pbsc1_derefidx_vbsz3 
-    lda.z _32
+    lda.z __32
     ldy.z t8
     sec
     sbc COSQ,y
-    sta.z _33
+    sta.z __33
     // [177] *((const signed byte[9]) rotation_matrix+(byte) 7) ← (signed byte~) calculate_matrix::$33 -- _deref_pbsc1=vbsz1 
-    lda.z _33
+    lda.z __33
     sta rotation_matrix+7
     // [178] (signed byte~) calculate_matrix::$34 ← *((const signed byte*) COSH#0 + (signed byte) calculate_matrix::t9#0) + *((const signed byte*) COSH#0 + (signed byte) calculate_matrix::t10#0) -- vbsz1=pbsc1_derefidx_vbsz2_plus_pbsc1_derefidx_vbsz3 
     ldy.z t9
@@ -5952,13 +5952,13 @@ calculate_matrix: {
     ldy.z t10
     clc
     adc COSH,y
-    sta.z _34
+    sta.z __34
     // [179] *((const signed byte[9]) rotation_matrix+(byte) 8) ← (signed byte~) calculate_matrix::$34 -- _deref_pbsc1=vbsz1 
-    lda.z _34
+    lda.z __34
     sta rotation_matrix+8
-    jmp breturn
+    jmp __breturn
     // calculate_matrix::@return
-  breturn:
+  __breturn:
     // [180] return 
     rts
 }
@@ -5967,15 +5967,15 @@ debug_print_init: {
     .label COLS = $d800
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
-    .label _41 = $53
-    .label _44 = $55
-    .label _47 = $57
-    .label _50 = $59
-    .label _53 = $5b
-    .label _56 = $5d
-    .label _59 = $5f
-    .label _62 = $61
-    .label _65 = $63
+    .label __41 = $53
+    .label __44 = $55
+    .label __47 = $57
+    .label __50 = $59
+    .label __53 = $5b
+    .label __56 = $5d
+    .label __59 = $5f
+    .label __62 = $61
+    .label __65 = $63
     .label col = $52
     .label j = $f
     .label c = $d
@@ -5985,13 +5985,13 @@ debug_print_init: {
   print_cls_from_debug_print_init:
     jsr print_cls
     // [183] phi from debug_print_init to debug_print_init::@4 [phi:debug_print_init->debug_print_init::@4]
-  b4_from_debug_print_init:
-    jmp b4
+  __b4_from_debug_print_init:
+    jmp __b4
     // debug_print_init::@4
-  b4:
+  __b4:
     // [184] call print_str_at 
     // [243] phi from debug_print_init::@4 to print_str_at [phi:debug_print_init::@4->print_str_at]
-  print_str_at_from_b4:
+  print_str_at_from___b4:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(byte) $22 [phi:debug_print_init::@4->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$22
     sta.z print_str_at.at
@@ -6004,13 +6004,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [185] phi from debug_print_init::@4 to debug_print_init::@5 [phi:debug_print_init::@4->debug_print_init::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // debug_print_init::@5
-  b5:
+  __b5:
     // [186] call print_str_at 
     // [243] phi from debug_print_init::@5 to print_str_at [phi:debug_print_init::@5->print_str_at]
-  print_str_at_from_b5:
+  print_str_at_from___b5:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(byte)(number) $28*(number) 1+(byte) $22 [phi:debug_print_init::@5->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*1+$22
     sta.z print_str_at.at
@@ -6023,13 +6023,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [187] phi from debug_print_init::@5 to debug_print_init::@6 [phi:debug_print_init::@5->debug_print_init::@6]
-  b6_from_b5:
-    jmp b6
+  __b6_from___b5:
+    jmp __b6
     // debug_print_init::@6
-  b6:
+  __b6:
     // [188] call print_str_at 
     // [243] phi from debug_print_init::@6 to print_str_at [phi:debug_print_init::@6->print_str_at]
-  print_str_at_from_b6:
+  print_str_at_from___b6:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(byte)(number) $28*(number) 2+(byte) $22 [phi:debug_print_init::@6->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*2+$22
     sta.z print_str_at.at
@@ -6042,13 +6042,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [189] phi from debug_print_init::@6 to debug_print_init::@7 [phi:debug_print_init::@6->debug_print_init::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // debug_print_init::@7
-  b7:
+  __b7:
     // [190] call print_str_at 
     // [243] phi from debug_print_init::@7 to print_str_at [phi:debug_print_init::@7->print_str_at]
-  print_str_at_from_b7:
+  print_str_at_from___b7:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $10 [phi:debug_print_init::@7->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$10
     sta.z print_str_at.at
@@ -6061,13 +6061,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [191] phi from debug_print_init::@7 to debug_print_init::@8 [phi:debug_print_init::@7->debug_print_init::@8]
-  b8_from_b7:
-    jmp b8
+  __b8_from___b7:
+    jmp __b8
     // debug_print_init::@8
-  b8:
+  __b8:
     // [192] call print_str_at 
     // [243] phi from debug_print_init::@8 to print_str_at [phi:debug_print_init::@8->print_str_at]
-  print_str_at_from_b8:
+  print_str_at_from___b8:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $11 [phi:debug_print_init::@8->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$11
     sta.z print_str_at.at
@@ -6080,13 +6080,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [193] phi from debug_print_init::@8 to debug_print_init::@9 [phi:debug_print_init::@8->debug_print_init::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // debug_print_init::@9
-  b9:
+  __b9:
     // [194] call print_str_at 
     // [243] phi from debug_print_init::@9 to print_str_at [phi:debug_print_init::@9->print_str_at]
-  print_str_at_from_b9:
+  print_str_at_from___b9:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $12 [phi:debug_print_init::@9->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$12
     sta.z print_str_at.at
@@ -6099,13 +6099,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [195] phi from debug_print_init::@9 to debug_print_init::@10 [phi:debug_print_init::@9->debug_print_init::@10]
-  b10_from_b9:
-    jmp b10
+  __b10_from___b9:
+    jmp __b10
     // debug_print_init::@10
-  b10:
+  __b10:
     // [196] call print_str_at 
     // [243] phi from debug_print_init::@10 to print_str_at [phi:debug_print_init::@10->print_str_at]
-  print_str_at_from_b10:
+  print_str_at_from___b10:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $13 [phi:debug_print_init::@10->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$13
     sta.z print_str_at.at
@@ -6118,13 +6118,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [197] phi from debug_print_init::@10 to debug_print_init::@11 [phi:debug_print_init::@10->debug_print_init::@11]
-  b11_from_b10:
-    jmp b11
+  __b11_from___b10:
+    jmp __b11
     // debug_print_init::@11
-  b11:
+  __b11:
     // [198] call print_str_at 
     // [243] phi from debug_print_init::@11 to print_str_at [phi:debug_print_init::@11->print_str_at]
-  print_str_at_from_b11:
+  print_str_at_from___b11:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $14 [phi:debug_print_init::@11->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$14
     sta.z print_str_at.at
@@ -6137,13 +6137,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [199] phi from debug_print_init::@11 to debug_print_init::@12 [phi:debug_print_init::@11->debug_print_init::@12]
-  b12_from_b11:
-    jmp b12
+  __b12_from___b11:
+    jmp __b12
     // debug_print_init::@12
-  b12:
+  __b12:
     // [200] call print_str_at 
     // [243] phi from debug_print_init::@12 to print_str_at [phi:debug_print_init::@12->print_str_at]
-  print_str_at_from_b12:
+  print_str_at_from___b12:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $15 [phi:debug_print_init::@12->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$15
     sta.z print_str_at.at
@@ -6156,13 +6156,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [201] phi from debug_print_init::@12 to debug_print_init::@13 [phi:debug_print_init::@12->debug_print_init::@13]
-  b13_from_b12:
-    jmp b13
+  __b13_from___b12:
+    jmp __b13
     // debug_print_init::@13
-  b13:
+  __b13:
     // [202] call print_str_at 
     // [243] phi from debug_print_init::@13 to print_str_at [phi:debug_print_init::@13->print_str_at]
-  print_str_at_from_b13:
+  print_str_at_from___b13:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $16 [phi:debug_print_init::@13->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$16
     sta.z print_str_at.at
@@ -6175,13 +6175,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [203] phi from debug_print_init::@13 to debug_print_init::@14 [phi:debug_print_init::@13->debug_print_init::@14]
-  b14_from_b13:
-    jmp b14
+  __b14_from___b13:
+    jmp __b14
     // debug_print_init::@14
-  b14:
+  __b14:
     // [204] call print_str_at 
     // [243] phi from debug_print_init::@14 to print_str_at [phi:debug_print_init::@14->print_str_at]
-  print_str_at_from_b14:
+  print_str_at_from___b14:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $17 [phi:debug_print_init::@14->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$17
     sta.z print_str_at.at
@@ -6194,13 +6194,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [205] phi from debug_print_init::@14 to debug_print_init::@15 [phi:debug_print_init::@14->debug_print_init::@15]
-  b15_from_b14:
-    jmp b15
+  __b15_from___b14:
+    jmp __b15
     // debug_print_init::@15
-  b15:
+  __b15:
     // [206] call print_str_at 
     // [243] phi from debug_print_init::@15 to print_str_at [phi:debug_print_init::@15->print_str_at]
-  print_str_at_from_b15:
+  print_str_at_from___b15:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $18 [phi:debug_print_init::@15->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$18
     sta.z print_str_at.at
@@ -6213,21 +6213,21 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [207] phi from debug_print_init::@15 to debug_print_init::@1 [phi:debug_print_init::@15->debug_print_init::@1]
-  b1_from_b15:
+  __b1_from___b15:
     // [207] phi (byte) debug_print_init::i#2 = (byte) 0 [phi:debug_print_init::@15->debug_print_init::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // [207] phi (byte) debug_print_init::c#2 = (byte) 4 [phi:debug_print_init::@15->debug_print_init::@1#1] -- vbuz1=vbuc1 
     lda #4
     sta.z c
-    jmp b1
+    jmp __b1
     // [207] phi from debug_print_init::@3 to debug_print_init::@1 [phi:debug_print_init::@3->debug_print_init::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [207] phi (byte) debug_print_init::i#2 = (byte) debug_print_init::i#1 [phi:debug_print_init::@3->debug_print_init::@1#0] -- register_copy 
     // [207] phi (byte) debug_print_init::c#2 = (byte) debug_print_init::c#1 [phi:debug_print_init::@3->debug_print_init::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // debug_print_init::@1
-  b1:
+  __b1:
     // [208] (byte*) print_sbyte_at::at#0 ← (const byte*) debug_print_init::at_line#0 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -6242,13 +6242,13 @@ debug_print_init: {
     sta.z print_sbyte_at.b
     // [210] call print_sbyte_at 
     // [105] phi from debug_print_init::@1 to print_sbyte_at [phi:debug_print_init::@1->print_sbyte_at]
-  print_sbyte_at_from_b1:
+  print_sbyte_at_from___b1:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#0 [phi:debug_print_init::@1->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#1 [phi:debug_print_init::@1->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b16
+    jmp __b16
     // debug_print_init::@16
-  b16:
+  __b16:
     // [211] (byte*) print_sbyte_at::at#1 ← (const byte*) debug_print_init::at_line#0+(byte)(number) $28*(number) 1 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -6263,13 +6263,13 @@ debug_print_init: {
     sta.z print_sbyte_at.b
     // [213] call print_sbyte_at 
     // [105] phi from debug_print_init::@16 to print_sbyte_at [phi:debug_print_init::@16->print_sbyte_at]
-  print_sbyte_at_from_b16:
+  print_sbyte_at_from___b16:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#1 [phi:debug_print_init::@16->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#2 [phi:debug_print_init::@16->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b17
+    jmp __b17
     // debug_print_init::@17
-  b17:
+  __b17:
     // [214] (byte*) print_sbyte_at::at#2 ← (const byte*) debug_print_init::at_line#0+(byte)(number) $28*(number) 2 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -6284,22 +6284,22 @@ debug_print_init: {
     sta.z print_sbyte_at.b
     // [216] call print_sbyte_at 
     // [105] phi from debug_print_init::@17 to print_sbyte_at [phi:debug_print_init::@17->print_sbyte_at]
-  print_sbyte_at_from_b17:
+  print_sbyte_at_from___b17:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#2 [phi:debug_print_init::@17->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#3 [phi:debug_print_init::@17->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
     // [217] phi from debug_print_init::@17 to debug_print_init::@2 [phi:debug_print_init::@17->debug_print_init::@2]
-  b2_from_b17:
+  __b2_from___b17:
     // [217] phi (byte) debug_print_init::j#2 = (byte) 0 [phi:debug_print_init::@17->debug_print_init::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z j
-    jmp b2
+    jmp __b2
     // [217] phi from debug_print_init::@2 to debug_print_init::@2 [phi:debug_print_init::@2->debug_print_init::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [217] phi (byte) debug_print_init::j#2 = (byte) debug_print_init::j#1 [phi:debug_print_init::@2->debug_print_init::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // debug_print_init::@2
-  b2:
+  __b2:
     // [218] (byte) debug_print_init::col#0 ← (byte) 8 + (byte) debug_print_init::i#2 -- vbuz1=vbuc1_plus_vbuz2 
     lax.z i
     axs #-[8]
@@ -6308,119 +6308,119 @@ debug_print_init: {
     lda.z c
     clc
     adc #<at_cols
-    sta.z _41
+    sta.z __41
     lda #>at_cols
     adc #0
-    sta.z _41+1
+    sta.z __41+1
     // [220] *((byte*~) debug_print_init::$41 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z col
     ldy.z j
-    sta (_41),y
+    sta (__41),y
     // [221] (byte*~) debug_print_init::$44 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 1 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*1
-    sta.z _44
+    sta.z __44
     lda #>at_cols+$28*1
     adc #0
-    sta.z _44+1
+    sta.z __44+1
     // [222] *((byte*~) debug_print_init::$44 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z col
     ldy.z j
-    sta (_44),y
+    sta (__44),y
     // [223] (byte*~) debug_print_init::$47 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 2 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*2
-    sta.z _47
+    sta.z __47
     lda #>at_cols+$28*2
     adc #0
-    sta.z _47+1
+    sta.z __47+1
     // [224] *((byte*~) debug_print_init::$47 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z col
     ldy.z j
-    sta (_47),y
+    sta (__47),y
     // [225] (byte*~) debug_print_init::$50 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 3 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*3
-    sta.z _50
+    sta.z __50
     lda #>at_cols+$28*3
     adc #0
-    sta.z _50+1
+    sta.z __50+1
     // [226] *((byte*~) debug_print_init::$50 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z col
     ldy.z j
-    sta (_50),y
+    sta (__50),y
     // [227] (byte*~) debug_print_init::$53 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 4 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*4
-    sta.z _53
+    sta.z __53
     lda #>at_cols+$28*4
     adc #0
-    sta.z _53+1
+    sta.z __53+1
     // [228] *((byte*~) debug_print_init::$53 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z col
     ldy.z j
-    sta (_53),y
+    sta (__53),y
     // [229] (byte*~) debug_print_init::$56 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 5 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*5
-    sta.z _56
+    sta.z __56
     lda #>at_cols+$28*5
     adc #0
-    sta.z _56+1
+    sta.z __56+1
     // [230] *((byte*~) debug_print_init::$56 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z col
     ldy.z j
-    sta (_56),y
+    sta (__56),y
     // [231] (byte*~) debug_print_init::$59 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 6 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*6
-    sta.z _59
+    sta.z __59
     lda #>at_cols+$28*6
     adc #0
-    sta.z _59+1
+    sta.z __59+1
     // [232] *((byte*~) debug_print_init::$59 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z col
     ldy.z j
-    sta (_59),y
+    sta (__59),y
     // [233] (byte*~) debug_print_init::$62 ← (const byte*) debug_print_init::at_cols#0+(word)(number) $28*(number) 7 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*7
-    sta.z _62
+    sta.z __62
     lda #>at_cols+$28*7
     adc #0
-    sta.z _62+1
+    sta.z __62+1
     // [234] *((byte*~) debug_print_init::$62 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z col
     ldy.z j
-    sta (_62),y
+    sta (__62),y
     // [235] (byte*~) debug_print_init::$65 ← (const byte*) debug_print_init::at_cols#0+(word)(number) $28*(number) 8 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*8
-    sta.z _65
+    sta.z __65
     lda #>at_cols+$28*8
     adc #0
-    sta.z _65+1
+    sta.z __65+1
     // [236] *((byte*~) debug_print_init::$65 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z col
     ldy.z j
-    sta (_65),y
+    sta (__65),y
     // [237] (byte) debug_print_init::j#1 ← ++ (byte) debug_print_init::j#2 -- vbuz1=_inc_vbuz1 
     inc.z j
     // [238] if((byte) debug_print_init::j#1!=(byte) 4) goto debug_print_init::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z j
-    bne b2_from_b2
-    jmp b3
+    bne __b2_from___b2
+    jmp __b3
     // debug_print_init::@3
-  b3:
+  __b3:
     // [239] (byte) debug_print_init::c#1 ← (byte) debug_print_init::c#2 + (byte) 4 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z c
     axs #-[4]
@@ -6430,10 +6430,10 @@ debug_print_init: {
     // [241] if((byte) debug_print_init::i#1!=(byte) 8) goto debug_print_init::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // debug_print_init::@return
-  breturn:
+  __breturn:
     // [242] return 
     rts
     str: .text "sx"
@@ -6468,25 +6468,25 @@ print_str_at: {
     .label at = $12
     .label str = $10
     // [244] phi from print_str_at print_str_at::@2 to print_str_at::@1 [phi:print_str_at/print_str_at::@2->print_str_at::@1]
-  b1_from_print_str_at:
-  b1_from_b2:
+  __b1_from_print_str_at:
+  __b1_from___b2:
     // [244] phi (byte*) print_str_at::at#13 = (byte*) print_str_at::at#15 [phi:print_str_at/print_str_at::@2->print_str_at::@1#0] -- register_copy 
     // [244] phi (byte*) print_str_at::str#13 = (byte*) print_str_at::str#15 [phi:print_str_at/print_str_at::@2->print_str_at::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_str_at::@1
-  b1:
+  __b1:
     // [245] if((byte) 0!=*((byte*) print_str_at::str#13)) goto print_str_at::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print_str_at::@return
-  breturn:
+  __breturn:
     // [246] return 
     rts
     // print_str_at::@2
-  b2:
+  __b2:
     // [247] *((byte*) print_str_at::at#13) ← *((byte*) print_str_at::str#13) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
@@ -6502,7 +6502,7 @@ print_str_at: {
     bne !+
     inc.z str+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
@@ -6511,9 +6511,9 @@ print_cls: {
     // [253] phi from print_cls to memset [phi:print_cls->memset]
   memset_from_print_cls:
     jsr memset
-    jmp breturn
+    jmp __breturn
     // print_cls::@return
-  breturn:
+  __breturn:
     // [252] return 
     rts
 }
@@ -6526,29 +6526,29 @@ memset: {
     .label end = str+num
     .label dst = $14
     // [254] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
+  __b1_from_memset:
     // [254] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [256] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
@@ -6559,9 +6559,9 @@ memset: {
     inc.z dst+1
   !:
     // [254] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // sprites_init
 // Initialize sprites
@@ -6573,17 +6573,17 @@ sprites_init: {
     lda #$ff
     sta SPRITES_ENABLE
     // [260] phi from sprites_init to sprites_init::@1 [phi:sprites_init->sprites_init::@1]
-  b1_from_sprites_init:
+  __b1_from_sprites_init:
     // [260] phi (byte) sprites_init::i#2 = (byte) 0 [phi:sprites_init->sprites_init::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [260] phi from sprites_init::@1 to sprites_init::@1 [phi:sprites_init::@1->sprites_init::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [260] phi (byte) sprites_init::i#2 = (byte) sprites_init::i#1 [phi:sprites_init::@1->sprites_init::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // sprites_init::@1
-  b1:
+  __b1:
     // [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #SPRITE/$40
     ldy.z i
@@ -6597,10 +6597,10 @@ sprites_init: {
     // [264] if((byte) sprites_init::i#1!=(byte) 8) goto sprites_init::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // sprites_init::@return
-  breturn:
+  __breturn:
     // [265] return 
     rts
 }
@@ -7318,7 +7318,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // - Codebase64 Article http://codebase64.org/doku.php?id=base:3d_rotation  
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SPRITES_XPOS = $d000
@@ -7351,27 +7351,27 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label sx = 2
   .label sy = 3
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm(location (const byte*) SPRITE) {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))     .for (var y=0; y<21; y++)         .for (var x=0;x<3; x++)             .byte pic.getSinglecolorByte(x,y)  }}
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // asm { sei  }
     sei
     // [5] call sprites_init 
     jsr sprites_init
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const word*) psp1) ← (word)(const byte[$200]) mulf_sqr1 -- _deref_pwuc1=vwuc2 
     //mulf_init();
     lda #<mulf_sqr1
@@ -7385,20 +7385,20 @@ main: {
     sta psp2+1
     // [8] call debug_print_init 
     // [181] phi from main::@1 to debug_print_init [phi:main::@1->debug_print_init]
-  debug_print_init_from_b1:
+  debug_print_init_from___b1:
     jsr debug_print_init
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [10] call anim 
     // [12] phi from main::@2 to anim [phi:main::@2->anim]
-  anim_from_b2:
+  anim_from___b2:
     jsr anim
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [11] return 
     rts
 }
@@ -7406,42 +7406,42 @@ main: {
 anim: {
     .label i = 5
     // [13] phi from anim to anim::@1 [phi:anim->anim::@1]
-  b1_from_anim:
+  __b1_from_anim:
     // [13] phi (signed byte) sy#10 = (signed byte) 0 [phi:anim->anim::@1#0] -- vbsz1=vbsc1 
     lda #0
     sta.z sy
     // [13] phi (signed byte) sx#10 = (signed byte) 0 [phi:anim->anim::@1#1] -- vbsz1=vbsc1 
     lda #0
     sta.z sx
-    jmp b1
+    jmp __b1
   //signed byte xmin = 0;
   //signed byte xmax = 0;
     // anim::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // anim::@2
-  b2:
+  __b2:
     // [14] if(*((const byte*) RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // anim::@3
-  b3:
+  __b3:
     // [15] if(*((const byte*) RASTER)!=(byte) $fe) goto anim::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
-    bne b3
-    jmp b4
+    bne __b3
+    jmp __b4
     // anim::@4
-  b4:
+  __b4:
     // [16] if(*((const byte*) RASTER)!=(byte) $fd) goto anim::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
-    bne b4
-    jmp b5
+    bne __b4
+    jmp __b5
     // anim::@5
-  b5:
+  __b5:
     // [17] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // [18] (signed byte) calculate_matrix::sx#0 ← (signed byte) sx#10 -- vbsxx=vbsz1 
@@ -7450,24 +7450,24 @@ anim: {
     // [20] call calculate_matrix 
     jsr calculate_matrix
     // [21] phi from anim::@5 to anim::@8 [phi:anim::@5->anim::@8]
-  b8_from_b5:
-    jmp b8
+  __b8_from___b5:
+    jmp __b8
     // anim::@8
-  b8:
+  __b8:
     // [22] call store_matrix 
     jsr store_matrix
     // [23] phi from anim::@8 to anim::@6 [phi:anim::@8->anim::@6]
-  b6_from_b8:
+  __b6_from___b8:
     // [23] phi (byte) anim::i#2 = (byte) 0 [phi:anim::@8->anim::@6#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b6
+    jmp __b6
     // [23] phi from anim::@9 to anim::@6 [phi:anim::@9->anim::@6]
-  b6_from_b9:
+  __b6_from___b9:
     // [23] phi (byte) anim::i#2 = (byte) anim::i#1 [phi:anim::@9->anim::@6#0] -- register_copy 
-    jmp b6
+    jmp __b6
     // anim::@6
-  b6:
+  __b6:
     // [24] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // [25] (signed byte) rotate_matrix::x#0 ← *((const signed byte[8]) xs + (byte) anim::i#2) -- vbsxx=pbsc1_derefidx_vbuz1 
@@ -7483,9 +7483,9 @@ anim: {
     sta.z rotate_matrix.z
     // [28] call rotate_matrix 
     jsr rotate_matrix
-    jmp b9
+    jmp __b9
     // anim::@9
-  b9:
+  __b9:
     // [29] *((const signed byte[8]) xrs + (byte) anim::i#2) ← *((const signed byte*) xr) -- pbsc1_derefidx_vbuz1=_deref_pbsc2 
     //if(*xr<xmin) xmin = *xr;
     //if(*xr>xmax) xmax = *xr;
@@ -7533,18 +7533,18 @@ anim: {
     // [41] if((byte) anim::i#1!=(byte) 8) goto anim::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b6_from_b9
-    jmp b7
+    bne __b6_from___b9
+    jmp __b7
     // anim::@7
-  b7:
+  __b7:
     // [42] *((const byte*) BORDERCOL) ← (const byte) LIGHT_GREY -- _deref_pbuc1=vbuc2 
     lda #LIGHT_GREY
     sta BORDERCOL
     // [43] call debug_print 
     jsr debug_print
-    jmp b10
+    jmp __b10
     // anim::@10
-  b10:
+  __b10:
     // [44] *((const byte*) BORDERCOL) ← (const byte) LIGHT_BLUE -- _deref_pbuc1=vbuc2 
     lda #LIGHT_BLUE
     sta BORDERCOL
@@ -7557,10 +7557,10 @@ anim: {
     axs #3
     stx.z sy
     // [13] phi from anim::@10 to anim::@1 [phi:anim::@10->anim::@1]
-  b1_from_b10:
+  __b1_from___b10:
     // [13] phi (signed byte) sy#10 = (signed byte) sy#3 [phi:anim::@10->anim::@1#0] -- register_copy 
     // [13] phi (signed byte) sx#10 = (signed byte) sx#3 [phi:anim::@10->anim::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // debug_print
 debug_print: {
@@ -7606,9 +7606,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#4 [phi:debug_print::print_sbyte_pos1->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b2
+    jmp __b2
     // debug_print::@2
-  b2:
+  __b2:
     // [50] (signed byte) debug_print::print_sbyte_pos2_sb#0 ← (signed byte) sy#10 -- vbsxx=vbsz1 
     ldx.z sy
     jmp print_sbyte_pos2
@@ -7641,9 +7641,9 @@ debug_print: {
     // [105] phi (signed byte) print_sbyte_at::b#22 = (const signed byte) sz [phi:debug_print::print_sbyte_pos3->print_sbyte_at#1] -- vbsxx=vbsc1 
     ldx #sz
     jsr print_sbyte_at
-    jmp b3
+    jmp __b3
     // debug_print::@3
-  b3:
+  __b3:
     // [55] (signed byte) debug_print::print_sbyte_pos4_sb#0 ← *((const signed byte[9]) rotation_matrix) -- vbsxx=_deref_pbsc1 
     ldx rotation_matrix
     jmp print_sbyte_pos4
@@ -7660,9 +7660,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#7 [phi:debug_print::print_sbyte_pos4->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b4
+    jmp __b4
     // debug_print::@4
-  b4:
+  __b4:
     // [58] (signed byte) debug_print::print_sbyte_pos5_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 1) -- vbsxx=_deref_pbsc1 
     ldx rotation_matrix+1
     jmp print_sbyte_pos5
@@ -7679,9 +7679,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#8 [phi:debug_print::print_sbyte_pos5->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b5
+    jmp __b5
     // debug_print::@5
-  b5:
+  __b5:
     // [61] (signed byte) debug_print::print_sbyte_pos6_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 2) -- vbsxx=_deref_pbsc1 
     ldx rotation_matrix+2
     jmp print_sbyte_pos6
@@ -7698,9 +7698,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#9 [phi:debug_print::print_sbyte_pos6->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b6
+    jmp __b6
     // debug_print::@6
-  b6:
+  __b6:
     // [64] (signed byte) debug_print::print_sbyte_pos7_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 3) -- vbsxx=_deref_pbsc1 
     ldx rotation_matrix+3
     jmp print_sbyte_pos7
@@ -7717,9 +7717,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#10 [phi:debug_print::print_sbyte_pos7->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b7
+    jmp __b7
     // debug_print::@7
-  b7:
+  __b7:
     // [67] (signed byte) debug_print::print_sbyte_pos8_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 4) -- vbsxx=_deref_pbsc1 
     ldx rotation_matrix+4
     jmp print_sbyte_pos8
@@ -7736,9 +7736,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#11 [phi:debug_print::print_sbyte_pos8->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b8
+    jmp __b8
     // debug_print::@8
-  b8:
+  __b8:
     // [70] (signed byte) debug_print::print_sbyte_pos9_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 5) -- vbsxx=_deref_pbsc1 
     ldx rotation_matrix+5
     jmp print_sbyte_pos9
@@ -7755,9 +7755,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#12 [phi:debug_print::print_sbyte_pos9->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b9
+    jmp __b9
     // debug_print::@9
-  b9:
+  __b9:
     // [73] (signed byte) debug_print::print_sbyte_pos10_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 6) -- vbsxx=_deref_pbsc1 
     ldx rotation_matrix+6
     jmp print_sbyte_pos10
@@ -7774,9 +7774,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#13 [phi:debug_print::print_sbyte_pos10->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b10
+    jmp __b10
     // debug_print::@10
-  b10:
+  __b10:
     // [76] (signed byte) debug_print::print_sbyte_pos11_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 7) -- vbsxx=_deref_pbsc1 
     ldx rotation_matrix+7
     jmp print_sbyte_pos11
@@ -7793,9 +7793,9 @@ debug_print: {
     sta.z print_sbyte_at.at+1
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#14 [phi:debug_print::print_sbyte_pos11->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b11
+    jmp __b11
     // debug_print::@11
-  b11:
+  __b11:
     // [79] (signed byte) debug_print::print_sbyte_pos12_sb#0 ← *((const signed byte[9]) rotation_matrix+(byte) 8) -- vbsxx=_deref_pbsc1 
     ldx rotation_matrix+8
     jmp print_sbyte_pos12
@@ -7813,21 +7813,21 @@ debug_print: {
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#15 [phi:debug_print::print_sbyte_pos12->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
     // [82] phi from debug_print::print_sbyte_pos12 to debug_print::@1 [phi:debug_print::print_sbyte_pos12->debug_print::@1]
-  b1_from_print_sbyte_pos12:
+  __b1_from_print_sbyte_pos12:
     // [82] phi (byte) debug_print::i#2 = (byte) 0 [phi:debug_print::print_sbyte_pos12->debug_print::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // [82] phi (byte) debug_print::c#2 = (byte) 4 [phi:debug_print::print_sbyte_pos12->debug_print::@1#1] -- vbuz1=vbuc1 
     lda #4
     sta.z c
-    jmp b1
+    jmp __b1
     // [82] phi from debug_print::@17 to debug_print::@1 [phi:debug_print::@17->debug_print::@1]
-  b1_from_b17:
+  __b1_from___b17:
     // [82] phi (byte) debug_print::i#2 = (byte) debug_print::i#1 [phi:debug_print::@17->debug_print::@1#0] -- register_copy 
     // [82] phi (byte) debug_print::c#2 = (byte) debug_print::c#1 [phi:debug_print::@17->debug_print::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // debug_print::@1
-  b1:
+  __b1:
     // [83] (byte*) print_sbyte_at::at#15 ← (const byte*) debug_print::at_line#0 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -7841,13 +7841,13 @@ debug_print: {
     ldx xrs,y
     // [85] call print_sbyte_at 
     // [105] phi from debug_print::@1 to print_sbyte_at [phi:debug_print::@1->print_sbyte_at]
-  print_sbyte_at_from_b1:
+  print_sbyte_at_from___b1:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#15 [phi:debug_print::@1->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#16 [phi:debug_print::@1->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b12
+    jmp __b12
     // debug_print::@12
-  b12:
+  __b12:
     // [86] (byte*) print_sbyte_at::at#16 ← (const byte*) debug_print::at_line#0+(byte)(number) $28*(number) 1 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -7861,13 +7861,13 @@ debug_print: {
     ldx yrs,y
     // [88] call print_sbyte_at 
     // [105] phi from debug_print::@12 to print_sbyte_at [phi:debug_print::@12->print_sbyte_at]
-  print_sbyte_at_from_b12:
+  print_sbyte_at_from___b12:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#16 [phi:debug_print::@12->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#17 [phi:debug_print::@12->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b13
+    jmp __b13
     // debug_print::@13
-  b13:
+  __b13:
     // [89] (byte*) print_sbyte_at::at#17 ← (const byte*) debug_print::at_line#0+(byte)(number) $28*(number) 2 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -7881,13 +7881,13 @@ debug_print: {
     ldx zrs,y
     // [91] call print_sbyte_at 
     // [105] phi from debug_print::@13 to print_sbyte_at [phi:debug_print::@13->print_sbyte_at]
-  print_sbyte_at_from_b13:
+  print_sbyte_at_from___b13:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#17 [phi:debug_print::@13->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#18 [phi:debug_print::@13->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b14
+    jmp __b14
     // debug_print::@14
-  b14:
+  __b14:
     // [92] (byte*) print_sbyte_at::at#18 ← (const byte*) debug_print::at_line#0+(byte)(number) $28*(number) 3 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -7901,13 +7901,13 @@ debug_print: {
     ldx pps,y
     // [94] call print_sbyte_at 
     // [105] phi from debug_print::@14 to print_sbyte_at [phi:debug_print::@14->print_sbyte_at]
-  print_sbyte_at_from_b14:
+  print_sbyte_at_from___b14:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#18 [phi:debug_print::@14->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#19 [phi:debug_print::@14->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b15
+    jmp __b15
     // debug_print::@15
-  b15:
+  __b15:
     // [95] (byte*) print_sbyte_at::at#19 ← (const byte*) debug_print::at_line#0+(byte)(number) $28*(number) 4 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -7921,13 +7921,13 @@ debug_print: {
     ldx xps,y
     // [97] call print_sbyte_at 
     // [105] phi from debug_print::@15 to print_sbyte_at [phi:debug_print::@15->print_sbyte_at]
-  print_sbyte_at_from_b15:
+  print_sbyte_at_from___b15:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#19 [phi:debug_print::@15->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#20 [phi:debug_print::@15->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b16
+    jmp __b16
     // debug_print::@16
-  b16:
+  __b16:
     // [98] (byte*) print_sbyte_at::at#20 ← (const byte*) debug_print::at_line#0+(byte)(number) $28*(number) 5 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -7941,13 +7941,13 @@ debug_print: {
     ldx yps,y
     // [100] call print_sbyte_at 
     // [105] phi from debug_print::@16 to print_sbyte_at [phi:debug_print::@16->print_sbyte_at]
-  print_sbyte_at_from_b16:
+  print_sbyte_at_from___b16:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#20 [phi:debug_print::@16->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#21 [phi:debug_print::@16->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b17
+    jmp __b17
     // debug_print::@17
-  b17:
+  __b17:
     // [101] (byte) debug_print::c#1 ← (byte) debug_print::c#2 + (byte) 4 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z c
     axs #-[4]
@@ -7957,10 +7957,10 @@ debug_print: {
     // [103] if((byte) debug_print::i#1!=(byte) 8) goto debug_print::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b1_from_b17
-    jmp breturn
+    bne __b1_from___b17
+    jmp __breturn
     // debug_print::@return
-  breturn:
+  __breturn:
     // [104] return 
     rts
 }
@@ -7971,25 +7971,25 @@ print_sbyte_at: {
     .label at = $d
     // [106] if((signed byte) print_sbyte_at::b#22<(signed byte) 0) goto print_sbyte_at::@1 -- vbsxx_lt_0_then_la1 
     cpx #0
-    bmi b1
-    jmp b3
+    bmi __b1
+    jmp __b3
     // print_sbyte_at::@3
-  b3:
+  __b3:
     // [107] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#21
     // [108] call print_char_at 
     // [117] phi from print_sbyte_at::@3 to print_char_at [phi:print_sbyte_at::@3->print_char_at]
-  print_char_at_from_b3:
+  print_char_at_from___b3:
     // [117] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#1 [phi:print_sbyte_at::@3->print_char_at#0] -- register_copy 
     // [117] phi (byte) print_char_at::ch#4 = (byte) ' ' [phi:print_sbyte_at::@3->print_char_at#1] -- vbuyy=vbuc1 
     ldy #' '
     jsr print_char_at
     // [109] phi from print_sbyte_at::@3 print_sbyte_at::@4 to print_sbyte_at::@2 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2]
-  b2_from_b3:
-  b2_from_b4:
+  __b2_from___b3:
+  __b2_from___b4:
     // [109] phi (signed byte) print_sbyte_at::b#24 = (signed byte) print_sbyte_at::b#22 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // print_sbyte_at::@2
-  b2:
+  __b2:
     // [110] (byte) print_byte_at::b#0 ← (byte)(signed byte) print_sbyte_at::b#24
     // [111] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#21 + (byte) 1 -- pbuz1=pbuz1_plus_1 
     inc.z print_byte_at.at
@@ -7998,31 +7998,31 @@ print_sbyte_at: {
   !:
     // [112] call print_byte_at 
     jsr print_byte_at
-    jmp breturn
+    jmp __breturn
     // print_sbyte_at::@return
-  breturn:
+  __breturn:
     // [113] return 
     rts
     // print_sbyte_at::@1
-  b1:
+  __b1:
     // [114] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#21
     // [115] call print_char_at 
     // [117] phi from print_sbyte_at::@1 to print_char_at [phi:print_sbyte_at::@1->print_char_at]
-  print_char_at_from_b1:
+  print_char_at_from___b1:
     // [117] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#0 [phi:print_sbyte_at::@1->print_char_at#0] -- register_copy 
     // [117] phi (byte) print_char_at::ch#4 = (byte) '-' [phi:print_sbyte_at::@1->print_char_at#1] -- vbuyy=vbuc1 
     ldy #'-'
     jsr print_char_at
-    jmp b4
+    jmp __b4
     // print_sbyte_at::@4
-  b4:
+  __b4:
     // [116] (signed byte) print_sbyte_at::b#0 ← - (signed byte) print_sbyte_at::b#22 -- vbsxx=_neg_vbsxx 
     txa
     eor #$ff
     clc
     adc #1
     tax
-    jmp b2_from_b4
+    jmp __b2_from___b4
 }
   // print_char_at
 // Print a single char
@@ -8033,9 +8033,9 @@ print_char_at: {
     tya
     ldy #0
     sta (at),y
-    jmp breturn
+    jmp __breturn
     // print_char_at::@return
-  breturn:
+  __breturn:
     // [119] return 
     rts
 }
@@ -8061,9 +8061,9 @@ print_byte_at: {
     // [117] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#2 [phi:print_byte_at->print_char_at#0] -- register_copy 
     // [117] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#2 [phi:print_byte_at->print_char_at#1] -- register_copy 
     jsr print_char_at
-    jmp b1
+    jmp __b1
     // print_byte_at::@1
-  b1:
+  __b1:
     // [124] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f -- vbuxx=vbuxx_band_vbuc1 
     lda #$f
     axs #0
@@ -8076,13 +8076,13 @@ print_byte_at: {
     ldy print_hextab,x
     // [127] call print_char_at 
     // [117] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
-  print_char_at_from_b1:
+  print_char_at_from___b1:
     // [117] phi (byte*) print_char_at::at#4 = (byte*) print_char_at::at#3 [phi:print_byte_at::@1->print_char_at#0] -- register_copy 
     // [117] phi (byte) print_char_at::ch#4 = (byte) print_char_at::ch#3 [phi:print_byte_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
-    jmp breturn
+    jmp __breturn
     // print_byte_at::@return
-  breturn:
+  __breturn:
     // [128] return 
     rts
 }
@@ -8191,9 +8191,9 @@ rotate_matrix: {
     sec
     sbc (psp2),y
     sta xp
-    jmp breturn
+    jmp __breturn
     // rotate_matrix::@return
-  breturn:
+  __breturn:
     // [133] return 
     rts
 }
@@ -8239,9 +8239,9 @@ store_matrix: {
     sta rotate_matrix.I1+1
     eor #$ff
     sta rotate_matrix.I2+1
-    jmp breturn
+    jmp __breturn
     // store_matrix::@return
-  breturn:
+  __breturn:
     // [135] return 
     rts
 }
@@ -8436,9 +8436,9 @@ calculate_matrix: {
     adc COSH,y
     // [179] *((const signed byte[9]) rotation_matrix+(byte) 8) ← (signed byte~) calculate_matrix::$34 -- _deref_pbsc1=vbsaa 
     sta rotation_matrix+8
-    jmp breturn
+    jmp __breturn
     // calculate_matrix::@return
-  breturn:
+  __breturn:
     // [180] return 
     rts
 }
@@ -8447,15 +8447,15 @@ debug_print_init: {
     .label COLS = $d800
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
-    .label _41 = $d
-    .label _44 = $f
-    .label _47 = $11
-    .label _50 = $13
-    .label _53 = $15
-    .label _56 = $17
-    .label _59 = $19
-    .label _62 = $1b
-    .label _65 = $1d
+    .label __41 = $d
+    .label __44 = $f
+    .label __47 = $11
+    .label __50 = $13
+    .label __53 = $15
+    .label __56 = $17
+    .label __59 = $19
+    .label __62 = $1b
+    .label __65 = $1d
     .label c = 2
     .label i = 3
     // [182] call print_cls 
@@ -8463,13 +8463,13 @@ debug_print_init: {
   print_cls_from_debug_print_init:
     jsr print_cls
     // [183] phi from debug_print_init to debug_print_init::@4 [phi:debug_print_init->debug_print_init::@4]
-  b4_from_debug_print_init:
-    jmp b4
+  __b4_from_debug_print_init:
+    jmp __b4
     // debug_print_init::@4
-  b4:
+  __b4:
     // [184] call print_str_at 
     // [243] phi from debug_print_init::@4 to print_str_at [phi:debug_print_init::@4->print_str_at]
-  print_str_at_from_b4:
+  print_str_at_from___b4:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(byte) $22 [phi:debug_print_init::@4->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$22
     sta.z print_str_at.at
@@ -8482,13 +8482,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [185] phi from debug_print_init::@4 to debug_print_init::@5 [phi:debug_print_init::@4->debug_print_init::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // debug_print_init::@5
-  b5:
+  __b5:
     // [186] call print_str_at 
     // [243] phi from debug_print_init::@5 to print_str_at [phi:debug_print_init::@5->print_str_at]
-  print_str_at_from_b5:
+  print_str_at_from___b5:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(byte)(number) $28*(number) 1+(byte) $22 [phi:debug_print_init::@5->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*1+$22
     sta.z print_str_at.at
@@ -8501,13 +8501,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [187] phi from debug_print_init::@5 to debug_print_init::@6 [phi:debug_print_init::@5->debug_print_init::@6]
-  b6_from_b5:
-    jmp b6
+  __b6_from___b5:
+    jmp __b6
     // debug_print_init::@6
-  b6:
+  __b6:
     // [188] call print_str_at 
     // [243] phi from debug_print_init::@6 to print_str_at [phi:debug_print_init::@6->print_str_at]
-  print_str_at_from_b6:
+  print_str_at_from___b6:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(byte)(number) $28*(number) 2+(byte) $22 [phi:debug_print_init::@6->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*2+$22
     sta.z print_str_at.at
@@ -8520,13 +8520,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [189] phi from debug_print_init::@6 to debug_print_init::@7 [phi:debug_print_init::@6->debug_print_init::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // debug_print_init::@7
-  b7:
+  __b7:
     // [190] call print_str_at 
     // [243] phi from debug_print_init::@7 to print_str_at [phi:debug_print_init::@7->print_str_at]
-  print_str_at_from_b7:
+  print_str_at_from___b7:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $10 [phi:debug_print_init::@7->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$10
     sta.z print_str_at.at
@@ -8539,13 +8539,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [191] phi from debug_print_init::@7 to debug_print_init::@8 [phi:debug_print_init::@7->debug_print_init::@8]
-  b8_from_b7:
-    jmp b8
+  __b8_from___b7:
+    jmp __b8
     // debug_print_init::@8
-  b8:
+  __b8:
     // [192] call print_str_at 
     // [243] phi from debug_print_init::@8 to print_str_at [phi:debug_print_init::@8->print_str_at]
-  print_str_at_from_b8:
+  print_str_at_from___b8:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $11 [phi:debug_print_init::@8->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$11
     sta.z print_str_at.at
@@ -8558,13 +8558,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [193] phi from debug_print_init::@8 to debug_print_init::@9 [phi:debug_print_init::@8->debug_print_init::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // debug_print_init::@9
-  b9:
+  __b9:
     // [194] call print_str_at 
     // [243] phi from debug_print_init::@9 to print_str_at [phi:debug_print_init::@9->print_str_at]
-  print_str_at_from_b9:
+  print_str_at_from___b9:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $12 [phi:debug_print_init::@9->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$12
     sta.z print_str_at.at
@@ -8577,13 +8577,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [195] phi from debug_print_init::@9 to debug_print_init::@10 [phi:debug_print_init::@9->debug_print_init::@10]
-  b10_from_b9:
-    jmp b10
+  __b10_from___b9:
+    jmp __b10
     // debug_print_init::@10
-  b10:
+  __b10:
     // [196] call print_str_at 
     // [243] phi from debug_print_init::@10 to print_str_at [phi:debug_print_init::@10->print_str_at]
-  print_str_at_from_b10:
+  print_str_at_from___b10:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $13 [phi:debug_print_init::@10->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$13
     sta.z print_str_at.at
@@ -8596,13 +8596,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [197] phi from debug_print_init::@10 to debug_print_init::@11 [phi:debug_print_init::@10->debug_print_init::@11]
-  b11_from_b10:
-    jmp b11
+  __b11_from___b10:
+    jmp __b11
     // debug_print_init::@11
-  b11:
+  __b11:
     // [198] call print_str_at 
     // [243] phi from debug_print_init::@11 to print_str_at [phi:debug_print_init::@11->print_str_at]
-  print_str_at_from_b11:
+  print_str_at_from___b11:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $14 [phi:debug_print_init::@11->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$14
     sta.z print_str_at.at
@@ -8615,13 +8615,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [199] phi from debug_print_init::@11 to debug_print_init::@12 [phi:debug_print_init::@11->debug_print_init::@12]
-  b12_from_b11:
-    jmp b12
+  __b12_from___b11:
+    jmp __b12
     // debug_print_init::@12
-  b12:
+  __b12:
     // [200] call print_str_at 
     // [243] phi from debug_print_init::@12 to print_str_at [phi:debug_print_init::@12->print_str_at]
-  print_str_at_from_b12:
+  print_str_at_from___b12:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $15 [phi:debug_print_init::@12->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$15
     sta.z print_str_at.at
@@ -8634,13 +8634,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [201] phi from debug_print_init::@12 to debug_print_init::@13 [phi:debug_print_init::@12->debug_print_init::@13]
-  b13_from_b12:
-    jmp b13
+  __b13_from___b12:
+    jmp __b13
     // debug_print_init::@13
-  b13:
+  __b13:
     // [202] call print_str_at 
     // [243] phi from debug_print_init::@13 to print_str_at [phi:debug_print_init::@13->print_str_at]
-  print_str_at_from_b13:
+  print_str_at_from___b13:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $16 [phi:debug_print_init::@13->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$16
     sta.z print_str_at.at
@@ -8653,13 +8653,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [203] phi from debug_print_init::@13 to debug_print_init::@14 [phi:debug_print_init::@13->debug_print_init::@14]
-  b14_from_b13:
-    jmp b14
+  __b14_from___b13:
+    jmp __b14
     // debug_print_init::@14
-  b14:
+  __b14:
     // [204] call print_str_at 
     // [243] phi from debug_print_init::@14 to print_str_at [phi:debug_print_init::@14->print_str_at]
-  print_str_at_from_b14:
+  print_str_at_from___b14:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $17 [phi:debug_print_init::@14->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$17
     sta.z print_str_at.at
@@ -8672,13 +8672,13 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [205] phi from debug_print_init::@14 to debug_print_init::@15 [phi:debug_print_init::@14->debug_print_init::@15]
-  b15_from_b14:
-    jmp b15
+  __b15_from___b14:
+    jmp __b15
     // debug_print_init::@15
-  b15:
+  __b15:
     // [206] call print_str_at 
     // [243] phi from debug_print_init::@15 to print_str_at [phi:debug_print_init::@15->print_str_at]
-  print_str_at_from_b15:
+  print_str_at_from___b15:
     // [243] phi (byte*) print_str_at::at#15 = (const byte*) SCREEN+(word)(number) $28*(number) $18 [phi:debug_print_init::@15->print_str_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$18
     sta.z print_str_at.at
@@ -8691,21 +8691,21 @@ debug_print_init: {
     sta.z print_str_at.str+1
     jsr print_str_at
     // [207] phi from debug_print_init::@15 to debug_print_init::@1 [phi:debug_print_init::@15->debug_print_init::@1]
-  b1_from_b15:
+  __b1_from___b15:
     // [207] phi (byte) debug_print_init::i#2 = (byte) 0 [phi:debug_print_init::@15->debug_print_init::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // [207] phi (byte) debug_print_init::c#2 = (byte) 4 [phi:debug_print_init::@15->debug_print_init::@1#1] -- vbuz1=vbuc1 
     lda #4
     sta.z c
-    jmp b1
+    jmp __b1
     // [207] phi from debug_print_init::@3 to debug_print_init::@1 [phi:debug_print_init::@3->debug_print_init::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [207] phi (byte) debug_print_init::i#2 = (byte) debug_print_init::i#1 [phi:debug_print_init::@3->debug_print_init::@1#0] -- register_copy 
     // [207] phi (byte) debug_print_init::c#2 = (byte) debug_print_init::c#1 [phi:debug_print_init::@3->debug_print_init::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // debug_print_init::@1
-  b1:
+  __b1:
     // [208] (byte*) print_sbyte_at::at#0 ← (const byte*) debug_print_init::at_line#0 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -8719,13 +8719,13 @@ debug_print_init: {
     ldx xs,y
     // [210] call print_sbyte_at 
     // [105] phi from debug_print_init::@1 to print_sbyte_at [phi:debug_print_init::@1->print_sbyte_at]
-  print_sbyte_at_from_b1:
+  print_sbyte_at_from___b1:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#0 [phi:debug_print_init::@1->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#1 [phi:debug_print_init::@1->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b16
+    jmp __b16
     // debug_print_init::@16
-  b16:
+  __b16:
     // [211] (byte*) print_sbyte_at::at#1 ← (const byte*) debug_print_init::at_line#0+(byte)(number) $28*(number) 1 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -8739,13 +8739,13 @@ debug_print_init: {
     ldx ys,y
     // [213] call print_sbyte_at 
     // [105] phi from debug_print_init::@16 to print_sbyte_at [phi:debug_print_init::@16->print_sbyte_at]
-  print_sbyte_at_from_b16:
+  print_sbyte_at_from___b16:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#1 [phi:debug_print_init::@16->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#2 [phi:debug_print_init::@16->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
-    jmp b17
+    jmp __b17
     // debug_print_init::@17
-  b17:
+  __b17:
     // [214] (byte*) print_sbyte_at::at#2 ← (const byte*) debug_print_init::at_line#0+(byte)(number) $28*(number) 2 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
@@ -8759,21 +8759,21 @@ debug_print_init: {
     ldx zs,y
     // [216] call print_sbyte_at 
     // [105] phi from debug_print_init::@17 to print_sbyte_at [phi:debug_print_init::@17->print_sbyte_at]
-  print_sbyte_at_from_b17:
+  print_sbyte_at_from___b17:
     // [105] phi (byte*) print_sbyte_at::at#21 = (byte*) print_sbyte_at::at#2 [phi:debug_print_init::@17->print_sbyte_at#0] -- register_copy 
     // [105] phi (signed byte) print_sbyte_at::b#22 = (signed byte) print_sbyte_at::b#3 [phi:debug_print_init::@17->print_sbyte_at#1] -- register_copy 
     jsr print_sbyte_at
     // [217] phi from debug_print_init::@17 to debug_print_init::@2 [phi:debug_print_init::@17->debug_print_init::@2]
-  b2_from_b17:
+  __b2_from___b17:
     // [217] phi (byte) debug_print_init::j#2 = (byte) 0 [phi:debug_print_init::@17->debug_print_init::@2#0] -- vbuyy=vbuc1 
     ldy #0
-    jmp b2
+    jmp __b2
     // [217] phi from debug_print_init::@2 to debug_print_init::@2 [phi:debug_print_init::@2->debug_print_init::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [217] phi (byte) debug_print_init::j#2 = (byte) debug_print_init::j#1 [phi:debug_print_init::@2->debug_print_init::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // debug_print_init::@2
-  b2:
+  __b2:
     // [218] (byte) debug_print_init::col#0 ← (byte) 8 + (byte) debug_print_init::i#2 -- vbuxx=vbuc1_plus_vbuz1 
     lax.z i
     axs #-[8]
@@ -8781,109 +8781,109 @@ debug_print_init: {
     lda.z c
     clc
     adc #<at_cols
-    sta.z _41
+    sta.z __41
     lda #>at_cols
     adc #0
-    sta.z _41+1
+    sta.z __41+1
     // [220] *((byte*~) debug_print_init::$41 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_41),y
+    sta (__41),y
     // [221] (byte*~) debug_print_init::$44 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 1 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*1
-    sta.z _44
+    sta.z __44
     lda #>at_cols+$28*1
     adc #0
-    sta.z _44+1
+    sta.z __44+1
     // [222] *((byte*~) debug_print_init::$44 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_44),y
+    sta (__44),y
     // [223] (byte*~) debug_print_init::$47 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 2 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*2
-    sta.z _47
+    sta.z __47
     lda #>at_cols+$28*2
     adc #0
-    sta.z _47+1
+    sta.z __47+1
     // [224] *((byte*~) debug_print_init::$47 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_47),y
+    sta (__47),y
     // [225] (byte*~) debug_print_init::$50 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 3 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*3
-    sta.z _50
+    sta.z __50
     lda #>at_cols+$28*3
     adc #0
-    sta.z _50+1
+    sta.z __50+1
     // [226] *((byte*~) debug_print_init::$50 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_50),y
+    sta (__50),y
     // [227] (byte*~) debug_print_init::$53 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 4 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*4
-    sta.z _53
+    sta.z __53
     lda #>at_cols+$28*4
     adc #0
-    sta.z _53+1
+    sta.z __53+1
     // [228] *((byte*~) debug_print_init::$53 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_53),y
+    sta (__53),y
     // [229] (byte*~) debug_print_init::$56 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 5 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*5
-    sta.z _56
+    sta.z __56
     lda #>at_cols+$28*5
     adc #0
-    sta.z _56+1
+    sta.z __56+1
     // [230] *((byte*~) debug_print_init::$56 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_56),y
+    sta (__56),y
     // [231] (byte*~) debug_print_init::$59 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 6 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*6
-    sta.z _59
+    sta.z __59
     lda #>at_cols+$28*6
     adc #0
-    sta.z _59+1
+    sta.z __59+1
     // [232] *((byte*~) debug_print_init::$59 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_59),y
+    sta (__59),y
     // [233] (byte*~) debug_print_init::$62 ← (const byte*) debug_print_init::at_cols#0+(word)(number) $28*(number) 7 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*7
-    sta.z _62
+    sta.z __62
     lda #>at_cols+$28*7
     adc #0
-    sta.z _62+1
+    sta.z __62+1
     // [234] *((byte*~) debug_print_init::$62 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_62),y
+    sta (__62),y
     // [235] (byte*~) debug_print_init::$65 ← (const byte*) debug_print_init::at_cols#0+(word)(number) $28*(number) 8 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*8
-    sta.z _65
+    sta.z __65
     lda #>at_cols+$28*8
     adc #0
-    sta.z _65+1
+    sta.z __65+1
     // [236] *((byte*~) debug_print_init::$65 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_65),y
+    sta (__65),y
     // [237] (byte) debug_print_init::j#1 ← ++ (byte) debug_print_init::j#2 -- vbuyy=_inc_vbuyy 
     iny
     // [238] if((byte) debug_print_init::j#1!=(byte) 4) goto debug_print_init::@2 -- vbuyy_neq_vbuc1_then_la1 
     cpy #4
-    bne b2_from_b2
-    jmp b3
+    bne __b2_from___b2
+    jmp __b3
     // debug_print_init::@3
-  b3:
+  __b3:
     // [239] (byte) debug_print_init::c#1 ← (byte) debug_print_init::c#2 + (byte) 4 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z c
     axs #-[4]
@@ -8893,10 +8893,10 @@ debug_print_init: {
     // [241] if((byte) debug_print_init::i#1!=(byte) 8) goto debug_print_init::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // debug_print_init::@return
-  breturn:
+  __breturn:
     // [242] return 
     rts
     str: .text "sx"
@@ -8931,25 +8931,25 @@ print_str_at: {
     .label at = $f
     .label str = $d
     // [244] phi from print_str_at print_str_at::@2 to print_str_at::@1 [phi:print_str_at/print_str_at::@2->print_str_at::@1]
-  b1_from_print_str_at:
-  b1_from_b2:
+  __b1_from_print_str_at:
+  __b1_from___b2:
     // [244] phi (byte*) print_str_at::at#13 = (byte*) print_str_at::at#15 [phi:print_str_at/print_str_at::@2->print_str_at::@1#0] -- register_copy 
     // [244] phi (byte*) print_str_at::str#13 = (byte*) print_str_at::str#15 [phi:print_str_at/print_str_at::@2->print_str_at::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // print_str_at::@1
-  b1:
+  __b1:
     // [245] if((byte) 0!=*((byte*) print_str_at::str#13)) goto print_str_at::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // print_str_at::@return
-  breturn:
+  __breturn:
     // [246] return 
     rts
     // print_str_at::@2
-  b2:
+  __b2:
     // [247] *((byte*) print_str_at::at#13) ← *((byte*) print_str_at::str#13) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (str),y
@@ -8965,7 +8965,7 @@ print_str_at: {
     bne !+
     inc.z str+1
   !:
-    jmp b1_from_b2
+    jmp __b1_from___b2
 }
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
@@ -8974,9 +8974,9 @@ print_cls: {
     // [253] phi from print_cls to memset [phi:print_cls->memset]
   memset_from_print_cls:
     jsr memset
-    jmp breturn
+    jmp __breturn
     // print_cls::@return
-  breturn:
+  __breturn:
     // [252] return 
     rts
 }
@@ -8989,29 +8989,29 @@ memset: {
     .label end = str+num
     .label dst = $f
     // [254] phi from memset to memset::@1 [phi:memset->memset::@1]
-  b1_from_memset:
+  __b1_from_memset:
     // [254] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
     sta.z dst+1
-    jmp b1
+    jmp __b1
     // memset::@1
-  b1:
+  __b1:
     // [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
-    jmp breturn
+    bne __b2
+    jmp __breturn
     // memset::@return
-  breturn:
+  __breturn:
     // [256] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
@@ -9022,9 +9022,9 @@ memset: {
     inc.z dst+1
   !:
     // [254] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // sprites_init
 // Initialize sprites
@@ -9035,16 +9035,16 @@ sprites_init: {
     lda #$ff
     sta SPRITES_ENABLE
     // [260] phi from sprites_init to sprites_init::@1 [phi:sprites_init->sprites_init::@1]
-  b1_from_sprites_init:
+  __b1_from_sprites_init:
     // [260] phi (byte) sprites_init::i#2 = (byte) 0 [phi:sprites_init->sprites_init::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // [260] phi from sprites_init::@1 to sprites_init::@1 [phi:sprites_init::@1->sprites_init::@1]
-  b1_from_b1:
+  __b1_from___b1:
     // [260] phi (byte) sprites_init::i#2 = (byte) sprites_init::i#1 [phi:sprites_init::@1->sprites_init::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // sprites_init::@1
-  b1:
+  __b1:
     // [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
     sta sprites_ptr,x
@@ -9055,10 +9055,10 @@ sprites_init: {
     inx
     // [264] if((byte) sprites_init::i#1!=(byte) 8) goto sprites_init::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
-    bne b1_from_b1
-    jmp breturn
+    bne __b1_from___b1
+    jmp __breturn
     // sprites_init::@return
-  breturn:
+  __breturn:
     // [265] return 
     rts
 }
@@ -9150,86 +9150,86 @@ SINQ:
 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp b8
-Removing instruction jmp b6
-Removing instruction jmp b9
-Removing instruction jmp b7
-Removing instruction jmp b10
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b5
+Removing instruction jmp __b8
+Removing instruction jmp __b6
+Removing instruction jmp __b9
+Removing instruction jmp __b7
+Removing instruction jmp __b10
 Removing instruction jmp print_sbyte_pos1
-Removing instruction jmp b2
+Removing instruction jmp __b2
 Removing instruction jmp print_sbyte_pos2
 Removing instruction jmp print_sbyte_pos3
-Removing instruction jmp b3
+Removing instruction jmp __b3
 Removing instruction jmp print_sbyte_pos4
-Removing instruction jmp b4
+Removing instruction jmp __b4
 Removing instruction jmp print_sbyte_pos5
-Removing instruction jmp b5
+Removing instruction jmp __b5
 Removing instruction jmp print_sbyte_pos6
-Removing instruction jmp b6
+Removing instruction jmp __b6
 Removing instruction jmp print_sbyte_pos7
-Removing instruction jmp b7
+Removing instruction jmp __b7
 Removing instruction jmp print_sbyte_pos8
-Removing instruction jmp b8
+Removing instruction jmp __b8
 Removing instruction jmp print_sbyte_pos9
-Removing instruction jmp b9
+Removing instruction jmp __b9
 Removing instruction jmp print_sbyte_pos10
-Removing instruction jmp b10
+Removing instruction jmp __b10
 Removing instruction jmp print_sbyte_pos11
-Removing instruction jmp b11
+Removing instruction jmp __b11
 Removing instruction jmp print_sbyte_pos12
-Removing instruction jmp b1
-Removing instruction jmp b12
-Removing instruction jmp b13
-Removing instruction jmp b14
-Removing instruction jmp b15
-Removing instruction jmp b16
-Removing instruction jmp b17
-Removing instruction jmp breturn
-Removing instruction jmp b3
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp b4
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp b7
-Removing instruction jmp b8
-Removing instruction jmp b9
-Removing instruction jmp b10
-Removing instruction jmp b11
-Removing instruction jmp b12
-Removing instruction jmp b13
-Removing instruction jmp b14
-Removing instruction jmp b15
-Removing instruction jmp b1
-Removing instruction jmp b16
-Removing instruction jmp b17
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b12
+Removing instruction jmp __b13
+Removing instruction jmp __b14
+Removing instruction jmp __b15
+Removing instruction jmp __b16
+Removing instruction jmp __b17
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b4
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __b7
+Removing instruction jmp __b8
+Removing instruction jmp __b9
+Removing instruction jmp __b10
+Removing instruction jmp __b11
+Removing instruction jmp __b12
+Removing instruction jmp __b13
+Removing instruction jmp __b14
+Removing instruction jmp __b15
+Removing instruction jmp __b1
+Removing instruction jmp __b16
+Removing instruction jmp __b17
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
 Removing instruction ldy.z i
@@ -9243,21 +9243,22 @@ Replacing instruction lda.z i with TYA
 Replacing instruction ldx zr with TAX
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b6_from_b9 with b6
-Replacing label b1 with b2
-Replacing label b1_from_b17 with b1
-Replacing label b2_from_b4 with b2
-Replacing label b2_from_b2 with b2
-Replacing label b1_from_b3 with b1
-Replacing label b1_from_b2 with b1
-Replacing label b1_from_b1 with b1
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction anim_from_b2:
-Removing instruction b1:
-Removing instruction b8_from_b5:
-Removing instruction b6_from_b9:
+Replacing label __bbegin with __b1
+Replacing label __b6_from___b9 with __b6
+Replacing label __b1 with __b2
+Replacing label __b1_from___b17 with __b1
+Replacing label __b2_from___b4 with __b2
+Replacing label __b2_from___b2 with __b2
+Replacing label __b1_from___b3 with __b1
+Replacing label __b1_from___b2 with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction anim_from___b2:
+Removing instruction __b1:
+Removing instruction __b8_from___b5:
+Removing instruction __b6_from___b9:
 Removing instruction print_sbyte_at_from_print_sbyte_pos1:
 Removing instruction print_sbyte_at_from_print_sbyte_pos2:
 Removing instruction print_sbyte_pos3_from_print_sbyte_pos2:
@@ -9271,146 +9272,146 @@ Removing instruction print_sbyte_at_from_print_sbyte_pos9:
 Removing instruction print_sbyte_at_from_print_sbyte_pos10:
 Removing instruction print_sbyte_at_from_print_sbyte_pos11:
 Removing instruction print_sbyte_at_from_print_sbyte_pos12:
-Removing instruction b1_from_b17:
-Removing instruction print_char_at_from_b3:
-Removing instruction b2_from_b3:
-Removing instruction b2_from_b4:
-Removing instruction print_char_at_from_b1:
-Removing instruction b4_from_debug_print_init:
-Removing instruction print_str_at_from_b4:
-Removing instruction b5_from_b4:
-Removing instruction print_str_at_from_b5:
-Removing instruction b6_from_b5:
-Removing instruction print_str_at_from_b6:
-Removing instruction b7_from_b6:
-Removing instruction print_str_at_from_b7:
-Removing instruction b8_from_b7:
-Removing instruction print_str_at_from_b8:
-Removing instruction b9_from_b8:
-Removing instruction print_str_at_from_b9:
-Removing instruction b10_from_b9:
-Removing instruction print_str_at_from_b10:
-Removing instruction b11_from_b10:
-Removing instruction print_str_at_from_b11:
-Removing instruction b12_from_b11:
-Removing instruction print_str_at_from_b12:
-Removing instruction b13_from_b12:
-Removing instruction print_str_at_from_b13:
-Removing instruction b14_from_b13:
-Removing instruction print_str_at_from_b14:
-Removing instruction b15_from_b14:
-Removing instruction print_str_at_from_b15:
-Removing instruction b1_from_b3:
-Removing instruction b2_from_b2:
-Removing instruction b1_from_print_str_at:
-Removing instruction b1_from_b2:
-Removing instruction b1_from_b1:
+Removing instruction __b1_from___b17:
+Removing instruction print_char_at_from___b3:
+Removing instruction __b2_from___b3:
+Removing instruction __b2_from___b4:
+Removing instruction print_char_at_from___b1:
+Removing instruction __b4_from_debug_print_init:
+Removing instruction print_str_at_from___b4:
+Removing instruction __b5_from___b4:
+Removing instruction print_str_at_from___b5:
+Removing instruction __b6_from___b5:
+Removing instruction print_str_at_from___b6:
+Removing instruction __b7_from___b6:
+Removing instruction print_str_at_from___b7:
+Removing instruction __b8_from___b7:
+Removing instruction print_str_at_from___b8:
+Removing instruction __b9_from___b8:
+Removing instruction print_str_at_from___b9:
+Removing instruction __b10_from___b9:
+Removing instruction print_str_at_from___b10:
+Removing instruction __b11_from___b10:
+Removing instruction print_str_at_from___b11:
+Removing instruction __b12_from___b11:
+Removing instruction print_str_at_from___b12:
+Removing instruction __b13_from___b12:
+Removing instruction print_str_at_from___b13:
+Removing instruction __b14_from___b13:
+Removing instruction print_str_at_from___b14:
+Removing instruction __b15_from___b14:
+Removing instruction print_str_at_from___b15:
+Removing instruction __b1_from___b3:
+Removing instruction __b2_from___b2:
+Removing instruction __b1_from_print_str_at:
+Removing instruction __b1_from___b2:
+Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1:
-Removing instruction debug_print_init_from_b1:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction b1_from_anim:
-Removing instruction b5:
-Removing instruction b8:
-Removing instruction b6_from_b8:
-Removing instruction b9:
-Removing instruction b7:
-Removing instruction b10:
-Removing instruction b1_from_b10:
+Removing instruction __bend:
+Removing instruction __b1:
+Removing instruction debug_print_init_from___b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __b1_from_anim:
+Removing instruction __b5:
+Removing instruction __b8:
+Removing instruction __b6_from___b8:
+Removing instruction __b9:
+Removing instruction __b7:
+Removing instruction __b10:
+Removing instruction __b1_from___b10:
 Removing instruction print_sbyte_pos1:
-Removing instruction b2:
+Removing instruction __b2:
 Removing instruction print_sbyte_pos2:
 Removing instruction print_sbyte_pos3:
-Removing instruction b3:
+Removing instruction __b3:
 Removing instruction print_sbyte_pos4:
-Removing instruction b4:
+Removing instruction __b4:
 Removing instruction print_sbyte_pos5:
-Removing instruction b5:
+Removing instruction __b5:
 Removing instruction print_sbyte_pos6:
-Removing instruction b6:
+Removing instruction __b6:
 Removing instruction print_sbyte_pos7:
-Removing instruction b7:
+Removing instruction __b7:
 Removing instruction print_sbyte_pos8:
-Removing instruction b8:
+Removing instruction __b8:
 Removing instruction print_sbyte_pos9:
-Removing instruction b9:
+Removing instruction __b9:
 Removing instruction print_sbyte_pos10:
-Removing instruction b10:
+Removing instruction __b10:
 Removing instruction print_sbyte_pos11:
-Removing instruction b11:
+Removing instruction __b11:
 Removing instruction print_sbyte_pos12:
-Removing instruction b1_from_print_sbyte_pos12:
-Removing instruction print_sbyte_at_from_b1:
-Removing instruction b12:
-Removing instruction print_sbyte_at_from_b12:
-Removing instruction b13:
-Removing instruction print_sbyte_at_from_b13:
-Removing instruction b14:
-Removing instruction print_sbyte_at_from_b14:
-Removing instruction b15:
-Removing instruction print_sbyte_at_from_b15:
-Removing instruction b16:
-Removing instruction print_sbyte_at_from_b16:
-Removing instruction b17:
-Removing instruction breturn:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction b4:
-Removing instruction breturn:
+Removing instruction __b1_from_print_sbyte_pos12:
+Removing instruction print_sbyte_at_from___b1:
+Removing instruction __b12:
+Removing instruction print_sbyte_at_from___b12:
+Removing instruction __b13:
+Removing instruction print_sbyte_at_from___b13:
+Removing instruction __b14:
+Removing instruction print_sbyte_at_from___b14:
+Removing instruction __b15:
+Removing instruction print_sbyte_at_from___b15:
+Removing instruction __b16:
+Removing instruction print_sbyte_at_from___b16:
+Removing instruction __b17:
+Removing instruction __breturn:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b4:
+Removing instruction __breturn:
 Removing instruction print_char_at_from_print_byte_at:
-Removing instruction b1:
-Removing instruction print_char_at_from_b1:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction print_char_at_from___b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction print_cls_from_debug_print_init:
-Removing instruction b4:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction b7:
-Removing instruction b8:
-Removing instruction b9:
-Removing instruction b10:
-Removing instruction b11:
-Removing instruction b12:
-Removing instruction b13:
-Removing instruction b14:
-Removing instruction b15:
-Removing instruction b1_from_b15:
-Removing instruction print_sbyte_at_from_b1:
-Removing instruction b16:
-Removing instruction print_sbyte_at_from_b16:
-Removing instruction b17:
-Removing instruction print_sbyte_at_from_b17:
-Removing instruction b2_from_b17:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b4:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction __b7:
+Removing instruction __b8:
+Removing instruction __b9:
+Removing instruction __b10:
+Removing instruction __b11:
+Removing instruction __b12:
+Removing instruction __b13:
+Removing instruction __b14:
+Removing instruction __b15:
+Removing instruction __b1_from___b15:
+Removing instruction print_sbyte_at_from___b1:
+Removing instruction __b16:
+Removing instruction print_sbyte_at_from___b16:
+Removing instruction __b17:
+Removing instruction print_sbyte_at_from___b17:
+Removing instruction __b2_from___b17:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction memset_from_print_cls:
-Removing instruction breturn:
-Removing instruction b1_from_memset:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
-Removing instruction b1_from_sprites_init:
-Removing instruction breturn:
+Removing instruction __breturn:
+Removing instruction __b1_from_memset:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Removing instruction __b1_from_sprites_init:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b6
-Removing instruction jmp b1
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b1
+Removing instruction jmp __b6
+Removing instruction jmp __b1
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [299] bne b1 to beq
-Fixing long branch [899] bne b2 to beq
-Fixing long branch [908] bne b1 to beq
+Fixing long branch [299] bne __b1 to beq
+Fixing long branch [899] bne __b2 to beq
+Fixing long branch [908] bne __b1 to beq
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -10030,26 +10031,26 @@ anim: {
   //signed byte xmax = 0;
     // anim::@1
     // anim::@2
-  b2:
+  __b2:
     // while(*RASTER!=$ff)
     // [14] if(*((const byte*) RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     // anim::@3
-  b3:
+  __b3:
     // while(*RASTER!=$fe)
     // [15] if(*((const byte*) RASTER)!=(byte) $fe) goto anim::@3 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
-    bne b3
+    bne __b3
     // anim::@4
-  b4:
+  __b4:
     // while(*RASTER!=$fd)
     // [16] if(*((const byte*) RASTER)!=(byte) $fd) goto anim::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
-    bne b4
+    bne __b4
     // anim::@5
     // (*BORDERCOL)++;
     // [17] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
@@ -10072,7 +10073,7 @@ anim: {
     // [23] phi from anim::@9 to anim::@6 [phi:anim::@9->anim::@6]
     // [23] phi (byte) anim::i#2 = (byte) anim::i#1 [phi:anim::@9->anim::@6#0] -- register_copy 
     // anim::@6
-  b6:
+  __b6:
     // (*BORDERCOL)++;
     // [24] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
@@ -10143,7 +10144,7 @@ anim: {
     // [41] if((byte) anim::i#1!=(byte) 8) goto anim::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    bne b6
+    bne __b6
     // anim::@7
     // *BORDERCOL = LIGHT_GREY
     // [42] *((const byte*) BORDERCOL) ← (const byte) LIGHT_GREY -- _deref_pbuc1=vbuc2 
@@ -10170,7 +10171,7 @@ anim: {
     // [13] phi from anim::@10 to anim::@1 [phi:anim::@10->anim::@1]
     // [13] phi (signed byte) sy#10 = (signed byte) sy#3 [phi:anim::@10->anim::@1#0] -- register_copy 
     // [13] phi (signed byte) sx#10 = (signed byte) sx#3 [phi:anim::@10->anim::@1#1] -- register_copy 
-    jmp b2
+    jmp __b2
 }
   // debug_print
 debug_print: {
@@ -10399,7 +10400,7 @@ debug_print: {
     // [82] phi (byte) debug_print::i#2 = (byte) debug_print::i#1 [phi:debug_print::@17->debug_print::@1#0] -- register_copy 
     // [82] phi (byte) debug_print::c#2 = (byte) debug_print::c#1 [phi:debug_print::@17->debug_print::@1#1] -- register_copy 
     // debug_print::@1
-  b1:
+  __b1:
     // print_sbyte_at(xrs[i], at_line+40*0+c)
     // [83] (byte*) print_sbyte_at::at#15 ← (const byte*) debug_print::at_line#0 + (byte) debug_print::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
@@ -10519,9 +10520,9 @@ debug_print: {
     // [103] if((byte) debug_print::i#1!=(byte) 8) goto debug_print::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    beq !b1+
-    jmp b1
-  !b1:
+    beq !__b1+
+    jmp __b1
+  !__b1:
     // debug_print::@return
     // }
     // [104] return 
@@ -10535,7 +10536,7 @@ print_sbyte_at: {
     // if(b<0)
     // [106] if((signed byte) print_sbyte_at::b#22<(signed byte) 0) goto print_sbyte_at::@1 -- vbsxx_lt_0_then_la1 
     cpx #0
-    bmi b1
+    bmi __b1
     // print_sbyte_at::@3
     // print_char_at(' ', at)
     // [107] (byte*) print_char_at::at#1 ← (byte*) print_sbyte_at::at#21
@@ -10548,7 +10549,7 @@ print_sbyte_at: {
     // [109] phi from print_sbyte_at::@3 print_sbyte_at::@4 to print_sbyte_at::@2 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2]
     // [109] phi (signed byte) print_sbyte_at::b#24 = (signed byte) print_sbyte_at::b#22 [phi:print_sbyte_at::@3/print_sbyte_at::@4->print_sbyte_at::@2#0] -- register_copy 
     // print_sbyte_at::@2
-  b2:
+  __b2:
     // print_byte_at((byte)b, at+1)
     // [110] (byte) print_byte_at::b#0 ← (byte)(signed byte) print_sbyte_at::b#24
     // [111] (byte*) print_byte_at::at#0 ← (byte*) print_sbyte_at::at#21 + (byte) 1 -- pbuz1=pbuz1_plus_1 
@@ -10563,7 +10564,7 @@ print_sbyte_at: {
     // [113] return 
     rts
     // print_sbyte_at::@1
-  b1:
+  __b1:
     // print_char_at('-', at)
     // [114] (byte*) print_char_at::at#0 ← (byte*) print_sbyte_at::at#21
     // [115] call print_char_at 
@@ -10580,7 +10581,7 @@ print_sbyte_at: {
     clc
     adc #1
     tax
-    jmp b2
+    jmp __b2
 }
   // print_char_at
 // Print a single char
@@ -11050,15 +11051,15 @@ debug_print_init: {
     .label COLS = $d800
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
-    .label _41 = $d
-    .label _44 = $f
-    .label _47 = $11
-    .label _50 = $13
-    .label _53 = $15
-    .label _56 = $17
-    .label _59 = $19
-    .label _62 = $1b
-    .label _65 = $1d
+    .label __41 = $d
+    .label __44 = $f
+    .label __47 = $11
+    .label __50 = $13
+    .label __53 = $15
+    .label __56 = $17
+    .label __59 = $19
+    .label __62 = $1b
+    .label __65 = $1d
     .label c = 2
     .label i = 3
     // print_cls()
@@ -11268,7 +11269,7 @@ debug_print_init: {
     // [207] phi (byte) debug_print_init::i#2 = (byte) debug_print_init::i#1 [phi:debug_print_init::@3->debug_print_init::@1#0] -- register_copy 
     // [207] phi (byte) debug_print_init::c#2 = (byte) debug_print_init::c#1 [phi:debug_print_init::@3->debug_print_init::@1#1] -- register_copy 
     // debug_print_init::@1
-  b1:
+  __b1:
     // print_sbyte_at(xs[i], at_line+40*0+c)
     // [208] (byte*) print_sbyte_at::at#0 ← (const byte*) debug_print_init::at_line#0 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
@@ -11328,7 +11329,7 @@ debug_print_init: {
     // [217] phi from debug_print_init::@2 to debug_print_init::@2 [phi:debug_print_init::@2->debug_print_init::@2]
     // [217] phi (byte) debug_print_init::j#2 = (byte) debug_print_init::j#1 [phi:debug_print_init::@2->debug_print_init::@2#0] -- register_copy 
     // debug_print_init::@2
-  b2:
+  __b2:
     // col = 8+i
     // [218] (byte) debug_print_init::col#0 ← (byte) 8 + (byte) debug_print_init::i#2 -- vbuxx=vbuc1_plus_vbuz1 
     lax.z i
@@ -11338,126 +11339,126 @@ debug_print_init: {
     lda.z c
     clc
     adc #<at_cols
-    sta.z _41
+    sta.z __41
     lda #>at_cols
     adc #0
-    sta.z _41+1
+    sta.z __41+1
     // *(at_cols+40*0+c+j) = col
     // [220] *((byte*~) debug_print_init::$41 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_41),y
+    sta (__41),y
     // at_cols+40*1+c
     // [221] (byte*~) debug_print_init::$44 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 1 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*1
-    sta.z _44
+    sta.z __44
     lda #>at_cols+$28*1
     adc #0
-    sta.z _44+1
+    sta.z __44+1
     // *(at_cols+40*1+c+j) = col
     // [222] *((byte*~) debug_print_init::$44 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_44),y
+    sta (__44),y
     // at_cols+40*2+c
     // [223] (byte*~) debug_print_init::$47 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 2 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*2
-    sta.z _47
+    sta.z __47
     lda #>at_cols+$28*2
     adc #0
-    sta.z _47+1
+    sta.z __47+1
     // *(at_cols+40*2+c+j) = col
     // [224] *((byte*~) debug_print_init::$47 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_47),y
+    sta (__47),y
     // at_cols+40*3+c
     // [225] (byte*~) debug_print_init::$50 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 3 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*3
-    sta.z _50
+    sta.z __50
     lda #>at_cols+$28*3
     adc #0
-    sta.z _50+1
+    sta.z __50+1
     // *(at_cols+40*3+c+j) = col
     // [226] *((byte*~) debug_print_init::$50 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_50),y
+    sta (__50),y
     // at_cols+40*4+c
     // [227] (byte*~) debug_print_init::$53 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 4 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*4
-    sta.z _53
+    sta.z __53
     lda #>at_cols+$28*4
     adc #0
-    sta.z _53+1
+    sta.z __53+1
     // *(at_cols+40*4+c+j) = col
     // [228] *((byte*~) debug_print_init::$53 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_53),y
+    sta (__53),y
     // at_cols+40*5+c
     // [229] (byte*~) debug_print_init::$56 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 5 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*5
-    sta.z _56
+    sta.z __56
     lda #>at_cols+$28*5
     adc #0
-    sta.z _56+1
+    sta.z __56+1
     // *(at_cols+40*5+c+j) = col
     // [230] *((byte*~) debug_print_init::$56 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_56),y
+    sta (__56),y
     // at_cols+40*6+c
     // [231] (byte*~) debug_print_init::$59 ← (const byte*) debug_print_init::at_cols#0+(byte)(number) $28*(number) 6 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*6
-    sta.z _59
+    sta.z __59
     lda #>at_cols+$28*6
     adc #0
-    sta.z _59+1
+    sta.z __59+1
     // *(at_cols+40*6+c+j) = col
     // [232] *((byte*~) debug_print_init::$59 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_59),y
+    sta (__59),y
     // at_cols+40*7+c
     // [233] (byte*~) debug_print_init::$62 ← (const byte*) debug_print_init::at_cols#0+(word)(number) $28*(number) 7 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*7
-    sta.z _62
+    sta.z __62
     lda #>at_cols+$28*7
     adc #0
-    sta.z _62+1
+    sta.z __62+1
     // *(at_cols+40*7+c+j) = col
     // [234] *((byte*~) debug_print_init::$62 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_62),y
+    sta (__62),y
     // at_cols+40*8+c
     // [235] (byte*~) debug_print_init::$65 ← (const byte*) debug_print_init::at_cols#0+(word)(number) $28*(number) 8 + (byte) debug_print_init::c#2 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z c
     clc
     adc #<at_cols+$28*8
-    sta.z _65
+    sta.z __65
     lda #>at_cols+$28*8
     adc #0
-    sta.z _65+1
+    sta.z __65+1
     // *(at_cols+40*8+c+j) = col
     // [236] *((byte*~) debug_print_init::$65 + (byte) debug_print_init::j#2) ← (byte) debug_print_init::col#0 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
-    sta (_65),y
+    sta (__65),y
     // for( byte j: 0..3)
     // [237] (byte) debug_print_init::j#1 ← ++ (byte) debug_print_init::j#2 -- vbuyy=_inc_vbuyy 
     iny
     // [238] if((byte) debug_print_init::j#1!=(byte) 4) goto debug_print_init::@2 -- vbuyy_neq_vbuc1_then_la1 
     cpy #4
-    beq !b2+
-    jmp b2
-  !b2:
+    beq !__b2+
+    jmp __b2
+  !__b2:
     // debug_print_init::@3
     // c += 4
     // [239] (byte) debug_print_init::c#1 ← (byte) debug_print_init::c#2 + (byte) 4 -- vbuz1=vbuz1_plus_vbuc1 
@@ -11470,9 +11471,9 @@ debug_print_init: {
     // [241] if((byte) debug_print_init::i#1!=(byte) 8) goto debug_print_init::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
-    beq !b1+
-    jmp b1
-  !b1:
+    beq !__b1+
+    jmp __b1
+  !__b1:
     // debug_print_init::@return
     // }
     // [242] return 
@@ -11512,19 +11513,19 @@ print_str_at: {
     // [244] phi (byte*) print_str_at::at#13 = (byte*) print_str_at::at#15 [phi:print_str_at/print_str_at::@2->print_str_at::@1#0] -- register_copy 
     // [244] phi (byte*) print_str_at::str#13 = (byte*) print_str_at::str#15 [phi:print_str_at/print_str_at::@2->print_str_at::@1#1] -- register_copy 
     // print_str_at::@1
-  b1:
+  __b1:
     // while(*str)
     // [245] if((byte) 0!=*((byte*) print_str_at::str#13)) goto print_str_at::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     // print_str_at::@return
     // }
     // [246] return 
     rts
     // print_str_at::@2
-  b2:
+  __b2:
     // *(at++) = *(str++)
     // [247] *((byte*) print_str_at::at#13) ← *((byte*) print_str_at::str#13) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
@@ -11541,7 +11542,7 @@ print_str_at: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
@@ -11570,21 +11571,21 @@ memset: {
     lda #>str
     sta.z dst+1
     // memset::@1
-  b1:
+  __b1:
     // for(char* dst = str; dst!=end; dst++)
     // [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
-    bne b2
+    bne __b2
     lda.z dst
     cmp #<end
-    bne b2
+    bne __b2
     // memset::@return
     // }
     // [256] return 
     rts
     // memset::@2
-  b2:
+  __b2:
     // *dst = c
     // [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
@@ -11598,7 +11599,7 @@ memset: {
   !:
     // [254] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
     // [254] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // sprites_init
 // Initialize sprites
@@ -11615,7 +11616,7 @@ sprites_init: {
     // [260] phi from sprites_init::@1 to sprites_init::@1 [phi:sprites_init::@1->sprites_init::@1]
     // [260] phi (byte) sprites_init::i#2 = (byte) sprites_init::i#1 [phi:sprites_init::@1->sprites_init::@1#0] -- register_copy 
     // sprites_init::@1
-  b1:
+  __b1:
     // sprites_ptr[i] = (byte)(SPRITE/$40)
     // [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
@@ -11629,7 +11630,7 @@ sprites_init: {
     inx
     // [264] if((byte) sprites_init::i#1!=(byte) 8) goto sprites_init::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
-    bne b1
+    bne __b1
     // sprites_init::@return
     // }
     // [265] return 

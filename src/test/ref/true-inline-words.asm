@@ -16,11 +16,11 @@ main: {
     sta sc
     lda #'m'
     cmp pos
-    beq b1
+    beq __b1
     lda #2
     sta bgcol
     rts
-  b1:
+  __b1:
     lda #5
     sta bgcol
     rts

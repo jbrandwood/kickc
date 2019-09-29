@@ -5,8 +5,8 @@
 .pc = $80d "Program"
   .label BGCOL = $d020
 main: {
-  b1:
+  __b1:
     inc BGCOL
     dec BGCOL
-    jmp b1
+    jmp __b1
 }

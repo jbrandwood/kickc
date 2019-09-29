@@ -42,20 +42,20 @@ main: {
     sta.z yvel_12
     lda #>$64
     sta.z yvel_12+1
-  b1:
+  __b1:
     lda #$ff
     cmp RASTER
-    bne b1
+    bne __b1
     jsr anim
-    jmp b1
+    jmp __b1
 }
 anim: {
-    .label _5 = $c
-    .label _7 = $e
+    .label __5 = $c
+    .label __7 = $e
     .label sprite_x = $c
     .label sprite_y = $e
     lda.z ypos+1
-    bpl b1
+    bpl __b1
     sec
     lda #0
     sbc.z xvel
@@ -77,12 +77,12 @@ anim: {
     bvc !+
     eor #$80
   !:
-    bpl b3
+    bpl __b3
     lda #<$c8
     sta.z yvel
     lda #>$c8
     sta.z yvel+1
-  b3:
+  __b3:
     lda.z yvel
     sta.z yvel_21
     lda.z yvel+1
@@ -92,7 +92,7 @@ anim: {
     sta.z ypos+1
     sta.z xpos
     sta.z xpos+1
-  b1:
+  __b1:
     clc
     lda.z yvel_10
     adc #<g
@@ -117,16 +117,16 @@ anim: {
     lda.z xpos
     sta.z $ff
     lda.z xpos+1
-    sta.z _5
+    sta.z __5
     lda #0
     bit.z xpos+1
     bpl !+
     lda #$ff
   !:
-    sta.z _5+1
+    sta.z __5+1
     rol.z $ff
-    rol.z _5
-    rol.z _5+1
+    rol.z __5
+    rol.z __5+1
     clc
     lda.z sprite_x
     adc #<$a0
@@ -137,22 +137,22 @@ anim: {
     lda.z ypos
     sta.z $ff
     lda.z ypos+1
-    sta.z _7
+    sta.z __7
     lda #0
     bit.z ypos+1
     bpl !+
     lda #$ff
   !:
-    sta.z _7+1
+    sta.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     rol.z $ff
-    rol.z _7
-    rol.z _7+1
+    rol.z __7
+    rol.z __7+1
     lda #<$e6
     sec
     sbc.z sprite_y
@@ -187,22 +187,22 @@ init: {
     sta.z sc
     lda #>SCREEN
     sta.z sc+1
-  b1:
+  __b1:
     lda.z sc+1
     cmp #>SCREEN+$3e8
-    bne b2
+    bne __b2
     lda.z sc
     cmp #<SCREEN+$3e8
-    bne b2
+    bne __b2
     ldx #0
-  b3:
+  __b3:
     lda #$ff
     sta SPRITE,x
     inx
     cpx #$40
-    bne b3
+    bne __b3
     rts
-  b2:
+  __b2:
     lda #' '
     ldy #0
     sta (sc),y
@@ -210,5 +210,5 @@ init: {
     bne !+
     inc.z sc+1
   !:
-    jmp b1
+    jmp __b1
 }

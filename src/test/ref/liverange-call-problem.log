@@ -316,28 +316,28 @@ Target platform is c64basic / MOS6502X
 // w1 and w2 ended up having the same zero-page register as their live range was not propagated properly
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
   .label w1 = 4
   .label w2 = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
@@ -351,13 +351,13 @@ main: {
     sta.z w1+1
     jsr incw1
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call incw2 
     // [15] phi from main::@1 to incw2 [phi:main::@1->incw2]
-  incw2_from_b1:
+  incw2_from___b1:
     // [15] phi (word) w2#10 = (byte) 0 [phi:main::@1->incw2#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z w2
@@ -365,28 +365,28 @@ main: {
     sta.z w2+1
     jsr incw2
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] call incw1 
     // [18] phi from main::@2 to incw1 [phi:main::@2->incw1]
-  incw1_from_b2:
+  incw1_from___b2:
     // [18] phi (word) w1#11 = (word) w1#12 [phi:main::@2->incw1#0] -- register_copy 
     jsr incw1
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] call incw2 
     // [15] phi from main::@3 to incw2 [phi:main::@3->incw2]
-  incw2_from_b3:
+  incw2_from___b3:
     // [15] phi (word) w2#10 = (word) w2#11 [phi:main::@3->incw2#0] -- register_copy 
     jsr incw2
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [12] *((const word*) main::SCREEN) ← (word) w1#12 -- _deref_pwuc1=vwuz1 
     lda.z w1
     sta SCREEN
@@ -397,9 +397,9 @@ main: {
     sta SCREEN+2*SIZEOF_WORD
     lda.z w2+1
     sta SCREEN+2*SIZEOF_WORD+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -410,9 +410,9 @@ incw2: {
     bne !+
     inc.z w2+1
   !:
-    jmp breturn
+    jmp __breturn
     // incw2::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
@@ -423,9 +423,9 @@ incw1: {
     bne !+
     inc.z w1+1
   !:
-    jmp breturn
+    jmp __breturn
     // incw1::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
 }
@@ -454,28 +454,28 @@ ASSEMBLER BEFORE OPTIMIZATION
 // w1 and w2 ended up having the same zero-page register as their live range was not propagated properly
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
   .label w1 = 4
   .label w2 = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
@@ -489,13 +489,13 @@ main: {
     sta.z w1+1
     jsr incw1
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
-    jmp b1
+  __b1_from_main:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] call incw2 
     // [15] phi from main::@1 to incw2 [phi:main::@1->incw2]
-  incw2_from_b1:
+  incw2_from___b1:
     // [15] phi (word) w2#10 = (byte) 0 [phi:main::@1->incw2#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z w2
@@ -503,28 +503,28 @@ main: {
     sta.z w2+1
     jsr incw2
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] call incw1 
     // [18] phi from main::@2 to incw1 [phi:main::@2->incw1]
-  incw1_from_b2:
+  incw1_from___b2:
     // [18] phi (word) w1#11 = (word) w1#12 [phi:main::@2->incw1#0] -- register_copy 
     jsr incw1
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] call incw2 
     // [15] phi from main::@3 to incw2 [phi:main::@3->incw2]
-  incw2_from_b3:
+  incw2_from___b3:
     // [15] phi (word) w2#10 = (word) w2#11 [phi:main::@3->incw2#0] -- register_copy 
     jsr incw2
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [12] *((const word*) main::SCREEN) ← (word) w1#12 -- _deref_pwuc1=vwuz1 
     lda.z w1
     sta SCREEN
@@ -535,9 +535,9 @@ main: {
     sta SCREEN+2*SIZEOF_WORD
     lda.z w2+1
     sta SCREEN+2*SIZEOF_WORD+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -548,9 +548,9 @@ incw2: {
     bne !+
     inc.z w2+1
   !:
-    jmp breturn
+    jmp __breturn
     // incw2::@return
-  breturn:
+  __breturn:
     // [17] return 
     rts
 }
@@ -561,53 +561,54 @@ incw1: {
     bne !+
     inc.z w1+1
   !:
-    jmp breturn
+    jmp __breturn
     // incw1::@return
-  breturn:
+  __breturn:
     // [20] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction incw2_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction incw1_from_b2:
-Removing instruction b3_from_b2:
-Removing instruction incw2_from_b3:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction incw2_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction incw1_from___b2:
+Removing instruction __b3_from___b2:
+Removing instruction incw2_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction incw1_from_main:
-Removing instruction b1:
-Removing instruction b2:
-Removing instruction b3:
-Removing instruction b4:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction __b3:
+Removing instruction __b4:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

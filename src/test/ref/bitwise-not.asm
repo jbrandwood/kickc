@@ -6,12 +6,12 @@ main: {
     lda #1^$ff
     sta SCREEN
     ldx #1
-  b1:
+  __b1:
     txa
     eor #$ff
     sta SCREEN,x
     inx
     cpx #$1b
-    bne b1
+    bne __b1
     rts
 }

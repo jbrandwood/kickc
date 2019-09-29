@@ -183,32 +183,32 @@ Target platform is c64basic / MOS6502X
 // Tests a simple word array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400+6*$28
     .label words = $400
-    .label _0 = 4
-    .label _1 = 5
-    .label _2 = 8
-    .label _3 = 9
+    .label __0 = 4
+    .label __1 = 5
+    .label __2 = 8
+    .label __3 = 9
     .label w1 = 2
     .label w2 = 6
     // [4] (word) main::w1#0 ← *((const word[3]) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
@@ -218,15 +218,15 @@ main: {
     sta.z w1+1
     // [5] (byte~) main::$0 ← < (word) main::w1#0 -- vbuz1=_lo_vwuz2 
     lda.z w1
-    sta.z _0
+    sta.z __0
     // [6] *((const byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
-    lda.z _0
+    lda.z __0
     sta SCREEN
     // [7] (byte~) main::$1 ← > (word) main::w1#0 -- vbuz1=_hi_vwuz2 
     lda.z w1+1
-    sta.z _1
+    sta.z __1
     // [8] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
-    lda.z _1
+    lda.z __1
     sta SCREEN+1
     // [9] (word) main::w2#0 ← *((const word[3]) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+2*SIZEOF_WORD
@@ -235,19 +235,19 @@ main: {
     sta.z w2+1
     // [10] (byte~) main::$2 ← < (word) main::w2#0 -- vbuz1=_lo_vwuz2 
     lda.z w2
-    sta.z _2
+    sta.z __2
     // [11] *((const byte*) main::SCREEN+(byte) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
-    lda.z _2
+    lda.z __2
     sta SCREEN+2
     // [12] (byte~) main::$3 ← > (word) main::w2#0 -- vbuz1=_hi_vwuz2 
     lda.z w2+1
-    sta.z _3
+    sta.z __3
     // [13] *((const byte*) main::SCREEN+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
-    lda.z _3
+    lda.z __3
     sta SCREEN+3
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -281,24 +281,24 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests a simple word array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400+6*$28
@@ -331,30 +331,31 @@ main: {
     lda.z w2+1
     // [13] *((const byte*) main::SCREEN+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta SCREEN+3
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

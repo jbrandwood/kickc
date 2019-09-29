@@ -35,16 +35,16 @@ main: {
     lda #>irq
     sta KERNEL_IRQ+1
     cli
-  b4:
-    lda #0
-    sta.z i
   b1:
     lda #0
+    sta.z i
+  __b1:
+    lda #0
     sta.z j
-  b2:
+  __b2:
     lda #0
     sta.z k
-  b3:
+  __b3:
     lda.z i
     clc
     adc.z j
@@ -55,24 +55,24 @@ main: {
     inc.z k
     lda #$b
     cmp.z k
-    bne b3
+    bne __b3
     inc.z j
     cmp.z j
-    bne b2
+    bne __b2
     inc.z i
     cmp.z i
-    bne b1
-    jmp b4
+    bne __b1
+    jmp b1
 }
 sub_main: {
     .label i = 5
     lda #0
     sta.z i
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     ldy #0
-  b3:
+  __b3:
     txa
     clc
     adc.z i
@@ -82,14 +82,14 @@ sub_main: {
     sta BGCOL
     iny
     cpy #$b
-    bne b3
+    bne __b3
     inx
     cpx #$b
-    bne b2
+    bne __b2
     inc.z i
     lda #$b
     cmp.z i
-    bne b1
+    bne __b1
     rts
 }
 irq: {
@@ -99,13 +99,13 @@ irq: {
     inc BGCOL
     lda #0
     sta.z i
-  b1:
+  __b1:
     lda #0
     sta.z j
-  b2:
+  __b2:
     lda #0
     sta.z k
-  b3:
+  __b3:
     lda.z i
     clc
     adc.z j
@@ -116,13 +116,13 @@ irq: {
     inc.z k
     lda #$b
     cmp.z k
-    bne b3
+    bne __b3
     inc.z j
     cmp.z j
-    bne b2
+    bne __b2
     inc.z i
     cmp.z i
-    bne b1
+    bne __b1
     lda #IRQ_RASTER
     sta IRQ_STATUS
     dec BGCOL
@@ -132,11 +132,11 @@ sub_irq: {
     .label i = 9
     lda #0
     sta.z i
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     ldy #0
-  b3:
+  __b3:
     txa
     clc
     adc.z i
@@ -146,13 +146,13 @@ sub_irq: {
     sta BGCOL
     iny
     cpy #$b
-    bne b3
+    bne __b3
     inx
     cpx #$b
-    bne b2
+    bne __b2
     inc.z i
     lda #$b
     cmp.z i
-    bne b1
+    bne __b1
     rts
 }

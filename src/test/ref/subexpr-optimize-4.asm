@@ -9,15 +9,15 @@ main: {
     lda #>$400
     sta.z screen+1
     ldx #0
-  b1:
+  __b1:
     txa
     and #1
     cmp #0
-    bne b2
+    bne __b2
     txa
     asl
     asl
-  b4:
+  __b4:
     ldy #0
     sta (screen),y
     inc.z screen
@@ -27,11 +27,11 @@ main: {
     txa
     and #1
     cmp #0
-    bne b5
+    bne __b5
     txa
     asl
     asl
-  b7:
+  __b7:
     ldy #0
     sta (screen),y
     inc.z screen
@@ -40,16 +40,16 @@ main: {
   !:
     inx
     cpx #3
-    bne b1
+    bne __b1
     rts
-  b5:
+  __b5:
     txa
     clc
     adc #3
-    jmp b7
-  b2:
+    jmp __b7
+  __b2:
     txa
     clc
     adc #3
-    jmp b4
+    jmp __b4
 }

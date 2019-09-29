@@ -10,13 +10,13 @@ main: {
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-  b1:
+  __b1:
     jsr next_char
     tya
     sta SCREEN,x
     inx
     cpx #0
-    bne b1
+    bne __b1
     rts
 }
 // Find the next char of the text
@@ -25,13 +25,13 @@ next_char: {
     lda (nxt),y
     tay
     cpy #0
-    bne b1
+    bne __b1
     ldy TEXT
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-  b1:
+  __b1:
     inc.z nxt
     bne !+
     inc.z nxt+1

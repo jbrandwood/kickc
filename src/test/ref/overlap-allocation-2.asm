@@ -5,21 +5,21 @@
   .label SCREEN = $400
 main: {
     ldy #0
-  b1:
+  __b1:
     tya
     tax
     jsr line
     iny
     cpy #9
-    bne b1
+    bne __b1
     ldy #$a
-  b2:
+  __b2:
     tya
     tax
     jsr line
     iny
     cpy #$13
-    bne b2
+    bne __b2
     rts
 }
 // line(byte register(X) l)

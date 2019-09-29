@@ -5,8 +5,8 @@
   .byte 1, 2, 3
 
 main: {
-  b1:
+  __b1:
     inc $d020
         
-    jmp b1
+    jmp __b1
 }

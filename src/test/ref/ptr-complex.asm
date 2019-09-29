@@ -9,12 +9,12 @@ main: {
     .label BGCOL = $d020
     ldx #0
   // RValue pointer expression (variable)
-  b1:
+  __b1:
     lda screen+$28,x
     sta screen,x
     inx
     cpx #$b
-    bne b1
+    bne __b1
     lda screen+$79
     sta screen+$51
     // LValue pointer expression (constant - directly)
@@ -22,12 +22,12 @@ main: {
     sta screen+$52
     ldx #0
   // LValue pointer expression (variable - directly)
-  b3:
+  __b3:
     lda screen+$c8,x
     sta screen+$a0,x
     inx
     cpx #$b
-    bne b3
+    bne __b3
     inc $d020
     dec $d000+$21
     inc BGCOL

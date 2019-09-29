@@ -181,7 +181,7 @@ Target platform is c64basic / MOS6502X
 // Illustrates problem where volatiles reuse the same ZP addresses for multiple overlapping volatiles
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
@@ -189,7 +189,7 @@ Target platform is c64basic / MOS6502X
   .label col1 = 2
   .label col2 = 3
   // @begin
-bbegin:
+__bbegin:
   // [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col1
@@ -197,17 +197,17 @@ bbegin:
   lda #8
   sta.z col2
   // [2] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [3] call main 
   jsr main
   // [4] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
@@ -215,9 +215,9 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [6] return 
     rts
 }
@@ -234,9 +234,9 @@ irq: {
     sta SCREEN+$29
     // [10] (byte) col2#1 ← ++ (byte) col2#0 -- vbuz1=_inc_vbuz1 
     inc.z col2
-    jmp breturn
+    jmp __breturn
     // irq::@return
-  breturn:
+  __breturn:
     // [11] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
@@ -269,7 +269,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Illustrates problem where volatiles reuse the same ZP addresses for multiple overlapping volatiles
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
@@ -277,7 +277,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label col1 = 2
   .label col2 = 3
   // @begin
-bbegin:
+__bbegin:
   // [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col1
@@ -285,17 +285,17 @@ bbegin:
   lda #8
   sta.z col2
   // [2] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [3] call main 
   jsr main
   // [4] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
@@ -303,9 +303,9 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [6] return 
     rts
 }
@@ -322,27 +322,27 @@ irq: {
     sta SCREEN+$29
     // [10] (byte) col2#1 ← ++ (byte) col2#0 -- vbuz1=_inc_vbuz1 
     inc.z col2
-    jmp breturn
+    jmp __breturn
     // irq::@return
-  breturn:
+  __breturn:
     // [11] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction bend_from_b1:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b1:
-Removing instruction bend:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
@@ -375,7 +375,7 @@ Score: 67
 // Illustrates problem where volatiles reuse the same ZP addresses for multiple overlapping volatiles
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
@@ -383,7 +383,7 @@ Score: 67
   .label col1 = 2
   .label col2 = 3
   // @begin
-bbegin:
+__bbegin:
   // col1 = 0
   // [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0

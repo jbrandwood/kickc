@@ -200,84 +200,84 @@ Target platform is c64basic / MOS6502X
 // The compiler does not realize that A is alive in the statement b=b-a - and thus can clobber it.
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label a = 2
     .label b = 3
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::b#2 = (byte) 2 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #2
     sta.z b
     // [5] phi (byte) main::a#2 = (byte) $80 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #$80
     sta.z a
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) main::a#2!=(byte) main::b#2) goto main::@2 -- vbuz1_neq_vbuz2_then_la1 
     lda.z a
     cmp.z b
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [7] *((const byte*) SCREEN) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
     lda.z a
     sta SCREEN
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [9] if((byte) main::a#2>(byte) main::b#2) goto main::@4 -- vbuz1_gt_vbuz2_then_la1 
     lda.z b
     cmp.z a
-    bcc b4
-    jmp b5
+    bcc __b4
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [10] (byte) main::b#1 ← (byte) main::b#2 - (byte) main::a#2 -- vbuz1=vbuz1_minus_vbuz2 
     lda.z b
     sec
     sbc.z a
     sta.z b
     // [5] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
-  b1_from_b4:
-  b1_from_b5:
+  __b1_from___b4:
+  __b1_from___b5:
     // [5] phi (byte) main::b#2 = (byte) main::b#2 [phi:main::@4/main::@5->main::@1#0] -- register_copy 
     // [5] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@4/main::@5->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@4
-  b4:
+  __b4:
     // [11] (byte) main::a#1 ← (byte) main::a#2 - (byte) main::b#2 -- vbuz1=vbuz1_minus_vbuz2 
     lda.z a
     sec
     sbc.z b
     sta.z a
-    jmp b1_from_b4
+    jmp __b1_from___b4
 }
   // File Data
 
@@ -306,114 +306,115 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The compiler does not realize that A is alive in the statement b=b-a - and thus can clobber it.
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label a = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::b#2 = (byte) 2 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #2
     // [5] phi (byte) main::a#2 = (byte) $80 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #$80
     sta.z a
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte) main::a#2!=(byte) main::b#2) goto main::@2 -- vbuz1_neq_vbuxx_then_la1 
     cpx.z a
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [7] *((const byte*) SCREEN) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
     lda.z a
     sta SCREEN
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [9] if((byte) main::a#2>(byte) main::b#2) goto main::@4 -- vbuz1_gt_vbuxx_then_la1 
     cpx.z a
-    bcc b4
-    jmp b5
+    bcc __b4
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [10] (byte) main::b#1 ← (byte) main::b#2 - (byte) main::a#2 -- vbuxx=vbuxx_minus_vbuz1 
     txa
     sec
     sbc.z a
     tax
     // [5] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
-  b1_from_b4:
-  b1_from_b5:
+  __b1_from___b4:
+  __b1_from___b5:
     // [5] phi (byte) main::b#2 = (byte) main::b#2 [phi:main::@4/main::@5->main::@1#0] -- register_copy 
     // [5] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@4/main::@5->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@4
-  b4:
+  __b4:
     // [11] (byte) main::a#1 ← (byte) main::a#2 - (byte) main::b#2 -- vbuz1=vbuz1_minus_vbuxx 
     txa
     eor #$ff
     sec
     adc.z a
     sta.z a
-    jmp b1_from_b4
+    jmp __b1_from___b4
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b5
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b5
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b4 with b1_from_b5
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b4:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b4 with __b1_from___b5
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction b5:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b5:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Skipping double jump to b1 in jmp b1_from_b5
+Skipping double jump to __b1 in jmp __b1_from___b5
 Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label b1_from_b5 to b3
+Relabelling long label __b1_from___b5 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
-Removing instruction bbegin:
-Removing instruction b3:
+Removing instruction __b1:
+Removing instruction b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -468,11 +469,11 @@ main: {
     lda #$80
     sta.z a
     // main::@1
-  b1:
+  __b1:
     // while (a!=b)
     // [6] if((byte) main::a#2!=(byte) main::b#2) goto main::@2 -- vbuz1_neq_vbuxx_then_la1 
     cpx.z a
-    bne b2
+    bne __b2
     // main::@3
     // *SCREEN = a
     // [7] *((const byte*) SCREEN) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
@@ -483,11 +484,11 @@ main: {
     // [8] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // if(a>b)
     // [9] if((byte) main::a#2>(byte) main::b#2) goto main::@4 -- vbuz1_gt_vbuxx_then_la1 
     cpx.z a
-    bcc b4
+    bcc __b4
     // main::@5
     // b = b-a
     // [10] (byte) main::b#1 ← (byte) main::b#2 - (byte) main::a#2 -- vbuxx=vbuxx_minus_vbuz1 
@@ -498,9 +499,9 @@ main: {
     // [5] phi from main::@4 main::@5 to main::@1 [phi:main::@4/main::@5->main::@1]
     // [5] phi (byte) main::b#2 = (byte) main::b#2 [phi:main::@4/main::@5->main::@1#0] -- register_copy 
     // [5] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@4/main::@5->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@4
-  b4:
+  __b4:
     // a = a-b
     // [11] (byte) main::a#1 ← (byte) main::a#2 - (byte) main::b#2 -- vbuz1=vbuz1_minus_vbuxx 
     txa
@@ -508,7 +509,7 @@ main: {
     sec
     adc.z a
     sta.z a
-    jmp b1
+    jmp __b1
 }
   // File Data
 

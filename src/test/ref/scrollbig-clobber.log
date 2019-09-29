@@ -297,33 +297,33 @@ Target platform is c64basic / MOS6502X
 // Clobber problem in next_char return value
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label nxt = 3
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
-    .label _0 = 7
+    .label __0 = 7
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -332,27 +332,27 @@ main: {
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-    jmp b1
+    jmp __b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     // [5] phi (byte*) nxt#13 = (byte*) nxt#11 [phi:main::@2->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] call next_char 
     jsr next_char
     // [7] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuz1=vbuz2 
     lda.z next_char.return_1
     sta.z next_char.return
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] (byte~) main::$0 ← (byte) next_char::return#0 -- vbuz1=vbuz2 
     lda.z next_char.return
-    sta.z _0
+    sta.z __0
     // [9] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _0
+    lda.z __0
     ldy.z i
     sta SCREEN,y
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
@@ -360,10 +360,10 @@ main: {
     // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
     lda.z i
     cmp #0
-    bne b1_from_b2
-    jmp breturn
+    bne __b1_from___b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
@@ -380,37 +380,37 @@ next_char: {
     // [14] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1 -- vbuz1_neq_0_then_la1 
     lda.z c
     cmp #0
-    bne b1_from_next_char
-    jmp b2
+    bne __b1_from_next_char
+    jmp __b2
     // next_char::@2
-  b2:
+  __b2:
     // [15] (byte) next_char::c#1 ← *((const byte*) TEXT) -- vbuz1=_deref_pbuc1 
     lda TEXT
     sta.z c
     // [16] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [16] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
     // [16] phi (byte*) nxt#10 = (const byte*) TEXT [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-    jmp b1
+    jmp __b1
     // [16] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
-  b1_from_next_char:
+  __b1_from_next_char:
     // [16] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
     // [16] phi (byte*) nxt#10 = (byte*) nxt#13 [phi:next_char->next_char::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // next_char::@1
-  b1:
+  __b1:
     // [17] (byte*) nxt#11 ← ++ (byte*) nxt#10 -- pbuz1=_inc_pbuz1 
     inc.z nxt
     bne !+
     inc.z nxt+1
   !:
-    jmp breturn
+    jmp __breturn
     // next_char::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
@@ -444,31 +444,31 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Clobber problem in next_char return value
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label nxt = 2
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [5] phi (byte*) nxt#13 = (const byte*) TEXT [phi:main->main::@1#1] -- pbuz1=pbuc1 
@@ -476,21 +476,21 @@ main: {
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-    jmp b1
+    jmp __b1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     // [5] phi (byte*) nxt#13 = (byte*) nxt#11 [phi:main::@2->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] call next_char 
     jsr next_char
     // [7] (byte) next_char::return#0 ← (byte) next_char::return#1 -- vbuaa=vbuyy 
     tya
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] (byte~) main::$0 ← (byte) next_char::return#0
     // [9] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
@@ -498,10 +498,10 @@ main: {
     inx
     // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1_from_b2
-    jmp breturn
+    bne __b1_from___b2
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
@@ -514,36 +514,36 @@ next_char: {
     tay
     // [14] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1 -- vbuyy_neq_0_then_la1 
     cpy #0
-    bne b1_from_next_char
-    jmp b2
+    bne __b1_from_next_char
+    jmp __b2
     // next_char::@2
-  b2:
+  __b2:
     // [15] (byte) next_char::c#1 ← *((const byte*) TEXT) -- vbuyy=_deref_pbuc1 
     ldy TEXT
     // [16] phi from next_char::@2 to next_char::@1 [phi:next_char::@2->next_char::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [16] phi (byte) next_char::return#1 = (byte) next_char::c#1 [phi:next_char::@2->next_char::@1#0] -- register_copy 
     // [16] phi (byte*) nxt#10 = (const byte*) TEXT [phi:next_char::@2->next_char::@1#1] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-    jmp b1
+    jmp __b1
     // [16] phi from next_char to next_char::@1 [phi:next_char->next_char::@1]
-  b1_from_next_char:
+  __b1_from_next_char:
     // [16] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
     // [16] phi (byte*) nxt#10 = (byte*) nxt#13 [phi:next_char->next_char::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // next_char::@1
-  b1:
+  __b1:
     // [17] (byte*) nxt#11 ← ++ (byte*) nxt#10 -- pbuz1=_inc_pbuz1 
     inc.z nxt
     bne !+
     inc.z nxt+1
   !:
-    jmp breturn
+    jmp __breturn
     // next_char::@return
-  breturn:
+  __breturn:
     // [18] return 
     rts
 }
@@ -552,39 +552,40 @@ next_char: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp b2
-Removing instruction jmp b1
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b2 with b1
-Replacing label b1_from_next_char with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b2:
-Removing instruction b1_from_next_char:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b2 with __b1
+Replacing label __b1_from_next_char with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b2:
+Removing instruction __b1_from_next_char:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b2:
-Removing instruction breturn:
-Removing instruction b2:
-Removing instruction b1_from_b2:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __b2:
+Removing instruction __b1_from___b2:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction jmp b1
-Removing instruction jmp b1
+Removing instruction jmp __b1
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -656,7 +657,7 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     // [5] phi (byte*) nxt#13 = (byte*) nxt#11 [phi:main::@2->main::@1#1] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // next_char()
     // [6] call next_char 
     jsr next_char
@@ -672,7 +673,7 @@ main: {
     inx
     // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1
+    bne __b1
     // main::@return
     // }
     // [12] return 
@@ -689,7 +690,7 @@ next_char: {
     // if(c==0)
     // [14] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1 -- vbuyy_neq_0_then_la1 
     cpy #0
-    bne b1
+    bne __b1
     // next_char::@2
     // c = *nxt
     // [15] (byte) next_char::c#1 ← *((const byte*) TEXT) -- vbuyy=_deref_pbuc1 
@@ -705,7 +706,7 @@ next_char: {
     // [16] phi (byte) next_char::return#1 = (byte) next_char::c#0 [phi:next_char->next_char::@1#0] -- register_copy 
     // [16] phi (byte*) nxt#10 = (byte*) nxt#13 [phi:next_char->next_char::@1#1] -- register_copy 
     // next_char::@1
-  b1:
+  __b1:
     // nxt++;
     // [17] (byte*) nxt#11 ← ++ (byte*) nxt#10 -- pbuz1=_inc_pbuz1 
     inc.z nxt

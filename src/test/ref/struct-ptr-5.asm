@@ -33,15 +33,15 @@ main: {
     sta.z entry
     lda #>ENTRIES
     sta.z entry+1
-  b1:
+  __b1:
     lda.z entry+1
     cmp #>0
-    bne b2
+    bne __b2
     lda.z entry
     cmp #<0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     lda #'0'
     clc
     ldy #0
@@ -67,5 +67,5 @@ main: {
     sta.z entry+1
     pla
     sta.z entry
-    jmp b1
+    jmp __b1
 }

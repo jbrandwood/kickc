@@ -7,7 +7,7 @@
   .label SCREEN4 = SCREEN+$28*9
 main: {
     ldx #0
-  b1:
+  __b1:
     txa
     eor #$ff
     clc
@@ -20,7 +20,7 @@ main: {
     sta SCREEN2,x
     inx
     cpx #$65
-    bne b1
+    bne __b1
     jsr w
     rts
 }
@@ -29,7 +29,7 @@ w: {
     .const w2 = $4e2
     .const b = w1-w2
     ldy #0
-  b1:
+  __b1:
     tya
     tax
     axs #-[$578-$546]
@@ -39,6 +39,6 @@ w: {
     sta SCREEN4,y
     iny
     cpy #$b
-    bne b1
+    bne __b1
     rts
 }

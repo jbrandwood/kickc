@@ -779,7 +779,7 @@ Target platform is c64basic / MOS6502X
 // Tests different integer literal types
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const TYPEID_BYTE = 1
@@ -794,59 +794,59 @@ Target platform is c64basic / MOS6502X
   .label COLS = $d800
   .label idx = 6
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label s = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::s#2 = (const byte*) SCREEN [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z s
     lda #>SCREEN
     sta.z s+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte*) main::s#2<(const byte*) SCREEN+(word) $3e8) goto main::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z s+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z s
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
     // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
-  b3_from_b1:
-    jmp b3
+  __b3_from___b1:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [8] call testSimpleTypes 
     // [12] phi from main::@3 to testSimpleTypes [phi:main::@3->testSimpleTypes]
-  testSimpleTypes_from_b3:
+  testSimpleTypes_from___b3:
     jsr testSimpleTypes
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [10] *((byte*) main::s#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
@@ -857,9 +857,9 @@ main: {
     inc.z s+1
   !:
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte*) main::s#2 = (byte*) main::s#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // testSimpleTypes
 testSimpleTypes: {
@@ -877,13 +877,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [14] phi from testSimpleTypes to testSimpleTypes::@1 [phi:testSimpleTypes->testSimpleTypes::@1]
-  b1_from_testSimpleTypes:
-    jmp b1
+  __b1_from_testSimpleTypes:
+    jmp __b1
     // testSimpleTypes::@1
-  b1:
+  __b1:
     // [15] call assertType 
     // [43] phi from testSimpleTypes::@1 to assertType [phi:testSimpleTypes::@1->assertType]
-  assertType_from_b1:
+  assertType_from___b1:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@1->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_BYTE [phi:testSimpleTypes::@1->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
@@ -893,13 +893,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [16] phi from testSimpleTypes::@1 to testSimpleTypes::@2 [phi:testSimpleTypes::@1->testSimpleTypes::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // testSimpleTypes::@2
-  b2:
+  __b2:
     // [17] call assertType 
     // [43] phi from testSimpleTypes::@2 to assertType [phi:testSimpleTypes::@2->assertType]
-  assertType_from_b2:
+  assertType_from___b2:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@2->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_BYTE [phi:testSimpleTypes::@2->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
@@ -909,13 +909,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [18] phi from testSimpleTypes::@2 to testSimpleTypes::@3 [phi:testSimpleTypes::@2->testSimpleTypes::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // testSimpleTypes::@3
-  b3:
+  __b3:
     // [19] call assertType 
     // [43] phi from testSimpleTypes::@3 to assertType [phi:testSimpleTypes::@3->assertType]
-  assertType_from_b3:
+  assertType_from___b3:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@3->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_BYTE [phi:testSimpleTypes::@3->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
@@ -925,13 +925,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [20] phi from testSimpleTypes::@3 to testSimpleTypes::@4 [phi:testSimpleTypes::@3->testSimpleTypes::@4]
-  b4_from_b3:
-    jmp b4
+  __b4_from___b3:
+    jmp __b4
     // testSimpleTypes::@4
-  b4:
+  __b4:
     // [21] call assertType 
     // [43] phi from testSimpleTypes::@4 to assertType [phi:testSimpleTypes::@4->assertType]
-  assertType_from_b4:
+  assertType_from___b4:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@4->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_WORD [phi:testSimpleTypes::@4->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
@@ -941,13 +941,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [22] phi from testSimpleTypes::@4 to testSimpleTypes::@5 [phi:testSimpleTypes::@4->testSimpleTypes::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // testSimpleTypes::@5
-  b5:
+  __b5:
     // [23] call assertType 
     // [43] phi from testSimpleTypes::@5 to assertType [phi:testSimpleTypes::@5->assertType]
-  assertType_from_b5:
+  assertType_from___b5:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@5->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_WORD [phi:testSimpleTypes::@5->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
@@ -957,13 +957,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [24] phi from testSimpleTypes::@5 to testSimpleTypes::@6 [phi:testSimpleTypes::@5->testSimpleTypes::@6]
-  b6_from_b5:
-    jmp b6
+  __b6_from___b5:
+    jmp __b6
     // testSimpleTypes::@6
-  b6:
+  __b6:
     // [25] call assertType 
     // [43] phi from testSimpleTypes::@6 to assertType [phi:testSimpleTypes::@6->assertType]
-  assertType_from_b6:
+  assertType_from___b6:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@6->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_WORD [phi:testSimpleTypes::@6->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
@@ -973,13 +973,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [26] phi from testSimpleTypes::@6 to testSimpleTypes::@7 [phi:testSimpleTypes::@6->testSimpleTypes::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // testSimpleTypes::@7
-  b7:
+  __b7:
     // [27] call assertType 
     // [43] phi from testSimpleTypes::@7 to assertType [phi:testSimpleTypes::@7->assertType]
-  assertType_from_b7:
+  assertType_from___b7:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@7->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_WORD [phi:testSimpleTypes::@7->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
@@ -989,13 +989,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [28] phi from testSimpleTypes::@7 to testSimpleTypes::@8 [phi:testSimpleTypes::@7->testSimpleTypes::@8]
-  b8_from_b7:
-    jmp b8
+  __b8_from___b7:
+    jmp __b8
     // testSimpleTypes::@8
-  b8:
+  __b8:
     // [29] call assertType 
     // [43] phi from testSimpleTypes::@8 to assertType [phi:testSimpleTypes::@8->assertType]
-  assertType_from_b8:
+  assertType_from___b8:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@8->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_WORD [phi:testSimpleTypes::@8->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
@@ -1005,13 +1005,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [30] phi from testSimpleTypes::@8 to testSimpleTypes::@9 [phi:testSimpleTypes::@8->testSimpleTypes::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // testSimpleTypes::@9
-  b9:
+  __b9:
     // [31] call assertType 
     // [43] phi from testSimpleTypes::@9 to assertType [phi:testSimpleTypes::@9->assertType]
-  assertType_from_b9:
+  assertType_from___b9:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@9->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_WORD [phi:testSimpleTypes::@9->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
@@ -1021,13 +1021,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [32] phi from testSimpleTypes::@9 to testSimpleTypes::@10 [phi:testSimpleTypes::@9->testSimpleTypes::@10]
-  b10_from_b9:
-    jmp b10
+  __b10_from___b9:
+    jmp __b10
     // testSimpleTypes::@10
-  b10:
+  __b10:
     // [33] call assertType 
     // [43] phi from testSimpleTypes::@10 to assertType [phi:testSimpleTypes::@10->assertType]
-  assertType_from_b10:
+  assertType_from___b10:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@10->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_DWORD [phi:testSimpleTypes::@10->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
@@ -1037,13 +1037,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [34] phi from testSimpleTypes::@10 to testSimpleTypes::@11 [phi:testSimpleTypes::@10->testSimpleTypes::@11]
-  b11_from_b10:
-    jmp b11
+  __b11_from___b10:
+    jmp __b11
     // testSimpleTypes::@11
-  b11:
+  __b11:
     // [35] call assertType 
     // [43] phi from testSimpleTypes::@11 to assertType [phi:testSimpleTypes::@11->assertType]
-  assertType_from_b11:
+  assertType_from___b11:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@11->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_DWORD [phi:testSimpleTypes::@11->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
@@ -1053,13 +1053,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [36] phi from testSimpleTypes::@11 to testSimpleTypes::@12 [phi:testSimpleTypes::@11->testSimpleTypes::@12]
-  b12_from_b11:
-    jmp b12
+  __b12_from___b11:
+    jmp __b12
     // testSimpleTypes::@12
-  b12:
+  __b12:
     // [37] call assertType 
     // [43] phi from testSimpleTypes::@12 to assertType [phi:testSimpleTypes::@12->assertType]
-  assertType_from_b12:
+  assertType_from___b12:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@12->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_DWORD [phi:testSimpleTypes::@12->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
@@ -1069,13 +1069,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [38] phi from testSimpleTypes::@12 to testSimpleTypes::@13 [phi:testSimpleTypes::@12->testSimpleTypes::@13]
-  b13_from_b12:
-    jmp b13
+  __b13_from___b12:
+    jmp __b13
     // testSimpleTypes::@13
-  b13:
+  __b13:
     // [39] call assertType 
     // [43] phi from testSimpleTypes::@13 to assertType [phi:testSimpleTypes::@13->assertType]
-  assertType_from_b13:
+  assertType_from___b13:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@13->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_DWORD [phi:testSimpleTypes::@13->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
@@ -1085,13 +1085,13 @@ testSimpleTypes: {
     sta.z assertType.t1
     jsr assertType
     // [40] phi from testSimpleTypes::@13 to testSimpleTypes::@14 [phi:testSimpleTypes::@13->testSimpleTypes::@14]
-  b14_from_b13:
-    jmp b14
+  __b14_from___b13:
+    jmp __b14
     // testSimpleTypes::@14
-  b14:
+  __b14:
     // [41] call assertType 
     // [43] phi from testSimpleTypes::@14 to assertType [phi:testSimpleTypes::@14->assertType]
-  assertType_from_b14:
+  assertType_from___b14:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@14->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_DWORD [phi:testSimpleTypes::@14->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
@@ -1100,9 +1100,9 @@ testSimpleTypes: {
     lda #TYPEID_SIGNED_DWORD
     sta.z assertType.t1
     jsr assertType
-    jmp breturn
+    jmp __breturn
     // testSimpleTypes::@return
-  breturn:
+  __breturn:
     // [42] return 
     rts
 }
@@ -1117,35 +1117,35 @@ assertType: {
     // [44] if((byte) assertType::t1#15==(byte) assertType::t2#15) goto assertType::@1 -- vbuz1_eq_vbuz2_then_la1 
     lda.z t1
     cmp.z t2
-    beq b1
-    jmp b3
+    beq __b1
+    jmp __b3
     // assertType::@3
-  b3:
+  __b3:
     // [45] *((const byte*) COLS + (byte) idx#41) ← (const byte) RED -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #RED
     ldy.z idx
     sta COLS,y
-    jmp b2
+    jmp __b2
     // assertType::@2
-  b2:
+  __b2:
     // [46] *((const byte*) SCREEN + (byte) idx#41) ← (byte) assertType::t1#15 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z t1
     ldy.z idx
     sta SCREEN,y
     // [47] (byte) idx#20 ← ++ (byte) idx#41 -- vbuz1=_inc_vbuz1 
     inc.z idx
-    jmp breturn
+    jmp __breturn
     // assertType::@return
-  breturn:
+  __breturn:
     // [48] return 
     rts
     // assertType::@1
-  b1:
+  __b1:
     // [49] *((const byte*) COLS + (byte) idx#41) ← (const byte) GREEN -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #GREEN
     ldy.z idx
     sta COLS,y
-    jmp b2
+    jmp __b2
 }
   // File Data
 
@@ -1186,7 +1186,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests different integer literal types
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .const TYPEID_BYTE = 1
@@ -1200,59 +1200,59 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   .label COLS = $d800
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label s = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [5] phi (byte*) main::s#2 = (const byte*) SCREEN [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z s
     lda #>SCREEN
     sta.z s+1
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] if((byte*) main::s#2<(const byte*) SCREEN+(word) $3e8) goto main::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z s+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z s
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
     // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
-  b3_from_b1:
-    jmp b3
+  __b3_from___b1:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [8] call testSimpleTypes 
     // [12] phi from main::@3 to testSimpleTypes [phi:main::@3->testSimpleTypes]
-  testSimpleTypes_from_b3:
+  testSimpleTypes_from___b3:
     jsr testSimpleTypes
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // [10] *((byte*) main::s#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
@@ -1263,9 +1263,9 @@ main: {
     inc.z s+1
   !:
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [5] phi (byte*) main::s#2 = (byte*) main::s#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // testSimpleTypes
 testSimpleTypes: {
@@ -1281,13 +1281,13 @@ testSimpleTypes: {
     ldy #TYPEID_BYTE
     jsr assertType
     // [14] phi from testSimpleTypes to testSimpleTypes::@1 [phi:testSimpleTypes->testSimpleTypes::@1]
-  b1_from_testSimpleTypes:
-    jmp b1
+  __b1_from_testSimpleTypes:
+    jmp __b1
     // testSimpleTypes::@1
-  b1:
+  __b1:
     // [15] call assertType 
     // [43] phi from testSimpleTypes::@1 to assertType [phi:testSimpleTypes::@1->assertType]
-  assertType_from_b1:
+  assertType_from___b1:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@1->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_BYTE [phi:testSimpleTypes::@1->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_BYTE
@@ -1296,13 +1296,13 @@ testSimpleTypes: {
     ldy #TYPEID_BYTE
     jsr assertType
     // [16] phi from testSimpleTypes::@1 to testSimpleTypes::@2 [phi:testSimpleTypes::@1->testSimpleTypes::@2]
-  b2_from_b1:
-    jmp b2
+  __b2_from___b1:
+    jmp __b2
     // testSimpleTypes::@2
-  b2:
+  __b2:
     // [17] call assertType 
     // [43] phi from testSimpleTypes::@2 to assertType [phi:testSimpleTypes::@2->assertType]
-  assertType_from_b2:
+  assertType_from___b2:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@2->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_BYTE [phi:testSimpleTypes::@2->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
@@ -1311,13 +1311,13 @@ testSimpleTypes: {
     ldy #TYPEID_SIGNED_BYTE
     jsr assertType
     // [18] phi from testSimpleTypes::@2 to testSimpleTypes::@3 [phi:testSimpleTypes::@2->testSimpleTypes::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // testSimpleTypes::@3
-  b3:
+  __b3:
     // [19] call assertType 
     // [43] phi from testSimpleTypes::@3 to assertType [phi:testSimpleTypes::@3->assertType]
-  assertType_from_b3:
+  assertType_from___b3:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@3->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_BYTE [phi:testSimpleTypes::@3->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_BYTE
@@ -1326,13 +1326,13 @@ testSimpleTypes: {
     ldy #TYPEID_SIGNED_BYTE
     jsr assertType
     // [20] phi from testSimpleTypes::@3 to testSimpleTypes::@4 [phi:testSimpleTypes::@3->testSimpleTypes::@4]
-  b4_from_b3:
-    jmp b4
+  __b4_from___b3:
+    jmp __b4
     // testSimpleTypes::@4
-  b4:
+  __b4:
     // [21] call assertType 
     // [43] phi from testSimpleTypes::@4 to assertType [phi:testSimpleTypes::@4->assertType]
-  assertType_from_b4:
+  assertType_from___b4:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@4->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_WORD [phi:testSimpleTypes::@4->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
@@ -1341,13 +1341,13 @@ testSimpleTypes: {
     ldy #TYPEID_WORD
     jsr assertType
     // [22] phi from testSimpleTypes::@4 to testSimpleTypes::@5 [phi:testSimpleTypes::@4->testSimpleTypes::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // testSimpleTypes::@5
-  b5:
+  __b5:
     // [23] call assertType 
     // [43] phi from testSimpleTypes::@5 to assertType [phi:testSimpleTypes::@5->assertType]
-  assertType_from_b5:
+  assertType_from___b5:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@5->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_WORD [phi:testSimpleTypes::@5->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
@@ -1356,13 +1356,13 @@ testSimpleTypes: {
     ldy #TYPEID_WORD
     jsr assertType
     // [24] phi from testSimpleTypes::@5 to testSimpleTypes::@6 [phi:testSimpleTypes::@5->testSimpleTypes::@6]
-  b6_from_b5:
-    jmp b6
+  __b6_from___b5:
+    jmp __b6
     // testSimpleTypes::@6
-  b6:
+  __b6:
     // [25] call assertType 
     // [43] phi from testSimpleTypes::@6 to assertType [phi:testSimpleTypes::@6->assertType]
-  assertType_from_b6:
+  assertType_from___b6:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@6->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_WORD [phi:testSimpleTypes::@6->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_WORD
@@ -1371,13 +1371,13 @@ testSimpleTypes: {
     ldy #TYPEID_WORD
     jsr assertType
     // [26] phi from testSimpleTypes::@6 to testSimpleTypes::@7 [phi:testSimpleTypes::@6->testSimpleTypes::@7]
-  b7_from_b6:
-    jmp b7
+  __b7_from___b6:
+    jmp __b7
     // testSimpleTypes::@7
-  b7:
+  __b7:
     // [27] call assertType 
     // [43] phi from testSimpleTypes::@7 to assertType [phi:testSimpleTypes::@7->assertType]
-  assertType_from_b7:
+  assertType_from___b7:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@7->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_WORD [phi:testSimpleTypes::@7->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
@@ -1386,13 +1386,13 @@ testSimpleTypes: {
     ldy #TYPEID_SIGNED_WORD
     jsr assertType
     // [28] phi from testSimpleTypes::@7 to testSimpleTypes::@8 [phi:testSimpleTypes::@7->testSimpleTypes::@8]
-  b8_from_b7:
-    jmp b8
+  __b8_from___b7:
+    jmp __b8
     // testSimpleTypes::@8
-  b8:
+  __b8:
     // [29] call assertType 
     // [43] phi from testSimpleTypes::@8 to assertType [phi:testSimpleTypes::@8->assertType]
-  assertType_from_b8:
+  assertType_from___b8:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@8->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_WORD [phi:testSimpleTypes::@8->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
@@ -1401,13 +1401,13 @@ testSimpleTypes: {
     ldy #TYPEID_SIGNED_WORD
     jsr assertType
     // [30] phi from testSimpleTypes::@8 to testSimpleTypes::@9 [phi:testSimpleTypes::@8->testSimpleTypes::@9]
-  b9_from_b8:
-    jmp b9
+  __b9_from___b8:
+    jmp __b9
     // testSimpleTypes::@9
-  b9:
+  __b9:
     // [31] call assertType 
     // [43] phi from testSimpleTypes::@9 to assertType [phi:testSimpleTypes::@9->assertType]
-  assertType_from_b9:
+  assertType_from___b9:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@9->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_WORD [phi:testSimpleTypes::@9->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_WORD
@@ -1416,13 +1416,13 @@ testSimpleTypes: {
     ldy #TYPEID_SIGNED_WORD
     jsr assertType
     // [32] phi from testSimpleTypes::@9 to testSimpleTypes::@10 [phi:testSimpleTypes::@9->testSimpleTypes::@10]
-  b10_from_b9:
-    jmp b10
+  __b10_from___b9:
+    jmp __b10
     // testSimpleTypes::@10
-  b10:
+  __b10:
     // [33] call assertType 
     // [43] phi from testSimpleTypes::@10 to assertType [phi:testSimpleTypes::@10->assertType]
-  assertType_from_b10:
+  assertType_from___b10:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@10->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_DWORD [phi:testSimpleTypes::@10->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
@@ -1431,13 +1431,13 @@ testSimpleTypes: {
     ldy #TYPEID_DWORD
     jsr assertType
     // [34] phi from testSimpleTypes::@10 to testSimpleTypes::@11 [phi:testSimpleTypes::@10->testSimpleTypes::@11]
-  b11_from_b10:
-    jmp b11
+  __b11_from___b10:
+    jmp __b11
     // testSimpleTypes::@11
-  b11:
+  __b11:
     // [35] call assertType 
     // [43] phi from testSimpleTypes::@11 to assertType [phi:testSimpleTypes::@11->assertType]
-  assertType_from_b11:
+  assertType_from___b11:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@11->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_DWORD [phi:testSimpleTypes::@11->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_DWORD
@@ -1446,13 +1446,13 @@ testSimpleTypes: {
     ldy #TYPEID_DWORD
     jsr assertType
     // [36] phi from testSimpleTypes::@11 to testSimpleTypes::@12 [phi:testSimpleTypes::@11->testSimpleTypes::@12]
-  b12_from_b11:
-    jmp b12
+  __b12_from___b11:
+    jmp __b12
     // testSimpleTypes::@12
-  b12:
+  __b12:
     // [37] call assertType 
     // [43] phi from testSimpleTypes::@12 to assertType [phi:testSimpleTypes::@12->assertType]
-  assertType_from_b12:
+  assertType_from___b12:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@12->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_DWORD [phi:testSimpleTypes::@12->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
@@ -1461,13 +1461,13 @@ testSimpleTypes: {
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
     // [38] phi from testSimpleTypes::@12 to testSimpleTypes::@13 [phi:testSimpleTypes::@12->testSimpleTypes::@13]
-  b13_from_b12:
-    jmp b13
+  __b13_from___b12:
+    jmp __b13
     // testSimpleTypes::@13
-  b13:
+  __b13:
     // [39] call assertType 
     // [43] phi from testSimpleTypes::@13 to assertType [phi:testSimpleTypes::@13->assertType]
-  assertType_from_b13:
+  assertType_from___b13:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@13->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_DWORD [phi:testSimpleTypes::@13->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
@@ -1476,13 +1476,13 @@ testSimpleTypes: {
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
     // [40] phi from testSimpleTypes::@13 to testSimpleTypes::@14 [phi:testSimpleTypes::@13->testSimpleTypes::@14]
-  b14_from_b13:
-    jmp b14
+  __b14_from___b13:
+    jmp __b14
     // testSimpleTypes::@14
-  b14:
+  __b14:
     // [41] call assertType 
     // [43] phi from testSimpleTypes::@14 to assertType [phi:testSimpleTypes::@14->assertType]
-  assertType_from_b14:
+  assertType_from___b14:
     // [43] phi (byte) idx#41 = (byte) idx#20 [phi:testSimpleTypes::@14->assertType#0] -- register_copy 
     // [43] phi (byte) assertType::t2#15 = (const byte) TYPEID_SIGNED_DWORD [phi:testSimpleTypes::@14->assertType#1] -- vbuz1=vbuc1 
     lda #TYPEID_SIGNED_DWORD
@@ -1490,9 +1490,9 @@ testSimpleTypes: {
     // [43] phi (byte) assertType::t1#15 = (const byte) TYPEID_SIGNED_DWORD [phi:testSimpleTypes::@14->assertType#2] -- vbuyy=vbuc1 
     ldy #TYPEID_SIGNED_DWORD
     jsr assertType
-    jmp breturn
+    jmp __breturn
     // testSimpleTypes::@return
-  breturn:
+  __breturn:
     // [42] return 
     rts
 }
@@ -1506,59 +1506,59 @@ assertType: {
     // [44] if((byte) assertType::t1#15==(byte) assertType::t2#15) goto assertType::@1 -- vbuyy_eq_vbuz1_then_la1 
     tya
     cmp.z t2
-    beq b1
-    jmp b3
+    beq __b1
+    jmp __b3
     // assertType::@3
-  b3:
+  __b3:
     // [45] *((const byte*) COLS + (byte) idx#41) ← (const byte) RED -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #RED
     sta COLS,x
-    jmp b2
+    jmp __b2
     // assertType::@2
-  b2:
+  __b2:
     // [46] *((const byte*) SCREEN + (byte) idx#41) ← (byte) assertType::t1#15 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
     sta SCREEN,x
     // [47] (byte) idx#20 ← ++ (byte) idx#41 -- vbuxx=_inc_vbuxx 
     inx
-    jmp breturn
+    jmp __breturn
     // assertType::@return
-  breturn:
+  __breturn:
     // [48] return 
     rts
     // assertType::@1
-  b1:
+  __b1:
     // [49] *((const byte*) COLS + (byte) idx#41) ← (const byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
     sta COLS,x
-    jmp b2
+    jmp __b2
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp b7
-Removing instruction jmp b8
-Removing instruction jmp b9
-Removing instruction jmp b10
-Removing instruction jmp b11
-Removing instruction jmp b12
-Removing instruction jmp b13
-Removing instruction jmp b14
-Removing instruction jmp breturn
-Removing instruction jmp b3
-Removing instruction jmp b2
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __b7
+Removing instruction jmp __b8
+Removing instruction jmp __b9
+Removing instruction jmp __b10
+Removing instruction jmp __b11
+Removing instruction jmp __b12
+Removing instruction jmp __b13
+Removing instruction jmp __b14
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldy #TYPEID_BYTE with TAY
 Replacing instruction ldy #TYPEID_BYTE with TAY
@@ -1575,69 +1575,70 @@ Replacing instruction ldy #TYPEID_DWORD with TAY
 Replacing instruction ldy #TYPEID_SIGNED_DWORD with TAY
 Replacing instruction ldy #TYPEID_SIGNED_DWORD with TAY
 Replacing instruction ldy #TYPEID_SIGNED_DWORD with TAY
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
-Removing instruction b3_from_b1:
-Removing instruction testSimpleTypes_from_b3:
-Removing instruction b1_from_testSimpleTypes:
-Removing instruction assertType_from_b1:
-Removing instruction b2_from_b1:
-Removing instruction assertType_from_b2:
-Removing instruction b3_from_b2:
-Removing instruction assertType_from_b3:
-Removing instruction b4_from_b3:
-Removing instruction assertType_from_b4:
-Removing instruction b5_from_b4:
-Removing instruction assertType_from_b5:
-Removing instruction b6_from_b5:
-Removing instruction assertType_from_b6:
-Removing instruction b7_from_b6:
-Removing instruction assertType_from_b7:
-Removing instruction b8_from_b7:
-Removing instruction assertType_from_b8:
-Removing instruction b9_from_b8:
-Removing instruction assertType_from_b9:
-Removing instruction b10_from_b9:
-Removing instruction assertType_from_b10:
-Removing instruction b11_from_b10:
-Removing instruction assertType_from_b11:
-Removing instruction b12_from_b11:
-Removing instruction assertType_from_b12:
-Removing instruction b13_from_b12:
-Removing instruction assertType_from_b13:
-Removing instruction b14_from_b13:
-Removing instruction assertType_from_b14:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b3_from___b1:
+Removing instruction testSimpleTypes_from___b3:
+Removing instruction __b1_from_testSimpleTypes:
+Removing instruction assertType_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction assertType_from___b2:
+Removing instruction __b3_from___b2:
+Removing instruction assertType_from___b3:
+Removing instruction __b4_from___b3:
+Removing instruction assertType_from___b4:
+Removing instruction __b5_from___b4:
+Removing instruction assertType_from___b5:
+Removing instruction __b6_from___b5:
+Removing instruction assertType_from___b6:
+Removing instruction __b7_from___b6:
+Removing instruction assertType_from___b7:
+Removing instruction __b8_from___b7:
+Removing instruction assertType_from___b8:
+Removing instruction __b9_from___b8:
+Removing instruction assertType_from___b9:
+Removing instruction __b10_from___b9:
+Removing instruction assertType_from___b10:
+Removing instruction __b11_from___b10:
+Removing instruction assertType_from___b11:
+Removing instruction __b12_from___b11:
+Removing instruction assertType_from___b12:
+Removing instruction __b13_from___b12:
+Removing instruction assertType_from___b13:
+Removing instruction __b14_from___b13:
+Removing instruction assertType_from___b14:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction b1_from_b2:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Removing instruction assertType_from_testSimpleTypes:
-Removing instruction b1:
-Removing instruction b2:
-Removing instruction b3:
-Removing instruction b4:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction b7:
-Removing instruction b8:
-Removing instruction b9:
-Removing instruction b10:
-Removing instruction b11:
-Removing instruction b12:
-Removing instruction b13:
-Removing instruction b14:
-Removing instruction breturn:
-Removing instruction b3:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction __b3:
+Removing instruction __b4:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction __b7:
+Removing instruction __b8:
+Removing instruction __b9:
+Removing instruction __b10:
+Removing instruction __b11:
+Removing instruction __b12:
+Removing instruction __b13:
+Removing instruction __b14:
+Removing instruction __breturn:
+Removing instruction __b3:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -1734,16 +1735,16 @@ main: {
     lda #>SCREEN
     sta.z s+1
     // main::@1
-  b1:
+  __b1:
     // for(byte* s=SCREEN;s<SCREEN+1000uw;s++)
     // [6] if((byte*) main::s#2<(const byte*) SCREEN+(word) $3e8) goto main::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z s+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z s
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
     // [7] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
     // main::@3
@@ -1756,7 +1757,7 @@ main: {
     // [9] return 
     rts
     // main::@2
-  b2:
+  __b2:
     // *s = ' '
     // [10] *((byte*) main::s#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
@@ -1770,7 +1771,7 @@ main: {
   !:
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [5] phi (byte*) main::s#2 = (byte*) main::s#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // testSimpleTypes
 testSimpleTypes: {
@@ -1969,14 +1970,14 @@ assertType: {
     // [44] if((byte) assertType::t1#15==(byte) assertType::t2#15) goto assertType::@1 -- vbuyy_eq_vbuz1_then_la1 
     tya
     cmp.z t2
-    beq b1
+    beq __b1
     // assertType::@3
     // COLS[idx] = RED
     // [45] *((const byte*) COLS + (byte) idx#41) ← (const byte) RED -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #RED
     sta COLS,x
     // assertType::@2
-  b2:
+  __b2:
     // SCREEN[idx++] = t1
     // [46] *((const byte*) SCREEN + (byte) idx#41) ← (byte) assertType::t1#15 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
@@ -1989,12 +1990,12 @@ assertType: {
     // [48] return 
     rts
     // assertType::@1
-  b1:
+  __b1:
     // COLS[idx] = GREEN
     // [49] *((const byte*) COLS + (byte) idx#41) ← (const byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
     sta COLS,x
-    jmp b2
+    jmp __b2
 }
   // File Data
 

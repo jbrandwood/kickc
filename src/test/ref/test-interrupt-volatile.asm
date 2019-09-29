@@ -1,10 +1,10 @@
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label BGCOL = $d020
   .label col = 2
-bbegin:
+__bbegin:
   lda #0
   sta.z col
   jsr main
@@ -14,9 +14,9 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  b2:
+  __b2:
     inc.z col
-    jmp b2
+    jmp __b2
 }
 irq: {
     lda $dc0d

@@ -167,16 +167,16 @@ assertType: {
     .label t2 = 2
     tya
     cmp.z t2
-    beq b1
+    beq __b1
     lda #RED
     sta COLS,x
-  b2:
+  __b2:
     tya
     sta SCREEN,x
     inx
     rts
-  b1:
+  __b1:
     lda #GREEN
     sta COLS,x
-    jmp b2
+    jmp __b2
 }

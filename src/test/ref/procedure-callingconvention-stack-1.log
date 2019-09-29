@@ -158,30 +158,30 @@ Target platform is c64basic / MOS6502X
 // Test a procedure with calling convention stack
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .const STACK_BASE = $103
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _0 = 2
+    .label __0 = 2
     // [5] callprepare plus (byte) '0' (byte) 7 
     // [5] callprepare plus (byte) '0' (byte) 7  -- _stackpushbyte_=vbuc1 
     lda #'0'
@@ -197,13 +197,13 @@ main: {
     pla
     // [7] (byte~) main::$0 ← callfinalize plus  -- vbuz1=_stackpullbyte_ 
     pla
-    sta.z _0
+    sta.z __0
     // [8] *((const byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
-    lda.z _0
+    lda.z __0
     sta SCREEN
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
@@ -229,9 +229,9 @@ plus: {
     clc
     adc.z b
     sta.z return
-    jmp breturn
+    jmp __breturn
     // plus::@return
-  breturn:
+  __breturn:
     // [13] return (byte) plus::return#0
     // [13] return (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuz1 
     lda.z return
@@ -278,27 +278,27 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test a procedure with calling convention stack
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .const STACK_BASE = $103
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] callprepare plus (byte) '0' (byte) 7 
@@ -318,9 +318,9 @@ main: {
     pla
     // [8] *((const byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
@@ -341,9 +341,9 @@ plus: {
     // [12] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
     clc
     adc.z a
-    jmp breturn
+    jmp __breturn
     // plus::@return
-  breturn:
+  __breturn:
     // [13] return (byte) plus::return#0
     // [13] return (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
@@ -353,24 +353,25 @@ plus: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

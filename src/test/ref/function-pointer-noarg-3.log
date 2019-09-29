@@ -272,97 +272,97 @@ Target platform is c64basic / MOS6502X
 // Tests creating and assigning pointers to non-args no-return functions - plus inline kickasm-based calling
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm() {{ ff:     jmp (main.f)  }}
   ff:
     jmp (main.f)
 
   // [2] phi from @1 to @2 [phi:@1->@2]
-b2_from_b1:
-  jmp b2
+__b2_from___b1:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [3] call main 
   // [5] phi from @2 to main [phi:@2->main]
-main_from_b2:
+main_from___b2:
   jsr main
   // [4] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _0 = 5
+    .label __0 = 5
     .label i = 2
     .label f = 3
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z i
-    sta.z _0
+    sta.z __0
     // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuz1_eq_0_then_la1 
-    lda.z _0
+    lda.z __0
     cmp #0
-    beq b3_from_b2
+    beq __b3_from___b2
     // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
-  b4_from_b2:
+  __b4_from___b2:
     // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta.z f
     lda #>fn2
     sta.z f+1
-    jmp b4
+    jmp __b4
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  b4_from_b3:
+  __b4_from___b3:
     // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
     sta.z f
     lda #>fn1
     sta.z f+1
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // kickasm( uses main::f#3) {{ jsr ff          }}
     jsr ff
         
     // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // fn2
 fn2: {
     .label BGCOL = $d021
     // [13] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-    jmp breturn
+    jmp __breturn
     // fn2::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -371,9 +371,9 @@ fn1: {
     .label BORDERCOL = $d020
     // [15] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    jmp breturn
+    jmp __breturn
     // fn1::@return
-  breturn:
+  __breturn:
     // [16] return 
     rts
 }
@@ -401,45 +401,45 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests creating and assigning pointers to non-args no-return functions - plus inline kickasm-based calling
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm() {{ ff:     jmp (main.f)  }}
   ff:
     jmp (main.f)
 
   // [2] phi from @1 to @2 [phi:@1->@2]
-b2_from_b1:
-  jmp b2
+__b2_from___b1:
+  jmp __b2
   // @2
-b2:
+__b2:
   // [3] call main 
   // [5] phi from @2 to main [phi:@2->main]
-main_from_b2:
+main_from___b2:
   jsr main
   // [4] phi from @2 to @end [phi:@2->@end]
-bend_from_b2:
-  jmp bend
+__bend_from___b2:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label f = 2
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
-    jmp b2
+  __b1:
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
@@ -447,46 +447,46 @@ main: {
     and #1
     // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b3_from_b2
+    beq __b3_from___b2
     // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
-  b4_from_b2:
+  __b4_from___b2:
     // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta.z f
     lda #>fn2
     sta.z f+1
-    jmp b4
+    jmp __b4
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
-    jmp b3
+  __b3_from___b2:
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  b4_from_b3:
+  __b4_from___b3:
     // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
     sta.z f
     lda #>fn1
     sta.z f+1
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // kickasm( uses main::f#3) {{ jsr ff          }}
     jsr ff
         
     // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-  b1_from_b4:
+  __b1_from___b4:
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
 }
   // fn2
 fn2: {
     .label BGCOL = $d021
     // [13] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-    jmp breturn
+    jmp __breturn
     // fn2::@return
-  breturn:
+  __breturn:
     // [14] return 
     rts
 }
@@ -495,47 +495,48 @@ fn1: {
     .label BORDERCOL = $d020
     // [15] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    jmp breturn
+    jmp __breturn
     // fn1::@return
-  breturn:
+  __breturn:
     // [16] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b4
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b3_from_b2 with b3
-Replacing label b1 with b2
-Removing instruction b1:
-Removing instruction b2_from_b1:
-Removing instruction main_from_b2:
-Removing instruction bend_from_b2:
-Removing instruction b1:
-Removing instruction b3_from_b2:
-Removing instruction b4_from_b3:
+Replacing label __bbegin with __b1
+Replacing label __b3_from___b2 with __b3
+Replacing label __b1 with __b2
+Removing instruction __bbegin:
+Removing instruction __b2_from___b1:
+Removing instruction main_from___b2:
+Removing instruction __bend_from___b2:
+Removing instruction __b1:
+Removing instruction __b3_from___b2:
+Removing instruction __b4_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction b2:
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b4_from_b2:
-Removing instruction b1_from_b4:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __b2:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b4_from___b2:
+Removing instruction __b1_from___b4:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -597,7 +598,7 @@ main: {
     ldx #0
     // main::@1
     // main::@2
-  b2:
+  __b2:
     // ++i;
     // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -608,17 +609,17 @@ main: {
     // if((i&1)==0)
     // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b3
+    beq __b3
     // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
     // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta.z f
     lda #>fn2
     sta.z f+1
-    jmp b4
+    jmp __b4
     // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // main::@3
-  b3:
+  __b3:
     // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
     // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
@@ -626,14 +627,14 @@ main: {
     lda #>fn1
     sta.z f+1
     // main::@4
-  b4:
+  __b4:
     // kickasm
     // kickasm( uses main::f#3) {{ jsr ff          }}
     jsr ff
         
     // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
-    jmp b2
+    jmp __b2
 }
   // fn2
 fn2: {

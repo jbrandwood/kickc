@@ -5,18 +5,18 @@ main: {
     .label SCREEN = $400
     ldy #0
     ldx #$64
-  b1:
+  __b1:
     dex
     cpx #0
-    bne b2
+    bne __b2
     sty SCREEN
     rts
-  b2:
+  __b2:
     cpx #$32+1
-    bcs b4
+    bcs __b4
     dey
-    jmp b1
-  b4:
+    jmp __b1
+  __b4:
     iny
-    jmp b1
+    jmp __b1
 }

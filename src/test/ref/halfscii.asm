@@ -7,10 +7,10 @@
   .label D018 = $d018
   .label CHARSET4 = $2800
 main: {
-    .label _1 = 8
-    .label _11 = 9
-    .label _21 = $a
-    .label _30 = $b
+    .label __1 = 8
+    .label __11 = 9
+    .label __21 = $a
+    .label __30 = $b
     .label chargen1 = 6
     .label charset4 = 4
     .label chargen = 2
@@ -25,7 +25,7 @@ main: {
     sta.z chargen
     lda #>CHARGEN
     sta.z chargen+1
-  b1:
+  __b1:
     lda.z chargen
     clc
     adc #1
@@ -36,42 +36,42 @@ main: {
     lda #$60
     ldy #0
     and (chargen),y
-    sta.z _1
+    sta.z __1
     lda #$60
     and (chargen1),y
     lsr
     lsr
-    ora.z _1
+    ora.z __1
     lsr
     lsr
     lsr
     tay
     lda bits_count,y
     cmp #2
-    bcc b6
+    bcc b1
     lda #1
-    jmp b2
-  b6:
+    jmp __b2
+  b1:
     lda #0
-  b2:
+  __b2:
     asl
     tax
     lda #$18
     ldy #0
     and (chargen),y
-    sta.z _11
+    sta.z __11
     lda #$18
     and (chargen1),y
     lsr
     lsr
-    ora.z _11
+    ora.z __11
     lsr
     tay
     lda bits_count,y
     cmp #2
-    bcc b3
+    bcc __b3
     inx
-  b3:
+  __b3:
     txa
     asl
     tax
@@ -79,17 +79,17 @@ main: {
     ldy #0
     and (chargen),y
     asl
-    sta.z _21
+    sta.z __21
     lda #6
     and (chargen1),y
     lsr
-    ora.z _21
+    ora.z __21
     tay
     lda bits_count,y
     cmp #2
-    bcc b4
+    bcc __b4
     inx
-  b4:
+  __b4:
     txa
     asl
     tax
@@ -98,16 +98,16 @@ main: {
     and (chargen),y
     asl
     asl
-    sta.z _30
+    sta.z __30
     lda #1
     and (chargen1),y
-    ora.z _30
+    ora.z __30
     tay
     lda bits_count,y
     cmp #2
-    bcc b5
+    bcc __b5
     inx
-  b5:
+  __b5:
     txa
     asl
     ldy #0
@@ -125,26 +125,26 @@ main: {
   !:
     lda.z chargen+1
     cmp #>CHARGEN+$800
-    bcs !b1+
-    jmp b1
-  !b1:
+    bcs !__b1+
+    jmp __b1
+  !__b1:
     bne !+
     lda.z chargen
     cmp #<CHARGEN+$800
-    bcs !b1+
-    jmp b1
-  !b1:
+    bcs !__b1+
+    jmp __b1
+  !__b1:
   !:
     lda #$37
     sta PROCPORT
     cli
     ldx #0
-  b11:
+  __b11:
     txa
     sta SCREEN,x
     inx
     cpx #0
-    bne b11
+    bne __b11
     lda #$19
     sta D018
     rts

@@ -12,11 +12,11 @@ main: {
 }
 b: {
     ldx #0
-  b1:
+  __b1:
     jsr d
     inx
     cpx #4
-    bne b1
+    bne __b1
     rts
 }
 d: {

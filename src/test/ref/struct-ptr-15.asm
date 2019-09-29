@@ -7,7 +7,7 @@
   .const OFFSET_STRUCT_POINT_Y = 1
 main: {
     .label SCREEN = $400
-    .label _14 = 6
+    .label __14 = 6
     .label x = 5
     .label ptr = 2
     .label i = 4
@@ -30,19 +30,19 @@ main: {
     sta.z ptr
     lda #>circles
     sta.z ptr+1
-  b1:
+  __b1:
     ldy #OFFSET_STRUCT_CIRCLE_CENTER
     lda (ptr),y
     sta.z x
     tya
     clc
     adc.z ptr
-    sta.z _14
+    sta.z __14
     lda #0
     adc.z ptr+1
-    sta.z _14+1
+    sta.z __14+1
     ldy #OFFSET_STRUCT_POINT_Y
-    lda (_14),y
+    lda (__14),y
     tay
     lda.z x
     sta SCREEN,x
@@ -60,7 +60,7 @@ main: {
     inc.z i
     lda #2
     cmp.z i
-    bne b1
+    bne __b1
     rts
 }
   circles: .fill 3*2, 0

@@ -270,26 +270,26 @@ Target platform is c64basic / MOS6502X
 // Test inlining a slightly complex print function (containing an if)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const toUpper1_ch = 'c'
@@ -300,26 +300,26 @@ main: {
     jmp toUpper1
     // main::toUpper1
   toUpper1:
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper1_return
     sta screen
     // [7] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
-  toUpper2_from_b1:
+  toUpper2_from___b1:
     jmp toUpper2
     // main::toUpper2
   toUpper2:
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper2_ch
     sta screen+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
@@ -341,26 +341,26 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test inlining a slightly complex print function (containing an if)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const toUpper1_ch = 'c'
@@ -371,58 +371,59 @@ main: {
     jmp toUpper1
     // main::toUpper1
   toUpper1:
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper1_return
     sta screen
     // [7] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
-  toUpper2_from_b1:
+  toUpper2_from___b1:
     jmp toUpper2
     // main::toUpper2
   toUpper2:
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper2_ch
     sta screen+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
+Removing instruction jmp __b1
+Removing instruction jmp __bend
 Removing instruction jmp toUpper1
-Removing instruction jmp b1
+Removing instruction jmp __b1
 Removing instruction jmp toUpper2
-Removing instruction jmp b2
-Removing instruction jmp breturn
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Removing instruction toUpper1_from_main:
 Removing instruction toUpper1:
-Removing instruction toUpper2_from_b1:
+Removing instruction toUpper2_from___b1:
 Removing instruction toUpper2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1:
-Removing instruction b2:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

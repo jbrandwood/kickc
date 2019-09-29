@@ -1,10 +1,10 @@
 // Test parsing a negated struct reference - which causes problems with the ASMREL labels !a++
 // https://gitlab.com/camelot/kickc/issues/266
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label aa_b = 2
-bbegin:
+__bbegin:
   lda #1
   sta.z aa_b
   jsr main

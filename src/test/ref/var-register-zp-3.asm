@@ -25,20 +25,20 @@ print2: {
     sta.z msg
     lda #>main.msg
     sta.z msg+1
-  b1:
+  __b1:
     ldy.z i
     lda (msg),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy.z i
     lda (msg),y
     jsr print_char
     inx
     inx
     inc.z i
-    jmp b1
+    jmp __b1
 }
 // print_char(byte* zeropage($fa) at, byte register(X) idx, byte register(A) ch)
 print_char: {

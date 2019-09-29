@@ -3,56 +3,56 @@
 .pc = $80d "Program"
 main: {
     .label screen = $400
-    .label _2 = 6
-    .label _4 = 8
-    .label _6 = 4
+    .label __2 = 6
+    .label __4 = 8
+    .label __6 = 4
     .label line = 2
-    .label _7 = 8
-    .label _8 = 6
-    .label _9 = 4
+    .label __7 = 8
+    .label __8 = 6
+    .label __9 = 4
     lda #<0
     sta.z line
     sta.z line+1
-  b1:
+  __b1:
     lda.z line+1
     cmp #>$28*$18
-    bcc b4
+    bcc b1
     bne !+
     lda.z line
     cmp #<$28*$18
-    bcc b4
+    bcc b1
   !:
     ldx #0
   // Cleare the bottom line
-  b5:
+  __b5:
     cpx #$28
-    bcc b6
+    bcc __b6
     rts
-  b6:
+  __b6:
     txa
     clc
     adc.z line
-    sta.z _6
+    sta.z __6
     lda #0
     adc.z line+1
-    sta.z _6+1
+    sta.z __6+1
     clc
-    lda.z _9
+    lda.z __9
     adc #<screen
-    sta.z _9
-    lda.z _9+1
+    sta.z __9
+    lda.z __9+1
     adc #>screen
-    sta.z _9+1
+    sta.z __9+1
     lda #' '
     ldy #0
-    sta (_9),y
+    sta (__9),y
     inx
-    jmp b5
-  b4:
+    jmp __b5
+  b1:
     ldx #0
-  b2:
+  __b2:
     cpx #$28
-    bcc b3
+    bcc __b3
     lda #$28
     clc
     adc.z line
@@ -60,39 +60,39 @@ main: {
     bcc !+
     inc.z line+1
   !:
-    jmp b1
-  b3:
+    jmp __b1
+  __b3:
     txa
     clc
     adc.z line
-    sta.z _2
+    sta.z __2
     lda #0
     adc.z line+1
-    sta.z _2+1
+    sta.z __2+1
     txa
     clc
     adc.z line
-    sta.z _4
+    sta.z __4
     lda #0
     adc.z line+1
-    sta.z _4+1
+    sta.z __4+1
     clc
-    lda.z _7
+    lda.z __7
     adc #<screen+$28
-    sta.z _7
-    lda.z _7+1
+    sta.z __7
+    lda.z __7+1
     adc #>screen+$28
-    sta.z _7+1
+    sta.z __7+1
     clc
-    lda.z _8
+    lda.z __8
     adc #<screen
-    sta.z _8
-    lda.z _8+1
+    sta.z __8
+    lda.z __8+1
     adc #>screen
-    sta.z _8+1
+    sta.z __8+1
     ldy #0
-    lda (_7),y
-    sta (_8),y
+    lda (__7),y
+    sta (__8),y
     inx
-    jmp b2
+    jmp __b2
 }

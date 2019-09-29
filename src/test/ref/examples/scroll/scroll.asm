@@ -15,50 +15,50 @@ main: {
     sta.z nxt+1
     ldx #7
   // Wait for raster
-  b1:
+  __b1:
     lda #$fe
     cmp RASTER
-    bne b1
-  b2:
+    bne __b1
+  __b2:
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     inc BGCOL
     dex
     cpx #$ff
-    bne b4
+    bne __b4
     ldx #0
   // Hard scroll
-  b5:
+  __b5:
     cpx #$27
-    bne b6
+    bne __b6
     // Render next char
     ldy #0
     lda (nxt),y
     tax
     cpx #0
-    bne b9
+    bne __b9
     ldx TEXT
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-  b9:
+  __b9:
     stx line+$27
     inc.z nxt
     bne !+
     inc.z nxt+1
   !:
     ldx #7
-  b4:
+  __b4:
     stx SCROLL
     dec BGCOL
-    jmp b1
-  b6:
+    jmp __b1
+  __b6:
     lda line+1,x
     sta line,x
     inx
-    jmp b5
+    jmp __b5
 }
 fillscreen: {
     .const fill = $20
@@ -67,17 +67,17 @@ fillscreen: {
     sta.z cursor
     lda #>SCREEN
     sta.z cursor+1
-  b1:
+  __b1:
     lda.z cursor+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z cursor
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
     rts
-  b2:
+  __b2:
     lda #fill
     ldy #0
     sta (cursor),y
@@ -85,7 +85,7 @@ fillscreen: {
     bne !+
     inc.z cursor+1
   !:
-    jmp b1
+    jmp __b1
 }
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
   .byte 0

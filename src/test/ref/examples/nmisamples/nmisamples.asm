@@ -2,7 +2,7 @@
 // Code by Scan of Desire (Richard-William Loerakker)
 // Sample from ART OF NOISE: MOMENTS IN LOVE
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   .label BORDERCOL = $d020
   // CIA #2 Timer A Value (16-bit)
@@ -19,7 +19,7 @@
   .label SID_VOLUME = $d418
   .const SAMPLE_SIZE = $6100
   .label sample = 2
-bbegin:
+__b1:
   lda #<SAMPLE
   sta.z sample
   lda #>SAMPLE
@@ -75,12 +75,12 @@ nmi2: {
   !:
     lda.z sample+1
     cmp #>SAMPLE+$6100
-    bne b1
+    bne __b1
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE
     sta.z sample+1
-  b1:
+  __b1:
     lda #<nmi
     sta KERNEL_NMI
     lda #>nmi

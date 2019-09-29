@@ -706,7 +706,7 @@ Target platform is c64basic / MOS6502X
 // but never when they are disabled (red border)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label BORDERCOL = $d020
@@ -723,50 +723,50 @@ Target platform is c64basic / MOS6502X
   .const KEY_SPACE = $3c
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [4] *((const byte*) BORDERCOL) ← (const byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDERCOL
     // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-  b1_from_main:
-  b1_from_b1:
-    jmp b1
+  __b1_from_main:
+  __b1_from___b1:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] call menu 
     // [7] phi from main::@1 to menu [phi:main::@1->menu]
-  menu_from_b1:
+  menu_from___b1:
     jsr menu
-    jmp b1_from_b1
+    jmp __b1_from___b1
 }
   // menu
 menu: {
-    .label _0 = 4
-    .label _4 = 6
-    .label _7 = 8
+    .label __0 = 4
+    .label __4 = 6
+    .label __7 = 8
     // [8] phi from menu menu::@4 to menu::@1 [phi:menu/menu::@4->menu::@1]
-  b1_from_menu:
-  b1_from_b4:
-    jmp b1
+  __b1_from_menu:
+  __b1_from___b4:
+    jmp __b1
     // menu::@1
-  b1:
+  __b1:
     // [9] call keyboard_key_pressed 
     // [31] phi from menu::@1 to keyboard_key_pressed [phi:menu::@1->keyboard_key_pressed]
-  keyboard_key_pressed_from_b1:
+  keyboard_key_pressed_from___b1:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_C [phi:menu::@1->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_C
     sta.z keyboard_key_pressed.key
@@ -774,36 +774,36 @@ menu: {
     // [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
     sta.z keyboard_key_pressed.return_2
-    jmp b8
+    jmp __b8
     // menu::@8
-  b8:
+  __b8:
     // [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return_2
-    sta.z _0
+    sta.z __0
     // [12] if((byte~) menu::$0==(byte) 0) goto menu::@2 -- vbuz1_eq_0_then_la1 
-    lda.z _0
+    lda.z __0
     cmp #0
-    beq b2_from_b8
+    beq __b2_from___b8
     // [13] phi from menu::@8 to menu::@5 [phi:menu::@8->menu::@5]
-  b5_from_b8:
-    jmp b5
+  __b5_from___b8:
+    jmp __b5
     // menu::@5
-  b5:
+  __b5:
     // [14] call pressed 
     jsr pressed
-    jmp breturn
+    jmp __breturn
     // menu::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
     // [16] phi from menu::@8 to menu::@2 [phi:menu::@8->menu::@2]
-  b2_from_b8:
-    jmp b2
+  __b2_from___b8:
+    jmp __b2
     // menu::@2
-  b2:
+  __b2:
     // [17] call keyboard_key_pressed 
     // [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
-  keyboard_key_pressed_from_b2:
+  keyboard_key_pressed_from___b2:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_I [phi:menu::@2->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_I
     sta.z keyboard_key_pressed.key
@@ -811,33 +811,33 @@ menu: {
     // [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
     sta.z keyboard_key_pressed.return_3
-    jmp b9
+    jmp __b9
     // menu::@9
-  b9:
+  __b9:
     // [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return_3
-    sta.z _4
+    sta.z __4
     // [20] if((byte~) menu::$4==(byte) 0) goto menu::@3 -- vbuz1_eq_0_then_la1 
-    lda.z _4
+    lda.z __4
     cmp #0
-    beq b3_from_b9
-    jmp b6
+    beq __b3_from___b9
+    jmp __b6
     // menu::@6
-  b6:
+  __b6:
     // [21] *((const byte*) BORDERCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     // asm { sei  }
     sei
-    jmp breturn
+    jmp __breturn
     // [23] phi from menu::@9 to menu::@3 [phi:menu::@9->menu::@3]
-  b3_from_b9:
-    jmp b3
+  __b3_from___b9:
+    jmp __b3
     // menu::@3
-  b3:
+  __b3:
     // [24] call keyboard_key_pressed 
     // [31] phi from menu::@3 to keyboard_key_pressed [phi:menu::@3->keyboard_key_pressed]
-  keyboard_key_pressed_from_b3:
+  keyboard_key_pressed_from___b3:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_E [phi:menu::@3->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_E
     sta.z keyboard_key_pressed.key
@@ -845,30 +845,30 @@ menu: {
     // [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
     sta.z keyboard_key_pressed.return_4
-    jmp b10
+    jmp __b10
     // menu::@10
-  b10:
+  __b10:
     // [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return_4
-    sta.z _7
+    sta.z __7
     // [27] if((byte~) menu::$7==(byte) 0) goto menu::@4 -- vbuz1_eq_0_then_la1 
-    lda.z _7
+    lda.z __7
     cmp #0
-    beq b4
-    jmp b7
+    beq __b4
+    jmp __b7
     // menu::@7
-  b7:
+  __b7:
     // [28] *((const byte*) BORDERCOL) ← (const byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDERCOL
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // menu::@4
-  b4:
+  __b4:
     // [30] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
-    jmp b1_from_b4
+    jmp __b1_from___b4
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
@@ -877,7 +877,7 @@ menu: {
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte zeropage(2) key)
 keyboard_key_pressed: {
-    .label _2 = $d
+    .label __2 = $d
     .label colidx = 9
     .label rowidx = $a
     .label return = $e
@@ -904,20 +904,20 @@ keyboard_key_pressed: {
     // [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_matrix_read.return
     sta.z keyboard_matrix_read.return_2
-    jmp b1
+    jmp __b1
     // keyboard_key_pressed::@1
-  b1:
+  __b1:
     // [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
     lda.z keyboard_matrix_read.return_2
-    sta.z _2
+    sta.z __2
     // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
-    lda.z _2
+    lda.z __2
     ldy.z colidx
     and keyboard_matrix_col_bitmask,y
     sta.z return
-    jmp breturn
+    jmp __breturn
     // keyboard_key_pressed::@return
-  breturn:
+  __breturn:
     // [39] return 
     rts
 }
@@ -940,26 +940,26 @@ keyboard_matrix_read: {
     lda CIA1_PORT_B
     eor #$ff
     sta.z return
-    jmp breturn
+    jmp __breturn
     // keyboard_matrix_read::@return
-  breturn:
+  __breturn:
     // [42] return 
     rts
 }
   // pressed
 pressed: {
-    .label _1 = $11
+    .label __1 = $11
     // [43] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // [44] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
-  b1_from_pressed:
-  b1_from_b2:
-    jmp b1
+  __b1_from_pressed:
+  __b1_from___b2:
+    jmp __b1
     // pressed::@1
-  b1:
+  __b1:
     // [45] call keyboard_key_pressed 
     // [31] phi from pressed::@1 to keyboard_key_pressed [phi:pressed::@1->keyboard_key_pressed]
-  keyboard_key_pressed_from_b1:
+  keyboard_key_pressed_from___b1:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_SPACE [phi:pressed::@1->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_SPACE
     sta.z keyboard_key_pressed.key
@@ -967,19 +967,19 @@ pressed: {
     // [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
     sta.z keyboard_key_pressed.return_10
-    jmp b2
+    jmp __b2
     // pressed::@2
-  b2:
+  __b2:
     // [47] (byte~) pressed::$1 ← (byte) keyboard_key_pressed::return#10 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return_10
-    sta.z _1
+    sta.z __1
     // [48] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return -- vbuz1_neq_0_then_la1 
-    lda.z _1
+    lda.z __1
     cmp #0
-    bne breturn
-    jmp b1_from_b2
+    bne __breturn
+    jmp __b1_from___b2
     // pressed::@return
-  breturn:
+  __breturn:
     // [49] return 
     rts
 }
@@ -1057,7 +1057,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // but never when they are disabled (red border)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label BORDERCOL = $d020
@@ -1074,131 +1074,131 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const KEY_SPACE = $3c
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [4] *((const byte*) BORDERCOL) ← (const byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDERCOL
     // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-  b1_from_main:
-  b1_from_b1:
-    jmp b1
+  __b1_from_main:
+  __b1_from___b1:
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [6] call menu 
     // [7] phi from main::@1 to menu [phi:main::@1->menu]
-  menu_from_b1:
+  menu_from___b1:
     jsr menu
-    jmp b1_from_b1
+    jmp __b1_from___b1
 }
   // menu
 menu: {
     // [8] phi from menu menu::@4 to menu::@1 [phi:menu/menu::@4->menu::@1]
-  b1_from_menu:
-  b1_from_b4:
-    jmp b1
+  __b1_from_menu:
+  __b1_from___b4:
+    jmp __b1
     // menu::@1
-  b1:
+  __b1:
     // [9] call keyboard_key_pressed 
     // [31] phi from menu::@1 to keyboard_key_pressed [phi:menu::@1->keyboard_key_pressed]
-  keyboard_key_pressed_from_b1:
+  keyboard_key_pressed_from___b1:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_C [phi:menu::@1->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_C
     jsr keyboard_key_pressed
     // [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
-    jmp b8
+    jmp __b8
     // menu::@8
-  b8:
+  __b8:
     // [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
     // [12] if((byte~) menu::$0==(byte) 0) goto menu::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b2_from_b8
+    beq __b2_from___b8
     // [13] phi from menu::@8 to menu::@5 [phi:menu::@8->menu::@5]
-  b5_from_b8:
-    jmp b5
+  __b5_from___b8:
+    jmp __b5
     // menu::@5
-  b5:
+  __b5:
     // [14] call pressed 
     jsr pressed
-    jmp breturn
+    jmp __breturn
     // menu::@return
-  breturn:
+  __breturn:
     // [15] return 
     rts
     // [16] phi from menu::@8 to menu::@2 [phi:menu::@8->menu::@2]
-  b2_from_b8:
-    jmp b2
+  __b2_from___b8:
+    jmp __b2
     // menu::@2
-  b2:
+  __b2:
     // [17] call keyboard_key_pressed 
     // [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
-  keyboard_key_pressed_from_b2:
+  keyboard_key_pressed_from___b2:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_I [phi:menu::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_I
     jsr keyboard_key_pressed
     // [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
-    jmp b9
+    jmp __b9
     // menu::@9
-  b9:
+  __b9:
     // [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
     // [20] if((byte~) menu::$4==(byte) 0) goto menu::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b3_from_b9
-    jmp b6
+    beq __b3_from___b9
+    jmp __b6
     // menu::@6
-  b6:
+  __b6:
     // [21] *((const byte*) BORDERCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     // asm { sei  }
     sei
-    jmp breturn
+    jmp __breturn
     // [23] phi from menu::@9 to menu::@3 [phi:menu::@9->menu::@3]
-  b3_from_b9:
-    jmp b3
+  __b3_from___b9:
+    jmp __b3
     // menu::@3
-  b3:
+  __b3:
     // [24] call keyboard_key_pressed 
     // [31] phi from menu::@3 to keyboard_key_pressed [phi:menu::@3->keyboard_key_pressed]
-  keyboard_key_pressed_from_b3:
+  keyboard_key_pressed_from___b3:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_E [phi:menu::@3->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_E
     jsr keyboard_key_pressed
     // [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
-    jmp b10
+    jmp __b10
     // menu::@10
-  b10:
+  __b10:
     // [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
     // [27] if((byte~) menu::$7==(byte) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b4
-    jmp b7
+    beq __b4
+    jmp __b7
     // menu::@7
-  b7:
+  __b7:
     // [28] *((const byte*) BORDERCOL) ← (const byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDERCOL
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // menu::@4
-  b4:
+  __b4:
     // [30] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
-    jmp b1_from_b4
+    jmp __b1_from___b4
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
@@ -1221,15 +1221,15 @@ keyboard_key_pressed: {
     // [35] call keyboard_matrix_read 
     jsr keyboard_matrix_read
     // [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-    jmp b1
+    jmp __b1
     // keyboard_key_pressed::@1
-  b1:
+  __b1:
     // [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
     // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
     and keyboard_matrix_col_bitmask,y
-    jmp breturn
+    jmp __breturn
     // keyboard_key_pressed::@return
-  breturn:
+  __breturn:
     // [39] return 
     rts
 }
@@ -1247,9 +1247,9 @@ keyboard_matrix_read: {
     // [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
-    jmp breturn
+    jmp __breturn
     // keyboard_matrix_read::@return
-  breturn:
+  __breturn:
     // [42] return 
     rts
 }
@@ -1258,28 +1258,28 @@ pressed: {
     // [43] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // [44] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
-  b1_from_pressed:
-  b1_from_b2:
-    jmp b1
+  __b1_from_pressed:
+  __b1_from___b2:
+    jmp __b1
     // pressed::@1
-  b1:
+  __b1:
     // [45] call keyboard_key_pressed 
     // [31] phi from pressed::@1 to keyboard_key_pressed [phi:pressed::@1->keyboard_key_pressed]
-  keyboard_key_pressed_from_b1:
+  keyboard_key_pressed_from___b1:
     // [31] phi (byte) keyboard_key_pressed::key#4 = (const byte) KEY_SPACE [phi:pressed::@1->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_SPACE
     jsr keyboard_key_pressed
     // [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
-    jmp b2
+    jmp __b2
     // pressed::@2
-  b2:
+  __b2:
     // [47] (byte~) pressed::$1 ← (byte) keyboard_key_pressed::return#10
     // [48] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne breturn
-    jmp b1_from_b2
+    bne __breturn
+    jmp __b1_from___b2
     // pressed::@return
-  breturn:
+  __breturn:
     // [49] return 
     rts
 }
@@ -1290,68 +1290,69 @@ pressed: {
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b1
-Removing instruction jmp b8
-Removing instruction jmp b5
-Removing instruction jmp breturn
-Removing instruction jmp b2
-Removing instruction jmp b9
-Removing instruction jmp b6
-Removing instruction jmp b3
-Removing instruction jmp b10
-Removing instruction jmp b7
-Removing instruction jmp b1
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b1
+Removing instruction jmp __b8
+Removing instruction jmp __b5
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __b9
+Removing instruction jmp __b6
+Removing instruction jmp __b3
+Removing instruction jmp __b10
+Removing instruction jmp __b7
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b1_from_b1 with b1
-Replacing label b2_from_b8 with b2
-Replacing label b3_from_b9 with b3
-Replacing label b1_from_b4 with b1
-Replacing label b1_from_b2 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_main:
-Removing instruction b1_from_b1:
-Removing instruction menu_from_b1:
-Removing instruction b1_from_menu:
-Removing instruction b1_from_b4:
-Removing instruction keyboard_key_pressed_from_b1:
-Removing instruction b5_from_b8:
-Removing instruction b2_from_b8:
-Removing instruction keyboard_key_pressed_from_b2:
-Removing instruction b3_from_b9:
-Removing instruction keyboard_key_pressed_from_b3:
-Removing instruction b1_from_pressed:
-Removing instruction b1_from_b2:
-Removing instruction keyboard_key_pressed_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Replacing label __b2_from___b8 with __b2
+Replacing label __b3_from___b9 with __b3
+Replacing label __b1_from___b4 with __b1
+Replacing label __b1_from___b2 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction __b1_from___b1:
+Removing instruction menu_from___b1:
+Removing instruction __b1_from_menu:
+Removing instruction __b1_from___b4:
+Removing instruction keyboard_key_pressed_from___b1:
+Removing instruction __b5_from___b8:
+Removing instruction __b2_from___b8:
+Removing instruction keyboard_key_pressed_from___b2:
+Removing instruction __b3_from___b9:
+Removing instruction keyboard_key_pressed_from___b3:
+Removing instruction __b1_from_pressed:
+Removing instruction __b1_from___b2:
+Removing instruction keyboard_key_pressed_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b8:
-Removing instruction b5:
-Removing instruction b9:
-Removing instruction b6:
-Removing instruction b10:
-Removing instruction b7:
-Removing instruction b1:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction b2:
+Removing instruction __bend:
+Removing instruction __b8:
+Removing instruction __b5:
+Removing instruction __b9:
+Removing instruction __b6:
+Removing instruction __b10:
+Removing instruction __b7:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Replacing jump to rts with rts in jmp breturn
-Replacing jump to rts with rts in jmp breturn
+Replacing jump to rts with rts in jmp __breturn
+Replacing jump to rts with rts in jmp __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Removing instruction bbegin:
-Removing instruction breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -1479,18 +1480,18 @@ main: {
     sta BORDERCOL
     // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
     // main::@1
-  b1:
+  __b1:
     // menu()
     // [6] call menu 
     // [7] phi from main::@1 to menu [phi:main::@1->menu]
     jsr menu
-    jmp b1
+    jmp __b1
 }
   // menu
 menu: {
     // [8] phi from menu menu::@4 to menu::@1 [phi:menu/menu::@4->menu::@1]
     // menu::@1
-  b1:
+  __b1:
     // keyboard_key_pressed(KEY_C)
     // [9] call keyboard_key_pressed 
     // [31] phi from menu::@1 to keyboard_key_pressed [phi:menu::@1->keyboard_key_pressed]
@@ -1504,7 +1505,7 @@ menu: {
     // if(keyboard_key_pressed(KEY_C)!=0)
     // [12] if((byte~) menu::$0==(byte) 0) goto menu::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b2
+    beq __b2
     // [13] phi from menu::@8 to menu::@5 [phi:menu::@8->menu::@5]
     // menu::@5
     // pressed()
@@ -1516,7 +1517,7 @@ menu: {
     rts
     // [16] phi from menu::@8 to menu::@2 [phi:menu::@8->menu::@2]
     // menu::@2
-  b2:
+  __b2:
     // keyboard_key_pressed(KEY_I)
     // [17] call keyboard_key_pressed 
     // [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
@@ -1530,7 +1531,7 @@ menu: {
     // if(keyboard_key_pressed(KEY_I)!=0)
     // [20] if((byte~) menu::$4==(byte) 0) goto menu::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b3
+    beq __b3
     // menu::@6
     // *BORDERCOL = RED
     // [21] *((const byte*) BORDERCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
@@ -1542,7 +1543,7 @@ menu: {
     rts
     // [23] phi from menu::@9 to menu::@3 [phi:menu::@9->menu::@3]
     // menu::@3
-  b3:
+  __b3:
     // keyboard_key_pressed(KEY_E)
     // [24] call keyboard_key_pressed 
     // [31] phi from menu::@3 to keyboard_key_pressed [phi:menu::@3->keyboard_key_pressed]
@@ -1556,7 +1557,7 @@ menu: {
     // if(keyboard_key_pressed(KEY_E)!=0)
     // [27] if((byte~) menu::$7==(byte) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b4
+    beq __b4
     // menu::@7
     // *BORDERCOL = GREEN
     // [28] *((const byte*) BORDERCOL) ← (const byte) GREEN -- _deref_pbuc1=vbuc2 
@@ -1567,11 +1568,11 @@ menu: {
     cli
     rts
     // menu::@4
-  b4:
+  __b4:
     // (*SCREEN)++;
     // [30] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
-    jmp b1
+    jmp __b1
 }
   // keyboard_key_pressed
 // Determines whether a specific key is currently pressed by accessing the matrix directly
@@ -1635,7 +1636,7 @@ pressed: {
     inc BGCOL
     // [44] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
     // pressed::@1
-  b1:
+  __b1:
     // keyboard_key_pressed(KEY_SPACE)
     // [45] call keyboard_key_pressed 
     // [31] phi from pressed::@1 to keyboard_key_pressed [phi:pressed::@1->keyboard_key_pressed]
@@ -1649,10 +1650,10 @@ pressed: {
     // if(keyboard_key_pressed(KEY_SPACE)!=0)
     // [48] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne breturn
-    jmp b1
+    bne __breturn
+    jmp __b1
     // pressed::@return
-  breturn:
+  __breturn:
     // }
     // [49] return 
     rts

@@ -5,7 +5,7 @@
 main: {
     .label SCREEN = $400
     ldx #0
-  b1:
+  __b1:
     lda screencode_mixed1,x
     sta SCREEN+$28*2,x
     lda petscii_mixed1,x
@@ -20,7 +20,7 @@ main: {
     sta SCREEN+$28*3,x
     inx
     cpx #6
-    bne b1
+    bne __b1
     rts
 }
   // Default encoding (screencode_mixed)

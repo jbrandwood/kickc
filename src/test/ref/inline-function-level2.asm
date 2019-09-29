@@ -21,14 +21,14 @@ main: {
     sta.z sc
     lda #>$400
     sta.z sc+1
-  b1:
+  __b1:
     lda.z sc+1
     cmp #>$400+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z sc
     cmp #<$400+$3e8
-    bcc b2
+    bcc __b2
   !:
     lda #<$400
     sta.z cur_line
@@ -39,9 +39,9 @@ main: {
     lda #>line1_xpos*$100
     sta.z line1_pos+1
     ldx #0
-  line1_b1:
+  line1___b1:
     cpx #line1_ysize
-    bcc line1_b2
+    bcc line1___b2
     lda #<$400
     sta.z cur_line_10
     lda #>$400
@@ -51,11 +51,11 @@ main: {
     lda #>line2_xpos*$100
     sta.z line2_pos+1
     ldx #0
-  line2_b1:
+  line2___b1:
     cpx #line2_ysize
-    bcc line2_b2
+    bcc line2___b2
     rts
-  line2_b2:
+  line2___b2:
     lda.z line2_pos+1
     tay
     lda #line2_ch
@@ -75,8 +75,8 @@ main: {
     inc.z cur_line_3+1
   !:
     inx
-    jmp line2_b1
-  line1_b2:
+    jmp line2___b1
+  line1___b2:
     lda.z line1_pos+1
     tay
     lda #line1_ch
@@ -96,8 +96,8 @@ main: {
     inc.z cur_line+1
   !:
     inx
-    jmp line1_b1
-  b2:
+    jmp line1___b1
+  __b2:
     lda #' '
     ldy #0
     sta (sc),y
@@ -105,5 +105,5 @@ main: {
     bne !+
     inc.z sc+1
   !:
-    jmp b1
+    jmp __b1
 }

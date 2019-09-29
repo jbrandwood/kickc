@@ -94,35 +94,35 @@ Target platform is c64basic / MOS6502X
 // Test inline KickAssembler code
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm() {{ .byte 1, 2, 3  }}
   .byte 1, 2, 3
 
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // kickasm() {{ inc $d020          }}
     inc $d020
         
-    jmp b1
+    jmp __b1
 }
   // File Data
 
@@ -140,53 +140,54 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test inline KickAssembler code
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
-  jmp b1
+__bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // kickasm() {{ .byte 1, 2, 3  }}
   .byte 1, 2, 3
 
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // kickasm() {{ inc $d020          }}
     inc $d020
         
-    jmp b1
+    jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction main_from_b1:
-Removing instruction bend:
+Removing instruction main_from___b1:
+Removing instruction __bend:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -221,12 +222,12 @@ Score: 2846
   // main
 main: {
     // main::@1
-  b1:
+  __b1:
     // kickasm
     // kickasm() {{ inc $d020          }}
     inc $d020
         
-    jmp b1
+    jmp __b1
 }
   // File Data
 

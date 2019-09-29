@@ -8,9 +8,9 @@ main: {
     lda #0
     sta.z h
   // constant array
-  b1:
+  __b1:
     ldx #4
-  b2:
+  __b2:
     ldy.z h
     lda his,y
     sta.z w+1
@@ -20,11 +20,11 @@ main: {
     sta (w),y
     inx
     cpx #8
-    bne b2
+    bne __b2
     inc.z h
     lda #3
     cmp.z h
-    bne b1
+    bne __b1
     rts
     his: .byte >SCREEN, >SCREEN+$100, >SCREEN+$200
 }

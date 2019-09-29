@@ -234,23 +234,23 @@ Target platform is c64basic / MOS6502X
 // Tests creating pointers to non-args no-return functions
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
@@ -266,9 +266,9 @@ main: {
     // [7] *((const byte*) main::SCREEN+(byte) 3) ← >(word)&(void()) fn2() -- _deref_pbuc1=vbuc2 
     lda #>fn2
     sta SCREEN+3
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -277,9 +277,9 @@ fn2: {
     .label BGCOL = $d021
     // [9] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-    jmp breturn
+    jmp __breturn
     // fn2::@return
-  breturn:
+  __breturn:
     // [10] return 
     rts
 }
@@ -288,9 +288,9 @@ fn1: {
     .label BORDERCOL = $d020
     // [11] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    jmp breturn
+    jmp __breturn
     // fn1::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
@@ -318,23 +318,23 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests creating pointers to non-args no-return functions
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label SCREEN = $400
@@ -350,9 +350,9 @@ main: {
     // [7] *((const byte*) main::SCREEN+(byte) 3) ← >(word)&(void()) fn2() -- _deref_pbuc1=vbuc2 
     lda #>fn2
     sta SCREEN+3
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -361,9 +361,9 @@ fn2: {
     .label BGCOL = $d021
     // [9] *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-    jmp breturn
+    jmp __breturn
     // fn2::@return
-  breturn:
+  __breturn:
     // [10] return 
     rts
 }
@@ -372,34 +372,35 @@ fn1: {
     .label BORDERCOL = $d020
     // [11] *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    jmp breturn
+    jmp __breturn
     // fn1::@return
-  breturn:
+  __breturn:
     // [12] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction breturn:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE

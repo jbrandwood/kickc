@@ -383,30 +383,30 @@ Target platform is c64basic / MOS6502X
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label PROCPORT = 1
   .label CHARGEN = $d000
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label CHAR_A = CHARGEN+8
-    .label _1 = 8
+    .label __1 = 8
     .label bits = 3
     .label sc = 4
     .label x = 6
@@ -418,7 +418,7 @@ main: {
     lda #$32
     sta PROCPORT
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (byte*) main::sc#7 = (const byte*) SCREEN [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
@@ -427,61 +427,61 @@ main: {
     // [6] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z y
-    jmp b1
+    jmp __b1
     // [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [6] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
     // [6] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (byte) main::bits#0 ← *((const byte*) main::CHAR_A#0 + (byte) main::y#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z y
     lda CHAR_A,y
     sta.z bits
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [8] phi (byte) main::x#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z x
     // [8] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
     // [8] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  b2_from_b3:
+  __b2_from___b3:
     // [8] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
     // [8] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
     // [8] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (byte~) main::$1 ← (byte) main::bits#2 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
     and.z bits
-    sta.z _1
+    sta.z __1
     // [10] if((byte~) main::$1==(byte) 0) goto main::@3 -- vbuz1_eq_0_then_la1 
-    lda.z _1
+    lda.z __1
     cmp #0
-    beq b3_from_b2
+    beq __b3_from___b2
     // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
-  b4_from_b2:
-    jmp b4
+  __b4_from___b2:
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [12] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- vbuz1=vbuc1 
     lda #'*'
     sta.z c
-    jmp b3
+    jmp __b3
     // [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [12] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
     lda #'.'
     sta.z c
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [13] *((byte*) main::sc#3) ← (byte) main::c#2 -- _deref_pbuz1=vbuz2 
     lda.z c
     ldy #0
@@ -498,10 +498,10 @@ main: {
     // [17] if((byte) main::x#1!=(byte) 8) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z x
-    bne b2_from_b3
-    jmp b5
+    bne __b2_from___b3
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$20
     clc
@@ -515,18 +515,18 @@ main: {
     // [20] if((byte) main::y#1!=(byte) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z y
-    bne b1_from_b5
-    jmp b6
+    bne __b1_from___b5
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [21] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [23] return 
     rts
 }
@@ -568,26 +568,26 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label PROCPORT = 1
   .label CHARGEN = $d000
   .label SCREEN = $400
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .label CHAR_A = CHARGEN+8
@@ -600,7 +600,7 @@ main: {
     lda #$32
     sta PROCPORT
     // [6] phi from main to main::@1 [phi:main->main::@1]
-  b1_from_main:
+  __b1_from_main:
     // [6] phi (byte*) main::sc#7 = (const byte*) SCREEN [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
@@ -609,56 +609,56 @@ main: {
     // [6] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z y
-    jmp b1
+    jmp __b1
     // [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  b1_from_b5:
+  __b1_from___b5:
     // [6] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
     // [6] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [7] (byte) main::bits#0 ← *((const byte*) main::CHAR_A#0 + (byte) main::y#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z y
     lda CHAR_A,y
     sta.z bits
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [8] phi (byte) main::x#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuxx=vbuc1 
     ldx #0
     // [8] phi (byte*) main::sc#3 = (byte*) main::sc#7 [phi:main::@1->main::@2#1] -- register_copy 
     // [8] phi (byte) main::bits#2 = (byte) main::bits#0 [phi:main::@1->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // [8] phi from main::@3 to main::@2 [phi:main::@3->main::@2]
-  b2_from_b3:
+  __b2_from___b3:
     // [8] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@2#0] -- register_copy 
     // [8] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
     // [8] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
-    jmp b2
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [9] (byte~) main::$1 ← (byte) main::bits#2 & (byte) $80 -- vbuaa=vbuz1_band_vbuc1 
     lda #$80
     and.z bits
     // [10] if((byte~) main::$1==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b3_from_b2
+    beq __b3_from___b2
     // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
-  b4_from_b2:
-    jmp b4
+  __b4_from___b2:
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [12] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- vbuaa=vbuc1 
     lda #'*'
-    jmp b3
+    jmp __b3
     // [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [12] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- vbuaa=vbuc1 
     lda #'.'
-    jmp b3
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [13] *((byte*) main::sc#3) ← (byte) main::c#2 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sc),y
@@ -673,10 +673,10 @@ main: {
     inx
     // [17] if((byte) main::x#1!=(byte) 8) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
-    bne b2_from_b3
-    jmp b5
+    bne __b2_from___b3
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$20
     clc
@@ -690,61 +690,62 @@ main: {
     // [20] if((byte) main::y#1!=(byte) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z y
-    bne b1_from_b5
-    jmp b6
+    bne __b1_from___b5
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [21] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
     // asm { cli  }
     cli
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [23] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b4
-Removing instruction jmp b3
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b4
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label b2_from_b3 with b2
-Replacing label b1_from_b5 with b1
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
-Removing instruction b1_from_b5:
-Removing instruction b2_from_b3:
-Removing instruction b4_from_b2:
-Removing instruction b3_from_b4:
+Replacing label __bbegin with __b1
+Replacing label __b2_from___b3 with __b2
+Replacing label __b1_from___b5 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b5:
+Removing instruction __b2_from___b3:
+Removing instruction __b4_from___b2:
+Removing instruction __b3_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction b1_from_main:
-Removing instruction b2_from_b1:
-Removing instruction b4:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __b2_from___b1:
+Removing instruction __b4:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Relabelling long label b3_from_b2 to b4
+Relabelling long label __b3_from___b2 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
-Removing instruction jmp b1
-Removing instruction jmp b2
+Removing instruction jmp __b1
+Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -835,7 +836,7 @@ main: {
     // [6] phi (byte*) main::sc#7 = (byte*) main::sc#2 [phi:main::@5->main::@1#0] -- register_copy 
     // [6] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // bits = CHAR_A[y]
     // [7] (byte) main::bits#0 ← *((const byte*) main::CHAR_A#0 + (byte) main::y#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z y
@@ -851,7 +852,7 @@ main: {
     // [8] phi (byte*) main::sc#3 = (byte*) main::sc#1 [phi:main::@3->main::@2#1] -- register_copy 
     // [8] phi (byte) main::bits#2 = (byte) main::bits#1 [phi:main::@3->main::@2#2] -- register_copy 
     // main::@2
-  b2:
+  __b2:
     // bits & $80
     // [9] (byte~) main::$1 ← (byte) main::bits#2 & (byte) $80 -- vbuaa=vbuz1_band_vbuc1 
     lda #$80
@@ -859,19 +860,19 @@ main: {
     // if((bits & $80) != 0)
     // [10] if((byte~) main::$1==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b4
+    beq b1
     // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
     // main::@4
     // [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
     // [12] phi (byte) main::c#2 = (byte) '*' [phi:main::@4->main::@3#0] -- vbuaa=vbuc1 
     lda #'*'
-    jmp b3
+    jmp __b3
     // [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  b4:
+  b1:
     // [12] phi (byte) main::c#2 = (byte) '.' [phi:main::@2->main::@3#0] -- vbuaa=vbuc1 
     lda #'.'
     // main::@3
-  b3:
+  __b3:
     // *sc = c
     // [13] *((byte*) main::sc#3) ← (byte) main::c#2 -- _deref_pbuz1=vbuaa 
     ldy #0
@@ -890,7 +891,7 @@ main: {
     inx
     // [17] if((byte) main::x#1!=(byte) 8) goto main::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
-    bne b2
+    bne __b2
     // main::@5
     // sc = sc+32
     // [18] (byte*) main::sc#2 ← (byte*) main::sc#1 + (byte) $20 -- pbuz1=pbuz1_plus_vbuc1 
@@ -907,7 +908,7 @@ main: {
     // [20] if((byte) main::y#1!=(byte) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z y
-    bne b1
+    bne __b1
     // main::@6
     // *PROCPORT = $37
     // [21] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 

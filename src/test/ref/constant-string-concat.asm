@@ -5,12 +5,12 @@
 main: {
     .label SCREEN = $400
     ldx #0
-  b1:
+  __b1:
     lda s,x
     sta SCREEN,x
     inx
     cpx #8
-    bne b1
+    bne __b1
     rts
     s: .text "camelot"
     .byte 0

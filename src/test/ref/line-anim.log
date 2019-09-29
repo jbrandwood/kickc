@@ -2716,7 +2716,7 @@ Target platform is c64basic / MOS6502X
 // Animated lines drawn on a single color bitmap
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // Processor port data direction register
@@ -2745,24 +2745,24 @@ Target platform is c64basic / MOS6502X
   // The delay between pixels
   .const DELAY = 8
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)/$40
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label _14 = $23
+    .label __14 = $23
     .label i = 2
     // asm { sei  }
     // Disable normal interrupt
@@ -2788,69 +2788,69 @@ main: {
     jmp vicSelectGfxBank1_toDd001
     // main::vicSelectGfxBank1_toDd001
   vicSelectGfxBank1_toDd001:
-    jmp vicSelectGfxBank1_b1
+    jmp vicSelectGfxBank1___b1
     // main::vicSelectGfxBank1_@1
-  vicSelectGfxBank1_b1:
+  vicSelectGfxBank1___b1:
     // [10] *((const byte*) CIA2_PORT_A) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 -- _deref_pbuc1=vbuc2 
     lda #vicSelectGfxBank1_toDd001_return
     sta CIA2_PORT_A
     // [11] phi from main::vicSelectGfxBank1_@1 to main::toD0181 [phi:main::vicSelectGfxBank1_@1->main::toD0181]
-  toD0181_from_vicSelectGfxBank1_b1:
+  toD0181_from_vicSelectGfxBank1___b1:
     jmp toD0181
     // main::toD0181
   toD0181:
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [12] *((const byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // [13] call bitmap_init 
     // [130] phi from main::@4 to bitmap_init [phi:main::@4->bitmap_init]
-  bitmap_init_from_b4:
+  bitmap_init_from___b4:
     jsr bitmap_init
     // [14] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [15] call bitmap_clear 
     jsr bitmap_clear
     // [16] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
-  b6_from_b5:
-    jmp b6
+  __b6_from___b5:
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [17] call screen_fill 
     // [109] phi from main::@6 to screen_fill [phi:main::@6->screen_fill]
-  screen_fill_from_b6:
+  screen_fill_from___b6:
     jsr screen_fill
     // [18] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
-  b1_from_b6:
+  __b1_from___b6:
     // [18] phi (byte) main::i#2 = (byte) 0 [phi:main::@6->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [18] phi from main::@8 to main::@1 [phi:main::@8->main::@1]
-  b1_from_b8:
+  __b1_from___b8:
     // [18] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@8->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [19] (byte) point_init::point_idx#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
     lda.z i
     sta.z point_init.point_idx
     // [20] call point_init 
     jsr point_init
-    jmp b7
+    jmp __b7
     // main::@7
-  b7:
+  __b7:
     // [21] (byte~) main::$14 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z _14
+    sta.z __14
     // [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$14) -- vwuz1=pwuc1_derefidx_vbuz2 
-    ldy.z _14
+    ldy.z __14
     lda x_start,y
     sta.z bitmap_plot.x
     lda x_start+1,y
@@ -2861,35 +2861,35 @@ main: {
     sta.z bitmap_plot.y
     // [24] call bitmap_plot 
     jsr bitmap_plot
-    jmp b8
+    jmp __b8
     // main::@8
-  b8:
+  __b8:
     // [25] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [26] if((byte) main::i#1!=(const byte) SIZE-(byte) 1+(byte) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #SIZE-1+1
     cmp.z i
-    bne b1_from_b8
-    jmp b2
+    bne __b1_from___b8
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [27] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [28] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    jmp b2
+    jmp __b2
 }
   // bitmap_plot
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage($24) x, byte zeropage($26) y)
 bitmap_plot: {
-    .label _1 = $29
-    .label _2 = $2d
+    .label __1 = $29
+    .label __2 = $2d
     .label x = $24
     .label y = $26
     .label plotter = $27
@@ -2903,31 +2903,31 @@ bitmap_plot: {
     // [30] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     // [31] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz2_plus_vwuz3 
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter_1
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter_1+1
     // [32] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 -- vbuz1=_lo_vwuz2 
     lda.z x
-    sta.z _2
+    sta.z __2
     // [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
     ldy #0
     lda (plotter_1),y
-    ldy.z _2
+    ldy.z __2
     ora bitmap_plot_bit,y
     ldy #0
     sta (plotter_1),y
-    jmp breturn
+    jmp __breturn
     // bitmap_plot::@return
-  breturn:
+  __breturn:
     // [34] return 
     rts
 }
@@ -2935,15 +2935,15 @@ bitmap_plot: {
 // Initialize the points to be animated
 // point_init(byte zeropage($22) point_idx)
 point_init: {
-    .label _3 = $31
-    .label _4 = $33
-    .label _9 = $38
-    .label _10 = $3a
-    .label _11 = $3c
-    .label _14 = $46
-    .label _16 = $47
-    .label _18 = $2e
-    .label _20 = $37
+    .label __3 = $31
+    .label __4 = $33
+    .label __9 = $38
+    .label __10 = $3a
+    .label __11 = $3c
+    .label __14 = $46
+    .label __16 = $47
+    .label __18 = $2e
+    .label __20 = $37
     .label point_idx = $22
     .label y_diff = $35
     .label abs16s1_return = $4a
@@ -2959,9 +2959,9 @@ point_init: {
     // [35] (byte~) point_init::$18 ← (byte) point_init::point_idx#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z point_idx
     asl
-    sta.z _18
+    sta.z __18
     // [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word[SIZE]) x_end + (byte~) point_init::$18) - (signed word)*((const word[SIZE]) x_start + (byte~) point_init::$18) -- vwsz1=pwsc1_derefidx_vbuz2_minus_pwsc2_derefidx_vbuz2 
-    ldy.z _18
+    ldy.z __18
     sec
     lda x_end,y
     sbc x_start,y
@@ -2972,155 +2972,155 @@ point_init: {
     // [37] (signed word~) point_init::$3 ← (signed word)*((const byte[SIZE]) y_end + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_end,y
-    sta.z _3
+    sta.z __3
     lda #0
-    sta.z _3+1
+    sta.z __3+1
     // [38] (signed word~) point_init::$4 ← (signed word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_start,y
-    sta.z _4
+    sta.z __4
     lda #0
-    sta.z _4+1
+    sta.z __4+1
     // [39] (signed word) point_init::y_diff#0 ← (signed word~) point_init::$3 - (signed word~) point_init::$4 -- vwsz1=vwsz2_minus_vwsz3 
-    lda.z _3
+    lda.z __3
     sec
-    sbc.z _4
+    sbc.z __4
     sta.z y_diff
-    lda.z _3+1
-    sbc.z _4+1
+    lda.z __3+1
+    sbc.z __4+1
     sta.z y_diff+1
     jmp abs16s1
     // point_init::abs16s1
   abs16s1:
     // [40] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::abs16s1_@1 -- vwsz1_lt_0_then_la1 
     lda.z x_diff+1
-    bmi abs16s1_b1
-    jmp abs16s1_b3
+    bmi abs16s1___b1
+    jmp abs16s1___b3
     // point_init::abs16s1_@3
-  abs16s1_b3:
+  abs16s1___b3:
     // [41] (word~) point_init::abs16s1_return#6 ← (word)(signed word) point_init::x_diff#1 -- vwuz1=vwuz2 
     lda.z x_diff
     sta.z abs16s1_return_6
     lda.z x_diff+1
     sta.z abs16s1_return_6+1
     // [42] phi from point_init::abs16s1_@1 point_init::abs16s1_@3 to point_init::abs16s1_@return [phi:point_init::abs16s1_@1/point_init::abs16s1_@3->point_init::abs16s1_@return]
-  abs16s1_breturn_from_abs16s1_b1:
-  abs16s1_breturn_from_abs16s1_b3:
+  abs16s1___breturn_from_abs16s1___b1:
+  abs16s1___breturn_from_abs16s1___b3:
     // [42] phi (word) point_init::abs16s1_return#2 = (word~) point_init::abs16s1_return#5 [phi:point_init::abs16s1_@1/point_init::abs16s1_@3->point_init::abs16s1_@return#0] -- register_copy 
-    jmp abs16s1_breturn
+    jmp abs16s1___breturn
     // point_init::abs16s1_@return
-  abs16s1_breturn:
+  abs16s1___breturn:
     jmp abs16s2
     // point_init::abs16s2
   abs16s2:
     // [43] if((signed word) point_init::y_diff#0<(signed byte) 0) goto point_init::abs16s2_@1 -- vwsz1_lt_0_then_la1 
     lda.z y_diff+1
-    bmi abs16s2_b1
-    jmp abs16s2_b3
+    bmi abs16s2___b1
+    jmp abs16s2___b3
     // point_init::abs16s2_@3
-  abs16s2_b3:
+  abs16s2___b3:
     // [44] (word~) point_init::abs16s2_return#6 ← (word)(signed word) point_init::y_diff#0 -- vwuz1=vwuz2 
     lda.z y_diff
     sta.z abs16s2_return_6
     lda.z y_diff+1
     sta.z abs16s2_return_6+1
     // [45] phi from point_init::abs16s2_@1 point_init::abs16s2_@3 to point_init::abs16s2_@return [phi:point_init::abs16s2_@1/point_init::abs16s2_@3->point_init::abs16s2_@return]
-  abs16s2_breturn_from_abs16s2_b1:
-  abs16s2_breturn_from_abs16s2_b3:
+  abs16s2___breturn_from_abs16s2___b1:
+  abs16s2___breturn_from_abs16s2___b3:
     // [45] phi (word) point_init::abs16s2_return#2 = (word~) point_init::abs16s2_return#5 [phi:point_init::abs16s2_@1/point_init::abs16s2_@3->point_init::abs16s2_@return#0] -- register_copy 
-    jmp abs16s2_breturn
+    jmp abs16s2___breturn
     // point_init::abs16s2_@return
-  abs16s2_breturn:
-    jmp b6
+  abs16s2___breturn:
+    jmp __b6
     // point_init::@6
-  b6:
+  __b6:
     // [46] if((word) point_init::abs16s1_return#2>(word) point_init::abs16s2_return#2) goto point_init::@1 -- vwuz1_gt_vwuz2_then_la1 
     lda.z abs16s2_return_2+1
     cmp.z abs16s1_return_2+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z abs16s2_return_2
     cmp.z abs16s1_return_2
-    bcc b1
+    bcc __b1
   !:
-    jmp b2
+    jmp __b2
     // point_init::@2
-  b2:
+  __b2:
     // [47] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z point_idx
     asl
-    sta.z _20
+    sta.z __20
     // [48] (word~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$20) << (byte) 4 -- vwuz1=pwuc1_derefidx_vbuz2_rol_4 
-    ldy.z _20
+    ldy.z __20
     lda x_start,y
-    sta.z _9
+    sta.z __9
     lda x_start+1,y
-    sta.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
+    sta.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
     // [49] *((const word[SIZE]) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy.z _20
-    lda.z _9
+    ldy.z __20
+    lda.z __9
     sta x_cur,y
-    lda.z _9+1
+    lda.z __9+1
     sta x_cur+1,y
     // [50] (word~) point_init::$10 ← (word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_start,y
-    sta.z _10
+    sta.z __10
     lda #0
-    sta.z _10+1
+    sta.z __10+1
     // [51] (word~) point_init::$11 ← (word~) point_init::$10 << (byte) 4 -- vwuz1=vwuz2_rol_4 
-    lda.z _10
+    lda.z __10
     asl
-    sta.z _11
-    lda.z _10+1
+    sta.z __11
+    lda.z __10+1
     rol
-    sta.z _11+1
-    asl.z _11
-    rol.z _11+1
-    asl.z _11
-    rol.z _11+1
-    asl.z _11
-    rol.z _11+1
+    sta.z __11+1
+    asl.z __11
+    rol.z __11+1
+    asl.z __11
+    rol.z __11+1
+    asl.z __11
+    rol.z __11+1
     // [52] *((const word[SIZE]) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy.z _20
-    lda.z _11
+    ldy.z __20
+    lda.z __11
     sta y_cur,y
-    lda.z _11+1
+    lda.z __11+1
     sta y_cur+1,y
     // [53] *((const byte[SIZE]) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #DELAY
     ldy.z point_idx
     sta delay,y
-    jmp breturn
+    jmp __breturn
     // point_init::@return
-  breturn:
+  __breturn:
     // [54] return 
     rts
     // point_init::@1
-  b1:
+  __b1:
     // [55] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::@4 -- vwsz1_lt_0_then_la1 
     // X is driver - abs(y/x) is < 1
     lda.z x_diff+1
-    bmi b4
-    jmp b3
+    bmi __b4
+    jmp __b3
     // point_init::@3
-  b3:
+  __b3:
     // [56] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 -- pbsc1_derefidx_vbuz1=vbsc2 
     // x add = 1.0
     lda #$10
     ldy.z point_idx
     sta x_add,y
-    jmp b5
+    jmp __b5
     // point_init::@5
-  b5:
+  __b5:
     // [57] (signed word) divr16s::divisor#0 ← (signed word) point_init::x_diff#1 -- vwsz1=vwsz2 
     lda.z x_diff
     sta.z divr16s.divisor
@@ -3133,16 +3133,16 @@ point_init: {
     sta.z divr16s.rem+1
     // [59] call divr16s 
     // [70] phi from point_init::@5 to divr16s [phi:point_init::@5->divr16s]
-  divr16s_from_b5:
+  divr16s_from___b5:
     jsr divr16s
     // [60] (signed word) divr16s::return#3 ← (signed word) divr16s::return#2 -- vwsz1=vwsz2 
     lda.z divr16s.return
     sta.z divr16s.return_3
     lda.z divr16s.return+1
     sta.z divr16s.return_3+1
-    jmp b7
+    jmp __b7
     // point_init::@7
-  b7:
+  __b7:
     // [61] (signed word) point_init::x_stepf#0 ← (signed word) divr16s::return#3 -- vwsz1=vwsz2 
     lda.z divr16s.return_3
     sta.z x_stepf
@@ -3150,29 +3150,29 @@ point_init: {
     sta.z x_stepf+1
     // [62] (byte~) point_init::$14 ← > (signed word) point_init::x_stepf#0 -- vbuz1=_hi_vwsz2 
     lda.z x_stepf+1
-    sta.z _14
+    sta.z __14
     // [63] (byte~) point_init::$16 ← (byte~) point_init::$14 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
-    lda.z _14
+    lda.z __14
     lsr
     lsr
     lsr
     lsr
-    sta.z _16
+    sta.z __16
     // [64] *((const signed byte[SIZE]) y_add + (byte) point_init::point_idx#0) ← (signed byte)(byte~) point_init::$16 -- pbsc1_derefidx_vbuz1=vbsz2 
-    lda.z _16
+    lda.z __16
     ldy.z point_idx
     sta y_add,y
-    jmp b2
+    jmp __b2
     // point_init::@4
-  b4:
+  __b4:
     // [65] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 -- pbsc1_derefidx_vbuz1=vbsc2 
     // x add = -1.0
     lda #-$10
     ldy.z point_idx
     sta x_add,y
-    jmp b5
+    jmp __b5
     // point_init::abs16s2_@1
-  abs16s2_b1:
+  abs16s2___b1:
     // [66] (signed word) point_init::abs16s2_return#0 ← - (signed word) point_init::y_diff#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
@@ -3186,9 +3186,9 @@ point_init: {
     sta.z abs16s2_return_5
     lda.z abs16s2_return+1
     sta.z abs16s2_return_5+1
-    jmp abs16s2_breturn_from_abs16s2_b1
+    jmp abs16s2___breturn_from_abs16s2___b1
     // point_init::abs16s1_@1
-  abs16s1_b1:
+  abs16s1___b1:
     // [68] (signed word) point_init::abs16s1_return#0 ← - (signed word) point_init::x_diff#1 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
@@ -3202,7 +3202,7 @@ point_init: {
     sta.z abs16s1_return_5
     lda.z abs16s1_return+1
     sta.z abs16s1_return_5+1
-    jmp abs16s1_breturn_from_abs16s1_b1
+    jmp abs16s1___breturn_from_abs16s1___b1
 }
   // divr16s
 // Perform division on two signed 16-bit numbers with an initial remainder.
@@ -3226,48 +3226,48 @@ divr16s: {
     .label remu_8 = 7
     .label divisoru_4 = 9
     .label divisoru_5 = 9
-    jmp b10
+    jmp __b10
     // divr16s::@10
-  b10:
+  __b10:
     // [71] if((signed word) divr16s::rem#0<(signed byte) 0) goto divr16s::@1 -- vwsz1_lt_0_then_la1 
     lda.z rem+1
-    bmi b1
-    jmp b6
+    bmi __b1
+    jmp __b6
     // divr16s::@6
-  b6:
+  __b6:
     // [72] (word~) divr16s::remu#8 ← (word)(signed word) divr16s::rem#0 -- vwuz1=vwuz2 
     lda.z rem
     sta.z remu_8
     lda.z rem+1
     sta.z remu_8+1
     // [73] phi from divr16s::@6 to divr16s::@2 [phi:divr16s::@6->divr16s::@2]
-  b2_from_b6:
+  __b2_from___b6:
     // [73] phi (word) divr16s::remu#3 = (word~) divr16s::remu#8 [phi:divr16s::@6->divr16s::@2#0] -- register_copy 
     // [73] phi (byte) divr16s::neg#3 = (byte) 0 [phi:divr16s::@6->divr16s::@2#1] -- vbuz1=vbuc1 
     lda #0
     sta.z neg
-    jmp b2
+    jmp __b2
     // divr16s::@2
-  b2:
+  __b2:
     // [74] if((signed word) divr16s::divisor#0<(signed byte) 0) goto divr16s::@3 -- vwsz1_lt_0_then_la1 
     lda.z divisor+1
-    bmi b3
-    jmp b7
+    bmi __b3
+    jmp __b7
     // divr16s::@7
-  b7:
+  __b7:
     // [75] (word~) divr16s::divisoru#5 ← (word)(signed word) divr16s::divisor#0 -- vwuz1=vwuz2 
     lda.z divisor
     sta.z divisoru_5
     lda.z divisor+1
     sta.z divisoru_5+1
     // [76] phi from divr16s::@3 divr16s::@7 to divr16s::@4 [phi:divr16s::@3/divr16s::@7->divr16s::@4]
-  b4_from_b3:
-  b4_from_b7:
+  __b4_from___b3:
+  __b4_from___b7:
     // [76] phi (byte) divr16s::neg#4 = (byte) divr16s::neg#2 [phi:divr16s::@3/divr16s::@7->divr16s::@4#0] -- register_copy 
     // [76] phi (word) divr16s::divisoru#3 = (word~) divr16s::divisoru#4 [phi:divr16s::@3/divr16s::@7->divr16s::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // divr16s::@4
-  b4:
+  __b4:
     // [77] (word) divr16u::divisor#0 ← (word) divr16s::divisoru#3 -- vwuz1=vwuz2 
     lda.z divisoru_3
     sta.z divr16u.divisor
@@ -3280,16 +3280,16 @@ divr16s: {
     sta.z divr16u.rem+1
     // [79] call divr16u 
     // [92] phi from divr16s::@4 to divr16u [phi:divr16s::@4->divr16u]
-  divr16u_from_b4:
+  divr16u_from___b4:
     jsr divr16u
     // [80] (word) divr16u::return#2 ← (word) divr16u::return#0 -- vwuz1=vwuz2 
     lda.z divr16u.return
     sta.z divr16u.return_2
     lda.z divr16u.return+1
     sta.z divr16u.return_2+1
-    jmp b9
+    jmp __b9
     // divr16s::@9
-  b9:
+  __b9:
     // [81] (word) divr16s::resultu#0 ← (word) divr16u::return#2 -- vwuz1=vwuz2 
     lda.z divr16u.return_2
     sta.z resultu
@@ -3298,10 +3298,10 @@ divr16s: {
     // [82] if((byte) divr16s::neg#4==(byte) 0) goto divr16s::@5 -- vbuz1_eq_0_then_la1 
     lda.z neg
     cmp #0
-    beq b5
-    jmp b8
+    beq __b5
+    jmp __b8
     // divr16s::@8
-  b8:
+  __b8:
     // [83] (signed word) divr16s::return#1 ← - (signed word)(word) divr16s::resultu#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
@@ -3311,24 +3311,24 @@ divr16s: {
     sbc.z resultu+1
     sta.z return+1
     // [84] phi from divr16s::@5 divr16s::@8 to divr16s::@return [phi:divr16s::@5/divr16s::@8->divr16s::@return]
-  breturn_from_b5:
-  breturn_from_b8:
+  __breturn_from___b5:
+  __breturn_from___b8:
     // [84] phi (signed word) divr16s::return#2 = (signed word~) divr16s::return#7 [phi:divr16s::@5/divr16s::@8->divr16s::@return#0] -- register_copy 
-    jmp breturn
+    jmp __breturn
     // divr16s::@return
-  breturn:
+  __breturn:
     // [85] return 
     rts
     // divr16s::@5
-  b5:
+  __b5:
     // [86] (signed word~) divr16s::return#7 ← (signed word)(word) divr16s::resultu#0 -- vwsz1=vwsz2 
     lda.z resultu
     sta.z return
     lda.z resultu+1
     sta.z return+1
-    jmp breturn_from_b5
+    jmp __breturn_from___b5
     // divr16s::@3
-  b3:
+  __b3:
     // [87] (signed word) divr16s::divisoru#1 ← - (signed word) divr16s::divisor#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
@@ -3346,9 +3346,9 @@ divr16s: {
     sta.z divisoru_4
     lda.z divisoru+1
     sta.z divisoru_4+1
-    jmp b4_from_b3
+    jmp __b4_from___b3
     // divr16s::@1
-  b1:
+  __b1:
     // [90] (signed word) divr16s::remu#1 ← - (signed word) divr16s::rem#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
@@ -3363,12 +3363,12 @@ divr16s: {
     lda.z remu+1
     sta.z remu_7+1
     // [73] phi from divr16s::@1 to divr16s::@2 [phi:divr16s::@1->divr16s::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [73] phi (word) divr16s::remu#3 = (word~) divr16s::remu#7 [phi:divr16s::@1->divr16s::@2#0] -- register_copy 
     // [73] phi (byte) divr16s::neg#3 = (byte) 1 [phi:divr16s::@1->divr16s::@2#1] -- vbuz1=vbuc1 
     lda #1
     sta.z neg
-    jmp b2
+    jmp __b2
 }
   // divr16u
 // Performs division on two 16 bit unsigned words and an initial remainder
@@ -3377,8 +3377,8 @@ divr16s: {
 // Implemented using simple binary division
 // divr16u(word zeropage($10) dividend, word zeropage($4c) divisor, word zeropage($e) rem)
 divr16u: {
-    .label _1 = $56
-    .label _2 = $57
+    .label __1 = $56
+    .label __2 = $57
     .label rem = $e
     .label dividend = $10
     .label quotient = $12
@@ -3387,7 +3387,7 @@ divr16u: {
     .label divisor = $4c
     .label return_2 = $4e
     // [93] phi from divr16u to divr16u::@1 [phi:divr16u->divr16u::@1]
-  b1_from_divr16u:
+  __b1_from_divr16u:
     // [93] phi (byte) divr16u::i#2 = (byte) 0 [phi:divr16u->divr16u::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -3402,44 +3402,44 @@ divr16u: {
     lda #>0
     sta.z dividend+1
     // [93] phi (word) divr16u::rem#4 = (word) divr16u::rem#3 [phi:divr16u->divr16u::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // [93] phi from divr16u::@3 to divr16u::@1 [phi:divr16u::@3->divr16u::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [93] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
     // [93] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
     // [93] phi (word) divr16u::dividend#2 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
     // [93] phi (word) divr16u::rem#4 = (word) divr16u::rem#9 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // divr16u::@1
-  b1:
+  __b1:
     // [94] (word) divr16u::rem#0 ← (word) divr16u::rem#4 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z rem
     rol.z rem+1
     // [95] (byte~) divr16u::$1 ← > (word) divr16u::dividend#2 -- vbuz1=_hi_vwuz2 
     lda.z dividend+1
-    sta.z _1
+    sta.z __1
     // [96] (byte~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
     lda #$80
-    and.z _1
-    sta.z _2
+    and.z __1
+    sta.z __2
     // [97] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuz1_eq_0_then_la1 
-    lda.z _2
+    lda.z __2
     cmp #0
-    beq b2_from_b1
-    jmp b4
+    beq __b2_from___b1
+    jmp __b4
     // divr16u::@4
-  b4:
+  __b4:
     // [98] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
     lda #1
     ora.z rem
     sta.z rem
     // [99] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
-  b2_from_b1:
-  b2_from_b4:
+  __b2_from___b1:
+  __b2_from___b4:
     // [99] phi (word) divr16u::rem#5 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // divr16u::@2
-  b2:
+  __b2:
     // [100] (word) divr16u::dividend#0 ← (word) divr16u::dividend#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z dividend
     rol.z dividend+1
@@ -3449,15 +3449,15 @@ divr16u: {
     // [102] if((word) divr16u::rem#5<(word) divr16u::divisor#0) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
     lda.z rem+1
     cmp.z divisor+1
-    bcc b3_from_b2
+    bcc __b3_from___b2
     bne !+
     lda.z rem
     cmp.z divisor
-    bcc b3_from_b2
+    bcc __b3_from___b2
   !:
-    jmp b5
+    jmp __b5
     // divr16u::@5
-  b5:
+  __b5:
     // [103] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
     inc.z quotient
     bne !+
@@ -3472,22 +3472,22 @@ divr16u: {
     sbc.z divisor+1
     sta.z rem+1
     // [105] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
-  b3_from_b2:
-  b3_from_b5:
+  __b3_from___b2:
+  __b3_from___b5:
     // [105] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
     // [105] phi (word) divr16u::rem#9 = (word) divr16u::rem#5 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // divr16u::@3
-  b3:
+  __b3:
     // [106] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [107] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z i
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // divr16u::@return
-  breturn:
+  __breturn:
     // [108] return 
     rts
 }
@@ -3500,7 +3500,7 @@ screen_fill: {
     .label x = $18
     .label y = $15
     // [110] phi from screen_fill to screen_fill::@1 [phi:screen_fill->screen_fill::@1]
-  b1_from_screen_fill:
+  __b1_from_screen_fill:
     // [110] phi (byte) screen_fill::y#4 = (byte) 0 [phi:screen_fill->screen_fill::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z y
@@ -3509,28 +3509,28 @@ screen_fill: {
     sta.z screen
     lda #>SCREEN
     sta.z screen+1
-    jmp b1
+    jmp __b1
     // [110] phi from screen_fill::@3 to screen_fill::@1 [phi:screen_fill::@3->screen_fill::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [110] phi (byte) screen_fill::y#4 = (byte) screen_fill::y#1 [phi:screen_fill::@3->screen_fill::@1#0] -- register_copy 
     // [110] phi (byte*) screen_fill::screen#3 = (byte*) screen_fill::screen#1 [phi:screen_fill::@3->screen_fill::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // screen_fill::@1
-  b1:
+  __b1:
     // [111] phi from screen_fill::@1 to screen_fill::@2 [phi:screen_fill::@1->screen_fill::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [111] phi (byte) screen_fill::x#2 = (byte) 0 [phi:screen_fill::@1->screen_fill::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z x
     // [111] phi (byte*) screen_fill::screen#2 = (byte*) screen_fill::screen#3 [phi:screen_fill::@1->screen_fill::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
     // [111] phi from screen_fill::@2 to screen_fill::@2 [phi:screen_fill::@2->screen_fill::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [111] phi (byte) screen_fill::x#2 = (byte) screen_fill::x#1 [phi:screen_fill::@2->screen_fill::@2#0] -- register_copy 
     // [111] phi (byte*) screen_fill::screen#2 = (byte*) screen_fill::screen#1 [phi:screen_fill::@2->screen_fill::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
     // screen_fill::@2
-  b2:
+  __b2:
     // [112] *((byte*) screen_fill::screen#2) ← (const byte) screen_fill::ch#0 -- _deref_pbuz1=vbuc1 
     lda #ch
     ldy #0
@@ -3545,19 +3545,19 @@ screen_fill: {
     // [115] if((byte) screen_fill::x#1!=(byte) $28) goto screen_fill::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp.z x
-    bne b2_from_b2
-    jmp b3
+    bne __b2_from___b2
+    jmp __b3
     // screen_fill::@3
-  b3:
+  __b3:
     // [116] (byte) screen_fill::y#1 ← ++ (byte) screen_fill::y#4 -- vbuz1=_inc_vbuz1 
     inc.z y
     // [117] if((byte) screen_fill::y#1!=(byte) $19) goto screen_fill::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
     cmp.z y
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // screen_fill::@return
-  breturn:
+  __breturn:
     // [118] return 
     rts
 }
@@ -3582,33 +3582,33 @@ bitmap_clear: {
     lda.z bitmap+1
     sta.z bitmap_5+1
     // [121] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
-  b1_from_bitmap_clear:
+  __b1_from_bitmap_clear:
     // [121] phi (byte) bitmap_clear::y#4 = (byte) 0 [phi:bitmap_clear->bitmap_clear::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z y
     // [121] phi (byte*) bitmap_clear::bitmap#3 = (byte*~) bitmap_clear::bitmap#5 [phi:bitmap_clear->bitmap_clear::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // [121] phi from bitmap_clear::@3 to bitmap_clear::@1 [phi:bitmap_clear::@3->bitmap_clear::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [121] phi (byte) bitmap_clear::y#4 = (byte) bitmap_clear::y#1 [phi:bitmap_clear::@3->bitmap_clear::@1#0] -- register_copy 
     // [121] phi (byte*) bitmap_clear::bitmap#3 = (byte*) bitmap_clear::bitmap#1 [phi:bitmap_clear::@3->bitmap_clear::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // bitmap_clear::@1
-  b1:
+  __b1:
     // [122] phi from bitmap_clear::@1 to bitmap_clear::@2 [phi:bitmap_clear::@1->bitmap_clear::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [122] phi (byte) bitmap_clear::x#2 = (byte) 0 [phi:bitmap_clear::@1->bitmap_clear::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z x
     // [122] phi (byte*) bitmap_clear::bitmap#2 = (byte*) bitmap_clear::bitmap#3 [phi:bitmap_clear::@1->bitmap_clear::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
     // [122] phi from bitmap_clear::@2 to bitmap_clear::@2 [phi:bitmap_clear::@2->bitmap_clear::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [122] phi (byte) bitmap_clear::x#2 = (byte) bitmap_clear::x#1 [phi:bitmap_clear::@2->bitmap_clear::@2#0] -- register_copy 
     // [122] phi (byte*) bitmap_clear::bitmap#2 = (byte*) bitmap_clear::bitmap#1 [phi:bitmap_clear::@2->bitmap_clear::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
     // bitmap_clear::@2
-  b2:
+  __b2:
     // [123] *((byte*) bitmap_clear::bitmap#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
@@ -3623,48 +3623,48 @@ bitmap_clear: {
     // [126] if((byte) bitmap_clear::x#1!=(byte) $c8) goto bitmap_clear::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$c8
     cmp.z x
-    bne b2_from_b2
-    jmp b3
+    bne __b2_from___b2
+    jmp __b3
     // bitmap_clear::@3
-  b3:
+  __b3:
     // [127] (byte) bitmap_clear::y#1 ← ++ (byte) bitmap_clear::y#4 -- vbuz1=_inc_vbuz1 
     inc.z y
     // [128] if((byte) bitmap_clear::y#1!=(byte) $28) goto bitmap_clear::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp.z y
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // bitmap_clear::@return
-  breturn:
+  __breturn:
     // [129] return 
     rts
 }
   // bitmap_init
 bitmap_init: {
-    .label _4 = $5b
-    .label _5 = $5c
-    .label _6 = $5d
-    .label _7 = $5a
+    .label __4 = $5b
+    .label __5 = $5c
+    .label __6 = $5d
+    .label __7 = $5a
     .label bits = $1d
     .label x = $1e
     .label y = $1f
     .label yoffs = $20
     // [131] phi from bitmap_init to bitmap_init::@1 [phi:bitmap_init->bitmap_init::@1]
-  b1_from_bitmap_init:
+  __b1_from_bitmap_init:
     // [131] phi (byte) bitmap_init::x#2 = (byte) 0 [phi:bitmap_init->bitmap_init::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z x
     // [131] phi (byte) bitmap_init::bits#3 = (byte) $80 [phi:bitmap_init->bitmap_init::@1#1] -- vbuz1=vbuc1 
     lda #$80
     sta.z bits
-    jmp b1
+    jmp __b1
     // [131] phi from bitmap_init::@2 to bitmap_init::@1 [phi:bitmap_init::@2->bitmap_init::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [131] phi (byte) bitmap_init::x#2 = (byte) bitmap_init::x#1 [phi:bitmap_init::@2->bitmap_init::@1#0] -- register_copy 
     // [131] phi (byte) bitmap_init::bits#3 = (byte) bitmap_init::bits#4 [phi:bitmap_init::@2->bitmap_init::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // bitmap_init::@1
-  b1:
+  __b1:
     // [132] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z bits
     ldy.z x
@@ -3674,32 +3674,32 @@ bitmap_init: {
     // [134] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@6 -- vbuz1_neq_0_then_la1 
     lda.z bits
     cmp #0
-    bne b6_from_b1
+    bne __b6_from___b1
     // [136] phi from bitmap_init::@1 to bitmap_init::@2 [phi:bitmap_init::@1->bitmap_init::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [136] phi (byte) bitmap_init::bits#4 = (byte) $80 [phi:bitmap_init::@1->bitmap_init::@2#0] -- vbuz1=vbuc1 
     lda #$80
     sta.z bits
-    jmp b2
+    jmp __b2
     // [135] phi from bitmap_init::@1 to bitmap_init::@6 [phi:bitmap_init::@1->bitmap_init::@6]
-  b6_from_b1:
-    jmp b6
+  __b6_from___b1:
+    jmp __b6
     // bitmap_init::@6
-  b6:
+  __b6:
     // [136] phi from bitmap_init::@6 to bitmap_init::@2 [phi:bitmap_init::@6->bitmap_init::@2]
-  b2_from_b6:
+  __b2_from___b6:
     // [136] phi (byte) bitmap_init::bits#4 = (byte) bitmap_init::bits#1 [phi:bitmap_init::@6->bitmap_init::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // bitmap_init::@2
-  b2:
+  __b2:
     // [137] (byte) bitmap_init::x#1 ← ++ (byte) bitmap_init::x#2 -- vbuz1=_inc_vbuz1 
     inc.z x
     // [138] if((byte) bitmap_init::x#1!=(byte) 0) goto bitmap_init::@1 -- vbuz1_neq_0_then_la1 
     lda.z x
     cmp #0
-    bne b1_from_b2
+    bne __b1_from___b2
     // [139] phi from bitmap_init::@2 to bitmap_init::@3 [phi:bitmap_init::@2->bitmap_init::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [139] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
     lda #<BITMAP
     sta.z yoffs
@@ -3708,43 +3708,43 @@ bitmap_init: {
     // [139] phi (byte) bitmap_init::y#2 = (byte) 0 [phi:bitmap_init::@2->bitmap_init::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta.z y
-    jmp b3
+    jmp __b3
     // [139] phi from bitmap_init::@4 to bitmap_init::@3 [phi:bitmap_init::@4->bitmap_init::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [139] phi (byte*) bitmap_init::yoffs#2 = (byte*) bitmap_init::yoffs#4 [phi:bitmap_init::@4->bitmap_init::@3#0] -- register_copy 
     // [139] phi (byte) bitmap_init::y#2 = (byte) bitmap_init::y#1 [phi:bitmap_init::@4->bitmap_init::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // bitmap_init::@3
-  b3:
+  __b3:
     // [140] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and.z y
-    sta.z _7
+    sta.z __7
     // [141] (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2 -- vbuz1=_lo_pbuz2 
     lda.z yoffs
-    sta.z _4
+    sta.z __4
     // [142] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuz1=vbuz2_bor_vbuz3 
-    lda.z _7
-    ora.z _4
-    sta.z _5
+    lda.z __7
+    ora.z __4
+    sta.z __5
     // [143] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _5
+    lda.z __5
     ldy.z y
     sta bitmap_plot_ylo,y
     // [144] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuz1=_hi_pbuz2 
     lda.z yoffs+1
-    sta.z _6
+    sta.z __6
     // [145] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z _6
+    lda.z __6
     ldy.z y
     sta bitmap_plot_yhi,y
     // [146] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp.z _7
-    bne b4_from_b3
-    jmp b5
+    cmp.z __7
+    bne __b4_from___b3
+    jmp __b5
     // bitmap_init::@5
-  b5:
+  __b5:
     // [147] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda.z yoffs
@@ -3754,21 +3754,21 @@ bitmap_init: {
     adc #>$28*8
     sta.z yoffs+1
     // [148] phi from bitmap_init::@3 bitmap_init::@5 to bitmap_init::@4 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4]
-  b4_from_b3:
-  b4_from_b5:
+  __b4_from___b3:
+  __b4_from___b5:
     // [148] phi (byte*) bitmap_init::yoffs#4 = (byte*) bitmap_init::yoffs#2 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // bitmap_init::@4
-  b4:
+  __b4:
     // [149] (byte) bitmap_init::y#1 ← ++ (byte) bitmap_init::y#2 -- vbuz1=_inc_vbuz1 
     inc.z y
     // [150] if((byte) bitmap_init::y#1!=(byte) 0) goto bitmap_init::@3 -- vbuz1_neq_0_then_la1 
     lda.z y
     cmp #0
-    bne b3_from_b4
-    jmp breturn
+    bne __b3_from___b4
+    jmp __breturn
     // bitmap_init::@return
-  breturn:
+  __breturn:
     // [151] return 
     rts
 }
@@ -4087,7 +4087,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Animated lines drawn on a single color bitmap
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // Processor port data direction register
@@ -4116,19 +4116,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   // The delay between pixels
   .const DELAY = 8
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)/$40
@@ -4158,61 +4158,61 @@ main: {
     jmp vicSelectGfxBank1_toDd001
     // main::vicSelectGfxBank1_toDd001
   vicSelectGfxBank1_toDd001:
-    jmp vicSelectGfxBank1_b1
+    jmp vicSelectGfxBank1___b1
     // main::vicSelectGfxBank1_@1
-  vicSelectGfxBank1_b1:
+  vicSelectGfxBank1___b1:
     // [10] *((const byte*) CIA2_PORT_A) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 -- _deref_pbuc1=vbuc2 
     lda #vicSelectGfxBank1_toDd001_return
     sta CIA2_PORT_A
     // [11] phi from main::vicSelectGfxBank1_@1 to main::toD0181 [phi:main::vicSelectGfxBank1_@1->main::toD0181]
-  toD0181_from_vicSelectGfxBank1_b1:
+  toD0181_from_vicSelectGfxBank1___b1:
     jmp toD0181
     // main::toD0181
   toD0181:
-    jmp b4
+    jmp __b4
     // main::@4
-  b4:
+  __b4:
     // [12] *((const byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // [13] call bitmap_init 
     // [130] phi from main::@4 to bitmap_init [phi:main::@4->bitmap_init]
-  bitmap_init_from_b4:
+  bitmap_init_from___b4:
     jsr bitmap_init
     // [14] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
-  b5_from_b4:
-    jmp b5
+  __b5_from___b4:
+    jmp __b5
     // main::@5
-  b5:
+  __b5:
     // [15] call bitmap_clear 
     jsr bitmap_clear
     // [16] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
-  b6_from_b5:
-    jmp b6
+  __b6_from___b5:
+    jmp __b6
     // main::@6
-  b6:
+  __b6:
     // [17] call screen_fill 
     // [109] phi from main::@6 to screen_fill [phi:main::@6->screen_fill]
-  screen_fill_from_b6:
+  screen_fill_from___b6:
     jsr screen_fill
     // [18] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
-  b1_from_b6:
+  __b1_from___b6:
     // [18] phi (byte) main::i#2 = (byte) 0 [phi:main::@6->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    jmp b1
+    jmp __b1
     // [18] phi from main::@8 to main::@1 [phi:main::@8->main::@1]
-  b1_from_b8:
+  __b1_from___b8:
     // [18] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@8->main::@1#0] -- register_copy 
-    jmp b1
+    jmp __b1
     // main::@1
-  b1:
+  __b1:
     // [19] (byte) point_init::point_idx#0 ← (byte) main::i#2
     // [20] call point_init 
     jsr point_init
-    jmp b7
+    jmp __b7
     // main::@7
-  b7:
+  __b7:
     // [21] (byte~) main::$14 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
@@ -4227,34 +4227,34 @@ main: {
     ldx y_start,y
     // [24] call bitmap_plot 
     jsr bitmap_plot
-    jmp b8
+    jmp __b8
     // main::@8
-  b8:
+  __b8:
     // [25] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [26] if((byte) main::i#1!=(const byte) SIZE-(byte) 1+(byte) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #SIZE-1+1
     cmp.z i
-    bne b1_from_b8
-    jmp b2
+    bne __b1_from___b8
+    jmp __b2
     // main::@2
-  b2:
+  __b2:
     // [27] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
-    jmp b3
+    bne __b2
+    jmp __b3
     // main::@3
-  b3:
+  __b3:
     // [28] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    jmp b2
+    jmp __b2
 }
   // bitmap_plot
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage($a) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $e
+    .label __1 = $e
     .label x = $a
     .label plotter = $c
     // [29] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
@@ -4265,17 +4265,17 @@ bitmap_plot: {
     // [30] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     // [31] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter+1
     // [32] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 -- vbuaa=_lo_vwuz1 
     lda.z x
@@ -4286,9 +4286,9 @@ bitmap_plot: {
     ora (plotter),y
     ldy #0
     sta (plotter),y
-    jmp breturn
+    jmp __breturn
     // bitmap_plot::@return
-  breturn:
+  __breturn:
     // [34] return 
     rts
 }
@@ -4296,11 +4296,11 @@ bitmap_plot: {
 // Initialize the points to be animated
 // point_init(byte zeropage($12) point_idx)
 point_init: {
-    .label _3 = 6
-    .label _4 = $c
-    .label _9 = $e
-    .label _10 = $10
-    .label _11 = $10
+    .label __3 = 6
+    .label __4 = $c
+    .label __9 = $e
+    .label __10 = $10
+    .label __11 = $10
     .label point_idx = $12
     .label y_diff = 6
     .label abs16s1_return = 2
@@ -4322,158 +4322,158 @@ point_init: {
     // [37] (signed word~) point_init::$3 ← (signed word)*((const byte[SIZE]) y_end + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_end,y
-    sta.z _3
+    sta.z __3
     lda #0
-    sta.z _3+1
+    sta.z __3+1
     // [38] (signed word~) point_init::$4 ← (signed word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_start,y
-    sta.z _4
+    sta.z __4
     lda #0
-    sta.z _4+1
+    sta.z __4+1
     // [39] (signed word) point_init::y_diff#0 ← (signed word~) point_init::$3 - (signed word~) point_init::$4 -- vwsz1=vwsz1_minus_vwsz2 
     lda.z y_diff
     sec
-    sbc.z _4
+    sbc.z __4
     sta.z y_diff
     lda.z y_diff+1
-    sbc.z _4+1
+    sbc.z __4+1
     sta.z y_diff+1
     jmp abs16s1
     // point_init::abs16s1
   abs16s1:
     // [40] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::abs16s1_@1 -- vwsz1_lt_0_then_la1 
     lda.z x_diff+1
-    bmi abs16s1_b1
-    jmp abs16s1_b3
+    bmi abs16s1___b1
+    jmp abs16s1___b3
     // point_init::abs16s1_@3
-  abs16s1_b3:
+  abs16s1___b3:
     // [41] (word~) point_init::abs16s1_return#6 ← (word)(signed word) point_init::x_diff#1 -- vwuz1=vwuz2 
     lda.z x_diff
     sta.z abs16s1_return
     lda.z x_diff+1
     sta.z abs16s1_return+1
     // [42] phi from point_init::abs16s1_@1 point_init::abs16s1_@3 to point_init::abs16s1_@return [phi:point_init::abs16s1_@1/point_init::abs16s1_@3->point_init::abs16s1_@return]
-  abs16s1_breturn_from_abs16s1_b1:
-  abs16s1_breturn_from_abs16s1_b3:
+  abs16s1___breturn_from_abs16s1___b1:
+  abs16s1___breturn_from_abs16s1___b3:
     // [42] phi (word) point_init::abs16s1_return#2 = (word~) point_init::abs16s1_return#5 [phi:point_init::abs16s1_@1/point_init::abs16s1_@3->point_init::abs16s1_@return#0] -- register_copy 
-    jmp abs16s1_breturn
+    jmp abs16s1___breturn
     // point_init::abs16s1_@return
-  abs16s1_breturn:
+  abs16s1___breturn:
     jmp abs16s2
     // point_init::abs16s2
   abs16s2:
     // [43] if((signed word) point_init::y_diff#0<(signed byte) 0) goto point_init::abs16s2_@1 -- vwsz1_lt_0_then_la1 
     lda.z y_diff+1
-    bmi abs16s2_b1
-    jmp abs16s2_b3
+    bmi abs16s2___b1
+    jmp abs16s2___b3
     // point_init::abs16s2_@3
-  abs16s2_b3:
+  abs16s2___b3:
     // [44] (word~) point_init::abs16s2_return#6 ← (word)(signed word) point_init::y_diff#0 -- vwuz1=vwuz2 
     lda.z y_diff
     sta.z abs16s2_return
     lda.z y_diff+1
     sta.z abs16s2_return+1
     // [45] phi from point_init::abs16s2_@1 point_init::abs16s2_@3 to point_init::abs16s2_@return [phi:point_init::abs16s2_@1/point_init::abs16s2_@3->point_init::abs16s2_@return]
-  abs16s2_breturn_from_abs16s2_b1:
-  abs16s2_breturn_from_abs16s2_b3:
+  abs16s2___breturn_from_abs16s2___b1:
+  abs16s2___breturn_from_abs16s2___b3:
     // [45] phi (word) point_init::abs16s2_return#2 = (word~) point_init::abs16s2_return#5 [phi:point_init::abs16s2_@1/point_init::abs16s2_@3->point_init::abs16s2_@return#0] -- register_copy 
-    jmp abs16s2_breturn
+    jmp abs16s2___breturn
     // point_init::abs16s2_@return
-  abs16s2_breturn:
-    jmp b6
+  abs16s2___breturn:
+    jmp __b6
     // point_init::@6
-  b6:
+  __b6:
     // [46] if((word) point_init::abs16s1_return#2>(word) point_init::abs16s2_return#2) goto point_init::@1 -- vwuz1_gt_vwuz2_then_la1 
     lda.z abs16s2_return+1
     cmp.z abs16s1_return+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z abs16s2_return
     cmp.z abs16s1_return
-    bcc b1
+    bcc __b1
   !:
-    jmp b2
+    jmp __b2
     // point_init::@2
-  b2:
+  __b2:
     // [47] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z point_idx
     asl
     tax
     // [48] (word~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$20) << (byte) 4 -- vwuz1=pwuc1_derefidx_vbuxx_rol_4 
     lda x_start,x
-    sta.z _9
+    sta.z __9
     lda x_start+1,x
-    sta.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
+    sta.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
     // [49] *((const word[SIZE]) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda.z _9
+    lda.z __9
     sta x_cur,x
-    lda.z _9+1
+    lda.z __9+1
     sta x_cur+1,x
     // [50] (word~) point_init::$10 ← (word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_start,y
-    sta.z _10
+    sta.z __10
     lda #0
-    sta.z _10+1
+    sta.z __10+1
     // [51] (word~) point_init::$11 ← (word~) point_init::$10 << (byte) 4 -- vwuz1=vwuz1_rol_4 
-    asl.z _11
-    rol.z _11+1
-    asl.z _11
-    rol.z _11+1
-    asl.z _11
-    rol.z _11+1
-    asl.z _11
-    rol.z _11+1
+    asl.z __11
+    rol.z __11+1
+    asl.z __11
+    rol.z __11+1
+    asl.z __11
+    rol.z __11+1
+    asl.z __11
+    rol.z __11+1
     // [52] *((const word[SIZE]) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda.z _11
+    lda.z __11
     sta y_cur,x
-    lda.z _11+1
+    lda.z __11+1
     sta y_cur+1,x
     // [53] *((const byte[SIZE]) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #DELAY
     ldy.z point_idx
     sta delay,y
-    jmp breturn
+    jmp __breturn
     // point_init::@return
-  breturn:
+  __breturn:
     // [54] return 
     rts
     // point_init::@1
-  b1:
+  __b1:
     // [55] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::@4 -- vwsz1_lt_0_then_la1 
     // X is driver - abs(y/x) is < 1
     lda.z x_diff+1
-    bmi b4
-    jmp b3
+    bmi __b4
+    jmp __b3
     // point_init::@3
-  b3:
+  __b3:
     // [56] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 -- pbsc1_derefidx_vbuz1=vbsc2 
     // x add = 1.0
     lda #$10
     ldy.z point_idx
     sta x_add,y
-    jmp b5
+    jmp __b5
     // point_init::@5
-  b5:
+  __b5:
     // [57] (signed word) divr16s::divisor#0 ← (signed word) point_init::x_diff#1
     // [58] (signed word) divr16s::rem#0 ← (signed word) point_init::y_diff#0
     // [59] call divr16s 
     // [70] phi from point_init::@5 to divr16s [phi:point_init::@5->divr16s]
-  divr16s_from_b5:
+  divr16s_from___b5:
     jsr divr16s
     // [60] (signed word) divr16s::return#3 ← (signed word) divr16s::return#2
-    jmp b7
+    jmp __b7
     // point_init::@7
-  b7:
+  __b7:
     // [61] (signed word) point_init::x_stepf#0 ← (signed word) divr16s::return#3
     // [62] (byte~) point_init::$14 ← > (signed word) point_init::x_stepf#0 -- vbuaa=_hi_vwsz1 
     lda.z x_stepf+1
@@ -4485,17 +4485,17 @@ point_init: {
     // [64] *((const signed byte[SIZE]) y_add + (byte) point_init::point_idx#0) ← (signed byte)(byte~) point_init::$16 -- pbsc1_derefidx_vbuz1=vbsaa 
     ldy.z point_idx
     sta y_add,y
-    jmp b2
+    jmp __b2
     // point_init::@4
-  b4:
+  __b4:
     // [65] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 -- pbsc1_derefidx_vbuz1=vbsc2 
     // x add = -1.0
     lda #-$10
     ldy.z point_idx
     sta x_add,y
-    jmp b5
+    jmp __b5
     // point_init::abs16s2_@1
-  abs16s2_b1:
+  abs16s2___b1:
     // [66] (signed word) point_init::abs16s2_return#0 ← - (signed word) point_init::y_diff#0 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
@@ -4505,9 +4505,9 @@ point_init: {
     sbc.z y_diff+1
     sta.z abs16s2_return+1
     // [67] (word~) point_init::abs16s2_return#5 ← (word)(signed word) point_init::abs16s2_return#0
-    jmp abs16s2_breturn_from_abs16s2_b1
+    jmp abs16s2___breturn_from_abs16s2___b1
     // point_init::abs16s1_@1
-  abs16s1_b1:
+  abs16s1___b1:
     // [68] (signed word) point_init::abs16s1_return#0 ← - (signed word) point_init::x_diff#1 -- vwsz1=_neg_vwsz2 
     sec
     lda #0
@@ -4517,7 +4517,7 @@ point_init: {
     sbc.z x_diff+1
     sta.z abs16s1_return+1
     // [69] (word~) point_init::abs16s1_return#5 ← (word)(signed word) point_init::abs16s1_return#0
-    jmp abs16s1_breturn_from_abs16s1_b1
+    jmp abs16s1___breturn_from_abs16s1___b1
 }
   // divr16s
 // Perform division on two signed 16-bit numbers with an initial remainder.
@@ -4533,56 +4533,56 @@ divr16s: {
     .label return = $a
     .label divisor = 8
     .label rem = 6
-    jmp b10
+    jmp __b10
     // divr16s::@10
-  b10:
+  __b10:
     // [71] if((signed word) divr16s::rem#0<(signed byte) 0) goto divr16s::@1 -- vwsz1_lt_0_then_la1 
     lda.z rem+1
-    bmi b1
-    jmp b6
+    bmi __b1
+    jmp __b6
     // divr16s::@6
-  b6:
+  __b6:
     // [72] (word~) divr16s::remu#8 ← (word)(signed word) divr16s::rem#0
     // [73] phi from divr16s::@6 to divr16s::@2 [phi:divr16s::@6->divr16s::@2]
-  b2_from_b6:
+  __b2_from___b6:
     // [73] phi (word) divr16s::remu#3 = (word~) divr16s::remu#8 [phi:divr16s::@6->divr16s::@2#0] -- register_copy 
     // [73] phi (byte) divr16s::neg#3 = (byte) 0 [phi:divr16s::@6->divr16s::@2#1] -- vbuyy=vbuc1 
     ldy #0
-    jmp b2
+    jmp __b2
     // divr16s::@2
-  b2:
+  __b2:
     // [74] if((signed word) divr16s::divisor#0<(signed byte) 0) goto divr16s::@3 -- vwsz1_lt_0_then_la1 
     lda.z divisor+1
-    bmi b3
-    jmp b7
+    bmi __b3
+    jmp __b7
     // divr16s::@7
-  b7:
+  __b7:
     // [75] (word~) divr16s::divisoru#5 ← (word)(signed word) divr16s::divisor#0
     // [76] phi from divr16s::@3 divr16s::@7 to divr16s::@4 [phi:divr16s::@3/divr16s::@7->divr16s::@4]
-  b4_from_b3:
-  b4_from_b7:
+  __b4_from___b3:
+  __b4_from___b7:
     // [76] phi (byte) divr16s::neg#4 = (byte) divr16s::neg#2 [phi:divr16s::@3/divr16s::@7->divr16s::@4#0] -- register_copy 
     // [76] phi (word) divr16s::divisoru#3 = (word~) divr16s::divisoru#4 [phi:divr16s::@3/divr16s::@7->divr16s::@4#1] -- register_copy 
-    jmp b4
+    jmp __b4
     // divr16s::@4
-  b4:
+  __b4:
     // [77] (word) divr16u::divisor#0 ← (word) divr16s::divisoru#3
     // [78] (word) divr16u::rem#3 ← (word) divr16s::remu#3
     // [79] call divr16u 
     // [92] phi from divr16s::@4 to divr16u [phi:divr16s::@4->divr16u]
-  divr16u_from_b4:
+  divr16u_from___b4:
     jsr divr16u
     // [80] (word) divr16u::return#2 ← (word) divr16u::return#0
-    jmp b9
+    jmp __b9
     // divr16s::@9
-  b9:
+  __b9:
     // [81] (word) divr16s::resultu#0 ← (word) divr16u::return#2
     // [82] if((byte) divr16s::neg#4==(byte) 0) goto divr16s::@5 -- vbuyy_eq_0_then_la1 
     cpy #0
-    beq b5
-    jmp b8
+    beq __b5
+    jmp __b8
     // divr16s::@8
-  b8:
+  __b8:
     // [83] (signed word) divr16s::return#1 ← - (signed word)(word) divr16s::resultu#0 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
@@ -4592,20 +4592,20 @@ divr16s: {
     sbc.z return+1
     sta.z return+1
     // [84] phi from divr16s::@5 divr16s::@8 to divr16s::@return [phi:divr16s::@5/divr16s::@8->divr16s::@return]
-  breturn_from_b5:
-  breturn_from_b8:
+  __breturn_from___b5:
+  __breturn_from___b8:
     // [84] phi (signed word) divr16s::return#2 = (signed word~) divr16s::return#7 [phi:divr16s::@5/divr16s::@8->divr16s::@return#0] -- register_copy 
-    jmp breturn
+    jmp __breturn
     // divr16s::@return
-  breturn:
+  __breturn:
     // [85] return 
     rts
     // divr16s::@5
-  b5:
+  __b5:
     // [86] (signed word~) divr16s::return#7 ← (signed word)(word) divr16s::resultu#0
-    jmp breturn_from_b5
+    jmp __breturn_from___b5
     // divr16s::@3
-  b3:
+  __b3:
     // [87] (signed word) divr16s::divisoru#1 ← - (signed word) divr16s::divisor#0 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
@@ -4619,9 +4619,9 @@ divr16s: {
     eor #1
     tay
     // [89] (word~) divr16s::divisoru#4 ← (word)(signed word) divr16s::divisoru#1
-    jmp b4_from_b3
+    jmp __b4_from___b3
     // divr16s::@1
-  b1:
+  __b1:
     // [90] (signed word) divr16s::remu#1 ← - (signed word) divr16s::rem#0 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
@@ -4632,11 +4632,11 @@ divr16s: {
     sta.z remu+1
     // [91] (word~) divr16s::remu#7 ← (word)(signed word) divr16s::remu#1
     // [73] phi from divr16s::@1 to divr16s::@2 [phi:divr16s::@1->divr16s::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [73] phi (word) divr16s::remu#3 = (word~) divr16s::remu#7 [phi:divr16s::@1->divr16s::@2#0] -- register_copy 
     // [73] phi (byte) divr16s::neg#3 = (byte) 1 [phi:divr16s::@1->divr16s::@2#1] -- vbuyy=vbuc1 
     ldy #1
-    jmp b2
+    jmp __b2
 }
   // divr16u
 // Performs division on two 16 bit unsigned words and an initial remainder
@@ -4651,7 +4651,7 @@ divr16u: {
     .label return = $a
     .label divisor = 8
     // [93] phi from divr16u to divr16u::@1 [phi:divr16u->divr16u::@1]
-  b1_from_divr16u:
+  __b1_from_divr16u:
     // [93] phi (byte) divr16u::i#2 = (byte) 0 [phi:divr16u->divr16u::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [93] phi (word) divr16u::quotient#3 = (byte) 0 [phi:divr16u->divr16u::@1#1] -- vwuz1=vbuc1 
@@ -4665,16 +4665,16 @@ divr16u: {
     lda #>0
     sta.z dividend+1
     // [93] phi (word) divr16u::rem#4 = (word) divr16u::rem#3 [phi:divr16u->divr16u::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // [93] phi from divr16u::@3 to divr16u::@1 [phi:divr16u::@3->divr16u::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [93] phi (byte) divr16u::i#2 = (byte) divr16u::i#1 [phi:divr16u::@3->divr16u::@1#0] -- register_copy 
     // [93] phi (word) divr16u::quotient#3 = (word) divr16u::return#0 [phi:divr16u::@3->divr16u::@1#1] -- register_copy 
     // [93] phi (word) divr16u::dividend#2 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
     // [93] phi (word) divr16u::rem#4 = (word) divr16u::rem#9 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
-    jmp b1
+    jmp __b1
     // divr16u::@1
-  b1:
+  __b1:
     // [94] (word) divr16u::rem#0 ← (word) divr16u::rem#4 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z rem
     rol.z rem+1
@@ -4684,21 +4684,21 @@ divr16u: {
     and #$80
     // [97] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b2_from_b1
-    jmp b4
+    beq __b2_from___b1
+    jmp __b4
     // divr16u::@4
-  b4:
+  __b4:
     // [98] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
     lda #1
     ora.z rem
     sta.z rem
     // [99] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
-  b2_from_b1:
-  b2_from_b4:
+  __b2_from___b1:
+  __b2_from___b4:
     // [99] phi (word) divr16u::rem#5 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // divr16u::@2
-  b2:
+  __b2:
     // [100] (word) divr16u::dividend#0 ← (word) divr16u::dividend#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z dividend
     rol.z dividend+1
@@ -4708,15 +4708,15 @@ divr16u: {
     // [102] if((word) divr16u::rem#5<(word) divr16u::divisor#0) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
     lda.z rem+1
     cmp.z divisor+1
-    bcc b3_from_b2
+    bcc __b3_from___b2
     bne !+
     lda.z rem
     cmp.z divisor
-    bcc b3_from_b2
+    bcc __b3_from___b2
   !:
-    jmp b5
+    jmp __b5
     // divr16u::@5
-  b5:
+  __b5:
     // [103] (word) divr16u::quotient#2 ← ++ (word) divr16u::quotient#1 -- vwuz1=_inc_vwuz1 
     inc.z quotient
     bne !+
@@ -4731,21 +4731,21 @@ divr16u: {
     sbc.z divisor+1
     sta.z rem+1
     // [105] phi from divr16u::@2 divr16u::@5 to divr16u::@3 [phi:divr16u::@2/divr16u::@5->divr16u::@3]
-  b3_from_b2:
-  b3_from_b5:
+  __b3_from___b2:
+  __b3_from___b5:
     // [105] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
     // [105] phi (word) divr16u::rem#9 = (word) divr16u::rem#5 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // divr16u::@3
-  b3:
+  __b3:
     // [106] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [107] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // divr16u::@return
-  breturn:
+  __breturn:
     // [108] return 
     rts
 }
@@ -4757,7 +4757,7 @@ screen_fill: {
     .label screen = 4
     .label y = $12
     // [110] phi from screen_fill to screen_fill::@1 [phi:screen_fill->screen_fill::@1]
-  b1_from_screen_fill:
+  __b1_from_screen_fill:
     // [110] phi (byte) screen_fill::y#4 = (byte) 0 [phi:screen_fill->screen_fill::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z y
@@ -4766,27 +4766,27 @@ screen_fill: {
     sta.z screen
     lda #>SCREEN
     sta.z screen+1
-    jmp b1
+    jmp __b1
     // [110] phi from screen_fill::@3 to screen_fill::@1 [phi:screen_fill::@3->screen_fill::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [110] phi (byte) screen_fill::y#4 = (byte) screen_fill::y#1 [phi:screen_fill::@3->screen_fill::@1#0] -- register_copy 
     // [110] phi (byte*) screen_fill::screen#3 = (byte*) screen_fill::screen#1 [phi:screen_fill::@3->screen_fill::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // screen_fill::@1
-  b1:
+  __b1:
     // [111] phi from screen_fill::@1 to screen_fill::@2 [phi:screen_fill::@1->screen_fill::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [111] phi (byte) screen_fill::x#2 = (byte) 0 [phi:screen_fill::@1->screen_fill::@2#0] -- vbuxx=vbuc1 
     ldx #0
     // [111] phi (byte*) screen_fill::screen#2 = (byte*) screen_fill::screen#3 [phi:screen_fill::@1->screen_fill::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
     // [111] phi from screen_fill::@2 to screen_fill::@2 [phi:screen_fill::@2->screen_fill::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [111] phi (byte) screen_fill::x#2 = (byte) screen_fill::x#1 [phi:screen_fill::@2->screen_fill::@2#0] -- register_copy 
     // [111] phi (byte*) screen_fill::screen#2 = (byte*) screen_fill::screen#1 [phi:screen_fill::@2->screen_fill::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
     // screen_fill::@2
-  b2:
+  __b2:
     // [112] *((byte*) screen_fill::screen#2) ← (const byte) screen_fill::ch#0 -- _deref_pbuz1=vbuc1 
     lda #ch
     ldy #0
@@ -4800,19 +4800,19 @@ screen_fill: {
     inx
     // [115] if((byte) screen_fill::x#1!=(byte) $28) goto screen_fill::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
-    bne b2_from_b2
-    jmp b3
+    bne __b2_from___b2
+    jmp __b3
     // screen_fill::@3
-  b3:
+  __b3:
     // [116] (byte) screen_fill::y#1 ← ++ (byte) screen_fill::y#4 -- vbuz1=_inc_vbuz1 
     inc.z y
     // [117] if((byte) screen_fill::y#1!=(byte) $19) goto screen_fill::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
     cmp.z y
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // screen_fill::@return
-  breturn:
+  __breturn:
     // [118] return 
     rts
 }
@@ -4828,32 +4828,32 @@ bitmap_clear: {
     sta.z bitmap+1
     // [120] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word) bitmap_clear::bitmap#0
     // [121] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
-  b1_from_bitmap_clear:
+  __b1_from_bitmap_clear:
     // [121] phi (byte) bitmap_clear::y#4 = (byte) 0 [phi:bitmap_clear->bitmap_clear::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z y
     // [121] phi (byte*) bitmap_clear::bitmap#3 = (byte*~) bitmap_clear::bitmap#5 [phi:bitmap_clear->bitmap_clear::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // [121] phi from bitmap_clear::@3 to bitmap_clear::@1 [phi:bitmap_clear::@3->bitmap_clear::@1]
-  b1_from_b3:
+  __b1_from___b3:
     // [121] phi (byte) bitmap_clear::y#4 = (byte) bitmap_clear::y#1 [phi:bitmap_clear::@3->bitmap_clear::@1#0] -- register_copy 
     // [121] phi (byte*) bitmap_clear::bitmap#3 = (byte*) bitmap_clear::bitmap#1 [phi:bitmap_clear::@3->bitmap_clear::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // bitmap_clear::@1
-  b1:
+  __b1:
     // [122] phi from bitmap_clear::@1 to bitmap_clear::@2 [phi:bitmap_clear::@1->bitmap_clear::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [122] phi (byte) bitmap_clear::x#2 = (byte) 0 [phi:bitmap_clear::@1->bitmap_clear::@2#0] -- vbuxx=vbuc1 
     ldx #0
     // [122] phi (byte*) bitmap_clear::bitmap#2 = (byte*) bitmap_clear::bitmap#3 [phi:bitmap_clear::@1->bitmap_clear::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
     // [122] phi from bitmap_clear::@2 to bitmap_clear::@2 [phi:bitmap_clear::@2->bitmap_clear::@2]
-  b2_from_b2:
+  __b2_from___b2:
     // [122] phi (byte) bitmap_clear::x#2 = (byte) bitmap_clear::x#1 [phi:bitmap_clear::@2->bitmap_clear::@2#0] -- register_copy 
     // [122] phi (byte*) bitmap_clear::bitmap#2 = (byte*) bitmap_clear::bitmap#1 [phi:bitmap_clear::@2->bitmap_clear::@2#1] -- register_copy 
-    jmp b2
+    jmp __b2
     // bitmap_clear::@2
-  b2:
+  __b2:
     // [123] *((byte*) bitmap_clear::bitmap#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
@@ -4867,70 +4867,70 @@ bitmap_clear: {
     inx
     // [126] if((byte) bitmap_clear::x#1!=(byte) $c8) goto bitmap_clear::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$c8
-    bne b2_from_b2
-    jmp b3
+    bne __b2_from___b2
+    jmp __b3
     // bitmap_clear::@3
-  b3:
+  __b3:
     // [127] (byte) bitmap_clear::y#1 ← ++ (byte) bitmap_clear::y#4 -- vbuz1=_inc_vbuz1 
     inc.z y
     // [128] if((byte) bitmap_clear::y#1!=(byte) $28) goto bitmap_clear::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp.z y
-    bne b1_from_b3
-    jmp breturn
+    bne __b1_from___b3
+    jmp __breturn
     // bitmap_clear::@return
-  breturn:
+  __breturn:
     // [129] return 
     rts
 }
   // bitmap_init
 bitmap_init: {
-    .label _7 = $12
+    .label __7 = $12
     .label yoffs = 8
     // [131] phi from bitmap_init to bitmap_init::@1 [phi:bitmap_init->bitmap_init::@1]
-  b1_from_bitmap_init:
+  __b1_from_bitmap_init:
     // [131] phi (byte) bitmap_init::x#2 = (byte) 0 [phi:bitmap_init->bitmap_init::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [131] phi (byte) bitmap_init::bits#3 = (byte) $80 [phi:bitmap_init->bitmap_init::@1#1] -- vbuaa=vbuc1 
     lda #$80
-    jmp b1
+    jmp __b1
     // [131] phi from bitmap_init::@2 to bitmap_init::@1 [phi:bitmap_init::@2->bitmap_init::@1]
-  b1_from_b2:
+  __b1_from___b2:
     // [131] phi (byte) bitmap_init::x#2 = (byte) bitmap_init::x#1 [phi:bitmap_init::@2->bitmap_init::@1#0] -- register_copy 
     // [131] phi (byte) bitmap_init::bits#3 = (byte) bitmap_init::bits#4 [phi:bitmap_init::@2->bitmap_init::@1#1] -- register_copy 
-    jmp b1
+    jmp __b1
     // bitmap_init::@1
-  b1:
+  __b1:
     // [132] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_bit,x
     // [133] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
     // [134] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@6 -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne b6_from_b1
+    bne __b6_from___b1
     // [136] phi from bitmap_init::@1 to bitmap_init::@2 [phi:bitmap_init::@1->bitmap_init::@2]
-  b2_from_b1:
+  __b2_from___b1:
     // [136] phi (byte) bitmap_init::bits#4 = (byte) $80 [phi:bitmap_init::@1->bitmap_init::@2#0] -- vbuaa=vbuc1 
     lda #$80
-    jmp b2
+    jmp __b2
     // [135] phi from bitmap_init::@1 to bitmap_init::@6 [phi:bitmap_init::@1->bitmap_init::@6]
-  b6_from_b1:
-    jmp b6
+  __b6_from___b1:
+    jmp __b6
     // bitmap_init::@6
-  b6:
+  __b6:
     // [136] phi from bitmap_init::@6 to bitmap_init::@2 [phi:bitmap_init::@6->bitmap_init::@2]
-  b2_from_b6:
+  __b2_from___b6:
     // [136] phi (byte) bitmap_init::bits#4 = (byte) bitmap_init::bits#1 [phi:bitmap_init::@6->bitmap_init::@2#0] -- register_copy 
-    jmp b2
+    jmp __b2
     // bitmap_init::@2
-  b2:
+  __b2:
     // [137] (byte) bitmap_init::x#1 ← ++ (byte) bitmap_init::x#2 -- vbuxx=_inc_vbuxx 
     inx
     // [138] if((byte) bitmap_init::x#1!=(byte) 0) goto bitmap_init::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1_from_b2
+    bne __b1_from___b2
     // [139] phi from bitmap_init::@2 to bitmap_init::@3 [phi:bitmap_init::@2->bitmap_init::@3]
-  b3_from_b2:
+  __b3_from___b2:
     // [139] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
     lda #<BITMAP
     sta.z yoffs
@@ -4938,21 +4938,21 @@ bitmap_init: {
     sta.z yoffs+1
     // [139] phi (byte) bitmap_init::y#2 = (byte) 0 [phi:bitmap_init::@2->bitmap_init::@3#1] -- vbuxx=vbuc1 
     ldx #0
-    jmp b3
+    jmp __b3
     // [139] phi from bitmap_init::@4 to bitmap_init::@3 [phi:bitmap_init::@4->bitmap_init::@3]
-  b3_from_b4:
+  __b3_from___b4:
     // [139] phi (byte*) bitmap_init::yoffs#2 = (byte*) bitmap_init::yoffs#4 [phi:bitmap_init::@4->bitmap_init::@3#0] -- register_copy 
     // [139] phi (byte) bitmap_init::y#2 = (byte) bitmap_init::y#1 [phi:bitmap_init::@4->bitmap_init::@3#1] -- register_copy 
-    jmp b3
+    jmp __b3
     // bitmap_init::@3
-  b3:
+  __b3:
     // [140] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
-    sax.z _7
+    sax.z __7
     // [141] (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2 -- vbuaa=_lo_pbuz1 
     lda.z yoffs
     // [142] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
-    ora.z _7
+    ora.z __7
     // [143] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // [144] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
@@ -4961,11 +4961,11 @@ bitmap_init: {
     sta bitmap_plot_yhi,x
     // [146] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp.z _7
-    bne b4_from_b3
-    jmp b5
+    cmp.z __7
+    bne __b4_from___b3
+    jmp __b5
     // bitmap_init::@5
-  b5:
+  __b5:
     // [147] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda.z yoffs
@@ -4975,20 +4975,20 @@ bitmap_init: {
     adc #>$28*8
     sta.z yoffs+1
     // [148] phi from bitmap_init::@3 bitmap_init::@5 to bitmap_init::@4 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4]
-  b4_from_b3:
-  b4_from_b5:
+  __b4_from___b3:
+  __b4_from___b5:
     // [148] phi (byte*) bitmap_init::yoffs#4 = (byte*) bitmap_init::yoffs#2 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4#0] -- register_copy 
-    jmp b4
+    jmp __b4
     // bitmap_init::@4
-  b4:
+  __b4:
     // [149] (byte) bitmap_init::y#1 ← ++ (byte) bitmap_init::y#2 -- vbuxx=_inc_vbuxx 
     inx
     // [150] if((byte) bitmap_init::y#1!=(byte) 0) goto bitmap_init::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b3_from_b4
-    jmp breturn
+    bne __b3_from___b4
+    jmp __breturn
     // bitmap_init::@return
-  breturn:
+  __breturn:
     // [151] return 
     rts
 }
@@ -5014,62 +5014,62 @@ bitmap_init: {
   delay: .fill SIZE, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
+Removing instruction jmp __b1
+Removing instruction jmp __bend
 Removing instruction jmp vicSelectGfxBank1
 Removing instruction jmp vicSelectGfxBank1_toDd001
-Removing instruction jmp vicSelectGfxBank1_b1
+Removing instruction jmp vicSelectGfxBank1___b1
 Removing instruction jmp toD0181
-Removing instruction jmp b4
-Removing instruction jmp b5
-Removing instruction jmp b6
-Removing instruction jmp b1
-Removing instruction jmp b7
-Removing instruction jmp b8
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
+Removing instruction jmp __b4
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __b1
+Removing instruction jmp __b7
+Removing instruction jmp __b8
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
 Removing instruction jmp abs16s1
-Removing instruction jmp abs16s1_b3
-Removing instruction jmp abs16s1_breturn
+Removing instruction jmp abs16s1___b3
+Removing instruction jmp abs16s1___breturn
 Removing instruction jmp abs16s2
-Removing instruction jmp abs16s2_b3
-Removing instruction jmp abs16s2_breturn
-Removing instruction jmp b6
-Removing instruction jmp b2
-Removing instruction jmp breturn
-Removing instruction jmp b3
-Removing instruction jmp b5
-Removing instruction jmp b7
-Removing instruction jmp b10
-Removing instruction jmp b6
-Removing instruction jmp b2
-Removing instruction jmp b7
-Removing instruction jmp b4
-Removing instruction jmp b9
-Removing instruction jmp b8
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b4
-Removing instruction jmp b2
-Removing instruction jmp b5
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp breturn
-Removing instruction jmp b1
-Removing instruction jmp b6
-Removing instruction jmp b2
-Removing instruction jmp b3
-Removing instruction jmp b5
-Removing instruction jmp b4
-Removing instruction jmp breturn
+Removing instruction jmp abs16s2___b3
+Removing instruction jmp abs16s2___breturn
+Removing instruction jmp __b6
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Removing instruction jmp __b7
+Removing instruction jmp __b10
+Removing instruction jmp __b6
+Removing instruction jmp __b2
+Removing instruction jmp __b7
+Removing instruction jmp __b4
+Removing instruction jmp __b9
+Removing instruction jmp __b8
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b4
+Removing instruction jmp __b2
+Removing instruction jmp __b5
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b6
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Removing instruction ldy.z point_idx
@@ -5080,129 +5080,130 @@ Removing instruction lda #<0
 Removing instruction lda #>0
 Replacing instruction ldy #0 with TAY
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label b1_from_b8 with b1
-Replacing label abs16s2_breturn_from_abs16s2_b1 with b6
-Replacing label abs16s1_breturn_from_abs16s1_b1 with abs16s2
-Replacing label breturn_from_b5 with breturn
-Replacing label b4_from_b3 with b4
-Replacing label b2_from_b1 with b2
-Replacing label b3_from_b2 with b3
-Replacing label b3_from_b2 with b3
-Replacing label b1_from_b3 with b1
-Replacing label b2_from_b2 with b2
-Replacing label b1_from_b3 with b1
-Replacing label b2_from_b2 with b2
-Replacing label b1_from_b3 with b1
-Replacing label b6_from_b1 with b2
-Replacing label b1_from_b2 with b1
-Replacing label b4_from_b3 with b4
-Replacing label b3_from_b4 with b3
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b8 with __b1
+Replacing label abs16s2___breturn_from_abs16s2___b1 with __b6
+Replacing label abs16s1___breturn_from_abs16s1___b1 with abs16s2
+Replacing label __breturn_from___b5 with __breturn
+Replacing label __b4_from___b3 with __b4
+Replacing label __b2_from___b1 with __b2
+Replacing label __b3_from___b2 with __b3
+Replacing label __b3_from___b2 with __b3
+Replacing label __b1_from___b3 with __b1
+Replacing label __b2_from___b2 with __b2
+Replacing label __b1_from___b3 with __b1
+Replacing label __b2_from___b2 with __b2
+Replacing label __b1_from___b3 with __b1
+Replacing label __b6_from___b1 with __b2
+Replacing label __b1_from___b2 with __b1
+Replacing label __b4_from___b3 with __b4
+Replacing label __b3_from___b4 with __b3
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
 Removing instruction vicSelectGfxBank1_toDd001_from_vicSelectGfxBank1:
 Removing instruction vicSelectGfxBank1_toDd001:
-Removing instruction toD0181_from_vicSelectGfxBank1_b1:
+Removing instruction toD0181_from_vicSelectGfxBank1___b1:
 Removing instruction toD0181:
-Removing instruction b5_from_b4:
-Removing instruction b6_from_b5:
-Removing instruction screen_fill_from_b6:
-Removing instruction b1_from_b8:
-Removing instruction abs16s1_breturn_from_abs16s1_b1:
-Removing instruction abs16s1_breturn_from_abs16s1_b3:
-Removing instruction abs16s1_breturn:
-Removing instruction abs16s2_breturn_from_abs16s2_b1:
-Removing instruction abs16s2_breturn_from_abs16s2_b3:
-Removing instruction abs16s2_breturn:
-Removing instruction divr16s_from_b5:
-Removing instruction b2_from_b6:
-Removing instruction b7:
-Removing instruction b4_from_b3:
-Removing instruction b4_from_b7:
-Removing instruction divr16u_from_b4:
-Removing instruction breturn_from_b5:
-Removing instruction breturn_from_b8:
-Removing instruction b1_from_b3:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b4:
-Removing instruction b3_from_b2:
-Removing instruction b3_from_b5:
-Removing instruction b1_from_b3:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b2:
-Removing instruction b1_from_b3:
-Removing instruction b2_from_b1:
-Removing instruction b2_from_b2:
-Removing instruction b1_from_b2:
-Removing instruction b6_from_b1:
-Removing instruction b6:
-Removing instruction b2_from_b6:
-Removing instruction b3_from_b4:
-Removing instruction b4_from_b3:
-Removing instruction b4_from_b5:
+Removing instruction __b5_from___b4:
+Removing instruction __b6_from___b5:
+Removing instruction screen_fill_from___b6:
+Removing instruction __b1_from___b8:
+Removing instruction abs16s1___breturn_from_abs16s1___b1:
+Removing instruction abs16s1___breturn_from_abs16s1___b3:
+Removing instruction abs16s1___breturn:
+Removing instruction abs16s2___breturn_from_abs16s2___b1:
+Removing instruction abs16s2___breturn_from_abs16s2___b3:
+Removing instruction abs16s2___breturn:
+Removing instruction divr16s_from___b5:
+Removing instruction __b2_from___b6:
+Removing instruction __b7:
+Removing instruction __b4_from___b3:
+Removing instruction __b4_from___b7:
+Removing instruction divr16u_from___b4:
+Removing instruction __breturn_from___b5:
+Removing instruction __breturn_from___b8:
+Removing instruction __b1_from___b3:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b4:
+Removing instruction __b3_from___b2:
+Removing instruction __b3_from___b5:
+Removing instruction __b1_from___b3:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b2:
+Removing instruction __b1_from___b3:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b2:
+Removing instruction __b1_from___b2:
+Removing instruction __b6_from___b1:
+Removing instruction __b6:
+Removing instruction __b2_from___b6:
+Removing instruction __b3_from___b4:
+Removing instruction __b4_from___b3:
+Removing instruction __b4_from___b5:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
+Removing instruction __bend:
 Removing instruction vicSelectGfxBank1:
-Removing instruction vicSelectGfxBank1_b1:
-Removing instruction b4:
-Removing instruction bitmap_init_from_b4:
-Removing instruction b5:
-Removing instruction b6:
-Removing instruction b1_from_b6:
-Removing instruction b7:
-Removing instruction b8:
-Removing instruction b3:
-Removing instruction breturn:
+Removing instruction vicSelectGfxBank1___b1:
+Removing instruction __b4:
+Removing instruction bitmap_init_from___b4:
+Removing instruction __b5:
+Removing instruction __b6:
+Removing instruction __b1_from___b6:
+Removing instruction __b7:
+Removing instruction __b8:
+Removing instruction __b3:
+Removing instruction __breturn:
 Removing instruction abs16s1:
-Removing instruction abs16s1_b3:
-Removing instruction abs16s2_b3:
-Removing instruction breturn:
-Removing instruction b3:
-Removing instruction b7:
-Removing instruction b10:
-Removing instruction b6:
-Removing instruction b9:
-Removing instruction b8:
-Removing instruction b2_from_b1:
-Removing instruction b1_from_divr16u:
-Removing instruction b4:
-Removing instruction b5:
-Removing instruction breturn:
-Removing instruction b1_from_screen_fill:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction b1_from_bitmap_clear:
-Removing instruction b3:
-Removing instruction breturn:
-Removing instruction b1_from_bitmap_init:
-Removing instruction b2_from_b1:
-Removing instruction b3_from_b2:
-Removing instruction b5:
-Removing instruction breturn:
+Removing instruction abs16s1___b3:
+Removing instruction abs16s2___b3:
+Removing instruction __breturn:
+Removing instruction __b3:
+Removing instruction __b7:
+Removing instruction __b10:
+Removing instruction __b6:
+Removing instruction __b9:
+Removing instruction __b8:
+Removing instruction __b2_from___b1:
+Removing instruction __b1_from_divr16u:
+Removing instruction __b4:
+Removing instruction __b5:
+Removing instruction __breturn:
+Removing instruction __b1_from_screen_fill:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b1_from_bitmap_clear:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b1_from_bitmap_init:
+Removing instruction __b2_from___b1:
+Removing instruction __b3_from___b2:
+Removing instruction __b5:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Skipping double jump to breturn in beq b5
-Replacing jump to rts with rts in jmp breturn
+Skipping double jump to __breturn in beq __b5
+Replacing jump to rts with rts in jmp __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Removing instruction jmp b1
-Removing instruction jmp b1
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b1
-Removing instruction jmp b2
-Removing instruction jmp b3
+Removing instruction jmp __b1
+Removing instruction jmp __b1
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction bbegin:
-Removing instruction b5:
+Removing instruction __b1:
+Removing instruction __b5:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing unreachable instruction rts
 Succesful ASM optimization Pass5UnreachableCodeElimination
-Fixing long branch [148] bmi abs16s1_b1 to bpl
-Fixing long branch [157] bmi abs16s2_b1 to bpl
+Fixing long branch [148] bmi abs16s1___b1 to bpl
+Fixing long branch [157] bmi abs16s2___b1 to bpl
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -5586,7 +5587,7 @@ main: {
     // [18] phi from main::@8 to main::@1 [phi:main::@8->main::@1]
     // [18] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@8->main::@1#0] -- register_copy 
     // main::@1
-  b1:
+  __b1:
     // point_init(i)
     // [19] (byte) point_init::point_idx#0 ← (byte) main::i#2
     // [20] call point_init 
@@ -5614,25 +5615,25 @@ main: {
     // [26] if((byte) main::i#1!=(const byte) SIZE-(byte) 1+(byte) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #SIZE-1+1
     cmp.z i
-    bne b1
+    bne __b1
     // main::@2
-  b2:
+  __b2:
     // while(*RASTER!=$ff)
     // [27] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     // main::@3
     // (*BORDERCOL)++;
     // [28] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
-    jmp b2
+    jmp __b2
 }
   // bitmap_plot
 // Plot a single dot in the bitmap
 // bitmap_plot(word zeropage($a) x, byte register(X) y)
 bitmap_plot: {
-    .label _1 = $e
+    .label __1 = $e
     .label x = $a
     .label plotter = $c
     // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
@@ -5645,18 +5646,18 @@ bitmap_plot: {
     // [30] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 -- vwuz1=vwuz2_band_vwuc1 
     lda.z x
     and #<$fff8
-    sta.z _1
+    sta.z __1
     lda.z x+1
     and #>$fff8
-    sta.z _1+1
+    sta.z __1+1
     // plotter += ( x & $fff8 )
     // [31] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 -- pbuz1=pbuz1_plus_vwuz2 
     lda.z plotter
     clc
-    adc.z _1
+    adc.z __1
     sta.z plotter
     lda.z plotter+1
-    adc.z _1+1
+    adc.z __1+1
     sta.z plotter+1
     // <x
     // [32] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 -- vbuaa=_lo_vwuz1 
@@ -5677,11 +5678,11 @@ bitmap_plot: {
 // Initialize the points to be animated
 // point_init(byte zeropage($12) point_idx)
 point_init: {
-    .label _3 = 6
-    .label _4 = $c
-    .label _9 = $e
-    .label _10 = $10
-    .label _11 = $10
+    .label __3 = 6
+    .label __4 = $c
+    .label __9 = $e
+    .label __10 = $10
+    .label __11 = $10
     .label point_idx = $12
     .label y_diff = 6
     .label abs16s1_return = 2
@@ -5706,31 +5707,31 @@ point_init: {
     // [37] (signed word~) point_init::$3 ← (signed word)*((const byte[SIZE]) y_end + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_end,y
-    sta.z _3
+    sta.z __3
     lda #0
-    sta.z _3+1
+    sta.z __3+1
     // (signed word)y_start[point_idx]
     // [38] (signed word~) point_init::$4 ← (signed word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     lda y_start,y
-    sta.z _4
+    sta.z __4
     lda #0
-    sta.z _4+1
+    sta.z __4+1
     // y_diff = ((signed word)y_end[point_idx])-((signed word)y_start[point_idx])
     // [39] (signed word) point_init::y_diff#0 ← (signed word~) point_init::$3 - (signed word~) point_init::$4 -- vwsz1=vwsz1_minus_vwsz2 
     lda.z y_diff
     sec
-    sbc.z _4
+    sbc.z __4
     sta.z y_diff
     lda.z y_diff+1
-    sbc.z _4+1
+    sbc.z __4+1
     sta.z y_diff+1
     // point_init::abs16s1
     // if(w<0)
     // [40] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::abs16s1_@1 -- vwsz1_lt_0_then_la1 
     lda.z x_diff+1
-    bpl !abs16s1_b1+
-    jmp abs16s1_b1
-  !abs16s1_b1:
+    bpl !abs16s1___b1+
+    jmp abs16s1___b1
+  !abs16s1___b1:
     // point_init::abs16s1_@3
     // [41] (word~) point_init::abs16s1_return#6 ← (word)(signed word) point_init::x_diff#1 -- vwuz1=vwuz2 
     lda.z x_diff
@@ -5745,9 +5746,9 @@ point_init: {
     // if(w<0)
     // [43] if((signed word) point_init::y_diff#0<(signed byte) 0) goto point_init::abs16s2_@1 -- vwsz1_lt_0_then_la1 
     lda.z y_diff+1
-    bpl !abs16s2_b1+
-    jmp abs16s2_b1
-  !abs16s2_b1:
+    bpl !abs16s2___b1+
+    jmp abs16s2___b1
+  !abs16s2___b1:
     // point_init::abs16s2_@3
     // [44] (word~) point_init::abs16s2_return#6 ← (word)(signed word) point_init::y_diff#0 -- vwuz1=vwuz2 
     lda.z y_diff
@@ -5758,19 +5759,19 @@ point_init: {
     // [45] phi (word) point_init::abs16s2_return#2 = (word~) point_init::abs16s2_return#5 [phi:point_init::abs16s2_@1/point_init::abs16s2_@3->point_init::abs16s2_@return#0] -- register_copy 
     // point_init::abs16s2_@return
     // point_init::@6
-  b6:
+  __b6:
     // if(abs16s(x_diff)>abs16s(y_diff))
     // [46] if((word) point_init::abs16s1_return#2>(word) point_init::abs16s2_return#2) goto point_init::@1 -- vwuz1_gt_vwuz2_then_la1 
     lda.z abs16s2_return+1
     cmp.z abs16s1_return+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z abs16s2_return
     cmp.z abs16s1_return
-    bcc b1
+    bcc __b1
   !:
     // point_init::@2
-  b2:
+  __b2:
     // x_start[point_idx]*$10
     // [47] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z point_idx
@@ -5778,45 +5779,45 @@ point_init: {
     tax
     // [48] (word~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$20) << (byte) 4 -- vwuz1=pwuc1_derefidx_vbuxx_rol_4 
     lda x_start,x
-    sta.z _9
+    sta.z __9
     lda x_start+1,x
-    sta.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
-    asl.z _9
-    rol.z _9+1
+    sta.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
+    asl.z __9
+    rol.z __9+1
     // x_cur[point_idx] = x_start[point_idx]*$10
     // [49] *((const word[SIZE]) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda.z _9
+    lda.z __9
     sta x_cur,x
-    lda.z _9+1
+    lda.z __9+1
     sta x_cur+1,x
     // (word)y_start[point_idx]
     // [50] (word~) point_init::$10 ← (word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_start,y
-    sta.z _10
+    sta.z __10
     lda #0
-    sta.z _10+1
+    sta.z __10+1
     // ((word)y_start[point_idx])*$10
     // [51] (word~) point_init::$11 ← (word~) point_init::$10 << (byte) 4 -- vwuz1=vwuz1_rol_4 
-    asl.z _11
-    rol.z _11+1
-    asl.z _11
-    rol.z _11+1
-    asl.z _11
-    rol.z _11+1
-    asl.z _11
-    rol.z _11+1
+    asl.z __11
+    rol.z __11+1
+    asl.z __11
+    rol.z __11+1
+    asl.z __11
+    rol.z __11+1
+    asl.z __11
+    rol.z __11+1
     // y_cur[point_idx] = ((word)y_start[point_idx])*$10
     // [52] *((const word[SIZE]) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 -- pwuc1_derefidx_vbuxx=vwuz1 
-    lda.z _11
+    lda.z __11
     sta y_cur,x
-    lda.z _11+1
+    lda.z __11+1
     sta y_cur+1,x
     // delay[point_idx] = DELAY
     // [53] *((const byte[SIZE]) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY -- pbuc1_derefidx_vbuz1=vbuc2 
@@ -5827,12 +5828,12 @@ point_init: {
     // [54] return 
     rts
     // point_init::@1
-  b1:
+  __b1:
     // if(x_diff<0)
     // [55] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::@4 -- vwsz1_lt_0_then_la1 
     // X is driver - abs(y/x) is < 1
     lda.z x_diff+1
-    bmi b4
+    bmi __b4
     // point_init::@3
     // x_add[point_idx] = $10
     // [56] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 -- pbsc1_derefidx_vbuz1=vbsc2 
@@ -5841,7 +5842,7 @@ point_init: {
     ldy.z point_idx
     sta x_add,y
     // point_init::@5
-  b5:
+  __b5:
     // divr16s(0, x_diff, y_diff)
     // [57] (signed word) divr16s::divisor#0 ← (signed word) point_init::x_diff#1
     // [58] (signed word) divr16s::rem#0 ← (signed word) point_init::y_diff#0
@@ -5866,18 +5867,18 @@ point_init: {
     // [64] *((const signed byte[SIZE]) y_add + (byte) point_init::point_idx#0) ← (signed byte)(byte~) point_init::$16 -- pbsc1_derefidx_vbuz1=vbsaa 
     ldy.z point_idx
     sta y_add,y
-    jmp b2
+    jmp __b2
     // point_init::@4
-  b4:
+  __b4:
     // x_add[point_idx] = -$10
     // [65] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 -- pbsc1_derefidx_vbuz1=vbsc2 
     // x add = -1.0
     lda #-$10
     ldy.z point_idx
     sta x_add,y
-    jmp b5
+    jmp __b5
     // point_init::abs16s2_@1
-  abs16s2_b1:
+  abs16s2___b1:
     // -w
     // [66] (signed word) point_init::abs16s2_return#0 ← - (signed word) point_init::y_diff#0 -- vwsz1=_neg_vwsz2 
     sec
@@ -5888,9 +5889,9 @@ point_init: {
     sbc.z y_diff+1
     sta.z abs16s2_return+1
     // [67] (word~) point_init::abs16s2_return#5 ← (word)(signed word) point_init::abs16s2_return#0
-    jmp b6
+    jmp __b6
     // point_init::abs16s1_@1
-  abs16s1_b1:
+  abs16s1___b1:
     // -w
     // [68] (signed word) point_init::abs16s1_return#0 ← - (signed word) point_init::x_diff#1 -- vwsz1=_neg_vwsz2 
     sec
@@ -5921,7 +5922,7 @@ divr16s: {
     // if(dividend<0 || rem<0)
     // [71] if((signed word) divr16s::rem#0<(signed byte) 0) goto divr16s::@1 -- vwsz1_lt_0_then_la1 
     lda.z rem+1
-    bmi b1
+    bmi __b1
     // divr16s::@6
     // [72] (word~) divr16s::remu#8 ← (word)(signed word) divr16s::rem#0
     // [73] phi from divr16s::@6 to divr16s::@2 [phi:divr16s::@6->divr16s::@2]
@@ -5929,18 +5930,18 @@ divr16s: {
     // [73] phi (byte) divr16s::neg#3 = (byte) 0 [phi:divr16s::@6->divr16s::@2#1] -- vbuyy=vbuc1 
     ldy #0
     // divr16s::@2
-  b2:
+  __b2:
     // if(divisor<0)
     // [74] if((signed word) divr16s::divisor#0<(signed byte) 0) goto divr16s::@3 -- vwsz1_lt_0_then_la1 
     lda.z divisor+1
-    bmi b3
+    bmi __b3
     // divr16s::@7
     // [75] (word~) divr16s::divisoru#5 ← (word)(signed word) divr16s::divisor#0
     // [76] phi from divr16s::@3 divr16s::@7 to divr16s::@4 [phi:divr16s::@3/divr16s::@7->divr16s::@4]
     // [76] phi (byte) divr16s::neg#4 = (byte) divr16s::neg#2 [phi:divr16s::@3/divr16s::@7->divr16s::@4#0] -- register_copy 
     // [76] phi (word) divr16s::divisoru#3 = (word~) divr16s::divisoru#4 [phi:divr16s::@3/divr16s::@7->divr16s::@4#1] -- register_copy 
     // divr16s::@4
-  b4:
+  __b4:
     // divr16u(dividendu, divisoru, remu)
     // [77] (word) divr16u::divisor#0 ← (word) divr16s::divisoru#3
     // [78] (word) divr16u::rem#3 ← (word) divr16s::remu#3
@@ -5955,7 +5956,7 @@ divr16s: {
     // if(neg==0)
     // [82] if((byte) divr16s::neg#4==(byte) 0) goto divr16s::@5 -- vbuyy_eq_0_then_la1 
     cpy #0
-    beq breturn
+    beq __breturn
     // divr16s::@8
     // return -(signed word)resultu;
     // [83] (signed word) divr16s::return#1 ← - (signed word)(word) divr16s::resultu#0 -- vwsz1=_neg_vwsz1 
@@ -5969,14 +5970,14 @@ divr16s: {
     // [84] phi from divr16s::@5 divr16s::@8 to divr16s::@return [phi:divr16s::@5/divr16s::@8->divr16s::@return]
     // [84] phi (signed word) divr16s::return#2 = (signed word~) divr16s::return#7 [phi:divr16s::@5/divr16s::@8->divr16s::@return#0] -- register_copy 
     // divr16s::@return
-  breturn:
+  __breturn:
     // }
     // [85] return 
     rts
     // divr16s::@5
     // [86] (signed word~) divr16s::return#7 ← (signed word)(word) divr16s::resultu#0
     // divr16s::@3
-  b3:
+  __b3:
     // -divisor
     // [87] (signed word) divr16s::divisoru#1 ← - (signed word) divr16s::divisor#0 -- vwsz1=_neg_vwsz1 
     sec
@@ -5992,9 +5993,9 @@ divr16s: {
     eor #1
     tay
     // [89] (word~) divr16s::divisoru#4 ← (word)(signed word) divr16s::divisoru#1
-    jmp b4
+    jmp __b4
     // divr16s::@1
-  b1:
+  __b1:
     // -rem
     // [90] (signed word) divr16s::remu#1 ← - (signed word) divr16s::rem#0 -- vwsz1=_neg_vwsz1 
     sec
@@ -6009,7 +6010,7 @@ divr16s: {
     // [73] phi (word) divr16s::remu#3 = (word~) divr16s::remu#7 [phi:divr16s::@1->divr16s::@2#0] -- register_copy 
     // [73] phi (byte) divr16s::neg#3 = (byte) 1 [phi:divr16s::@1->divr16s::@2#1] -- vbuyy=vbuc1 
     ldy #1
-    jmp b2
+    jmp __b2
 }
   // divr16u
 // Performs division on two 16 bit unsigned words and an initial remainder
@@ -6040,7 +6041,7 @@ divr16u: {
     // [93] phi (word) divr16u::dividend#2 = (word) divr16u::dividend#0 [phi:divr16u::@3->divr16u::@1#2] -- register_copy 
     // [93] phi (word) divr16u::rem#4 = (word) divr16u::rem#9 [phi:divr16u::@3->divr16u::@1#3] -- register_copy 
     // divr16u::@1
-  b1:
+  __b1:
     // rem = rem << 1
     // [94] (word) divr16u::rem#0 ← (word) divr16u::rem#4 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z rem
@@ -6054,7 +6055,7 @@ divr16u: {
     // if( (>dividend & $80) != 0 )
     // [97] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
-    beq b2
+    beq __b2
     // divr16u::@4
     // rem = rem | 1
     // [98] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 -- vwuz1=vwuz1_bor_vbuc1 
@@ -6064,7 +6065,7 @@ divr16u: {
     // [99] phi from divr16u::@1 divr16u::@4 to divr16u::@2 [phi:divr16u::@1/divr16u::@4->divr16u::@2]
     // [99] phi (word) divr16u::rem#5 = (word) divr16u::rem#0 [phi:divr16u::@1/divr16u::@4->divr16u::@2#0] -- register_copy 
     // divr16u::@2
-  b2:
+  __b2:
     // dividend = dividend << 1
     // [100] (word) divr16u::dividend#0 ← (word) divr16u::dividend#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z dividend
@@ -6077,11 +6078,11 @@ divr16u: {
     // [102] if((word) divr16u::rem#5<(word) divr16u::divisor#0) goto divr16u::@3 -- vwuz1_lt_vwuz2_then_la1 
     lda.z rem+1
     cmp.z divisor+1
-    bcc b3
+    bcc __b3
     bne !+
     lda.z rem
     cmp.z divisor
-    bcc b3
+    bcc __b3
   !:
     // divr16u::@5
     // quotient++;
@@ -6103,13 +6104,13 @@ divr16u: {
     // [105] phi (word) divr16u::return#0 = (word) divr16u::quotient#1 [phi:divr16u::@2/divr16u::@5->divr16u::@3#0] -- register_copy 
     // [105] phi (word) divr16u::rem#9 = (word) divr16u::rem#5 [phi:divr16u::@2/divr16u::@5->divr16u::@3#1] -- register_copy 
     // divr16u::@3
-  b3:
+  __b3:
     // for( byte i : 0..15)
     // [106] (byte) divr16u::i#1 ← ++ (byte) divr16u::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [107] if((byte) divr16u::i#1!=(byte) $10) goto divr16u::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
-    bne b1
+    bne __b1
     // divr16u::@return
     // }
     // [108] return 
@@ -6135,7 +6136,7 @@ screen_fill: {
     // [110] phi (byte) screen_fill::y#4 = (byte) screen_fill::y#1 [phi:screen_fill::@3->screen_fill::@1#0] -- register_copy 
     // [110] phi (byte*) screen_fill::screen#3 = (byte*) screen_fill::screen#1 [phi:screen_fill::@3->screen_fill::@1#1] -- register_copy 
     // screen_fill::@1
-  b1:
+  __b1:
     // [111] phi from screen_fill::@1 to screen_fill::@2 [phi:screen_fill::@1->screen_fill::@2]
     // [111] phi (byte) screen_fill::x#2 = (byte) 0 [phi:screen_fill::@1->screen_fill::@2#0] -- vbuxx=vbuc1 
     ldx #0
@@ -6144,7 +6145,7 @@ screen_fill: {
     // [111] phi (byte) screen_fill::x#2 = (byte) screen_fill::x#1 [phi:screen_fill::@2->screen_fill::@2#0] -- register_copy 
     // [111] phi (byte*) screen_fill::screen#2 = (byte*) screen_fill::screen#1 [phi:screen_fill::@2->screen_fill::@2#1] -- register_copy 
     // screen_fill::@2
-  b2:
+  __b2:
     // *screen++ = ch
     // [112] *((byte*) screen_fill::screen#2) ← (const byte) screen_fill::ch#0 -- _deref_pbuz1=vbuc1 
     lda #ch
@@ -6161,7 +6162,7 @@ screen_fill: {
     inx
     // [115] if((byte) screen_fill::x#1!=(byte) $28) goto screen_fill::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
-    bne b2
+    bne __b2
     // screen_fill::@3
     // for( byte y: 0..24)
     // [116] (byte) screen_fill::y#1 ← ++ (byte) screen_fill::y#4 -- vbuz1=_inc_vbuz1 
@@ -6169,7 +6170,7 @@ screen_fill: {
     // [117] if((byte) screen_fill::y#1!=(byte) $19) goto screen_fill::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
     cmp.z y
-    bne b1
+    bne __b1
     // screen_fill::@return
     // }
     // [118] return 
@@ -6196,7 +6197,7 @@ bitmap_clear: {
     // [121] phi (byte) bitmap_clear::y#4 = (byte) bitmap_clear::y#1 [phi:bitmap_clear::@3->bitmap_clear::@1#0] -- register_copy 
     // [121] phi (byte*) bitmap_clear::bitmap#3 = (byte*) bitmap_clear::bitmap#1 [phi:bitmap_clear::@3->bitmap_clear::@1#1] -- register_copy 
     // bitmap_clear::@1
-  b1:
+  __b1:
     // [122] phi from bitmap_clear::@1 to bitmap_clear::@2 [phi:bitmap_clear::@1->bitmap_clear::@2]
     // [122] phi (byte) bitmap_clear::x#2 = (byte) 0 [phi:bitmap_clear::@1->bitmap_clear::@2#0] -- vbuxx=vbuc1 
     ldx #0
@@ -6205,7 +6206,7 @@ bitmap_clear: {
     // [122] phi (byte) bitmap_clear::x#2 = (byte) bitmap_clear::x#1 [phi:bitmap_clear::@2->bitmap_clear::@2#0] -- register_copy 
     // [122] phi (byte*) bitmap_clear::bitmap#2 = (byte*) bitmap_clear::bitmap#1 [phi:bitmap_clear::@2->bitmap_clear::@2#1] -- register_copy 
     // bitmap_clear::@2
-  b2:
+  __b2:
     // *bitmap++ = 0
     // [123] *((byte*) bitmap_clear::bitmap#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
@@ -6222,7 +6223,7 @@ bitmap_clear: {
     inx
     // [126] if((byte) bitmap_clear::x#1!=(byte) $c8) goto bitmap_clear::@2 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$c8
-    bne b2
+    bne __b2
     // bitmap_clear::@3
     // for( byte y: 0..39 )
     // [127] (byte) bitmap_clear::y#1 ← ++ (byte) bitmap_clear::y#4 -- vbuz1=_inc_vbuz1 
@@ -6230,7 +6231,7 @@ bitmap_clear: {
     // [128] if((byte) bitmap_clear::y#1!=(byte) $28) goto bitmap_clear::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp.z y
-    bne b1
+    bne __b1
     // bitmap_clear::@return
     // }
     // [129] return 
@@ -6238,7 +6239,7 @@ bitmap_clear: {
 }
   // bitmap_init
 bitmap_init: {
-    .label _7 = $12
+    .label __7 = $12
     .label yoffs = 8
     // [131] phi from bitmap_init to bitmap_init::@1 [phi:bitmap_init->bitmap_init::@1]
     // [131] phi (byte) bitmap_init::x#2 = (byte) 0 [phi:bitmap_init->bitmap_init::@1#0] -- vbuxx=vbuc1 
@@ -6249,7 +6250,7 @@ bitmap_init: {
     // [131] phi (byte) bitmap_init::x#2 = (byte) bitmap_init::x#1 [phi:bitmap_init::@2->bitmap_init::@1#0] -- register_copy 
     // [131] phi (byte) bitmap_init::bits#3 = (byte) bitmap_init::bits#4 [phi:bitmap_init::@2->bitmap_init::@1#1] -- register_copy 
     // bitmap_init::@1
-  b1:
+  __b1:
     // bitmap_plot_bit[x] = bits
     // [132] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_bit,x
@@ -6259,7 +6260,7 @@ bitmap_init: {
     // if(bits==0)
     // [134] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@6 -- vbuaa_neq_0_then_la1 
     cmp #0
-    bne b2
+    bne __b2
     // [136] phi from bitmap_init::@1 to bitmap_init::@2 [phi:bitmap_init::@1->bitmap_init::@2]
     // [136] phi (byte) bitmap_init::bits#4 = (byte) $80 [phi:bitmap_init::@1->bitmap_init::@2#0] -- vbuaa=vbuc1 
     lda #$80
@@ -6268,13 +6269,13 @@ bitmap_init: {
     // [136] phi from bitmap_init::@6 to bitmap_init::@2 [phi:bitmap_init::@6->bitmap_init::@2]
     // [136] phi (byte) bitmap_init::bits#4 = (byte) bitmap_init::bits#1 [phi:bitmap_init::@6->bitmap_init::@2#0] -- register_copy 
     // bitmap_init::@2
-  b2:
+  __b2:
     // for(byte x : 0..255)
     // [137] (byte) bitmap_init::x#1 ← ++ (byte) bitmap_init::x#2 -- vbuxx=_inc_vbuxx 
     inx
     // [138] if((byte) bitmap_init::x#1!=(byte) 0) goto bitmap_init::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b1
+    bne __b1
     // [139] phi from bitmap_init::@2 to bitmap_init::@3 [phi:bitmap_init::@2->bitmap_init::@3]
     // [139] phi (byte*) bitmap_init::yoffs#2 = (const byte*) BITMAP [phi:bitmap_init::@2->bitmap_init::@3#0] -- pbuz1=pbuc1 
     lda #<BITMAP
@@ -6287,17 +6288,17 @@ bitmap_init: {
     // [139] phi (byte*) bitmap_init::yoffs#2 = (byte*) bitmap_init::yoffs#4 [phi:bitmap_init::@4->bitmap_init::@3#0] -- register_copy 
     // [139] phi (byte) bitmap_init::y#2 = (byte) bitmap_init::y#1 [phi:bitmap_init::@4->bitmap_init::@3#1] -- register_copy 
     // bitmap_init::@3
-  b3:
+  __b3:
     // y&$7
     // [140] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
-    sax.z _7
+    sax.z __7
     // <yoffs
     // [141] (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2 -- vbuaa=_lo_pbuz1 
     lda.z yoffs
     // y&$7 | <yoffs
     // [142] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
-    ora.z _7
+    ora.z __7
     // bitmap_plot_ylo[y] = y&$7 | <yoffs
     // [143] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
@@ -6310,8 +6311,8 @@ bitmap_init: {
     // if((y&$7)==7)
     // [146] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
-    cmp.z _7
-    bne b4
+    cmp.z __7
+    bne __b4
     // bitmap_init::@5
     // yoffs = yoffs + 40*8
     // [147] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
@@ -6325,13 +6326,13 @@ bitmap_init: {
     // [148] phi from bitmap_init::@3 bitmap_init::@5 to bitmap_init::@4 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4]
     // [148] phi (byte*) bitmap_init::yoffs#4 = (byte*) bitmap_init::yoffs#2 [phi:bitmap_init::@3/bitmap_init::@5->bitmap_init::@4#0] -- register_copy 
     // bitmap_init::@4
-  b4:
+  __b4:
     // for(byte y : 0..255)
     // [149] (byte) bitmap_init::y#1 ← ++ (byte) bitmap_init::y#2 -- vbuxx=_inc_vbuxx 
     inx
     // [150] if((byte) bitmap_init::y#1!=(byte) 0) goto bitmap_init::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
-    bne b3
+    bne __b3
     // bitmap_init::@return
     // }
     // [151] return 

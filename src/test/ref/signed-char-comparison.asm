@@ -6,11 +6,11 @@
   .label SCREEN = $400
 main: {
     ldx #-$80
-  b1:
+  __b1:
     jsr debug
     inx
     cpx #-$80
-    bne b1
+    bne __b1
     rts
 }
 // debug(signed byte register(X) dy)
@@ -18,13 +18,13 @@ debug: {
     txa
     sec
     sbc #-$78
-    beq breturn
+    beq __breturn
     bvc !+
     eor #$80
   !:
-    bmi breturn
+    bmi __breturn
     lda #$a
     sta SCREEN,x
-  breturn:
+  __breturn:
     rts
 }

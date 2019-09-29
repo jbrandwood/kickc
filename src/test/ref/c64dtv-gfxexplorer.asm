@@ -153,25 +153,25 @@ main: {
     sta.z keyboard_events_size
     lda #FORM_CURSOR_BLINK/2
     sta.z form_cursor_count
-  b2:
+  __b2:
     jsr form_mode
     jsr gfx_mode
-    jmp b2
+    jmp __b2
 }
 // Change graphics mode to show the selected graphics mode
 gfx_mode: {
-    .label _22 = 2
-    .label _26 = $1a
-    .label _28 = $1c
-    .label _36 = 2
-    .label _40 = $16
-    .label _42 = $18
-    .label _53 = 6
-    .label _54 = 6
-    .label _55 = 6
-    .label _56 = $1f
-    .label _58 = $e
-    .label _59 = $e
+    .label __22 = 2
+    .label __26 = $1a
+    .label __28 = $1c
+    .label __36 = 2
+    .label __40 = $16
+    .label __42 = $18
+    .label __53 = 6
+    .label __54 = 6
+    .label __55 = 6
+    .label __56 = $1f
+    .label __58 = $e
+    .label __59 = $e
     .label plane_a = 2
     .label plane_b = 2
     .label vic_colors = 6
@@ -179,72 +179,72 @@ gfx_mode: {
     .label cy = $a
     lda form_fields_val+5
     cmp #0
-    beq b10
+    beq b1
     ldx #DTV_LINEAR
-    jmp b1
-  b10:
-    ldx #0
+    jmp __b1
   b1:
+    ldx #0
+  __b1:
     lda form_fields_val+8
     cmp #0
-    beq b2
+    beq __b2
     txa
     ora #DTV_BORDER_OFF
     tax
-  b2:
+  __b2:
     lda form_fields_val+4
     cmp #0
-    beq b3
+    beq __b3
     txa
     ora #DTV_HIGHCOLOR
     tax
-  b3:
+  __b3:
     lda form_fields_val+9
     cmp #0
-    beq b4
+    beq __b4
     txa
     ora #DTV_OVERSCAN
     tax
-  b4:
+  __b4:
     lda form_fields_val+6
     cmp #0
-    beq b5
+    beq __b5
     txa
     ora #DTV_COLORRAM_OFF
     tax
-  b5:
+  __b5:
     lda form_fields_val+7
     cmp #0
-    beq b6
+    beq __b6
     txa
     ora #DTV_CHUNKY
     tax
-  b6:
+  __b6:
     stx DTV_CONTROL
     lda form_fields_val+3
     cmp #0
-    beq b11
+    beq b2
     ldx #VIC_DEN|VIC_RSEL|3|VIC_ECM
-    jmp b7
-  b11:
+    jmp __b7
+  b2:
     ldx #VIC_DEN|VIC_RSEL|3
-  b7:
+  __b7:
     lda form_fields_val+1
     cmp #0
-    beq b8
+    beq __b8
     txa
     ora #VIC_BMM
     tax
-  b8:
+  __b8:
     stx VIC_CONTROL
     lda form_fields_val+2
     cmp #0
-    beq b12
+    beq b3
     lda #VIC_CSEL|VIC_MCM
-    jmp b9
-  b12:
+    jmp __b9
+  b3:
     lda #VIC_CSEL
-  b9:
+  __b9:
     sta VIC_CONTROL2
     lda form_fields_val+$b
     asl
@@ -269,18 +269,18 @@ gfx_mode: {
     adc #0
     sta.z plane_a+3
     lda.z plane_a
-    sta.z _26
+    sta.z __26
     lda.z plane_a+1
-    sta.z _26+1
-    lda.z _26
+    sta.z __26+1
+    lda.z __26
     sta DTV_PLANEA_START_LO
-    lda.z _26+1
+    lda.z __26+1
     sta DTV_PLANEA_START_MI
     lda.z plane_a+2
-    sta.z _28
+    sta.z __28
     lda.z plane_a+3
-    sta.z _28+1
-    lda.z _28
+    sta.z __28+1
+    lda.z __28
     sta DTV_PLANEA_START_HI
     lda form_fields_val+$d
     asl
@@ -321,18 +321,18 @@ gfx_mode: {
     adc #0
     sta.z plane_b+3
     lda.z plane_b
-    sta.z _40
+    sta.z __40
     lda.z plane_b+1
-    sta.z _40+1
-    lda.z _40
+    sta.z __40+1
+    lda.z __40
     sta DTV_PLANEB_START_LO
-    lda.z _40+1
+    lda.z __40+1
     sta DTV_PLANEB_START_MI
     lda.z plane_b+2
-    sta.z _42
+    sta.z __42
     lda.z plane_b+3
-    sta.z _42+1
-    lda.z _42
+    sta.z __42+1
+    lda.z __42
     sta DTV_PLANEB_START_HI
     lda form_fields_val+$14
     asl
@@ -358,31 +358,31 @@ gfx_mode: {
     sta CIA2_PORT_A
     lda form_fields_val+$18
     jsr get_vic_screen
-    lda.z _54
+    lda.z __54
     and #<$3fff
-    sta.z _54
-    lda.z _54+1
+    sta.z __54
+    lda.z __54+1
     and #>$3fff
-    sta.z _54+1
+    sta.z __54+1
     ldy #6
   !:
-    lsr.z _55+1
-    ror.z _55
+    lsr.z __55+1
+    ror.z __55
     dey
     bne !-
-    lda.z _55
-    sta.z _56
+    lda.z __55
+    sta.z __56
     lda form_fields_val+$19
     jsr get_vic_charset
-    lda.z _59
+    lda.z __59
     and #<$3fff
-    sta.z _59
-    lda.z _59+1
+    sta.z __59
+    lda.z __59+1
     and #>$3fff
-    sta.z _59+1
+    sta.z __59+1
     lsr
     lsr
-    ora.z _56
+    ora.z __56
     // Set VIC Bank
     // VIC memory
     sta VIC_MEMORY
@@ -394,9 +394,9 @@ gfx_mode: {
     sta.z col
     lda #>COLS
     sta.z col+1
-  b19:
+  __b19:
     ldx #0
-  b20:
+  __b20:
     ldy #0
     lda (vic_colors),y
     sta (col),y
@@ -410,11 +410,11 @@ gfx_mode: {
   !:
     inx
     cpx #$28
-    bne b20
+    bne __b20
     inc.z cy
     lda #$19
     cmp.z cy
-    bne b19
+    bne __b19
     // Background colors
     lda #0
     sta BORDERCOL
@@ -449,36 +449,36 @@ gfx_mode: {
     // DTV Palette
     lda form_fields_val+$1b
     cmp #0
-    beq b13
+    beq b4
     ldx #0
   // DTV Palette - Grey Tones
-  b23:
+  __b23:
     txa
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b23
-  b25:
+    bne __b23
+  __b25:
     lda #$ff
     cmp RASTER
-    bne b25
+    bne __b25
     jsr keyboard_event_scan
     jsr keyboard_event_get
     cmp #KEY_SPACE
-    beq breturn
-    jmp b25
-  breturn:
+    beq __breturn
+    jmp __b25
+  __breturn:
     rts
   // DTV Palette - default
-  b13:
+  b4:
     ldx #0
-  b24:
+  __b24:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b24
-    jmp b25
+    bne __b24
+    jmp __b25
 }
 // Get the next event from the keyboard event buffer.
 // Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
@@ -506,99 +506,99 @@ keyboard_event_scan: {
     lda #0
     sta.z keycode
     sta.z row
-  b7:
+  __b7:
     ldx.z row
     jsr keyboard_matrix_read
     sta.z row_scan
     ldy.z row
     cmp keyboard_scan_values,y
-    bne b6
+    bne b3
     lax.z keycode
     axs #-[8]
     stx.z keycode
-  b8:
+  __b8:
     inc.z row
     lda #8
     cmp.z row
-    bne b7
+    bne __b7
     lda #KEY_LSHIFT
     sta.z keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b4
+    beq b1
     ldx #KEY_MODIFIER_LSHIFT
-    jmp b1
-  b4:
-    ldx #0
+    jmp __b1
   b1:
+    ldx #0
+  __b1:
     lda #KEY_RSHIFT
     sta.z keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b2
+    beq __b2
     txa
     ora #KEY_MODIFIER_RSHIFT
     tax
-  b2:
+  __b2:
     lda #KEY_CTRL
     sta.z keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq b3
+    beq __b3
     txa
     ora #KEY_MODIFIER_CTRL
     tax
-  b3:
+  __b3:
     lda #KEY_COMMODORE
     sta.z keyboard_event_pressed.keycode
     jsr keyboard_event_pressed
     cmp #0
-    beq breturn
+    beq __breturn
     txa
     ora #KEY_MODIFIER_COMMODORE
     tax
-  breturn:
+  __breturn:
     rts
   // Something has changed on the keyboard row - check each column
-  b6:
+  b3:
     ldx #0
-  b9:
+  __b9:
     lda.z row_scan
     ldy.z row
     eor keyboard_scan_values,y
     and keyboard_matrix_col_bitmask,x
     cmp #0
-    beq b10
+    beq __b10
     lda #8
     cmp.z keyboard_events_size
-    beq b10
+    beq __b10
     lda keyboard_matrix_col_bitmask,x
     and.z row_scan
     cmp #0
-    beq b11
+    beq __b11
     // Key pressed
     lda.z keycode
     ldy.z keyboard_events_size
     sta keyboard_events,y
     inc.z keyboard_events_size
-  b10:
+  __b10:
     inc.z keycode
     inx
     cpx #8
-    bne b9
+    bne __b9
     // Store the current keyboard status for the row to debounce
     lda.z row_scan
     ldy.z row
     sta keyboard_scan_values,y
-    jmp b8
-  b11:
+    jmp __b8
+  __b11:
     lda #$40
     ora.z keycode
     // Key released
     ldy.z keyboard_events_size
     sta keyboard_events,y
     inc.z keyboard_events_size
-    jmp b10
+    jmp __b10
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
@@ -638,39 +638,39 @@ keyboard_matrix_read: {
 get_vic_screen: {
     .label return = 6
     cmp #0
-    beq b1
+    beq __b1
     cmp #1
-    beq b2
+    beq b1
     cmp #2
-    beq b3
+    beq b2
     cmp #3
-    beq b4
+    beq b3
     cmp #4
-    bne b1
+    bne __b1
     lda #<VIC_SCREEN4
     sta.z return
     lda #>VIC_SCREEN4
     sta.z return+1
     rts
-  b1:
+  __b1:
     lda #<VIC_SCREEN0
     sta.z return
     lda #>VIC_SCREEN0
     sta.z return+1
     rts
-  b2:
+  b1:
     lda #<VIC_SCREEN1
     sta.z return
     lda #>VIC_SCREEN1
     sta.z return+1
     rts
-  b3:
+  b2:
     lda #<VIC_SCREEN2
     sta.z return
     lda #>VIC_SCREEN2
     sta.z return+1
     rts
-  b4:
+  b3:
     lda #<VIC_SCREEN3
     sta.z return
     lda #>VIC_SCREEN3
@@ -682,15 +682,15 @@ get_vic_screen: {
 get_vic_charset: {
     .label return = $e
     cmp #0
-    beq b1
+    beq __b1
     cmp #1
-    bne b1
+    bne __b1
     lda #<VIC_BITMAP
     sta.z return
     lda #>VIC_BITMAP
     sta.z return+1
     rts
-  b1:
+  __b1:
     lda #<VIC_CHARSET_ROM
     sta.z return
     lda #>VIC_CHARSET_ROM
@@ -702,49 +702,49 @@ get_vic_charset: {
 get_plane: {
     .label return = 2
     cmp #0
-    beq b2
+    beq b1
     cmp #1
+    bne !b6+
+    jmp b6
+  !b6:
+    cmp #2
     bne !b7+
     jmp b7
   !b7:
-    cmp #2
+    cmp #3
     bne !b8+
     jmp b8
   !b8:
-    cmp #3
+    cmp #4
     bne !b9+
     jmp b9
   !b9:
-    cmp #4
+    cmp #5
     bne !b10+
     jmp b10
   !b10:
-    cmp #5
+    cmp #6
     bne !b11+
     jmp b11
   !b11:
-    cmp #6
+    cmp #7
     bne !b12+
     jmp b12
   !b12:
-    cmp #7
+    cmp #8
     bne !b13+
     jmp b13
   !b13:
-    cmp #8
-    bne !b14+
-    jmp b14
-  !b14:
     cmp #9
-    beq b3
+    beq b2
     cmp #$a
-    beq b4
+    beq b3
     cmp #$b
-    beq b5
+    beq b4
     cmp #$c
-    beq b6
+    beq b5
     cmp #$d
-    bne b1
+    bne __b1
     lda #<PLANE_FULL
     sta.z return
     lda #>PLANE_FULL
@@ -752,6 +752,16 @@ get_plane: {
     lda #<PLANE_FULL>>$10
     sta.z return+2
     lda #>PLANE_FULL>>$10
+    sta.z return+3
+    rts
+  __b1:
+    lda #<VIC_SCREEN0
+    sta.z return
+    lda #>VIC_SCREEN0
+    sta.z return+1
+    lda #<VIC_SCREEN0>>$10
+    sta.z return+2
+    lda #>VIC_SCREEN0>>$10
     sta.z return+3
     rts
   b1:
@@ -765,16 +775,6 @@ get_plane: {
     sta.z return+3
     rts
   b2:
-    lda #<VIC_SCREEN0
-    sta.z return
-    lda #>VIC_SCREEN0
-    sta.z return+1
-    lda #<VIC_SCREEN0>>$10
-    sta.z return+2
-    lda #>VIC_SCREEN0>>$10
-    sta.z return+3
-    rts
-  b3:
     lda #<PLANE_HORISONTAL2
     sta.z return
     lda #>PLANE_HORISONTAL2
@@ -784,7 +784,7 @@ get_plane: {
     lda #>PLANE_HORISONTAL2>>$10
     sta.z return+3
     rts
-  b4:
+  b3:
     lda #<PLANE_VERTICAL2
     sta.z return
     lda #>PLANE_VERTICAL2
@@ -794,7 +794,7 @@ get_plane: {
     lda #>PLANE_VERTICAL2>>$10
     sta.z return+3
     rts
-  b5:
+  b4:
     lda #<PLANE_CHARSET8
     sta.z return
     lda #>PLANE_CHARSET8
@@ -804,7 +804,7 @@ get_plane: {
     lda #>PLANE_CHARSET8>>$10
     sta.z return+3
     rts
-  b6:
+  b5:
     lda #<PLANE_BLANK
     sta.z return
     lda #>PLANE_BLANK
@@ -814,7 +814,7 @@ get_plane: {
     lda #>PLANE_BLANK>>$10
     sta.z return+3
     rts
-  b7:
+  b6:
     lda #<VIC_SCREEN1
     sta.z return
     lda #>VIC_SCREEN1
@@ -824,7 +824,7 @@ get_plane: {
     lda #>VIC_SCREEN1>>$10
     sta.z return+3
     rts
-  b8:
+  b7:
     lda #<VIC_SCREEN2
     sta.z return
     lda #>VIC_SCREEN2
@@ -834,7 +834,7 @@ get_plane: {
     lda #>VIC_SCREEN2>>$10
     sta.z return+3
     rts
-  b9:
+  b8:
     lda #<VIC_SCREEN3
     sta.z return
     lda #>VIC_SCREEN3
@@ -844,7 +844,7 @@ get_plane: {
     lda #>VIC_SCREEN3>>$10
     sta.z return+3
     rts
-  b10:
+  b9:
     lda #<VIC_BITMAP
     sta.z return
     lda #>VIC_BITMAP
@@ -854,7 +854,7 @@ get_plane: {
     lda #>VIC_BITMAP>>$10
     sta.z return+3
     rts
-  b11:
+  b10:
     lda #<VIC_CHARSET_ROM
     sta.z return
     lda #>VIC_CHARSET_ROM
@@ -864,7 +864,7 @@ get_plane: {
     lda #>VIC_CHARSET_ROM>>$10
     sta.z return+3
     rts
-  b12:
+  b11:
     lda #<PLANE_8BPP_CHUNKY
     sta.z return
     lda #>PLANE_8BPP_CHUNKY
@@ -874,7 +874,7 @@ get_plane: {
     lda #>PLANE_8BPP_CHUNKY>>$10
     sta.z return+3
     rts
-  b13:
+  b12:
     lda #<PLANE_HORISONTAL
     sta.z return
     lda #>PLANE_HORISONTAL
@@ -884,7 +884,7 @@ get_plane: {
     lda #>PLANE_HORISONTAL>>$10
     sta.z return+3
     rts
-  b14:
+  b13:
     lda #<PLANE_VERTICAL
     sta.z return
     lda #>PLANE_VERTICAL
@@ -958,40 +958,40 @@ form_mode: {
     sta DTV_PLANEA_START_HI
     tax
   // DTV Palette - default
-  b1:
+  __b1:
     lda DTV_PALETTE_DEFAULT,x
     sta DTV_PALETTE,x
     inx
     cpx #$10
-    bne b1
+    bne __b1
     // Screen colors
     lda #0
     sta BGCOL
     sta BORDERCOL
     lda form_fields_val
     sta.z preset_current
-  b2:
+  b1:
   // Let the user change values in the form
-  b4:
+  __b4:
     lda #$ff
     cmp RASTER
-    bne b4
+    bne __b4
     jsr form_control
     txa
     cmp #0
-    beq b6
+    beq __b6
     rts
-  b6:
+  __b6:
     lda form_fields_val
     cmp.z preset_current
-    beq b2
+    beq b1
     jsr apply_preset
     lda form_fields_val
     sta.z preset_current
     jsr form_render_values
     lda form_fields_val
     jsr render_preset_name
-    jmp b2
+    jmp b1
 }
 // Render form preset name in the form
 // idx is the ID of the preset
@@ -999,93 +999,93 @@ form_mode: {
 render_preset_name: {
     .label name = 6
     cmp #0
-    beq b3
-    cmp #1
-    beq b6
-    cmp #2
-    beq b7
-    cmp #3
-    beq b8
-    cmp #4
-    beq b9
-    cmp #5
-    beq b10
-    cmp #6
-    beq b11
-    cmp #7
-    beq b12
-    cmp #8
-    beq b4
-    cmp #9
-    beq b5
-    cmp #$a
     beq b1
-  b3:
+    cmp #1
+    beq b4
+    cmp #2
+    beq b5
+    cmp #3
+    beq b6
+    cmp #4
+    beq b7
+    cmp #5
+    beq b8
+    cmp #6
+    beq b9
+    cmp #7
+    beq b10
+    cmp #8
+    beq b2
+    cmp #9
+    beq b3
+    cmp #$a
+    beq __b1
+  b1:
     lda #<name_1
     sta.z name
     lda #>name_1
     sta.z name+1
-    jmp b2
-  b1:
+    jmp __b2
+  __b1:
     lda #<name_11
     sta.z name
     lda #>name_11
     sta.z name+1
-    jmp b2
-  b4:
+    jmp __b2
+  b2:
     lda #<name_9
     sta.z name
     lda #>name_9
     sta.z name+1
-    jmp b2
-  b5:
+    jmp __b2
+  b3:
     lda #<name_10
     sta.z name
     lda #>name_10
     sta.z name+1
-    jmp b2
-  b6:
+    jmp __b2
+  b4:
     lda #<name_2
     sta.z name
     lda #>name_2
     sta.z name+1
-    jmp b2
-  b7:
+    jmp __b2
+  b5:
     lda #<name_3
     sta.z name
     lda #>name_3
     sta.z name+1
-    jmp b2
-  b8:
+    jmp __b2
+  b6:
     lda #<name_4
     sta.z name
     lda #>name_4
     sta.z name+1
-    jmp b2
-  b9:
+    jmp __b2
+  b7:
     lda #<name_5
     sta.z name
     lda #>name_5
     sta.z name+1
-    jmp b2
-  b10:
+    jmp __b2
+  b8:
     lda #<name_6
     sta.z name
     lda #>name_6
     sta.z name+1
-    jmp b2
-  b11:
+    jmp __b2
+  b9:
     lda #<name_7
     sta.z name
     lda #>name_7
     sta.z name+1
-    jmp b2
-  b12:
+    jmp __b2
+  b10:
     lda #<name_8
     sta.z name
     lda #>name_8
     sta.z name+1
-  b2:
+  __b2:
     jsr print_str_at
     rts
     name_1: .text "Standard Charset              "
@@ -1120,13 +1120,13 @@ print_str_at: {
     sta.z at
     lda #>FORM_SCREEN+$28*2+$a
     sta.z at+1
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     sta (at),y
@@ -1138,23 +1138,23 @@ print_str_at: {
     bne !+
     inc.z str+1
   !:
-    jmp b1
+    jmp __b1
 }
 // Render all form values from the form_fields_val array
 form_render_values: {
     ldx #0
-  b1:
+  __b1:
     cpx #form_fields_cnt
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     jsr form_field_ptr
     ldy form_fields_val,x
     lda print_hextab,y
     ldy.z form_field_ptr.x
     sta (form_field_ptr.line),y
     inx
-    jmp b1
+    jmp __b1
 }
 // Get the screen address of a form field
 // field_idx is the index of the field to get the screen address for
@@ -1178,104 +1178,104 @@ form_field_ptr: {
 apply_preset: {
     .label preset = $e
     cmp #0
-    beq b3
-    cmp #1
-    beq b6
-    cmp #2
-    beq b7
-    cmp #3
-    beq b8
-    cmp #4
-    beq b9
-    cmp #5
-    beq b10
-    cmp #6
-    beq b11
-    cmp #7
-    beq b12
-    cmp #8
-    beq b4
-    cmp #9
-    beq b5
-    cmp #$a
     beq b1
-  b3:
+    cmp #1
+    beq b4
+    cmp #2
+    beq b5
+    cmp #3
+    beq b6
+    cmp #4
+    beq b7
+    cmp #5
+    beq b8
+    cmp #6
+    beq b9
+    cmp #7
+    beq b10
+    cmp #8
+    beq b2
+    cmp #9
+    beq b3
+    cmp #$a
+    beq __b1
+  b1:
     lda #<preset_stdchar
     sta.z preset
     lda #>preset_stdchar
     sta.z preset+1
-    jmp b2
-  b1:
+    jmp __b2
+  __b1:
     lda #<preset_8bpppixelcell
     sta.z preset
     lda #>preset_8bpppixelcell
     sta.z preset+1
-    jmp b2
-  b4:
+    jmp __b2
+  b2:
     lda #<preset_sixsfred
     sta.z preset
     lda #>preset_sixsfred
     sta.z preset+1
-    jmp b2
-  b5:
+    jmp __b2
+  b3:
     lda #<preset_sixsfred2
     sta.z preset
     lda #>preset_sixsfred2
     sta.z preset+1
-    jmp b2
-  b6:
+    jmp __b2
+  b4:
     lda #<preset_ecmchar
     sta.z preset
     lda #>preset_ecmchar
     sta.z preset+1
-    jmp b2
-  b7:
+    jmp __b2
+  b5:
     lda #<preset_stdbm
     sta.z preset
     lda #>preset_stdbm
     sta.z preset+1
-    jmp b2
-  b8:
+    jmp __b2
+  b6:
     lda #<preset_mcbm
     sta.z preset
     lda #>preset_mcbm
     sta.z preset+1
-    jmp b2
-  b9:
+    jmp __b2
+  b7:
     lda #<preset_hi_stdchar
     sta.z preset
     lda #>preset_hi_stdchar
     sta.z preset+1
-    jmp b2
-  b10:
+    jmp __b2
+  b8:
     lda #<preset_hi_ecmchar
     sta.z preset
     lda #>preset_hi_ecmchar
     sta.z preset+1
-    jmp b2
-  b11:
+    jmp __b2
+  b9:
     lda #<preset_twoplane
     sta.z preset
     lda #>preset_twoplane
     sta.z preset+1
-    jmp b2
-  b12:
+    jmp __b2
+  b10:
     lda #<preset_chunky
     sta.z preset
     lda #>preset_chunky
     sta.z preset+1
-  b2:
+  __b2:
     ldy #0
   // Copy preset values into the fields
-  b13:
+  __b13:
     cpy #form_fields_cnt
-    bne b14
+    bne __b14
     rts
-  b14:
+  __b14:
     lda (preset),y
     sta form_fields_val,y
     iny
-    jmp b13
+    jmp __b13
 }
 // Reads keyboard and allows the user to navigate and change the fields of the form
 // Returns 0 if space is not pressed, non-0 if space is pressed
@@ -1285,28 +1285,28 @@ form_control: {
     dec.z form_cursor_count
     lda.z form_cursor_count
     cmp #0
-    bpl b1
+    bpl __b1
     lda #FORM_CURSOR_BLINK
     sta.z form_cursor_count
-  b1:
+  __b1:
     lda.z form_cursor_count
     sec
     sbc #FORM_CURSOR_BLINK/2
     bvc !+
     eor #$80
   !:
-    bpl !b2+
-    jmp b2
-  !b2:
+    bpl !__b2+
+    jmp __b2
+  !__b2:
     lda #$7f
     ldy.z form_field_ptr.x
     and (form_field_ptr.line),y
     sta (form_field_ptr.line),y
-  b3:
+  __b3:
     jsr keyboard_event_scan
     jsr keyboard_event_get
     cmp #KEY_CRSR_DOWN
-    bne b4
+    bne __b4
     lda #$7f
     ldy.z form_field_ptr.x
     and (form_field_ptr.line),y
@@ -1315,72 +1315,72 @@ form_control: {
     txa
     and #KEY_MODIFIER_SHIFT
     cmp #0
-    beq b13
+    beq __b13
     dec.z form_field_idx
     lda #$ff
     cmp.z form_field_idx
-    bne b14
+    bne __b14
     lda #form_fields_cnt-1
     sta.z form_field_idx
-  b14:
+  __b14:
     lda #FORM_CURSOR_BLINK/2
     sta.z form_cursor_count
     ldx #0
     rts
-  b13:
+  __b13:
     inc.z form_field_idx
     lda #form_fields_cnt
     cmp.z form_field_idx
-    bne b14
+    bne __b14
     lda #0
     sta.z form_field_idx
-    jmp b14
-  b4:
+    jmp __b14
+  __b4:
     cmp #KEY_CRSR_RIGHT
-    bne b5
+    bne __b5
     txa
     and #KEY_MODIFIER_SHIFT
     cmp #0
-    beq b15
+    beq __b15
     ldx.z form_field_idx
     dec form_fields_val,x
     lda #$ff
     ldy.z form_field_idx
     cmp form_fields_val,y
-    bne b16
+    bne __b16
     lda form_fields_max,y
     sta form_fields_val,y
-  b16:
+  __b16:
     // Render field value
     ldx.z form_field_idx
     ldy form_fields_val,x
     lda print_hextab,y
     ldy.z form_field_ptr.x
     sta (form_field_ptr.line),y
-  b7:
+  b1:
     ldx #0
     rts
-  b15:
+  __b15:
     ldx.z form_field_idx
     inc form_fields_val,x
     ldy.z form_field_idx
     lda form_fields_max,y
     cmp form_fields_val,y
-    bcs b16
+    bcs __b16
     lda #0
     sta form_fields_val,y
-    jmp b16
-  b5:
+    jmp __b16
+  __b5:
     cmp #KEY_SPACE
-    bne b7
+    bne b1
     ldx #$ff
     rts
-  b2:
+  __b2:
     lda #$80
     ldy.z form_field_ptr.x
     ora (form_field_ptr.line),y
     sta (form_field_ptr.line),y
-    jmp b3
+    jmp __b3
 }
 // Set the screen to use for the form.
 // screen is the start address of the screen to use
@@ -1391,7 +1391,7 @@ form_set_screen: {
     sta.z line
     lda #>FORM_SCREEN
     sta.z line+1
-  b1:
+  __b1:
     lda.z line
     sta form_line_lo,x
     lda.z line+1
@@ -1405,7 +1405,7 @@ form_set_screen: {
   !:
     inx
     cpx #$19
-    bne b1
+    bne __b1
     rts
 }
 // Print a number of zero-terminated strings, each followed by a newline.
@@ -1417,13 +1417,13 @@ print_str_lines: {
     sta.z print_char_cursor
     lda.z print_set_screen.screen+1
     sta.z print_char_cursor+1
-  b1:
+  __b1:
     ldy #0
     lda (str),y
     cmp #0
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (str),y
     inc.z str
@@ -1431,26 +1431,26 @@ print_str_lines: {
     inc.z str+1
   !:
     cmp #0
-    beq b3
+    beq __b3
     ldy #0
     sta (print_char_cursor),y
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
   !:
-  b3:
+  __b3:
     cmp #0
-    bne b2
+    bne __b2
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    jmp b1
+    jmp __b1
 }
 // Print a newline
 print_ln: {
-  b1:
+  __b1:
     lda #$28
     clc
     adc.z print_line_cursor
@@ -1460,11 +1460,11 @@ print_ln: {
   !:
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc b1
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc b1
+    bcc __b1
   !:
     rts
 }
@@ -1492,15 +1492,15 @@ memset: {
     lda.z str+1
     adc #>num
     sta.z end+1
-  b2:
+  __b2:
     lda.z dst+1
     cmp.z end+1
-    bne b3
+    bne __b3
     lda.z dst
     cmp.z end
-    bne b3
+    bne __b3
     rts
-  b3:
+  __b3:
     lda #c
     ldy #0
     sta (dst),y
@@ -1508,7 +1508,7 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp b2
+    jmp __b2
 }
 // Set the screen to print on. Also resets current line/char cursor.
 // print_set_screen(byte* zeropage($e) screen)
@@ -1553,46 +1553,46 @@ gfx_init_plane_full: {
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
 // gfx_init_plane_fill(dword zeropage(2) plane_addr, byte zeropage(8) fill)
 gfx_init_plane_fill: {
-    .label _0 = $12
-    .label _1 = $16
-    .label _4 = $e
-    .label _5 = $e
+    .label __0 = $12
+    .label __1 = $16
+    .label __4 = $e
+    .label __5 = $e
     .label gfxb = $e
     .label by = $10
     .label plane_addr = 2
     .label fill = 8
     lda.z plane_addr
-    sta.z _0
+    sta.z __0
     lda.z plane_addr+1
-    sta.z _0+1
+    sta.z __0+1
     lda.z plane_addr+2
-    sta.z _0+2
+    sta.z __0+2
     lda.z plane_addr+3
-    sta.z _0+3
-    asl.z _0
-    rol.z _0+1
-    rol.z _0+2
-    rol.z _0+3
-    asl.z _0
-    rol.z _0+1
-    rol.z _0+2
-    rol.z _0+3
-    lda.z _0+2
-    sta.z _1
-    lda.z _0+3
-    sta.z _1+1
-    lda.z _1
+    sta.z __0+3
+    asl.z __0
+    rol.z __0+1
+    rol.z __0+2
+    rol.z __0+3
+    asl.z __0
+    rol.z __0+1
+    rol.z __0+2
+    rol.z __0+3
+    lda.z __0+2
+    sta.z __1
+    lda.z __0+3
+    sta.z __1+1
+    lda.z __1
     jsr dtvSetCpuBankSegment1
     lda.z plane_addr
-    sta.z _4
+    sta.z __4
     lda.z plane_addr+1
-    sta.z _4+1
-    lda.z _5
+    sta.z __4+1
+    lda.z __5
     and #<$3fff
-    sta.z _5
-    lda.z _5+1
+    sta.z __5
+    lda.z __5+1
     and #>$3fff
-    sta.z _5+1
+    sta.z __5+1
     clc
     lda.z gfxb
     adc #<$4000
@@ -1602,9 +1602,9 @@ gfx_init_plane_fill: {
     sta.z gfxb+1
     lda #0
     sta.z by
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda.z fill
     ldy #0
     sta (gfxb),y
@@ -1614,11 +1614,11 @@ gfx_init_plane_fill: {
   !:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z by
     lda #$c8
     cmp.z by
-    bne b1
+    bne __b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     rts
@@ -1679,9 +1679,9 @@ gfx_init_plane_horisontal2: {
     sta.z gfxa+1
     lda #0
     sta.z ay
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda.z ay
     lsr
     and #3
@@ -1695,11 +1695,11 @@ gfx_init_plane_horisontal2: {
   !:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z ay
     lda #$c8
     cmp.z ay
-    bne b1
+    bne __b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     rts
@@ -1718,9 +1718,9 @@ gfx_init_plane_vertical: {
     sta.z gfxb
     lda #>$4000+(PLANE_VERTICAL&$3fff)
     sta.z gfxb+1
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda #$f
     ldy #0
     sta (gfxb),y
@@ -1730,11 +1730,11 @@ gfx_init_plane_vertical: {
   !:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z by
     lda #$c8
     cmp.z by
-    bne b1
+    bne __b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     rts
@@ -1752,13 +1752,13 @@ gfx_init_plane_horisontal: {
     sta.z gfxa+1
     lda #0
     sta.z ay
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda #4
     and.z ay
     cmp #0
-    beq b3
+    beq __b3
     lda #$ff
     ldy #0
     sta (gfxa),y
@@ -1766,18 +1766,18 @@ gfx_init_plane_horisontal: {
     bne !+
     inc.z gfxa+1
   !:
-  b4:
+  __b4:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z ay
     lda #$c8
     cmp.z ay
-    bne b1
+    bne __b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     rts
-  b3:
+  __b3:
     lda #0
     tay
     sta (gfxa),y
@@ -1785,7 +1785,7 @@ gfx_init_plane_horisontal: {
     bne !+
     inc.z gfxa+1
   !:
-    jmp b4
+    jmp __b4
 }
 // Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
@@ -1811,10 +1811,10 @@ gfx_init_plane_charset8: {
     sta.z chargen
     lda #>CHARGEN
     sta.z chargen+1
-  b1:
+  __b1:
     lda #0
     sta.z cr
-  b2:
+  __b2:
     ldy #0
     lda (chargen),y
     sta.z bits
@@ -1823,16 +1823,16 @@ gfx_init_plane_charset8: {
     inc.z chargen+1
   !:
     ldx #0
-  b3:
+  __b3:
     lda #$80
     and.z bits
     cmp #0
-    beq b5
+    beq b1
     lda.z col
-    jmp b4
-  b5:
+    jmp __b4
+  b1:
     lda #0
-  b4:
+  __b4:
     ldy #0
     sta (gfxa),y
     inc.z gfxa
@@ -1843,15 +1843,15 @@ gfx_init_plane_charset8: {
     inc.z col
     inx
     cpx #8
-    bne b3
+    bne __b3
     inc.z cr
     lda #8
     cmp.z cr
-    bne b2
+    bne __b2
     inc.z ch
     lda.z ch
     cmp #0
-    bne b1
+    bne __b1
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     lda #$4000/$4000
@@ -1860,7 +1860,7 @@ gfx_init_plane_charset8: {
 }
 // Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
-    .label _8 = $18
+    .label __8 = $18
     .label gfxb = $e
     .label x = $b
     .label y = $d
@@ -1873,17 +1873,17 @@ gfx_init_plane_8bppchunky: {
     sta.z gfxb
     lda #>$4000
     sta.z gfxb+1
-  b1:
+  __b1:
     lda #<0
     sta.z x
     sta.z x+1
-  b2:
+  __b2:
     lda.z gfxb+1
     cmp #>$8000
-    bne b3
+    bne __b3
     lda.z gfxb
     cmp #<$8000
-    bne b3
+    bne __b3
     txa
     jsr dtvSetCpuBankSegment1
     inx
@@ -1891,15 +1891,15 @@ gfx_init_plane_8bppchunky: {
     sta.z gfxb
     lda #>$4000
     sta.z gfxb+1
-  b3:
+  __b3:
     lda.z y
     clc
     adc.z x
-    sta.z _8
+    sta.z __8
     lda #0
     adc.z x+1
-    sta.z _8+1
-    lda.z _8
+    sta.z __8+1
+    lda.z __8
     ldy #0
     sta (gfxb),y
     inc.z gfxb
@@ -1912,14 +1912,14 @@ gfx_init_plane_8bppchunky: {
   !:
     lda.z x+1
     cmp #>$140
-    bne b2
+    bne __b2
     lda.z x
     cmp #<$140
-    bne b2
+    bne __b2
     inc.z y
     lda #$c8
     cmp.z y
-    bne b1
+    bne __b1
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     rts
@@ -1932,12 +1932,12 @@ gfx_init_vic_bitmap: {
     jsr bitmap_clear
     lda #0
     sta.z l
-  b1:
+  __b1:
     lda.z l
     cmp #lines_cnt
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     ldy.z l
     lda lines_x,y
     sta.z bitmap_line.x0
@@ -1948,7 +1948,7 @@ gfx_init_vic_bitmap: {
     sta.z bitmap_line.y1
     jsr bitmap_line
     inc.z l
-    jmp b1
+    jmp __b1
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
@@ -1962,7 +1962,7 @@ bitmap_line: {
     txa
     cmp.z x0
     beq !+
-    bcs b1
+    bcs __b1
   !:
     txa
     eor #$ff
@@ -1971,12 +1971,12 @@ bitmap_line: {
     sta.z xd
     lda.z y0
     cmp.z y1
-    bcc b7
+    bcc __b7
     sec
     sbc.z y1
     tay
     cpy.z xd
-    bcc b8
+    bcc __b8
     lda.z y1
     sta.z bitmap_line_ydxi.y
     lda.z y0
@@ -1984,20 +1984,20 @@ bitmap_line: {
     sty.z bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
     rts
-  b8:
+  __b8:
     stx.z bitmap_line_xdyi.x
     lda.z y1
     sta.z bitmap_line_xdyi.y
     sty.z bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
     rts
-  b7:
+  __b7:
     lda.z y1
     sec
     sbc.z y0
     tay
     cpy.z xd
-    bcc b9
+    bcc __b9
     lda.z y0
     sta.z bitmap_line_ydxd.y
     ldx.z x0
@@ -2006,52 +2006,52 @@ bitmap_line: {
     sty.z bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     rts
-  b9:
+  __b9:
     stx.z bitmap_line_xdyd.x
     lda.z y1
     sta.z bitmap_line_xdyd.y
     sty.z bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     rts
-  b1:
+  __b1:
     txa
     sec
     sbc.z x0
     sta.z xd
     lda.z y0
     cmp.z y1
-    bcc b11
+    bcc __b11
     sec
     sbc.z y1
     tay
     cpy.z xd
-    bcc b12
+    bcc __b12
     lda.z y1
     sta.z bitmap_line_ydxd.y
     sty.z bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     rts
-  b12:
+  __b12:
     lda.z x0
     sta.z bitmap_line_xdyd.x
     stx.z bitmap_line_xdyd.x1
     sty.z bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     rts
-  b11:
+  __b11:
     lda.z y1
     sec
     sbc.z y0
     tay
     cpy.z xd
-    bcc b13
+    bcc __b13
     lda.z y0
     sta.z bitmap_line_ydxi.y
     ldx.z x0
     sty.z bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
     rts
-  b13:
+  __b13:
     lda.z x0
     sta.z bitmap_line_xdyi.x
     stx.z bitmap_line_xdyi.x1
@@ -2070,7 +2070,7 @@ bitmap_line_xdyi: {
     lda.z yd
     lsr
     sta.z e
-  b1:
+  __b1:
     ldx.z x
     ldy.z y
     jsr bitmap_plot
@@ -2081,17 +2081,17 @@ bitmap_line_xdyi: {
     sta.z e
     lda.z xd
     cmp.z e
-    bcs b2
+    bcs __b2
     inc.z y
     lda.z e
     sec
     sbc.z xd
     sta.z e
-  b2:
+  __b2:
     ldx.z x1
     inx
     cpx.z x
-    bne b1
+    bne __b1
     rts
 }
 // bitmap_plot(byte register(X) x, byte register(Y) y)
@@ -2130,7 +2130,7 @@ bitmap_line_ydxi: {
     lda.z xd
     lsr
     sta.z e
-  b1:
+  __b1:
     ldy.z y
     jsr bitmap_plot
     inc.z y
@@ -2140,18 +2140,18 @@ bitmap_line_ydxi: {
     sta.z e
     lda.z yd
     cmp.z e
-    bcs b2
+    bcs __b2
     inx
     lda.z e
     sec
     sbc.z yd
     sta.z e
-  b2:
+  __b2:
     lda.z y1
     clc
     adc #1
     cmp.z y
-    bne b1
+    bne __b1
     rts
 }
 // bitmap_line_xdyd(byte zeropage($10) x, byte zeropage($d) y, byte zeropage(9) x1, byte zeropage($1f) xd, byte zeropage($a) yd)
@@ -2165,7 +2165,7 @@ bitmap_line_xdyd: {
     lda.z yd
     lsr
     sta.z e
-  b1:
+  __b1:
     ldx.z x
     ldy.z y
     jsr bitmap_plot
@@ -2176,17 +2176,17 @@ bitmap_line_xdyd: {
     sta.z e
     lda.z xd
     cmp.z e
-    bcs b2
+    bcs __b2
     dec.z y
     lda.z e
     sec
     sbc.z xd
     sta.z e
-  b2:
+  __b2:
     ldx.z x1
     inx
     cpx.z x
-    bne b1
+    bne __b1
     rts
 }
 // bitmap_line_ydxd(byte zeropage($10) y, byte register(X) x, byte zeropage($d) y1, byte zeropage($a) yd, byte zeropage($1f) xd)
@@ -2199,7 +2199,7 @@ bitmap_line_ydxd: {
     lda.z xd
     lsr
     sta.z e
-  b1:
+  __b1:
     ldy.z y
     jsr bitmap_plot
     inc.z y
@@ -2209,18 +2209,18 @@ bitmap_line_ydxd: {
     sta.z e
     lda.z yd
     cmp.z e
-    bcs b2
+    bcs __b2
     dex
     lda.z e
     sec
     sbc.z yd
     sta.z e
-  b2:
+  __b2:
     lda.z y1
     clc
     adc #1
     cmp.z y
-    bne b1
+    bne __b1
     rts
 }
 // Clear all graphics on the bitmap
@@ -2233,9 +2233,9 @@ bitmap_clear: {
     sta.z bitmap+1
     lda #0
     sta.z y
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda #0
     tay
     sta (bitmap),y
@@ -2245,20 +2245,20 @@ bitmap_clear: {
   !:
     inx
     cpx #$c8
-    bne b2
+    bne __b2
     inc.z y
     lda #$28
     cmp.z y
-    bne b1
+    bne __b1
     rts
 }
 // Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
-    .label _10 = $1f
+    .label __10 = $1f
     .label yoffs = $b
     ldy #$80
     ldx #0
-  b1:
+  __b1:
     txa
     and #$f8
     sta bitmap_plot_xlo,x
@@ -2270,27 +2270,27 @@ bitmap_init: {
     lsr
     tay
     cpy #0
-    bne b2
+    bne __b2
     ldy #$80
-  b2:
+  __b2:
     inx
     cpx #0
-    bne b1
+    bne __b1
     lda #<0
     sta.z yoffs
     sta.z yoffs+1
     tax
-  b3:
+  __b3:
     lda #7
-    sax.z _10
+    sax.z __10
     lda.z yoffs
-    ora.z _10
+    ora.z __10
     sta bitmap_plot_ylo,x
     lda.z yoffs+1
     sta bitmap_plot_yhi,x
     lda #7
-    cmp.z _10
-    bne b4
+    cmp.z __10
+    bne __b4
     clc
     lda.z yoffs
     adc #<$28*8
@@ -2298,10 +2298,10 @@ bitmap_init: {
     lda.z yoffs+1
     adc #>$28*8
     sta.z yoffs+1
-  b4:
+  __b4:
     inx
     cpx #0
-    bne b3
+    bne __b3
     rts
 }
 gfx_init_charset: {
@@ -2320,9 +2320,9 @@ gfx_init_charset: {
     sta.z chargen
     lda #>CHARGEN
     sta.z chargen+1
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     ldy #0
     lda (chargen),y
     sta (charset),y
@@ -2336,11 +2336,11 @@ gfx_init_charset: {
   !:
     inx
     cpx #8
-    bne b2
+    bne __b2
     inc.z c
     lda.z c
     cmp #0
-    bne b1
+    bne __b1
     lda #$37
     sta PROCPORT
     rts
@@ -2355,9 +2355,9 @@ gfx_init_screen4: {
     sta.z ch
     lda #>VIC_SCREEN4
     sta.z ch+1
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda #0
     tay
     sta (ch),y
@@ -2367,16 +2367,16 @@ gfx_init_screen4: {
   !:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z cy
     lda #$19
     cmp.z cy
-    bne b1
+    bne __b1
     rts
 }
 // Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
 gfx_init_screen3: {
-    .label _1 = $1e
+    .label __1 = $1e
     .label ch = $16
     .label cy = $10
     lda #<VIC_SCREEN3
@@ -2385,19 +2385,19 @@ gfx_init_screen3: {
     sta.z ch+1
     lda #0
     sta.z cy
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     txa
     and #3
     asl
     asl
     asl
     asl
-    sta.z _1
+    sta.z __1
     lda #3
     and.z cy
-    ora.z _1
+    ora.z __1
     ldy #0
     sta (ch),y
     inc.z ch
@@ -2406,11 +2406,11 @@ gfx_init_screen3: {
   !:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z cy
     lda #$19
     cmp.z cy
-    bne b1
+    bne __b1
     rts
 }
 // Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
@@ -2424,9 +2424,9 @@ gfx_init_screen2: {
     sta.z ch+1
     lda #0
     sta.z cy
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     txa
     clc
     adc.z cy
@@ -2451,11 +2451,11 @@ gfx_init_screen2: {
   !:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z cy
     lda #$19
     cmp.z cy
-    bne b1
+    bne __b1
     rts
 }
 // Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
@@ -2468,9 +2468,9 @@ gfx_init_screen1: {
     sta.z ch+1
     lda #0
     sta.z cy
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     txa
     clc
     adc.z cy
@@ -2483,16 +2483,16 @@ gfx_init_screen1: {
   !:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z cy
     lda #$19
     cmp.z cy
-    bne b1
+    bne __b1
     rts
 }
 // Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
-    .label _1 = $1f
+    .label __1 = $1f
     .label ch = $16
     .label cy = $11
     lda #<VIC_SCREEN0
@@ -2501,19 +2501,19 @@ gfx_init_screen0: {
     sta.z ch+1
     lda #0
     sta.z cy
-  b1:
+  __b1:
     ldx #0
-  b2:
+  __b2:
     lda #$f
     and.z cy
     asl
     asl
     asl
     asl
-    sta.z _1
+    sta.z __1
     txa
     and #$f
-    ora.z _1
+    ora.z __1
     ldy #0
     sta (ch),y
     inc.z ch
@@ -2522,11 +2522,11 @@ gfx_init_screen0: {
   !:
     inx
     cpx #$28
-    bne b2
+    bne __b2
     inc.z cy
     lda #$19
     cmp.z cy
-    bne b1
+    bne __b1
     rts
 }
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers

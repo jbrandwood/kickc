@@ -8,15 +8,15 @@
 main: {
     ldx #0
     ldy #RATE
-  b2:
+  __b2:
     lda #$ff
     cmp RASTER
-    bne b2
+    bne __b2
     dey
     cpy #0
-    bne b2
+    bne __b2
     inx
     stx SCREEN
     ldy #RATE
-    jmp b2
+    jmp __b2
 }

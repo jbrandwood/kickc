@@ -30,11 +30,11 @@ main: {
     lda #>MEDUSA_COLORS
     sta.z memcpy.source+1
     jsr memcpy
-  b1:
+  __b1:
     lda #$e
     eor SCREEN+$3e7
     sta SCREEN+$3e7
-    jmp b1
+    jmp __b1
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
@@ -52,15 +52,15 @@ memcpy: {
     lda.z source+1
     adc #>$3e8
     sta.z src_end+1
-  b1:
+  __b1:
     lda.z src+1
     cmp.z src_end+1
-    bne b2
+    bne __b2
     lda.z src
     cmp.z src_end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     ldy #0
     lda (src),y
     sta (dst),y
@@ -72,7 +72,7 @@ memcpy: {
     bne !+
     inc.z src+1
   !:
-    jmp b1
+    jmp __b1
 }
 MEDUSA_SCREEN:
 .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)

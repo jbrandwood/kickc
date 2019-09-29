@@ -175,30 +175,30 @@ Target platform is c64basic / MOS6502X
 // Test a procedure with calling convention stack - and enough parameters to use fast ASM for cleaning stack
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .const STACK_BASE = $103
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _0 = 2
+    .label __0 = 2
     // [5] callprepare plus (word) $1234 (word) $2345 
     // [5] callprepare plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
     lda #>$1234
@@ -219,17 +219,17 @@ main: {
     pla
     // [7] (word~) main::$0 ← callfinalize plus  -- vwuz1=_stackpullword_ 
     pla
-    sta.z _0
+    sta.z __0
     pla
-    sta.z _0+1
+    sta.z __0+1
     // [8] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
-    lda.z _0
+    lda.z __0
     sta SCREEN
-    lda.z _0+1
+    lda.z __0+1
     sta SCREEN+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
@@ -262,9 +262,9 @@ plus: {
     lda.z a+1
     adc.z b+1
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // plus::@return
-  breturn:
+  __breturn:
     // [13] return (word) plus::return#0
     // [13] return (word) plus::return#0 -- _stackidxword_vbuc1=vwuz1 
     tsx
@@ -307,30 +307,30 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test a procedure with calling convention stack - and enough parameters to use fast ASM for cleaning stack
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .const STACK_BASE = $103
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
-    .label _0 = 2
+    .label __0 = 2
     // [5] callprepare plus (word) $1234 (word) $2345 
     // [5] callprepare plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
     lda #>$1234
@@ -351,17 +351,17 @@ main: {
     pla
     // [7] (word~) main::$0 ← callfinalize plus  -- vwuz1=_stackpullword_ 
     pla
-    sta.z _0
+    sta.z __0
     pla
-    sta.z _0+1
+    sta.z __0+1
     // [8] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
-    lda.z _0
+    lda.z __0
     sta SCREEN
-    lda.z _0+1
+    lda.z __0+1
     sta SCREEN+1
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [9] return 
     rts
 }
@@ -394,9 +394,9 @@ plus: {
     lda.z return+1
     adc.z b+1
     sta.z return+1
-    jmp breturn
+    jmp __breturn
     // plus::@return
-  breturn:
+  __breturn:
     // [13] return (word) plus::return#0
     // [13] return (word) plus::return#0 -- _stackidxword_vbuc1=vwuz1 
     tsx
@@ -409,24 +409,25 @@ plus: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -475,7 +476,7 @@ Score: 146
   // @end
   // main
 main: {
-    .label _0 = 2
+    .label __0 = 2
     // plus(0x1234, 0x2345)
     // [5] callprepare plus (word) $1234 (word) $2345 
     // [5] callprepare plus (word) $1234 (word) $2345  -- _stackpushword_=vwuc1 
@@ -497,14 +498,14 @@ main: {
     pla
     // [7] (word~) main::$0 ← callfinalize plus  -- vwuz1=_stackpullword_ 
     pla
-    sta.z _0
+    sta.z __0
     pla
-    sta.z _0+1
+    sta.z __0+1
     // SCREEN[0] = plus(0x1234, 0x2345)
     // [8] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
-    lda.z _0
+    lda.z __0
     sta SCREEN
-    lda.z _0+1
+    lda.z __0+1
     sta SCREEN+1
     // main::@return
     // }

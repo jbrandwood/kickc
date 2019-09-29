@@ -6,36 +6,36 @@
   .const OFFSET_STRUCT_POINT_Y = 1
 main: {
     .label SCREEN = $400
-    .label _4 = 3
+    .label __4 = 3
     .label idx = 2
     lda #0
     sta.z idx
     tax
-  b1:
+  __b1:
     txa
     asl
     stx.z $ff
     clc
     adc.z $ff
-    sta.z _4
+    sta.z __4
     tay
     lda points,y
     ldy.z idx
     sta SCREEN,y
     inc.z idx
-    ldy.z _4
+    ldy.z __4
     lda points+OFFSET_STRUCT_POINT_Y,y
     ldy.z idx
     sta SCREEN,y
     inc.z idx
-    ldy.z _4
+    ldy.z __4
     lda points+OFFSET_STRUCT_POINT_Y+1,y
     ldy.z idx
     sta SCREEN,y
     inc.z idx
     inx
     cpx #3
-    bne b1
+    bne __b1
     rts
 }
   points: .byte 1

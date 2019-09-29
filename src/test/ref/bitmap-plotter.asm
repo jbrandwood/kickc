@@ -22,29 +22,29 @@ main: {
     sta D018
     jsr init_screen
     jsr init_plot_tables
-  b1:
+  __b1:
     lda #$ff
     cmp RASTER
-    bne b1
+    bne __b1
     inc BGCOL
     jsr plots
     dec BGCOL
-    jmp b1
+    jmp __b1
 }
 plots: {
     ldx #0
-  b1:
+  __b1:
     cpx #plots_cnt
-    bcc b2
+    bcc __b2
     rts
-  b2:
+  __b2:
     lda plots_x,x
     sta.z plot.x
     lda plots_y,x
     sta.z plot.y
     jsr plot
     inx
-    jmp b1
+    jmp __b1
 }
 // plot(byte zeropage(7) x, byte zeropage(2) y)
 plot: {
@@ -83,11 +83,11 @@ plot: {
     rts
 }
 init_plot_tables: {
-    .label _10 = 7
+    .label __10 = 7
     .label yoffs = 5
     ldy #$80
     ldx #0
-  b1:
+  __b1:
     txa
     and #$f8
     sta plot_xlo,x
@@ -99,27 +99,27 @@ init_plot_tables: {
     lsr
     tay
     cpy #0
-    bne b2
+    bne __b2
     ldy #$80
-  b2:
+  __b2:
     inx
     cpx #0
-    bne b1
+    bne __b1
     lda #<0
     sta.z yoffs
     sta.z yoffs+1
     tax
-  b3:
+  __b3:
     lda #7
-    sax.z _10
+    sax.z __10
     lda.z yoffs
-    ora.z _10
+    ora.z __10
     sta plot_ylo,x
     lda.z yoffs+1
     sta plot_yhi,x
     lda #7
-    cmp.z _10
-    bne b4
+    cmp.z __10
+    bne __b4
     clc
     lda.z yoffs
     adc #<$28*8
@@ -127,10 +127,10 @@ init_plot_tables: {
     lda.z yoffs+1
     adc #>$28*8
     sta.z yoffs+1
-  b4:
+  __b4:
     inx
     cpx #0
-    bne b3
+    bne __b3
     rts
 }
 init_screen: {
@@ -140,26 +140,26 @@ init_screen: {
     sta.z b
     lda #>BITMAP
     sta.z b+1
-  b1:
+  __b1:
     lda.z b+1
     cmp #>BITMAP+$2000
-    bne b2
+    bne __b2
     lda.z b
     cmp #<BITMAP+$2000
-    bne b2
+    bne __b2
     lda #<SCREEN
     sta.z c
     lda #>SCREEN
     sta.z c+1
-  b3:
+  __b3:
     lda.z c+1
     cmp #>SCREEN+$400
-    bne b4
+    bne __b4
     lda.z c
     cmp #<SCREEN+$400
-    bne b4
+    bne __b4
     rts
-  b4:
+  __b4:
     lda #$14
     ldy #0
     sta (c),y
@@ -167,8 +167,8 @@ init_screen: {
     bne !+
     inc.z c+1
   !:
-    jmp b3
-  b2:
+    jmp __b3
+  __b2:
     lda #0
     tay
     sta (b),y
@@ -176,7 +176,7 @@ init_screen: {
     bne !+
     inc.z b+1
   !:
-    jmp b1
+    jmp __b1
 }
   plots_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28
   plots_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28

@@ -41,18 +41,18 @@ main: {
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VIC_MEMORY
     jsr circle
-  b1:
-    jmp b1
+  __b1:
+    jmp __b1
 }
 circle: {
     .const xc = $64
     .const yc = $64
     .const r = $32
-    .label _5 = 8
-    .label _6 = 8
-    .label _7 = 2
-    .label _9 = $a
-    .label _10 = 2
+    .label __5 = 8
+    .label __6 = 8
+    .label __7 = 2
+    .label __9 = $a
+    .label __10 = 2
     .label p = 2
     .label y = 6
     .label x1 = 4
@@ -67,7 +67,7 @@ circle: {
     lda #<0
     sta.z x1
     sta.z x1+1
-  b1:
+  __b1:
     lda.z y
     cmp.z x1
     lda.z y+1
@@ -75,13 +75,13 @@ circle: {
     bvc !+
     eor #$80
   !:
-    bpl b2
+    bpl __b2
     rts
-  b2:
+  __b2:
     lda.z p+1
-    bpl !b3+
-    jmp b3
-  !b3:
+    bpl !__b3+
+    jmp __b3
+  !__b3:
     sec
     lda.z y
     sbc #1
@@ -92,21 +92,21 @@ circle: {
     lda.z x1
     sec
     sbc.z y
-    sta.z _5
+    sta.z __5
     lda.z x1+1
     sbc.z y+1
-    sta.z _5+1
-    asl.z _6
-    rol.z _6+1
-    asl.z _6
-    rol.z _6+1
-    lda.z _7
+    sta.z __5+1
+    asl.z __6
+    rol.z __6+1
+    asl.z __6
+    rol.z __6+1
+    lda.z __7
     clc
-    adc.z _6
-    sta.z _7
-    lda.z _7+1
-    adc.z _6+1
-    sta.z _7+1
+    adc.z __6
+    sta.z __7
+    lda.z __7+1
+    adc.z __6+1
+    sta.z __7+1
     lda.z p
     clc
     adc #<$a
@@ -114,7 +114,7 @@ circle: {
     lda.z p+1
     adc #>$a
     sta.z p+1
-  b4:
+  __b4:
     lda.z x1
     clc
     adc #<xc
@@ -239,23 +239,23 @@ circle: {
     bne !+
     inc.z x1+1
   !:
-    jmp b1
-  b3:
+    jmp __b1
+  __b3:
     lda.z x1
     asl
-    sta.z _9
+    sta.z __9
     lda.z x1+1
     rol
-    sta.z _9+1
-    asl.z _9
-    rol.z _9+1
-    lda.z _10
+    sta.z __9+1
+    asl.z __9
+    rol.z __9+1
+    lda.z __10
     clc
-    adc.z _9
-    sta.z _10
-    lda.z _10+1
-    adc.z _9+1
-    sta.z _10+1
+    adc.z __9
+    sta.z __10
+    lda.z __10+1
+    adc.z __9+1
+    sta.z __10+1
     lda.z p
     clc
     adc #<6
@@ -263,24 +263,24 @@ circle: {
     lda.z p+1
     adc #>6
     sta.z p+1
-    jmp b4
+    jmp __b4
 }
 // plot(signed word zeropage(8) x, signed word zeropage($a) y)
 plot: {
-    .label _0 = $c
-    .label _3 = $a
-    .label _4 = $e
+    .label __0 = $c
+    .label __3 = $a
+    .label __4 = $e
     .label x = 8
     .label y = $a
     .label location = $c
-    .label _7 = $e
-    .label _8 = $e
+    .label __7 = $e
+    .label __8 = $e
     lda.z x
     and #<$fff8
-    sta.z _0
+    sta.z __0
     lda.z x+1
     and #>$fff8
-    sta.z _0+1
+    sta.z __0+1
     clc
     lda.z location
     adc #<BITMAP
@@ -296,51 +296,51 @@ plot: {
     bcc !+
     inc.z location+1
   !:
-    lda.z _3+1
+    lda.z __3+1
     cmp #$80
-    ror.z _3+1
-    ror.z _3
-    lda.z _3+1
+    ror.z __3+1
+    ror.z __3
+    lda.z __3+1
     cmp #$80
-    ror.z _3+1
-    ror.z _3
-    lda.z _3+1
+    ror.z __3+1
+    ror.z __3
+    lda.z __3+1
     cmp #$80
-    ror.z _3+1
-    ror.z _3
-    lda.z _3
+    ror.z __3+1
+    ror.z __3
+    lda.z __3
     asl
-    sta.z _7
-    lda.z _3+1
+    sta.z __7
+    lda.z __3+1
     rol
-    sta.z _7+1
-    asl.z _7
-    rol.z _7+1
-    lda.z _8
+    sta.z __7+1
+    asl.z __7
+    rol.z __7+1
+    lda.z __8
     clc
-    adc.z _3
-    sta.z _8
-    lda.z _8+1
-    adc.z _3+1
-    sta.z _8+1
-    lda.z _4+1
+    adc.z __3
+    sta.z __8
+    lda.z __8+1
+    adc.z __3+1
+    sta.z __8+1
+    lda.z __4+1
     sta.z $ff
-    lda.z _4
-    sta.z _4+1
+    lda.z __4
+    sta.z __4+1
     lda #0
-    sta.z _4
+    sta.z __4
     lsr.z $ff
-    ror.z _4+1
-    ror.z _4
+    ror.z __4+1
+    ror.z __4
     lsr.z $ff
-    ror.z _4+1
-    ror.z _4
+    ror.z __4+1
+    ror.z __4
     lda.z location
     clc
-    adc.z _4
+    adc.z __4
     sta.z location
     lda.z location+1
-    adc.z _4+1
+    adc.z __4+1
     sta.z location+1
     lda #7
     and.z x
@@ -364,15 +364,15 @@ fill: {
     lda.z end+1
     adc.z addr+1
     sta.z end+1
-  b1:
+  __b1:
     lda.z addr+1
     cmp.z end+1
-    bne b2
+    bne __b2
     lda.z addr
     cmp.z end
-    bne b2
+    bne __b2
     rts
-  b2:
+  __b2:
     txa
     ldy #0
     sta (addr),y
@@ -380,6 +380,6 @@ fill: {
     bne !+
     inc.z addr+1
   !:
-    jmp b1
+    jmp __b1
 }
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1

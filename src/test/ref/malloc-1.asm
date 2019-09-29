@@ -1,12 +1,12 @@
 // Experiments with malloc() - a word array
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__b1)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
-bbegin:
+__b1:
   jsr malloc
   jsr main
   rts
@@ -17,7 +17,7 @@ main: {
     lda #>WORDS
     sta.z w+1
     ldx #0
-  b1:
+  __b1:
     txa
     ldy #0
     sta (w),y
@@ -33,7 +33,7 @@ main: {
   !:
     inx
     cpx #0
-    bne b1
+    bne __b1
     rts
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.

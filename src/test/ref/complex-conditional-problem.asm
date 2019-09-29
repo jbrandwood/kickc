@@ -5,15 +5,15 @@
   .label RASTER = $d012
   .label SCREEN = $400
 main: {
-  b1:
+  __b1:
     lda RASTER
     cmp #$20+1
-    bcs b3
+    bcs b1
     cmp #$40
-    bcs b2
-  b3:
+    bcs __b2
+  b1:
     lda #0
-  b2:
+  __b2:
     sta SCREEN
-    jmp b1
+    jmp __b1
 }

@@ -18,19 +18,19 @@ main: {
     sta.z s
     lda #>SCREEN
     sta.z s+1
-  b1:
+  __b1:
     lda.z s+1
     cmp #>SCREEN+$3e8
-    bcc b2
+    bcc __b2
     bne !+
     lda.z s
     cmp #<SCREEN+$3e8
-    bcc b2
+    bcc __b2
   !:
     jsr testUnaryOperator
     jsr testBinaryOperator
     rts
-  b2:
+  __b2:
     lda #' '
     ldy #0
     sta (s),y
@@ -38,7 +38,7 @@ main: {
     bne !+
     inc.z s+1
   !:
-    jmp b1
+    jmp __b1
 }
 testBinaryOperator: {
     ldx #$28
@@ -201,18 +201,18 @@ assertType: {
     .label t2 = 4
     tya
     cmp.z t2
-    beq b1
+    beq __b1
     lda #RED
     sta COLS,x
-  b2:
+  __b2:
     tya
     sta SCREEN,x
     inx
     rts
-  b1:
+  __b1:
     lda #GREEN
     sta COLS,x
-    jmp b2
+    jmp __b2
 }
 testUnaryOperator: {
     ldx #0

@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantInteger;
@@ -80,12 +81,12 @@ public class AsmFragmentTemplate {
       // Generate a dummy instance to find clobber & cycles
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
-      Variable v1 = new Variable("$tmp1", scope, SymbolType.BYTE, null, true, false, false);
-      Variable v2 = new Variable("$tmp2", scope, SymbolType.BYTE, null, true, false, false);
-      Variable v3 = new Variable("$tmp3", scope, SymbolType.BYTE, null, true, false, false);
-      Variable v4 = new Variable("$tmp4", scope, SymbolType.BYTE, null, true, false, false);
-      Variable v5 = new Variable("$tmp5", scope, SymbolType.BYTE, null, true, false, false);
-      Variable v6 = new Variable("$tmp6", scope, SymbolType.BYTE, null, true, false, false);
+      Variable v1 = new Variable("$tmp1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, true, false, false);
+      Variable v2 = new Variable("$tmp2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, true, false, false);
+      Variable v3 = new Variable("$tmp3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, true, false, false);
+      Variable v4 = new Variable("$tmp4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, true, false, false);
+      Variable v5 = new Variable("$tmp5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, true, false, false);
+      Variable v6 = new Variable("$tmp6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, true, false, false);
       v1.setAllocation(new Registers.RegisterZpByte(2));
       v2.setAllocation(new Registers.RegisterZpByte(4));
       v3.setAllocation(new Registers.RegisterZpByte(6));

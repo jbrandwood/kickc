@@ -260,9 +260,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
-      Variable param = new Variable(ctx.NAME().getText(), getCurrentScope(), type, currentDataSegment, false, false, true);
-      // Set initial storage strategy
-      param.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_REGISTER);
+      Variable param = new Variable(ctx.NAME().getText(), getCurrentScope(), type, currentDataSegment, SymbolVariable.StorageStrategy.PHI_MASTER, false, false, true);
       // Add directives
       addDirectives(param, type, directives, new StatementSource(ctx));
       exitDeclTypes();
@@ -619,13 +617,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } catch(CompileError e) {
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }
-      // Set initial storage strategy
-      lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_REGISTER);
       // Add directives
       addDirectives(lValue, type, directives, new StatementSource(ctx));
       // Array / String variables are implicitly constant
       if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
          lValue.setDeclaredConstant(true);
+         lValue.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
       }
       if(lValue.isDeclaredConstant()) {
          // Add comments to constant
@@ -704,7 +701,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          } else if(directive instanceof DirectiveRegister) {
             DirectiveRegister directiveRegister = (DirectiveRegister) directive;
             lValue.setDeclaredAsRegister(true);
-            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_REGISTER);
+            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_MASTER);
             if(directiveRegister.name != null) {
                // Ignore register directive without parameter (all variables are placed on ZP and attempted register uplift anyways)
                Registers.Register register = Registers.getRegister(directiveRegister.name);
@@ -1206,8 +1203,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          } catch(CompileError e) {
             throw new CompileError(e.getMessage(), statementSource);
          }
-         // Set initial storage strategy
-         lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_REGISTER);
          // Add directives
          addDirectives(lValue, varType, varDirectives, statementSource);
       } else {

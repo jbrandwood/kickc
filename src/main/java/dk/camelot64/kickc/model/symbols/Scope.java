@@ -100,12 +100,12 @@ public abstract class Scope implements Symbol, Serializable {
    }
 
    public Variable addVariablePhiMaster(String name, SymbolType type, String dataSegment) {
-      return add(new Variable(name, this, type, dataSegment, false, false, true));
+      return add(new Variable(name, this, type, dataSegment, SymbolVariable.StorageStrategy.PHI_MASTER, false, false, true));
    }
 
    public Variable addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
-      return add(new Variable(name, this, SymbolType.VAR, getSegmentData(), true, false, false));
+      return add(new Variable(name, this, SymbolType.VAR, getSegmentData(), SymbolVariable.StorageStrategy.INTERMEDIATE, true, false, false));
    }
 
    /**
@@ -347,7 +347,7 @@ public abstract class Scope implements Symbol, Serializable {
                   if(asmName != null) {
                      res.append(" " + asmName);
                   }
-                  if(symVar.getStorageStrategy().equals(SymbolVariable.StorageStrategy.MEMORY)) {
+                  if(SymbolVariable.StorageStrategy.MEMORY.equals(symVar.getStorageStrategy())) {
                      res.append(" memory");
                   }
                   Registers.Register declRegister = symVar.getDeclaredRegister();

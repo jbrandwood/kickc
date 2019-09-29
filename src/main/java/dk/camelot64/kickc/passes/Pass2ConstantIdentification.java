@@ -11,10 +11,7 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -88,7 +85,6 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          constantVar.setDeclaredRegister(variable.getDeclaredRegister());
          constantVar.setDeclaredAsMemory(variable.isDeclaredAsMemory());
          constantVar.setDeclaredMemoryAddress(variable.getDeclaredMemoryAddress());
-         constantVar.setStorageStrategy(variable.getStorageStrategy());
          constantVar.setDeclaredExport(variable.isDeclaredExport());
          if(variable.getComments().size() > 0) {
             constantVar.setComments(variable.getComments());

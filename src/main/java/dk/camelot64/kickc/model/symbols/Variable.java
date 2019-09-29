@@ -25,7 +25,7 @@ public class Variable extends SymbolVariable {
    private boolean isPhiMaster;
 
    /** The number of the next version (only used for PHI masters)*/
-   private Integer nextVersionNumber;
+   private Integer nextPhiVersionNumber;
 
    /* true if the variable is a PHI version. (the "master" variable has storage strategy PHI)*/
    private boolean isPhiVersion;
@@ -33,13 +33,13 @@ public class Variable extends SymbolVariable {
    /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
    private Registers.Register allocation;
 
-   public Variable(String name, Scope scope, SymbolType type, String dataSegment, boolean isIntermediate, boolean isPhiVersion, boolean isPhiMaster) {
-      super(name, scope, type, dataSegment);
+   public Variable(String name, Scope scope, SymbolType type, String dataSegment, StorageStrategy storageStrategy, boolean isIntermediate, boolean isPhiVersion, boolean isPhiMaster) {
+      super(name, scope, type, storageStrategy, dataSegment);
       this.isIntermediate = isIntermediate;
       this.isPhiVersion = isPhiVersion;
       this.isPhiMaster = isPhiMaster;
       if(isPhiMaster)
-         this.nextVersionNumber = 0;
+         this.nextPhiVersionNumber = 0;
    }
 
    /**
@@ -48,13 +48,12 @@ public class Variable extends SymbolVariable {
     * @param version The version number
     */
    public Variable(Variable phiMaster, int version) {
-      super(phiMaster.getName()+"#"+version, phiMaster.getScope(), phiMaster.getType(), phiMaster.getDataSegment());
+      super(phiMaster.getName()+"#"+version, phiMaster.getScope(), phiMaster.getType(), StorageStrategy.PHI_VERSION, phiMaster.getDataSegment());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       this.setDeclaredAsMemory(phiMaster.isDeclaredAsMemory());
       this.setDeclaredRegister(phiMaster.getDeclaredRegister());
       this.setDeclaredMemoryAddress(phiMaster.getDeclaredMemoryAddress());
-      this.setStorageStrategy(phiMaster.getStorageStrategy());
       this.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
       this.setDeclaredExport(phiMaster.isDeclaredExport());
       this.setInferedVolatile(phiMaster.isInferedVolatile());
@@ -74,6 +73,14 @@ public class Variable extends SymbolVariable {
    }
 
    public boolean isPhiMaster() {
+      /*
+      if(isPhiMaster) {
+         if(!StorageStrategy.PHI_MASTER.equals(getStorageStrategy())) {
+            System.out.println("PHI master mismatch!");
+         };
+      }
+      return StorageStrategy.PHI_MASTER.equals(getStorageStrategy());
+       */
       return isPhiMaster;
    }
 
@@ -92,7 +99,7 @@ public class Variable extends SymbolVariable {
    public Variable createVersion() {
       if(!isPhiMaster)
          throw new InternalError("Cannot version non-PHI variable");
-      Variable version = new Variable(this, nextVersionNumber++);
+      Variable version = new Variable(this, nextPhiVersionNumber++);
       getScope().add(version);
       return version;
    }

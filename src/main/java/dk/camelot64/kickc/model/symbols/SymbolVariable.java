@@ -60,7 +60,7 @@ public abstract class SymbolVariable implements Symbol {
     * <li>CONSTANT-variables are constant.
     * </ul>
     **/
-   public enum StorageStrategy {PHI_REGISTER, MEMORY, CONSTANT }
+   public enum StorageStrategy {PHI_MASTER, PHI_VERSION, INTERMEDIATE, MEMORY, CONSTANT }
 
    /** The storage strategy for the variable. */
    private StorageStrategy storageStrategy;
@@ -75,14 +75,14 @@ public abstract class SymbolVariable implements Symbol {
    private String dataSegment;
 
 
-   public SymbolVariable(String name, Scope scope, SymbolType type, String dataSegment) {
+   public SymbolVariable(String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, String dataSegment) {
       this.name = name;
       this.scope = scope;
       this.type = type;
       this.inferredType = false;
       this.comments = new ArrayList<>();
       this.dataSegment = dataSegment;
-      this.storageStrategy = StorageStrategy.PHI_REGISTER;
+      this.storageStrategy = storageStrategy;
       setFullName();
    }
 

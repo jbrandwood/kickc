@@ -85,11 +85,21 @@ public class Variable extends SymbolVariable {
    }
 
    public boolean isPhiVersion() {
-      return isPhiVersion;
+      if(isPhiVersion) {
+         if(!StorageStrategy.PHI_VERSION.equals(getStorageStrategy())) {
+            throw new InternalError("PHI version mismatch!");
+         }
+      }
+      return StorageStrategy.PHI_VERSION.equals(getStorageStrategy());
    }
 
    public boolean isIntermediate() {
-      return isIntermediate;
+      if(isIntermediate) {
+         if(!StorageStrategy.INTERMEDIATE.equals(getStorageStrategy())) {
+            throw new InternalError("IMMEDIATE mismatch!");
+         }
+      }
+      return StorageStrategy.INTERMEDIATE.equals(getStorageStrategy());
    }
 
    /**

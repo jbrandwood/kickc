@@ -1,7 +1,9 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
+import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -37,6 +39,11 @@ public class Pass1PointifyMemoryVariables extends Pass1Base {
       ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          Value value = programValue.get();
          if(memoryVarPointers.containsKey(value)) {
+            if(programValue instanceof ProgramValue.ProgramValueLValue && currentStmt instanceof StatementAssignment) {
+               if(((StatementAssignment) currentStmt).getrValue2() instanceof StructUnwoundPlaceholder)
+                  // Skip unwound structs!
+                  return;
+            }
             programValue.set(new PointerDereferenceSimple(memoryVarPointers.get(value)));
             getLog().append("Updating memory variable reference " + programValue.get().toString(getProgram()));
          }

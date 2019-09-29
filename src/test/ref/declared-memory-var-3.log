@@ -1,0 +1,406 @@
+Setting inferred volatile on symbol affected by address-of (struct foo*~) main::$0 ← & (struct foo) bar
+Created struct value member variable (byte) bar_thing1
+Created struct value member variable (byte) bar_thing2
+Converted struct value to member variables (struct foo) bar
+Adding struct value list initializer (byte) bar_thing1 ← (byte) 'a'
+Adding struct value list initializer (byte) bar_thing2 ← (byte) 'b'
+Rewriting struct pointer member access *((struct foo*) main::barp).thing1
+Rewriting struct pointer member access *((struct foo*) main::barp).thing2
+Adding memory variable constant pointer (const struct foo*) bar_ptr
+Updating memory variable reference *((const struct foo*) bar_ptr)
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte) bar_thing1#0 ← (byte) 'a'
+  (byte) bar_thing2#0 ← (byte) 'b'
+  (struct foo) bar ← struct-unwound {(byte) bar_thing1#0, (byte) bar_thing2#0}
+  to:@1
+
+(void()) main()
+main: scope:[main]  from @1
+  (struct foo*~) main::$0 ← & *((const struct foo*) bar_ptr)
+  (struct foo*) main::barp#0 ← (struct foo*~) main::$0
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
+  (byte) main::i#0 ← (number) 0
+  (byte*) main::$1 ← (byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING1
+  *((byte*) main::SCREEN + (byte) main::i#0) ← *((byte*) main::$1)
+  (byte) main::i#1 ← ++ (byte) main::i#0
+  (byte*) main::$2 ← (byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING2
+  *((byte*) main::SCREEN + (byte) main::i#1) ← *((byte*) main::$2)
+  (byte) main::i#2 ← ++ (byte) main::i#1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(const byte) OFFSET_STRUCT_FOO_THING1 = (byte) 0
+(const byte) OFFSET_STRUCT_FOO_THING2 = (byte) 1
+(struct foo) bar memory
+(const struct foo*) bar_ptr = &(struct foo) bar
+(byte) bar_thing1
+(byte) bar_thing1#0
+(byte) bar_thing2
+(byte) bar_thing2#0
+(byte) foo::thing1
+(byte) foo::thing2
+(void()) main()
+(struct foo*~) main::$0
+(byte*) main::$1
+(byte*) main::$2
+(label) main::@return
+(byte*) main::SCREEN
+(struct foo*) main::barp
+(struct foo*) main::barp#0
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
+
+Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
+Inlining cast (byte) main::i#0 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (struct foo*) main::barp#0 = (struct foo*~) main::$0 
+Successful SSA optimization Pass2AliasElimination
+Rewriting struct address-of to first member &(struct foo) bar
+Successful SSA optimization PassNStructAddressOfRewriting
+Constant (const byte*) main::SCREEN = (byte*) 1024
+Constant (const byte) main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Converting *(pointer+n) to pointer[n] [8] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*) main::$1)  -- *((byte*)main::barp#0 + OFFSET_STRUCT_FOO_THING1)
+Converting *(pointer+n) to pointer[n] [11] *((const byte*) main::SCREEN + (byte) main::i#1) ← *((byte*) main::$2)  -- *((byte*)main::barp#0 + OFFSET_STRUCT_FOO_THING2)
+Successful SSA optimization Pass2InlineDerefIdx
+Simplifying expression containing zero (byte*)main::barp#0 in [7] (byte*) main::$1 ← (byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING1
+Simplifying expression containing zero (byte*)main::barp#0 in [8] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING1)
+Simplifying expression containing zero main::SCREEN in [8] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)(struct foo*) main::barp#0)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable (struct foo) bar and assignment [2] (struct foo) bar ← struct-unwound {(byte) bar_thing1#0, (byte) bar_thing2#0}
+Eliminating unused variable (byte*) main::$1 and assignment [4] (byte*) main::$1 ← (byte*)(struct foo*) main::barp#0
+Eliminating unused variable (byte*) main::$2 and assignment [7] (byte*) main::$2 ← (byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING2
+Eliminating unused variable (byte) main::i#2 and assignment [9] (byte) main::i#2 ← ++ (byte) main::i#1
+Eliminating unused constant (const byte) OFFSET_STRUCT_FOO_THING1
+Successful SSA optimization PassNEliminateUnusedVars
+Constant right-side identified [4] (byte) main::i#1 ← ++ (const byte) main::i#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) main::i#1 = ++main::i#0
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with different constant siblings (const byte) main::i#0
+Inlining constant with different constant siblings (const byte) main::i#1
+Constant inlined main::i#0 = (byte) 0
+Constant inlined main::i#1 = ++(byte) 0
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(main::SCREEN+++0)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Simplifying constant integer increment ++0
+Successful SSA optimization Pass2ConstantSimplification
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:3 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] (byte) bar_thing1#0 ← (byte) 'a'
+  [1] (byte) bar_thing2#0 ← (byte) 'b'
+  to:@1
+@1: scope:[]  from @begin
+  [2] phi()
+  [3] call main 
+  to:@end
+@end: scope:[]  from @1
+  [4] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [5] (struct foo*) main::barp#0 ← & *((const struct foo*) bar_ptr)
+  [6] *((const byte*) main::SCREEN) ← *((byte*)(struct foo*) main::barp#0)
+  [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING2)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [8] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) bar_thing1
+(byte) bar_thing1#0 20.0
+(byte) bar_thing2
+(byte) bar_thing2#0 20.0
+(byte) foo::thing1
+(byte) foo::thing2
+(void()) main()
+(struct foo*) main::barp
+(struct foo*) main::barp#0 1.0
+(byte) main::i
+
+Initial phi equivalence classes
+Added variable main::barp#0 to zero page equivalence class [ main::barp#0 ]
+Complete equivalence classes
+[ bar_thing1#0 ]
+[ bar_thing2#0 ]
+[ main::barp#0 ]
+Allocated zp ZP_BYTE:2 [ bar_thing1#0 ]
+Allocated zp ZP_BYTE:3 [ bar_thing2#0 ]
+Allocated zp ZP_WORD:4 [ main::barp#0 ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
+// Test a memory variable struct value
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const OFFSET_STRUCT_FOO_THING2 = 1
+  .label bar_ptr = bar_thing1
+  .label bar_thing1 = 2
+  .label bar_thing2 = 3
+  // @begin
+__bbegin:
+  // [0] (byte) bar_thing1#0 ← (byte) 'a' -- vbuz1=vbuc1 
+  lda #'a'
+  sta.z bar_thing1
+  // [1] (byte) bar_thing2#0 ← (byte) 'b' -- vbuz1=vbuc1 
+  lda #'b'
+  sta.z bar_thing2
+  // [2] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [3] call main 
+  jsr main
+  // [4] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    .label SCREEN = $400
+    .label barp = 4
+    // [5] (struct foo*) main::barp#0 ← & *((const struct foo*) bar_ptr) -- pssz1=_addr__deref_pssc1 
+    lda #<bar_ptr
+    sta.z barp
+    lda #>bar_ptr
+    sta.z barp+1
+    // [6] *((const byte*) main::SCREEN) ← *((byte*)(struct foo*) main::barp#0) -- _deref_pbuc1=_deref_pbuz1 
+    ldy #0
+    lda (barp),y
+    sta SCREEN
+    // [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=pbuz1_derefidx_vbuc2 
+    ldy #OFFSET_STRUCT_FOO_THING2
+    lda (barp),y
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [8] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] (byte) bar_thing1#0 ← (byte) 'a' [ ] (  [ ] ) always clobbers reg byte a 
+Statement [1] (byte) bar_thing2#0 ← (byte) 'b' [ ] (  [ ] ) always clobbers reg byte a 
+Statement [5] (struct foo*) main::barp#0 ← & *((const struct foo*) bar_ptr) [ main::barp#0 ] ( main:3 [ main::barp#0 ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::SCREEN) ← *((byte*)(struct foo*) main::barp#0) [ main::barp#0 ] ( main:3 [ main::barp#0 ] ) always clobbers reg byte a reg byte y 
+Statement [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING2) [ ] ( main:3 [ ] ) always clobbers reg byte a reg byte y 
+Potential registers zp ZP_BYTE:2 [ bar_thing1#0 ] : zp ZP_BYTE:2 , 
+Potential registers zp ZP_BYTE:3 [ bar_thing2#0 ] : zp ZP_BYTE:3 , 
+Potential registers zp ZP_WORD:4 [ main::barp#0 ] : zp ZP_WORD:4 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [] 20: zp ZP_BYTE:2 [ bar_thing1#0 ] 20: zp ZP_BYTE:3 [ bar_thing2#0 ] 
+Uplift Scope [main] 1: zp ZP_WORD:4 [ main::barp#0 ] 
+Uplift Scope [foo] 
+
+Uplifting [] best 63 combination zp ZP_BYTE:2 [ bar_thing1#0 ] zp ZP_BYTE:3 [ bar_thing2#0 ] 
+Uplifting [main] best 63 combination zp ZP_WORD:4 [ main::barp#0 ] 
+Uplifting [foo] best 63 combination 
+Attempting to uplift remaining variables inzp ZP_BYTE:2 [ bar_thing1#0 ]
+Uplifting [] best 63 combination zp ZP_BYTE:2 [ bar_thing1#0 ] 
+Attempting to uplift remaining variables inzp ZP_BYTE:3 [ bar_thing2#0 ]
+Uplifting [] best 63 combination zp ZP_BYTE:3 [ bar_thing2#0 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
+// Test a memory variable struct value
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const OFFSET_STRUCT_FOO_THING2 = 1
+  .label bar_ptr = bar_thing1
+  .label bar_thing1 = 2
+  .label bar_thing2 = 3
+  // @begin
+__bbegin:
+  // [0] (byte) bar_thing1#0 ← (byte) 'a' -- vbuz1=vbuc1 
+  lda #'a'
+  sta.z bar_thing1
+  // [1] (byte) bar_thing2#0 ← (byte) 'b' -- vbuz1=vbuc1 
+  lda #'b'
+  sta.z bar_thing2
+  // [2] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [3] call main 
+  jsr main
+  // [4] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    .label SCREEN = $400
+    .label barp = 4
+    // [5] (struct foo*) main::barp#0 ← & *((const struct foo*) bar_ptr) -- pssz1=_addr__deref_pssc1 
+    lda #<bar_ptr
+    sta.z barp
+    lda #>bar_ptr
+    sta.z barp+1
+    // [6] *((const byte*) main::SCREEN) ← *((byte*)(struct foo*) main::barp#0) -- _deref_pbuc1=_deref_pbuz1 
+    ldy #0
+    lda (barp),y
+    sta SCREEN
+    // [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=pbuz1_derefidx_vbuc2 
+    ldy #OFFSET_STRUCT_FOO_THING2
+    lda (barp),y
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [8] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1:
+Removing instruction __bend:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(const byte) OFFSET_STRUCT_FOO_THING2 OFFSET_STRUCT_FOO_THING2 = (byte) 1
+(const struct foo*) bar_ptr bar_ptr = (struct foo*)&(byte) bar_thing1#0
+(byte) bar_thing1
+(byte) bar_thing1#0 bar_thing1 zp ZP_BYTE:2 20.0
+(byte) bar_thing2
+(byte) bar_thing2#0 bar_thing2 zp ZP_BYTE:3 20.0
+(byte) foo::thing1
+(byte) foo::thing2
+(void()) main()
+(label) main::@return
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(struct foo*) main::barp
+(struct foo*) main::barp#0 barp zp ZP_WORD:4 1.0
+(byte) main::i
+
+zp ZP_BYTE:2 [ bar_thing1#0 ]
+zp ZP_BYTE:3 [ bar_thing2#0 ]
+zp ZP_WORD:4 [ main::barp#0 ]
+
+
+FINAL ASSEMBLER
+Score: 60
+
+  // File Comments
+// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
+// Test a memory variable struct value
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const OFFSET_STRUCT_FOO_THING2 = 1
+  .label bar_ptr = bar_thing1
+  .label bar_thing1 = 2
+  .label bar_thing2 = 3
+  // @begin
+__bbegin:
+  // bar = { 'a', 'b' }
+  // [0] (byte) bar_thing1#0 ← (byte) 'a' -- vbuz1=vbuc1 
+  lda #'a'
+  sta.z bar_thing1
+  // [1] (byte) bar_thing2#0 ← (byte) 'b' -- vbuz1=vbuc1 
+  lda #'b'
+  sta.z bar_thing2
+  // [2] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [3] call main 
+  jsr main
+  rts
+  // [4] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    .label SCREEN = $400
+    .label barp = 4
+    // barp = &bar
+    // [5] (struct foo*) main::barp#0 ← & *((const struct foo*) bar_ptr) -- pssz1=_addr__deref_pssc1 
+    lda #<bar_ptr
+    sta.z barp
+    lda #>bar_ptr
+    sta.z barp+1
+    // SCREEN[i++] = barp->thing1
+    // [6] *((const byte*) main::SCREEN) ← *((byte*)(struct foo*) main::barp#0) -- _deref_pbuc1=_deref_pbuz1 
+    ldy #0
+    lda (barp),y
+    sta SCREEN
+    // SCREEN[i++] = barp->thing2
+    // [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=pbuz1_derefidx_vbuc2 
+    ldy #OFFSET_STRUCT_FOO_THING2
+    lda (barp),y
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [8] return 
+    rts
+}
+  // File Data
+

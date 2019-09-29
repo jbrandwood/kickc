@@ -33,7 +33,7 @@ public class PassNStructAddressOfRewriting extends Pass2SsaOptimization {
             SymbolRef toSymbolRef = constantSymbolPointer.getToSymbol();
             Symbol toSymbol = getScope().getSymbol(toSymbolRef);
             if(toSymbol.getType() instanceof SymbolTypeStruct) {
-               RValue rewrite = rewriteStructAddressOf((VariableRef) toSymbol);
+               RValue rewrite = rewriteStructAddressOf((VariableRef) toSymbol.getRef());
                if(rewrite!=null) {
                   programValue.set(rewrite);
                }
@@ -77,7 +77,7 @@ public class PassNStructAddressOfRewriting extends Pass2SsaOptimization {
             // Found placeholder assignment!
             StructUnwoundPlaceholder placeholder = (StructUnwoundPlaceholder) assignment.getrValue2();
             SymbolRef firstMember = (SymbolRef) placeholder.getUnwoundMembers().get(0);
-            return new CastValue(new SymbolTypePointer(placeholder.getTypeStruct()), new ConstantSymbolPointer(firstMember));
+            return new ConstantCastValue(new SymbolTypePointer(placeholder.getTypeStruct()), new ConstantSymbolPointer(firstMember));
          }
       }
       return null;

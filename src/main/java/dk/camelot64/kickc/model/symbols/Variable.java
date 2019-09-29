@@ -21,7 +21,7 @@ public class Variable extends SymbolVariable {
    /** true if the variable is intermediate. */
    private boolean isIntermediate;
 
-   /* true if the variable is a PHI master variable that is turned into versions. (the variable has storage strategy PHI)*/
+   /** true if the variable is a PHI master variable that is turned into versions. (the variable has storage strategy PHI)*/
    private boolean isPhiMaster;
 
    /** The number of the next version (only used for PHI masters)*/
@@ -72,16 +72,24 @@ public class Variable extends SymbolVariable {
       this.allocation = allocation;
    }
 
+   public boolean isConstant() {
+      return StorageStrategy.CONSTANT.equals(getStorageStrategy());
+   }
+
    public boolean isPhiMaster() {
+      return StorageStrategy.PHI_MASTER.equals(getStorageStrategy());
+   }
+
+   public boolean isPhiMaster2() {
       /*
       if(isPhiMaster) {
          if(!StorageStrategy.PHI_MASTER.equals(getStorageStrategy())) {
             System.out.println("PHI master mismatch!");
-         };
+         }
       }
-      return StorageStrategy.PHI_MASTER.equals(getStorageStrategy());
-       */
+      */
       return isPhiMaster;
+      //return StorageStrategy.PHI_MASTER.equals(getStorageStrategy());
    }
 
    public boolean isPhiVersion() {

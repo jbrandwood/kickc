@@ -43,7 +43,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
       Collection<Symbol> tableSymbols = getScope().getAllSymbols(true);
 
       for(Symbol tableSymbol : tableSymbols) {
-         if(tableSymbol instanceof Variable && ((Variable) tableSymbol).isPhiMaster()) continue;
+         if(tableSymbol instanceof Variable && ((Variable) tableSymbol).isPhiMaster2()) continue;
          if(tableSymbol instanceof ConstantVar) continue;
          if(tableSymbol instanceof StructDefinition) continue;
          if(tableSymbol instanceof EnumDefinition) continue;

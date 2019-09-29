@@ -76,7 +76,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private void versionAssignment(VariableRef lValueRef, ProgramValue programLValue, StatementSource source) {
       Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       Variable assignedVar = getScope().getVariable(lValueRef);
-      if(assignedVar.isPhiMaster()) {
+      if(assignedVar.isPhiMaster2()) {
          // Assignment to a non-versioned non-intermediary variable
          Variable assignedSymbol = assignedVar;
          Variable version;
@@ -177,7 +177,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       Variable version = null;
       if(rValue instanceof VariableRef) {
          Variable rValueVar = getScope().getVariable((VariableRef) rValue);
-         if(rValueVar.isPhiMaster()) {
+         if(rValueVar.isPhiMaster2()) {
             // rValue needs versioning - look for version in statements
             Variable rSymbol = rValueVar;
             if(rSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(rSymbol.getRef())) {

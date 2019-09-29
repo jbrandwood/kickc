@@ -4,7 +4,10 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.SymbolRef;
+import dk.camelot64.kickc.model.values.Value;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,12 +38,12 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
          Value value = programValue.get();
          if(value instanceof VariableRef) {
             SymbolRef unwound = unwoundSymbols.get(value);
-            if(unwound!=null) {
+            if(unwound != null) {
                programValue.set(unwound);
             }
          } else if(value instanceof LabelRef) {
             SymbolRef unwound = unwoundSymbols.get(value);
-            if(unwound!=null) {
+            if(unwound != null) {
                programValue.set(unwound);
             }
          }
@@ -51,6 +54,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
 
    /**
     * Unwind symbols inside a single block scope (recursively)
+    *
     * @param subScope The block scope
     * @param procedure The containing procedure
     * @param unwoundSymbols All unwound symbols
@@ -62,30 +66,35 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                if(symbol.getRef().isIntermediate()) {
                   Label unwound = procedure.addLabelIntermediate();
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
-               }  else {
+               } else {
                   String name = findLocalName(procedure, symbol);
                   Label unwound = procedure.addLabel(name);
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                }
-            }  else if(symbol instanceof Variable && ((Variable) symbol).isPhiMaster()) {
-               String name = findLocalName(procedure, symbol);
-               Variable var = (Variable) symbol;
-               Variable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getDataSegment());
-               unwound.setDeclaredAlignment(var.getDeclaredAlignment());
-               unwound.setDeclaredConstant(var.isDeclaredConstant());
-               unwound.setDeclaredVolatile(var.isDeclaredVolatile());
-               unwound.setInferedVolatile(var.isInferedVolatile());
-               unwound.setDeclaredRegister((var.getDeclaredRegister()));
-               unwound.setDeclaredExport(var.isDeclaredExport());
-               unwoundSymbols.put(symbol.getRef(), unwound.getRef());
-            }  else if(symbol instanceof Variable && ((Variable) symbol).isIntermediate()) {
-               Variable unwound = procedure.addVariableIntermediate();
-               unwoundSymbols.put(symbol.getRef(), unwound.getRef());
-            }  else if(symbol instanceof BlockScope) {
+            } else if(symbol instanceof Variable) {
+               Variable variable = (Variable) symbol;
+               if(variable.isPhiMaster() || variable.isConstant()) {
+                  String name = findLocalName(procedure, symbol);
+                  Variable var = (Variable) symbol;
+                  Variable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getDataSegment());
+                  unwound.setDeclaredAlignment(var.getDeclaredAlignment());
+                  unwound.setDeclaredConstant(var.isDeclaredConstant());
+                  unwound.setDeclaredVolatile(var.isDeclaredVolatile());
+                  unwound.setInferedVolatile(var.isInferedVolatile());
+                  unwound.setDeclaredRegister((var.getDeclaredRegister()));
+                  unwound.setDeclaredExport(var.isDeclaredExport());
+                  unwoundSymbols.put(symbol.getRef(), unwound.getRef());
+               } else if(variable.isIntermediate()) {
+                  Variable unwound = procedure.addVariableIntermediate();
+                  unwoundSymbols.put(symbol.getRef(), unwound.getRef());
+               } else {
+                  throw new CompileError("ERROR! Unexpected symbol encountered in block scope " + symbol.toString(getProgram()));
+               }
+            } else if(symbol instanceof BlockScope) {
                // Recurse!
                unwindSubScope((Scope) symbol, procedure, unwoundSymbols);
             } else {
-               throw new CompileError("ERROR! Unexpected symbol encountered in block scope "+symbol.toString(getProgram()));
+               throw new CompileError("ERROR! Unexpected symbol encountered in block scope " + symbol.toString(getProgram()));
             }
          }
       }
@@ -94,6 +103,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
    /**
     * Find a suitable name for the symbol in the surrounding procedure.
     * Avoids clashes with other symbols already in the procedure
+    *
     * @param procedure The procedure
     * @param symbol The symbol to find a good ,ocal name for
     * @return An unused local name
@@ -101,8 +111,8 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
    private String findLocalName(Procedure procedure, Symbol symbol) {
       String name = symbol.getLocalName();
       int idx = 0;
-      while(procedure.getLocalSymbol(name)!=null) {
-         name = symbol.getLocalName()+(++idx);
+      while(procedure.getLocalSymbol(name) != null) {
+         name = symbol.getLocalName() + (++idx);
       }
       return name;
    }

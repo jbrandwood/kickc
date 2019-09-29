@@ -7,7 +7,10 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.*;
@@ -70,6 +73,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
 
    /**
     * Version a single unversioned variable being assigned
+    *
     * @param lValueRef The variable  being assigned
     * @param programLValue Program Value usable for updating the variable
     * @param source The statement source - usable for error messages
@@ -78,20 +82,9 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       Variable assignedVar = getScope().getVariable(lValueRef);
       if(assignedVar.isStoragePhiMaster()) {
-         // Assignment to a non-versioned non-intermediary variable
-         Variable assignedSymbol = assignedVar;
-         Variable version;
-         if(assignedSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(assignedSymbol.getRef())) {
-            Collection<Variable> versions = assignedVar.getScope().getVersions(assignedSymbol);
-            if(versions.size() != 0) {
-               throw new CompileError("Error! Constants can not be modified", source);
-            }
-            throw new InternalError("ERR!");
-            //version = assignedSymbol.createVersion();
-            //version.setDeclaredConstant(true);
-         } else {
-            version = assignedSymbol.createVersion();
-         }
+         if(assignedVar.isDeclaredConstant() || earlyIdentifiedConstants.contains(assignedVar.getRef()))
+            throw new InternalError("Error! Constants can not be versioned ", source);
+         Variable version = assignedVar.createVersion();
          programLValue.set(version.getRef());
       }
    }

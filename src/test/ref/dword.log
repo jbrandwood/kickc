@@ -16,8 +16,8 @@ main::@1: scope:[main]  from main main::@1
   (dword) main::b#0 ← (dword~) main::$0
   (byte~) main::$1 ← ((byte)) (dword) main::b#0
   (byte) main::c#0 ← (byte~) main::$1
-  (byte*) main::SCREEN#0 ← ((byte*)) (number) $400
-  *((byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#0
+  (byte*) main::SCREEN ← ((byte*)) (number) $400
+  *((byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::c#0
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$64)
   (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,$64)
   if((bool~) main::$2) goto main::@1
@@ -44,7 +44,6 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@return
 (byte*) main::SCREEN
-(byte*) main::SCREEN#0
 (dword) main::a
 (dword) main::b
 (dword) main::b#0
@@ -59,7 +58,7 @@ Adding number conversion cast (unumber) $ee6b2800 in (dword) main::a ← (number
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (dword) main::a ← (unumber)(number) $ee6b2800
 Inlining cast (byte~) main::$1 ← (byte)(dword) main::b#0
-Inlining cast (byte*) main::SCREEN#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $ee6b2800
 Simplifying constant pointer cast (byte*) 1024
@@ -73,7 +72,7 @@ Simple Condition (bool~) main::$2 [11] if((byte) main::i#1!=rangelast(0,$64)) go
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const dword) main::a = $ee6b2800
 Constant (const byte) main::i#0 = 0
-Constant (const byte*) main::SCREEN#0 = (byte*) 1024
+Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [11] if(main::i#1!=rangelast(0,$64)) goto main::@1 to (number) $65
@@ -124,7 +123,7 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
   [6] (dword) main::b#0 ← (const dword) main::a + (byte) main::i#2
   [7] (byte) main::c#0 ← (byte)(dword) main::b#0
-  [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#0
+  [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::c#0
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
   [10] if((byte) main::i#1!=(byte) $65) goto main::@1
   to:main::@return
@@ -135,7 +134,6 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::SCREEN
 (dword) main::b
 (dword) main::b#0 11.0
 (byte) main::c
@@ -216,7 +214,7 @@ main: {
     // [7] (byte) main::c#0 ← (byte)(dword) main::b#0 -- vbuz1=_byte_vduz2 
     lda.z b
     sta.z c
-    // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z c
     ldy.z i
     sta SCREEN,y
@@ -307,7 +305,7 @@ main: {
     sta.z b+3
     // [7] (byte) main::c#0 ← (byte)(dword) main::b#0 -- vbuaa=_byte_vduz1 
     lda.z b
-    // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -354,8 +352,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte*) main::SCREEN
-(const byte*) main::SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) main::SCREEN SCREEN = (byte*) 1024
 (const dword) main::a a = (dword) $ee6b2800
 (dword) main::b
 (dword) main::b#0 b zp ZP_DWORD:2 11.0
@@ -417,7 +414,7 @@ main: {
     // [7] (byte) main::c#0 ← (byte)(dword) main::b#0 -- vbuaa=_byte_vduz1 
     lda.z b
     // SCREEN[i] = c
-    // [8] *((const byte*) main::SCREEN#0 + (byte) main::i#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::c#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // for( byte i: 0..100)
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 

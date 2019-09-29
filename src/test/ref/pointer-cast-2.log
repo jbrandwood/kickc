@@ -7,21 +7,21 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::ub_screen#0 ← ((byte*)) (number) $400
+  (byte*) main::ub_screen ← ((byte*)) (number) $400
   (byte) main::ub#0 ← (number) $ff
   (byte*~) main::$0 ← & (byte) main::ub#0
   (signed byte*~) main::$1 ← ((signed byte*)) (byte*~) main::$0
   (signed byte*) main::sb_ptr#0 ← (signed byte*~) main::$1
   *((signed byte*) main::sb_ptr#0) ← (number) 1
-  *((byte*) main::ub_screen#0) ← (byte) main::ub#0
-  (signed byte*) main::sb_screen#0 ← ((signed byte*)) (number) $428
+  *((byte*) main::ub_screen) ← (byte) main::ub#0
+  (signed byte*) main::sb_screen ← ((signed byte*)) (number) $428
   (signed byte~) main::$2 ← ((signed byte)) (number) $7f
   (signed byte) main::sb#0 ← (signed byte~) main::$2
   (signed byte*~) main::$3 ← & (signed byte) main::sb#0
   (byte*~) main::$4 ← ((byte*)) (signed byte*~) main::$3
   (byte*) main::ub_ptr#0 ← (byte*~) main::$4
   *((byte*) main::ub_ptr#0) ← (number) 1
-  *((signed byte*) main::sb_screen#0) ← (signed byte) main::sb#0
+  *((signed byte*) main::sb_screen) ← (signed byte) main::sb#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -50,23 +50,21 @@ SYMBOL TABLE SSA
 (signed byte*) main::sb_ptr
 (signed byte*) main::sb_ptr#0
 (signed byte*) main::sb_screen
-(signed byte*) main::sb_screen#0
 (byte) main::ub
 (byte) main::ub#0
 (byte*) main::ub_ptr
 (byte*) main::ub_ptr#0
 (byte*) main::ub_screen
-(byte*) main::ub_screen#0
 
 Adding number conversion cast (unumber) $ff in (byte) main::ub#0 ← (number) $ff
 Adding number conversion cast (snumber) 1 in *((signed byte*) main::sb_ptr#0) ← (number) 1
 Adding number conversion cast (unumber) 1 in *((byte*) main::ub_ptr#0) ← (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::ub_screen#0 ← (byte*)(number) $400
+Inlining cast (byte*) main::ub_screen ← (byte*)(number) $400
 Inlining cast (byte) main::ub#0 ← (unumber)(number) $ff
 Inlining cast (signed byte*~) main::$1 ← (signed byte*)(byte*~) main::$0
 Inlining cast *((signed byte*) main::sb_ptr#0) ← (snumber)(number) 1
-Inlining cast (signed byte*) main::sb_screen#0 ← (signed byte*)(number) $428
+Inlining cast (signed byte*) main::sb_screen ← (signed byte*)(number) $428
 Inlining cast (signed byte~) main::$2 ← (signed byte)(number) $7f
 Inlining cast (byte*~) main::$4 ← (byte*)(signed byte*~) main::$3
 Inlining cast *((byte*) main::ub_ptr#0) ← (unumber)(number) 1
@@ -90,9 +88,9 @@ Alias candidate removed (volatile)(signed byte) main::sb#0 = (signed byte~) main
 Constant right-side identified [2] (byte*~) main::$0 ← & (byte) main::ub#0
 Constant right-side identified [10] (signed byte*~) main::$3 ← & (signed byte) main::sb#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::ub_screen#0 = (byte*) 1024
+Constant (const byte*) main::ub_screen = (byte*) 1024
 Constant (const byte*) main::$0 = &main::ub#0
-Constant (const signed byte*) main::sb_screen#0 = (signed byte*) 1064
+Constant (const signed byte*) main::sb_screen = (signed byte*) 1064
 Constant (const signed byte) main::$2 = $7f
 Constant (const signed byte*) main::$3 = &main::sb#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -135,10 +133,10 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] (byte) main::ub#0 ← (byte) $ff
   [5] *((const signed byte*) main::sb_ptr#0) ← (signed byte) 1
-  [6] *((const byte*) main::ub_screen#0) ← (byte) main::ub#0
+  [6] *((const byte*) main::ub_screen) ← (byte) main::ub#0
   [7] (signed byte) main::sb#0 ← (signed byte) $7f
   [8] *((const byte*) main::ub_ptr#0) ← (byte) 1
-  [9] *((const signed byte*) main::sb_screen#0) ← (signed byte) main::sb#0
+  [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0
   to:main::@return
 main::@return: scope:[main]  from main
   [10] return 
@@ -150,11 +148,9 @@ VARIABLE REGISTER WEIGHTS
 (signed byte) main::sb
 (signed byte) main::sb#0 2.0
 (signed byte*) main::sb_ptr
-(signed byte*) main::sb_screen
 (byte) main::ub
 (byte) main::ub#0 2.0
 (byte*) main::ub_ptr
-(byte*) main::ub_screen
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -200,7 +196,7 @@ main: {
     // [5] *((const signed byte*) main::sb_ptr#0) ← (signed byte) 1 -- _deref_pbsc1=vbsc2 
     lda #1
     sta.z sb_ptr
-    // [6] *((const byte*) main::ub_screen#0) ← (byte) main::ub#0 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte*) main::ub_screen) ← (byte) main::ub#0 -- _deref_pbuc1=vbuz1 
     lda.z ub
     sta ub_screen
     // [7] (signed byte) main::sb#0 ← (signed byte) $7f -- vbsz1=vbsc1 
@@ -209,7 +205,7 @@ main: {
     // [8] *((const byte*) main::ub_ptr#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta.z ub_ptr
-    // [9] *((const signed byte*) main::sb_screen#0) ← (signed byte) main::sb#0 -- _deref_pbsc1=vbsz1 
+    // [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0 -- _deref_pbsc1=vbsz1 
     lda.z sb
     sta sb_screen
     jmp breturn
@@ -223,10 +219,10 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte) main::ub#0 ← (byte) $ff [ main::ub#0 ] ( main:2 [ main::ub#0 ] ) always clobbers reg byte a 
 Statement [5] *((const signed byte*) main::sb_ptr#0) ← (signed byte) 1 [ main::ub#0 ] ( main:2 [ main::ub#0 ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::ub_screen#0) ← (byte) main::ub#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::ub_screen) ← (byte) main::ub#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] (signed byte) main::sb#0 ← (signed byte) $7f [ main::sb#0 ] ( main:2 [ main::sb#0 ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) main::ub_ptr#0) ← (byte) 1 [ main::sb#0 ] ( main:2 [ main::sb#0 ] ) always clobbers reg byte a 
-Statement [9] *((const signed byte*) main::sb_screen#0) ← (signed byte) main::sb#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::ub#0 ] : zp ZP_BYTE:2 , 
 Potential registers zp ZP_BYTE:3 [ main::sb#0 ] : zp ZP_BYTE:3 , 
 
@@ -277,7 +273,7 @@ main: {
     // [5] *((const signed byte*) main::sb_ptr#0) ← (signed byte) 1 -- _deref_pbsc1=vbsc2 
     lda #1
     sta.z sb_ptr
-    // [6] *((const byte*) main::ub_screen#0) ← (byte) main::ub#0 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte*) main::ub_screen) ← (byte) main::ub#0 -- _deref_pbuc1=vbuz1 
     lda.z ub
     sta ub_screen
     // [7] (signed byte) main::sb#0 ← (signed byte) $7f -- vbsz1=vbsc1 
@@ -286,7 +282,7 @@ main: {
     // [8] *((const byte*) main::ub_ptr#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta.z ub_ptr
-    // [9] *((const signed byte*) main::sb_screen#0) ← (signed byte) main::sb#0 -- _deref_pbsc1=vbsz1 
+    // [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0 -- _deref_pbsc1=vbsz1 
     lda.z sb
     sta sb_screen
     jmp breturn
@@ -325,14 +321,12 @@ FINAL SYMBOL TABLE
 (signed byte) main::sb#0 sb zp ZP_BYTE:3 2.0
 (signed byte*) main::sb_ptr
 (const signed byte*) main::sb_ptr#0 sb_ptr = (signed byte*)&(byte) main::ub#0
-(signed byte*) main::sb_screen
-(const signed byte*) main::sb_screen#0 sb_screen = (signed byte*) 1064
+(const signed byte*) main::sb_screen sb_screen = (signed byte*) 1064
 (byte) main::ub
 (byte) main::ub#0 ub zp ZP_BYTE:2 2.0
 (byte*) main::ub_ptr
 (const byte*) main::ub_ptr#0 ub_ptr = (byte*)&(signed byte) main::sb#0
-(byte*) main::ub_screen
-(const byte*) main::ub_screen#0 ub_screen = (byte*) 1024
+(const byte*) main::ub_screen ub_screen = (byte*) 1024
 
 zp ZP_BYTE:2 [ main::ub#0 ]
 zp ZP_BYTE:3 [ main::sb#0 ]
@@ -371,7 +365,7 @@ main: {
     lda #1
     sta.z sb_ptr
     // *ub_screen = ub
-    // [6] *((const byte*) main::ub_screen#0) ← (byte) main::ub#0 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte*) main::ub_screen) ← (byte) main::ub#0 -- _deref_pbuc1=vbuz1 
     lda.z ub
     sta ub_screen
     // sb = (signed byte)0x7f
@@ -383,7 +377,7 @@ main: {
     lda #1
     sta.z ub_ptr
     // *sb_screen = sb
-    // [9] *((const signed byte*) main::sb_screen#0) ← (signed byte) main::sb#0 -- _deref_pbsc1=vbsz1 
+    // [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0 -- _deref_pbsc1=vbsz1 
     lda.z sb
     sta sb_screen
     // main::@return

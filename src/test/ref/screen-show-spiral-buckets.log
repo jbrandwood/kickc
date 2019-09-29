@@ -602,7 +602,7 @@ main::@5: scope:[main]  from main::@4
   (byte) main::bucket_idx#2 ← phi( main::@4/(byte) main::bucket_idx#4 )
   *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
   (byte~) main::$26 ← (byte) main::bucket_idx#2 * (const byte) SIZEOF_POINTER
-  (word[]) main::bucket#0 ← *((word*[]) BUCKETS + (byte~) main::$26)
+  (word[]) main::bucket ← *((word*[]) BUCKETS + (byte~) main::$26)
   (byte) main::bucket_size#0 ← *((byte[]) BUCKET_SIZES + (byte) main::bucket_idx#2)
   (bool~) main::$5 ← (byte) main::bucket_size#0 > (number) 0
   (bool~) main::$6 ← ! (bool~) main::$5
@@ -650,7 +650,7 @@ main::@9: scope:[main]  from main::@8
   (byte) main::min_angle#3 ← phi( main::@8/(byte) main::min_angle#4 )
   (byte) main::i#3 ← phi( main::@8/(byte) main::i#2 )
   (byte~) main::$27 ← (byte) main::i#3 * (const byte) SIZEOF_WORD
-  (word) main::offset#0 ← *((word[]) main::bucket#0 + (byte~) main::$27)
+  (word) main::offset#0 ← *((word[]) main::bucket + (byte~) main::$27)
   (byte*~) main::$8 ← (byte*) SCREEN_FILL + (word) main::offset#0
   (byte*) main::fill#0 ← (byte*~) main::$8
   (bool~) main::$9 ← *((byte*) main::fill#0) != (byte) FILL_CHAR
@@ -2071,7 +2071,6 @@ SYMBOL TABLE SSA
 (byte*) main::angle#0
 (byte*) main::angle#1
 (word[]) main::bucket
-(word[]) main::bucket#0
 (byte) main::bucket_idx
 (byte) main::bucket_idx#0
 (byte) main::bucket_idx#1
@@ -3438,7 +3437,7 @@ main::@2: scope:[main]  from main::@1 main::@2
 main::@3: scope:[main]  from main::@2
   [25] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   [26] (byte~) main::$26 ← (byte) main::bucket_idx#6 << (byte) 1
-  [27] (word[]) main::bucket#0 ← *((word*[])(void*) BUCKETS + (byte~) main::$26)
+  [27] (word[]) main::bucket ← *((word*[])(void*) BUCKETS + (byte~) main::$26)
   [28] (byte) main::bucket_size#0 ← *((byte[])(void*) BUCKET_SIZES + (byte) main::bucket_idx#6)
   [29] if((byte) main::bucket_size#0<=(byte) 0) goto main::@4
   to:main::@5
@@ -3471,7 +3470,7 @@ main::@12: scope:[main]  from main::@4
   to:main::@1
 main::@6: scope:[main]  from main::@5
   [41] (byte~) main::$27 ← (byte) main::i#2 << (byte) 1
-  [42] (word) main::offset#0 ← *((word[]) main::bucket#0 + (byte~) main::$27)
+  [42] (word) main::offset#0 ← *((word[]) main::bucket + (byte~) main::$27)
   [43] (byte*) main::fill#0 ← (const byte*) SCREEN_FILL + (word) main::offset#0
   [44] if(*((byte*) main::fill#0)==(const byte) FILL_CHAR) goto main::@18
   to:main::@9
@@ -4117,8 +4116,7 @@ VARIABLE REGISTER WEIGHTS
 (byte~) main::$27 202.0
 (byte*) main::angle
 (byte*) main::angle#0 151.5
-(word[]) main::bucket
-(word[]) main::bucket#0 6.588235294117648
+(word[]) main::bucket 6.588235294117648
 (byte) main::bucket_idx
 (byte) main::bucket_idx#1 11.0
 (byte) main::bucket_idx#6 2.64
@@ -4221,7 +4219,7 @@ Added variable BUCKET_IDX to zero page equivalence class [ BUCKET_IDX ]
 Added variable init_angle_screen::screen#0 to zero page equivalence class [ init_angle_screen::screen#0 ]
 Added variable init_buckets::screen#0 to zero page equivalence class [ init_buckets::screen#0 ]
 Added variable main::$26 to zero page equivalence class [ main::$26 ]
-Added variable main::bucket#0 to zero page equivalence class [ main::bucket#0 ]
+Added variable main::bucket to zero page equivalence class [ main::bucket ]
 Added variable main::bucket_size#0 to zero page equivalence class [ main::bucket_size#0 ]
 Added variable main::fill1#0 to zero page equivalence class [ main::fill1#0 ]
 Added variable main::$27 to zero page equivalence class [ main::$27 ]
@@ -4329,7 +4327,7 @@ Complete equivalence classes
 [ init_angle_screen::screen#0 ]
 [ init_buckets::screen#0 ]
 [ main::$26 ]
-[ main::bucket#0 ]
+[ main::bucket ]
 [ main::bucket_size#0 ]
 [ main::fill1#0 ]
 [ main::$27 ]
@@ -4436,7 +4434,7 @@ Allocated zp ZP_WORD:72 [ BUCKET_IDX ]
 Allocated zp ZP_WORD:74 [ init_angle_screen::screen#0 ]
 Allocated zp ZP_WORD:76 [ init_buckets::screen#0 ]
 Allocated zp ZP_BYTE:78 [ main::$26 ]
-Allocated zp ZP_WORD:79 [ main::bucket#0 ]
+Allocated zp ZP_WORD:79 [ main::bucket ]
 Allocated zp ZP_BYTE:81 [ main::bucket_size#0 ]
 Allocated zp ZP_WORD:82 [ main::fill1#0 ]
 Allocated zp ZP_BYTE:84 [ main::$27 ]
@@ -4658,9 +4656,9 @@ bend_from_b3:
 bend:
   // main
 main: {
+    .label bucket = $4f
     .label _26 = $4e
     .label _27 = $54
-    .label bucket = $4f
     .label bucket_size = $51
     .label bucket_idx = 2
     .label offset = 7
@@ -4730,7 +4728,7 @@ main: {
     lda.z bucket_idx
     asl
     sta.z _26
-    // [27] (word[]) main::bucket#0 ← *((word*[])(void*) BUCKETS + (byte~) main::$26) -- pwuz1=pptz2_derefidx_vbuz3 
+    // [27] (word[]) main::bucket ← *((word*[])(void*) BUCKETS + (byte~) main::$26) -- pwuz1=pptz2_derefidx_vbuz3 
     ldy.z _26
     lda (BUCKETS),y
     sta.z bucket
@@ -4828,7 +4826,7 @@ main: {
     lda.z i
     asl
     sta.z _27
-    // [42] (word) main::offset#0 ← *((word[]) main::bucket#0 + (byte~) main::$27) -- vwuz1=pwuz2_derefidx_vbuz3 
+    // [42] (word) main::offset#0 ← *((word[]) main::bucket + (byte~) main::$27) -- vwuz1=pwuz2_derefidx_vbuz3 
     ldy.z _27
     lda (bucket),y
     sta.z offset
@@ -6386,28 +6384,28 @@ Statement [21] (byte*) init_buckets::screen#0 ← (byte[])(void*) SCREEN_DIST [ 
 Statement [24] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::bucket_idx#6 main::bucket_idx#1 ]
 Statement [26] (byte~) main::$26 ← (byte) main::bucket_idx#6 << (byte) 1 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::$26 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::$26 ] ) always clobbers reg byte a 
-Statement [27] (word[]) main::bucket#0 ← *((word*[])(void*) BUCKETS + (byte~) main::$26) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 ] ) always clobbers reg byte a reg byte y 
+Statement [27] (word[]) main::bucket ← *((word*[])(void*) BUCKETS + (byte~) main::$26) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::bucket_idx#6 main::bucket_idx#1 ]
-Statement [28] (byte) main::bucket_size#0 ← *((byte[])(void*) BUCKET_SIZES + (byte) main::bucket_idx#6) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 ] ) always clobbers reg byte a reg byte y 
+Statement [28] (byte) main::bucket_size#0 ← *((byte[])(void*) BUCKET_SIZES + (byte) main::bucket_idx#6) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 ] ) always clobbers reg byte a reg byte y 
 Statement [32] if((word) main::min_offset#2==(word) $ffff) goto main::@4 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::min_offset#2 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::min_offset#2 ] ) always clobbers reg byte a 
 Statement [33] (byte*) main::fill1#0 ← (const byte*) SCREEN_FILL + (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::fill1#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::fill1#0 ] ) always clobbers reg byte a 
 Statement [34] *((byte*) main::fill1#0) ← (const byte) FILL_CHAR [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ) always clobbers reg byte a reg byte y 
-Statement [41] (byte~) main::$27 ← (byte) main::i#2 << (byte) 1 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ) always clobbers reg byte a 
+Statement [41] (byte~) main::$27 ← (byte) main::i#2 << (byte) 1 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:81 [ main::bucket_size#0 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ main::min_angle#2 main::min_angle#5 main::min_angle#1 ]
-Statement [42] (word) main::offset#0 ← *((word[]) main::bucket#0 + (byte~) main::$27) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
+Statement [42] (word) main::offset#0 ← *((word[]) main::bucket + (byte~) main::$27) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:81 [ main::bucket_size#0 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp ZP_BYTE:6 [ main::min_angle#2 main::min_angle#5 main::min_angle#1 ]
-Statement [43] (byte*) main::fill#0 ← (const byte*) SCREEN_FILL + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ) always clobbers reg byte a 
-Statement [44] if(*((byte*) main::fill#0)==(const byte) FILL_CHAR) goto main::@18 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
-Statement [45] (byte*) main::angle#0 ← (byte[])(void*) SCREEN_ANGLE + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a 
-Statement [46] if(*((byte*) main::angle#0)>(byte) main::min_angle#2) goto main::@17 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a reg byte y 
-Statement [47] (byte) main::min_angle#1 ← *((byte*) main::angle#0) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ) always clobbers reg byte a reg byte y 
-Statement [50] (word~) main::min_offset#8 ← (word) main::min_offset#5 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ) always clobbers reg byte a 
-Statement [51] (word~) main::min_offset#9 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ) always clobbers reg byte a 
-Statement [52] (word~) main::min_offset#11 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ) always clobbers reg byte a 
+Statement [43] (byte*) main::fill#0 ← (const byte*) SCREEN_FILL + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ) always clobbers reg byte a 
+Statement [44] if(*((byte*) main::fill#0)==(const byte) FILL_CHAR) goto main::@18 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
+Statement [45] (byte*) main::angle#0 ← (byte[])(void*) SCREEN_ANGLE + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a 
+Statement [46] if(*((byte*) main::angle#0)>(byte) main::min_angle#2) goto main::@17 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a reg byte y 
+Statement [47] (byte) main::min_angle#1 ← *((byte*) main::angle#0) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ) always clobbers reg byte a reg byte y 
+Statement [50] (word~) main::min_offset#8 ← (word) main::min_offset#5 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ) always clobbers reg byte a 
+Statement [51] (word~) main::min_offset#9 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ) always clobbers reg byte a 
+Statement [52] (word~) main::min_offset#11 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ) always clobbers reg byte a 
 Statement [55] *((byte[])(void*) BUCKET_SIZES + (byte) init_buckets::i#2) ← (byte) 0 [ BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::i#2 heap_head#1 ] ( main:14::init_buckets:22 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::i#2 heap_head#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ init_buckets::i#2 init_buckets::i#1 ]
 Statement [58] (byte*~) init_buckets::dist#6 ← (byte*) init_buckets::screen#0 [ BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::dist#6 heap_head#1 ] ( main:14::init_buckets:22 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::dist#6 heap_head#1 ] ) always clobbers reg byte a 
@@ -6554,21 +6552,21 @@ Statement [19] (byte*) init_angle_screen::screen#0 ← (byte[])(void*) SCREEN_AN
 Statement [21] (byte*) init_buckets::screen#0 ← (byte[])(void*) SCREEN_DIST [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 heap_head#1 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 heap_head#1 ] ) always clobbers reg byte a 
 Statement [24] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ) always clobbers reg byte a 
 Statement [26] (byte~) main::$26 ← (byte) main::bucket_idx#6 << (byte) 1 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::$26 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::$26 ] ) always clobbers reg byte a 
-Statement [27] (word[]) main::bucket#0 ← *((word*[])(void*) BUCKETS + (byte~) main::$26) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 ] ) always clobbers reg byte a reg byte y 
-Statement [28] (byte) main::bucket_size#0 ← *((byte[])(void*) BUCKET_SIZES + (byte) main::bucket_idx#6) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 ] ) always clobbers reg byte a reg byte y 
+Statement [27] (word[]) main::bucket ← *((word*[])(void*) BUCKETS + (byte~) main::$26) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket ] ) always clobbers reg byte a reg byte y 
+Statement [28] (byte) main::bucket_size#0 ← *((byte[])(void*) BUCKET_SIZES + (byte) main::bucket_idx#6) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 ] ) always clobbers reg byte a reg byte y 
 Statement [32] if((word) main::min_offset#2==(word) $ffff) goto main::@4 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::min_offset#2 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::min_offset#2 ] ) always clobbers reg byte a 
 Statement [33] (byte*) main::fill1#0 ← (const byte*) SCREEN_FILL + (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::fill1#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::fill1#0 ] ) always clobbers reg byte a 
 Statement [34] *((byte*) main::fill1#0) ← (const byte) FILL_CHAR [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ) always clobbers reg byte a reg byte y 
-Statement [41] (byte~) main::$27 ← (byte) main::i#2 << (byte) 1 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ) always clobbers reg byte a 
-Statement [42] (word) main::offset#0 ← *((word[]) main::bucket#0 + (byte~) main::$27) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
-Statement [43] (byte*) main::fill#0 ← (const byte*) SCREEN_FILL + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ) always clobbers reg byte a 
-Statement [44] if(*((byte*) main::fill#0)==(const byte) FILL_CHAR) goto main::@18 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
-Statement [45] (byte*) main::angle#0 ← (byte[])(void*) SCREEN_ANGLE + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a 
-Statement [46] if(*((byte*) main::angle#0)>(byte) main::min_angle#2) goto main::@17 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a reg byte y 
-Statement [47] (byte) main::min_angle#1 ← *((byte*) main::angle#0) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ) always clobbers reg byte a reg byte y 
-Statement [50] (word~) main::min_offset#8 ← (word) main::min_offset#5 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ) always clobbers reg byte a 
-Statement [51] (word~) main::min_offset#9 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ) always clobbers reg byte a 
-Statement [52] (word~) main::min_offset#11 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ) always clobbers reg byte a 
+Statement [41] (byte~) main::$27 ← (byte) main::i#2 << (byte) 1 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ) always clobbers reg byte a 
+Statement [42] (word) main::offset#0 ← *((word[]) main::bucket + (byte~) main::$27) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
+Statement [43] (byte*) main::fill#0 ← (const byte*) SCREEN_FILL + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ) always clobbers reg byte a 
+Statement [44] if(*((byte*) main::fill#0)==(const byte) FILL_CHAR) goto main::@18 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
+Statement [45] (byte*) main::angle#0 ← (byte[])(void*) SCREEN_ANGLE + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a 
+Statement [46] if(*((byte*) main::angle#0)>(byte) main::min_angle#2) goto main::@17 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a reg byte y 
+Statement [47] (byte) main::min_angle#1 ← *((byte*) main::angle#0) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ) always clobbers reg byte a reg byte y 
+Statement [50] (word~) main::min_offset#8 ← (word) main::min_offset#5 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ) always clobbers reg byte a 
+Statement [51] (word~) main::min_offset#9 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ) always clobbers reg byte a 
+Statement [52] (word~) main::min_offset#11 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ) always clobbers reg byte a 
 Statement [55] *((byte[])(void*) BUCKET_SIZES + (byte) init_buckets::i#2) ← (byte) 0 [ BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::i#2 heap_head#1 ] ( main:14::init_buckets:22 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::i#2 heap_head#1 ] ) always clobbers reg byte a 
 Statement [58] (byte*~) init_buckets::dist#6 ← (byte*) init_buckets::screen#0 [ BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::dist#6 heap_head#1 ] ( main:14::init_buckets:22 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::dist#6 heap_head#1 ] ) always clobbers reg byte a 
 Statement [60] *((byte[])(void*) BUCKET_SIZES + *((byte*) init_buckets::dist#4)) ← ++ *((byte[])(void*) BUCKET_SIZES + *((byte*) init_buckets::dist#4)) [ BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::dist#4 init_buckets::i1#2 heap_head#1 ] ( main:14::init_buckets:22 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::dist#4 init_buckets::i1#2 heap_head#1 ] ) always clobbers reg byte a reg byte y 
@@ -6696,21 +6694,21 @@ Statement [19] (byte*) init_angle_screen::screen#0 ← (byte[])(void*) SCREEN_AN
 Statement [21] (byte*) init_buckets::screen#0 ← (byte[])(void*) SCREEN_DIST [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 heap_head#1 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 heap_head#1 ] ) always clobbers reg byte a 
 Statement [24] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ) always clobbers reg byte a 
 Statement [26] (byte~) main::$26 ← (byte) main::bucket_idx#6 << (byte) 1 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::$26 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::$26 ] ) always clobbers reg byte a 
-Statement [27] (word[]) main::bucket#0 ← *((word*[])(void*) BUCKETS + (byte~) main::$26) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 ] ) always clobbers reg byte a reg byte y 
-Statement [28] (byte) main::bucket_size#0 ← *((byte[])(void*) BUCKET_SIZES + (byte) main::bucket_idx#6) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 ] ) always clobbers reg byte a reg byte y 
+Statement [27] (word[]) main::bucket ← *((word*[])(void*) BUCKETS + (byte~) main::$26) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket ] ) always clobbers reg byte a reg byte y 
+Statement [28] (byte) main::bucket_size#0 ← *((byte[])(void*) BUCKET_SIZES + (byte) main::bucket_idx#6) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 ] ) always clobbers reg byte a reg byte y 
 Statement [32] if((word) main::min_offset#2==(word) $ffff) goto main::@4 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::min_offset#2 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::min_offset#2 ] ) always clobbers reg byte a 
 Statement [33] (byte*) main::fill1#0 ← (const byte*) SCREEN_FILL + (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::fill1#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::fill1#0 ] ) always clobbers reg byte a 
 Statement [34] *((byte*) main::fill1#0) ← (const byte) FILL_CHAR [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 ] ) always clobbers reg byte a reg byte y 
-Statement [41] (byte~) main::$27 ← (byte) main::i#2 << (byte) 1 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ) always clobbers reg byte a 
-Statement [42] (word) main::offset#0 ← *((word[]) main::bucket#0 + (byte~) main::$27) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
-Statement [43] (byte*) main::fill#0 ← (const byte*) SCREEN_FILL + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ) always clobbers reg byte a 
-Statement [44] if(*((byte*) main::fill#0)==(const byte) FILL_CHAR) goto main::@18 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
-Statement [45] (byte*) main::angle#0 ← (byte[])(void*) SCREEN_ANGLE + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a 
-Statement [46] if(*((byte*) main::angle#0)>(byte) main::min_angle#2) goto main::@17 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a reg byte y 
-Statement [47] (byte) main::min_angle#1 ← *((byte*) main::angle#0) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ) always clobbers reg byte a reg byte y 
-Statement [50] (word~) main::min_offset#8 ← (word) main::min_offset#5 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ) always clobbers reg byte a 
-Statement [51] (word~) main::min_offset#9 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ) always clobbers reg byte a 
-Statement [52] (word~) main::min_offset#11 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket#0 main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ) always clobbers reg byte a 
+Statement [41] (byte~) main::$27 ← (byte) main::i#2 << (byte) 1 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::$27 ] ) always clobbers reg byte a 
+Statement [42] (word) main::offset#0 ← *((word[]) main::bucket + (byte~) main::$27) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
+Statement [43] (byte*) main::fill#0 ← (const byte*) SCREEN_FILL + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::fill#0 ] ) always clobbers reg byte a 
+Statement [44] if(*((byte*) main::fill#0)==(const byte) FILL_CHAR) goto main::@18 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 ] ) always clobbers reg byte a reg byte y 
+Statement [45] (byte*) main::angle#0 ← (byte[])(void*) SCREEN_ANGLE + (word) main::offset#0 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a 
+Statement [46] if(*((byte*) main::angle#0)>(byte) main::min_angle#2) goto main::@17 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_offset#2 main::min_angle#2 main::offset#0 main::angle#0 ] ) always clobbers reg byte a reg byte y 
+Statement [47] (byte) main::min_angle#1 ← *((byte*) main::angle#0) [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::offset#0 main::min_angle#1 ] ) always clobbers reg byte a reg byte y 
+Statement [50] (word~) main::min_offset#8 ← (word) main::min_offset#5 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#1 main::min_offset#8 main::min_angle#5 ] ) always clobbers reg byte a 
+Statement [51] (word~) main::min_offset#9 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#9 ] ) always clobbers reg byte a 
+Statement [52] (word~) main::min_offset#11 ← (word) main::min_offset#2 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ( main:14 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS main::bucket_idx#6 main::bucket main::bucket_size#0 main::i#2 main::min_angle#2 main::min_offset#11 ] ) always clobbers reg byte a 
 Statement [55] *((byte[])(void*) BUCKET_SIZES + (byte) init_buckets::i#2) ← (byte) 0 [ BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::i#2 heap_head#1 ] ( main:14::init_buckets:22 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::i#2 heap_head#1 ] ) always clobbers reg byte a 
 Statement [58] (byte*~) init_buckets::dist#6 ← (byte*) init_buckets::screen#0 [ BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::dist#6 heap_head#1 ] ( main:14::init_buckets:22 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::dist#6 heap_head#1 ] ) always clobbers reg byte a 
 Statement [60] *((byte[])(void*) BUCKET_SIZES + *((byte*) init_buckets::dist#4)) ← ++ *((byte[])(void*) BUCKET_SIZES + *((byte*) init_buckets::dist#4)) [ BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::dist#4 init_buckets::i1#2 heap_head#1 ] ( main:14::init_buckets:22 [ SCREEN_ANGLE BUCKET_SIZES BUCKETS BUCKET_IDX init_buckets::screen#0 init_buckets::dist#4 init_buckets::i1#2 heap_head#1 ] ) always clobbers reg byte a reg byte y 
@@ -6875,7 +6873,7 @@ Potential registers zp ZP_WORD:72 [ BUCKET_IDX ] : zp ZP_WORD:72 ,
 Potential registers zp ZP_WORD:74 [ init_angle_screen::screen#0 ] : zp ZP_WORD:74 , 
 Potential registers zp ZP_WORD:76 [ init_buckets::screen#0 ] : zp ZP_WORD:76 , 
 Potential registers zp ZP_BYTE:78 [ main::$26 ] : zp ZP_BYTE:78 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:79 [ main::bucket#0 ] : zp ZP_WORD:79 , 
+Potential registers zp ZP_WORD:79 [ main::bucket ] : zp ZP_WORD:79 , 
 Potential registers zp ZP_BYTE:81 [ main::bucket_size#0 ] : zp ZP_BYTE:81 , reg byte x , 
 Potential registers zp ZP_WORD:82 [ main::fill1#0 ] : zp ZP_WORD:82 , 
 Potential registers zp ZP_BYTE:84 [ main::$27 ] : zp ZP_BYTE:84 , reg byte a , reg byte x , reg byte y , 
@@ -6939,7 +6937,7 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [atan2_16] 28,670.58: zp ZP_BYTE:41 [ atan2_16::shift#2 atan2_16::shift#5 atan2_16::shift#1 ] 20,608: zp ZP_WORD:42 [ atan2_16::yd#5 atan2_16::yd#3 atan2_16::yd#10 atan2_16::yd#1 atan2_16::yd#2 ] 17,338.67: zp ZP_WORD:44 [ atan2_16::xd#5 atan2_16::xd#3 atan2_16::xd#10 atan2_16::xd#1 atan2_16::xd#2 ] 7,533.33: zp ZP_WORD:37 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 ] 2,698.28: zp ZP_WORD:32 [ atan2_16::yi#3 atan2_16::yi#8 atan2_16::yi#0 atan2_16::yi#16 atan2_16::$2 atan2_16::yi#1 atan2_16::yi#2 ] 2,283.07: zp ZP_WORD:34 [ atan2_16::xi#3 atan2_16::xi#8 atan2_16::xi#0 atan2_16::xi#13 atan2_16::$7 atan2_16::xi#1 atan2_16::xi#2 ] 2,002: zp ZP_BYTE:132 [ atan2_16::$24 ] 2,002: zp ZP_BYTE:133 [ atan2_16::$23 ] 1,710.04: zp ZP_BYTE:36 [ atan2_16::i#2 atan2_16::i#1 ] 202: zp ZP_WORD:122 [ atan2_16::return#2 ] 50: zp ZP_WORD:39 [ atan2_16::return#0 atan2_16::angle#5 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 ] 2.87: zp ZP_WORD:118 [ atan2_16::x#0 ] 2.72: zp ZP_WORD:120 [ atan2_16::y#0 ] 
 Uplift Scope [bsearch16u] 7,563.11: zp ZP_BYTE:57 [ bsearch16u::num#5 bsearch16u::num#1 bsearch16u::num#3 bsearch16u::num#0 ] 2,855.06: zp ZP_WORD:55 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#1 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 ] 2,002: zp ZP_BYTE:161 [ bsearch16u::$6 ] 2,002: zp ZP_BYTE:162 [ bsearch16u::$16 ] 1,501.5: zp ZP_WORD:165 [ bsearch16u::result#0 ] 501: zp ZP_WORD:163 [ bsearch16u::pivot#0 ] 4: zp ZP_WORD:152 [ bsearch16u::return#3 ] 0.27: zp ZP_WORD:150 [ bsearch16u::key#0 ] 
 Uplift Scope [init_angle_screen] 220.36: zp ZP_BYTE:31 [ init_angle_screen::xb#2 init_angle_screen::xb#1 ] 202: zp ZP_BYTE:111 [ init_angle_screen::$3 ] 202: zp ZP_BYTE:112 [ init_angle_screen::$4 ] 202: zp ZP_BYTE:115 [ init_angle_screen::$7 ] 202: zp ZP_WORD:124 [ init_angle_screen::angle_w#0 ] 202: zp ZP_WORD:126 [ init_angle_screen::$11 ] 202: zp ZP_BYTE:129 [ init_angle_screen::$13 ] 202: zp ZP_BYTE:130 [ init_angle_screen::$14 ] 202: zp ZP_BYTE:131 [ init_angle_screen::$15 ] 129.86: zp ZP_BYTE:30 [ init_angle_screen::x#2 init_angle_screen::x#1 ] 84.17: zp ZP_BYTE:128 [ init_angle_screen::ang_w#0 ] 50.5: zp ZP_WORD:116 [ init_angle_screen::yw#0 ] 33.67: zp ZP_WORD:113 [ init_angle_screen::xw#0 ] 21.23: zp ZP_BYTE:25 [ init_angle_screen::y#5 init_angle_screen::y#1 ] 20.37: zp ZP_WORD:28 [ init_angle_screen::screen_bottomline#6 init_angle_screen::screen_bottomline#0 init_angle_screen::screen_bottomline#1 ] 16.92: zp ZP_WORD:26 [ init_angle_screen::screen_topline#6 init_angle_screen::screen_topline#0 init_angle_screen::screen_topline#1 ] 3: zp ZP_WORD:74 [ init_angle_screen::screen#0 ] 
-Uplift Scope [main] 673.33: zp ZP_WORD:7 [ main::min_offset#5 main::min_offset#9 main::offset#0 main::min_offset#11 ] 377.07: zp ZP_BYTE:6 [ main::min_angle#2 main::min_angle#5 main::min_angle#1 ] 238.11: zp ZP_WORD:4 [ main::min_offset#2 main::min_offset#8 ] 202: zp ZP_BYTE:84 [ main::$27 ] 202: zp ZP_WORD:85 [ main::fill#0 ] 151.5: zp ZP_WORD:87 [ main::angle#0 ] 134.67: zp ZP_BYTE:3 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:78 [ main::$26 ] 22: zp ZP_WORD:82 [ main::fill1#0 ] 13.64: zp ZP_BYTE:2 [ main::bucket_idx#6 main::bucket_idx#1 ] 7.69: zp ZP_BYTE:81 [ main::bucket_size#0 ] 6.59: zp ZP_WORD:79 [ main::bucket#0 ] 
+Uplift Scope [main] 673.33: zp ZP_WORD:7 [ main::min_offset#5 main::min_offset#9 main::offset#0 main::min_offset#11 ] 377.07: zp ZP_BYTE:6 [ main::min_angle#2 main::min_angle#5 main::min_angle#1 ] 238.11: zp ZP_WORD:4 [ main::min_offset#2 main::min_offset#8 ] 202: zp ZP_BYTE:84 [ main::$27 ] 202: zp ZP_WORD:85 [ main::fill#0 ] 151.5: zp ZP_WORD:87 [ main::angle#0 ] 134.67: zp ZP_BYTE:3 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:78 [ main::$26 ] 22: zp ZP_WORD:82 [ main::fill1#0 ] 13.64: zp ZP_BYTE:2 [ main::bucket_idx#6 main::bucket_idx#1 ] 7.69: zp ZP_BYTE:81 [ main::bucket_size#0 ] 6.59: zp ZP_WORD:79 [ main::bucket ] 
 Uplift Scope [init_dist_screen] 707: zp ZP_BYTE:54 [ init_dist_screen::xd#0 init_dist_screen::$16 init_dist_screen::$14 ] 221.24: zp ZP_BYTE:53 [ init_dist_screen::xb#2 init_dist_screen::xb#1 ] 202: zp ZP_BYTE:139 [ init_dist_screen::x2#0 ] 202: zp ZP_WORD:142 [ init_dist_screen::xds#0 ] 202: zp ZP_WORD:144 [ init_dist_screen::ds#0 ] 131.3: zp ZP_BYTE:52 [ init_dist_screen::x#2 init_dist_screen::x#1 ] 126.25: zp ZP_BYTE:149 [ init_dist_screen::d#0 ] 77: zp ZP_BYTE:51 [ init_dist_screen::yd#0 init_dist_screen::$7 init_dist_screen::$5 ] 22: zp ZP_BYTE:134 [ init_dist_screen::y2#0 ] 18.18: zp ZP_WORD:49 [ init_dist_screen::screen_bottomline#11 init_dist_screen::screen_bottomline#0 init_dist_screen::screen_bottomline#1 ] 17.47: zp ZP_BYTE:46 [ init_dist_screen::y#10 init_dist_screen::y#1 ] 14.06: zp ZP_WORD:47 [ init_dist_screen::screen_topline#11 init_dist_screen::screen#0 init_dist_screen::screen_topline#1 ] 4.87: zp ZP_WORD:137 [ init_dist_screen::yds#0 ] 
 Uplift Scope [sqr] 338: zp ZP_BYTE:58 [ sqr::val#2 sqr::val#1 sqr::val#0 ] 202: zp ZP_WORD:140 [ sqr::return#3 ] 28.5: zp ZP_WORD:168 [ sqr::return#0 ] 22: zp ZP_WORD:135 [ sqr::return#2 ] 4: zp ZP_BYTE:167 [ sqr::$0 ] 
 Uplift Scope [init_buckets] 34.33: zp ZP_WORD:10 [ init_buckets::dist#4 init_buckets::dist#6 init_buckets::dist#1 ] 33: zp ZP_BYTE:9 [ init_buckets::i#2 init_buckets::i#1 ] 33: zp ZP_BYTE:16 [ init_buckets::i3#2 init_buckets::i3#1 ] 23.83: zp ZP_WORD:12 [ init_buckets::i1#2 init_buckets::i1#1 ] 22: zp ZP_WORD:14 [ init_buckets::i2#2 init_buckets::i2#1 ] 22: zp ZP_WORD:89 [ init_buckets::$18 ] 22: zp ZP_WORD:93 [ init_buckets::$15 ] 22: zp ZP_WORD:95 [ init_buckets::$19 ] 22: zp ZP_WORD:98 [ init_buckets::$10 ] 22: zp ZP_WORD:100 [ init_buckets::$16 ] 22: zp ZP_WORD:102 [ init_buckets::$20 ] 22: zp ZP_BYTE:108 [ init_buckets::$17 ] 18.5: zp ZP_WORD:19 [ init_buckets::i4#2 init_buckets::i4#1 ] 15.93: zp ZP_WORD:17 [ init_buckets::dist#5 init_buckets::dist#8 init_buckets::dist#3 ] 11: zp ZP_WORD:106 [ init_buckets::$11 ] 7.33: zp ZP_WORD:104 [ init_buckets::bucket#0 ] 5.5: zp ZP_BYTE:97 [ init_buckets::distance#0 ] 3.67: zp ZP_WORD:91 [ init_buckets::$6 ] 0.43: zp ZP_WORD:76 [ init_buckets::screen#0 ] 
@@ -6954,7 +6952,7 @@ Limited combination testing to 100 combinations of 144 possible.
 Uplifting [bsearch16u] best 1234979 combination reg byte x [ bsearch16u::num#5 bsearch16u::num#1 bsearch16u::num#3 bsearch16u::num#0 ] zp ZP_WORD:55 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#1 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 ] reg byte a [ bsearch16u::$6 ] reg byte a [ bsearch16u::$16 ] zp ZP_WORD:165 [ bsearch16u::result#0 ] zp ZP_WORD:163 [ bsearch16u::pivot#0 ] zp ZP_WORD:152 [ bsearch16u::return#3 ] zp ZP_WORD:150 [ bsearch16u::key#0 ] 
 Uplifting [init_angle_screen] best 1233379 combination zp ZP_BYTE:31 [ init_angle_screen::xb#2 init_angle_screen::xb#1 ] reg byte a [ init_angle_screen::$3 ] reg byte a [ init_angle_screen::$4 ] reg byte a [ init_angle_screen::$7 ] zp ZP_WORD:124 [ init_angle_screen::angle_w#0 ] zp ZP_WORD:126 [ init_angle_screen::$11 ] zp ZP_BYTE:129 [ init_angle_screen::$13 ] zp ZP_BYTE:130 [ init_angle_screen::$14 ] zp ZP_BYTE:131 [ init_angle_screen::$15 ] zp ZP_BYTE:30 [ init_angle_screen::x#2 init_angle_screen::x#1 ] zp ZP_BYTE:128 [ init_angle_screen::ang_w#0 ] zp ZP_WORD:116 [ init_angle_screen::yw#0 ] zp ZP_WORD:113 [ init_angle_screen::xw#0 ] zp ZP_BYTE:25 [ init_angle_screen::y#5 init_angle_screen::y#1 ] zp ZP_WORD:28 [ init_angle_screen::screen_bottomline#6 init_angle_screen::screen_bottomline#0 init_angle_screen::screen_bottomline#1 ] zp ZP_WORD:26 [ init_angle_screen::screen_topline#6 init_angle_screen::screen_topline#0 init_angle_screen::screen_topline#1 ] zp ZP_WORD:74 [ init_angle_screen::screen#0 ] 
 Limited combination testing to 100 combinations of 65536 possible.
-Uplifting [main] best 1231939 combination zp ZP_WORD:7 [ main::min_offset#5 main::min_offset#9 main::offset#0 main::min_offset#11 ] zp ZP_BYTE:6 [ main::min_angle#2 main::min_angle#5 main::min_angle#1 ] zp ZP_WORD:4 [ main::min_offset#2 main::min_offset#8 ] reg byte a [ main::$27 ] zp ZP_WORD:85 [ main::fill#0 ] zp ZP_WORD:87 [ main::angle#0 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$26 ] zp ZP_WORD:82 [ main::fill1#0 ] zp ZP_BYTE:2 [ main::bucket_idx#6 main::bucket_idx#1 ] zp ZP_BYTE:81 [ main::bucket_size#0 ] zp ZP_WORD:79 [ main::bucket#0 ] 
+Uplifting [main] best 1231939 combination zp ZP_WORD:7 [ main::min_offset#5 main::min_offset#9 main::offset#0 main::min_offset#11 ] zp ZP_BYTE:6 [ main::min_angle#2 main::min_angle#5 main::min_angle#1 ] zp ZP_WORD:4 [ main::min_offset#2 main::min_offset#8 ] reg byte a [ main::$27 ] zp ZP_WORD:85 [ main::fill#0 ] zp ZP_WORD:87 [ main::angle#0 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$26 ] zp ZP_WORD:82 [ main::fill1#0 ] zp ZP_BYTE:2 [ main::bucket_idx#6 main::bucket_idx#1 ] zp ZP_BYTE:81 [ main::bucket_size#0 ] zp ZP_WORD:79 [ main::bucket ] 
 Limited combination testing to 100 combinations of 256 possible.
 Uplifting [init_dist_screen] best 1228739 combination reg byte a [ init_dist_screen::xd#0 init_dist_screen::$16 init_dist_screen::$14 ] zp ZP_BYTE:53 [ init_dist_screen::xb#2 init_dist_screen::xb#1 ] reg byte a [ init_dist_screen::x2#0 ] zp ZP_WORD:142 [ init_dist_screen::xds#0 ] zp ZP_WORD:144 [ init_dist_screen::ds#0 ] zp ZP_BYTE:52 [ init_dist_screen::x#2 init_dist_screen::x#1 ] reg byte a [ init_dist_screen::d#0 ] zp ZP_BYTE:51 [ init_dist_screen::yd#0 init_dist_screen::$7 init_dist_screen::$5 ] zp ZP_BYTE:134 [ init_dist_screen::y2#0 ] zp ZP_WORD:49 [ init_dist_screen::screen_bottomline#11 init_dist_screen::screen_bottomline#0 init_dist_screen::screen_bottomline#1 ] zp ZP_BYTE:46 [ init_dist_screen::y#10 init_dist_screen::y#1 ] zp ZP_WORD:47 [ init_dist_screen::screen_topline#11 init_dist_screen::screen#0 init_dist_screen::screen_topline#1 ] zp ZP_WORD:137 [ init_dist_screen::yds#0 ] 
 Limited combination testing to 100 combinations of 6144 possible.
@@ -7037,7 +7035,7 @@ Coalescing zero page register [ zp ZP_WORD:47 [ init_dist_screen::screen_topline
 Coalescing zero page register [ zp ZP_WORD:49 [ init_dist_screen::screen_bottomline#11 init_dist_screen::screen_bottomline#0 init_dist_screen::screen_bottomline#1 ] ] with [ zp ZP_WORD:37 [ atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#5 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::return#2 init_angle_screen::angle_w#0 init_angle_screen::$11 ] ]
 Coalescing zero page register [ zp ZP_WORD:55 [ bsearch16u::return#1 bsearch16u::return#6 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#1 bsearch16u::items#8 bsearch16u::$2 bsearch16u::items#0 bsearch16u::return#3 sqrt::found#0 sqrt::$3 sqrt::$1 ] ] with [ zp ZP_WORD:42 [ atan2_16::yd#5 atan2_16::yd#3 atan2_16::yd#10 atan2_16::yd#1 atan2_16::yd#2 ] ]
 Coalescing zero page register [ zp ZP_WORD:59 [ init_squares::sqr#2 init_squares::sqr#1 ] ] with [ zp ZP_WORD:44 [ atan2_16::xd#5 atan2_16::xd#3 atan2_16::xd#10 atan2_16::xd#1 atan2_16::xd#2 ] ]
-Coalescing zero page register [ zp ZP_WORD:79 [ main::bucket#0 ] ] with [ zp ZP_WORD:61 [ init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 ] ]
+Coalescing zero page register [ zp ZP_WORD:79 [ main::bucket ] ] with [ zp ZP_WORD:61 [ init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 ] ]
 Coalescing zero page register [ zp ZP_BYTE:81 [ main::bucket_size#0 ] ] with [ zp ZP_BYTE:52 [ init_dist_screen::x#2 init_dist_screen::x#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:85 [ main::fill#0 ] ] with [ zp ZP_WORD:64 [ SCREEN_DIST init_buckets::screen#0 ] ]
 Coalescing zero page register [ zp ZP_WORD:87 [ main::angle#0 ] ] with [ zp ZP_WORD:72 [ BUCKET_IDX ] ]
@@ -7047,7 +7045,7 @@ Coalescing zero page register [ zp ZP_WORD:116 [ init_angle_screen::yw#0 atan2_1
 Coalescing zero page register [ zp ZP_WORD:135 [ sqr::return#2 init_dist_screen::yds#0 ] ] with [ zp ZP_WORD:106 [ init_buckets::$11 ] ]
 Coalescing zero page register [ zp ZP_WORD:47 [ init_dist_screen::screen_topline#11 init_dist_screen::screen#0 init_dist_screen::screen_topline#1 atan2_16::xi#3 atan2_16::xi#8 atan2_16::xi#0 atan2_16::xi#13 atan2_16::$7 atan2_16::xi#1 atan2_16::xi#2 ] ] with [ zp ZP_WORD:10 [ init_buckets::dist#4 init_buckets::dist#6 init_buckets::dist#1 main::min_offset#2 main::min_offset#8 main::fill1#0 ] ]
 Coalescing zero page register [ zp ZP_WORD:49 [ init_dist_screen::screen_bottomline#11 init_dist_screen::screen_bottomline#0 init_dist_screen::screen_bottomline#1 atan2_16::angle#6 atan2_16::angle#12 atan2_16::angle#13 atan2_16::angle#2 atan2_16::angle#3 atan2_16::return#0 atan2_16::angle#5 atan2_16::angle#11 atan2_16::angle#1 atan2_16::angle#4 atan2_16::return#2 init_angle_screen::angle_w#0 init_angle_screen::$11 ] ] with [ zp ZP_WORD:12 [ init_buckets::i1#2 init_buckets::i1#1 main::min_offset#5 main::min_offset#9 main::offset#0 main::min_offset#11 ] ]
-Coalescing zero page register [ zp ZP_WORD:79 [ main::bucket#0 init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 ] ] with [ zp ZP_WORD:26 [ init_angle_screen::screen_topline#6 init_angle_screen::screen_topline#0 init_angle_screen::screen_topline#1 init_buckets::i2#2 init_buckets::i2#1 ] ]
+Coalescing zero page register [ zp ZP_WORD:79 [ main::bucket init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 ] ] with [ zp ZP_WORD:26 [ init_angle_screen::screen_topline#6 init_angle_screen::screen_topline#0 init_angle_screen::screen_topline#1 init_buckets::i2#2 init_buckets::i2#1 ] ]
 Coalescing zero page register [ zp ZP_BYTE:97 [ init_buckets::distance#0 init_dist_screen::xb#2 init_dist_screen::xb#1 ] ] with [ zp ZP_BYTE:25 [ init_angle_screen::y#5 init_angle_screen::y#1 main::bucket_idx#6 main::bucket_idx#1 ] ]
 Coalescing zero page register [ zp ZP_BYTE:128 [ init_angle_screen::ang_w#0 ] ] with [ zp ZP_BYTE:81 [ main::bucket_size#0 init_dist_screen::x#2 init_dist_screen::x#1 ] ]
 Coalescing zero page register [ zp ZP_WORD:135 [ sqr::return#2 init_dist_screen::yds#0 init_buckets::$11 ] ] with [ zp ZP_WORD:59 [ init_squares::sqr#2 init_squares::sqr#1 atan2_16::xd#5 atan2_16::xd#3 atan2_16::xd#10 atan2_16::xd#1 atan2_16::xd#2 ] ]
@@ -7064,7 +7062,7 @@ Allocated (was zp ZP_WORD:55) zp ZP_WORD:12 [ bsearch16u::return#1 bsearch16u::r
 Allocated (was zp ZP_WORD:66) zp ZP_WORD:14 [ SCREEN_ANGLE ]
 Allocated (was zp ZP_WORD:68) zp ZP_WORD:16 [ BUCKET_SIZES ]
 Allocated (was zp ZP_WORD:70) zp ZP_WORD:18 [ BUCKETS ]
-Allocated (was zp ZP_WORD:79) zp ZP_WORD:20 [ main::bucket#0 init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 init_angle_screen::screen_topline#6 init_angle_screen::screen_topline#0 init_angle_screen::screen_topline#1 init_buckets::i2#2 init_buckets::i2#1 ]
+Allocated (was zp ZP_WORD:79) zp ZP_WORD:20 [ main::bucket init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 init_angle_screen::screen_topline#6 init_angle_screen::screen_topline#0 init_angle_screen::screen_topline#1 init_buckets::i2#2 init_buckets::i2#1 ]
 Allocated (was zp ZP_WORD:85) zp ZP_WORD:22 [ main::fill#0 SCREEN_DIST init_buckets::screen#0 ]
 Allocated (was zp ZP_WORD:87) zp ZP_WORD:24 [ main::angle#0 BUCKET_IDX ]
 Allocated (was zp ZP_BYTE:97) zp ZP_BYTE:26 [ init_buckets::distance#0 init_dist_screen::xb#2 init_dist_screen::xb#1 init_angle_screen::y#5 init_angle_screen::y#1 main::bucket_idx#6 main::bucket_idx#1 ]
@@ -7299,7 +7297,7 @@ main: {
     // [26] (byte~) main::$26 ← (byte) main::bucket_idx#6 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z bucket_idx
     asl
-    // [27] (word[]) main::bucket#0 ← *((word*[])(void*) BUCKETS + (byte~) main::$26) -- pwuz1=pptz2_derefidx_vbuaa 
+    // [27] (word[]) main::bucket ← *((word*[])(void*) BUCKETS + (byte~) main::$26) -- pwuz1=pptz2_derefidx_vbuaa 
     tay
     lda (BUCKETS),y
     sta.z bucket
@@ -7394,7 +7392,7 @@ main: {
     // [41] (byte~) main::$27 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [42] (word) main::offset#0 ← *((word[]) main::bucket#0 + (byte~) main::$27) -- vwuz1=pwuz2_derefidx_vbuaa 
+    // [42] (word) main::offset#0 ← *((word[]) main::bucket + (byte~) main::$27) -- vwuz1=pwuz2_derefidx_vbuaa 
     tay
     lda (bucket),y
     sta.z offset
@@ -9402,8 +9400,7 @@ FINAL SYMBOL TABLE
 (label) main::@9
 (byte*) main::angle
 (byte*) main::angle#0 angle zp ZP_WORD:24 151.5
-(word[]) main::bucket
-(word[]) main::bucket#0 bucket zp ZP_WORD:20 6.588235294117648
+(word[]) main::bucket bucket zp ZP_WORD:20 6.588235294117648
 (byte) main::bucket_idx
 (byte) main::bucket_idx#1 bucket_idx zp ZP_BYTE:26 11.0
 (byte) main::bucket_idx#6 bucket_idx zp ZP_BYTE:26 2.64
@@ -9482,7 +9479,7 @@ zp ZP_WORD:14 [ SCREEN_ANGLE ]
 zp ZP_WORD:16 [ BUCKET_SIZES ]
 zp ZP_WORD:18 [ BUCKETS ]
 reg byte a [ main::$26 ]
-zp ZP_WORD:20 [ main::bucket#0 init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 init_angle_screen::screen_topline#6 init_angle_screen::screen_topline#0 init_angle_screen::screen_topline#1 init_buckets::i2#2 init_buckets::i2#1 ]
+zp ZP_WORD:20 [ main::bucket init_squares::squares#2 init_squares::squares#1 init_squares::squares#0 init_angle_screen::screen_topline#6 init_angle_screen::screen_topline#0 init_angle_screen::screen_topline#1 init_buckets::i2#2 init_buckets::i2#1 ]
 reg byte a [ main::$27 ]
 zp ZP_WORD:22 [ main::fill#0 SCREEN_DIST init_buckets::screen#0 ]
 zp ZP_WORD:24 [ main::angle#0 BUCKET_IDX ]
@@ -9718,7 +9715,7 @@ main: {
     // [26] (byte~) main::$26 ← (byte) main::bucket_idx#6 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z bucket_idx
     asl
-    // [27] (word[]) main::bucket#0 ← *((word*[])(void*) BUCKETS + (byte~) main::$26) -- pwuz1=pptz2_derefidx_vbuaa 
+    // [27] (word[]) main::bucket ← *((word*[])(void*) BUCKETS + (byte~) main::$26) -- pwuz1=pptz2_derefidx_vbuaa 
     tay
     lda (BUCKETS),y
     sta.z bucket
@@ -9814,7 +9811,7 @@ main: {
     // [41] (byte~) main::$27 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [42] (word) main::offset#0 ← *((word[]) main::bucket#0 + (byte~) main::$27) -- vwuz1=pwuz2_derefidx_vbuaa 
+    // [42] (word) main::offset#0 ← *((word[]) main::bucket + (byte~) main::$27) -- vwuz1=pwuz2_derefidx_vbuaa 
     tay
     lda (bucket),y
     sta.z offset

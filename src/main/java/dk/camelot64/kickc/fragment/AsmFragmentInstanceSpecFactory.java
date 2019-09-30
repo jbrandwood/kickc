@@ -41,6 +41,7 @@ public class AsmFragmentInstanceSpecFactory {
 
    /** Indexing for zeropages/constants/labels */
    private int nextZpIdx = 1;
+   private int nextMemIdx = 1;
    private int nextConstIdx = 1;
    private int nextLabelIdx = 1;
 
@@ -477,6 +478,10 @@ public class AsmFragmentInstanceSpecFactory {
             zpNameIdx = Integer.toString(nextZpIdx++);
          }
          return "z" + zpNameIdx;
+      } else if(Registers.RegisterType.MEMORY.equals(register.getType())) {
+         // TODO: Examine of Memory is already bound!
+
+         return "m"+(nextMemIdx++);
       } else if(Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {
          return "aa";
       } else if(Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {

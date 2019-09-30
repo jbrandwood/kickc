@@ -184,7 +184,11 @@ public class Pass4RegistersFinalize extends Pass2Base {
             String before = register == null ? null : register.toString();
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
             Variable variable = getProgram().getSymbolInfos().getVariable(variableRef);
-            register = allocateNewRegisterZp(variable);
+            if(variable.isStorageMemory()) {
+               register = new Registers.RegisterMemory();
+            }  else {
+               register = allocateNewRegisterZp(variable);
+            }
             equivalenceClass.setRegister(register);
             if(before == null || !before.equals(register.toString())) {
                getLog().append("Allocated " + (before == null ? "" : ("(was " + before + ") ")) + equivalenceClass.toString());

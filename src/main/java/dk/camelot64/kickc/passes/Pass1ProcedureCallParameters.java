@@ -115,6 +115,8 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       // Add self-assignments for all variables modified in the procedure
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
       for(VariableRef modifiedVar : modifiedVars) {
+         if(getScope().getVariable(modifiedVar).isStorageMemory())
+            continue;
          addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, origCall.getSource(), Comment.NO_COMMENTS));
       }
       return null;
@@ -132,6 +134,8 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       // Add self-assignments for all variables modified in the procedure
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
       for(VariableRef modifiedVar : modifiedVars) {
+         if(getScope().getVariable(modifiedVar).isStorageMemory())
+            continue;
          addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, orig.getSource(), Comment.NO_COMMENTS));
       }
       return super.visitReturn(orig);

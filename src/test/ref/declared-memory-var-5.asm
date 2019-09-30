@@ -3,7 +3,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  .const OFFSET_STRUCT_FOO_THING2 = 1
 __bbegin:
   lda #'a'
   sta bar_thing1
@@ -12,11 +11,10 @@ __bbegin:
   jsr main
   rts
 main: {
-    .label barp = bar_thing1
     .label SCREEN = $400
-    lda barp
+    lda bar_thing1
     sta SCREEN
-    lda barp+OFFSET_STRUCT_FOO_THING2
+    lda bar_thing2
     sta SCREEN+1
     rts
 }

@@ -3,28 +3,22 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  .label idx_ptr = idx
+  .label idx_p = idx
   .label SCREEN = $400
-  .label idx_p = 2
 __bbegin:
   lda #0
-  sta idx_ptr
-  lda #<idx_ptr
-  sta.z idx_p
-  lda #>idx_ptr
-  sta.z idx_p+1
+  sta idx
   jsr main
   rts
 main: {
     ldx #0
   __b1:
-    ldy #0
-    lda (idx_p),y
+    lda idx_p
     sta SCREEN,x
     txa
     clc
-    adc (idx_p),y
-    sta (idx_p),y
+    adc idx_p
+    sta idx_p
     inx
     cpx #6
     bne __b1

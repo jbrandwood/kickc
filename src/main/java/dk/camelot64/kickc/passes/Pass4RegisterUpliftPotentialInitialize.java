@@ -1,12 +1,11 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /*** Initialize potential registers for each equivalence class.
@@ -46,12 +45,12 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
             Registers.RegisterType registerType = defaultRegister.getType();
             List<Registers.Register> potentials = new ArrayList<>();
             potentials.add(defaultRegister);
-            if(registerType.equals(Registers.RegisterType.ZP_BYTE) &&!varVolatile(equivalenceClass)) {
+            if(registerType.equals(Registers.RegisterType.ZP_BYTE) && !varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
                potentials.add(Registers.getRegisterX());
                potentials.add(Registers.getRegisterY());
             }
-            if(registerType.equals(Registers.RegisterType.ZP_BOOL) &&!varVolatile(equivalenceClass)) {
+            if(registerType.equals(Registers.RegisterType.ZP_BOOL) && !varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
             }
             registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
@@ -62,13 +61,14 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
 
    /**
     * Determine if any variable is declared as volatile
+    *
     * @param equivalenceClass The variable equivalence class
     * @return true if any variable is volatile
     */
    private boolean varVolatile(LiveRangeEquivalenceClass equivalenceClass) {
       for(VariableRef variableRef : equivalenceClass.getVariables()) {
          Variable variable = getSymbols().getVariable(variableRef);
-         if(variable.isVolatile()) {
+         if(variable.isVolatile() || variable.isStorageMemory()) {
             return true;
          }
       }

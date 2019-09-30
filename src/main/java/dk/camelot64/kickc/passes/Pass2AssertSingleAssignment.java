@@ -1,11 +1,12 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.LValue;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class Pass2AssertSingleAssignment extends Pass2SsaAssertion {
             if(statement instanceof StatementLValue) {
                LValue lValue = ((StatementLValue) statement).getlValue();
                if(lValue instanceof VariableRef) {
-                  checkAssignment(assignments, lValue, statement);
+                  checkAssignment(assignments, (VariableRef) lValue, statement);
                }
             } else if(statement instanceof StatementPhiBlock) {
                for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
@@ -39,11 +40,13 @@ public class Pass2AssertSingleAssignment extends Pass2SsaAssertion {
 
    }
 
-   private void checkAssignment(Map<VariableRef, Statement> assignments, LValue lValue, Statement statement) {
+   private void checkAssignment(Map<VariableRef, Statement> assignments, VariableRef lValue, Statement statement) {
+      if(getScope().getVariable(lValue).isStorageMemory())
+         return;
       if(assignments.get(lValue) != null) {
          throw new AssertionFailed("Multiple assignments to variable " + lValue + " 1: " + assignments.get(lValue) + " 2:" + statement);
       } else {
-         assignments.put((VariableRef) lValue, statement);
+         assignments.put(lValue, statement);
       }
    }
 

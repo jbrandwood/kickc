@@ -81,24 +81,46 @@ public class AsmFragmentTemplate {
       // Generate a dummy instance to find clobber & cycles
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
-      Variable v1 = new Variable("$tmp1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-      Variable v2 = new Variable("$tmp2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-      Variable v3 = new Variable("$tmp3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-      Variable v4 = new Variable("$tmp4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-      Variable v5 = new Variable("$tmp5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-      Variable v6 = new Variable("$tmp6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-      v1.setAllocation(new Registers.RegisterZpByte(2));
-      v2.setAllocation(new Registers.RegisterZpByte(4));
-      v3.setAllocation(new Registers.RegisterZpByte(6));
-      v4.setAllocation(new Registers.RegisterZpByte(8));
-      v5.setAllocation(new Registers.RegisterZpByte(9));
-      v6.setAllocation(new Registers.RegisterZpByte(10));
-      if(signature.contains("z1")) bindings.put("z1", v1);
-      if(signature.contains("z2")) bindings.put("z2", v2);
-      if(signature.contains("z3")) bindings.put("z3", v3);
-      if(signature.contains("z4")) bindings.put("z4", v4);
-      if(signature.contains("z5")) bindings.put("z5", v5);
-      if(signature.contains("z6")) bindings.put("z6", v6);
+      {
+         Variable v1 = new Variable("z1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
+         Variable v2 = new Variable("z2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
+         Variable v3 = new Variable("z3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
+         Variable v4 = new Variable("z4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
+         Variable v5 = new Variable("z5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
+         Variable v6 = new Variable("z6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
+         v1.setAllocation(new Registers.RegisterZpByte(2));
+         v2.setAllocation(new Registers.RegisterZpByte(4));
+         v3.setAllocation(new Registers.RegisterZpByte(6));
+         v4.setAllocation(new Registers.RegisterZpByte(8));
+         v5.setAllocation(new Registers.RegisterZpByte(9));
+         v6.setAllocation(new Registers.RegisterZpByte(10));
+         if(signature.contains("z1")) bindings.put("z1", v1);
+         if(signature.contains("z2")) bindings.put("z2", v2);
+         if(signature.contains("z3")) bindings.put("z3", v3);
+         if(signature.contains("z4")) bindings.put("z4", v4);
+         if(signature.contains("z5")) bindings.put("z5", v5);
+         if(signature.contains("z6")) bindings.put("z6", v6);
+      }
+      {
+         Variable v1 = new Variable("m1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
+         Variable v2 = new Variable("m2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
+         Variable v3 = new Variable("m3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
+         Variable v4 = new Variable("m4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
+         Variable v5 = new Variable("m5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
+         Variable v6 = new Variable("m6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
+         v1.setAllocation(new Registers.RegisterMemory());
+         v2.setAllocation(new Registers.RegisterMemory());
+         v3.setAllocation(new Registers.RegisterMemory());
+         v4.setAllocation(new Registers.RegisterMemory());
+         v5.setAllocation(new Registers.RegisterMemory());
+         v6.setAllocation(new Registers.RegisterMemory());
+         if(signature.contains("m1")) bindings.put("m1", v1);
+         if(signature.contains("m2")) bindings.put("m2", v2);
+         if(signature.contains("m3")) bindings.put("m3", v3);
+         if(signature.contains("m4")) bindings.put("m4", v4);
+         if(signature.contains("m5")) bindings.put("m5", v5);
+         if(signature.contains("m6")) bindings.put("m6", v6);
+      }
       if(signature.contains("c1")) bindings.put("c1", new ConstantInteger(310L));
       if(signature.contains("c2")) bindings.put("c2", new ConstantInteger(320L));
       if(signature.contains("c3")) bindings.put("c3", new ConstantInteger(330L));

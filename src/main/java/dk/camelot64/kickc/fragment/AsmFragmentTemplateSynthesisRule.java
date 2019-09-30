@@ -222,6 +222,14 @@ class AsmFragmentTemplateSynthesisRule {
       Map<String, String> mapZ4 = new LinkedHashMap<>();
       mapZ4.put("z5", "z4");
       mapZ4.put("z6", "z5");
+      // M1 is replaced by something non-mem - all above are moved down
+      Map<String, String> mapM1 = new LinkedHashMap<>();
+      mapM1.put("m2", "m1");
+      mapM1.put("m3", "m2");
+      mapM1.put("m4", "m3");
+      mapM1.put("m5", "m4");
+      mapM1.put("m6", "m5");
+
       // C1 is replaced by something non-C - all above are moved down
       Map<String, String> mapC1 = new LinkedHashMap<>();
       mapC1.put("c2", "c1");
@@ -320,10 +328,16 @@ class AsmFragmentTemplateSynthesisRule {
       String lvalZ1 = "...z1=.*";
       String lvalZ2 = "...z2=.*";
       String lvalZ3 = "...z3=.*";
+      String lvalM1 = "...m1=.*";
+      String lvalM2 = "...m2=.*";
+      String lvalM3 = "...m3=.*";
       // Multiple occurences of Z1/...
       String twoZ1 = ".*z1.*z1.*";
       String twoZ2 = ".*z2.*z2.*";
       String twoZ3 = ".*z3.*z3.*";
+      String twoM1 = ".*m1.*m1.*";
+      String twoM2 = ".*m2.*m2.*";
+      String twoM3 = ".*m3.*m3.*";
       String twoC1 = ".*c1.*c1.*";
       String twoC2 = ".*c2.*c2.*";
       String threeC1 = ".*c1.*c1.*c1.*";
@@ -331,6 +345,9 @@ class AsmFragmentTemplateSynthesisRule {
       String threeZ2 = ".*z2.*z2.*z2.*";
       String threeZ3 = ".*z3.*z3.*z3.*";
       String threeZ4 = ".*z4.*z4.*z4.*";
+      String threeM1 = ".*m1.*m1.*m1.*";
+      String threeM2 = ".*m2.*m2.*m2.*";
+      String threeM3 = ".*m3.*m3.*m3.*";
       String threeAa = ".*aa.*aa.*aa.*";
 
       // Presence of unwanted single symbols
@@ -451,6 +468,20 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z3(.*)", lvalZ3+"|"+twoZ3+"|"+rvalYy, "ldy {z3}", "$1yy$2", null, mapZ3));
       // Replace Z3 with XX (only one)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)z3(.*)", lvalZ3+"|"+twoZ3+"|"+rvalXx, "ldx {z3}", "$1xx$2", null, mapZ3));
+
+      // Replace M1 with AA (only one)
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*)", lvalM1+"|"+rvalAa+"|"+ twoM1, "lda {m1}", "$1aa$2", null, mapM1));
+      // Replace two M1s with AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*vb.)m1(.*)", lvalM1+"|"+rvalAa+"|"+ threeM1, "lda {m1}", "$1aa$2aa$3", null, mapM1));
+      // Replace first (not second) M1 with AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*)m1(.*)", lvalM1+"|"+rvalAa, "lda {m1}", "$1aa$2m1$3", null, null));
+      // Replace second (not first) M1 with AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)m1(.*vb.)m1(.*)", lvalM1+"|"+rvalAa, "lda {m1}", "$1m1$2aa$3", null, null));
+      // Replace non-assigned M1 with AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(...aa)=(.*vb.)m1(.*)", rvalAa+"|"+ twoM1, "lda {m1}", "$1=$2aa$3", null, mapM1));
+      // Replace assigned M1 with AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vb.)m1=(.*)", twoM1, null, "$1aa=$2", "sta {m1}", mapM1));
+
 
       // Correct wrong ordered Z2/Z1
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z2(.*)z1(.*)", twoZ1+"|"+twoZ2, null, "$1z1$2z2$3", null, mapZ2Swap, false));

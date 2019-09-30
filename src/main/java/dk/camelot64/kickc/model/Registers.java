@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.Value;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -51,7 +52,8 @@ public class Registers {
       ZP_STRUCT,
       ZP_BOOL,
       ZP_VAR,
-      CONSTANT
+      CONSTANT,
+      MEMORY
    }
 
    /** A register used for storing a single variable. */
@@ -61,6 +63,29 @@ public class Registers {
 
       boolean isZp();
 
+   }
+
+   public static class RegisterMemory implements Register {
+
+      @Override
+      public RegisterType getType() {
+         return RegisterType.MEMORY;
+      }
+
+      @Override
+      public boolean isZp() {
+         return false;
+      }
+
+      @Override
+      public String toString() {
+         return "mem";
+      }
+
+      @Override
+      public String toString(Program program) {
+         return toString();
+      }
    }
 
    public static abstract class RegisterZp implements Register {

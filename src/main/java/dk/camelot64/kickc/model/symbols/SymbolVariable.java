@@ -202,7 +202,7 @@ public abstract class SymbolVariable implements Symbol {
    }
 
    public boolean isVolatile() {
-      return declaredVolatile || inferedVolatile;
+      return declaredVolatile || inferedVolatile || StorageStrategy.MEMORY.equals(getStorageStrategy());
    }
 
    public boolean isDeclaredExport() {

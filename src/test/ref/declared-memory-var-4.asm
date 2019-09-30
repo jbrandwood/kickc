@@ -5,15 +5,12 @@
 .pc = $80d "Program"
   .const OFFSET_STRUCT_FOO_THING2 = 1
   .const OFFSET_STRUCT_FOO_THING3 = 2
-  .label bar_ptr = bar_thing1
-  .label bar_thing1 = 2
-  .label bar_thing2 = 3
-  .label bar_thing3 = 4
+  .label bar_thing3 = 2
 __bbegin:
   lda #'a'
-  sta.z bar_thing1
+  sta bar_thing1
   lda #'b'
-  sta.z bar_thing2
+  sta bar_thing2
   lda #<__0
   sta.z bar_thing3
   lda #>__0
@@ -21,30 +18,16 @@ __bbegin:
   jsr main
   rts
 main: {
+    .label barp = bar_thing1
     .label SCREEN = $400
-    .label __4 = 8
-    .label barp = 6
-    lda #<bar_ptr
-    sta.z barp
-    lda #>bar_ptr
-    sta.z barp+1
-    ldy #0
-    lda (barp),y
+    lda barp
     sta SCREEN
-    ldy #OFFSET_STRUCT_FOO_THING2
-    lda (barp),y
+    lda barp+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     ldx #2
     ldy #0
   __b1:
-    lda #OFFSET_STRUCT_FOO_THING3
-    clc
-    adc.z barp
-    sta.z __4
-    lda #0
-    adc.z barp+1
-    sta.z __4+1
-    lda (__4),y
+    lda barp+OFFSET_STRUCT_FOO_THING3,y
     sta SCREEN,x
     inx
     iny
@@ -54,3 +37,5 @@ main: {
 }
   __0: .text "qwe"
   .byte 0
+  bar_thing1: .byte 0
+  bar_thing2: .byte 0

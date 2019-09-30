@@ -51,6 +51,10 @@ public class Variable extends SymbolVariable {
       this.setComments(phiMaster.getComments());
    }
 
+   public VariableRef getRef() {
+      return new VariableRef(this);
+   }
+
    public Registers.Register getAllocation() {
       return allocation;
    }
@@ -86,9 +90,6 @@ public class Variable extends SymbolVariable {
       return getScope().getVariable(versionOfName);
    }
 
-   public VariableRef getRef() {
-      return new VariableRef(this);
-   }
 
    @Override
    public boolean equals(Object o) {

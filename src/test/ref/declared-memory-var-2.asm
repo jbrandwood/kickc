@@ -3,32 +3,31 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  .label cursor_ptr = cursor
   .label SCREEN = $400
 __bbegin:
   lda #<SCREEN
-  sta cursor_ptr
+  sta cursor
   lda #>SCREEN
-  sta cursor_ptr+1
+  sta cursor+1
   jsr main
   rts
 main: {
     ldx #0
   __b1:
     lda #'*'
-    ldy cursor_ptr
+    ldy cursor
     sty.z $fe
-    ldy cursor_ptr+1
+    ldy cursor+1
     sty.z $ff
     ldy #0
     sta ($fe),y
-    lda cursor_ptr
+    lda #$29
     clc
-    adc #$29
-    sta cursor_ptr
-    lda cursor_ptr+1
-    adc #0
-    sta cursor_ptr+1
+    adc cursor
+    sta cursor
+    tya
+    adc cursor+1
+    sta cursor+1
     inx
     cpx #$19
     bne __b1

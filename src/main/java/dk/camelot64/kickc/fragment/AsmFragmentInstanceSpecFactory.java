@@ -493,7 +493,7 @@ public class AsmFragmentInstanceSpecFactory {
             }
          }
          if(memNameIdx == null) {
-            memNameIdx = Integer.toString(nextMemIdx++);
+            memNameIdx = Integer.toString(nextZpIdx++);
          }
          return "m" + memNameIdx;
       } else if(Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {

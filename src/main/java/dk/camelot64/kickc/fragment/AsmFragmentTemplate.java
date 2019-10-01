@@ -108,12 +108,12 @@ public class AsmFragmentTemplate {
          Variable v4 = new Variable("m4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
          Variable v5 = new Variable("m5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
          Variable v6 = new Variable("m6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         v1.setAllocation(new Registers.RegisterMemory());
-         v2.setAllocation(new Registers.RegisterMemory());
-         v3.setAllocation(new Registers.RegisterMemory());
-         v4.setAllocation(new Registers.RegisterMemory());
-         v5.setAllocation(new Registers.RegisterMemory());
-         v6.setAllocation(new Registers.RegisterMemory());
+         v1.setAllocation(new Registers.RegisterMemory(v1.getRef()));
+         v2.setAllocation(new Registers.RegisterMemory(v2.getRef()));
+         v3.setAllocation(new Registers.RegisterMemory(v3.getRef()));
+         v4.setAllocation(new Registers.RegisterMemory(v4.getRef()));
+         v5.setAllocation(new Registers.RegisterMemory(v5.getRef()));
+         v6.setAllocation(new Registers.RegisterMemory(v6.getRef()));
          if(signature.contains("m1")) bindings.put("m1", v1);
          if(signature.contains("m2")) bindings.put("m2", v2);
          if(signature.contains("m3")) bindings.put("m3", v3);

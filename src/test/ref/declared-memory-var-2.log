@@ -128,7 +128,7 @@ Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ cursor ]
 Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated mem [ cursor ]
+Allocated mem cursor [ cursor ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -185,14 +185,14 @@ main: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [7] (byte*) cursor ← (byte*) cursor + (byte) $29 -- pbum1=pbum2_plus_vbuc1 
+    // [7] (byte*) cursor ← (byte*) cursor + (byte) $29 -- pbum1=pbum1_plus_vbuc1 
     lda #$29
     clc
     adc cursor
     sta cursor
-    lda #0
-    adc cursor+1
-    sta cursor+1
+    bcc !+
+    inc cursor+1
+  !:
     // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [9] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -218,14 +218,14 @@ Statement [0] (byte*) cursor ← (const byte*) SCREEN [ cursor ] (  [ cursor ] )
 Statement [6] *((byte*) cursor) ← (byte) '*' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [7] (byte*) cursor ← (byte*) cursor + (byte) $29 [ cursor main::i#2 ] ( main:2 [ cursor main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
-Potential registers mem [ cursor ] : mem , 
+Potential registers mem cursor [ cursor ] : mem cursor , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 23.83: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
-Uplift Scope [] 5: mem [ cursor ] 
+Uplift Scope [] 5: mem cursor [ cursor ] 
 
-Uplifting [main] best 665 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 665 combination mem [ cursor ] 
+Uplifting [main] best 650 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 650 combination mem cursor [ cursor ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -279,14 +279,14 @@ main: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [7] (byte*) cursor ← (byte*) cursor + (byte) $29 -- pbum1=pbum2_plus_vbuc1 
+    // [7] (byte*) cursor ← (byte*) cursor + (byte) $29 -- pbum1=pbum1_plus_vbuc1 
     lda #$29
     clc
     adc cursor
     sta cursor
-    lda #0
-    adc cursor+1
-    sta cursor+1
+    bcc !+
+    inc cursor+1
+  !:
     // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [9] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
@@ -307,7 +307,6 @@ Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing instruction lda #0 with TYA
 Replacing label __b1_from___b1 with __b1
 Removing instruction __b1_from___bbegin:
 Removing instruction main_from___b1:
@@ -329,7 +328,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte*) SCREEN SCREEN = (byte*) 1024
-(byte*) cursor memory mem 5.0
+(byte*) cursor memory mem cursor 5.0
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -338,11 +337,11 @@ FINAL SYMBOL TABLE
 (byte) main::i#2 reg byte x 7.333333333333333
 
 reg byte x [ main::i#2 main::i#1 ]
-mem [ cursor ]
+mem cursor [ cursor ]
 
 
 FINAL ASSEMBLER
-Score: 575
+Score: 560
 
   // File Comments
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
@@ -388,14 +387,14 @@ main: {
     ldy #0
     sta ($fe),y
     // cursor += 41
-    // [7] (byte*) cursor ← (byte*) cursor + (byte) $29 -- pbum1=pbum2_plus_vbuc1 
+    // [7] (byte*) cursor ← (byte*) cursor + (byte) $29 -- pbum1=pbum1_plus_vbuc1 
     lda #$29
     clc
     adc cursor
     sta cursor
-    tya
-    adc cursor+1
-    sta cursor+1
+    bcc !+
+    inc cursor+1
+  !:
     // for( char i: 0..24 )
     // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx

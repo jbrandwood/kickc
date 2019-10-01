@@ -481,6 +481,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(...aa)=(.*vb.)m1(.*)", rvalAa+"|"+ twoM1, "lda {m1}", "$1=$2aa$3", null, mapM1));
       // Replace assigned M1 with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(vb.)m1=(.*)", twoM1, null, "$1aa=$2", "sta {m1}", mapM1));
+      // Replace assigned M1 with AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vb.)m1=(.*m1.*)", null, null, "$1aa=$2", "sta {m1}", null));
 
 
       // Correct wrong ordered Z2/Z1

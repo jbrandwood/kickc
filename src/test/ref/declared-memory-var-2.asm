@@ -25,9 +25,9 @@ main: {
     clc
     adc cursor
     sta cursor
-    tya
-    adc cursor+1
-    sta cursor+1
+    bcc !+
+    inc cursor+1
+  !:
     inx
     cpx #$19
     bne __b1

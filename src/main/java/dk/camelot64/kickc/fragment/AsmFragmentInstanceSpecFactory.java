@@ -365,7 +365,7 @@ public class AsmFragmentInstanceSpecFactory {
       } else if(value instanceof StackPushValue) {
          SymbolType type = ((StackPushValue) value).getType();
          String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
-         return "_stackpush" +  typeShortName + "_";
+         return "_stackpush" + typeShortName + "_";
       } else if(value instanceof StackPullValue) {
          SymbolType type = ((StackPullValue) value).getType();
          String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
@@ -479,9 +479,23 @@ public class AsmFragmentInstanceSpecFactory {
          }
          return "z" + zpNameIdx;
       } else if(Registers.RegisterType.MEMORY.equals(register.getType())) {
-         // TODO: Examine of Memory is already bound!
-
-         return "m"+(nextMemIdx++);
+         String memNameIdx = null;
+         for(String boundName : bindings.keySet()) {
+            Value boundValue = bindings.get(boundName);
+            if(boundValue instanceof Variable) {
+               Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
+               if(boundRegister instanceof Registers.RegisterMemory) {
+                  if(boundRegister.equals(register)) {
+                     memNameIdx = boundName.substring(boundName.length() - 1);
+                     break;
+                  }
+               }
+            }
+         }
+         if(memNameIdx == null) {
+            memNameIdx = Integer.toString(nextMemIdx++);
+         }
+         return "m" + memNameIdx;
       } else if(Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {
          return "aa";
       } else if(Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {

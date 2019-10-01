@@ -67,6 +67,16 @@ public class Registers {
 
    public static class RegisterMemory implements Register {
 
+      private VariableRef variableRef;
+
+      public RegisterMemory(VariableRef variableRef) {
+         this.variableRef = variableRef;
+      }
+
+      public VariableRef getVariableRef() {
+         return variableRef;
+      }
+
       @Override
       public RegisterType getType() {
          return RegisterType.MEMORY;
@@ -79,12 +89,25 @@ public class Registers {
 
       @Override
       public String toString() {
-         return "mem";
+         return "mem "+variableRef.toString();
       }
 
       @Override
       public String toString(Program program) {
          return toString();
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         if(this == o) return true;
+         if(o == null || getClass() != o.getClass()) return false;
+         RegisterMemory that = (RegisterMemory) o;
+         return Objects.equals(variableRef, that.variableRef);
+      }
+
+      @Override
+      public int hashCode() {
+         return Objects.hash(variableRef);
       }
    }
 

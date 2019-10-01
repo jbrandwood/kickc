@@ -13,9 +13,9 @@ main: {
   __b1:
     lda idx
     sta SCREEN,x
-    stx.z $ff
+    txa
     clc
-    adc.z $ff
+    adc idx
     sta idx
     inx
     cpx #6

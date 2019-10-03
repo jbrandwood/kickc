@@ -713,24 +713,10 @@ class AsmFragmentTemplateSynthesisRule {
 
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuz1=(.*)", twoZM1+"|"+twoC1, null, "vb$1aa=$2", "ldx {z1}\n" + "sta {c1},x", mapZ1C1));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuz2=(.*)", twoZM1+"|"+twoZM2, null, "vb$1aa=$2", "ldy {z2}\n" + "sta ({z1}),y", mapZM12));
-
-      // Convert array indexing twice with A/zp1/zp2 to X/Y register with a ldx/ldy prefix ( ..._derefidx_vbunn..._derefidx_vbunn... -> ..._derefidx_vbuxx..._derefidx_vbuxx... )
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuaa(.*)_derefidx_vbuaa(.*)", threeAa+"|"+rvalXx+"|"+lvalDerefIdxAa, "tax", "$1_derefidx_vbuxx$2_derefidx_vbuxx$3", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuaa(.*)_derefidx_vbuaa(.*)", threeAa+"|"+rvalYy+"|"+lvalDerefIdxAa, "tay", "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz1(.*)_derefidx_vbuz1(.*)", threeZM1+"|"+rvalXx+"|"+lvalDerefIdxZ1, "ldx {z1}", "$1_derefidx_vbuxx$2_derefidx_vbuxx$3", null, mapZM1));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz1(.*)_derefidx_vbuz1(.*)", threeZM1+"|"+rvalYy+"|"+lvalDerefIdxZ1, "ldy {z1}", "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", null, mapZM1));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz2(.*)_derefidx_vbuz2(.*)", threeZM2+"|"+rvalXx+"|"+lvalDerefIdxZ2, "ldx {z2}", "$1_derefidx_vbuxx$2_derefidx_vbuxx$3", null, mapZM2));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz2(.*)_derefidx_vbuz2(.*)", threeZM2+"|"+rvalYy+"|"+lvalDerefIdxZ2, "ldy {z2}", "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", null, mapZM2));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz3(.*)_derefidx_vbuz3(.*)", threeZM3+"|"+rvalXx+"|"+lvalDerefIdxZ3, "ldx {z3}", "$1_derefidx_vbuxx$2_derefidx_vbuxx$3", null, mapZM3));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz3(.*)_derefidx_vbuz3(.*)", threeZM3+"|"+rvalYy+"|"+lvalDerefIdxZ3, "ldy {z3}", "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", null, mapZM3));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz4(.*)_derefidx_vbuz4(.*)", threeZM4+"|"+rvalXx+"|"+lvalDerefIdxZ4, "ldx {z4}", "$1_derefidx_vbuxx$2_derefidx_vbuxx$3", null, mapZM4));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz4(.*)_derefidx_vbuz4(.*)", threeZM4+"|"+rvalYy+"|"+lvalDerefIdxZ4, "ldy {z4}", "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", null, mapZM4));
-
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuz1=(.*c1.*)", twoZM1, null, "vb$1aa=$2", "ldx {z1}\n" + "sta {c1},x", mapZM1));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuz1=(.*z1.*)", twoC1, null, "vb$1aa=$2", "ldx {z1}\n" + "sta {c1},x", mapC1));
 
       // Convert X/Y-based array indexing of a constant pointer into A-register by prefixing lda cn,x / lda cn,y ( ...pb.c1_derefidx_vbuxx... / ...pb.c1_derefidx_vbuyy... -> ...vb.aa... )
-
 
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)pb(.)c1_derefidx_vbuxx(.*)", rvalAa+"|"+twoC1, "lda {c1},x", "$1=$2vb$3aa$4", null, mapC1));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)pb(.)c1_derefidx_vbuxx(.*)", rvalYy+"|"+twoC1, "ldy {c1},x", "$1=$2vb$3yy$4", null, mapC1));

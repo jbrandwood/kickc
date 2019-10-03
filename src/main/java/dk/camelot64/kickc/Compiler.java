@@ -93,6 +93,10 @@ public class Compiler {
       program.initAsmFragmentSynthesizer();
    }
 
+   public void initAsmFragmentSynthesizer(AsmFragmentTemplateSynthesizer synthesizer) {
+      program.initAsmFragmentSynthesizer(synthesizer);
+   }
+
    public AsmFragmentTemplateSynthesizer getAsmFragmentSynthesizer() {
       return program.getAsmFragmentSynthesizer();
    }
@@ -115,7 +119,6 @@ public class Compiler {
       }
       program.setFileName(fileName);
 
-      initAsmFragmentSynthesizer();
       try {
          Path currentPath = new File(".").toPath();
          if(this.linkScriptFileName != null) {
@@ -167,6 +170,7 @@ public class Compiler {
       new Pass1StructTypeSizeFix(program).execute();
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
+      new Pass1AssertNoConstParams(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");

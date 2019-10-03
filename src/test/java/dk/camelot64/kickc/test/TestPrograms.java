@@ -3,8 +3,10 @@ package dk.camelot64.kickc.test;
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.TargetCpu;
 import kickass.KickAssembler;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 import org.junit.AfterClass;
@@ -127,15 +129,22 @@ public class TestPrograms {
       compileAndCompare("string-pointer-problem");
    }
 
-   //@Test
-   //public void testOs52() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/unit5/os5.2");
-   //}
+/*
+   @Test
+   public void testMaze() throws IOException, URISyntaxException {
+      compileAndCompare("complex/maze/maze", log().verboseSSAOptimize());
+   }
 
-   //@Test
-   //public void testOs51() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/unit5/os5.1", log().verboseSSAOptimize());
-   //}
+   @Test
+   public void testOs52() throws IOException, URISyntaxException {
+         compileAndCompare("complex/unit5/os5.2");
+   }
+
+   @Test
+   public void testOs51() throws IOException, URISyntaxException {
+      compileAndCompare("complex/unit5/os5.1");
+   }
+*/
 
    @Test
    public void testCpu6502() throws IOException, URISyntaxException {
@@ -2407,6 +2416,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConstParam1() throws IOException, URISyntaxException {
+      assertError("const-param-1", "Error! Const parameters not supported", true);
+   }
+
+   @Test
    public void testConstParam() throws IOException, URISyntaxException {
       compileAndCompare("const-param");
    }
@@ -3242,8 +3256,13 @@ public class TestPrograms {
       compileAndCompare("condition-type-mismatch");
    }
 
+   static AsmFragmentTemplateSynthesizer asmFragmentSynthesizer;
+
    @BeforeClass
    public static void setUp() {
+      Path asmFragmentBaseFolder = new File("src/main/fragment/").toPath();
+      Path asmFragmentCacheFolder = null;
+      asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, TargetCpu.MOS6502X, asmFragmentCacheFolder, new CompileLog());
    }
 
    @AfterClass
@@ -3332,7 +3351,7 @@ public class TestPrograms {
       tester.testFile(filename, upliftCombinations, log);
    }
 
-   private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException, URISyntaxException {
+   private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
       //compiler.setWarnFragmentMissing(true);
@@ -3343,6 +3362,7 @@ public class TestPrograms {
       }
       compiler.addImportPath(stdlibPath);
       compiler.addImportPath(testPath);
+      compiler.initAsmFragmentSynthesizer(asmFragmentSynthesizer);
       if(upliftCombinations != null) {
          compiler.setUpliftCombinations(upliftCombinations);
       }

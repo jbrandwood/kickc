@@ -203,6 +203,9 @@ public class Program {
       this.asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, targetCpu, asmFragmentCacheFolder, getLog());
    }
 
+   public void initAsmFragmentSynthesizer(AsmFragmentTemplateSynthesizer synthesizer) {
+      this.asmFragmentSynthesizer = synthesizer;
+   }
    public TargetCpu getTargetCpu() {
       return targetCpu;
    }

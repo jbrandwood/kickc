@@ -1207,6 +1207,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          addDirectives(lValue, varType, varDirectives, statementSource);
       } else {
          lValue = getCurrentScope().getVariable(varName);
+         if(lValue==null) {
+            throw new CompileError("Error! Loop variable not declared "+varName, statementSource);
+         }
       }
       exitDeclTypes();
       KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();

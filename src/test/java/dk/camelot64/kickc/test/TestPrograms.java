@@ -2411,6 +2411,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLoopNpe() throws IOException, URISyntaxException {
+      assertError("loop-npe", "Error! Loop variable not declared");
+   }
+
+   @Test
    public void testConstWordPointer() throws IOException, URISyntaxException {
       compileAndCompare("const-word-pointer");
    }

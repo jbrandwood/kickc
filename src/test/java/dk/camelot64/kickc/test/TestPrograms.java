@@ -2102,6 +2102,11 @@ public class TestPrograms {
    //   compileAndCompare("complex/bcmod/bcmod5h", log());
    //}
 
+   //@Test
+   //public void testBcmod5hb() throws IOException, URISyntaxException {
+   //   compileAndCompare("complex/bcmod/bcmod5hb", log());
+   //}
+
    @Test
    public void testTetrisSprites() throws IOException, URISyntaxException {
       compileAndCompare("complex/tetris/test-sprites");

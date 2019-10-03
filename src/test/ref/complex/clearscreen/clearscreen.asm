@@ -1015,13 +1015,13 @@ processChars: {
     sta.z processing+1
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_ID
     lda (processing),y
-    tax
+    tay
     lda #1
-    cpx #0
+    cpy #0
     beq !e+
   !:
     asl
-    dex
+    dey
     bne !-
   !e:
     sta.z bitmask

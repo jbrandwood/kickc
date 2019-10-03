@@ -105,9 +105,8 @@ atan2_8: {
     bpl __b7
     txa
     eor #$ff
-    clc
-    adc #$80+1
     tax
+    axs #-$80-1
   __b7:
     lda.z y
     cmp #0

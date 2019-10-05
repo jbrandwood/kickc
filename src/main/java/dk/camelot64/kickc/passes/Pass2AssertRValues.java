@@ -31,7 +31,7 @@ public class Pass2AssertRValues extends Pass2SsaAssertion {
          if(rValue instanceof VariableRef) {
             VariableRef variableRef = (VariableRef) rValue;
             Variable variable = getScope().getVariable(variableRef);
-            if(variable.getStorageStrategy().equals(SymbolVariable.StorageStrategy.PHI_MASTER)) {
+            if(variable.isStoragePhiMaster()) {
                throw new CompileError("No unversioned variable references allowed "+currentStmt.toString(getProgram(), false), currentStmt.getSource());
             }
          }

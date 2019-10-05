@@ -107,11 +107,12 @@ main: {
     sta.z __36+1
     ldy #0
     lda (cos_x),y
-    tax
+    pha
     iny
     lda (cos_x),y
-    stx.z cos_x
     sta.z cos_x+1
+    pla
+    sta.z cos_x
     jsr mul16s
     lda.z xpos+2
     sta.z __10
@@ -147,11 +148,12 @@ main: {
     sta.z __37+1
     ldy #0
     lda (sin_y),y
-    tax
+    pha
     iny
     lda (sin_y),y
-    stx.z sin_y
     sta.z sin_y+1
+    pla
+    sta.z sin_y
     jsr mul16s
     lda.z ypos+2
     sta.z __16

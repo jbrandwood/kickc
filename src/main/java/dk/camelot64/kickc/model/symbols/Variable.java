@@ -27,7 +27,7 @@ public class Variable extends SymbolVariable {
 
    public Variable(String name, Scope scope, SymbolType type, String dataSegment, StorageStrategy storageStrategy) {
       super(name, scope, type, storageStrategy, dataSegment);
-      if(StorageStrategy.PHI_MASTER.equals(storageStrategy))
+      if(isStoragePhiMaster())
          this.nextPhiVersionNumber = 0;
    }
 

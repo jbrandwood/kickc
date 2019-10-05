@@ -98,11 +98,12 @@ main: {
     sta.z __27+1
     ldy #0
     lda (cos_x),y
-    tax
+    pha
     iny
     lda (cos_x),y
-    stx.z cos_x
     sta.z cos_x+1
+    pla
+    sta.z cos_x
     lda #<$a0
     sta.z mul16s.a
     lda #>$a0
@@ -146,11 +147,12 @@ main: {
     sta.z __28+1
     ldy #0
     lda (sin_y),y
-    tax
+    pha
     iny
     lda (sin_y),y
-    stx.z sin_y
     sta.z sin_y+1
+    pla
+    sta.z sin_y
     lda #<$64
     sta.z mul16s.a
     lda #>$64

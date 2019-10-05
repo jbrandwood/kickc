@@ -23,7 +23,7 @@ main: {
     .label __4 = $18
     .label __11 = $18
     .label sb = $17
-    .label sw = $20
+    .label sw = $18
     jsr sin8s_gen
     jsr sin16s_gen
     jsr print_cls
@@ -49,11 +49,14 @@ main: {
     adc #>sintabw
     sta.z __4+1
     ldy #0
-    lda (__4),y
-    sta.z sw
+    lda (sw),y
+    pha
     iny
-    lda (__4),y
+    lda (sw),y
     sta.z sw+1
+    pla
+    sta.z sw
+    lda.z sw+1
     eor #$ff
     sec
     adc.z sb
@@ -265,14 +268,14 @@ sin16s: {
     .label __4 = 6
     .label x = 6
     .label return = $18
-    .label x1 = $20
+    .label x1 = $1e
     .label x2 = $10
     .label x3 = $10
-    .label x3_6 = $1e
+    .label x3_6 = $20
     .label usinx = $18
     .label x4 = $10
-    .label x5 = $1e
-    .label x5_128 = $1e
+    .label x5 = $20
+    .label x5_128 = $20
     .label sinx = $18
     .label isUpper = $14
     lda.z x+3
@@ -442,7 +445,7 @@ mulu16_sel: {
     .label __1 = 6
     .label v1 = $10
     .label v2 = $12
-    .label return = $1e
+    .label return = $20
     .label return_1 = $10
     .label return_10 = $10
     lda.z v1
@@ -467,9 +470,9 @@ mulu16_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($1e) a, word zeropage($12) b)
+// mul16u(word zeropage($20) a, word zeropage($12) b)
 mul16u: {
-    .label a = $1e
+    .label a = $20
     .label mb = $a
     .label res = 6
     .label b = $12
@@ -612,7 +615,7 @@ divr16u: {
 sin8s_gen: {
     .label step = $10
     .label sintab = $18
-    .label x = $1e
+    .label x = $20
     .label i = $12
     jsr div16u
     lda #<main.sintabb
@@ -795,7 +798,7 @@ mulu8_sel: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $20
+    .label mb = $1e
     .label res = $15
     .label return = $15
     sta.z mb

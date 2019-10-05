@@ -93,11 +93,12 @@ loop: {
     sta.z __2+1
     ldy #0
     lda (xpos),y
-    tax
+    pha
     iny
     lda (xpos),y
-    stx.z xpos
     sta.z xpos+1
+    pla
+    sta.z xpos
     jsr render_logo
     inc.z xsin_idx
     bne !+

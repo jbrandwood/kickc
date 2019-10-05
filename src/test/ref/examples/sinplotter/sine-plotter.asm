@@ -102,11 +102,12 @@ render_sine: {
     sta.z __1+1
     ldy #0
     lda (sin_val),y
-    tax
+    pha
     iny
     lda (sin_val),y
-    stx.z sin_val
     sta.z sin_val+1
+    pla
+    sta.z sin_val
     jsr wrap_y
     tax
     jsr bitmap_plot
@@ -125,11 +126,12 @@ render_sine: {
     sta.z __4+1
     ldy #0
     lda (sin2_val),y
-    tax
+    pha
     iny
     lda (sin2_val),y
-    stx.z sin2_val
     sta.z sin2_val+1
+    pla
+    sta.z sin2_val
     lda.z wrap_y.y
     clc
     adc #<$a

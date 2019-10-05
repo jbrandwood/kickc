@@ -3364,7 +3364,7 @@ public class TestPrograms {
    private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
-      //compiler.setWarnFragmentMissing(true);
+      compiler.setWarnFragmentMissing(true);
       compiler.setAsmFragmentBaseFolder(new File("src/main/fragment/").toPath());
       compiler.setAsmFragmentCacheFolder(null);
       if(compileLog != null) {

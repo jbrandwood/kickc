@@ -194,13 +194,13 @@ public class Registers {
       public String toString() {
          String typeString;
          if(getBytes()==1) {
-            typeString = RegisterType.ZP_BYTE.toString();
+            typeString = "ZP_BYTE";
          } else if(getBytes()==2) {
-            typeString = RegisterType.ZP_WORD.toString();
+            typeString = "ZP_WORD";
          } else if(getBytes()==4) {
-            typeString = RegisterType.ZP_DWORD.toString();
+            typeString = "ZP_DWORD";
          } else {
-            typeString = RegisterType.ZP_MEM.toString();
+            typeString = "ZP_MEM";
          }
          return "zp " + typeString + ":" + getZp();
       }

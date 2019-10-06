@@ -46,7 +46,7 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
             List<Registers.Register> potentials = new ArrayList<>();
             potentials.add(defaultRegister);
             boolean isByte1 = registerType.equals(Registers.RegisterType.ZP_BYTE);
-            boolean isByte2 = defaultRegister instanceof Registers.RegisterZpMem && ((Registers.RegisterZpMem) defaultRegister).getBytes() == 1;
+            boolean isByte2 = defaultRegister.isZp() && defaultRegister.getBytes() == 1;
             if((isByte1 || isByte2)  && !varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
                potentials.add(Registers.getRegisterX());

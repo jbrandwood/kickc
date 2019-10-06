@@ -453,6 +453,7 @@ public class AsmFragmentInstanceSpecFactory {
             Registers.RegisterType.ZP_BOOL.equals(register.getType()) ||
                   Registers.RegisterType.ZP_BYTE.equals(register.getType()) ||
                   Registers.RegisterType.ZP_WORD.equals(register.getType()) ||
+                  Registers.RegisterType.ZP_MEM.equals(register.getType()) ||
                   Registers.RegisterType.ZP_DWORD.equals(register.getType()) ||
                   Registers.RegisterType.ZP_STRUCT.equals(register.getType())
       ) {

@@ -52,6 +52,7 @@ public class Registers {
       ZP_STRUCT,
       ZP_BOOL,
       ZP_VAR,
+      ZP_MEM,
       CONSTANT,
       MEMORY
    }
@@ -63,14 +64,19 @@ public class Registers {
 
       boolean isZp();
 
+      int getBytes();
+
    }
 
    public static class RegisterMemory implements Register {
 
       private VariableRef variableRef;
 
-      public RegisterMemory(VariableRef variableRef) {
+      private int bytes;
+
+      public RegisterMemory(VariableRef variableRef, int bytes ) {
          this.variableRef = variableRef;
+         this.bytes = bytes;
       }
 
       public VariableRef getVariableRef() {
@@ -85,6 +91,11 @@ public class Registers {
       @Override
       public boolean isZp() {
          return false;
+      }
+
+      @Override
+      public int getBytes() {
+         return bytes;
       }
 
       @Override
@@ -116,13 +127,15 @@ public class Registers {
       /** The ZP address used for the byte. */
       private int zp;
 
-      public RegisterZp(int zp) {
+      RegisterZp(int zp) {
          this.zp = zp;
       }
 
       public int getZp() {
          return zp;
       }
+
+      public abstract int getBytes();
 
       @Override
       public boolean isZp() {
@@ -158,6 +171,51 @@ public class Registers {
 
    }
 
+   /** Two zero page addresses used as a register for a single unsigned word variable. */
+   public static class RegisterZpMem extends RegisterZp {
+
+      int bytes;
+
+      public RegisterZpMem(int zp, int bytes) {
+         super(zp);
+         this.bytes = bytes;
+      }
+
+      @Override
+      public RegisterType getType() {
+         return RegisterType.ZP_MEM;
+      }
+
+      public int getBytes() {
+         return bytes;
+      }
+
+      @Override
+      public String toString() {
+         String typeString;
+         if(getBytes()==1) {
+            typeString = RegisterType.ZP_BYTE.toString();
+         } else if(getBytes()==2) {
+            typeString = RegisterType.ZP_WORD.toString();
+         } else if(getBytes()==4) {
+            typeString = RegisterType.ZP_DWORD.toString();
+         } else {
+            typeString = RegisterType.ZP_MEM.toString();
+         }
+         return "zp " + typeString + ":" + getZp();
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         return super.equals(o);
+      }
+
+      @Override
+      public int hashCode() {
+         return super.hashCode();
+      }
+   }
+
    /** A zero page address used as a register for a declared register allocation. Size is initially unknown and will be resolved when performing allocation by setting the type. */
    public static class RegisterZpDeclared extends RegisterZp {
 
@@ -178,6 +236,11 @@ public class Registers {
       }
 
       @Override
+      public int getBytes() {
+         return -1;
+      }
+
+      @Override
       public boolean equals(Object o) {
          if(this == o) return true;
          if(o == null || getClass() != o.getClass()) return false;
@@ -194,58 +257,14 @@ public class Registers {
    }
 
 
-   /** A zero page address used as a register for a single unsigned byte variable. */
-   public static class RegisterZpByte extends RegisterZp {
-
-      public RegisterZpByte(int zp) {
-         super(zp);
-      }
-
-      @Override
-      public RegisterType getType() {
-         return RegisterType.ZP_BYTE;
-      }
-
-
-   }
-
-   /** Two zero page addresses used as a register for a single unsigned word variable. */
-   public static class RegisterZpWord extends RegisterZp {
-
-      public RegisterZpWord(int zp) {
-         super(zp);
-      }
-
-      @Override
-      public RegisterType getType() {
-         return RegisterType.ZP_WORD;
-      }
-
-   }
-
-   /** Four zero page addresses used as a register for a single unsigned word variable. */
-   public static class RegisterZpDWord extends RegisterZp {
-
-      public RegisterZpDWord(int zp) {
-         super(zp);
-      }
-
-      @Override
-      public RegisterType getType() {
-         return RegisterType.ZP_DWORD;
-      }
-
-   }
-
    /** Zero page addresses used as a register for a struct variable. */
    public static class RegisterZpStruct extends RegisterZp {
 
-      public RegisterZpStruct(int zp) {
-         super(zp);
-      }
+      private int bytes;
 
-      public RegisterZpStructMember getMemberRegister(long memberByteOffset) {
-         return new RegisterZpStructMember((int) (getZp()+memberByteOffset));
+      public RegisterZpStruct(int zp, int bytes) {
+         super(zp);
+         this.bytes = bytes;
       }
 
       @Override
@@ -253,20 +272,10 @@ public class Registers {
          return RegisterType.ZP_STRUCT;
       }
 
-   }
-
-   /** Zero page addresses used as a register for a struct member variable. */
-   public static class RegisterZpStructMember extends RegisterZp {
-
-      public RegisterZpStructMember(int zp) {
-         super(zp);
-      }
-
       @Override
-      public RegisterType getType() {
-         return RegisterType.ZP_STRUCT;
+      public int getBytes() {
+         return bytes;
       }
-
    }
 
    /** A zero page address used as a register for a boolean variable. */
@@ -281,7 +290,10 @@ public class Registers {
          return RegisterType.ZP_BOOL;
       }
 
-
+      @Override
+      public int getBytes() {
+         return 1;
+      }
    }
 
    /** A CPU byte register. */
@@ -295,6 +307,11 @@ public class Registers {
       }
 
       @Override
+      public int getBytes() {
+         return 1;
+      }
+
+      @Override
       public abstract String toString();
 
       @Override
@@ -302,10 +319,7 @@ public class Registers {
          if(this == obj) {
             return true;
          }
-         if(obj == null || getClass() != obj.getClass()) {
-            return false;
-         }
-         return true;
+         return obj != null && getClass() == obj.getClass();
       }
 
       @Override
@@ -394,6 +408,11 @@ public class Registers {
       @Override
       public boolean isZp() {
          return false;
+      }
+
+      @Override
+      public int getBytes() {
+         return 0;
       }
 
       public ConstantValue getConstantValue() {

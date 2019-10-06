@@ -185,7 +185,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
             Variable variable = getProgram().getSymbolInfos().getVariable(variableRef);
             if(variable.isStorageMemory()) {
-               register = new Registers.RegisterMemory(variableRef);
+               register = new Registers.RegisterMemory(variableRef, variable.getType().getSizeBytes());
             }  else {
                register = allocateNewRegisterZp(variable);
             }
@@ -233,24 +233,24 @@ public class Pass4RegistersFinalize extends Pass2Base {
    private Registers.Register allocateNewRegisterZp(Variable variable) {
       SymbolType varType = variable.getType();
       if(SymbolType.BYTE.equals(varType)) {
-         return new Registers.RegisterZpByte(allocateZp((1)));
+         return new Registers.RegisterZpMem(allocateZp(1), 1);
       } else if(SymbolType.SBYTE.equals(varType)) {
-         return new Registers.RegisterZpByte(allocateZp(1));
+         return new Registers.RegisterZpMem(allocateZp(1),1);
       } else if(SymbolType.WORD.equals(varType)) {
-         Registers.RegisterZpWord registerZpWord =
-               new Registers.RegisterZpWord(allocateZp(2));
+         Registers.RegisterZpMem registerZpWord =
+               new Registers.RegisterZpMem(allocateZp(2), 2);
          return registerZpWord;
       } else if(SymbolType.SWORD.equals(varType)) {
-         Registers.RegisterZpWord registerZpWord =
-               new Registers.RegisterZpWord(allocateZp(2));
+         Registers.RegisterZpMem registerZpWord =
+               new Registers.RegisterZpMem(allocateZp(2), 2);
          return registerZpWord;
       } else if(SymbolType.DWORD.equals(varType)) {
-         Registers.RegisterZpDWord registerZpDWord =
-               new Registers.RegisterZpDWord(allocateZp(4));
+         Registers.RegisterZpMem registerZpDWord =
+               new Registers.RegisterZpMem(allocateZp(4), 4);
          return registerZpDWord;
       } else if(SymbolType.SDWORD.equals(varType)) {
-         Registers.RegisterZpDWord registerZpDWord =
-               new Registers.RegisterZpDWord(allocateZp(4));
+         Registers.RegisterZpMem registerZpDWord =
+               new Registers.RegisterZpMem(allocateZp(4), 4);
          return registerZpDWord;
       } else if(varType.equals(SymbolType.BOOLEAN)) {
          return new Registers.RegisterZpBool(allocateZp(1));
@@ -258,12 +258,12 @@ public class Pass4RegistersFinalize extends Pass2Base {
          // No need to setRegister register for VOID value
          return null;
       } else if(varType instanceof SymbolTypePointer) {
-         Registers.RegisterZpWord registerZpWord =
-               new Registers.RegisterZpWord(allocateZp(2));
+         Registers.RegisterZpMem registerZpWord =
+               new Registers.RegisterZpMem(allocateZp(2), 2);
          return registerZpWord;
       } else if(varType instanceof SymbolTypeStruct) {
          Registers.RegisterZpStruct registerZpStruct =
-               new Registers.RegisterZpStruct(allocateZp(varType.getSizeBytes()));
+               new Registers.RegisterZpStruct(allocateZp(varType.getSizeBytes()), varType.getSizeBytes());
          return registerZpStruct;
       } else {
          throw new RuntimeException("Unhandled variable type " + varType);

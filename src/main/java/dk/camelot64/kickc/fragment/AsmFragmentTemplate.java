@@ -44,7 +44,7 @@ public class AsmFragmentTemplate {
    /** The cycles consumed by the ASM of the fragment. */
    private Double cycles;
 
-   public AsmFragmentTemplate(String signature, String body, boolean cache) {
+   AsmFragmentTemplate(String signature, String body, boolean cache) {
       this.signature = signature;
       this.body = body;
       this.file = true;
@@ -72,8 +72,6 @@ public class AsmFragmentTemplate {
 
    /**
     * Initialize the fields that require parsing the ASM (bodyAsm, clobber, cycles).
-    *
-    * @return The parsed fragment ready for generating
     */
    private void initAsm() {
       // Parse the body ASM
@@ -88,12 +86,12 @@ public class AsmFragmentTemplate {
          Variable v4 = new Variable("z4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
          Variable v5 = new Variable("z5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
          Variable v6 = new Variable("z6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         v1.setAllocation(new Registers.RegisterZpByte(2));
-         v2.setAllocation(new Registers.RegisterZpByte(4));
-         v3.setAllocation(new Registers.RegisterZpByte(6));
-         v4.setAllocation(new Registers.RegisterZpByte(8));
-         v5.setAllocation(new Registers.RegisterZpByte(9));
-         v6.setAllocation(new Registers.RegisterZpByte(10));
+         v1.setAllocation(new Registers.RegisterZpMem(2, 1));
+         v2.setAllocation(new Registers.RegisterZpMem(4, 1));
+         v3.setAllocation(new Registers.RegisterZpMem(6, 1));
+         v4.setAllocation(new Registers.RegisterZpMem(8, 1));
+         v5.setAllocation(new Registers.RegisterZpMem(9, 1));
+         v6.setAllocation(new Registers.RegisterZpMem(10, 1));
          if(signature.contains("z1")) bindings.put("z1", v1);
          if(signature.contains("z2")) bindings.put("z2", v2);
          if(signature.contains("z3")) bindings.put("z3", v3);
@@ -108,12 +106,12 @@ public class AsmFragmentTemplate {
          Variable v4 = new Variable("m4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
          Variable v5 = new Variable("m5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
          Variable v6 = new Variable("m6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         v1.setAllocation(new Registers.RegisterMemory(v1.getRef()));
-         v2.setAllocation(new Registers.RegisterMemory(v2.getRef()));
-         v3.setAllocation(new Registers.RegisterMemory(v3.getRef()));
-         v4.setAllocation(new Registers.RegisterMemory(v4.getRef()));
-         v5.setAllocation(new Registers.RegisterMemory(v5.getRef()));
-         v6.setAllocation(new Registers.RegisterMemory(v6.getRef()));
+         v1.setAllocation(new Registers.RegisterMemory(v1.getRef(), 1));
+         v2.setAllocation(new Registers.RegisterMemory(v2.getRef(), 1));
+         v3.setAllocation(new Registers.RegisterMemory(v3.getRef(), 1));
+         v4.setAllocation(new Registers.RegisterMemory(v4.getRef(), 1));
+         v5.setAllocation(new Registers.RegisterMemory(v5.getRef(), 1));
+         v6.setAllocation(new Registers.RegisterMemory(v6.getRef(), 1));
          if(signature.contains("m1")) bindings.put("m1", v1);
          if(signature.contains("m2")) bindings.put("m2", v2);
          if(signature.contains("m3")) bindings.put("m3", v3);
@@ -138,7 +136,7 @@ public class AsmFragmentTemplate {
       this.cycles = asm.getCycles();
    }
 
-   public String getSignature() {
+   String getSignature() {
       return signature;
    }
 
@@ -146,7 +144,7 @@ public class AsmFragmentTemplate {
       return body;
    }
 
-   public KickCParser.AsmLinesContext getBodyAsm() {
+   KickCParser.AsmLinesContext getBodyAsm() {
       if(bodyAsm == null) {
          initAsm();
       }
@@ -175,11 +173,11 @@ public class AsmFragmentTemplate {
       return cache;
    }
 
-   public AsmFragmentTemplateSynthesisRule getSynthesis() {
+   AsmFragmentTemplateSynthesisRule getSynthesis() {
       return synthesis;
    }
 
-   public AsmFragmentTemplate getSubFragment() {
+   AsmFragmentTemplate getSubFragment() {
       return subFragment;
    }
 

@@ -63,7 +63,7 @@ public abstract class Pass4ZeroPageCoalesce extends Pass2Base {
    }
 
    /**
-    * Determines if two lice range equivalence classes are candidates for coalescing by checking that they are not the same
+    * Determines if two live range equivalence classes are candidates for coalescing by checking that they are not the same
     *
     * @param ec1 One equivalence class
     * @param ec2 Another equivalence class
@@ -142,7 +142,7 @@ public abstract class Pass4ZeroPageCoalesce extends Pass2Base {
    private static boolean canCoalesceClobber(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Set<String> unknownFragments, Program program) {
       Registers.Register register1 = ec1.getRegister();
       Registers.Register register2 = ec2.getRegister();
-      if(register1.isZp() && register2.isZp() && register1.getType().equals(register2.getType())) {
+      if(register1.isZp() && register2.isZp() && register1.getBytes()==register2.getBytes()) {
          // Both registers are on Zero Page & have the same zero page size
          // Try out the coalesce to test if it works
          RegisterCombination combination = new RegisterCombination();

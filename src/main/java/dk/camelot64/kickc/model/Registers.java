@@ -42,15 +42,10 @@ public class Registers {
 
    /** The register type. */
    public enum RegisterType {
-      REG_A_BYTE,
-      REG_Y_BYTE,
-      REG_X_BYTE,
+      REG_A,
+      REG_Y,
+      REG_X,
       REG_ALU,
-      ZP_BYTE,
-      ZP_WORD,
-      ZP_DWORD,
-      ZP_STRUCT,
-      ZP_BOOL,
       ZP_VAR,
       ZP_MEM,
       CONSTANT,
@@ -65,6 +60,8 @@ public class Registers {
       boolean isZp();
 
       int getBytes();
+
+      boolean isNonRelocatable();
 
    }
 
@@ -96,6 +93,11 @@ public class Registers {
       @Override
       public int getBytes() {
          return bytes;
+      }
+
+      @Override
+      public boolean isNonRelocatable() {
+         return false;
       }
 
       @Override
@@ -137,6 +139,7 @@ public class Registers {
 
       public abstract int getBytes();
 
+
       @Override
       public boolean isZp() {
          return true;
@@ -174,12 +177,23 @@ public class Registers {
    /** Two zero page addresses used as a register for a single unsigned word variable. */
    public static class RegisterZpMem extends RegisterZp {
 
-      int bytes;
+      /** The number of bytes that the register takes up*/
+      private int bytes;
 
-      public RegisterZpMem(int zp, int bytes) {
+      /** True if the address of the register is delcared in the code (non-relocatable)*/
+      private boolean isNonRelocatable;
+
+
+      public RegisterZpMem(int zp, int bytes, boolean isNonRelocatable) {
          super(zp);
          this.bytes = bytes;
+         this.isNonRelocatable = isNonRelocatable;
       }
+
+      public RegisterZpMem(int zp, int bytes) {
+         this(zp, bytes, false);
+      }
+
 
       @Override
       public RegisterType getType() {
@@ -188,6 +202,10 @@ public class Registers {
 
       public int getBytes() {
          return bytes;
+      }
+
+      public boolean isNonRelocatable() {
+         return isNonRelocatable;
       }
 
       @Override
@@ -221,9 +239,12 @@ public class Registers {
 
       private RegisterType type;
 
+      private int bytes;
+
       public RegisterZpDeclared(int zp) {
          super(zp);
          this.type = RegisterType.ZP_VAR;
+         this.bytes = -1;
       }
 
       @Override
@@ -235,9 +256,22 @@ public class Registers {
          this.type = type;
       }
 
+      public void setBytes(int bytes) {
+         this.bytes = bytes;
+      }
+
+      @Override
+      public boolean isNonRelocatable() {
+         return true;
+      }
+
       @Override
       public int getBytes() {
-         return -1;
+         return bytes;
+      }
+
+      public RegisterZpMem getZpRegister(int bytes) {
+         return new RegisterZpMem(getZp(), bytes, true);
       }
 
       @Override
@@ -256,46 +290,6 @@ public class Registers {
 
    }
 
-
-   /** Zero page addresses used as a register for a struct variable. */
-   public static class RegisterZpStruct extends RegisterZp {
-
-      private int bytes;
-
-      public RegisterZpStruct(int zp, int bytes) {
-         super(zp);
-         this.bytes = bytes;
-      }
-
-      @Override
-      public RegisterType getType() {
-         return RegisterType.ZP_STRUCT;
-      }
-
-      @Override
-      public int getBytes() {
-         return bytes;
-      }
-   }
-
-   /** A zero page address used as a register for a boolean variable. */
-   public static class RegisterZpBool extends RegisterZp {
-
-      public RegisterZpBool(int zp) {
-         super(zp);
-      }
-
-      @Override
-      public RegisterType getType() {
-         return RegisterType.ZP_BOOL;
-      }
-
-      @Override
-      public int getBytes() {
-         return 1;
-      }
-   }
-
    /** A CPU byte register. */
    public static abstract class RegisterCpuByte implements Register {
       @Override
@@ -309,6 +303,11 @@ public class Registers {
       @Override
       public int getBytes() {
          return 1;
+      }
+
+      @Override
+      public boolean isNonRelocatable() {
+         return true;
       }
 
       @Override
@@ -339,7 +338,7 @@ public class Registers {
    public static class RegisterXByte extends RegisterCpuByte {
       @Override
       public RegisterType getType() {
-         return RegisterType.REG_X_BYTE;
+         return RegisterType.REG_X;
       }
 
       @Override
@@ -353,7 +352,7 @@ public class Registers {
    public static class RegisterYByte extends RegisterCpuByte {
       @Override
       public RegisterType getType() {
-         return RegisterType.REG_Y_BYTE;
+         return RegisterType.REG_Y;
       }
 
       @Override
@@ -367,7 +366,7 @@ public class Registers {
    public static class RegisterAByte extends RegisterCpuByte {
       @Override
       public RegisterType getType() {
-         return RegisterType.REG_A_BYTE;
+         return RegisterType.REG_A;
       }
 
       @Override
@@ -407,6 +406,11 @@ public class Registers {
 
       @Override
       public boolean isZp() {
+         return false;
+      }
+
+      @Override
+      public boolean isNonRelocatable() {
          return false;
       }
 

@@ -25,6 +25,7 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
       RegisterPotentials registerPotentials = new RegisterPotentials();
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          Registers.Register declaredRegister = null;
+         int bytes = -1;
          for(VariableRef varRef : equivalenceClass.getVariables()) {
             Variable variable = getProgram().getScope().getVariable(varRef);
             if(variable.getDeclaredRegister() != null) { //TODO: Handle register/memory/storage strategy differently!
@@ -36,24 +37,26 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
                   );
                }
                declaredRegister = variable.getDeclaredRegister();
+               bytes = variable.getType().getSizeBytes();
             }
          }
          if(declaredRegister != null) {
-            registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(declaredRegister));
+            if(declaredRegister instanceof Registers.RegisterZpDeclared) {
+               Registers.RegisterZpMem zpRegister = ((Registers.RegisterZpDeclared) declaredRegister).getZpRegister(bytes);
+               registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(zpRegister));
+            }  else {
+               registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(declaredRegister));
+            }
          } else {
             Registers.Register defaultRegister = equivalenceClass.getRegister();
             Registers.RegisterType registerType = defaultRegister.getType();
             List<Registers.Register> potentials = new ArrayList<>();
             potentials.add(defaultRegister);
-            boolean isByte1 = registerType.equals(Registers.RegisterType.ZP_BYTE);
             boolean isByte2 = defaultRegister.isZp() && defaultRegister.getBytes() == 1;
-            if((isByte1 || isByte2)  && !varVolatile(equivalenceClass)) {
+            if(isByte2  && !varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
                potentials.add(Registers.getRegisterX());
                potentials.add(Registers.getRegisterY());
-            }
-            if(registerType.equals(Registers.RegisterType.ZP_BOOL) && !varVolatile(equivalenceClass)) {
-               potentials.add(Registers.getRegisterA());
             }
             registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
          }

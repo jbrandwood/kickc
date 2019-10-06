@@ -449,14 +449,7 @@ public class AsmFragmentInstanceSpecFactory {
     * @return The register part of the binding name.
     */
    private String getRegisterName(Registers.Register register) {
-      if(
-            Registers.RegisterType.ZP_BOOL.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_BYTE.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_WORD.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_MEM.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_DWORD.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_STRUCT.equals(register.getType())
-      ) {
+      if(Registers.RegisterType.ZP_MEM.equals(register.getType())) {
          // Examine if the ZP register is already bound
          Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
          String zpNameIdx = null;
@@ -497,11 +490,11 @@ public class AsmFragmentInstanceSpecFactory {
             memNameIdx = Integer.toString(nextZpIdx++);
          }
          return "m" + memNameIdx;
-      } else if(Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {
+      } else if(Registers.RegisterType.REG_A.equals(register.getType())) {
          return "aa";
-      } else if(Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {
+      } else if(Registers.RegisterType.REG_X.equals(register.getType())) {
          return "xx";
-      } else if(Registers.RegisterType.REG_Y_BYTE.equals(register.getType())) {
+      } else if(Registers.RegisterType.REG_Y.equals(register.getType())) {
          return "yy";
       } else if(Registers.RegisterType.REG_ALU.equals(register.getType())) {
          throw new AsmFragmentInstance.AluNotApplicableException();

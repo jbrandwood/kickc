@@ -48,8 +48,8 @@ public class Registers {
       REG_ALU,
       ZP_VAR,
       ZP_MEM,
+      MAIN_MEM,
       CONSTANT,
-      MEMORY
    }
 
    /** A register used for storing a single variable. */
@@ -65,13 +65,13 @@ public class Registers {
 
    }
 
-   public static class RegisterMemory implements Register {
+   public static class RegisterMainMem implements Register {
 
       private VariableRef variableRef;
 
       private int bytes;
 
-      public RegisterMemory(VariableRef variableRef, int bytes ) {
+      public RegisterMainMem(VariableRef variableRef, int bytes ) {
          this.variableRef = variableRef;
          this.bytes = bytes;
       }
@@ -82,7 +82,7 @@ public class Registers {
 
       @Override
       public RegisterType getType() {
-         return RegisterType.MEMORY;
+         return RegisterType.MAIN_MEM;
       }
 
       @Override
@@ -114,7 +114,7 @@ public class Registers {
       public boolean equals(Object o) {
          if(this == o) return true;
          if(o == null || getClass() != o.getClass()) return false;
-         RegisterMemory that = (RegisterMemory) o;
+         RegisterMainMem that = (RegisterMainMem) o;
          return Objects.equals(variableRef, that.variableRef);
       }
 
@@ -237,27 +237,13 @@ public class Registers {
    /** A zero page address used as a register for a declared register allocation. Size is initially unknown and will be resolved when performing allocation by setting the type. */
    public static class RegisterZpDeclared extends RegisterZp {
 
-      private RegisterType type;
-
-      private int bytes;
-
       public RegisterZpDeclared(int zp) {
          super(zp);
-         this.type = RegisterType.ZP_VAR;
-         this.bytes = -1;
       }
 
       @Override
       public RegisterType getType() {
-         return type;
-      }
-
-      public void setType(RegisterType type) {
-         this.type = type;
-      }
-
-      public void setBytes(int bytes) {
-         this.bytes = bytes;
+         return RegisterType.ZP_MEM;
       }
 
       @Override
@@ -267,7 +253,7 @@ public class Registers {
 
       @Override
       public int getBytes() {
-         return bytes;
+         return -1;
       }
 
       public RegisterZpMem getZpRegister(int bytes) {
@@ -276,16 +262,12 @@ public class Registers {
 
       @Override
       public boolean equals(Object o) {
-         if(this == o) return true;
-         if(o == null || getClass() != o.getClass()) return false;
-         if(!super.equals(o)) return false;
-         RegisterZpDeclared that = (RegisterZpDeclared) o;
-         return type == that.type;
+         return super.equals(o);
       }
 
       @Override
       public int hashCode() {
-         return Objects.hash(super.hashCode(), type);
+         return super.hashCode();
       }
 
    }

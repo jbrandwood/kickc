@@ -180,7 +180,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
             Variable variable = getProgram().getSymbolInfos().getVariable(variableRef);
             if(variable.isStorageMemory()) {
-               register = new Registers.RegisterMemory(variableRef, variable.getType().getSizeBytes());
+               register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes());
             }  else {
                register = allocateNewRegisterZp(variable);
             }

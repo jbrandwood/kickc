@@ -472,13 +472,13 @@ public class AsmFragmentInstanceSpecFactory {
             zpNameIdx = Integer.toString(nextZpIdx++);
          }
          return "z" + zpNameIdx;
-      } else if(Registers.RegisterType.MEMORY.equals(register.getType())) {
+      } else if(Registers.RegisterType.MAIN_MEM.equals(register.getType())) {
          String memNameIdx = null;
          for(String boundName : bindings.keySet()) {
             Value boundValue = bindings.get(boundName);
             if(boundValue instanceof Variable) {
                Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
-               if(boundRegister instanceof Registers.RegisterMemory) {
+               if(boundRegister instanceof Registers.RegisterMainMem) {
                   if(boundRegister.equals(register)) {
                      memNameIdx = boundName.substring(boundName.length() - 1);
                      break;

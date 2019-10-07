@@ -715,7 +715,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                if(address>255) {
                   throw new CompileError("Error! Register not on zeropage " + directiveRegister.address, source);
                }
-               Registers.Register register = new Registers.RegisterZpDeclared(address.intValue());
+               Registers.Register register = new Registers.RegisterZpMem(address.intValue(), -1, true);
                lValue.setDeclaredRegister(register);
             }
          } else {

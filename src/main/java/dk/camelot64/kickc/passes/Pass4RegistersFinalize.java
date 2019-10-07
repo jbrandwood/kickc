@@ -40,8 +40,8 @@ public class Pass4RegistersFinalize extends Pass2Base {
       }
       // Add all ZP's declared hardcoded register for a live variable
       for(Variable variable : getSymbols().getAllVariables(true)) {
-         if(variable.getDeclaredRegister() instanceof Registers.RegisterZpDeclared) { //TODO: Handle register/memory/storage strategy differently!
-            int zp = ((Registers.RegisterZpDeclared) variable.getDeclaredRegister()).getZp();
+         if(variable.getDeclaredRegister() instanceof Registers.RegisterZpMem) {
+            int zp = ((Registers.RegisterZpMem) variable.getDeclaredRegister()).getZp();
             int sizeBytes = variable.getType().getSizeBytes();
             for(int i=0;i<sizeBytes; i++) {
                if(!reservedZp.contains(zp+i))
@@ -59,8 +59,10 @@ public class Pass4RegistersFinalize extends Pass2Base {
             Registers.Register declaredRegister = variable.getDeclaredRegister(); //TODO: Handle register/memory/storage strategy differently!
             Registers.Register register = declaredRegister;
             if(declaredRegister !=null) {
-               if(declaredRegister instanceof Registers.RegisterZpDeclared) {
-                  register = ((Registers.RegisterZpDeclared) declaredRegister).getZpRegister(variable.getType().getSizeBytes());
+               if(declaredRegister instanceof Registers.RegisterZpMem) {
+                  int zp = ((Registers.RegisterZpMem) declaredRegister).getZp();
+                  int bytes = variable.getType().getSizeBytes();
+                  register = new Registers.RegisterZpMem(zp, bytes, true);
                } else if(equivalenceClass.getRegister()!=null && !declaredRegister.equals(equivalenceClass.getRegister())) {
                   throw new CompileError("Equivalence class has variables with different declared registers \n" +
                         " - equivalence class: " + equivalenceClass.toString(true) + "\n" +

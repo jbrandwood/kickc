@@ -451,14 +451,14 @@ public class AsmFragmentInstanceSpecFactory {
    private String getRegisterName(Registers.Register register) {
       if(Registers.RegisterType.ZP_MEM.equals(register.getType())) {
          // Examine if the ZP register is already bound
-         Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
+         Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
          String zpNameIdx = null;
          for(String boundName : bindings.keySet()) {
             Value boundValue = bindings.get(boundName);
             if(boundValue instanceof Variable) {
                Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
                if(boundRegister != null && boundRegister.isZp()) {
-                  Registers.RegisterZp boundRegisterZp = (Registers.RegisterZp) boundRegister;
+                  Registers.RegisterZpMem boundRegisterZp = (Registers.RegisterZpMem) boundRegister;
                   if(registerZp.getZp() == boundRegisterZp.getZp()) {
                      // Found other register with same ZP address!
                      zpNameIdx = boundName.substring(boundName.length() - 1);

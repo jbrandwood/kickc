@@ -40,7 +40,7 @@ public class ConstantSymbolPointer implements ConstantValue {
       if(symbol instanceof Variable) {
          Registers.Register allocation = ((Variable) symbol).getAllocation();
          if(allocation!=null && allocation.isZp()) {
-            int zp = ((Registers.RegisterZp) allocation).getZp();
+            int zp = ((Registers.RegisterZpMem) allocation).getZp();
             return new ConstantInteger((long)zp, SymbolType.BYTE);
          }
       }

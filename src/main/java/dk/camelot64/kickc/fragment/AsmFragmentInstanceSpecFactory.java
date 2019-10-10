@@ -449,23 +449,16 @@ public class AsmFragmentInstanceSpecFactory {
     * @return The register part of the binding name.
     */
    private String getRegisterName(Registers.Register register) {
-      if(
-            Registers.RegisterType.ZP_BOOL.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_BYTE.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_WORD.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_MEM.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_DWORD.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_STRUCT.equals(register.getType())
-      ) {
+      if(Registers.RegisterType.ZP_MEM.equals(register.getType())) {
          // Examine if the ZP register is already bound
-         Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
+         Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
          String zpNameIdx = null;
          for(String boundName : bindings.keySet()) {
             Value boundValue = bindings.get(boundName);
             if(boundValue instanceof Variable) {
                Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
                if(boundRegister != null && boundRegister.isZp()) {
-                  Registers.RegisterZp boundRegisterZp = (Registers.RegisterZp) boundRegister;
+                  Registers.RegisterZpMem boundRegisterZp = (Registers.RegisterZpMem) boundRegister;
                   if(registerZp.getZp() == boundRegisterZp.getZp()) {
                      // Found other register with same ZP address!
                      zpNameIdx = boundName.substring(boundName.length() - 1);
@@ -479,13 +472,13 @@ public class AsmFragmentInstanceSpecFactory {
             zpNameIdx = Integer.toString(nextZpIdx++);
          }
          return "z" + zpNameIdx;
-      } else if(Registers.RegisterType.MEMORY.equals(register.getType())) {
+      } else if(Registers.RegisterType.MAIN_MEM.equals(register.getType())) {
          String memNameIdx = null;
          for(String boundName : bindings.keySet()) {
             Value boundValue = bindings.get(boundName);
             if(boundValue instanceof Variable) {
                Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
-               if(boundRegister instanceof Registers.RegisterMemory) {
+               if(boundRegister instanceof Registers.RegisterMainMem) {
                   if(boundRegister.equals(register)) {
                      memNameIdx = boundName.substring(boundName.length() - 1);
                      break;
@@ -497,11 +490,11 @@ public class AsmFragmentInstanceSpecFactory {
             memNameIdx = Integer.toString(nextZpIdx++);
          }
          return "m" + memNameIdx;
-      } else if(Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {
+      } else if(Registers.RegisterType.REG_A.equals(register.getType())) {
          return "aa";
-      } else if(Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {
+      } else if(Registers.RegisterType.REG_X.equals(register.getType())) {
          return "xx";
-      } else if(Registers.RegisterType.REG_Y_BYTE.equals(register.getType())) {
+      } else if(Registers.RegisterType.REG_Y.equals(register.getType())) {
          return "yy";
       } else if(Registers.RegisterType.REG_ALU.equals(register.getType())) {
          throw new AsmFragmentInstance.AluNotApplicableException();

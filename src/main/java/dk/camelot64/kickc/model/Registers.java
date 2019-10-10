@@ -42,19 +42,13 @@ public class Registers {
 
    /** The register type. */
    public enum RegisterType {
-      REG_A_BYTE,
-      REG_Y_BYTE,
-      REG_X_BYTE,
+      REG_A,
+      REG_Y,
+      REG_X,
       REG_ALU,
-      ZP_BYTE,
-      ZP_WORD,
-      ZP_DWORD,
-      ZP_STRUCT,
-      ZP_BOOL,
-      ZP_VAR,
       ZP_MEM,
+      MAIN_MEM,
       CONSTANT,
-      MEMORY
    }
 
    /** A register used for storing a single variable. */
@@ -66,15 +60,17 @@ public class Registers {
 
       int getBytes();
 
+      boolean isNonRelocatable();
+
    }
 
-   public static class RegisterMemory implements Register {
+   public static class RegisterMainMem implements Register {
 
       private VariableRef variableRef;
 
       private int bytes;
 
-      public RegisterMemory(VariableRef variableRef, int bytes ) {
+      public RegisterMainMem(VariableRef variableRef, int bytes ) {
          this.variableRef = variableRef;
          this.bytes = bytes;
       }
@@ -85,7 +81,7 @@ public class Registers {
 
       @Override
       public RegisterType getType() {
-         return RegisterType.MEMORY;
+         return RegisterType.MAIN_MEM;
       }
 
       @Override
@@ -96,6 +92,11 @@ public class Registers {
       @Override
       public int getBytes() {
          return bytes;
+      }
+
+      @Override
+      public boolean isNonRelocatable() {
+         return false;
       }
 
       @Override
@@ -112,7 +113,7 @@ public class Registers {
       public boolean equals(Object o) {
          if(this == o) return true;
          if(o == null || getClass() != o.getClass()) return false;
-         RegisterMemory that = (RegisterMemory) o;
+         RegisterMainMem that = (RegisterMainMem) o;
          return Objects.equals(variableRef, that.variableRef);
       }
 
@@ -122,63 +123,37 @@ public class Registers {
       }
    }
 
-   public static abstract class RegisterZp implements Register {
+   /** Two zero page addresses used as a register for a single unsigned word variable. */
+   public static class RegisterZpMem implements Register {
 
       /** The ZP address used for the byte. */
       private int zp;
 
-      RegisterZp(int zp) {
+
+      /** The number of bytes that the register takes up*/
+      private int bytes;
+
+      /** True if the address of the register is delcared in the code (non-relocatable)*/
+      private boolean isNonRelocatable;
+
+
+      public RegisterZpMem(int zp, int bytes, boolean isNonRelocatable) {
          this.zp = zp;
+         this.bytes = bytes;
+         this.isNonRelocatable = isNonRelocatable;
+      }
+
+      public RegisterZpMem(int zp, int bytes) {
+         this(zp, bytes, false);
       }
 
       public int getZp() {
          return zp;
       }
 
-      public abstract int getBytes();
-
       @Override
       public boolean isZp() {
          return true;
-      }
-
-      @Override
-      public String toString() {
-         return "zp " + getType().toString() + ":" + zp;
-      }
-
-      @Override
-      public String toString(Program program) {
-         return toString();
-      }
-
-      @Override
-      public boolean equals(Object o) {
-         if(this == o) {
-            return true;
-         }
-         if(o == null || getClass() != o.getClass()) {
-            return false;
-         }
-         RegisterZp that = (RegisterZp) o;
-         return zp == that.zp;
-      }
-
-      @Override
-      public int hashCode() {
-         return zp+31*getClass().hashCode();
-      }
-
-   }
-
-   /** Two zero page addresses used as a register for a single unsigned word variable. */
-   public static class RegisterZpMem extends RegisterZp {
-
-      int bytes;
-
-      public RegisterZpMem(int zp, int bytes) {
-         super(zp);
-         this.bytes = bytes;
       }
 
       @Override
@@ -190,109 +165,43 @@ public class Registers {
          return bytes;
       }
 
+      public boolean isNonRelocatable() {
+         return isNonRelocatable;
+      }
+
       @Override
       public String toString() {
          String typeString;
          if(getBytes()==1) {
-            typeString = RegisterType.ZP_BYTE.toString();
+            typeString = "ZP_BYTE";
          } else if(getBytes()==2) {
-            typeString = RegisterType.ZP_WORD.toString();
+            typeString = "ZP_WORD";
          } else if(getBytes()==4) {
-            typeString = RegisterType.ZP_DWORD.toString();
+            typeString = "ZP_DWORD";
          } else {
-            typeString = RegisterType.ZP_MEM.toString();
+            typeString = "ZP_MEM";
          }
          return "zp " + typeString + ":" + getZp();
       }
 
       @Override
-      public boolean equals(Object o) {
-         return super.equals(o);
-      }
-
-      @Override
-      public int hashCode() {
-         return super.hashCode();
-      }
-   }
-
-   /** A zero page address used as a register for a declared register allocation. Size is initially unknown and will be resolved when performing allocation by setting the type. */
-   public static class RegisterZpDeclared extends RegisterZp {
-
-      private RegisterType type;
-
-      public RegisterZpDeclared(int zp) {
-         super(zp);
-         this.type = RegisterType.ZP_VAR;
-      }
-
-      @Override
-      public RegisterType getType() {
-         return type;
-      }
-
-      public void setType(RegisterType type) {
-         this.type = type;
-      }
-
-      @Override
-      public int getBytes() {
-         return -1;
+      public String toString(Program program) {
+         return toString();
       }
 
       @Override
       public boolean equals(Object o) {
          if(this == o) return true;
          if(o == null || getClass() != o.getClass()) return false;
-         if(!super.equals(o)) return false;
-         RegisterZpDeclared that = (RegisterZpDeclared) o;
-         return type == that.type;
+         RegisterZpMem that = (RegisterZpMem) o;
+         return zp == that.zp &&
+               bytes == that.bytes &&
+               isNonRelocatable == that.isNonRelocatable;
       }
 
       @Override
       public int hashCode() {
-         return Objects.hash(super.hashCode(), type);
-      }
-
-   }
-
-
-   /** Zero page addresses used as a register for a struct variable. */
-   public static class RegisterZpStruct extends RegisterZp {
-
-      private int bytes;
-
-      public RegisterZpStruct(int zp, int bytes) {
-         super(zp);
-         this.bytes = bytes;
-      }
-
-      @Override
-      public RegisterType getType() {
-         return RegisterType.ZP_STRUCT;
-      }
-
-      @Override
-      public int getBytes() {
-         return bytes;
-      }
-   }
-
-   /** A zero page address used as a register for a boolean variable. */
-   public static class RegisterZpBool extends RegisterZp {
-
-      public RegisterZpBool(int zp) {
-         super(zp);
-      }
-
-      @Override
-      public RegisterType getType() {
-         return RegisterType.ZP_BOOL;
-      }
-
-      @Override
-      public int getBytes() {
-         return 1;
+         return Objects.hash(zp, bytes, isNonRelocatable);
       }
    }
 
@@ -309,6 +218,11 @@ public class Registers {
       @Override
       public int getBytes() {
          return 1;
+      }
+
+      @Override
+      public boolean isNonRelocatable() {
+         return true;
       }
 
       @Override
@@ -339,7 +253,7 @@ public class Registers {
    public static class RegisterXByte extends RegisterCpuByte {
       @Override
       public RegisterType getType() {
-         return RegisterType.REG_X_BYTE;
+         return RegisterType.REG_X;
       }
 
       @Override
@@ -353,7 +267,7 @@ public class Registers {
    public static class RegisterYByte extends RegisterCpuByte {
       @Override
       public RegisterType getType() {
-         return RegisterType.REG_Y_BYTE;
+         return RegisterType.REG_Y;
       }
 
       @Override
@@ -367,7 +281,7 @@ public class Registers {
    public static class RegisterAByte extends RegisterCpuByte {
       @Override
       public RegisterType getType() {
-         return RegisterType.REG_A_BYTE;
+         return RegisterType.REG_A;
       }
 
       @Override
@@ -407,6 +321,11 @@ public class Registers {
 
       @Override
       public boolean isZp() {
+         return false;
+      }
+
+      @Override
+      public boolean isNonRelocatable() {
          return false;
       }
 

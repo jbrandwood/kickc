@@ -269,8 +269,8 @@ public class Pass4CodeGeneration {
             Registers.Register allocation = param.getAllocation();
             if(i++ > 0) signature.append(", ");
             signature.append(param.getType().getTypeName()).append(" ");
-            if(allocation instanceof Registers.RegisterZp) {
-               Registers.RegisterZp registerZp = (Registers.RegisterZp) allocation;
+            if(allocation instanceof Registers.RegisterZpMem) {
+               Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) allocation;
                signature.append("zeropage(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(")");
             } else if(allocation instanceof Registers.RegisterAByte) {
                signature.append("register(A)");
@@ -666,7 +666,7 @@ public class Pass4CodeGeneration {
       for(Variable scopeVar : scopeVars) {
          Registers.Register register = scopeVar.getAllocation();
          if(register != null && register.isZp()) {
-            Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
+            Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
             String asmName = scopeVar.getAsmName();
             if(asmName != null && !added.contains(asmName)) {
                // Add any comments

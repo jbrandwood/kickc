@@ -13,7 +13,7 @@ main: {
     lda #1
   !:
     eor #1
-    sta.z isSet.b
+    tay
     jsr isSet
     cmp #0
     bne __b2
@@ -31,15 +31,15 @@ main: {
 }
 // Determine whether to set a char to '*.
 // Returns true if i&8!=0 or b=true
-// isSet(byte register(X) i, bool zeropage(2) b)
+// isSet(byte register(X) i, bool register(Y) b)
 isSet: {
-    .label b = 2
     txa
     and #8
     eor #0
     beq !+
     lda #1
   !:
-    ora.z b
+    sty.z $ff
+    ora.z $ff
     rts
 }

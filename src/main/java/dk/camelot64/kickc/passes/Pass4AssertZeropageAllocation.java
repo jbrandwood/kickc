@@ -22,7 +22,7 @@ public class Pass4AssertZeropageAllocation extends Pass2Base {
       for(Variable variable : allVariables) {
          Registers.Register allocation = variable.getAllocation();
          if(allocation!=null && allocation.isZp()) {
-            int zp = ((Registers.RegisterZp) allocation).getZp();
+            int zp = ((Registers.RegisterZpMem) allocation).getZp();
             int sizeBytes = variable.getType().getSizeBytes();
             if(zp+sizeBytes>0x100) {
                // Allocation is outside ZP!

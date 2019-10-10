@@ -724,6 +724,9 @@ public class TestPrograms {
    /**
     * TODO: Fix error with number resolving
     *
+    * @Test public void testNumberTernaryFail2() throws IOException, URISyntaxException {
+    * compileAndCompare("number-ternary-fail-2");
+    * }
     * @Test public void testNumberTernaryFail() throws IOException, URISyntaxException {
     * compileAndCompare("number-ternary-fail");
     * }

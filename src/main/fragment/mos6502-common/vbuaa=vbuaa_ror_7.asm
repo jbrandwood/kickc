@@ -1,7 +1,3 @@
-lsr
-lsr
-lsr
-lsr
-lsr
-lsr
-lsr
+rol
+rol
+and #$01

@@ -1,6 +1,4 @@
-lsr
-lsr
-lsr
-lsr
-lsr
-lsr
+rol
+rol
+rol
+and #$02

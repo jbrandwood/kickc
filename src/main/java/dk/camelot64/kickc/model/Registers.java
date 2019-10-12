@@ -70,7 +70,7 @@ public class Registers {
 
       private int bytes;
 
-      public RegisterMainMem(VariableRef variableRef, int bytes ) {
+      public RegisterMainMem(VariableRef variableRef, int bytes) {
          this.variableRef = variableRef;
          this.bytes = bytes;
       }
@@ -101,7 +101,7 @@ public class Registers {
 
       @Override
       public String toString() {
-         return "mem "+variableRef.toString();
+         return "mem[" + getBytes() + "]:" + variableRef.toString();
       }
 
       @Override
@@ -130,10 +130,10 @@ public class Registers {
       private int zp;
 
 
-      /** The number of bytes that the register takes up*/
+      /** The number of bytes that the register takes up */
       private int bytes;
 
-      /** True if the address of the register is delcared in the code (non-relocatable)*/
+      /** True if the address of the register is delcared in the code (non-relocatable) */
       private boolean isNonRelocatable;
 
 

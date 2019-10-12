@@ -171,17 +171,7 @@ public class Registers {
 
       @Override
       public String toString() {
-         String typeString;
-         if(getBytes()==1) {
-            typeString = "ZP_BYTE";
-         } else if(getBytes()==2) {
-            typeString = "ZP_WORD";
-         } else if(getBytes()==4) {
-            typeString = "ZP_DWORD";
-         } else {
-            typeString = "ZP_MEM";
-         }
-         return "zp " + typeString + ":" + getZp();
+         return "zp[" + getBytes() + "]:" + getZp();
       }
 
       @Override

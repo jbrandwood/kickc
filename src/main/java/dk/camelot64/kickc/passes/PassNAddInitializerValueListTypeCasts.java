@@ -92,7 +92,7 @@ public class PassNAddInitializerValueListTypeCasts extends Pass2SsaOptimization 
             programValue.set(new CastValue(declaredType, valueList));
          } else {
             // TODO: Handle word/dword initializers
-            throw new InternalError("Type not handled! "+declaredType);
+            throw new CompileError("Initializer cannot initialize "+declaredType, currentStmt);
          }
       } else {
          SymbolType valueType = SymbolTypeInference.inferType(getProgram().getScope(), (RValue) value);

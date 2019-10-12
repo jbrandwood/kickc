@@ -757,7 +757,7 @@ public class TestPrograms {
 
    @Test
    public void testStructError6() throws IOException, URISyntaxException {
-      compileAndCompare("struct-error-6");
+      assertError("struct-error-6", "Initializer cannot initialize");
    }
 
    @Test

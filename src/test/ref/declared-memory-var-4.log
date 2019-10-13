@@ -17,8 +17,8 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) bar_thing1 ← (byte) 'a'
   (byte) bar_thing2 ← (byte) 'b'
-  (byte[$c]) bar_thing3#0 ← (const string) $0
-  (struct foo) bar ← struct-unwound {(byte) bar_thing1, (byte) bar_thing2, (byte[$c]) bar_thing3#0}
+  (byte[$c]) bar_thing3 ← (const string) $0
+  (struct foo) bar ← struct-unwound {(byte) bar_thing1, (byte) bar_thing2, (byte[$c]) bar_thing3}
   to:@1
 
 (void()) main()
@@ -68,8 +68,7 @@ SYMBOL TABLE SSA
 (struct foo) bar notregister
 (byte) bar_thing1 notregister
 (byte) bar_thing2 notregister
-(byte[$c]) bar_thing3
-(byte[$c]) bar_thing3#0
+(byte[$c]) bar_thing3 notregister
 (byte) foo::thing1
 (byte) foo::thing2
 (byte[$c]) foo::thing3
@@ -132,7 +131,7 @@ Simplifying expression containing zero (byte*)main::barp#0 in [8] (byte*) main::
 Simplifying expression containing zero (byte*)main::barp#0 in [9] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)(const struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING1)
 Simplifying expression containing zero main::SCREEN in [9] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)(const struct foo*) main::barp#0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (struct foo) bar and assignment [3] (struct foo) bar ← struct-unwound {(byte) bar_thing1, (byte) bar_thing2, (byte[$c]) bar_thing3#0}
+Eliminating unused variable (struct foo) bar and assignment [3] (struct foo) bar ← struct-unwound {(byte) bar_thing1, (byte) bar_thing2, (byte[$c]) bar_thing3}
 Eliminating unused variable (byte*) main::$2 and assignment [4] (byte*) main::$2 ← (byte*)(const struct foo*) main::barp#0
 Eliminating unused variable (byte*) main::$3 and assignment [7] (byte*) main::$3 ← (byte*)(const struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING2
 Eliminating unused constant (const byte) OFFSET_STRUCT_FOO_THING1
@@ -191,7 +190,7 @@ FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] (byte) bar_thing1 ← (byte) 'a'
   [1] (byte) bar_thing2 ← (byte) 'b'
-  [2] (byte[$c]) bar_thing3#0 ← (const string) $0
+  [2] (byte[$c]) bar_thing3 ← (const string) $0
   to:@1
 @1: scope:[]  from @begin
   [3] phi()
@@ -221,8 +220,7 @@ main::@return: scope:[main]  from main::@1
 VARIABLE REGISTER WEIGHTS
 (byte) bar_thing1 notregister 20.0
 (byte) bar_thing2 notregister 20.0
-(byte[$c]) bar_thing3
-(byte[$c]) bar_thing3#0 20.0
+(byte[$c]) bar_thing3 notregister 20.0
 (byte) foo::thing1
 (byte) foo::thing2
 (byte[$c]) foo::thing3
@@ -240,17 +238,18 @@ Initial phi equivalence classes
 [ main::i#4 main::i#3 ]
 Added variable bar_thing1 to zero page equivalence class [ bar_thing1 ]
 Added variable bar_thing2 to zero page equivalence class [ bar_thing2 ]
+Added variable bar_thing3 to zero page equivalence class [ bar_thing3 ]
 Complete equivalence classes
 [ main::j#2 main::j#1 ]
 [ main::i#4 main::i#3 ]
-[ bar_thing3#0 ]
 [ bar_thing1 ]
 [ bar_thing2 ]
+[ bar_thing3 ]
 Allocated zp[1]:2 [ main::j#2 main::j#1 ]
 Allocated zp[1]:3 [ main::i#4 main::i#3 ]
-Allocated zp[2]:4 [ bar_thing3#0 ]
 Allocated mem[1]:bar_thing1 [ bar_thing1 ]
 Allocated mem[1]:bar_thing2 [ bar_thing2 ]
+Allocated zp[2]:4 [ bar_thing3 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -273,7 +272,7 @@ __bbegin:
   // [1] (byte) bar_thing2 ← (byte) 'b' -- vbum1=vbuc1 
   lda #'b'
   sta bar_thing2
-  // [2] (byte[$c]) bar_thing3#0 ← (const string) $0 -- pbuz1=pbuc1 
+  // [2] (byte[$c]) bar_thing3 ← (const string) $0 -- pbuz1=pbuc1 
   lda #<__0
   sta.z bar_thing3
   lda #>__0
@@ -346,7 +345,7 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) bar_thing1 ← (byte) 'a' [ ] (  [ ] ) always clobbers reg byte a 
 Statement [1] (byte) bar_thing2 ← (byte) 'b' [ ] (  [ ] ) always clobbers reg byte a 
-Statement [2] (byte[$c]) bar_thing3#0 ← (const string) $0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [2] (byte[$c]) bar_thing3 ← (const string) $0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp#0) [ ] ( main:4 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp#0+(const byte) OFFSET_STRUCT_FOO_THING2) [ ] ( main:4 [ ] ) always clobbers reg byte a 
 Statement [9] *((const byte*) main::SCREEN + (byte) main::i#4) ← *((byte[$c])(const struct foo*) main::barp#0+(const byte) OFFSET_STRUCT_FOO_THING3 + (byte) main::j#2) [ main::j#2 main::i#4 ] ( main:4 [ main::j#2 main::i#4 ] ) always clobbers reg byte a 
@@ -354,25 +353,25 @@ Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::j
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::i#4 main::i#3 ]
 Statement [0] (byte) bar_thing1 ← (byte) 'a' [ ] (  [ ] ) always clobbers reg byte a 
 Statement [1] (byte) bar_thing2 ← (byte) 'b' [ ] (  [ ] ) always clobbers reg byte a 
-Statement [2] (byte[$c]) bar_thing3#0 ← (const string) $0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [2] (byte[$c]) bar_thing3 ← (const string) $0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp#0) [ ] ( main:4 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp#0+(const byte) OFFSET_STRUCT_FOO_THING2) [ ] ( main:4 [ ] ) always clobbers reg byte a 
 Statement [9] *((const byte*) main::SCREEN + (byte) main::i#4) ← *((byte[$c])(const struct foo*) main::barp#0+(const byte) OFFSET_STRUCT_FOO_THING3 + (byte) main::j#2) [ main::j#2 main::i#4 ] ( main:4 [ main::j#2 main::i#4 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::j#2 main::j#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::i#4 main::i#3 ] : zp[1]:3 , reg byte x , reg byte y , 
-Potential registers zp[2]:4 [ bar_thing3#0 ] : zp[2]:4 , 
 Potential registers mem[1]:bar_thing1 [ bar_thing1 ] : mem[1]:bar_thing1 , 
 Potential registers mem[1]:bar_thing2 [ bar_thing2 ] : mem[1]:bar_thing2 , 
+Potential registers zp[2]:4 [ bar_thing3 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 20: zp[2]:4 [ bar_thing3#0 ] 20: mem[1]:bar_thing1 [ bar_thing1 ] 20: mem[1]:bar_thing2 [ bar_thing2 ] 
+Uplift Scope [] 20: mem[1]:bar_thing1 [ bar_thing1 ] 20: mem[1]:bar_thing2 [ bar_thing2 ] 20: zp[2]:4 [ bar_thing3 ] 
 Uplift Scope [main] 27.5: zp[1]:2 [ main::j#2 main::j#1 ] 23.83: zp[1]:3 [ main::i#4 main::i#3 ] 
 Uplift Scope [foo] 
 
-Uplifting [] best 576 combination zp[2]:4 [ bar_thing3#0 ] mem[1]:bar_thing1 [ bar_thing1 ] mem[1]:bar_thing2 [ bar_thing2 ] 
+Uplifting [] best 576 combination mem[1]:bar_thing1 [ bar_thing1 ] mem[1]:bar_thing2 [ bar_thing2 ] zp[2]:4 [ bar_thing3 ] 
 Uplifting [main] best 366 combination reg byte y [ main::j#2 main::j#1 ] reg byte x [ main::i#4 main::i#3 ] 
 Uplifting [foo] best 366 combination 
-Allocated (was zp[2]:4) zp[2]:2 [ bar_thing3#0 ]
+Allocated (was zp[2]:4) zp[2]:2 [ bar_thing3 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -394,7 +393,7 @@ __bbegin:
   // [1] (byte) bar_thing2 ← (byte) 'b' -- vbum1=vbuc1 
   lda #'b'
   sta bar_thing2
-  // [2] (byte[$c]) bar_thing3#0 ← (const string) $0 -- pbuz1=pbuc1 
+  // [2] (byte[$c]) bar_thing3 ← (const string) $0 -- pbuz1=pbuc1 
   lda #<__0
   sta.z bar_thing3
   lda #>__0
@@ -487,8 +486,7 @@ FINAL SYMBOL TABLE
 (const byte) OFFSET_STRUCT_FOO_THING3 = (byte) 2
 (byte) bar_thing1 notregister mem[1]:bar_thing1 20.0
 (byte) bar_thing2 notregister mem[1]:bar_thing2 20.0
-(byte[$c]) bar_thing3
-(byte[$c]) bar_thing3#0 bar_thing3 zp[2]:2 20.0
+(byte[$c]) bar_thing3 notregister zp[2]:2 20.0
 (byte) foo::thing1
 (byte) foo::thing2
 (byte[$c]) foo::thing3
@@ -507,9 +505,9 @@ FINAL SYMBOL TABLE
 
 reg byte y [ main::j#2 main::j#1 ]
 reg byte x [ main::i#4 main::i#3 ]
-zp[2]:2 [ bar_thing3#0 ]
 mem[1]:bar_thing1 [ bar_thing1 ]
 mem[1]:bar_thing2 [ bar_thing2 ]
+zp[2]:2 [ bar_thing3 ]
 
 
 FINAL ASSEMBLER
@@ -535,7 +533,7 @@ __bbegin:
   // [1] (byte) bar_thing2 ← (byte) 'b' -- vbum1=vbuc1 
   lda #'b'
   sta bar_thing2
-  // [2] (byte[$c]) bar_thing3#0 ← (const string) $0 -- pbuz1=pbuc1 
+  // [2] (byte[$c]) bar_thing3 ← (const string) $0 -- pbuz1=pbuc1 
   lda #<__0
   sta.z bar_thing3
   lda #>__0

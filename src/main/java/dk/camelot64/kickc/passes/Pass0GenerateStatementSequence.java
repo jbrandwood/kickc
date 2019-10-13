@@ -43,6 +43,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private StatementSequence sequence;
    /** Used to build the scopes of the source file. */
    private Stack<Scope> scopeStack;
+   /** The memory area used by default for variables. */
+   private SymbolVariable.MemoryArea defaultMemoryArea;
 
    public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program) {
       this.cParser = cParser;
@@ -50,6 +52,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.program = program;
       this.sequence = program.getStatementSequence();
       this.scopeStack = new Stack<>();
+      this.defaultMemoryArea = SymbolVariable.MemoryArea.ZEROPAGE;
       scopeStack.push(program.getScope());
    }
 
@@ -201,7 +204,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       Variable returnVar = null;
       if(!SymbolType.VOID.equals(type)) {
-         returnVar = procedure.addVariablePhiMaster("return", type, procedure.getSegmentData());
+         returnVar = procedure.addVariablePhiMaster("return", type, defaultMemoryArea, procedure.getSegmentData());
       }
       List<Variable> parameterList = new ArrayList<>();
       if(ctx.parameterListDecl() != null) {
@@ -260,7 +263,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
-      Variable param = new Variable(ctx.NAME().getText(), getCurrentScope(), type, currentDataSegment, SymbolVariable.StorageStrategy.PHI_MASTER);
+      Variable param = new Variable(ctx.NAME().getText(), getCurrentScope(), type, currentDataSegment, SymbolVariable.StorageStrategy.PHI_MASTER, defaultMemoryArea);
       // Add directives
       addDirectives(param, type, directives, new StatementSource(ctx));
       exitDeclTypes();
@@ -613,7 +616,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       Variable lValue;
       try {
-         lValue = getCurrentScope().addVariablePhiMaster(varName, type, currentDataSegment);
+         lValue = getCurrentScope().addVariablePhiMaster(varName, type, defaultMemoryArea, currentDataSegment);
       } catch(CompileError e) {
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }
@@ -623,6 +626,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
          lValue.setDeclaredConstant(true);
          lValue.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
+         lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
       }
       if(lValue.isDeclaredConstant()) {
          // Add comments to constant
@@ -681,6 +685,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(directive instanceof DirectiveConst) {
             lValue.setDeclaredConstant(true);
             lValue.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
+            lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
          } else if(directive instanceof DirectiveVolatile) {
             lValue.setDeclaredVolatile(true);
          } else if(directive instanceof DirectiveExport) {
@@ -695,6 +700,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             DirectiveMemory directiveMemory = (DirectiveMemory) directive;
             lValue.setDeclaredAsMemory(true);
             lValue.setStorageStrategy(SymbolVariable.StorageStrategy.MEMORY);
+            lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
             if(directiveMemory.address!=null) {
                lValue.setDeclaredMemoryAddress(directiveMemory.address);
             }
@@ -1199,7 +1205,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Variable lValue;
       if(varType != null) {
          try {
-            lValue = getCurrentScope().addVariablePhiMaster(varName, varType, currentDataSegment);
+            lValue = getCurrentScope().addVariablePhiMaster(varName, varType, defaultMemoryArea, currentDataSegment);
          } catch(CompileError e) {
             throw new CompileError(e.getMessage(), statementSource);
          }
@@ -1625,7 +1631,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       scopeStack.push(typedefScope);
       SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
       String typedefName = ctx.NAME().getText();
-      typedefScope.addVariablePhiMaster(typedefName, type, currentDataSegment);
+      typedefScope.addVariablePhiMaster(typedefName, type, defaultMemoryArea, currentDataSegment);
       scopeStack.pop();
       return null;
    }

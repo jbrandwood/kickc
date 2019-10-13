@@ -212,16 +212,18 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   for(Variable member : structDefinition.getAllVariables(false)) {
                      Variable memberVariable;
                      if(variable.getRef().isIntermediate()) {
-                        memberVariable = scope.add(new Variable(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), variable.getDataSegment(), SymbolVariable.StorageStrategy.INTERMEDIATE));
+                        memberVariable = scope.add(new Variable(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), variable.getDataSegment(), SymbolVariable.StorageStrategy.INTERMEDIATE, variable.getMemoryArea()));
                      } else {
-                        memberVariable = scope.addVariablePhiMaster(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), variable.getDataSegment());
+                        memberVariable = scope.addVariablePhiMaster(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), member.getMemoryArea(), variable.getDataSegment());
                      }
                      memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
                      memberVariable.setInferedVolatile(variable.isInferedVolatile());
                      memberVariable.setDeclaredConstant(variable.isDeclaredConstant());
                      memberVariable.setDeclaredExport(variable.isDeclaredExport());
-                     if(variable.isStorageMemory() && member.isStoragePhiMaster())
-                        memberVariable.setStorageStrategy(SymbolVariable.StorageStrategy.MEMORY);
+                     if(variable.isStorageMemory() && member.isStoragePhiMaster()) {
+                        memberVariable.setStorageStrategy(variable.getStorageStrategy());
+                        memberVariable.setMemoryArea(variable.getMemoryArea());
+                     }
                      variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
                      getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
                   }

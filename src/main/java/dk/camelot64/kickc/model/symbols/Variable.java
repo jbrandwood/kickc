@@ -25,8 +25,8 @@ public class Variable extends SymbolVariable {
    /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
    private Registers.Register allocation;
 
-   public Variable(String name, Scope scope, SymbolType type, String dataSegment, StorageStrategy storageStrategy) {
-      super(name, scope, type, storageStrategy, dataSegment);
+   public Variable(String name, Scope scope, SymbolType type, String dataSegment, StorageStrategy storageStrategy, MemoryArea memoryArea) {
+      super(name, scope, type, storageStrategy, memoryArea, dataSegment);
       if(isStoragePhiMaster())
          this.nextPhiVersionNumber = 0;
    }
@@ -38,7 +38,7 @@ public class Variable extends SymbolVariable {
     * @param version The version number
     */
    public Variable(Variable phiMaster, int version) {
-      super(phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), StorageStrategy.PHI_VERSION, phiMaster.getDataSegment());
+      super(phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), StorageStrategy.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       this.setDeclaredAsMemory(phiMaster.isDeclaredAsMemory());

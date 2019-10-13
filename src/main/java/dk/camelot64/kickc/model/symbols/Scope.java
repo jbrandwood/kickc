@@ -99,13 +99,13 @@ public abstract class Scope implements Symbol, Serializable {
       symbols.remove(symbol.getLocalName());
    }
 
-   public Variable addVariablePhiMaster(String name, SymbolType type, String dataSegment) {
-      return add(new Variable(name, this, type, dataSegment, SymbolVariable.StorageStrategy.PHI_MASTER));
+   public Variable addVariablePhiMaster(String name, SymbolType type, SymbolVariable.MemoryArea memoryArea, String dataSegment) {
+      return add(new Variable(name, this, type, dataSegment, SymbolVariable.StorageStrategy.PHI_MASTER, memoryArea));
    }
 
    public Variable addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
-      return add(new Variable(name, this, SymbolType.VAR, getSegmentData(), SymbolVariable.StorageStrategy.INTERMEDIATE));
+      return add(new Variable(name, this, SymbolType.VAR, getSegmentData(), SymbolVariable.StorageStrategy.INTERMEDIATE, SymbolVariable.MemoryArea.ZEROPAGE));
    }
 
    /**

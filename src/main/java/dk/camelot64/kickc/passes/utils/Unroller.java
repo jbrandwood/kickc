@@ -236,6 +236,7 @@ public class Unroller {
             newVar.setDeclaredAsMemory(definedVar.isDeclaredAsMemory());
             newVar.setDeclaredMemoryAddress(definedVar.getDeclaredMemoryAddress());
             newVar.setStorageStrategy(definedVar.getStorageStrategy());
+            newVar.setMemoryArea(definedVar.getMemoryArea());
             newVar.setDeclaredVolatile(definedVar.isDeclaredVolatile());
             newVar.setInferedVolatile(definedVar.isInferedVolatile());
             newVar.setDeclaredExport(definedVar.isDeclaredExport());

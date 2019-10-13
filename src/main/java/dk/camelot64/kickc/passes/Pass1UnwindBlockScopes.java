@@ -76,7 +76,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                if(variable.isStoragePhiMaster() || variable.isStorageConstant()) {
                   String name = findLocalName(procedure, symbol);
                   Variable var = (Variable) symbol;
-                  Variable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getDataSegment());
+                  Variable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getMemoryArea(), var.getDataSegment());
                   unwound.setDeclaredAlignment(var.getDeclaredAlignment());
                   unwound.setDeclaredConstant(var.isDeclaredConstant());
                   unwound.setDeclaredVolatile(var.isDeclaredVolatile());
@@ -85,9 +85,11 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                   unwound.setDeclaredExport(var.isDeclaredExport());
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                   unwound.setStorageStrategy(var.getStorageStrategy());
+                  unwound.setMemoryArea(var.getMemoryArea());
                } else if(variable.isStorageIntermediate()) {
                   Variable unwound = procedure.addVariableIntermediate();
                   unwound.setStorageStrategy(variable.getStorageStrategy());
+                  unwound.setMemoryArea(variable.getMemoryArea());
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                } else {
                   throw new CompileError("ERROR! Unexpected symbol encountered in block scope " + symbol.toString(getProgram()));

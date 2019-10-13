@@ -300,7 +300,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          if(procSymbol instanceof Variable) {
             Variable procVar = (Variable) procSymbol;
             String inlineVarName = getInlineSymbolName(procedure, procSymbol, serial);
-            Variable inlineVar = callScope.addVariablePhiMaster(inlineVarName, procSymbol.getType(), procVar.getDataSegment());
+            Variable inlineVar = callScope.addVariablePhiMaster(inlineVarName, procSymbol.getType(), procVar.getMemoryArea(), procVar.getDataSegment());
             inlineVar.setInferredType(procVar.isInferredType());
             inlineVar.setDeclaredAlignment(procVar.getDeclaredAlignment());
             inlineVar.setDeclaredConstant(procVar.isDeclaredConstant());
@@ -309,6 +309,7 @@ public class Pass1ProcedureInline extends Pass1Base {
             inlineVar.setDeclaredRegister(procVar.getDeclaredRegister());
             inlineVar.setDeclaredMemoryAddress(procVar.getDeclaredMemoryAddress());
             inlineVar.setStorageStrategy(procVar.getStorageStrategy());
+            inlineVar.setMemoryArea(procVar.getMemoryArea());
             inlineVar.setDeclaredVolatile(procVar.isDeclaredVolatile());
             inlineVar.setInferedVolatile(procVar.isInferedVolatile());
             inlineVar.setDeclaredExport(procVar.isDeclaredExport());

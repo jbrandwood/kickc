@@ -80,12 +80,12 @@ public class AsmFragmentTemplate {
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
       {
-         Variable v1 = new Variable("z1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         Variable v2 = new Variable("z2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         Variable v3 = new Variable("z3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         Variable v4 = new Variable("z4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         Variable v5 = new Variable("z5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         Variable v6 = new Variable("z6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
+         Variable v1 = new Variable("z1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE);
+         Variable v2 = new Variable("z2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE);
+         Variable v3 = new Variable("z3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE);
+         Variable v4 = new Variable("z4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE);
+         Variable v5 = new Variable("z5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE);
+         Variable v6 = new Variable("z6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE);
          v1.setAllocation(new Registers.RegisterZpMem(2, 1));
          v2.setAllocation(new Registers.RegisterZpMem(4, 1));
          v3.setAllocation(new Registers.RegisterZpMem(6, 1));
@@ -100,12 +100,12 @@ public class AsmFragmentTemplate {
          if(signature.contains("z6")) bindings.put("z6", v6);
       }
       {
-         Variable v1 = new Variable("m1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         Variable v2 = new Variable("m2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         Variable v3 = new Variable("m3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         Variable v4 = new Variable("m4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         Variable v5 = new Variable("m5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         Variable v6 = new Variable("m6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
+         Variable v1 = new Variable("m1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY, SymbolVariable.MemoryArea.MAIN_MEMORY);
+         Variable v2 = new Variable("m2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY, SymbolVariable.MemoryArea.MAIN_MEMORY);
+         Variable v3 = new Variable("m3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY, SymbolVariable.MemoryArea.MAIN_MEMORY);
+         Variable v4 = new Variable("m4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY, SymbolVariable.MemoryArea.MAIN_MEMORY);
+         Variable v5 = new Variable("m5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY, SymbolVariable.MemoryArea.MAIN_MEMORY);
+         Variable v6 = new Variable("m6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY, SymbolVariable.MemoryArea.MAIN_MEMORY);
          v1.setAllocation(new Registers.RegisterMainMem(v1.getRef(), 1));
          v2.setAllocation(new Registers.RegisterMainMem(v2.getRef(), 1));
          v3.setAllocation(new Registers.RegisterMainMem(v3.getRef(), 1));

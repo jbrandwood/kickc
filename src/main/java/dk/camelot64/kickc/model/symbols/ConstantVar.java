@@ -12,7 +12,7 @@ public class ConstantVar extends SymbolVariable {
    private ConstantValue value;
 
    public ConstantVar(String name, Scope scope, SymbolType type, ConstantValue value, String dataSegment) {
-      super(name, scope, type, StorageStrategy.CONSTANT, dataSegment);
+      super(name, scope, type, StorageStrategy.CONSTANT, MemoryArea.NONE, dataSegment);
       this.value = value;
    }
 

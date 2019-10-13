@@ -55,15 +55,22 @@ public abstract class SymbolVariable implements Symbol {
 
    /** Strategy being used for storing and accessing the variable. The value depends on the directives memory/register/volatile/const - and on the compilers optimization decisions.
     * <ul>
-    * <li>PHI_REGISTER-variables are turned into versions and PHI-nodes are used for them throughout the entire program. They cannot be "volatile" and the "address-of" operator cannot be used on them.</li>
-    * <li>MEMORY-variables are stored in memory and accessed through load/store operators. They cannot be declared as "register".</li>
-    * <li>CONSTANT-variables are constant.
+    * <li>PHI variables are turned into versions and PHI-nodes are used for them throughout the entire program. They cannot be "volatile" and the "address-of" operator cannot be used on them.</li>
+    * <li>INTERMEDIATE variables are created when expressions are broken into smaller statements. </li>
+    * <li>MEMORY variables are stored in memory and accessed through load/store operations. They cannot be declared as "register".</li>
+    * <li>CONSTANT variables are constant.
     * </ul>
     **/
-   public enum StorageStrategy {PHI_MASTER, PHI_VERSION, INTERMEDIATE, MEMORY, CONSTANT }
+   public enum StorageStrategy { PHI_MASTER, PHI_VERSION, INTERMEDIATE, MEMORY, CONSTANT }
 
    /** The storage strategy for the variable. */
    private StorageStrategy storageStrategy;
+
+   /** Memory area used for storing the variable (if is is stored in memory). */
+   public enum MemoryArea { ZEROPAGE, MAIN_MEMORY }
+
+   /** The memory area where the variable lives (if stored in memory). */
+   private MemoryArea memoryArea;
 
    /** Comments preceding the procedure in the source code. */
    private List<Comment> comments;
@@ -75,7 +82,7 @@ public abstract class SymbolVariable implements Symbol {
    private String dataSegment;
 
 
-   public SymbolVariable(String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, String dataSegment) {
+   public SymbolVariable(String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, MemoryArea memoryArea, String dataSegment) {
       this.name = name;
       this.scope = scope;
       this.type = type;
@@ -83,6 +90,7 @@ public abstract class SymbolVariable implements Symbol {
       this.comments = new ArrayList<>();
       this.dataSegment = dataSegment;
       this.storageStrategy = storageStrategy;
+      this.memoryArea = memoryArea;
       setFullName();
    }
 
@@ -263,6 +271,22 @@ public abstract class SymbolVariable implements Symbol {
 
    public boolean isStorageIntermediate() {
       return StorageStrategy.INTERMEDIATE.equals(getStorageStrategy());
+   }
+
+   public MemoryArea getMemoryArea() {
+      return memoryArea;
+   }
+
+   public void setMemoryArea(MemoryArea memoryArea) {
+      this.memoryArea = memoryArea;
+   }
+
+   public boolean isMemoryAreaZp() {
+      return MemoryArea.ZEROPAGE.equals(getMemoryArea());
+   }
+
+   public boolean isMemoryAreaMain() {
+      return MemoryArea.MAIN_MEMORY.equals(getMemoryArea());
    }
 
    public List<Comment> getComments() {

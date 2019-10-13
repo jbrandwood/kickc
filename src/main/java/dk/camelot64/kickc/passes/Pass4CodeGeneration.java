@@ -465,25 +465,28 @@ public class Pass4CodeGeneration {
       // Add all memory variables
       Collection<Variable> scopeVariables = scope.getAllVariables(false);
       for(Variable variable : scopeVariables) {
-         if(variable.isStorageMemory() && variable.isMemoryAreaMain()) {
+         if(variable.isStorageLoadStore() && variable.isMemoryAreaMain()) {
             // Skip if already added
             String asmName = variable.getAsmName() == null ? variable.getLocalName() : variable.getAsmName();
             if(added.contains(asmName)) {
                continue;
             }
-            // Set segment
-            setCurrentSegment(variable.getDataSegment(), asm);
-            // Add any comments
-            generateComments(asm, variable.getComments());
-            // Add any alignment
-            Integer declaredAlignment = variable.getDeclaredAlignment();
-            if(declaredAlignment != null) {
-               String alignment = AsmFormat.getAsmNumber(declaredAlignment);
-               asm.addDataAlignment(alignment);
+            if(variable.getDeclaredMemoryAddress() == null) {
+               // Generate into the data segment
+               // Set segment
+               setCurrentSegment(variable.getDataSegment(), asm);
+               // Add any comments
+               generateComments(asm, variable.getComments());
+               // Add any alignment
+               Integer declaredAlignment = variable.getDeclaredAlignment();
+               if(declaredAlignment != null) {
+                  String alignment = AsmFormat.getAsmNumber(declaredAlignment);
+                  asm.addDataAlignment(alignment);
+               }
+               AsmDataChunk asmDataChunk = new AsmDataChunk();
+               addChunkData(asmDataChunk, ZeroConstantValues.zeroValue(variable.getType(), getScope()), variable.getType(), scopeRef);
+               asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
             }
-            AsmDataChunk asmDataChunk = new AsmDataChunk();
-            addChunkData(asmDataChunk, ZeroConstantValues.zeroValue(variable.getType(), getScope()), variable.getType(), scopeRef);
-            asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
             added.add(asmName);
          }
       }
@@ -665,17 +668,27 @@ public class Pass4CodeGeneration {
       Set<String> added = new LinkedHashSet<>();
       for(Variable scopeVar : scopeVars) {
          Registers.Register register = scopeVar.getAllocation();
-         if(register != null && register.isZp()) {
-            Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
-            String asmName = scopeVar.getAsmName();
-            if(asmName != null && !added.contains(asmName)) {
-               // Add any comments
-               generateComments(asm, scopeVar.getComments());
-               // Add the label declaration
-               asm.addLabelDecl(AsmFormat.asmFix(asmName), registerZp.getZp());
-               added.add(asmName);
+         if(register != null)
+            if(register.isZp()) {
+               Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
+               String asmName = scopeVar.getAsmName();
+               if(asmName != null && !added.contains(asmName)) {
+                  // Add any comments
+                  generateComments(asm, scopeVar.getComments());
+                  // Add the label declaration
+                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(registerZp.getZp()));
+                  added.add(asmName);
+               }
+            } else if(register instanceof Registers.RegisterMainMem && scopeVar.getDeclaredMemoryAddress() != null) {
+               String asmName = scopeVar.getAsmName();
+               if(asmName != null && !added.contains(asmName)) {
+                  // Add any comments
+                  generateComments(asm, scopeVar.getComments());
+                  // Add the label declaration
+                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(scopeVar.getDeclaredMemoryAddress()));
+                  added.add(asmName);
+               }
             }
-         }
       }
    }
 
@@ -817,10 +830,10 @@ public class Pass4CodeGeneration {
             if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
 
                long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
-               long returnByteSize = procedure.getReturnType()==null?0:procedure.getReturnType().getSizeBytes();
+               long returnByteSize = procedure.getReturnType() == null ? 0 : procedure.getReturnType().getSizeBytes();
                if(stackFrameByteSize > returnByteSize) {
                   // Clean up the stack
-                  String pullSignature = "_stackpullbyte_" + (stackFrameByteSize-returnByteSize);
+                  String pullSignature = "_stackpullbyte_" + (stackFrameByteSize - returnByteSize);
                   AsmFragmentInstanceSpec pullFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, pullSignature, new LinkedHashMap<>(), block.getScope());
                   asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   generateAsm(asm, pullFragmentInstanceSpec);

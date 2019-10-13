@@ -223,11 +223,11 @@ SYMBOL TABLE SSA
 (byte) main::default_mem_flex
 (byte) main::default_zp_abs !zp[-1]:16
 (byte) main::default_zp_flex
-(byte) main::notreg_default memory
-(byte) main::notreg_mem_abs memory
-(byte) main::notreg_mem_flex memory
-(byte) main::notreg_zp_abs memory !zp[-1]:16
-(byte) main::notreg_zp_flex memory
+(byte) main::notreg_default notregister
+(byte) main::notreg_mem_abs notregister
+(byte) main::notreg_mem_flex notregister
+(byte) main::notreg_zp_abs notregister !zp[-1]:16
+(byte) main::notreg_zp_flex notregister
 (byte) main::reg_default
 (byte) main::reg_mem_abs
 (byte) main::reg_mem_flex
@@ -490,11 +490,11 @@ VARIABLE REGISTER WEIGHTS
 (byte) i#17 0.9999999999999999
 (byte) i#36 16.0
 (void()) main()
-(byte) main::notreg_default memory 0.2
-(byte) main::notreg_mem_abs memory 0.26666666666666666
-(byte) main::notreg_mem_flex memory 0.2857142857142857
-(byte) main::notreg_zp_abs memory !zp[-1]:16 0.3076923076923077
-(byte) main::notreg_zp_flex memory 0.3333333333333333
+(byte) main::notreg_default notregister 0.2
+(byte) main::notreg_mem_abs notregister 0.26666666666666666
+(byte) main::notreg_mem_flex notregister 0.2857142857142857
+(byte) main::notreg_zp_abs notregister !zp[-1]:16 0.3076923076923077
+(byte) main::notreg_zp_flex notregister 0.3333333333333333
 (void()) out((byte) out::c)
 (byte) out::c
 (byte) out::c#10 4.0
@@ -566,6 +566,7 @@ main: {
     .const default_mem_abs = '.'
     .label notreg_zp_flex = 4
     .label notreg_zp_abs = $10
+    .label notreg_mem_abs = $1000
     .label notreg_default = 5
     // [4] (byte) main::notreg_zp_flex ← (byte) '.' -- vbuz1=vbuc1 
     lda #'.'
@@ -775,7 +776,6 @@ main: {
     // [38] return 
     rts
     notreg_mem_flex: .byte 0
-    notreg_mem_abs: .byte 0
 }
   // out
 // out(byte zeropage(2) c)
@@ -863,6 +863,7 @@ main: {
     .const default_mem_abs = '.'
     .label notreg_zp_flex = 2
     .label notreg_zp_abs = $10
+    .label notreg_mem_abs = $1000
     .label notreg_default = 3
     // [4] (byte) main::notreg_zp_flex ← (byte) '.' -- vbuz1=vbuc1 
     lda #'.'
@@ -1056,7 +1057,6 @@ main: {
     // [38] return 
     rts
     notreg_mem_flex: .byte 0
-    notreg_mem_abs: .byte 0
 }
   // out
 // out(byte register(X) c)
@@ -1156,7 +1156,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (byte) i
 (byte) i#17 reg byte y 0.9999999999999999
 (byte) i#36 reg byte y 16.0
@@ -1176,21 +1176,21 @@ FINAL SYMBOL TABLE
 (label) main::@8
 (label) main::@9
 (label) main::@return
-(const byte) main::default_default default_default = (byte) '.'
-(const byte) main::default_mem_abs default_mem_abs = (byte) '.'
-(const byte) main::default_mem_flex default_mem_flex = (byte) '.'
-(const byte) main::default_zp_abs default_zp_abs !zp[-1]:16 = (byte) '.'
-(const byte) main::default_zp_flex default_zp_flex = (byte) '.'
-(byte) main::notreg_default notreg_default memory zp[1]:3 0.2
-(byte) main::notreg_mem_abs memory mem[1]:main::notreg_mem_abs 0.26666666666666666
-(byte) main::notreg_mem_flex memory mem[1]:main::notreg_mem_flex 0.2857142857142857
-(byte) main::notreg_zp_abs notreg_zp_abs memory !zp[-1]:16 zp[1]:16 0.3076923076923077
-(byte) main::notreg_zp_flex notreg_zp_flex memory zp[1]:2 0.3333333333333333
-(const byte) main::reg_default reg_default = (byte) '.'
-(const byte) main::reg_mem_abs reg_mem_abs = (byte) '.'
-(const byte) main::reg_mem_flex reg_mem_flex = (byte) '.'
-(const byte) main::reg_zp_abs reg_zp_abs !zp[-1]:16 = (byte) '.'
-(const byte) main::reg_zp_flex reg_zp_flex = (byte) '.'
+(const byte) main::default_default = (byte) '.'
+(const byte) main::default_mem_abs = (byte) '.'
+(const byte) main::default_mem_flex = (byte) '.'
+(const byte) main::default_zp_abs !zp[-1]:16 = (byte) '.'
+(const byte) main::default_zp_flex = (byte) '.'
+(byte) main::notreg_default notregister zp[1]:3 0.2
+(byte) main::notreg_mem_abs notregister mem[1]:main::notreg_mem_abs 0.26666666666666666
+(byte) main::notreg_mem_flex notregister mem[1]:main::notreg_mem_flex 0.2857142857142857
+(byte) main::notreg_zp_abs notregister !zp[-1]:16 zp[1]:16 0.3076923076923077
+(byte) main::notreg_zp_flex notregister zp[1]:2 0.3333333333333333
+(const byte) main::reg_default = (byte) '.'
+(const byte) main::reg_mem_abs = (byte) '.'
+(const byte) main::reg_mem_flex = (byte) '.'
+(const byte) main::reg_zp_abs !zp[-1]:16 = (byte) '.'
+(const byte) main::reg_zp_flex = (byte) '.'
 (void()) out((byte) out::c)
 (label) out::@return
 (byte) out::c
@@ -1241,6 +1241,7 @@ main: {
     .const default_mem_abs = '.'
     .label notreg_zp_flex = 2
     .label notreg_zp_abs = $10
+    .label notreg_mem_abs = $1000
     .label notreg_default = 3
     // notreg_zp_flex = '.'
     // [4] (byte) main::notreg_zp_flex ← (byte) '.' -- vbuz1=vbuc1 
@@ -1397,7 +1398,6 @@ main: {
     // [38] return 
     rts
     notreg_mem_flex: .byte 0
-    notreg_mem_abs: .byte 0
 }
   // out
 // out(byte register(X) c)

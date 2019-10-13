@@ -210,7 +210,7 @@ public abstract class SymbolVariable implements Symbol {
    }
 
    public boolean isVolatile() {
-      return declaredVolatile || inferedVolatile || isStorageMemory();
+      return declaredVolatile || inferedVolatile || isStorageLoadStore();
    }
 
    public boolean isDeclaredExport() {
@@ -265,7 +265,7 @@ public abstract class SymbolVariable implements Symbol {
       return StorageStrategy.PHI_VERSION.equals(getStorageStrategy());
    }
 
-   public boolean isStorageMemory() {
+   public boolean isStorageLoadStore() {
       return StorageStrategy.LOAD_STORE.equals(getStorageStrategy());
    }
 

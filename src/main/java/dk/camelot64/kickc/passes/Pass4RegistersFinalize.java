@@ -94,7 +94,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
       for(Scope scope : allScopes) {
          // Create initial short names - and remember the ones without "#"
          for(Variable variable : scope.getAllVariables(false)) {
-            if(variable.getAllocation() != null && variable.getAllocation().isZp()) {
+            if(variable.getAllocation() != null && variable.getAllocation().isMem()) {
                variable.setAsmName(variable.getLocalName());
             } else {
                variable.setAsmName(null);
@@ -109,7 +109,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
 
          for(Variable variable : scope.getAllVariables(false)) {
             Registers.Register allocation = variable.getAllocation();
-            if(allocation != null && allocation.isZp()) {
+            if(allocation != null && allocation.isMem()) {
                String asmName = variable.getAsmName();
                if(asmName.contains("#")) {
                   String shortName = asmName.substring(0, asmName.indexOf("#"));

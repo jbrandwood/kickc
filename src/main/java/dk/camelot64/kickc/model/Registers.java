@@ -58,6 +58,8 @@ public class Registers {
 
       boolean isZp();
 
+      boolean isMem();
+
       int getBytes();
 
       boolean isNonRelocatable();
@@ -87,6 +89,11 @@ public class Registers {
       @Override
       public boolean isZp() {
          return false;
+      }
+
+      @Override
+      public boolean isMem() {
+         return true;
       }
 
       @Override
@@ -129,13 +136,11 @@ public class Registers {
       /** The ZP address used for the byte. */
       private int zp;
 
-
       /** The number of bytes that the register takes up */
       private int bytes;
 
       /** True if the address of the register is delcared in the code (non-relocatable) */
       private boolean isNonRelocatable;
-
 
       public RegisterZpMem(int zp, int bytes, boolean isNonRelocatable) {
          this.zp = zp;
@@ -153,6 +158,11 @@ public class Registers {
 
       @Override
       public boolean isZp() {
+         return true;
+      }
+
+      @Override
+      public boolean isMem() {
          return true;
       }
 
@@ -202,6 +212,11 @@ public class Registers {
 
       @Override
       public boolean isZp() {
+         return false;
+      }
+
+      @Override
+      public boolean isMem() {
          return false;
       }
 
@@ -311,6 +326,11 @@ public class Registers {
 
       @Override
       public boolean isZp() {
+         return false;
+      }
+
+      @Override
+      public boolean isMem() {
          return false;
       }
 

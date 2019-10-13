@@ -225,7 +225,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                      memberVariable.setInferedVolatile(variable.isInferedVolatile());
                      memberVariable.setDeclaredConstant(variable.isDeclaredConstant());
                      memberVariable.setDeclaredExport(variable.isDeclaredExport());
-                     if(variable.isStorageMemory() && member.isStoragePhiMaster()) {
+                     if(variable.isStorageLoadStore() && member.isStoragePhiMaster()) {
                         memberVariable.setStorageStrategy(variable.getStorageStrategy());
                         memberVariable.setMemoryArea(variable.getMemoryArea());
                      }

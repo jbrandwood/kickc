@@ -343,12 +343,11 @@ public abstract class Scope implements Symbol, Serializable {
                res.append(symbol.toString(program));
                if(symbol instanceof SymbolVariable) {
                   SymbolVariable symVar = (SymbolVariable) symbol;
-                  String asmName = symVar.getAsmName();
-                  if(asmName != null) {
-                     res.append(" " + asmName);
+                  if(symVar.getAsmName()!=null && !symVar.getName().equals(symVar.getAsmName())) {
+                     res.append(" " + symVar.getAsmName());
                   }
-                  if(symVar.isStorageMemory()) {
-                     res.append(" memory");
+                  if(symVar.isStorageLoadStore()) {
+                     res.append(" notregister");
                   }
                   Registers.Register declRegister = symVar.getDeclaredRegister();
                   if(declRegister != null) {

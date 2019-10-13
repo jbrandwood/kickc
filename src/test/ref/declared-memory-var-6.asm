@@ -16,6 +16,7 @@ main: {
     .const default_mem_abs = '.'
     .label notreg_zp_flex = 2
     .label notreg_zp_abs = $10
+    .label notreg_mem_abs = $1000
     .label notreg_default = 3
     lda #'.'
     sta.z notreg_zp_flex
@@ -56,7 +57,6 @@ main: {
     jsr out
     rts
     notreg_mem_flex: .byte 0
-    notreg_mem_abs: .byte 0
 }
 // out(byte register(X) c)
 out: {

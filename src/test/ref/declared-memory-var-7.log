@@ -1,0 +1,378 @@
+Culled Empty Block (label) main::@2
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte) idx ← (byte) 0
+  (byte*) SCREEN ← ((byte*)) (number) $400
+  to:@1
+
+(void()) main()
+main: scope:[main]  from @1
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
+  *((byte*) SCREEN + (byte) main::i#2) ← (byte) idx
+  (byte) idx ← (byte) idx + (byte) main::i#2
+  (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,5)
+  (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,5)
+  if((bool~) main::$0) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) SCREEN
+(byte) idx memory
+(void()) main()
+(bool~) main::$0
+(label) main::@1
+(label) main::@return
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
+
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Simple Condition (bool~) main::$0 [8] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) SCREEN = (byte*) 1024
+Constant (const byte) main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [8] if(main::i#1!=rangelast(0,5)) goto main::@1 to (number) 6
+Adding number conversion cast (unumber) 6 in if((byte) main::i#1!=(number) 6) goto main::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 6
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 6
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inlining constant with var siblings (const byte) main::i#0
+Constant inlined main::i#0 = (byte) 0
+Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@3(between main::@1 and main::@1)
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 1 initial phi equivalence classes
+Coalesced [12] main::i#3 ← main::i#1
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@3
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] (byte) idx ← (byte) 0
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
+  [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx
+  [7] (byte) idx ← (byte) idx + (byte) main::i#2
+  [8] (byte) main::i#1 ← ++ (byte) main::i#2
+  [9] if((byte) main::i#1!=(byte) 6) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [10] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) idx memory 5.0
+(void()) main()
+(byte) main::i
+(byte) main::i#1 16.5
+(byte) main::i#2 14.666666666666666
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Added variable idx to zero page equivalence class [ idx ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ idx ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ idx ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
+// Test a zeropage notregister variable
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label idx = 3
+  // @begin
+__bbegin:
+  // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z idx
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from___b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    .label i = 2
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  __b1_from___b1:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@1
+  __b1:
+    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx -- pbuc1_derefidx_vbuz1=vbuz2 
+    lda.z idx
+    ldy.z i
+    sta SCREEN,y
+    // [7] (byte) idx ← (byte) idx + (byte) main::i#2 -- vbuz1=vbuz1_plus_vbuz2 
+    lda.z idx
+    clc
+    adc.z i
+    sta.z idx
+    // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [9] if((byte) main::i#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #6
+    cmp.z i
+    bne __b1_from___b1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [10] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ idx main::i#2 ] ( main:2 [ idx main::i#2 ] ) always clobbers reg byte a 
+Statement [0] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ idx main::i#2 ] ( main:2 [ idx main::i#2 ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ idx ] : zp[1]:3 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 31.17: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [] 5: zp[1]:3 [ idx ] 
+
+Uplifting [main] best 378 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 378 combination zp[1]:3 [ idx ] 
+Attempting to uplift remaining variables inzp[1]:3 [ idx ]
+Uplifting [] best 378 combination zp[1]:3 [ idx ] 
+Allocated (was zp[1]:3) zp[1]:2 [ idx ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
+// Test a zeropage notregister variable
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label idx = 2
+  // @begin
+__bbegin:
+  // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z idx
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from___b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  __b1_from___b1:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@1
+  __b1:
+    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx -- pbuc1_derefidx_vbuxx=vbuz1 
+    lda.z idx
+    sta SCREEN,x
+    // [7] (byte) idx ← (byte) idx + (byte) main::i#2 -- vbuz1=vbuz1_plus_vbuxx 
+    txa
+    clc
+    adc.z idx
+    sta.z idx
+    // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [9] if((byte) main::i#1!=(byte) 6) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #6
+    bne __b1_from___b1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [10] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __b1_from___b1 with __b1
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1:
+Removing instruction __bend:
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
+Removing instruction jmp __b1
+Succesful ASM optimization Pass5NextJumpElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(const byte*) SCREEN SCREEN = (byte*) 1024
+(byte) idx idx memory zp[1]:2 5.0
+(void()) main()
+(label) main::@1
+(label) main::@return
+(byte) main::i
+(byte) main::i#1 reg byte x 16.5
+(byte) main::i#2 reg byte x 14.666666666666666
+
+reg byte x [ main::i#2 main::i#1 ]
+zp[1]:2 [ idx ]
+
+
+FINAL ASSEMBLER
+Score: 288
+
+  // File Comments
+// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
+// Test a zeropage notregister variable
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label idx = 2
+  // @begin
+__bbegin:
+  // idx
+  // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z idx
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  jsr main
+  rts
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
+  __b1:
+    // SCREEN[i] = idx
+    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx -- pbuc1_derefidx_vbuxx=vbuz1 
+    lda.z idx
+    sta SCREEN,x
+    // idx +=i
+    // [7] (byte) idx ← (byte) idx + (byte) main::i#2 -- vbuz1=vbuz1_plus_vbuxx 
+    txa
+    clc
+    adc.z idx
+    sta.z idx
+    // for( char i: 0..5 )
+    // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [9] if((byte) main::i#1!=(byte) 6) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #6
+    bne __b1
+    // main::@return
+    // }
+    // [10] return 
+    rts
+}
+  // File Data
+

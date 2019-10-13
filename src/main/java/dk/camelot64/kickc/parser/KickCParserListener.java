@@ -358,6 +358,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveMemory(KickCParser.DirectiveMemoryContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code directiveMemoryArea}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveMemoryArea(KickCParser.DirectiveMemoryAreaContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveMemoryArea}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveMemoryArea(KickCParser.DirectiveMemoryAreaContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code directiveInline}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree

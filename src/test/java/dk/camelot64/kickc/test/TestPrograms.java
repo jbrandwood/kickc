@@ -2705,7 +2705,7 @@ public class TestPrograms {
 
    @Test
    public void testVarRegisterZp2() throws IOException, URISyntaxException {
-      assertError("var-register-zp-2", "Error! Register not on zeropage");
+      assertError("var-register-zp-2", "Error! Address not on zeropage");
    }
 
    @Test

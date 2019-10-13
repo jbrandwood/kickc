@@ -105,7 +105,7 @@ public abstract class Scope implements Symbol, Serializable {
 
    public Variable addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
-      return add(new Variable(name, this, SymbolType.VAR, getSegmentData(), SymbolVariable.StorageStrategy.INTERMEDIATE, SymbolVariable.MemoryArea.ZEROPAGE));
+      return add(new Variable(name, this, SymbolType.VAR, getSegmentData(), SymbolVariable.StorageStrategy.INTERMEDIATE, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY));
    }
 
    /**

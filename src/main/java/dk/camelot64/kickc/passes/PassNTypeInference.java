@@ -137,11 +137,11 @@ public class PassNTypeInference extends Pass2SsaOptimization {
             if(symbol.getType() instanceof SymbolTypeArray) {
                symbol.setDeclaredConstant(true);
                symbol.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
-               symbol.setMemoryArea(SymbolVariable.MemoryArea.NONE);
+               symbol.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
             } else if(SymbolType.STRING.equals(symbol.getType())) {
                symbol.setDeclaredConstant(true);
                symbol.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
-               symbol.setMemoryArea(SymbolVariable.MemoryArea.NONE);
+               symbol.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
             }
          }
       }

@@ -79,6 +79,8 @@ EXPORT: 'export' ;
 ALIGN: 'align' ;
 REGISTER: 'register' ;
 MEMORY: 'memory' ;
+ZEROPAGE: '__zp' ;
+MAINMEM: '__mem' ;
 INLINE: 'inline' ;
 VOLATILE: 'volatile' ;
 INTERRUPT: 'interrupt' ;

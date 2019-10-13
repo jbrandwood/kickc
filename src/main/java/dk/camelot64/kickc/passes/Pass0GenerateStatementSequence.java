@@ -52,7 +52,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.program = program;
       this.sequence = program.getStatementSequence();
       this.scopeStack = new Stack<>();
-      this.defaultMemoryArea = SymbolVariable.MemoryArea.ZEROPAGE;
+      this.defaultMemoryArea = SymbolVariable.MemoryArea.ZEROPAGE_MEMORY;
       scopeStack.push(program.getScope());
    }
 
@@ -167,7 +167,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx) {
       Procedure.CallingConvension callingConvension = Procedure.CallingConvension.getCallingConvension(ctx.CALLINGCONVENTION().getText());
-      if(callingConvension!=null) {
+      if(callingConvension != null) {
          currentCallingConvention = callingConvension;
       }
       return null;
@@ -685,7 +685,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(directive instanceof DirectiveConst) {
             lValue.setDeclaredConstant(true);
             lValue.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
-            lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
+            if(!(lValue.getType() instanceof SymbolTypePointer))
+               lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
          } else if(directive instanceof DirectiveVolatile) {
             lValue.setDeclaredVolatile(true);
          } else if(directive instanceof DirectiveExport) {
@@ -696,14 +697,25 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             } else {
                throw new CompileError("Error! Cannot align variable that is not a string or an array " + lValue.toString(program), source);
             }
-         } else if(directive instanceof DirectiveMemory) {
-            DirectiveMemory directiveMemory = (DirectiveMemory) directive;
-            lValue.setDeclaredAsMemory(true);
-            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.MEMORY);
-            lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
-            if(directiveMemory.address!=null) {
-               lValue.setDeclaredMemoryAddress(directiveMemory.address);
+         } else if(directive instanceof DirectiveMemoryArea) {
+            DirectiveMemoryArea directiveMemoryArea = (DirectiveMemoryArea) directive;
+            lValue.setMemoryArea(directiveMemoryArea.memoryArea);
+            if(directiveMemoryArea.address!=null) {
+               if(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY.equals(directiveMemoryArea.memoryArea)) {
+                  // Allocate to specific address
+                  if(directiveMemoryArea.address > 255) {
+                     throw new CompileError("Error! Address not on zeropage " + directiveMemoryArea.address, source);
+                  }
+                  Registers.Register register = new Registers.RegisterZpMem(directiveMemoryArea.address.intValue(), -1, true);
+                  lValue.setDeclaredRegister(register);
+               } else {
+                  lValue.setDeclaredMemoryAddress(directiveMemoryArea.address);
+               }
             }
+         } else if(directive instanceof DirectiveMemory) {
+            lValue.setDeclaredAsMemory(true);
+            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.LOAD_STORE);
+            lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
          } else if(directive instanceof DirectiveRegister) {
             DirectiveRegister directiveRegister = (DirectiveRegister) directive;
             lValue.setDeclaredAsRegister(true);
@@ -714,14 +726,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                if(register == null) {
                   throw new CompileError("Error! Unknown register " + directiveRegister.name, source);
                }
-               lValue.setDeclaredRegister(register);
-            } else if(directiveRegister.address != null) {
-               // Allocate to specific address
-               Long address = ((DirectiveRegister) directive).address;
-               if(address>255) {
-                  throw new CompileError("Error! Register not on zeropage " + directiveRegister.address, source);
-               }
-               Registers.Register register = new Registers.RegisterZpMem(address.intValue(), -1, true);
                lValue.setDeclaredRegister(register);
             }
          } else {
@@ -821,32 +825,31 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Directive visitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx) {
+      String name = null;
       if(ctx.NAME() != null) {
-         return new DirectiveRegister(ctx.NAME().getText());
-      } else if(ctx.NUMBER() != null) {
-         try {
-            ConstantInteger registerAddress = NumberParser.parseIntegerLiteral(ctx.NUMBER().getText());
-            return new DirectiveRegister(registerAddress.getInteger());
-         } catch(NumberFormatException e) {
-            throw new CompileError(e.getMessage(), new StatementSource(ctx));
-         }
-      } else {
-         return new DirectiveRegister(null);
+         name = ctx.NAME().getText();
       }
+      return new DirectiveRegister(name);
    }
 
    @Override
    public Object visitDirectiveMemory(KickCParser.DirectiveMemoryContext ctx) {
+      return new DirectiveMemory();
+   }
+
+   @Override
+   public Object visitDirectiveMemoryArea(KickCParser.DirectiveMemoryAreaContext ctx) {
+      SymbolVariable.MemoryArea mainMemory = ctx.ZEROPAGE() != null ? SymbolVariable.MemoryArea.ZEROPAGE_MEMORY : SymbolVariable.MemoryArea.MAIN_MEMORY;
+      Long address = null;
       if(ctx.NUMBER() != null) {
          try {
             ConstantInteger memoryAddress = NumberParser.parseIntegerLiteral(ctx.NUMBER().getText());
-            return new DirectiveMemory(memoryAddress.getInteger());
+            address = memoryAddress.getInteger();
          } catch(NumberFormatException e) {
             throw new CompileError(e.getMessage(), new StatementSource(ctx));
          }
-      } else {
-         return new DirectiveMemory();
       }
+      return new DirectiveMemoryArea(mainMemory, address);
    }
 
    @Override
@@ -1213,8 +1216,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          addDirectives(lValue, varType, varDirectives, statementSource);
       } else {
          lValue = getCurrentScope().getVariable(varName);
-         if(lValue==null) {
-            throw new CompileError("Error! Loop variable not declared "+varName, statementSource);
+         if(lValue == null) {
+            throw new CompileError("Error! Loop variable not declared " + varName, statementSource);
          }
       }
       exitDeclTypes();
@@ -2228,6 +2231,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    /** Variable memory alignment. */
    private static class DirectiveAlign implements Directive {
+
       private int alignment;
 
       public DirectiveAlign(int alignment) {
@@ -2238,32 +2242,35 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    /** Variable register allocation. */
    private static class DirectiveRegister implements Directive {
+
       /** Name of register to use for the variable */
       private String name;
-      /** Address to use as register for the variable */
-      private Long address;
 
       public DirectiveRegister(String name) {
          this.name = name;
       }
 
-      public DirectiveRegister(long address) {
-         this.address = address;
+   }
+
+   /** Variable memory declaration. */
+   private static class DirectiveMemory implements Directive {
+
+      public DirectiveMemory() {
       }
 
    }
 
-   /** Variable memory allocation. */
-   private static class DirectiveMemory implements Directive {
+   /** Variable memory area declaration. */
+   private static class DirectiveMemoryArea implements Directive {
+
+      /** The memory area. */
+      SymbolVariable.MemoryArea memoryArea;
 
       /** Optional hard-coded address to use for storing the variable. */
       private Long address;
 
-      public DirectiveMemory() {
-         this.address = null;
-      }
-
-      public DirectiveMemory(long address) {
+      public DirectiveMemoryArea(SymbolVariable.MemoryArea memoryArea, Long address) {
+         this.memoryArea = memoryArea;
          this.address = address;
       }
 

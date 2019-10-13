@@ -214,7 +214,12 @@ public class Pass1UnwindStructValues extends Pass1Base {
                      if(variable.getRef().isIntermediate()) {
                         memberVariable = scope.add(new Variable(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), variable.getDataSegment(), SymbolVariable.StorageStrategy.INTERMEDIATE, variable.getMemoryArea()));
                      } else {
-                        memberVariable = scope.addVariablePhiMaster(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), member.getMemoryArea(), variable.getDataSegment());
+                        if(member.getType() instanceof SymbolTypePointer) {
+                           // Always put pointers in ZP memory area
+                           memberVariable = scope.addVariablePhiMaster(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, variable.getDataSegment());
+                        }  else {
+                           memberVariable = scope.addVariablePhiMaster(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), member.getMemoryArea(), variable.getDataSegment());
+                        }
                      }
                      memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
                      memberVariable.setInferedVolatile(variable.isInferedVolatile());

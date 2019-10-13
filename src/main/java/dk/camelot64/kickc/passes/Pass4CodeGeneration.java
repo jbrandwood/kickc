@@ -465,7 +465,7 @@ public class Pass4CodeGeneration {
       // Add all memory variables
       Collection<Variable> scopeVariables = scope.getAllVariables(false);
       for(Variable variable : scopeVariables) {
-         if(variable.isMemoryAreaMain()) {
+         if(variable.isStorageMemory() && variable.isMemoryAreaMain()) {
             // Skip if already added
             String asmName = variable.getAsmName() == null ? variable.getLocalName() : variable.getAsmName();
             if(added.contains(asmName)) {

@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testDeclaredMemoryVar6() throws IOException, URISyntaxException {
+      compileAndCompare("declared-memory-var-6");
+   }
+
+   @Test
    public void testDeclaredMemoryVar5() throws IOException, URISyntaxException {
       compileAndCompare("declared-memory-var-5");
    }

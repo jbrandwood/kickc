@@ -27,8 +27,8 @@ public class KickCParser extends Parser {
 		GREATER_THAN_EQUAL=32, GREATER_THAN=33, LOGIC_AND=34, LOGIC_OR=35, ASSIGN=36, 
 		ASSIGN_COMPOUND=37, IMPORT=38, TYPEDEF=39, PRAGMA=40, RESERVE=41, PC=42, 
 		TARGET=43, LINK=44, CPU=45, CODESEG=46, DATASEG=47, ENCODING=48, CONST=49, 
-		EXTERN=50, EXPORT=51, ALIGN=52, REGISTER=53, MEMORY=54, ZEROPAGE=55, MAINMEM=56, 
-		INLINE=57, VOLATILE=58, INTERRUPT=59, CALLING=60, CALLINGCONVENTION=61, 
+		EXTERN=50, EXPORT=51, ALIGN=52, REGISTER=53, NOTREGISTER=54, ZEROPAGE=55, 
+		MAINMEM=56, INLINE=57, VOLATILE=58, INTERRUPT=59, CALLING=60, CALLINGCONVENTION=61, 
 		IF=62, ELSE=63, WHILE=64, DO=65, FOR=66, SWITCH=67, RETURN=68, BREAK=69, 
 		CONTINUE=70, ASM=71, DEFAULT=72, CASE=73, STRUCT=74, ENUM=75, SIZEOF=76, 
 		TYPEID=77, KICKASM=78, RESOURCE=79, USES=80, CLOBBERS=81, BYTES=82, CYCLES=83, 
@@ -75,7 +75,7 @@ public class KickCParser extends Parser {
 		null, "'&&'", "'||'", "'='", null, "'import'", "'typedef'", "'#pragma'", 
 		"'reserve'", "'pc'", "'target'", "'link'", "'cpu'", "'code_seg'", "'data_seg'", 
 		"'encoding'", "'const'", "'extern'", "'export'", "'align'", "'register'", 
-		"'memory'", "'__zp'", "'__mem'", "'inline'", "'volatile'", "'interrupt'", 
+		"'notregister'", "'__zp'", "'__mem'", "'inline'", "'volatile'", "'interrupt'", 
 		"'calling'", null, "'if'", "'else'", "'while'", "'do'", "'for'", "'switch'", 
 		"'return'", "'break'", "'continue'", "'asm'", "'default'", "'case'", "'struct'", 
 		"'enum'", "'sizeof'", "'typeid'", "'kickasm'", "'resource'", "'uses'", 
@@ -92,21 +92,21 @@ public class KickCParser extends Parser {
 		"GREATER_THAN", "LOGIC_AND", "LOGIC_OR", "ASSIGN", "ASSIGN_COMPOUND", 
 		"IMPORT", "TYPEDEF", "PRAGMA", "RESERVE", "PC", "TARGET", "LINK", "CPU", 
 		"CODESEG", "DATASEG", "ENCODING", "CONST", "EXTERN", "EXPORT", "ALIGN", 
-		"REGISTER", "MEMORY", "ZEROPAGE", "MAINMEM", "INLINE", "VOLATILE", "INTERRUPT", 
-		"CALLING", "CALLINGCONVENTION", "IF", "ELSE", "WHILE", "DO", "FOR", "SWITCH", 
-		"RETURN", "BREAK", "CONTINUE", "ASM", "DEFAULT", "CASE", "STRUCT", "ENUM", 
-		"SIZEOF", "TYPEID", "KICKASM", "RESOURCE", "USES", "CLOBBERS", "BYTES", 
-		"CYCLES", "LOGIC_NOT", "SIGNEDNESS", "SIMPLETYPE", "BOOLEAN", "KICKASM_BODY", 
-		"STRING", "CHAR", "NUMBER", "NUMFLOAT", "BINFLOAT", "DECFLOAT", "HEXFLOAT", 
-		"NUMINT", "BININTEGER", "DECINTEGER", "HEXINTEGER", "NAME", "WS", "COMMENT_LINE", 
-		"COMMENT_BLOCK", "ASM_BYTE", "ASM_MNEMONIC", "ASM_IMM", "ASM_COLON", "ASM_COMMA", 
-		"ASM_PAR_BEGIN", "ASM_PAR_END", "ASM_BRACKET_BEGIN", "ASM_BRACKET_END", 
-		"ASM_DOT", "ASM_SHIFT_LEFT", "ASM_SHIFT_RIGHT", "ASM_PLUS", "ASM_MINUS", 
-		"ASM_LESS_THAN", "ASM_GREATER_THAN", "ASM_MULTIPLY", "ASM_DIVIDE", "ASM_CURLY_BEGIN", 
-		"ASM_CURLY_END", "ASM_NUMBER", "ASM_NUMFLOAT", "ASM_BINFLOAT", "ASM_DECFLOAT", 
-		"ASM_HEXFLOAT", "ASM_NUMINT", "ASM_BININTEGER", "ASM_DECINTEGER", "ASM_HEXINTEGER", 
-		"ASM_CHAR", "ASM_MULTI_REL", "ASM_MULTI_NAME", "ASM_NAME", "ASM_WS", "ASM_COMMENT_LINE", 
-		"ASM_COMMENT_BLOCK"
+		"REGISTER", "NOTREGISTER", "ZEROPAGE", "MAINMEM", "INLINE", "VOLATILE", 
+		"INTERRUPT", "CALLING", "CALLINGCONVENTION", "IF", "ELSE", "WHILE", "DO", 
+		"FOR", "SWITCH", "RETURN", "BREAK", "CONTINUE", "ASM", "DEFAULT", "CASE", 
+		"STRUCT", "ENUM", "SIZEOF", "TYPEID", "KICKASM", "RESOURCE", "USES", "CLOBBERS", 
+		"BYTES", "CYCLES", "LOGIC_NOT", "SIGNEDNESS", "SIMPLETYPE", "BOOLEAN", 
+		"KICKASM_BODY", "STRING", "CHAR", "NUMBER", "NUMFLOAT", "BINFLOAT", "DECFLOAT", 
+		"HEXFLOAT", "NUMINT", "BININTEGER", "DECINTEGER", "HEXINTEGER", "NAME", 
+		"WS", "COMMENT_LINE", "COMMENT_BLOCK", "ASM_BYTE", "ASM_MNEMONIC", "ASM_IMM", 
+		"ASM_COLON", "ASM_COMMA", "ASM_PAR_BEGIN", "ASM_PAR_END", "ASM_BRACKET_BEGIN", 
+		"ASM_BRACKET_END", "ASM_DOT", "ASM_SHIFT_LEFT", "ASM_SHIFT_RIGHT", "ASM_PLUS", 
+		"ASM_MINUS", "ASM_LESS_THAN", "ASM_GREATER_THAN", "ASM_MULTIPLY", "ASM_DIVIDE", 
+		"ASM_CURLY_BEGIN", "ASM_CURLY_END", "ASM_NUMBER", "ASM_NUMFLOAT", "ASM_BINFLOAT", 
+		"ASM_DECFLOAT", "ASM_HEXFLOAT", "ASM_NUMINT", "ASM_BININTEGER", "ASM_DECINTEGER", 
+		"ASM_HEXINTEGER", "ASM_CHAR", "ASM_MULTI_REL", "ASM_MULTI_NAME", "ASM_NAME", 
+		"ASM_WS", "ASM_COMMENT_LINE", "ASM_COMMENT_BLOCK"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -296,7 +296,7 @@ public class KickCParser extends Parser {
 			setState(95);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << IMPORT) | (1L << TYPEDEF) | (1L << PRAGMA) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 74)) & ~0x3f) == 0 && ((1L << (_la - 74)) & ((1L << (STRUCT - 74)) | (1L << (ENUM - 74)) | (1L << (KICKASM - 74)) | (1L << (SIGNEDNESS - 74)) | (1L << (SIMPLETYPE - 74)))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << IMPORT) | (1L << TYPEDEF) | (1L << PRAGMA) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 74)) & ~0x3f) == 0 && ((1L << (_la - 74)) & ((1L << (STRUCT - 74)) | (1L << (ENUM - 74)) | (1L << (KICKASM - 74)) | (1L << (SIGNEDNESS - 74)) | (1L << (SIMPLETYPE - 74)))) != 0)) {
 				{
 				{
 				setState(92);
@@ -363,7 +363,7 @@ public class KickCParser extends Parser {
 			case EXPORT:
 			case ALIGN:
 			case REGISTER:
-			case MEMORY:
+			case NOTREGISTER:
 			case ZEROPAGE:
 			case MAINMEM:
 			case INLINE:
@@ -657,7 +657,7 @@ public class KickCParser extends Parser {
 			setState(130);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0)) {
 				{
 				{
 				setState(127);
@@ -673,7 +673,7 @@ public class KickCParser extends Parser {
 			setState(137);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0)) {
 				{
 				{
 				setState(134);
@@ -984,7 +984,7 @@ public class KickCParser extends Parser {
 			setState(168);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 74)) & ~0x3f) == 0 && ((1L << (_la - 74)) & ((1L << (STRUCT - 74)) | (1L << (ENUM - 74)) | (1L << (SIGNEDNESS - 74)) | (1L << (SIMPLETYPE - 74)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 74)) & ~0x3f) == 0 && ((1L << (_la - 74)) & ((1L << (STRUCT - 74)) | (1L << (ENUM - 74)) | (1L << (SIGNEDNESS - 74)) | (1L << (SIMPLETYPE - 74)))) != 0)) {
 				{
 				setState(167);
 				parameterListDecl();
@@ -998,7 +998,7 @@ public class KickCParser extends Parser {
 			setState(173);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION) | (1L << IF))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION) | (1L << IF))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
 				{
 				setState(172);
 				stmtSeq();
@@ -1685,6 +1685,23 @@ public class KickCParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class DirectiveNotRegisterContext extends DirectiveContext {
+		public TerminalNode NOTREGISTER() { return getToken(KickCParser.NOTREGISTER, 0); }
+		public DirectiveNotRegisterContext(DirectiveContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof KickCParserListener ) ((KickCParserListener)listener).enterDirectiveNotRegister(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof KickCParserListener ) ((KickCParserListener)listener).exitDirectiveNotRegister(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof KickCParserVisitor ) return ((KickCParserVisitor<? extends T>)visitor).visitDirectiveNotRegister(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class DirectiveReserveZpContext extends DirectiveContext {
 		public TerminalNode RESERVE() { return getToken(KickCParser.RESERVE, 0); }
 		public TerminalNode PAR_BEGIN() { return getToken(KickCParser.PAR_BEGIN, 0); }
@@ -1763,23 +1780,6 @@ public class KickCParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof KickCParserVisitor ) return ((KickCParserVisitor<? extends T>)visitor).visitDirectiveVolatile(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class DirectiveMemoryContext extends DirectiveContext {
-		public TerminalNode MEMORY() { return getToken(KickCParser.MEMORY, 0); }
-		public DirectiveMemoryContext(DirectiveContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof KickCParserListener ) ((KickCParserListener)listener).enterDirectiveMemory(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof KickCParserListener ) ((KickCParserListener)listener).exitDirectiveMemory(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof KickCParserVisitor ) return ((KickCParserVisitor<? extends T>)visitor).visitDirectiveMemory(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1891,12 +1891,12 @@ public class KickCParser extends Parser {
 				}
 				}
 				break;
-			case MEMORY:
-				_localctx = new DirectiveMemoryContext(_localctx);
+			case NOTREGISTER:
+				_localctx = new DirectiveNotRegisterContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(267);
-				match(MEMORY);
+				match(NOTREGISTER);
 				}
 				break;
 			case ZEROPAGE:
@@ -2069,7 +2069,7 @@ public class KickCParser extends Parser {
 				setState(299); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION) | (1L << IF))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION) | (1L << IF))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -2429,7 +2429,7 @@ public class KickCParser extends Parser {
 				setState(306);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION) | (1L << IF))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION) | (1L << IF))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
 					{
 					setState(305);
 					stmtSeq();
@@ -2485,7 +2485,7 @@ public class KickCParser extends Parser {
 				setState(324);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0)) {
 					{
 					{
 					setState(321);
@@ -2515,7 +2515,7 @@ public class KickCParser extends Parser {
 				setState(336);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0)) {
 					{
 					{
 					setState(333);
@@ -2549,7 +2549,7 @@ public class KickCParser extends Parser {
 				setState(350);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0)) {
 					{
 					{
 					setState(347);
@@ -2741,7 +2741,7 @@ public class KickCParser extends Parser {
 				setState(395);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION) | (1L << IF))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION) | (1L << IF))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
 					{
 					setState(394);
 					stmtSeq();
@@ -2808,7 +2808,7 @@ public class KickCParser extends Parser {
 			setState(403);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION) | (1L << IF))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION) | (1L << IF))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)))) != 0)) {
 				{
 				setState(402);
 				stmtSeq();
@@ -2931,7 +2931,7 @@ public class KickCParser extends Parser {
 				setState(413);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 74)) & ~0x3f) == 0 && ((1L << (_la - 74)) & ((1L << (STRUCT - 74)) | (1L << (ENUM - 74)) | (1L << (SIGNEDNESS - 74)) | (1L << (SIMPLETYPE - 74)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 74)) & ~0x3f) == 0 && ((1L << (_la - 74)) & ((1L << (STRUCT - 74)) | (1L << (ENUM - 74)) | (1L << (SIGNEDNESS - 74)) | (1L << (SIMPLETYPE - 74)))) != 0)) {
 					{
 					setState(412);
 					declTypes();
@@ -3028,7 +3028,7 @@ public class KickCParser extends Parser {
 				setState(424);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 74)) & ~0x3f) == 0 && ((1L << (_la - 74)) & ((1L << (STRUCT - 74)) | (1L << (ENUM - 74)) | (1L << (SIGNEDNESS - 74)) | (1L << (SIMPLETYPE - 74)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 74)) & ~0x3f) == 0 && ((1L << (_la - 74)) & ((1L << (STRUCT - 74)) | (1L << (ENUM - 74)) | (1L << (SIGNEDNESS - 74)) | (1L << (SIMPLETYPE - 74)))) != 0)) {
 					{
 					setState(423);
 					declVariables();
@@ -3576,7 +3576,7 @@ public class KickCParser extends Parser {
 				setState(473); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << MEMORY) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 74)) & ~0x3f) == 0 && ((1L << (_la - 74)) & ((1L << (STRUCT - 74)) | (1L << (ENUM - 74)) | (1L << (SIGNEDNESS - 74)) | (1L << (SIMPLETYPE - 74)))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << REGISTER) | (1L << NOTREGISTER) | (1L << ZEROPAGE) | (1L << MAINMEM) | (1L << INLINE) | (1L << VOLATILE) | (1L << INTERRUPT) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 74)) & ~0x3f) == 0 && ((1L << (_la - 74)) & ((1L << (STRUCT - 74)) | (1L << (ENUM - 74)) | (1L << (SIGNEDNESS - 74)) | (1L << (SIMPLETYPE - 74)))) != 0) );
 			setState(475);
 			match(CURLY_END);
 			}

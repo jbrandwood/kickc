@@ -41,7 +41,7 @@ public class Variable extends SymbolVariable {
       super(phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), StorageStrategy.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
-      this.setDeclaredAsMemory(phiMaster.isDeclaredAsMemory());
+      this.setDeclaredNotRegister(phiMaster.isDeclaredAsNotRegister());
       this.setDeclaredRegister(phiMaster.getDeclaredRegister());
       this.setDeclaredMemoryAddress(phiMaster.getDeclaredMemoryAddress());
       this.setDeclaredVolatile(phiMaster.isDeclaredVolatile());

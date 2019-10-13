@@ -48,7 +48,7 @@ public abstract class SymbolVariable implements Symbol {
    private boolean declaredAsRegister;
 
    /** Specifies that the variable must live in memory. */
-   private boolean declaredAsMemory;
+   private boolean declaredAsNotRegister;
 
    /** Specifies a specific address where the variable must reside in memory. */
    private Long declaredMemoryAddress;
@@ -229,12 +229,12 @@ public abstract class SymbolVariable implements Symbol {
       this.declaredAsRegister = declaredAsRegister;
    }
 
-   public boolean isDeclaredAsMemory() {
-      return declaredAsMemory;
+   public boolean isDeclaredAsNotRegister() {
+      return declaredAsNotRegister;
    }
 
-   public void setDeclaredAsMemory(boolean declaredAsMemory) {
-      this.declaredAsMemory = declaredAsMemory;
+   public void setDeclaredNotRegister(boolean declaredAsMemory) {
+      this.declaredAsNotRegister = declaredAsMemory;
    }
 
    public Long getDeclaredMemoryAddress() {

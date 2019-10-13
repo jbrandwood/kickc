@@ -233,7 +233,7 @@ public class Unroller {
             newVar.setType(definedVar.getType());
             newVar.setDeclaredAsRegister(definedVar.isDeclaredAsRegister());
             newVar.setDeclaredRegister(definedVar.getDeclaredRegister());
-            newVar.setDeclaredAsMemory(definedVar.isDeclaredAsMemory());
+            newVar.setDeclaredNotRegister(definedVar.isDeclaredAsNotRegister());
             newVar.setDeclaredMemoryAddress(definedVar.getDeclaredMemoryAddress());
             newVar.setStorageStrategy(definedVar.getStorageStrategy());
             newVar.setMemoryArea(definedVar.getMemoryArea());

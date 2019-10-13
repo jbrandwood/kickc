@@ -712,10 +712,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                   lValue.setDeclaredMemoryAddress(directiveMemoryArea.address);
                }
             }
-         } else if(directive instanceof DirectiveMemory) {
-            lValue.setDeclaredAsMemory(true);
+         } else if(directive instanceof DirectiveNotRegister) {
+            lValue.setDeclaredNotRegister(true);
             lValue.setStorageStrategy(SymbolVariable.StorageStrategy.LOAD_STORE);
-            lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
+            //lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
          } else if(directive instanceof DirectiveRegister) {
             DirectiveRegister directiveRegister = (DirectiveRegister) directive;
             lValue.setDeclaredAsRegister(true);
@@ -833,8 +833,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public Object visitDirectiveMemory(KickCParser.DirectiveMemoryContext ctx) {
-      return new DirectiveMemory();
+   public Object visitDirectiveNotRegister(KickCParser.DirectiveNotRegisterContext ctx) {
+      return new DirectiveNotRegister();
    }
 
    @Override
@@ -1355,6 +1355,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       CharStream stream = tokenStart.getInputStream();
       int startIndex = tokenStart.getStartIndex();
       int stopIndex = tokenStop.getStopIndex();
+      if(stopIndex<startIndex)
+         return "";
       Interval interval = new Interval(startIndex, stopIndex);
       return stream.getText(interval);
    }
@@ -2252,10 +2254,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    }
 
-   /** Variable memory declaration. */
-   private static class DirectiveMemory implements Directive {
+   /** Variable not regsiter declaration. */
+   private static class DirectiveNotRegister implements Directive {
 
-      public DirectiveMemory() {
+      public DirectiveNotRegister() {
       }
 
    }

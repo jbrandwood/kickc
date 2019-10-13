@@ -378,13 +378,13 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDirectiveMemory(KickCParser.DirectiveMemoryContext ctx) { }
+	@Override public void enterDirectiveNotRegister(KickCParser.DirectiveNotRegisterContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDirectiveMemory(KickCParser.DirectiveMemoryContext ctx) { }
+	@Override public void exitDirectiveNotRegister(KickCParser.DirectiveNotRegisterContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

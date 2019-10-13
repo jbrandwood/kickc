@@ -78,7 +78,7 @@ EXTERN: 'extern' ;
 EXPORT: 'export' ;
 ALIGN: 'align' ;
 REGISTER: 'register' ;
-MEMORY: 'memory' ;
+NOTREGISTER: 'notregister' ;
 ZEROPAGE: '__zp' ;
 MAINMEM: '__mem' ;
 INLINE: 'inline' ;

@@ -100,7 +100,7 @@ directive
     | EXPORT #directiveExport
     | ALIGN PAR_BEGIN NUMBER PAR_END #directiveAlign
     | REGISTER ( PAR_BEGIN ( NAME ) PAR_END)? #directiveRegister
-    | MEMORY #directiveMemory
+    | NOTREGISTER #directiveNotRegister
     | ( ZEROPAGE | MAINMEM ) ( PAR_BEGIN ( NUMBER ) PAR_END)? #directiveMemoryArea
     | INLINE #directiveInline
     | VOLATILE #directiveVolatile

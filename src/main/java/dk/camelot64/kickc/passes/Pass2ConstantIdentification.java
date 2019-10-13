@@ -83,7 +83,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          constantVar.setDeclaredAlignment(variable.getDeclaredAlignment());
          constantVar.setDeclaredAsRegister(variable.isDeclaredAsRegister());
          constantVar.setDeclaredRegister(variable.getDeclaredRegister());
-         constantVar.setDeclaredAsMemory(variable.isDeclaredAsMemory());
+         constantVar.setDeclaredNotRegister(variable.isDeclaredAsNotRegister());
          constantVar.setDeclaredMemoryAddress(variable.getDeclaredMemoryAddress());
          constantVar.setDeclaredExport(variable.isDeclaredExport());
          if(variable.getComments().size() > 0) {

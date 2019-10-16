@@ -839,17 +839,24 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitDirectiveMemoryArea(KickCParser.DirectiveMemoryAreaContext ctx) {
-      SymbolVariable.MemoryArea mainMemory = ctx.ZEROPAGE() != null ? SymbolVariable.MemoryArea.ZEROPAGE_MEMORY : SymbolVariable.MemoryArea.MAIN_MEMORY;
-      Long address = null;
-      if(ctx.NUMBER() != null) {
-         try {
-            ConstantInteger memoryAddress = NumberParser.parseIntegerLiteral(ctx.NUMBER().getText());
-            address = memoryAddress.getInteger();
-         } catch(NumberFormatException e) {
-            throw new CompileError(e.getMessage(), new StatementSource(ctx));
+      if(ctx.ADDRESS_ZEROPAGE()!=null) {
+         return new DirectiveMemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
+      } else if(ctx.ADDRESS_MAINMEM()!=null) {
+         return new DirectiveMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null);
+      } else if(ctx.ADDRESS()!=null && ctx.NUMBER()!=null) {
+         Long address = null;
+         if(ctx.NUMBER() != null) {
+            try {
+               ConstantInteger memoryAddress = NumberParser.parseIntegerLiteral(ctx.NUMBER().getText());
+               address = memoryAddress.getInteger();
+               SymbolVariable.MemoryArea memoryArea = (address<0x100)? SymbolVariable.MemoryArea.ZEROPAGE_MEMORY : SymbolVariable.MemoryArea.MAIN_MEMORY;
+               return new DirectiveMemoryArea(memoryArea, address);
+            } catch(NumberFormatException e) {
+               throw new CompileError(e.getMessage(), new StatementSource(ctx));
+            }
          }
       }
-      return new DirectiveMemoryArea(mainMemory, address);
+      return null;
    }
 
    @Override
@@ -962,7 +969,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       /** true if the loop is a switch-statement. */
       boolean isSwitch;
 
-      public Loop(Scope loopScope, boolean isSwitch) {
+      Loop(Scope loopScope, boolean isSwitch) {
          this.loopScope = loopScope;
          this.isSwitch = isSwitch;
       }

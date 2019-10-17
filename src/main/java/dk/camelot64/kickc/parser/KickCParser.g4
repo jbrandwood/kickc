@@ -101,7 +101,9 @@ directive
     | ALIGN PAR_BEGIN NUMBER PAR_END #directiveAlign
     | REGISTER ( PAR_BEGIN ( NAME ) PAR_END)? #directiveRegister
     | NOTREGISTER #directiveNotRegister
-    | ADDRESS_ZEROPAGE | ADDRESS_MAINMEM | ( ADDRESS PAR_BEGIN ( NUMBER ) PAR_END) #directiveMemoryArea
+    | ADDRESS_ZEROPAGE #directiveMemoryAreaZp
+    | ADDRESS_MAINMEM #directiveMemoryAreaMain
+    | ADDRESS PAR_BEGIN ( NUMBER ) PAR_END #directiveMemoryAreaAddress
     | INLINE #directiveInline
     | VOLATILE #directiveVolatile
     | INTERRUPT ( PAR_BEGIN NAME PAR_END )? #directiveInterrupt

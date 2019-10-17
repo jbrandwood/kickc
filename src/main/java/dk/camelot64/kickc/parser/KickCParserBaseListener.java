@@ -390,13 +390,37 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDirectiveMemoryArea(KickCParser.DirectiveMemoryAreaContext ctx) { }
+	@Override public void enterDirectiveMemoryAreaZp(KickCParser.DirectiveMemoryAreaZpContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDirectiveMemoryArea(KickCParser.DirectiveMemoryAreaContext ctx) { }
+	@Override public void exitDirectiveMemoryAreaZp(KickCParser.DirectiveMemoryAreaZpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDirectiveMemoryAreaMain(KickCParser.DirectiveMemoryAreaMainContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDirectiveMemoryAreaMain(KickCParser.DirectiveMemoryAreaMainContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

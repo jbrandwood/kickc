@@ -358,17 +358,41 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveNotRegister(KickCParser.DirectiveNotRegisterContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code directiveMemoryArea}
+	 * Enter a parse tree produced by the {@code directiveMemoryAreaZp}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
 	 */
-	void enterDirectiveMemoryArea(KickCParser.DirectiveMemoryAreaContext ctx);
+	void enterDirectiveMemoryAreaZp(KickCParser.DirectiveMemoryAreaZpContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code directiveMemoryArea}
+	 * Exit a parse tree produced by the {@code directiveMemoryAreaZp}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
 	 */
-	void exitDirectiveMemoryArea(KickCParser.DirectiveMemoryAreaContext ctx);
+	void exitDirectiveMemoryAreaZp(KickCParser.DirectiveMemoryAreaZpContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveMemoryAreaMain}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveMemoryAreaMain(KickCParser.DirectiveMemoryAreaMainContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveMemoryAreaMain}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveMemoryAreaMain(KickCParser.DirectiveMemoryAreaMainContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveMemoryAreaAddress}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveMemoryAreaAddress}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveInline}
 	 * labeled alternative in {@link KickCParser#directive}.

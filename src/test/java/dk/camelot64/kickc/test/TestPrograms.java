@@ -2719,11 +2719,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testVarRegisterZp2() throws IOException, URISyntaxException {
-      assertError("var-register-zp-2", "Error! Address not on zeropage");
-   }
-
-   @Test
    public void testVarRegisterZp3() throws IOException, URISyntaxException {
       compileAndCompare("var-register-zp-3");
    }

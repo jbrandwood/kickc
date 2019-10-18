@@ -46,7 +46,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** The memory area used by default for variables. */
    private SymbolVariable.MemoryArea defaultMemoryArea;
    /** Context used for adding directives to variables. */
-   private Directive.ParserContext directiveContext;
+   private DirectiveParserContext directiveContext;
 
    public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program) {
       this.cParser = cParser;
@@ -55,7 +55,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.sequence = program.getStatementSequence();
       this.scopeStack = new Stack<>();
       this.defaultMemoryArea = SymbolVariable.MemoryArea.ZEROPAGE_MEMORY;
-      this.directiveContext = new Directive.ParserContext();
+      this.directiveContext = new DirectiveParserContext();
       scopeStack.push(program.getScope());
    }
 

@@ -403,7 +403,7 @@ print_ln: {
   !:
     rts
 }
-// printu(byte zeropage(2) a, byte[] zeropage(4) op, byte zeropage(6) b, byte register(X) res)
+// printu(byte zeropage(2) a, byte* zeropage(4) op, byte zeropage(6) b, byte register(X) res)
 printu: {
     .label a = 2
     .label b = 6

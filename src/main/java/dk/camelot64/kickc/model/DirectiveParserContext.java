@@ -129,11 +129,11 @@ public class DirectiveParserContext {
       this.statementDirectives = null;
       // Setup default directives
       this.defaultDirectives = new ArrayList<>();
-      //this.defaultDirectives.add(new MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null));
-      //this.defaultDirectives.add(new Register(true, null));
+      this.defaultDirectives.add(new Directive.MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null));
+      //this.defaultDirectives.add(new Directive.Register(true, null));
       this.registerImpliesDirectives = new ArrayList<>();
       this.typeDirectives = new HashMap<>();
-      //this.typeDirectives.put(DirectiveType.ARRAY, Arrays.asList(new MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null), new Register(false, null)));
+      this.typeDirectives.put(DirectiveType.ARRAY, Arrays.asList(new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null), new Directive.Register(false, null)));
       this.scopeDirectives = new HashMap<>();
       this.scopeTypeDirectives = new HashMap<>();
    }

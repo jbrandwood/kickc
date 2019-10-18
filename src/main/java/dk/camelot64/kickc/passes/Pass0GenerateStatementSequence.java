@@ -45,6 +45,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private Stack<Scope> scopeStack;
    /** The memory area used by default for variables. */
    private SymbolVariable.MemoryArea defaultMemoryArea;
+   /** Context used for adding directives to variables. */
+   private Directive.ParserContext directiveContext;
 
    public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program) {
       this.cParser = cParser;
@@ -53,6 +55,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.sequence = program.getStatementSequence();
       this.scopeStack = new Stack<>();
       this.defaultMemoryArea = SymbolVariable.MemoryArea.ZEROPAGE_MEMORY;
+      this.directiveContext = new Directive.ParserContext();
       scopeStack.push(program.getScope());
    }
 
@@ -265,7 +268,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       List<Directive> directives = declVarDirectives;
       Variable param = new Variable(ctx.NAME().getText(), getCurrentScope(), type, currentDataSegment, SymbolVariable.StorageStrategy.PHI_MASTER, defaultMemoryArea);
       // Add directives
-      addDirectives(param, type, directives, new StatementSource(ctx));
+      addDirectives(param, true, directives, new StatementSource(ctx));
       exitDeclTypes();
       return param;
    }
@@ -620,7 +623,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }
       // Add directives
-      addDirectives(lValue, type, directives, new StatementSource(ctx));
+      addDirectives(lValue, false, directives, new StatementSource(ctx));
       // Array / String variables are implicitly constant
       if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
          lValue.setDeclaredConstant(true);
@@ -676,62 +679,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     * Add declared directives to an lValue (typically a variable).
     *
     * @param lValue The lValue
-    * @param type The type of the lValue
+    * @param isParameter True if the lValue is a parameter
     * @param directives The directives to add
     */
-   private void addDirectives(SymbolVariable lValue, SymbolType type, List<Directive> directives, StatementSource source) {
-      for(Directive directive : directives) {
-         if(directive instanceof DirectiveConst) {
-            lValue.setDeclaredConstant(true);
-            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
-            if(!(lValue.getType() instanceof SymbolTypePointer))
-               lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
-         } else if(directive instanceof DirectiveVolatile) {
-            lValue.setDeclaredVolatile(true);
-         } else if(directive instanceof DirectiveExport) {
-            lValue.setDeclaredExport(true);
-         } else if(directive instanceof DirectiveAlign) {
-            if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
-               lValue.setDeclaredAlignment(((DirectiveAlign) directive).alignment);
-            } else {
-               throw new CompileError("Error! Cannot align variable that is not a string or an array " + lValue.toString(program), source);
-            }
-         } else if(directive instanceof DirectiveMemoryArea) {
-            DirectiveMemoryArea directiveMemoryArea = (DirectiveMemoryArea) directive;
-            lValue.setMemoryArea(directiveMemoryArea.memoryArea);
-            if(directiveMemoryArea.address!=null) {
-               if(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY.equals(directiveMemoryArea.memoryArea)) {
-                  // Allocate to specific address
-                  if(directiveMemoryArea.address > 255) {
-                     throw new CompileError("Error! Address not on zeropage " + directiveMemoryArea.address, source);
-                  }
-                  Registers.Register register = new Registers.RegisterZpMem(directiveMemoryArea.address.intValue(), -1, true);
-                  lValue.setDeclaredRegister(register);
-               } else {
-                  lValue.setDeclaredMemoryAddress(directiveMemoryArea.address);
-               }
-            }
-         } else if(directive instanceof DirectiveRegister) {
-            DirectiveRegister directiveRegister = (DirectiveRegister) directive;
-            if(directiveRegister.isRegister) {
-               lValue.setDeclaredAsRegister(true);
-               lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_MASTER);
-               if(directiveRegister.name != null) {
-                  // Ignore register directive without parameter (all variables are placed on ZP and attempted register uplift anyways)
-                  Registers.Register register = Registers.getRegister(directiveRegister.name);
-                  if(register == null) {
-                     throw new CompileError("Error! Unknown register " + directiveRegister.name, source);
-                  }
-                  lValue.setDeclaredRegister(register);
-               }
-            } else {
-               lValue.setDeclaredNotRegister(true);
-               lValue.setStorageStrategy(SymbolVariable.StorageStrategy.LOAD_STORE);
-            }
-         } else {
-            throw new CompileError("Unsupported variable directive " + directive, source);
-         }
-      }
+   private void addDirectives(SymbolVariable lValue, boolean isParameter, List<Directive> directives, StatementSource source) {
+      directiveContext.applyDirectives(lValue, isParameter, directives, source);
    }
 
    /**
@@ -756,14 +708,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private void addDirectives(Procedure procedure, List<Directive> directives, StatementSource source) {
       for(Directive directive : directives) {
-         if(directive instanceof DirectiveInline) {
+         if(directive instanceof Directive.Inline) {
             procedure.setDeclaredInline(true);
-         } else if(directive instanceof DirectiveCallingConvention) {
-            procedure.setCallingConvension(((DirectiveCallingConvention) directive).callingConvension);
-         } else if(directive instanceof DirectiveInterrupt) {
-            procedure.setInterruptType(((DirectiveInterrupt) directive).interruptType);
-         } else if(directive instanceof DirectiveReserveZp) {
-            procedure.setReservedZps(((DirectiveReserveZp) directive).reservedZp);
+         } else if(directive instanceof Directive.CallingConvention) {
+            procedure.setCallingConvension(((Directive.CallingConvention) directive).callingConvension);
+         } else if(directive instanceof Directive.Interrupt) {
+            procedure.setInterruptType(((Directive.Interrupt) directive).interruptType);
+         } else if(directive instanceof Directive.ReserveZp) {
+            procedure.setReservedZps(((Directive.ReserveZp) directive).reservedZp);
          } else {
             throw new CompileError("Unsupported function directive " + directive, source);
          }
@@ -780,7 +732,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       List<Directive> directives = getDirectives(directivesCtx);
       for(Directive directive : directives) {
          StatementSource source = new StatementSource(directivesCtx.get(0));
-         if(directive instanceof DirectiveInline) {
+         if(directive instanceof Directive.Inline) {
             conditional.setDeclaredUnroll(true);
          } else {
             throw new CompileError("Unsupported loop directive " + directive, source);
@@ -790,12 +742,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Directive visitDirectiveConst(KickCParser.DirectiveConstContext ctx) {
-      return new DirectiveConst();
+      return new Directive.Const();
    }
 
    @Override
    public Object visitDirectiveInline(KickCParser.DirectiveInlineContext ctx) {
-      return new DirectiveInline();
+      return new Directive.Inline();
    }
 
    @Override
@@ -808,19 +760,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          interruptType = Procedure.InterruptType.DEFAULT.name();
       }
       Procedure.InterruptType type = Procedure.InterruptType.valueOf(interruptType);
-      return new DirectiveInterrupt(type);
+      return new Directive.Interrupt(type);
    }
 
    @Override
    public Directive visitDirectiveCallingConvention(KickCParser.DirectiveCallingConventionContext ctx) {
       Procedure.CallingConvension callingConvension = Procedure.CallingConvension.getCallingConvension(ctx.getText());
-      return new DirectiveCallingConvention(callingConvension);
+      return new Directive.CallingConvention(callingConvension);
    }
 
    @Override
    public Directive visitDirectiveAlign(KickCParser.DirectiveAlignContext ctx) {
       Number alignment = NumberParser.parseLiteral(ctx.NUMBER().getText());
-      return new DirectiveAlign(alignment.intValue());
+      return new Directive.Align(alignment.intValue());
    }
 
    @Override
@@ -829,22 +781,22 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(ctx.NAME() != null) {
          name = ctx.NAME().getText();
       }
-      return new DirectiveRegister(true, name);
+      return new Directive.Register(true, name);
    }
 
    @Override
    public Object visitDirectiveNotRegister(KickCParser.DirectiveNotRegisterContext ctx) {
-      return new DirectiveRegister(false, null);
+      return new Directive.Register(false, null);
    }
 
    @Override
    public Object visitDirectiveMemoryAreaZp(KickCParser.DirectiveMemoryAreaZpContext ctx) {
-      return new DirectiveMemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
+      return new Directive.MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
    }
 
    @Override
    public Object visitDirectiveMemoryAreaMain(KickCParser.DirectiveMemoryAreaMainContext ctx) {
-      return new DirectiveMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null);
+      return new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null);
    }
 
    @Override
@@ -853,7 +805,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          ConstantInteger memoryAddress = NumberParser.parseIntegerLiteral(ctx.NUMBER().getText());
          Long address = memoryAddress.getInteger();
          SymbolVariable.MemoryArea memoryArea = (address<0x100)? SymbolVariable.MemoryArea.ZEROPAGE_MEMORY : SymbolVariable.MemoryArea.MAIN_MEMORY;
-         return new DirectiveMemoryArea(memoryArea, address);
+         return new Directive.MemoryArea(memoryArea, address);
       } catch(NumberFormatException e) {
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }
@@ -861,12 +813,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Directive visitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx) {
-      return new DirectiveVolatile();
+      return new Directive.Volatile();
    }
 
    @Override
    public Object visitDirectiveExport(KickCParser.DirectiveExportContext ctx) {
-      return new DirectiveExport();
+      return new Directive.Export();
    }
 
    @Override
@@ -876,7 +828,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          int reservedZp = NumberParser.parseLiteral(reservedNum.getText()).intValue();
          reservedZps.add(reservedZp);
       }
-      return new DirectiveReserveZp(reservedZps);
+      return new Directive.ReserveZp(reservedZps);
    }
 
    @Override
@@ -1220,7 +1172,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             throw new CompileError(e.getMessage(), statementSource);
          }
          // Add directives
-         addDirectives(lValue, varType, varDirectives, statementSource);
+         addDirectives(lValue, false, varDirectives, statementSource);
       } else {
          lValue = getCurrentScope().getVariable(varName);
          if(lValue == null) {
@@ -2199,98 +2151,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return commentBlocks.get(commentBlocks.size() - 1);
    }
 
-   /** A declaration directive. */
-   private interface Directive {
-   }
-
-   /** Variable declared constant. */
-   private static class DirectiveConst implements Directive {
-   }
-
-   /** Function with specific declared calling convention. */
-   private static class DirectiveCallingConvention implements Directive {
-      private Procedure.CallingConvension callingConvension;
-
-      DirectiveCallingConvention(Procedure.CallingConvension callingConvension) {
-         this.callingConvension = callingConvension;
-      }
-
-   }
-
-   /** Function declared inline. */
-   private static class DirectiveInline implements Directive {
-   }
-
-   /** Variable declared volatile. */
-   private static class DirectiveVolatile implements Directive {
-   }
-
-   /** Variable declared as export. */
-   private static class DirectiveExport implements Directive {
-   }
-
-   /** Function declared interrupt. */
-   private static class DirectiveInterrupt implements Directive {
-      Procedure.InterruptType interruptType;
-
-      DirectiveInterrupt(Procedure.InterruptType interruptType) {
-         this.interruptType = interruptType;
-      }
-   }
-
-   /** Variable memory alignment. */
-   private static class DirectiveAlign implements Directive {
-
-      private int alignment;
-
-      private DirectiveAlign(int alignment) {
-         this.alignment = alignment;
-      }
-
-   }
-
-   /** Variable register or __notregister directive . */
-   private static class DirectiveRegister implements Directive {
-
-      /** true if the directive is a register directive. false if it is a notregister directive. */
-      private boolean isRegister;
-
-      /** Name of register to use for the variable (if named) */
-      private String name;
-
-      DirectiveRegister(boolean isRegister, String name) {
-         this.isRegister = isRegister;
-         this.name = name;
-      }
-
-   }
-
-   /** Variable memory area declaration. */
-   private static class DirectiveMemoryArea implements Directive {
-
-      /** The memory area. */
-      SymbolVariable.MemoryArea memoryArea;
-
-      /** Optional hard-coded address to use for storing the variable. */
-      private Long address;
-
-      DirectiveMemoryArea(SymbolVariable.MemoryArea memoryArea, Long address) {
-         this.memoryArea = memoryArea;
-         this.address = address;
-      }
-
-   }
-
-
-   /** Reservation of zero-page addresses */
-   private static class DirectiveReserveZp implements Directive {
-      List<Integer> reservedZp;
-
-      DirectiveReserveZp(List<Integer> reservedZp) {
-         this.reservedZp = reservedZp;
-      }
-
-   }
 
 
    private static class PrePostModifierHandler extends KickCParserBaseVisitor<Void> {

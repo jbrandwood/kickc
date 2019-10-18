@@ -1,14 +1,9 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.statements.StatementSource;
-import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeStruct;
-import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 
-import java.util.*;
+import java.util.List;
 
 /** A declaration directive. */
 public interface Directive {

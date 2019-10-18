@@ -236,7 +236,6 @@ public class DirectiveParserContext {
          DirectiveClass directive = findDirective(directiveClass, directives);
          if(directive != null) return directive;
       }
-      /*
       // Look in #pragma setting for type
       {
          List<Directive> directives = typeDirectives.get(directiveType);
@@ -254,7 +253,6 @@ public class DirectiveParserContext {
          DirectiveClass directive = findDirective(directiveClass, defaultDirectives);
          if(directive != null) return directive;
       }
-      */
       // Not found!
       return null;
    }

@@ -37,9 +37,9 @@ main: {
     sta.z sc2
     lda #>SCREEN+$28
     sta.z sc2+1
-    lda #<reigns_0
+    lda #<reigns_1
     sta.z reigns
-    lda #>reigns_0
+    lda #>reigns_1
     sta.z reigns+1
   __b2:
     ldy #0
@@ -85,7 +85,7 @@ main: {
     rts
     __8: .text "rules"
     .byte 0
-    reigns_0: .text "reigns"
+    reigns_1: .text "reigns"
     .byte 0
 }
 // Copy block of memory (forwards)

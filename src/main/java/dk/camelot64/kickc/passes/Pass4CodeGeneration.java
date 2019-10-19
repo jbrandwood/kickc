@@ -465,27 +465,46 @@ public class Pass4CodeGeneration {
       // Add all memory variables
       Collection<Variable> scopeVariables = scope.getAllVariables(false);
       for(Variable variable : scopeVariables) {
-         if(variable.isStorageLoadStore() && variable.isMemoryAreaMain()) {
+         if(variable.isMemoryAreaMain()) {
+            // Skip PHI masters
+            if(variable.isStoragePhiMaster())
+               continue;
             // Skip if already added
             String asmName = variable.getAsmName() == null ? variable.getLocalName() : variable.getAsmName();
             if(added.contains(asmName)) {
                continue;
             }
-            if(variable.getDeclaredMemoryAddress() == null) {
-               // Generate into the data segment
-               // Set segment
-               setCurrentSegment(variable.getDataSegment(), asm);
-               // Add any comments
-               generateComments(asm, variable.getComments());
-               // Add any alignment
-               Integer declaredAlignment = variable.getDeclaredAlignment();
-               if(declaredAlignment != null) {
-                  String alignment = AsmFormat.getAsmNumber(declaredAlignment);
-                  asm.addDataAlignment(alignment);
+            if(variable.isStorageLoadStore() || variable.isStoragePhiVersion() || variable.isStorageIntermediate()){
+               if(variable.getDeclaredMemoryAddress() == null) {
+
+                  Registers.Register allocation = variable.getAllocation();
+                  if(!(allocation instanceof Registers.RegisterMainMem)) {
+                     throw new InternalError("Expected main memory allocation "+variable.toString(program));
+                  }
+                  Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
+                  if(!((Registers.RegisterMainMem) allocation).getVariableRef().equals(variable.getRef())) {
+                     continue;
+                  }
+
+
+
+                  // Generate into the data segment
+                  // Set segment
+                  setCurrentSegment(variable.getDataSegment(), asm);
+                  // Add any comments
+                  generateComments(asm, variable.getComments());
+                  // Add any alignment
+                  Integer declaredAlignment = variable.getDeclaredAlignment();
+                  if(declaredAlignment != null) {
+                     String alignment = AsmFormat.getAsmNumber(declaredAlignment);
+                     asm.addDataAlignment(alignment);
+                  }
+                  AsmDataChunk asmDataChunk = new AsmDataChunk();
+                  addChunkData(asmDataChunk, ZeroConstantValues.zeroValue(variable.getType(), getScope()), variable.getType(), scopeRef);
+                  asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
                }
-               AsmDataChunk asmDataChunk = new AsmDataChunk();
-               addChunkData(asmDataChunk, ZeroConstantValues.zeroValue(variable.getType(), getScope()), variable.getType(), scopeRef);
-               asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
+            } else {
+               throw new InternalError("Not handled variable storage "+variable.toString());
             }
             added.add(asmName);
          }
@@ -632,6 +651,8 @@ public class Pass4CodeGeneration {
          dataChunk.addDataNumeric(AsmDataNumeric.Type.DWORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
       } else if(valueType instanceof SymbolTypePointer) {
          dataChunk.addDataNumeric(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
+      } else if(SymbolType.BOOLEAN.equals(valueType)) {
+         dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
       } else {
          throw new InternalError("Unhandled array element type " + valueType.toString() + " value " + value.toString(program));
       }
@@ -686,6 +707,20 @@ public class Pass4CodeGeneration {
                   generateComments(asm, scopeVar.getComments());
                   // Add the label declaration
                   asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(scopeVar.getDeclaredMemoryAddress()));
+                  added.add(asmName);
+               }
+            } else if(register instanceof Registers.RegisterMainMem && !((Registers.RegisterMainMem) register).getVariableRef().equals(scopeVar.getRef())) {
+               // Memory variable is not main var in the equivalence class - add a reference
+               String asmName = scopeVar.getAsmName();
+               Registers.RegisterMainMem memAllocation = (Registers.RegisterMainMem) register;
+               VariableRef memAllocationVarRef = memAllocation.getVariableRef();
+               Variable memAllocationVar = getScope().getVariable(memAllocationVarRef);
+               // Add the label declaration
+               String asmNameMemAllocVar = AsmFormat.getAsmParamName(memAllocationVar, scope);
+               if(!asmName.equals(asmNameMemAllocVar)) {
+                  // Add any comments
+                  generateComments(asm, scopeVar.getComments());
+                  asm.addLabelDecl(AsmFormat.asmFix(asmName), asmNameMemAllocVar);
                   added.add(asmName);
                }
             }

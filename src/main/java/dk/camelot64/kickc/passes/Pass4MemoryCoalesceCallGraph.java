@@ -10,22 +10,22 @@ import dk.camelot64.kickc.model.values.VariableRef;
 import java.util.*;
 
 /**
- * Use the call graph to coalesce zero page registers.
+ * Use the call graph to coalesce memory registers.
  * For each live range equivalence class:
  *  - Look up through the call graph and avoid all variables declared in the scopes there
  *  - Go through already handled live range equivalence classes and if any exist with no scope overlap with the call graph - try to coalesce
  *  - Add to the list of already handled live range equivalence classes
  */
-public class Pass4ZeroPageCoalesceCallGraph extends Pass2Base {
+public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
 
-   public Pass4ZeroPageCoalesceCallGraph(Program program) {
+   public Pass4MemoryCoalesceCallGraph(Program program) {
       super(program);
    }
 
    public void coalesce() {
       LinkedHashSet<String> unknownFragments = new LinkedHashSet<>();
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
-      Collection<ScopeRef> threads = Pass4ZeroPageCoalesce.getThreadHeads(getProgram());
+      Collection<ScopeRef> threads = Pass4MemoryCoalesce.getThreadHeads(getProgram());
       boolean modified;
       do {
          modified = coalesce(liveRangeEquivalenceClassSet, threads, unknownFragments);
@@ -66,8 +66,8 @@ public class Pass4ZeroPageCoalesceCallGraph extends Pass2Base {
             if(isScopeOverlap(otherEC, allCallingScopes))
                continue;
             // No scope overlap - attempt to coalesce
-            Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate candidate = new Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate(thisEC, otherEC, null);
-            if(Pass4ZeroPageCoalesce.attemptCoalesce(candidate, threadHeads, unknownFragments, getProgram())) {
+            Pass4MemoryCoalesce.LiveRangeEquivalenceClassCoalesceCandidate candidate = new Pass4MemoryCoalesce.LiveRangeEquivalenceClassCoalesceCandidate(thisEC, otherEC, null);
+            if(Pass4MemoryCoalesce.attemptCoalesce(candidate, threadHeads, unknownFragments, getProgram())) {
                // Succesfully coalesced with already handled EC - move on to the next one!
                coalesced = true;
                modified = true;

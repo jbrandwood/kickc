@@ -134,8 +134,10 @@ public class DirectiveParserContext {
       this.registerImpliesDirectives = new ArrayList<>();
       this.typeDirectives = new HashMap<>();
       this.typeDirectives.put(DirectiveType.ARRAY, Arrays.asList(new Directive.Const(), new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null), new Directive.Register(false, null)));
+      //this.typeDirectives.put(DirectiveType.POINTER, Arrays.asList(new Directive.MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null)));
       this.scopeDirectives = new HashMap<>();
       this.scopeTypeDirectives = new HashMap<>();
+      //this.scopeDirectives.put(DirectiveScope.GLOBAL, Arrays.asList(new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null)));
    }
 
    /**

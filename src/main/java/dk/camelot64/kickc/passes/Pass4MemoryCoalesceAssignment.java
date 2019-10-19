@@ -8,29 +8,29 @@ import dk.camelot64.kickc.model.statements.Statement;
 import java.util.*;
 
 /**
- * Coalesces zero page registers where their live ranges do not overlap.
+ * Coalesces memory registers where their live ranges do not overlap.
  * This step tries to coalesce lvalues with rvalues for all assignments - saving both cycles & bytes if successful.
  */
-public class Pass4ZeroPageCoalesceAssignment extends Pass2Base {
+public class Pass4MemoryCoalesceAssignment extends Pass2Base {
 
-   public Pass4ZeroPageCoalesceAssignment(Program program) {
+   public Pass4MemoryCoalesceAssignment(Program program) {
       super(program);
    }
 
    public void coalesce() {
       CoalesceVarScores coalesceVarScores = new CoalesceVarScores(getProgram());
       LinkedHashSet<String> unknownFragments = new LinkedHashSet<>();
-      Collection<ScopeRef> threadHeads = Pass4ZeroPageCoalesce.getThreadHeads(getProgram());
+      Collection<ScopeRef> threadHeads = Pass4MemoryCoalesce.getThreadHeads(getProgram());
 
       boolean change;
       do {
          change = false;
          CoalesceLiveRangeEquivalenceClassScores equivalenceClassScores =
                new CoalesceLiveRangeEquivalenceClassScores(getProgram(), coalesceVarScores);
-         List<Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate> coalesceCandidates =
+         List<Pass4MemoryCoalesce.LiveRangeEquivalenceClassCoalesceCandidate> coalesceCandidates =
                equivalenceClassScores.getCoalesceCandidates();
-         for(Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate candidate : coalesceCandidates) {
-            change |= Pass4ZeroPageCoalesce.attemptCoalesce(candidate, threadHeads, unknownFragments, getProgram());
+         for(Pass4MemoryCoalesce.LiveRangeEquivalenceClassCoalesceCandidate candidate : coalesceCandidates) {
+            change |= Pass4MemoryCoalesce.attemptCoalesce(candidate, threadHeads, unknownFragments, getProgram());
          }
       } while(change);
 
@@ -147,14 +147,14 @@ public class Pass4ZeroPageCoalesceAssignment extends Pass2Base {
        *
        * @return candidate pairs of live range equivalence classes for coalescing with a positive score
        */
-      public List<Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate> getCoalesceCandidates() {
-         ArrayList<Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate> candidates = new ArrayList<>();
+      public List<Pass4MemoryCoalesce.LiveRangeEquivalenceClassCoalesceCandidate> getCoalesceCandidates() {
+         ArrayList<Pass4MemoryCoalesce.LiveRangeEquivalenceClassCoalesceCandidate> candidates = new ArrayList<>();
          for(LiveRangeEquivalenceClass ec1 : scores.keySet()) {
             Map<LiveRangeEquivalenceClass, Integer> ec1Scores = scores.get(ec1);
             for(LiveRangeEquivalenceClass ec2 : ec1Scores.keySet()) {
                Integer score = ec1Scores.get(ec2);
-               Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate candidate =
-                     new Pass4ZeroPageCoalesce.LiveRangeEquivalenceClassCoalesceCandidate(ec1, ec2, score);
+               Pass4MemoryCoalesce.LiveRangeEquivalenceClassCoalesceCandidate candidate =
+                     new Pass4MemoryCoalesce.LiveRangeEquivalenceClassCoalesceCandidate(ec1, ec2, score);
                if(!candidates.contains(candidate)) {
                   candidates.add(candidate);
                }

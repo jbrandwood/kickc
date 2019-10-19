@@ -77,7 +77,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
 
       
       if(reallocateZp) {
-         reallocateZpRegisters(liveRangeEquivalenceClassSet);
+         reallocateMemRegisters(liveRangeEquivalenceClassSet);
       }
       liveRangeEquivalenceClassSet.storeRegisterAllocation();
       if(reallocateZp) {
@@ -160,11 +160,11 @@ public class Pass4RegistersFinalize extends Pass2Base {
    }
 
    /**
-    * Reallocate all ZP registers to minimize ZP usage
+    * Reallocate all memory registers. Minimizes zeropage usage.
     *
     * @param liveRangeEquivalenceClassSet The
     */
-   private void reallocateZpRegisters(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
+   private void reallocateMemRegisters(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          Registers.Register register = equivalenceClass.getRegister();
          boolean reallocate = true;

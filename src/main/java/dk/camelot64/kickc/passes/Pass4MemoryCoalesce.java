@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Coalesces zero page registers where their live ranges do not overlap.
+ * Coalesces memory registers where their live ranges do not overlap.
  * A final step done after all other register optimizations and before ASM generation.
  */
-public abstract class Pass4ZeroPageCoalesce extends Pass2Base {
+public abstract class Pass4MemoryCoalesce extends Pass2Base {
 
-   public Pass4ZeroPageCoalesce(Program program) {
+   public Pass4MemoryCoalesce(Program program) {
       super(program);
    }
 
@@ -57,6 +57,7 @@ public abstract class Pass4ZeroPageCoalesce extends Pass2Base {
    static boolean canCoalesce(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Collection<ScopeRef> threadHeads, Set<String> unknownFragments, Program program) {
       return
             canCoalesceNotEqual(ec1, ec2) &&
+                  canCoalesceCompatible(ec1, ec2, program) &&
                   canCoalesceVolatile(ec1, ec2, program) &&
                   canCoalesceThreads(ec1, ec2, threadHeads, program) &&
                   canCoalesceClobber(ec1, ec2, unknownFragments, program);
@@ -130,6 +131,30 @@ public abstract class Pass4ZeroPageCoalesce extends Pass2Base {
    }
 
    /**
+    * Determines if two live range equivalence classes have compatible registers.
+    * The registers are compatible if they are in memory and have the same type and size.
+    *
+    * @param ec1 One equivalence class
+    * @param ec2 Another equivalence class
+    * @param program The program
+    * @return True if the two equivalence classes can be coalesced into one without problems.
+    */
+   private static boolean canCoalesceCompatible(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Program program) {
+      Registers.Register register1 = ec1.getRegister();
+      Registers.Register register2 = ec2.getRegister();
+      // Check the both registers are in memory
+      if(!register1.isMem() || !register2.isMem())
+         return false;
+      // Check the both registers have the same type
+      if(!register1.getType().equals(register2.getType()))
+         return false;
+      // Check the both registers have the same size
+      if(register1.getBytes() != register2.getBytes())
+         return false;
+      return true;
+   }
+
+   /**
     * Determines if two live range equivalence classes can be coalesced without clobber.
     * This is possible if they are both allocated to zero page, have the same size and the resulting ASM has no live range overlaps or clobber issues.
     *
@@ -141,15 +166,10 @@ public abstract class Pass4ZeroPageCoalesce extends Pass2Base {
     */
    private static boolean canCoalesceClobber(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Set<String> unknownFragments, Program program) {
       Registers.Register register1 = ec1.getRegister();
-      Registers.Register register2 = ec2.getRegister();
-      if(register1.isZp() && register2.isZp() && register1.getBytes()==register2.getBytes()) {
-         // Both registers are on Zero Page & have the same zero page size
-         // Try out the coalesce to test if it works
-         RegisterCombination combination = new RegisterCombination();
-         combination.setRegister(ec2, register1);
-         return Pass4RegisterUpliftCombinations.generateCombinationAsm(combination, program, unknownFragments, ScopeRef.ROOT);
-      }
-      return false;
+      // Try out the coalesce to test if it works
+      RegisterCombination combination = new RegisterCombination();
+      combination.setRegister(ec2, register1);
+      return Pass4RegisterUpliftCombinations.generateCombinationAsm(combination, program, unknownFragments, ScopeRef.ROOT);
    }
 
    /**
@@ -192,7 +212,7 @@ public abstract class Pass4ZeroPageCoalesce extends Pass2Base {
       List<LiveRangeEquivalenceClass> equivalenceClasses = liveRangeEquivalenceClassSet.getEquivalenceClasses();
       if(equivalenceClasses.contains(candidate.getEc1()) && equivalenceClasses.contains(candidate.getEc2())) {
          // Both equivalence classes still exist
-         if(Pass4ZeroPageCoalesce.canCoalesce(candidate.getEc1(), candidate.getEc2(), threadHeads, unknownFragments, program)) {
+         if(Pass4MemoryCoalesce.canCoalesce(candidate.getEc1(), candidate.getEc2(), threadHeads, unknownFragments, program)) {
             String scoreString = (candidate.getScore() == null) ? "" : (" - score: " + candidate.getScore());
             program.getLog().append("Coalescing zero page register [ " + candidate.getEc1() + " ] with [ " + candidate.getEc2() + " ]" + scoreString);
             liveRangeEquivalenceClassSet.consolidate(candidate.getEc1(), candidate.getEc2());

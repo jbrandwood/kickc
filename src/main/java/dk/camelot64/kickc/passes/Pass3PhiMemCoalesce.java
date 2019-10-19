@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.LiveRangeEquivalenceClassSet;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -72,10 +73,16 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
                   VariableRef phiRVar = (VariableRef) phiRValue.getrValue();
                   LiveRangeEquivalenceClass rValEquivalenceClass = phiEquivalenceClasses.getOrCreateEquivalenceClass(phiRVar);
                   if(!rValEquivalenceClass.equals(equivalenceClass)) {
-                     SymbolType varType = program.getScope().getVariable(variable).getType();
-                     SymbolType rVarType = program.getScope().getVariable(phiRVar).getType();
+                     Variable var = program.getScope().getVariable(variable);
+                     Variable rVar = program.getScope().getVariable(phiRVar);
+                     SymbolType varType = var.getType();
+                     SymbolType rVarType = rVar.getType();
                      if(varType.getSizeBytes()==rVarType.getSizeBytes()) {
-                        phiEquivalenceClasses.consolidate(equivalenceClass, rValEquivalenceClass);
+                        if(var.getMemoryArea().equals(rVar.getMemoryArea())) {
+                           phiEquivalenceClasses.consolidate(equivalenceClass, rValEquivalenceClass);
+                        } else {
+                           program.getLog().append("Not consolidating phi with different storage strategy "+variable.toString()+" "+phiRVar.toString());
+                        }
                      } else {
                         program.getLog().append("Not consolidating phi with different size "+variable.toString()+" "+phiRVar.toString());
                      }

@@ -589,14 +589,14 @@ public class Compiler {
       }
 
       // Register coalesce on assignment (saving bytes & cycles)
-      new Pass4ZeroPageCoalesceAssignment(program).coalesce();
+      new Pass4MemoryCoalesceAssignment(program).coalesce();
 
       // Register coalesce on call graph (saving ZP)
-      new Pass4ZeroPageCoalesceCallGraph(program).coalesce();
+      new Pass4MemoryCoalesceCallGraph(program).coalesce();
 
       if(enableZeroPageCoalasce) {
          // Register coalesce using exhaustive search (saving even more ZP - but slow)
-         new Pass4ZeroPageCoalesceExhaustive(program).coalesce();
+         new Pass4MemoryCoalesceExhaustive(program).coalesce();
       }
       new Pass4RegistersFinalize(program).allocate(true);
       new Pass4AssertZeropageAllocation(program).check();

@@ -25,6 +25,8 @@ public class ZeroConstantValues {
             zeroValues.put(memberVar.getRef(), zeroValue(memberVar.getType(), programScope));
          }
          return new ConstantStructValue(typeStruct, zeroValues);
+      } else if(type.equals(SymbolType.BOOLEAN)) {
+         return new ConstantBool(false);
       } else if(type instanceof SymbolTypeIntegerFixed) {
          return new ConstantInteger(0L, type);
       } else if(type instanceof SymbolTypePointer) {

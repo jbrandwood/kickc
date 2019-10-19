@@ -3369,7 +3369,7 @@ public class TestPrograms {
       tester.testFile(filename, upliftCombinations, null);
    }
 
-   private void compileAndCompare(String filename, CompileLog log, int upliftCombinations) throws IOException, URISyntaxException {
+   private void compileAndCompare(String filename, int upliftCombinations, CompileLog log) throws IOException, URISyntaxException {
       TestPrograms tester = new TestPrograms();
       tester.testFile(filename, upliftCombinations, log);
    }

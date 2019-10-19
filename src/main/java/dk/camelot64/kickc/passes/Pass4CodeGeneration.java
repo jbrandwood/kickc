@@ -476,17 +476,16 @@ public class Pass4CodeGeneration {
             }
             if(variable.isStorageLoadStore() || variable.isStoragePhiVersion() || variable.isStorageIntermediate()){
                if(variable.getDeclaredMemoryAddress() == null) {
-
                   Registers.Register allocation = variable.getAllocation();
+                  if(allocation instanceof Registers.RegisterCpuByte)
+                     continue;
                   if(!(allocation instanceof Registers.RegisterMainMem)) {
                      throw new InternalError("Expected main memory allocation "+variable.toString(program));
                   }
                   Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
-                  if(!((Registers.RegisterMainMem) allocation).getVariableRef().equals(variable.getRef())) {
+                  if(!registerMainMem.getVariableRef().equals(variable.getRef())) {
                      continue;
                   }
-
-
 
                   // Generate into the data segment
                   // Set segment

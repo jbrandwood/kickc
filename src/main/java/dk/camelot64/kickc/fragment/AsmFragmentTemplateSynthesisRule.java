@@ -268,9 +268,9 @@ class AsmFragmentTemplateSynthesisRule {
       mapZM12.put("z6", "z4");
       mapZM12.put("m6", "m4");
       // Z1 and C1 are replaced by something non-ZP - all above are moved down
-      Map<String, String> mapZ1C1 = new LinkedHashMap<>();
-      mapZ1C1.putAll(mapZM1);
-      mapZ1C1.putAll(mapC1);
+      Map<String, String> mapZM1C1 = new LinkedHashMap<>();
+      mapZM1C1.putAll(mapZM1);
+      mapZM1C1.putAll(mapC1);
       // Use unsigned in place of a signed
       Map<String, String> mapSToU = new LinkedHashMap<>();
       mapSToU.put("vbsz1", "vbuz1");
@@ -709,12 +709,12 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite multiple _derefidx_vbuc1 to use YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuc1(.*)_derefidx_vbuc1(.*)", rvalYy+"|"+ threeC1, "ldy #{c1}", "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", null, mapC1));
 
-      // OLD STYLE REWRITES - written when only one rule could be taken
 
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuz1=(.*)", twoZM1+"|"+twoC1, null, "vb$1aa=$2", "ldx {z1}\n" + "sta {c1},x", mapZ1C1));
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuz2=(.*)", twoZM1+"|"+twoZM2, null, "vb$1aa=$2", "ldy {z2}\n" + "sta ({z1}),y", mapZM12));
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuz1=(.*c1.*)", twoZM1, null, "vb$1aa=$2", "ldx {z1}\n" + "sta {c1},x", mapZM1));
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuz1=(.*z1.*)", twoC1, null, "vb$1aa=$2", "ldx {z1}\n" + "sta {c1},x", mapC1));
+
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbum1=(.*)", twoZM1+"|"+twoC1, null, "vb$1aa=$2", "ldx {m1}\n" + "sta {c1},x", mapZM1C1));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbum2=(.*)", twoZM1+"|"+twoZM2, null, "vb$1aa=$2", "ldy {m2}\n" + "sta ({z1}),y", mapZM12));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbum1=(.*c1.*)", twoZM1, null, "vb$1aa=$2", "ldx {m1}\n" + "sta {c1},x", mapZM1));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbum1=(.*[mz]1.*)", twoC1, null, "vb$1aa=$2", "ldx {m1}\n" + "sta {c1},x", mapC1));
 
       // Convert X/Y-based array indexing of a constant pointer into A-register by prefixing lda cn,x / lda cn,y ( ...pb.c1_derefidx_vbuxx... / ...pb.c1_derefidx_vbuyy... -> ...vb.aa... )
 

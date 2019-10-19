@@ -28,7 +28,7 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
          int bytes = -1;
          for(VariableRef varRef : equivalenceClass.getVariables()) {
             Variable variable = getProgram().getScope().getVariable(varRef);
-            if(variable.getDeclaredRegister() != null) { //TODO: Handle register/memory/storage strategy differently!
+            if(variable.getDeclaredRegister() != null) {
                if(declaredRegister != null && !declaredRegister.equals(variable.getDeclaredRegister())) {
                   throw new CompileError("Equivalence class has variables with different declared registers \n" +
                         " - equivalence class: " + equivalenceClass.toString(true) + "\n" +
@@ -45,14 +45,18 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
                int zp = ((Registers.RegisterZpMem) declaredRegister).getZp();
                Registers.RegisterZpMem zpRegister = new Registers.RegisterZpMem(zp, bytes, true);
                registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(zpRegister));
-            }  else {
+            } else if(declaredRegister instanceof Registers.RegisterMainMem) {
+               VariableRef variableRef = ((Registers.RegisterMainMem) declaredRegister).getVariableRef();
+               Registers.RegisterMainMem memRegister = new Registers.RegisterMainMem(variableRef, bytes);
+               registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(memRegister));
+            } else {
                registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(declaredRegister));
             }
          } else {
             Registers.Register defaultRegister = equivalenceClass.getRegister();
             List<Registers.Register> potentials = new ArrayList<>();
             potentials.add(defaultRegister);
-            boolean isByte2 = defaultRegister.isZp() && defaultRegister.getBytes() == 1;
+            boolean isByte2 = defaultRegister.isMem() && defaultRegister.getBytes() == 1;
             if(isByte2  && !varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
                potentials.add(Registers.getRegisterX());

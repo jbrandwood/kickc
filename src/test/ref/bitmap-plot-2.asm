@@ -757,9 +757,9 @@ sin16s: {
     ldx #0
     jsr mulu16_sel
     lda.z mulu16_sel.return
-    sta.z mulu16_sel.return_10
+    sta.z mulu16_sel.return_1
     lda.z mulu16_sel.return+1
-    sta.z mulu16_sel.return_10+1
+    sta.z mulu16_sel.return_1+1
     lda.z x1
     sta.z mulu16_sel.v2
     lda.z x1+1
@@ -804,7 +804,6 @@ mulu16_sel: {
     .label v2 = 2
     .label return = $24
     .label return_1 = $17
-    .label return_10 = $17
     lda.z v1
     sta.z mul16u.a
     lda.z v1+1

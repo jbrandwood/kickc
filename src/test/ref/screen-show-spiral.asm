@@ -49,10 +49,8 @@ main: {
     .label fill = 7
     .label dist_angle = $1a
     .label min_dist_angle = $16
-    .label min_dist_angle_3 = $1a
+    .label min_dist_angle_1 = $1a
     .label min_fill = $18
-    .label min_dist_angle_7 = $1a
-    .label min_dist_angle_8 = $1a
     lda.z SCREEN_DIST
     sta.z init_dist_screen.screen
     lda.z SCREEN_DIST+1
@@ -127,10 +125,10 @@ main: {
     cmp #<SCREEN_FILL+$3e8
     bcc __b9
   !:
-    lda.z min_dist_angle_3+1
+    lda.z min_dist_angle_1+1
     cmp #>$ffff
     bne __b7
-    lda.z min_dist_angle_3
+    lda.z min_dist_angle_1
     cmp #<$ffff
     bne __b7
     rts
@@ -141,22 +139,22 @@ main: {
     sta (min_fill),y
     jmp __b1
   __b9:
-    lda.z min_dist_angle_3
+    lda.z min_dist_angle_1
     sta.z min_dist_angle
-    lda.z min_dist_angle_3+1
+    lda.z min_dist_angle_1+1
     sta.z min_dist_angle+1
     jmp __b2
   __b11:
     lda.z min_dist_angle
-    sta.z min_dist_angle_8
+    sta.z min_dist_angle_1
     lda.z min_dist_angle+1
-    sta.z min_dist_angle_8+1
+    sta.z min_dist_angle_1+1
     jmp __b3
   __b10:
     lda.z min_dist_angle
-    sta.z min_dist_angle_7
+    sta.z min_dist_angle_1
     lda.z min_dist_angle+1
-    sta.z min_dist_angle_7+1
+    sta.z min_dist_angle_1+1
     jmp __b3
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
@@ -483,9 +481,9 @@ init_dist_screen: {
   __b4:
     jsr sqr
     lda.z sqr.return
-    sta.z sqr.return_2
+    sta.z sqr.return_1
     lda.z sqr.return+1
-    sta.z sqr.return_2+1
+    sta.z sqr.return_1+1
     lda #$27
     sta.z xb
     lda #0
@@ -664,7 +662,7 @@ bsearch16u: {
 // sqr(byte register(A) val)
 sqr: {
     .label return = $16
-    .label return_2 = $14
+    .label return_1 = $14
     asl
     tay
     lda (SQUARES),y

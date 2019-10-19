@@ -13,8 +13,7 @@ main: {
     .label sieve_i = $a
     .label j = 4
     .label s = 6
-    .label i_3 = 2
-    .label i_10 = 2
+    .label i_1 = 2
     .label __19 = $c
     jsr memset
     lda #<sieve+2
@@ -39,15 +38,15 @@ main: {
     lda #>$400
     sta.z print_char_cursor+1
     lda #<2
-    sta.z i_10
+    sta.z i_1
     lda #>2
-    sta.z i_10+1
+    sta.z i_1+1
   __b7:
-    lda.z i_10+1
+    lda.z i_1+1
     cmp #>$4c7
     bcc __b8
     bne !+
-    lda.z i_10
+    lda.z i_1
     cmp #<$4c7
     bcc __b8
   !:
@@ -55,11 +54,11 @@ main: {
     inc SCREEN+$3e7
     jmp __b11
   __b8:
-    lda.z i_10
+    lda.z i_1
     clc
     adc #<sieve
     sta.z __19
-    lda.z i_10+1
+    lda.z i_1+1
     adc #>sieve
     sta.z __19+1
     ldy #0
@@ -70,9 +69,9 @@ main: {
     lda #' '
     jsr print_char
   __b9:
-    inc.z i_3
+    inc.z i_1
     bne !+
-    inc.z i_3+1
+    inc.z i_1+1
   !:
     jmp __b7
   __b2:

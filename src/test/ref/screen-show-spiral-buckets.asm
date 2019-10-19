@@ -97,9 +97,7 @@ main: {
     .label min_angle = 4
     .label fill1 = 8
     .label min_offset = 8
-    .label min_offset_5 = $a
-    .label min_offset_9 = $a
-    .label min_offset_11 = $a
+    .label min_offset_1 = $a
     sei
     lda.z SCREEN_DIST
     sta.z init_dist_screen.screen
@@ -210,22 +208,22 @@ main: {
     sta.z min_angle
   __b8:
     inx
-    lda.z min_offset_5
+    lda.z min_offset_1
     sta.z min_offset
-    lda.z min_offset_5+1
+    lda.z min_offset_1+1
     sta.z min_offset+1
     jmp __b5
   __b17:
     lda.z min_offset
-    sta.z min_offset_9
+    sta.z min_offset_1
     lda.z min_offset+1
-    sta.z min_offset_9+1
+    sta.z min_offset_1+1
     jmp __b8
   __b18:
     lda.z min_offset
-    sta.z min_offset_11
+    sta.z min_offset_1
     lda.z min_offset+1
-    sta.z min_offset_11+1
+    sta.z min_offset_1+1
     jmp __b8
 }
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
@@ -242,13 +240,11 @@ init_buckets: {
     .label i2 = $14
     .label distance = $1a
     .label bucket = $22
-    .label dist_3 = 2
+    .label dist_1 = 2
     .label i4 = $1e
-    .label dist_5 = 2
     .label __18 = 5
     .label __19 = $20
     .label __20 = $22
-    .label dist_8 = 2
     ldy #0
   // Init bucket sizes to 0
   __b1:
@@ -344,15 +340,15 @@ init_buckets: {
     cpy #NUM_BUCKETS-1+1
     bne __b5
     lda.z screen
-    sta.z dist_8
+    sta.z dist_1
     lda.z screen+1
-    sta.z dist_8+1
+    sta.z dist_1+1
     lda #<0
     sta.z i4
     sta.z i4+1
   __b7:
     ldy #0
-    lda (dist_5),y
+    lda (dist_1),y
     sta.z distance
     sta.z __10
     tya
@@ -373,11 +369,11 @@ init_buckets: {
     sta.z bucket+1
     pla
     sta.z bucket
-    lda.z dist_5
+    lda.z dist_1
     sec
     sbc.z screen
     sta.z __11
-    lda.z dist_5+1
+    lda.z dist_1+1
     sbc.z screen+1
     sta.z __11+1
     ldy.z distance
@@ -394,9 +390,9 @@ init_buckets: {
     clc
     adc #1
     sta (BUCKET_IDX),y
-    inc.z dist_3
+    inc.z dist_1
     bne !+
-    inc.z dist_3+1
+    inc.z dist_1+1
   !:
     inc.z i4
     bne !+
@@ -754,9 +750,9 @@ init_dist_screen: {
   __b4:
     jsr sqr
     lda.z sqr.return
-    sta.z sqr.return_2
+    sta.z sqr.return_1
     lda.z sqr.return+1
-    sta.z sqr.return_2+1
+    sta.z sqr.return_1+1
     lda #$27
     sta.z xb
     lda #0
@@ -935,7 +931,7 @@ bsearch16u: {
 // sqr(byte register(A) val)
 sqr: {
     .label return = $1e
-    .label return_2 = $1c
+    .label return_1 = $1c
     asl
     tay
     lda (SQUARES),y

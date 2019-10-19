@@ -15,13 +15,11 @@
   .label cp = $ff
 main: {
     .label at = $a
-    .label at_2 = $c
-    .label at_3 = 3
+    .label at_1 = $c
+    .label at_2 = 3
     .label j = 5
     .label i = 2
     .label at_line = $c
-    .label at_6 = 3
-    .label at_12 = 3
     jsr init_screen
     lda #<$400+4
     sta.z at
@@ -55,6 +53,28 @@ main: {
   __b2:
     lda #$28
     clc
+    adc.z at_1
+    sta.z at_1
+    bcc !+
+    inc.z at_1+1
+  !:
+    ldy.z i
+    lda vals,y
+    sta.z print_sbyte_at.b
+    lda.z at_1
+    sta.z print_sbyte_at.at
+    lda.z at_1+1
+    sta.z print_sbyte_at.at+1
+    jsr print_sbyte_at
+    lda.z at_1
+    sta.z at_2
+    lda.z at_1+1
+    sta.z at_2+1
+    lda #0
+    sta.z j
+  __b3:
+    lda #4
+    clc
     adc.z at_2
     sta.z at_2
     bcc !+
@@ -62,35 +82,13 @@ main: {
   !:
     ldy.z i
     lda vals,y
-    sta.z print_sbyte_at.b
-    lda.z at_2
-    sta.z print_sbyte_at.at
-    lda.z at_2+1
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    lda.z at_2
-    sta.z at_12
-    lda.z at_2+1
-    sta.z at_12+1
-    lda #0
-    sta.z j
-  __b3:
-    lda #4
-    clc
-    adc.z at_3
-    sta.z at_3
-    bcc !+
-    inc.z at_3+1
-  !:
-    ldy.z i
-    lda vals,y
     ldy.z j
     ldx vals,y
     jsr fmul8
     sta.z print_sbyte_at.b
-    lda.z at_3
+    lda.z at_2
     sta.z print_sbyte_at.at
-    lda.z at_3+1
+    lda.z at_2+1
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     inc.z j

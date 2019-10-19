@@ -4430,16 +4430,16 @@ gen_sintab: {
     jsr getFAC
     // [115] (word) getFAC::return#2 ← (word) getFAC::return#0 -- vwuz1=vwuz2 
     lda.z getFAC.return
-    sta.z getFAC.return_2
+    sta.z getFAC.return_1
     lda.z getFAC.return+1
-    sta.z getFAC.return_2+1
+    sta.z getFAC.return_1+1
     jmp __b21
     // gen_sintab::@21
   __b21:
     // [116] (word~) gen_sintab::$24 ← (word) getFAC::return#2 -- vwuz1=vwuz2 
-    lda.z getFAC.return_2
+    lda.z getFAC.return_1
     sta.z __24
-    lda.z getFAC.return_2+1
+    lda.z getFAC.return_1+1
     sta.z __24+1
     // [117] (byte~) gen_sintab::$25 ← (byte)(word~) gen_sintab::$24 -- vbuz1=_byte_vwuz2 
     lda.z __24
@@ -4523,7 +4523,7 @@ progress_inc: {
 // Destroys the value in the FAC in the process
 getFAC: {
     .label return = $3c
-    .label return_2 = $37
+    .label return_1 = $37
     // asm { jsr$b1aa stymemLo stamemHi  }
     // Load FAC (floating point accumulator) integer part into word register Y,A
     jsr $b1aa
@@ -5067,9 +5067,8 @@ place_sprites: {
     .label spr_x = $2f
     .label col = $31
     .label j2 = $4f
-    .label j2_2 = $30
+    .label j2_1 = $30
     .label j = $2e
-    .label j2_3 = $30
     // [214] *((const byte*) SPRITES_ENABLE) ← (byte) $7f -- _deref_pbuc1=vbuc2 
     lda #$7f
     sta SPRITES_ENABLE
@@ -5086,7 +5085,7 @@ place_sprites: {
     sta.z col
     // [217] phi (byte) place_sprites::j2#3 = (byte) 0 [phi:place_sprites->place_sprites::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta.z j2_3
+    sta.z j2_1
     // [217] phi (byte) place_sprites::spr_x#2 = (byte) $3c [phi:place_sprites->place_sprites::@1#2] -- vbuz1=vbuc1 
     lda #$3c
     sta.z spr_x
@@ -5115,11 +5114,11 @@ place_sprites: {
     inc.z spr_id
     // [220] *((const byte*) SPRITES_XPOS + (byte) place_sprites::j2#3) ← (byte) place_sprites::spr_x#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z spr_x
-    ldy.z j2_3
+    ldy.z j2_1
     sta SPRITES_XPOS,y
     // [221] *((const byte*) SPRITES_YPOS + (byte) place_sprites::j2#3) ← (byte) $50 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #$50
-    ldy.z j2_3
+    ldy.z j2_1
     sta SPRITES_YPOS,y
     // [222] *((const byte*) SPRITES_COLS + (byte) place_sprites::j#2) ← (byte) place_sprites::col#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z col
@@ -5134,13 +5133,13 @@ place_sprites: {
     eor.z col
     sta.z col
     // [225] (byte) place_sprites::j2#1 ← ++ (byte) place_sprites::j2#3 -- vbuz1=_inc_vbuz2 
-    ldy.z j2_3
+    ldy.z j2_1
     iny
     sty.z j2
     // [226] (byte) place_sprites::j2#2 ← ++ (byte) place_sprites::j2#1 -- vbuz1=_inc_vbuz2 
     ldy.z j2
     iny
-    sty.z j2_2
+    sty.z j2_1
     // [227] (byte) place_sprites::j#1 ← ++ (byte) place_sprites::j#2 -- vbuz1=_inc_vbuz1 
     inc.z j
     // [228] if((byte) place_sprites::j#1!=(byte) 7) goto place_sprites::@1 -- vbuz1_neq_vbuc1_then_la1 

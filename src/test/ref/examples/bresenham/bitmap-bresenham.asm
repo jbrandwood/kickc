@@ -54,11 +54,10 @@ lines: {
 bitmap_line: {
     .label xd = $d
     .label yd = 7
-    .label yd_2 = 4
+    .label yd_1 = 4
     .label x0 = 3
     .label x1 = 5
     .label y0 = 2
-    .label yd_11 = 4
     lda.z x0
     cmp.z x1
     bcc __b1
@@ -74,7 +73,7 @@ bitmap_line: {
     eor #$ff
     sec
     adc.z y0
-    sta.z yd_2
+    sta.z yd_1
     cmp.z xd
     bcc __b8
     sty.z bitmap_line_ydxi.y
@@ -135,7 +134,7 @@ bitmap_line: {
     tya
     sec
     sbc.z y0
-    sta.z yd_11
+    sta.z yd_1
     cmp.z xd
     bcc __b13
     lda.z y0

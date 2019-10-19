@@ -15,9 +15,9 @@ __b1:
   sta.z MEM+1
   jsr malloc
   lda.z malloc.return
-  sta.z malloc.return_2
+  sta.z malloc.return_1
   lda.z malloc.return+1
-  sta.z malloc.return_2+1
+  sta.z malloc.return_1+1
   jsr malloc
   jsr main
   rts
@@ -30,7 +30,7 @@ main: {
 }
 malloc: {
     .label return = 6
-    .label return_2 = 4
+    .label return_1 = 4
     inc.z MEM
     bne !+
     inc.z MEM+1

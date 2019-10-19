@@ -65,19 +65,19 @@ show_letter: {
     .label angle = $12
     .label to_x = 2
     .label to_y = 4
-    .label to_x_2 = $20
-    .label to_y_2 = $22
+    .label to_x_1 = $20
+    .label to_y_1 = $22
     .label via_x = 2
     .label via_y = 4
-    .label via_x_2 = $20
-    .label via_y_2 = $22
+    .label via_x_1 = $20
+    .label via_y_1 = $22
     .label segment_via_x = $20
     .label segment_via_y = $22
     .label i = $13
     .label current_x = $c
     .label current_y = $e
-    .label current_x_10 = $14
-    .label current_y_10 = $16
+    .label current_x_1 = $14
+    .label current_y_1 = $16
     lda #<0
     sta.z current_y
     sta.z current_y+1
@@ -116,20 +116,20 @@ show_letter: {
     sta.z to_y+1
     ldy.z angle
     jsr rotate
-    lda.z to_x_2
+    lda.z to_x_1
     clc
     adc #<$64
-    sta.z current_x_10
-    lda.z to_x_2+1
+    sta.z current_x_1
+    lda.z to_x_1+1
     adc #>$64
-    sta.z current_x_10+1
-    lda.z to_y_2
+    sta.z current_x_1+1
+    lda.z to_y_1
     clc
     adc #<$64
-    sta.z current_y_10
-    lda.z to_y_2+1
+    sta.z current_y_1
+    lda.z to_y_1+1
     adc #>$64
-    sta.z current_y_10+1
+    sta.z current_y_1+1
     lda.z i
     asl
     asl
@@ -187,13 +187,13 @@ show_letter: {
     beq __b3
     cmp #SPLINE_TO
     beq __b2
-    lda.z current_x_10
+    lda.z current_x_1
     sta.z bitmap_line.x2
-    lda.z current_x_10+1
+    lda.z current_x_1+1
     sta.z bitmap_line.x2+1
-    lda.z current_y_10
+    lda.z current_y_1
     sta.z bitmap_line.y2
-    lda.z current_y_10+1
+    lda.z current_y_1+1
     sta.z bitmap_line.y2+1
     jsr bitmap_line
   __b3:
@@ -203,13 +203,13 @@ show_letter: {
     bne __b9
     rts
   __b9:
-    lda.z current_x_10
+    lda.z current_x_1
     sta.z current_x
-    lda.z current_x_10+1
+    lda.z current_x_1+1
     sta.z current_x+1
-    lda.z current_y_10
+    lda.z current_y_1
     sta.z current_y
-    lda.z current_y_10+1
+    lda.z current_y_1+1
     sta.z current_y+1
     jmp __b1
   __b2:

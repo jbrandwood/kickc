@@ -709,8 +709,6 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite multiple _derefidx_vbuc1 to use YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuc1(.*)_derefidx_vbuc1(.*)", rvalYy+"|"+ threeC1, "ldy #{c1}", "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", null, mapC1));
 
-
-
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbum1=(.*)", twoZM1+"|"+twoC1, null, "vb$1aa=$2", "ldx {m1}\n" + "sta {c1},x", mapZM1C1));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbum2=(.*)", twoZM1+"|"+twoZM2, null, "vb$1aa=$2", "ldy {m2}\n" + "sta ({z1}),y", mapZM12));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbum1=(.*c1.*)", twoZM1, null, "vb$1aa=$2", "ldx {m1}\n" + "sta {c1},x", mapZM1));

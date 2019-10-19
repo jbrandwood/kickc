@@ -3,11 +3,8 @@
 .pc = $80d "Program"
   .label print_line_cursor = $10
   .label print_char_cursor = 8
-  .label print_char_cursor_31 = $10
-  .label print_line_cursor_9 = 6
-  .label print_line_cursor_15 = 6
-  .label print_line_cursor_37 = 6
-  .label print_line_cursor_38 = 6
+  .label print_char_cursor_1 = $10
+  .label print_line_cursor_1 = 6
 main: {
     .label __3 = 8
     .label __6 = $e
@@ -21,13 +18,13 @@ main: {
     .label dw = 2
     jsr print_cls
     lda #<$400
-    sta.z print_char_cursor_31
+    sta.z print_char_cursor_1
     lda #>$400
-    sta.z print_char_cursor_31+1
+    sta.z print_char_cursor_1+1
     lda #<$400
-    sta.z print_line_cursor_15
+    sta.z print_line_cursor_1
     lda #>$400
-    sta.z print_line_cursor_15+1
+    sta.z print_line_cursor_1+1
     lda #<$12345678
     sta.z dw
     lda #>$12345678
@@ -144,9 +141,9 @@ main: {
     inc.z dw+3
   !:
     lda.z print_line_cursor
-    sta.z print_line_cursor_38
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_38+1
+    sta.z print_line_cursor_1+1
     jmp __b1
 }
 // Print a newline
@@ -154,10 +151,10 @@ print_ln: {
   __b1:
     lda #$28
     clc
-    adc.z print_line_cursor_9
+    adc.z print_line_cursor_1
     sta.z print_line_cursor
     lda #0
-    adc.z print_line_cursor_9+1
+    adc.z print_line_cursor_1+1
     sta.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b2
@@ -169,9 +166,9 @@ print_ln: {
     rts
   __b2:
     lda.z print_line_cursor
-    sta.z print_line_cursor_37
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_37+1
+    sta.z print_line_cursor_1+1
     jmp __b1
 }
 // Print a byte as HEX
@@ -222,9 +219,9 @@ print_dword: {
     sta.z print_word.w
     lda.z dw+3
     sta.z print_word.w+1
-    lda.z print_char_cursor_31
+    lda.z print_char_cursor_1
     sta.z print_char_cursor
-    lda.z print_char_cursor_31+1
+    lda.z print_char_cursor_1+1
     sta.z print_char_cursor+1
     jsr print_word
     lda.z dw

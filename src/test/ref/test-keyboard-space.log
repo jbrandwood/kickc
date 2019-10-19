@@ -511,12 +511,12 @@ main: {
     jsr keyboard_key_pressed
     // [9] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
-    sta.z keyboard_key_pressed.return_2
+    sta.z keyboard_key_pressed.return_1
     jmp __b5
     // main::@5
   __b5:
     // [10] (byte~) main::$2 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
-    lda.z keyboard_key_pressed.return_2
+    lda.z keyboard_key_pressed.return_1
     sta.z __2
     // [11] if((byte~) main::$2!=(byte) 0) goto main::@4 -- vbuz1_neq_0_then_la1 
     lda.z __2
@@ -546,17 +546,17 @@ keyboard_key_pressed: {
     .label rowidx = KEY_SPACE>>3
     .label __2 = 5
     .label return = 6
-    .label return_2 = 2
+    .label return_1 = 2
     // [15] call keyboard_matrix_read 
     jsr keyboard_matrix_read
     // [16] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_matrix_read.return
-    sta.z keyboard_matrix_read.return_2
+    sta.z keyboard_matrix_read.return_1
     jmp __b1
     // keyboard_key_pressed::@1
   __b1:
     // [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
-    lda.z keyboard_matrix_read.return_2
+    lda.z keyboard_matrix_read.return_1
     sta.z __2
     // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band__deref_pbuc1 
     lda keyboard_matrix_col_bitmask+colidx
@@ -576,7 +576,7 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     .label return = 7
-    .label return_2 = 4
+    .label return_1 = 4
     // [20] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A

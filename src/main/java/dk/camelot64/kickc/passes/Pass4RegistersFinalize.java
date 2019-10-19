@@ -1,10 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
@@ -81,18 +78,18 @@ public class Pass4RegistersFinalize extends Pass2Base {
       }
       liveRangeEquivalenceClassSet.storeRegisterAllocation();
       if(reallocateZp) {
-         shortenZpRegisterNames();
+         shortenAsmNames();
       }
    }
 
    /**
-    * Shorten register names for ZP registers if possible
+    * Shorten ASM names for variables and constants
     */
-   private void shortenZpRegisterNames() {
+   private void shortenAsmNames() {
       Collection<Scope> allScopes = getProgram().getScope().getAllScopes(true);
       allScopes.add(getProgram().getScope());
       for(Scope scope : allScopes) {
-         // Create initial short names - and remember the ones without "#"
+         // Create initial short names
          for(Variable variable : scope.getAllVariables(false)) {
             if(variable.getAllocation() != null && variable.getAllocation().isMem()) {
                variable.setAsmName(variable.getLocalName());
@@ -104,58 +101,46 @@ public class Pass4RegistersFinalize extends Pass2Base {
             constantVar.setAsmName(constantVar.getLocalName());
          }
 
-         // Find short asm names for all variables if possible
+         // Maps short name to the allocated register.
          Map<String, Registers.Register> shortNames = new LinkedHashMap<>();
-
+         // Shorten variable and constant names
          for(Variable variable : scope.getAllVariables(false)) {
             Registers.Register allocation = variable.getAllocation();
             if(allocation != null && allocation.isMem()) {
-               String asmName = variable.getAsmName();
-               if(asmName.contains("#")) {
-                  String shortName = asmName.substring(0, asmName.indexOf("#"));
-                  if(shortNames.get(shortName) == null || shortNames.get(shortName).equals(allocation)) {
-                     // Short name is usable!
-                     variable.setAsmName(shortName);
-                     shortNames.put(shortName, allocation);
-                     continue;
-                  }
-               }
-               if(shortNames.get(asmName) == null || shortNames.get(asmName).equals(allocation)) {
-                  // Try the full name instead
-                  variable.setAsmName(asmName);
-                  shortNames.put(asmName, allocation);
-                  continue;
-               } else {
-                  // Be unhappy (if this triggers in the future extend with ability to create new names by adding suffixes)
-                  throw new RuntimeException("ASM name already used " + asmName);
-               }
+               shortenAsmName(shortNames, variable, allocation);
             }
          }
-
          for(ConstantVar constantVar : scope.getAllConstants(false)) {
-            String asmName = constantVar.getAsmName();
             Registers.Register allocation = new Registers.RegisterConstant(constantVar.getValue());
-            if(asmName.contains("#")) {
-               String shortName = asmName.substring(0, asmName.indexOf("#"));
-               if(shortNames.get(shortName) == null || shortNames.get(shortName).equals(allocation)) {
-                  // Short name is usable!
-                  constantVar.setAsmName(shortName);
-                  shortNames.put(shortName, allocation);
-                  continue;
-               }
-            }
-            if(shortNames.get(asmName) == null || shortNames.get(asmName).equals(allocation)) {
-               // Try the full name instead
-               constantVar.setAsmName(asmName);
-               shortNames.put(asmName, allocation);
-               continue;
-            } else {
-               // Be unhappy (if this triggers in the future extend with ability to create new names by adding suffixes)
-               throw new RuntimeException("ASM name already used " + asmName);
-            }
-
+            shortenAsmName(shortNames, constantVar, allocation);
          }
+      }
+   }
 
+   /**
+    * Shorten the ASM name for a single variable.
+    *
+    * @param shortNames Map of allocated short names. Maps short name to the allocated register.
+    * @param variable The variable to shorten the name for
+    * @param allocation The register allocation for the variable
+    */
+   private void shortenAsmName(Map<String, Registers.Register> shortNames, SymbolVariable variable, Registers.Register allocation) {
+      String asmName = variable.getAsmName();
+      String prefix = asmName;
+      if(asmName.contains("#")) {
+         prefix = asmName.substring(0, asmName.indexOf("#"));
+      }
+      int suffix = 0;
+      boolean found = false;
+      while(!found) {
+         String shortName = prefix + ((suffix==0)?"":("_"+suffix));
+         if(shortNames.get(shortName) == null || shortNames.get(shortName).equals(allocation)) {
+            // Short name is usable!
+            variable.setAsmName(shortName);
+            shortNames.put(shortName, allocation);
+            found=true;
+         }
+         suffix++;
       }
    }
 

@@ -2682,7 +2682,7 @@ bitmap_line: {
     .label y0 = 0
     .label y1 = $64
     .label xd = $20
-    .label xd_2 = $1d
+    .label xd_1 = $1d
     .label x1 = $1c
     // [17] if((const byte) bitmap_line::x0#0<(byte) bitmap_line::x1#0) goto bitmap_line::@1 -- vbuc1_lt_vbuz1_then_la1 
     lda #x0
@@ -2693,19 +2693,19 @@ bitmap_line: {
   __b2:
     // [18] (byte) bitmap_line::xd#2 ← (byte) bitmap_line::x1#0 -- vbuz1=vbuz2 
     lda.z x1
-    sta.z xd_2
+    sta.z xd_1
     jmp __b3
     // bitmap_line::@3
   __b3:
     // [19] if((const byte) bitmap_line::y1#0<(byte) bitmap_line::xd#2) goto bitmap_line::@4 -- vbuc1_lt_vbuz1_then_la1 
     lda #y1
-    cmp.z xd_2
+    cmp.z xd_1
     bcc __b4
     jmp __b5
     // bitmap_line::@5
   __b5:
     // [20] (byte) bitmap_line_ydxd::xd#0 ← (byte) bitmap_line::xd#2 -- vbuz1=vbuz2 
-    lda.z xd_2
+    lda.z xd_1
     sta.z bitmap_line_ydxd.xd
     // [21] call bitmap_line_ydxd 
     jsr bitmap_line_ydxd
@@ -2720,7 +2720,7 @@ bitmap_line: {
     lda.z x1
     sta.z bitmap_line_xdyd.x
     // [24] (byte) bitmap_line_xdyd::xd#0 ← (byte) bitmap_line::xd#2 -- vbuz1=vbuz2 
-    lda.z xd_2
+    lda.z xd_1
     sta.z bitmap_line_xdyd.xd
     // [25] call bitmap_line_xdyd 
     // [67] phi from bitmap_line::@4 to bitmap_line_xdyd [phi:bitmap_line::@4->bitmap_line_xdyd]
@@ -3183,9 +3183,6 @@ bitmap_clear: {
     .label bitmap_1 = $14
     .label x = $16
     .label y = $13
-    .label bitmap_2 = $14
-    .label bitmap_3 = $14
-    .label bitmap_5 = $14
     // [99] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_xhi) w= *((const byte[$100]) bitmap_plot_xlo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda bitmap_plot_xlo
     sta.z bitmap
@@ -3193,9 +3190,9 @@ bitmap_clear: {
     sta.z bitmap+1
     // [100] (byte*~) bitmap_clear::bitmap#5 ← (byte*)(word) bitmap_clear::bitmap#0 -- pbuz1=pbuz2 
     lda.z bitmap
-    sta.z bitmap_5
+    sta.z bitmap_1
     lda.z bitmap+1
-    sta.z bitmap_5+1
+    sta.z bitmap_1+1
     // [101] phi from bitmap_clear to bitmap_clear::@1 [phi:bitmap_clear->bitmap_clear::@1]
   __b1_from_bitmap_clear:
     // [101] phi (byte) bitmap_clear::y#4 = (byte) 0 [phi:bitmap_clear->bitmap_clear::@1#0] -- vbuz1=vbuc1 
@@ -3227,7 +3224,7 @@ bitmap_clear: {
     // [103] *((byte*) bitmap_clear::bitmap#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
-    sta (bitmap_2),y
+    sta (bitmap_1),y
     // [104] (byte*) bitmap_clear::bitmap#1 ← ++ (byte*) bitmap_clear::bitmap#2 -- pbuz1=_inc_pbuz1 
     inc.z bitmap_1
     bne !+

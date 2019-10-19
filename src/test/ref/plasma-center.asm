@@ -678,9 +678,9 @@ init_dist_screen: {
   __b4:
     jsr sqr
     lda.z sqr.return
-    sta.z sqr.return_2
+    sta.z sqr.return_1
     lda.z sqr.return+1
-    sta.z sqr.return_2+1
+    sta.z sqr.return_1+1
     lda #$27
     sta.z xb
     lda #0
@@ -859,7 +859,7 @@ bsearch16u: {
 // sqr(byte register(A) val)
 sqr: {
     .label return = $16
-    .label return_2 = $14
+    .label return_1 = $14
     asl
     tay
     lda (SQUARES),y

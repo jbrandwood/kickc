@@ -140,23 +140,11 @@
   .label render_screen_show = $14
   .label current_movedown_counter = $c
   .label lines_bcd = $16
-  .label current_piece_17 = $22
-  .label render_screen_render_33 = $d
-  .label current_xpos_59 = $e
-  .label current_piece_gfx_64 = $24
-  .label current_piece_char_68 = $f
-  .label render_screen_render_65 = $d
-  .label current_xpos_119 = $e
-  .label current_xpos_120 = $e
-  .label current_piece_gfx_112 = $24
-  .label current_piece_gfx_113 = $24
-  .label current_piece_char_100 = $f
-  .label current_piece_char_101 = $f
-  .label current_piece_96 = $22
-  .label current_piece_97 = $22
-  .label current_piece_98 = $22
-  .label current_piece_99 = $22
-  .label current_piece_100 = $22
+  .label current_piece_1 = $22
+  .label render_screen_render_1 = $d
+  .label current_xpos_1 = $e
+  .label current_piece_gfx_1 = $24
+  .label current_piece_char_1 = $f
 __b1:
   // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
   lda #0
@@ -197,16 +185,16 @@ main: {
     jsr render_playfield
     ldx.z current_ypos
     lda.z current_xpos
-    sta.z current_xpos_119
+    sta.z current_xpos_1
     ldy.z play_spawn_current.__7
     lda PIECES,y
-    sta.z current_piece_gfx_112
+    sta.z current_piece_gfx_1
     lda PIECES+1,y
-    sta.z current_piece_gfx_112+1
+    sta.z current_piece_gfx_1+1
     lda.z current_piece_char
-    sta.z current_piece_char_100
+    sta.z current_piece_char_1
     lda #$20
-    sta.z render_screen_render_33
+    sta.z render_screen_render_1
     jsr render_moving
     ldx.z play_spawn_current.piece_idx
     lda #$20
@@ -257,15 +245,15 @@ main: {
     jsr render_playfield
     ldx.z current_ypos
     lda.z render_screen_render
-    sta.z render_screen_render_65
+    sta.z render_screen_render_1
     lda.z current_xpos
-    sta.z current_xpos_120
+    sta.z current_xpos_1
     lda.z current_piece_gfx
-    sta.z current_piece_gfx_113
+    sta.z current_piece_gfx_1
     lda.z current_piece_gfx+1
-    sta.z current_piece_gfx_113+1
+    sta.z current_piece_gfx_1+1
     lda.z current_piece_char
-    sta.z current_piece_char_101
+    sta.z current_piece_char_1
     jsr render_moving
     lda.z render_screen_render
     ldx.z next_piece_idx
@@ -492,7 +480,7 @@ render_moving: {
     bne __b1
     rts
   __b2:
-    lda.z render_screen_render_33
+    lda.z render_screen_render_1
     clc
     adc.z ypos
     asl
@@ -501,16 +489,16 @@ render_moving: {
     sta.z screen_line
     lda screen_lines_1+1,y
     sta.z screen_line+1
-    lda.z current_xpos_59
+    lda.z current_xpos_1
     sta.z xpos
     ldx #0
   __b4:
     ldy.z i
-    lda (current_piece_gfx_64),y
+    lda (current_piece_gfx_1),y
     inc.z i
     cmp #0
     beq __b5
-    lda.z current_piece_char_68
+    lda.z current_piece_char_1
     ldy.z xpos
     sta (screen_line),y
   __b5:
@@ -615,9 +603,9 @@ play_move_rotate: {
     sta.z play_collision.ypos
     ldx.z orientation
     lda.z current_piece
-    sta.z current_piece_99
+    sta.z current_piece_1
     lda.z current_piece+1
-    sta.z current_piece_99+1
+    sta.z current_piece_1+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b1
@@ -650,10 +638,7 @@ play_collision: {
     .label i = $2f
     .label xp = $10
     .label l = $e
-    .label i_2 = $f
-    .label i_3 = $f
-    .label i_10 = $f
-    .label i_12 = $f
+    .label i_1 = $f
     txa
     clc
     adc.z piece_gfx
@@ -663,7 +648,7 @@ play_collision: {
   !:
     lda #0
     sta.z l
-    sta.z i_3
+    sta.z i_1
   __b1:
     lda.z yp
     asl
@@ -676,10 +661,10 @@ play_collision: {
     sta.z xp
     ldx #0
   __b2:
-    ldy.z i_2
+    ldy.z i_1
     iny
     sty.z i
-    ldy.z i_2
+    ldy.z i_1
     lda (piece_gfx),y
     cmp #0
     beq __b3
@@ -722,11 +707,11 @@ play_collision: {
     rts
   __b9:
     lda.z i
-    sta.z i_10
+    sta.z i_1
     jmp __b1
   __b10:
     lda.z i
-    sta.z i_12
+    sta.z i_1
     jmp __b2
 }
 // Move left/right or rotate the current piece
@@ -745,9 +730,9 @@ play_move_leftright: {
     sta.z play_collision.ypos
     ldx.z current_orientation
     lda.z current_piece
-    sta.z current_piece_98
+    sta.z current_piece_1
     lda.z current_piece+1
-    sta.z current_piece_98+1
+    sta.z current_piece_1+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b2
@@ -766,9 +751,9 @@ play_move_leftright: {
     sta.z play_collision.ypos
     ldx.z current_orientation
     lda.z current_piece
-    sta.z current_piece_97
+    sta.z current_piece_1
     lda.z current_piece+1
-    sta.z current_piece_97+1
+    sta.z current_piece_1+1
     jsr play_collision
     cmp #COLLISION_NONE
     bne b2
@@ -811,9 +796,9 @@ play_move_down: {
     sta.z play_collision.xpos
     ldx.z current_orientation
     lda.z current_piece
-    sta.z current_piece_96
+    sta.z current_piece_1
     lda.z current_piece+1
-    sta.z current_piece_96+1
+    sta.z current_piece_1+1
     jsr play_collision
     cmp #COLLISION_NONE
     beq __b10
@@ -868,9 +853,9 @@ play_spawn_current: {
     sta.z play_collision.ypos
     ldy.z __7
     lda PIECES,y
-    sta.z current_piece_100
+    sta.z current_piece_1
     lda PIECES+1,y
-    sta.z current_piece_100+1
+    sta.z current_piece_1+1
     ldx #0
     jsr play_collision
     cmp #COLLISION_PLAYFIELD
@@ -1061,13 +1046,10 @@ play_lock_current: {
     .label xp = $12
     .label i = $2f
     .label l = $10
-    .label i_2 = $11
-    .label i_3 = $11
-    .label i_7 = $11
-    .label i_9 = $11
+    .label i_1 = $11
     lda #0
     sta.z l
-    sta.z i_3
+    sta.z i_1
   __b1:
     lda.z yp
     asl
@@ -1080,10 +1062,10 @@ play_lock_current: {
     sta.z xp
     ldx #0
   __b2:
-    ldy.z i_2
+    ldy.z i_1
     iny
     sty.z i
-    ldy.z i_2
+    ldy.z i_1
     lda (current_piece_gfx),y
     cmp #0
     beq __b3
@@ -1103,11 +1085,11 @@ play_lock_current: {
     rts
   __b6:
     lda.z i
-    sta.z i_7
+    sta.z i_1
     jmp __b1
   __b7:
     lda.z i
-    sta.z i_9
+    sta.z i_1
     jmp __b2
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()

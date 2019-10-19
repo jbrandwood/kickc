@@ -32,9 +32,7 @@
   .label rem16u = $f
   .label print_char_cursor = $11
   .label print_line_cursor = 6
-  .label print_char_cursor_10 = 6
-  .label print_char_cursor_62 = 6
-  .label print_char_cursor_78 = 6
+  .label print_char_cursor_1 = 6
 main: {
     .label toD0181_gfx = $1800
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
@@ -46,8 +44,7 @@ main: {
     .label sieve_i = $f
     .label j = 2
     .label s = 4
-    .label i_3 = $d
-    .label i_10 = $d
+    .label i_1 = $d
     .label __39 = $13
     //Show lower case font
     lda #toD0181_return
@@ -151,21 +148,21 @@ main: {
     jsr print_dword_decimal
     jsr print_ln
     lda #<2
-    sta.z i_10
+    sta.z i_1
     lda #>2
-    sta.z i_10+1
+    sta.z i_1+1
   __b8:
-    lda.z i_10+1
+    lda.z i_1+1
     cmp #>$514
     bcc __b9
     bne !+
-    lda.z i_10
+    lda.z i_1
     cmp #<$514
     bcc __b9
   !:
-    lda.z print_char_cursor_62
+    lda.z print_char_cursor_1
     sta.z print_char_cursor
-    lda.z print_char_cursor_62+1
+    lda.z print_char_cursor_1+1
     sta.z print_char_cursor+1
     lda #<str4
     sta.z print_str.str
@@ -176,27 +173,27 @@ main: {
     inc SCREEN+$3e7
     jmp __b13
   __b9:
-    lda.z i_10
+    lda.z i_1
     clc
     adc #<sieve
     sta.z __39
-    lda.z i_10+1
+    lda.z i_1+1
     adc #>sieve
     sta.z __39+1
     ldy #0
     lda (__39),y
     cmp #0
     bne __b11
-    lda.z print_char_cursor_62
+    lda.z print_char_cursor_1
     sta.z print_char_cursor
-    lda.z print_char_cursor_62+1
+    lda.z print_char_cursor_1+1
     sta.z print_char_cursor+1
     jsr print_word_decimal
     jsr print_char
   __b11:
-    inc.z i_3
+    inc.z i_1
     bne !+
-    inc.z i_3+1
+    inc.z i_1+1
   !:
     jmp __b8
   __b2:
@@ -275,10 +272,10 @@ print_char: {
     lda.z print_char_cursor
     clc
     adc #1
-    sta.z print_char_cursor_10
+    sta.z print_char_cursor_1
     lda.z print_char_cursor+1
     adc #0
-    sta.z print_char_cursor_10+1
+    sta.z print_char_cursor_1+1
     rts
 }
 // Print a word as DECIMAL

@@ -347,9 +347,9 @@ sin16sb: {
     sta.z mulu16_sel.v2+1
     ldx #0
     jsr mulu16_sel
-    lda.z mulu16_sel.return_18
+    lda.z mulu16_sel.return_1
     sta.z x2
-    lda.z mulu16_sel.return_18+1
+    lda.z mulu16_sel.return_1+1
     sta.z x2+1
     lda.z x1
     sta.z mulu16_sel.v2
@@ -357,9 +357,9 @@ sin16sb: {
     sta.z mulu16_sel.v2+1
     ldx #1
     jsr mulu16_sel
-    lda.z mulu16_sel.return_17
+    lda.z mulu16_sel.return_1
     sta.z mulu16_sel.return
-    lda.z mulu16_sel.return_17+1
+    lda.z mulu16_sel.return_1+1
     sta.z mulu16_sel.return+1
     ldx #1
     lda #<$10000/6
@@ -380,9 +380,9 @@ sin16sb: {
     sta.z mulu16_sel.v2+1
     ldx #0
     jsr mulu16_sel
-    lda.z mulu16_sel.return_17
+    lda.z mulu16_sel.return_1
     sta.z mulu16_sel.return
-    lda.z mulu16_sel.return_17+1
+    lda.z mulu16_sel.return_1+1
     sta.z mulu16_sel.return+1
     lda.z x1
     sta.z mulu16_sel.v2
@@ -426,12 +426,7 @@ mulu16_sel: {
     .label v1 = 6
     .label v2 = 8
     .label return = 6
-    .label return_11 = $1b
-    .label return_14 = $1b
-    .label return_16 = $1b
-    .label return_17 = $1b
-    .label return_18 = $1b
-    .label return_20 = $1b
+    .label return_1 = $1b
     lda.z v1
     sta.z mul16u.a
     lda.z v1+1
@@ -448,9 +443,9 @@ mulu16_sel: {
     bne !-
   !e:
     lda.z __1+2
-    sta.z return_17
+    sta.z return_1
     lda.z __1+3
-    sta.z return_17+1
+    sta.z return_1+1
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
@@ -773,9 +768,9 @@ sin16s: {
     sta.z mulu16_sel.v2+1
     ldx #0
     jsr mulu16_sel
-    lda.z mulu16_sel.return_17
+    lda.z mulu16_sel.return_1
     sta.z mulu16_sel.return
-    lda.z mulu16_sel.return_17+1
+    lda.z mulu16_sel.return_1+1
     sta.z mulu16_sel.return+1
     lda.z x1
     sta.z mulu16_sel.v2
@@ -783,9 +778,9 @@ sin16s: {
     sta.z mulu16_sel.v2+1
     ldx #1
     jsr mulu16_sel
-    lda.z mulu16_sel.return_17
+    lda.z mulu16_sel.return_1
     sta.z mulu16_sel.return
-    lda.z mulu16_sel.return_17+1
+    lda.z mulu16_sel.return_1+1
     sta.z mulu16_sel.return+1
     ldx #1
     lda #<$10000/6
@@ -806,9 +801,9 @@ sin16s: {
     sta.z mulu16_sel.v2+1
     ldx #0
     jsr mulu16_sel
-    lda.z mulu16_sel.return_17
+    lda.z mulu16_sel.return_1
     sta.z mulu16_sel.return
-    lda.z mulu16_sel.return_17+1
+    lda.z mulu16_sel.return_1+1
     sta.z mulu16_sel.return+1
     lda.z x1
     sta.z mulu16_sel.v2

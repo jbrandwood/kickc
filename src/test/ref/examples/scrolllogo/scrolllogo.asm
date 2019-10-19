@@ -123,9 +123,7 @@ render_logo: {
     .label xpos = $16
     .label x_char = $18
     .label logo_idx = $b
-    .label logo_idx_4 = 2
-    .label logo_idx_11 = 2
-    .label logo_idx_14 = 2
+    .label logo_idx_1 = 2
     lda.z xpos
     and #7
     ora #VIC_MCM
@@ -200,11 +198,11 @@ render_logo: {
     eor #$ff
     clc
     adc #1
-    sta.z logo_idx_14
+    sta.z logo_idx_1
     ldy #0
   __b8:
     lda #$28
-    cmp.z logo_idx_11
+    cmp.z logo_idx_1
     bne __b9
   __b11:
     cpy #$28
@@ -221,30 +219,30 @@ render_logo: {
     iny
     jmp __b11
   __b9:
-    lda.z logo_idx_11
+    lda.z logo_idx_1
     sta SCREEN,y
     lda #$28*1
     clc
-    adc.z logo_idx_11
+    adc.z logo_idx_1
     sta SCREEN+$28*1,y
     lda #$28*2
     clc
-    adc.z logo_idx_11
+    adc.z logo_idx_1
     sta SCREEN+$28*2,y
     lda #$28*3
     clc
-    adc.z logo_idx_11
+    adc.z logo_idx_1
     sta SCREEN+$28*3,y
     lda #$28*4
     clc
-    adc.z logo_idx_11
+    adc.z logo_idx_1
     sta SCREEN+$28*4,y
     lda #$28*5
     clc
-    adc.z logo_idx_11
+    adc.z logo_idx_1
     sta SCREEN+$28*5,y
     iny
-    inc.z logo_idx_4
+    inc.z logo_idx_1
     jmp __b8
 }
 // Generate signed word sinus table - with values in the range min-max.
@@ -559,9 +557,9 @@ sin16s: {
     ldx #0
     jsr mulu16_sel
     lda.z mulu16_sel.return
-    sta.z mulu16_sel.return_10
+    sta.z mulu16_sel.return_1
     lda.z mulu16_sel.return+1
-    sta.z mulu16_sel.return_10+1
+    sta.z mulu16_sel.return_1+1
     lda.z x1
     sta.z mulu16_sel.v2
     lda.z x1+1
@@ -606,7 +604,6 @@ mulu16_sel: {
     .label v2 = $1d
     .label return = $21
     .label return_1 = $16
-    .label return_10 = $16
     lda.z v1
     sta.z mul16u.a
     lda.z v1+1

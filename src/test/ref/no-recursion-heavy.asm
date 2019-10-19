@@ -3,17 +3,8 @@
 .pc = $80d "Program"
   .label ba = 2
   .label bb = 3
-  .label bb_27 = 4
+  .label bb_1 = 4
   .label bc = 5
-  .label bb_100 = 4
-  .label bb_101 = 4
-  .label bb_102 = 4
-  .label bb_103 = 4
-  .label bb_104 = 4
-  .label bb_105 = 4
-  .label bb_106 = 4
-  .label bb_107 = 4
-  .label bb_108 = 4
 main: {
     lda #0
     sta.z ba
@@ -31,7 +22,7 @@ f0: {
     bne __b1
     inc.z bb
     lda.z bb
-    sta.z bb_100
+    sta.z bb_1
     jsr fa
   __b1:
     lda #1
@@ -39,7 +30,7 @@ f0: {
     bne __b2
     inc.z bb
     lda.z bb
-    sta.z bb_101
+    sta.z bb_1
     jsr fa
   __b2:
     lda #2
@@ -47,7 +38,7 @@ f0: {
     bne __b3
     inc.z bb
     lda.z bb
-    sta.z bb_102
+    sta.z bb_1
     jsr fa
   __b3:
     lda #3
@@ -55,7 +46,7 @@ f0: {
     bne __b4
     inc.z bb
     lda.z bb
-    sta.z bb_103
+    sta.z bb_1
     jsr fa
   __b4:
     lda #4
@@ -63,7 +54,7 @@ f0: {
     bne __b5
     inc.z bb
     lda.z bb
-    sta.z bb_104
+    sta.z bb_1
     jsr fa
   __b5:
     lda #5
@@ -71,7 +62,7 @@ f0: {
     bne __b6
     inc.z bb
     lda.z bb
-    sta.z bb_105
+    sta.z bb_1
     jsr fa
   __b6:
     lda #6
@@ -79,7 +70,7 @@ f0: {
     bne __b7
     inc.z bb
     lda.z bb
-    sta.z bb_106
+    sta.z bb_1
     jsr fa
   __b7:
     lda #7
@@ -87,7 +78,7 @@ f0: {
     bne __b8
     inc.z bb
     lda.z bb
-    sta.z bb_107
+    sta.z bb_1
     jsr fa
   __b8:
     lda #8
@@ -95,14 +86,14 @@ f0: {
     bne __b9
     inc.z bb
     lda.z bb
-    sta.z bb_108
+    sta.z bb_1
     jsr fa
   __b9:
     lda #9
     cmp.z ba
     bne __breturn
     lda #0
-    sta.z bb_27
+    sta.z bb_1
     jsr fa
     lda #0
     sta.z bb
@@ -111,7 +102,7 @@ f0: {
     rts
 }
 fa: {
-    lda.z bb_27
+    lda.z bb_1
     cmp #0
     bne __b1
     inx
@@ -119,63 +110,63 @@ fa: {
     jsr fb
   __b1:
     lda #1
-    cmp.z bb_27
+    cmp.z bb_1
     bne __b2
     inx
     stx.z bc
     jsr fb
   __b2:
     lda #2
-    cmp.z bb_27
+    cmp.z bb_1
     bne __b3
     inx
     stx.z bc
     jsr fb
   __b3:
     lda #3
-    cmp.z bb_27
+    cmp.z bb_1
     bne __b4
     inx
     stx.z bc
     jsr fb
   __b4:
     lda #4
-    cmp.z bb_27
+    cmp.z bb_1
     bne __b5
     inx
     stx.z bc
     jsr fb
   __b5:
     lda #5
-    cmp.z bb_27
+    cmp.z bb_1
     bne __b6
     inx
     stx.z bc
     jsr fb
   __b6:
     lda #6
-    cmp.z bb_27
+    cmp.z bb_1
     bne __b7
     inx
     stx.z bc
     jsr fb
   __b7:
     lda #7
-    cmp.z bb_27
+    cmp.z bb_1
     bne __b8
     inx
     stx.z bc
     jsr fb
   __b8:
     lda #8
-    cmp.z bb_27
+    cmp.z bb_1
     bne __b9
     inx
     stx.z bc
     jsr fb
   __b9:
     lda #9
-    cmp.z bb_27
+    cmp.z bb_1
     bne __breturn
     lda #0
     sta.z bc

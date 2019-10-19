@@ -5889,12 +5889,12 @@ make_plasma_charset: {
     jsr sid_rnd
     // [78] (byte) sid_rnd::return#2 ← (byte) sid_rnd::return#0 -- vbuz1=vbuz2 
     lda.z sid_rnd.return
-    sta.z sid_rnd.return_2
+    sta.z sid_rnd.return_1
     jmp __b13
     // make_plasma_charset::@13
   __b13:
     // [79] (byte~) make_plasma_charset::$6 ← (byte) sid_rnd::return#2 -- vbuz1=vbuz2 
-    lda.z sid_rnd.return_2
+    lda.z sid_rnd.return_1
     sta.z __6
     // [80] (byte~) make_plasma_charset::$7 ← (byte~) make_plasma_charset::$6 & (byte) $ff -- vbuz1=vbuz2_band_vbuc1 
     lda #$ff
@@ -5933,7 +5933,7 @@ make_plasma_charset: {
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
     .label return = $5c
-    .label return_2 = $59
+    .label return_1 = $59
     // [85] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC) -- vbuz1=_deref_pbuc1 
     lda SID_VOICE3_OSC
     sta.z return
@@ -6138,16 +6138,16 @@ init_angle_screen: {
     jsr atan2_16
     // [114] (word) atan2_16::return#2 ← (word) atan2_16::return#0 -- vwuz1=vwuz2 
     lda.z atan2_16.return
-    sta.z atan2_16.return_2
+    sta.z atan2_16.return_1
     lda.z atan2_16.return+1
-    sta.z atan2_16.return_2+1
+    sta.z atan2_16.return_1+1
     jmp __b5
     // init_angle_screen::@5
   __b5:
     // [115] (word) init_angle_screen::angle_w#0 ← (word) atan2_16::return#2 -- vwuz1=vwuz2 
-    lda.z atan2_16.return_2
+    lda.z atan2_16.return_1
     sta.z angle_w
-    lda.z atan2_16.return_2+1
+    lda.z atan2_16.return_1+1
     sta.z angle_w+1
     // [116] (word~) init_angle_screen::$11 ← (word) init_angle_screen::angle_w#0 + (byte) $80 -- vwuz1=vwuz2_plus_vbuc1 
     lda #$80
@@ -6217,16 +6217,12 @@ atan2_16: {
     .label xd = $2b
     .label yd = $29
     .label shift = $28
-    .label angle_2 = $24
-    .label angle_3 = $24
+    .label angle_1 = $24
     .label i = $23
     .label return = $26
     .label x = $64
     .label y = $66
-    .label return_2 = $68
-    .label angle_6 = $24
-    .label angle_12 = $24
-    .label angle_13 = $24
+    .label return_1 = $68
     // [127] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1 -- vwsz1_ge_0_then_la1 
     lda.z y+1
     bpl __b1
@@ -6273,9 +6269,9 @@ atan2_16: {
   __b10_from___b6:
     // [133] phi (word) atan2_16::angle#12 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#0] -- vwuz1=vbuc1 
     lda #<0
-    sta.z angle_12
+    sta.z angle_1
     lda #>0
-    sta.z angle_12+1
+    sta.z angle_1+1
     // [133] phi (byte) atan2_16::i#2 = (byte) 0 [phi:atan2_16::@6->atan2_16::@10#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -6297,10 +6293,10 @@ atan2_16: {
     // atan2_16::@12
   __b12:
     // [136] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 >> (byte) 1 -- vwuz1=vwuz2_ror_1 
-    lda.z angle_6+1
+    lda.z angle_1+1
     lsr
     sta.z angle+1
-    lda.z angle_6
+    lda.z angle_1
     ror
     sta.z angle
     // [137] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7 -- vwsz1_ge_0_then_la1 
@@ -6435,12 +6431,12 @@ atan2_16: {
     // [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$24) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
     ldy.z __24
     sec
-    lda.z angle_3
+    lda.z angle_1
     sbc CORDIC_ATAN2_ANGLES_16,y
-    sta.z angle_3
-    lda.z angle_3+1
+    sta.z angle_1
+    lda.z angle_1+1
     sbc CORDIC_ATAN2_ANGLES_16+1,y
-    sta.z angle_3+1
+    sta.z angle_1+1
     // [158] phi from atan2_16::@18 atan2_16::@20 to atan2_16::@19 [phi:atan2_16::@18/atan2_16::@20->atan2_16::@19]
   __b19_from___b18:
   __b19_from___b20:
@@ -6488,12 +6484,12 @@ atan2_16: {
     // [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuz2 
     ldy.z __23
     clc
-    lda.z angle_2
+    lda.z angle_1
     adc CORDIC_ATAN2_ANGLES_16,y
-    sta.z angle_2
-    lda.z angle_2+1
+    sta.z angle_1
+    lda.z angle_1+1
     adc CORDIC_ATAN2_ANGLES_16+1,y
-    sta.z angle_2+1
+    sta.z angle_1+1
     jmp __b19_from___b18
     // atan2_16::@14
   __b14:
@@ -6623,16 +6619,16 @@ init_dist_screen: {
     jsr sqr
     // [180] (word) sqr::return#2 ← (word) sqr::return#0 -- vwuz1=vwuz2 
     lda.z sqr.return
-    sta.z sqr.return_2
+    sta.z sqr.return_1
     lda.z sqr.return+1
-    sta.z sqr.return_2+1
+    sta.z sqr.return_1+1
     jmp __b12
     // init_dist_screen::@12
   __b12:
     // [181] (word) init_dist_screen::yds#0 ← (word) sqr::return#2 -- vwuz1=vwuz2 
-    lda.z sqr.return_2
+    lda.z sqr.return_1
     sta.z yds
-    lda.z sqr.return_2+1
+    lda.z sqr.return_1+1
     sta.z yds+1
     // [182] phi from init_dist_screen::@12 to init_dist_screen::@5 [phi:init_dist_screen::@12->init_dist_screen::@5]
   __b5_from___b12:
@@ -6714,16 +6710,16 @@ init_dist_screen: {
     jsr sqr
     // [195] (word) sqr::return#3 ← (word) sqr::return#0 -- vwuz1=vwuz2 
     lda.z sqr.return
-    sta.z sqr.return_3
+    sta.z sqr.return_2
     lda.z sqr.return+1
-    sta.z sqr.return_3+1
+    sta.z sqr.return_2+1
     jmp __b13
     // init_dist_screen::@13
   __b13:
     // [196] (word) init_dist_screen::xds#0 ← (word) sqr::return#3 -- vwuz1=vwuz2 
-    lda.z sqr.return_3
+    lda.z sqr.return_2
     sta.z xds
-    lda.z sqr.return_3+1
+    lda.z sqr.return_2+1
     sta.z xds+1
     // [197] (word) init_dist_screen::ds#0 ← (word) init_dist_screen::xds#0 + (word) init_dist_screen::yds#0 -- vwuz1=vwuz2_plus_vwuz3 
     lda.z xds
@@ -6742,12 +6738,12 @@ init_dist_screen: {
     jsr sqrt
     // [200] (byte) sqrt::return#2 ← (byte) sqrt::return#0 -- vbuz1=vbuz2 
     lda.z sqrt.return
-    sta.z sqrt.return_2
+    sta.z sqrt.return_1
     jmp __b14
     // init_dist_screen::@14
   __b14:
     // [201] (byte) init_dist_screen::d#0 ← (byte) sqrt::return#2 -- vbuz1=vbuz2 
-    lda.z sqrt.return_2
+    lda.z sqrt.return_1
     sta.z d
     // [202] *((byte*) init_dist_screen::screen_topline#11 + (byte) init_dist_screen::x#2) ← (byte) init_dist_screen::d#0 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z d
@@ -6800,7 +6796,7 @@ sqrt: {
     .label found = $88
     .label return = $8e
     .label val = $80
-    .label return_2 = $82
+    .label return_1 = $82
     // [210] (word) bsearch16u::key#0 ← (word) sqrt::val#0 -- vwuz1=vwuz2 
     lda.z val
     sta.z bsearch16u.key
@@ -6817,16 +6813,16 @@ sqrt: {
     jsr bsearch16u
     // [213] (word*) bsearch16u::return#3 ← (word*) bsearch16u::return#1 -- pwuz1=pwuz2 
     lda.z bsearch16u.return
-    sta.z bsearch16u.return_3
+    sta.z bsearch16u.return_1
     lda.z bsearch16u.return+1
-    sta.z bsearch16u.return_3+1
+    sta.z bsearch16u.return_1+1
     jmp __b1
     // sqrt::@1
   __b1:
     // [214] (word*) sqrt::found#0 ← (word*) bsearch16u::return#3 -- pwuz1=pwuz2 
-    lda.z bsearch16u.return_3
+    lda.z bsearch16u.return_1
     sta.z found
-    lda.z bsearch16u.return_3+1
+    lda.z bsearch16u.return_1+1
     sta.z found+1
     // [215] (word~) sqrt::$3 ← (word*) sqrt::found#0 - (word*)(void*) SQUARES#1 -- vwuz1=pwuz2_minus_pwuz3 
     lda.z found
@@ -6869,7 +6865,7 @@ bsearch16u: {
     .label num = $38
     .label items = $36
     .label key = $84
-    .label return_3 = $86
+    .label return_1 = $86
     // [220] phi from bsearch16u to bsearch16u::@3 [phi:bsearch16u->bsearch16u::@3]
   __b3_from_bsearch16u:
     // [220] phi (word*) bsearch16u::items#2 = (word*) bsearch16u::items#1 [phi:bsearch16u->bsearch16u::@3#0] -- register_copy 
@@ -7011,8 +7007,8 @@ sqr: {
     .label __0 = $95
     .label return = $96
     .label val = $39
-    .label return_2 = $75
-    .label return_3 = $7a
+    .label return_1 = $75
+    .label return_2 = $7a
     // [239] (byte~) sqr::$0 ← (byte) sqr::val#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z val
     asl
@@ -9049,9 +9045,9 @@ init_dist_screen: {
     jsr sqr
     // [180] (word) sqr::return#2 ← (word) sqr::return#0 -- vwuz1=vwuz2 
     lda.z sqr.return
-    sta.z sqr.return_2
+    sta.z sqr.return_1
     lda.z sqr.return+1
-    sta.z sqr.return_2+1
+    sta.z sqr.return_1+1
     jmp __b12
     // init_dist_screen::@12
   __b12:
@@ -9378,7 +9374,7 @@ bsearch16u: {
 // sqr(byte register(A) val)
 sqr: {
     .label return = $16
-    .label return_2 = $14
+    .label return_1 = $14
     // [239] (byte~) sqr::$0 ← (byte) sqr::val#2 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // [240] (word) sqr::return#0 ← *((word*)(void*) SQUARES#1 + (byte~) sqr::$0) -- vwuz1=pwuz2_derefidx_vbuaa 
@@ -10210,7 +10206,7 @@ FINAL SYMBOL TABLE
 (label) sqr::@return
 (word) sqr::return
 (word) sqr::return#0 return zp[2]:22 28.5
-(word) sqr::return#2 zp[2]:20 22.0
+(word) sqr::return#2 return_1 zp[2]:20 22.0
 (word) sqr::return#3 return zp[2]:22 202.0
 (byte) sqr::val
 (byte) sqr::val#0 reg byte a 22.0
@@ -11444,9 +11440,9 @@ init_dist_screen: {
     // sqr(yd)
     // [180] (word) sqr::return#2 ← (word) sqr::return#0 -- vwuz1=vwuz2 
     lda.z sqr.return
-    sta.z sqr.return_2
+    sta.z sqr.return_1
     lda.z sqr.return+1
-    sta.z sqr.return_2+1
+    sta.z sqr.return_1+1
     // init_dist_screen::@12
     // yds = sqr(yd)
     // [181] (word) init_dist_screen::yds#0 ← (word) sqr::return#2
@@ -11763,7 +11759,7 @@ bsearch16u: {
 // sqr(byte register(A) val)
 sqr: {
     .label return = $16
-    .label return_2 = $14
+    .label return_1 = $14
     // return SQUARES[val];
     // [239] (byte~) sqr::$0 ← (byte) sqr::val#2 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl

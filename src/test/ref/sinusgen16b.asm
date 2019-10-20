@@ -14,13 +14,13 @@
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
   .label print_line_cursor = $400
-  .label rem16u = 6
+  .label rem16u = 3
   .label print_char_cursor = $1f
 main: {
     .label wavelength = $78
-    .label sw = $1d
-    .label st1 = 6
-    .label st2 = $e
+    .label sw = $19
+    .label st1 = 3
+    .label st2 = $b
     jsr sin16s_gen
     jsr sin16s_genb
     jsr print_cls
@@ -86,9 +86,9 @@ main: {
     sintab2: .fill 2*$78, 0
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage($15) str)
+// print_str(byte* zeropage($11) str)
 print_str: {
-    .label str = $15
+    .label str = $11
   __b1:
     ldy #0
     lda (str),y
@@ -110,9 +110,9 @@ print_str: {
     jmp __b1
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage($1d) w)
+// print_sword(signed word zeropage($19) w)
 print_sword: {
-    .label w = $1d
+    .label w = $19
     lda.z w+1
     bmi __b1
     lda #' '
@@ -144,9 +144,9 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage($1d) w)
+// print_word(word zeropage($19) w)
 print_word: {
-    .label w = $1d
+    .label w = $19
     lda.z w+1
     sta.z print_byte.b
     jsr print_byte
@@ -156,9 +156,9 @@ print_word: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage($10) b)
+// print_byte(byte zeropage(2) b)
 print_byte: {
-    .label b = $10
+    .label b = 2
     lda.z b
     lsr
     lsr
@@ -185,7 +185,7 @@ memset: {
     .const num = $3e8
     .label str = print_line_cursor
     .label end = str+num
-    .label dst = 6
+    .label dst = 3
     lda #<str
     sta.z dst
     lda #>str
@@ -211,13 +211,13 @@ memset: {
 // Generate signed (large) word sinus table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_genb(signed word* zeropage($15) sintab)
+// sin16s_genb(signed word* zeropage($11) sintab)
 sin16s_genb: {
     .label __3 = $1f
-    .label step = $17
-    .label sintab = $15
-    .label x = $a
-    .label i = $e
+    .label step = $13
+    .label sintab = $11
+    .label x = 7
+    .label i = $b
     jsr div32u16u
     lda #<main.sintab2
     sta.z sintab
@@ -282,18 +282,18 @@ sin16s_genb: {
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16sb(word zeropage($1d) x)
+// sin16sb(word zeropage($19) x)
 sin16sb: {
-    .label x = $1d
+    .label x = $19
     .label return = $1f
-    .label x1 = $1d
-    .label x2 = 6
-    .label x3 = 6
-    .label x3_6 = $1b
+    .label x1 = $19
+    .label x2 = 3
+    .label x3 = 3
+    .label x3_6 = $17
     .label usinx = $1f
-    .label x4 = 6
-    .label x5 = $1b
-    .label x5_128 = $1b
+    .label x4 = 3
+    .label x5 = $17
+    .label x5_128 = $17
     .label sinx = $1f
     lda.z x+1
     cmp #>PI_u4f12
@@ -419,14 +419,14 @@ sin16sb: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage(6) v1, word zeropage(8) v2, byte register(X) select)
+// mulu16_sel(word zeropage(3) v1, word zeropage(5) v2, byte register(X) select)
 mulu16_sel: {
-    .label __0 = $11
-    .label __1 = $11
-    .label v1 = 6
-    .label v2 = 8
-    .label return = 6
-    .label return_1 = $1b
+    .label __0 = $d
+    .label __1 = $d
+    .label v1 = 3
+    .label v2 = 5
+    .label return = 3
+    .label return_1 = $17
     lda.z v1
     sta.z mul16u.a
     lda.z v1+1
@@ -449,13 +449,13 @@ mulu16_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($1b) a, word zeropage(8) b)
+// mul16u(word zeropage($17) a, word zeropage(5) b)
 mul16u: {
-    .label a = $1b
-    .label mb = 2
-    .label res = $11
-    .label b = 8
-    .label return = $11
+    .label a = $17
+    .label mb = $1b
+    .label res = $d
+    .label b = 5
+    .label return = $d
     lda.z b
     sta.z mb
     lda.z b+1
@@ -503,9 +503,9 @@ mul16u: {
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
 // The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
-    .label quotient_hi = $1d
-    .label quotient_lo = $1b
-    .label return = $17
+    .label quotient_hi = $19
+    .label quotient_lo = $17
+    .label return = $13
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
     lda #>PI2_u4f28>>$10
@@ -537,12 +537,12 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(8) dividend, word zeropage(6) rem)
+// divr16u(word zeropage(5) dividend, word zeropage(3) rem)
 divr16u: {
-    .label rem = 6
-    .label dividend = 8
-    .label quotient = $1b
-    .label return = $1b
+    .label rem = 3
+    .label dividend = 5
+    .label quotient = $17
+    .label return = $17
     ldx #0
     txa
     sta.z quotient
@@ -590,13 +590,13 @@ divr16u: {
 // Generate signed (large) word sinus table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen(signed word* zeropage($e) sintab)
+// sin16s_gen(signed word* zeropage($b) sintab)
 sin16s_gen: {
-    .label __2 = $15
-    .label step = $17
-    .label sintab = $e
-    .label x = $a
-    .label i = $1d
+    .label __2 = $11
+    .label step = $13
+    .label sintab = $b
+    .label x = 7
+    .label i = $19
     jsr div32u16u
     lda #<main.sintab1
     sta.z sintab
@@ -665,21 +665,20 @@ sin16s_gen: {
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zeropage($11) x)
+// sin16s(dword zeropage($d) x)
 sin16s: {
-    .label __4 = $11
-    .label x = $11
-    .label return = $15
+    .label __4 = $1b
+    .label x = $d
+    .label return = $11
     .label x1 = $1f
-    .label x2 = 6
-    .label x3 = 6
-    .label x3_6 = $1b
-    .label usinx = $15
-    .label x4 = 6
-    .label x5 = $1b
-    .label x5_128 = $1b
-    .label sinx = $15
-    .label isUpper = $10
+    .label x2 = 3
+    .label x3 = 3
+    .label x3_6 = $17
+    .label usinx = $11
+    .label x4 = 3
+    .label x5 = $17
+    .label x5_128 = $17
+    .label sinx = $11
     lda.z x+3
     cmp #>PI_u4f28>>$10
     bcc b1
@@ -709,12 +708,10 @@ sin16s: {
     lda.z x+3
     sbc #>PI_u4f28>>$10
     sta.z x+3
-    lda #1
-    sta.z isUpper
+    ldy #1
     jmp __b1
   b1:
-    lda #0
-    sta.z isUpper
+    ldy #0
   __b1:
     lda.z x+3
     cmp #>PI_HALF_u4f28>>$10
@@ -746,14 +743,26 @@ sin16s: {
     sbc.z x+3
     sta.z x+3
   __b2:
-    ldy #3
-  !:
+    lda.z x
+    asl
+    sta.z __4
+    lda.z x+1
+    rol
+    sta.z __4+1
+    lda.z x+2
+    rol
+    sta.z __4+2
+    lda.z x+3
+    rol
+    sta.z __4+3
     asl.z __4
     rol.z __4+1
     rol.z __4+2
     rol.z __4+3
-    dey
-    bne !-
+    asl.z __4
+    rol.z __4+1
+    rol.z __4+2
+    rol.z __4+3
     lda.z __4+2
     sta.z x1
     lda.z __4+3
@@ -826,8 +835,7 @@ sin16s: {
     lda.z usinx+1
     adc.z x5_128+1
     sta.z usinx+1
-    lda.z isUpper
-    cmp #0
+    cpy #0
     beq __b3
     sec
     lda #0

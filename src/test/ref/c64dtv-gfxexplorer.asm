@@ -1562,17 +1562,17 @@ gfx_init_plane_fill: {
     .label plane_addr = 2
     .label fill = 8
     lda.z plane_addr
+    asl
     sta.z __0
     lda.z plane_addr+1
+    rol
     sta.z __0+1
     lda.z plane_addr+2
+    rol
     sta.z __0+2
     lda.z plane_addr+3
+    rol
     sta.z __0+3
-    asl.z __0
-    rol.z __0+1
-    rol.z __0+2
-    rol.z __0+3
     asl.z __0
     rol.z __0+1
     rol.z __0+2

@@ -424,7 +424,44 @@ public class Pass4CodeGeneration {
    }
 
    /**
-    * Add data directives for constants declarations
+    * Add label declarations for all scope variables assigned to memory registers (before the scope code)
+    *
+    * @param asm The ASM program
+    * @param scope The scope
+    */
+   private void addMemLabels(AsmProgram asm, ScopeRef scope) {
+      Collection<Variable> scopeVars = program.getScope().getScope(scope).getAllVariables(false);
+      Set<String> added = new LinkedHashSet<>();
+      for(Variable scopeVar : scopeVars) {
+         Registers.Register register = scopeVar.getAllocation();
+         if(register != null) {
+            if(register.isZp()) {
+               Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
+               String asmName = scopeVar.getAsmName();
+               if(asmName != null && !added.contains(asmName)) {
+                  // Add any comments
+                  generateComments(asm, scopeVar.getComments());
+                  // Add the label declaration
+                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(registerZp.getZp()));
+                  added.add(asmName);
+               }
+            } else if(register instanceof Registers.RegisterMainMem && scopeVar.getDeclaredMemoryAddress() != null) {
+               String asmName = scopeVar.getAsmName();
+               if(asmName != null && !added.contains(asmName)) {
+                  // Add any comments
+                  generateComments(asm, scopeVar.getComments());
+                  // Add the label declaration
+                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(scopeVar.getDeclaredMemoryAddress()));
+                  added.add(asmName);
+               }
+            }
+         }
+      }
+   }
+
+
+   /**
+    * Add data for a scope (after the code)
     *
     * @param asm The ASM program
     * @param scopeRef The scope
@@ -470,7 +507,7 @@ public class Pass4CodeGeneration {
             if(variable.isStoragePhiMaster())
                continue;
             // Skip if already added
-            String asmName = variable.getAsmName() == null ? variable.getLocalName() : variable.getAsmName();
+            String asmName = variable.getAsmName();
             if(added.contains(asmName)) {
                continue;
             }
@@ -486,7 +523,6 @@ public class Pass4CodeGeneration {
                   if(!registerMainMem.getVariableRef().equals(variable.getRef())) {
                      continue;
                   }
-
                   // Generate into the data segment
                   // Set segment
                   setCurrentSegment(variable.getDataSegment(), asm);
@@ -677,54 +713,6 @@ public class Pass4CodeGeneration {
       }
    }
 
-   /**
-    * Add label declarations for all scope variables assigned to memory registers
-    *
-    * @param asm The ASM program
-    * @param scope The scope
-    */
-   private void addMemLabels(AsmProgram asm, ScopeRef scope) {
-      Collection<Variable> scopeVars = program.getScope().getScope(scope).getAllVariables(false);
-      Set<String> added = new LinkedHashSet<>();
-      for(Variable scopeVar : scopeVars) {
-         Registers.Register register = scopeVar.getAllocation();
-         if(register != null)
-            if(register.isZp()) {
-               Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
-               String asmName = scopeVar.getAsmName();
-               if(asmName != null && !added.contains(asmName)) {
-                  // Add any comments
-                  generateComments(asm, scopeVar.getComments());
-                  // Add the label declaration
-                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(registerZp.getZp()));
-                  added.add(asmName);
-               }
-            } else if(register instanceof Registers.RegisterMainMem && scopeVar.getDeclaredMemoryAddress() != null) {
-               String asmName = scopeVar.getAsmName();
-               if(asmName != null && !added.contains(asmName)) {
-                  // Add any comments
-                  generateComments(asm, scopeVar.getComments());
-                  // Add the label declaration
-                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(scopeVar.getDeclaredMemoryAddress()));
-                  added.add(asmName);
-               }
-            } else if(register instanceof Registers.RegisterMainMem && !((Registers.RegisterMainMem) register).getVariableRef().equals(scopeVar.getRef())) {
-               // Memory variable is not main var in the equivalence class - add a reference
-               String asmName = scopeVar.getAsmName();
-               Registers.RegisterMainMem memAllocation = (Registers.RegisterMainMem) register;
-               VariableRef memAllocationVarRef = memAllocation.getVariableRef();
-               Variable memAllocationVar = getScope().getVariable(memAllocationVarRef);
-               // Add the label declaration
-               String asmNameMemAllocVar = AsmFormat.getAsmParamName(memAllocationVar, scope);
-               if(!asmName.equals(asmNameMemAllocVar)) {
-                  // Add any comments
-                  generateComments(asm, scopeVar.getComments());
-                  asm.addLabelDecl(AsmFormat.asmFix(asmName), asmNameMemAllocVar);
-                  added.add(asmName);
-               }
-            }
-      }
-   }
 
    private void genStatements(AsmProgram asm, ControlFlowBlock block) {
       Iterator<Statement> statementsIt = block.getStatements().iterator();

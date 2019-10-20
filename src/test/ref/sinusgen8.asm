@@ -11,7 +11,6 @@
   .label print_char_cursor = 2
 main: {
     .label wavelength = $c0
-    .label sb = 4
     jsr sin8s_gen
     jsr print_cls
     lda #<print_line_cursor
@@ -23,27 +22,14 @@ main: {
     lda sintab2,x
     sec
     sbc sintabref,x
-    sta.z sb
-    bmi __b2
-    lda #<str1
-    sta.z print_str.str
-    lda #>str1
-    sta.z print_str.str+1
-    jsr print_str
-  __b2:
+    sta.z print_sbyte.b
     jsr print_sbyte
-    lda #<str
-    sta.z print_str.str
-    lda #>str
-    sta.z print_str.str+1
     jsr print_str
     inx
     cpx #$c0
     bne __b1
     rts
     str: .text "  "
-    .byte 0
-    str1: .text " "
     .byte 0
     sintab2: .fill $c0, 0
     // .fill $c0, round(127.5*sin(i*2*PI/$c0))
@@ -53,6 +39,10 @@ main: {
 // print_str(byte* zeropage(6) str)
 print_str: {
     .label str = 6
+    lda #<main.str
+    sta.z str
+    lda #>main.str
+    sta.z str+1
   __b1:
     ldy #0
     lda (str),y

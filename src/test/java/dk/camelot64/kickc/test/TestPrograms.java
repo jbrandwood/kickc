@@ -48,7 +48,7 @@ public class TestPrograms {
    }
 
    @Test
-   public void testDeclaredSsaVar8() throws IOException, URISyntaxException {
+   public void testDeclaredSsaVar0() throws IOException, URISyntaxException {
       compileAndCompare("declared-ssa-var-0");
    }
 

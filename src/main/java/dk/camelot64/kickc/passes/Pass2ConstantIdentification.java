@@ -202,7 +202,6 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                ConstantValue constant = getConstant(assignment.getrValue2());
                if(assignment.getrValue1() == null && assignment.getOperator() == null && constant != null) {
                   constants.put(varRef, new ConstantVariableValue(varRef, constant, assignment));
-                  throw new CompileError("Encountered constant variable! " + variable.toString(), statementLValue);
                }
             }
          }

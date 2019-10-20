@@ -42,6 +42,7 @@ public class Variable extends SymbolVariable {
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       this.setDeclaredNotRegister(phiMaster.isDeclaredAsNotRegister());
+      this.setConstantDeclaration(phiMaster.getConstantDeclaration());
       this.setDeclaredRegister(phiMaster.getDeclaredRegister());
       this.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
       this.setDeclaredExport(phiMaster.isDeclaredExport());

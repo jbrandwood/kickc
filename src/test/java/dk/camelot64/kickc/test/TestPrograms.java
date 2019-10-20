@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testDeclaredNotConstVar8() throws IOException, URISyntaxException {
+      compileAndCompare("declared-notconst-var-0");
+   }
+
+   @Test
    public void testDeclaredSsaVar8() throws IOException, URISyntaxException {
       compileAndCompare("declared-ssa-var-0");
    }

@@ -129,17 +129,26 @@ public class DirectiveParserContext {
    public DirectiveParserContext() {
       this.statementDirectives = null;
       // Setup default directives
-      this.defaultDirectives = new ArrayList<>();
-      this.defaultDirectives.add(new Directive.MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null));
-      this.defaultDirectives.add(new Directive.FormSsa(true));
-      this.defaultDirectives.add(new Directive.Const(SymbolVariable.ConstantDeclaration.MAYBE_CONST));
+      this.defaultDirectives = Arrays.asList(
+            new Directive.MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null),
+            new Directive.FormSsa(true),
+            new Directive.Const(SymbolVariable.ConstantDeclaration.MAYBE_CONST)
+      );
       this.registerImpliesDirectives = new ArrayList<>();
       this.typeDirectives = new HashMap<>();
-      this.typeDirectives.put(DirectiveType.ARRAY, Arrays.asList(new Directive.Const(SymbolVariable.ConstantDeclaration.CONST), new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null)));
-      //this.typeDirectives.put(DirectiveType.POINTER, Arrays.asList(new Directive.MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null)));
+      this.typeDirectives.put(DirectiveType.ARRAY, Arrays.asList(
+            new Directive.Const(SymbolVariable.ConstantDeclaration.CONST),
+            new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null)
+      ));
+      this.typeDirectives.put(DirectiveType.POINTER, Arrays.asList(
+            new Directive.MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null)
+      ));
       this.scopeDirectives = new HashMap<>();
+      //this.scopeDirectives.put(DirectiveScope.GLOBAL, Arrays.asList(
+      //      new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null),
+      //      new Directive.FormSsa(false)
+      //));
       this.scopeTypeDirectives = new HashMap<>();
-      //this.scopeDirectives.put(DirectiveScope.GLOBAL, Arrays.asList(new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null), new Directive.FormSsa(false)));
    }
 
    /**
@@ -158,7 +167,7 @@ public class DirectiveParserContext {
       if(ssaDirective != null) {
          if(ssaDirective.ssa) {
             lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_MASTER);
-         }  else {
+         } else {
             lValue.setStorageStrategy(SymbolVariable.StorageStrategy.LOAD_STORE);
          }
       }
@@ -201,7 +210,7 @@ public class DirectiveParserContext {
                Registers.Register register = new Registers.RegisterZpMem(memoryAreaDirective.address.intValue(), -1, true);
                lValue.setDeclaredRegister(register);
             } else {
-               Registers.Register register = new Registers.RegisterMainMem((VariableRef)lValue.getRef(), -1, memoryAreaDirective.address);
+               Registers.Register register = new Registers.RegisterMainMem((VariableRef) lValue.getRef(), -1, memoryAreaDirective.address);
                lValue.setDeclaredRegister(register);
             }
          }

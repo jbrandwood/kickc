@@ -23,7 +23,7 @@ public abstract class SymbolVariable implements Symbol {
    /** true if the symbol type is infered (not declared) */
    private boolean inferredType;
 
-   /** A short name used for the variable in ASM code. If possible variable names of ZP variables are shortened in ASM code. This is possible, when all versions of the var use the same register. */
+   /** A short name used for the variable in ASM code. If possible variable names of variables are shortened in ASM code. This is possible, when several versions of the var use the same register. */
    private String asmName;
 
    /** Specifies that the variable is declared a constant. It will be replaced by a ConstantVar when possible. */
@@ -80,7 +80,6 @@ public abstract class SymbolVariable implements Symbol {
 
    /** The data segment to put the variable into (if it is allocated in memory). */
    private String dataSegment;
-
 
    public SymbolVariable(String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, MemoryArea memoryArea, String dataSegment) {
       this.name = name;

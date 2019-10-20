@@ -105,7 +105,7 @@ public class Pass4CodeGeneration {
       // Generate global ZP labels
       asm.startChunk(currentScope, null, "Global Constants & labels");
       addConstants(asm, currentScope);
-      addZpLabels(asm, currentScope);
+      addMemLabels(asm, currentScope);
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          if(!block.getScope().equals(currentScope)) {
             // The current block is in a different scope. End the old scope.
@@ -128,7 +128,7 @@ public class Pass4CodeGeneration {
             asm.addScopeBegin(AsmFormat.asmFix(block.getLabel().getFullName()));
             // Add all ZP labels for the scope
             addConstants(asm, currentScope);
-            addZpLabels(asm, currentScope);
+            addMemLabels(asm, currentScope);
          }
 
          generateComments(asm, block.getComments());
@@ -474,13 +474,13 @@ public class Pass4CodeGeneration {
             if(added.contains(asmName)) {
                continue;
             }
-            if(variable.isStorageLoadStore() || variable.isStoragePhiVersion() || variable.isStorageIntermediate()){
+            if(variable.isStorageLoadStore() || variable.isStoragePhiVersion() || variable.isStorageIntermediate()) {
                if(variable.getDeclaredMemoryAddress() == null) {
                   Registers.Register allocation = variable.getAllocation();
                   if(allocation instanceof Registers.RegisterCpuByte)
                      continue;
                   if(!(allocation instanceof Registers.RegisterMainMem)) {
-                     throw new InternalError("Expected main memory allocation "+variable.toString(program));
+                     throw new InternalError("Expected main memory allocation " + variable.toString(program));
                   }
                   Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
                   if(!registerMainMem.getVariableRef().equals(variable.getRef())) {
@@ -503,7 +503,7 @@ public class Pass4CodeGeneration {
                   asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
                }
             } else {
-               throw new InternalError("Not handled variable storage "+variable.toString());
+               throw new InternalError("Not handled variable storage " + variable.toString());
             }
             added.add(asmName);
          }
@@ -678,12 +678,12 @@ public class Pass4CodeGeneration {
    }
 
    /**
-    * Add label declarations for all scope variables assigned to ZP registers
+    * Add label declarations for all scope variables assigned to memory registers
     *
     * @param asm The ASM program
     * @param scope The scope
     */
-   private void addZpLabels(AsmProgram asm, ScopeRef scope) {
+   private void addMemLabels(AsmProgram asm, ScopeRef scope) {
       Collection<Variable> scopeVars = program.getScope().getScope(scope).getAllVariables(false);
       Set<String> added = new LinkedHashSet<>();
       for(Variable scopeVar : scopeVars) {

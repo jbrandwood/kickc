@@ -298,6 +298,30 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveConst(KickCParser.DirectiveConstContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code directiveNotConst}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveNotConst}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveMaybeConst}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveMaybeConst}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code directiveExtern}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -345,18 +369,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code directiveNotRegister}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveNotRegister(KickCParser.DirectiveNotRegisterContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code directiveNotRegister}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveNotRegister(KickCParser.DirectiveNotRegisterContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveMemoryAreaZp}
 	 * labeled alternative in {@link KickCParser#directive}.

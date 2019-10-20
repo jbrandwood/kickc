@@ -78,7 +78,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                   Variable var = (Variable) symbol;
                   Variable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getMemoryArea(), var.getDataSegment());
                   unwound.setDeclaredAlignment(var.getDeclaredAlignment());
-                  unwound.setDeclaredConstant(var.isDeclaredConstant());
+                  unwound.setConstantDeclaration(var.getConstantDeclaration());
                   unwound.setDeclaredVolatile(var.isDeclaredVolatile());
                   unwound.setInferedVolatile(var.isInferedVolatile());
                   unwound.setDeclaredRegister((var.getDeclaredRegister()));

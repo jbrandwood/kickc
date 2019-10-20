@@ -183,6 +183,20 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDirectiveConst(KickCParser.DirectiveConstContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code directiveNotConst}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code directiveMaybeConst}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code directiveExtern}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -210,13 +224,6 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code directiveNotRegister}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDirectiveNotRegister(KickCParser.DirectiveNotRegisterContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code directiveMemoryAreaZp}
 	 * labeled alternative in {@link KickCParser#directive}.

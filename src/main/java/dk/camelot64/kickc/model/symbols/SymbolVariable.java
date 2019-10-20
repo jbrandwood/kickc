@@ -26,8 +26,13 @@ public abstract class SymbolVariable implements Symbol {
    /** A short name used for the variable in ASM code. If possible variable names of variables are shortened in ASM code. This is possible, when several versions of the var use the same register. */
    private String asmName;
 
+   /** Specifies whether the symbol is declared to be constant, never constant or maybe constant. */
+   public enum ConstantDeclaration {
+      CONST, NOT_CONST, MAYBE_CONST
+   }
+
    /** Specifies that the variable is declared a constant. It will be replaced by a ConstantVar when possible. */
-   private boolean declaredConstant;
+   private ConstantDeclaration constantDeclaration;
 
    /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. */
    private Integer declaredAlignment;
@@ -87,6 +92,7 @@ public abstract class SymbolVariable implements Symbol {
       this.dataSegment = dataSegment;
       this.storageStrategy = storageStrategy;
       this.memoryArea = memoryArea;
+      this.constantDeclaration = ConstantDeclaration.MAYBE_CONST;
       setFullName();
    }
 
@@ -165,12 +171,20 @@ public abstract class SymbolVariable implements Symbol {
       }
    }
 
-   public boolean isDeclaredConstant() {
-      return declaredConstant;
+   public void setConstantDeclaration(ConstantDeclaration constantDeclaration) {
+      this.constantDeclaration = constantDeclaration;
    }
 
-   public void setDeclaredConstant(boolean declaredConstant) {
-      this.declaredConstant = declaredConstant;
+   public ConstantDeclaration getConstantDeclaration() {
+      return constantDeclaration;
+   }
+
+   public boolean isDeclaredConstant() {
+      return ConstantDeclaration.CONST.equals(constantDeclaration);
+   }
+
+   public boolean isDeclaredNotConstant() {
+      return ConstantDeclaration.NOT_CONST.equals(constantDeclaration);
    }
 
    public Integer getDeclaredAlignment() {
@@ -206,7 +220,7 @@ public abstract class SymbolVariable implements Symbol {
    }
 
    public boolean isVolatile() {
-      return declaredVolatile || inferedVolatile || isStorageLoadStore();
+      return declaredVolatile || inferedVolatile;
    }
 
    public boolean isDeclaredExport() {

@@ -303,7 +303,7 @@ public class Pass1ProcedureInline extends Pass1Base {
             Variable inlineVar = callScope.addVariablePhiMaster(inlineVarName, procSymbol.getType(), procVar.getMemoryArea(), procVar.getDataSegment());
             inlineVar.setInferredType(procVar.isInferredType());
             inlineVar.setDeclaredAlignment(procVar.getDeclaredAlignment());
-            inlineVar.setDeclaredConstant(procVar.isDeclaredConstant());
+            inlineVar.setConstantDeclaration(procVar.getConstantDeclaration());
             inlineVar.setDeclaredAsRegister(procVar.isDeclaredAsRegister());
             inlineVar.setDeclaredNotRegister(procVar.isDeclaredAsNotRegister());
             inlineVar.setDeclaredRegister(procVar.getDeclaredRegister());

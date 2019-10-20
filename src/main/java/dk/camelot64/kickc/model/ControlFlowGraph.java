@@ -67,7 +67,7 @@ public class ControlFlowGraph implements Serializable {
    }
 
    /**
-    * Get the assignment of the passed variable.
+    * Get the assignment of the passed variable. Assumes that only a single assignment exists.
     *
     * @param variable The variable to find the assignment for
     * @return The assignment. null if the variable is not assigned. The variable is assigned by a Phi-statement instead.
@@ -87,7 +87,28 @@ public class ControlFlowGraph implements Serializable {
    }
 
    /**
-    * Get the block containing the assignment of the passed variable.
+    * Get all assignments of the passed variable.
+    *
+    * @param variable The variable to find the assignment for
+    * @return All assignments.
+    */
+   public List<StatementLValue> getAssignments(VariableRef variable) {
+      ArrayList<StatementLValue> assignments = new ArrayList<>();
+      for(ControlFlowBlock block : getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementLValue) {
+               StatementLValue assignment = (StatementLValue) statement;
+               if(variable.equals(assignment.getlValue())) {
+                  assignments.add(assignment);
+               }
+            }
+         }
+      }
+      return assignments;
+   }
+
+   /**
+    * Get the block containing the assignment of the passed variable. Assumes that only a single assignment exists.
     *
     * @param variable The variable to find the assignment for
     * @return The block containing the assignment. null if the variable is not assigned.

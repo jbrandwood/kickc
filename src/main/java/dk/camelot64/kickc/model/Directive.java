@@ -9,8 +9,16 @@ import java.util.List;
 public interface Directive {
 
 
-   /** Variable declared constant. */
+   /** Variable declared const, __notconst or __maybeconst. */
    class Const implements Directive {
+
+      /** The const declaration. */
+      SymbolVariable.ConstantDeclaration constantDeclaration;
+
+      public Const(SymbolVariable.ConstantDeclaration constantDeclaration) {
+         this.constantDeclaration = constantDeclaration;
+      }
+
    }
 
    /** Function with specific declared calling convention. */

@@ -626,7 +626,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       addDirectives(lValue, false, directives, new StatementSource(ctx));
       // Array / String variables are implicitly constant
       if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
-         lValue.setDeclaredConstant(true);
+         lValue.setConstantDeclaration(SymbolVariable.ConstantDeclaration.CONST);
          lValue.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
          lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
       }
@@ -742,7 +742,17 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Directive visitDirectiveConst(KickCParser.DirectiveConstContext ctx) {
-      return new Directive.Const();
+      return new Directive.Const(SymbolVariable.ConstantDeclaration.CONST);
+   }
+
+   @Override
+   public Object visitDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx) {
+      return new Directive.Const(SymbolVariable.ConstantDeclaration.NOT_CONST);
+   }
+
+   @Override
+   public Object visitDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx) {
+      return new Directive.Const(SymbolVariable.ConstantDeclaration.MAYBE_CONST);
    }
 
    @Override
@@ -782,11 +792,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          name = ctx.NAME().getText();
       }
       return new Directive.Register(true, name);
-   }
-
-   @Override
-   public Object visitDirectiveNotRegister(KickCParser.DirectiveNotRegisterContext ctx) {
-      return new Directive.Register(false, null);
    }
 
    @Override

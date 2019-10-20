@@ -96,11 +96,12 @@ globalDirective
 
 directive
     : CONST #directiveConst
+    | NOTCONST #directiveNotConst
+    | MAYBECONST #directiveMaybeConst
     | EXTERN #directiveExtern
     | EXPORT #directiveExport
     | ALIGN PAR_BEGIN NUMBER PAR_END #directiveAlign
     | REGISTER ( PAR_BEGIN ( NAME ) PAR_END)? #directiveRegister
-    | NOTREGISTER #directiveNotRegister
     | ADDRESS_ZEROPAGE #directiveMemoryAreaZp
     | ADDRESS_MAINMEM #directiveMemoryAreaMain
     | ADDRESS PAR_BEGIN ( NUMBER ) PAR_END #directiveMemoryAreaAddress

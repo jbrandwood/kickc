@@ -1,4 +1,4 @@
-// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
+// Test declaring a variable as "__mem __notssa", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"

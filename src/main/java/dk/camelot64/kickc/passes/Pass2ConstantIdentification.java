@@ -10,17 +10,18 @@ import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Compiler Pass propagating constants in expressions eliminating constant variables
@@ -155,11 +156,11 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                if(lValue instanceof VariableRef) {
                   VariableRef varRef = (VariableRef) lValue;
                   Variable var = getScope().getVariable(varRef);
-                  if(var.isVolatile() || var.isStorageLoadStore())
+                  if(var.isVolatile() || var.isDeclaredNotConstant() || var.isStorageLoadStore())
                      // Do not examine volatiles and non-versioned variables
                      continue;
                   ConstantValue constant = getConstant(assignment.getrValue2());
-                  if(assignment.getrValue1() == null && assignment.getOperator() == null && constant !=null) {
+                  if(assignment.getrValue1() == null && assignment.getOperator() == null && constant != null) {
                      constants.put(varRef, new ConstantVariableValue(varRef, constant, assignment));
                   }
                }
@@ -171,7 +172,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                      if(getConstant(phiRValue.getrValue()) != null) {
                         VariableRef varRef = phiVariable.getVariable();
                         Variable var = getScope().getVariable(varRef);
-                        if(var.isVolatile() || var.isStorageLoadStore())
+                        if(var.isVolatile() || var.isDeclaredNotConstant() || var.isStorageLoadStore())
                            // Do not examine volatiles and non-versioned variables
                            continue;
                         ConstantValue constant = getConstant(phiRValue.getrValue());
@@ -184,6 +185,29 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       }
 
       // Look for constants among non-versioned variables
+      for(Variable variable : getScope().getAllVariables(true)) {
+         if(variable.isVolatile() || variable.isDeclaredNotConstant() || !variable.isStorageLoadStore())
+            // Do not examine volatiles, non-constants or versioned variables
+            continue;
+         List<StatementLValue> assignments = getGraph().getAssignments(variable.getRef());
+         if(assignments.size() == 1) {
+            StatementLValue statementLValue = assignments.get(0);
+            if(!(statementLValue instanceof StatementAssignment))
+               // Only look at assignments
+               continue;
+            StatementAssignment assignment = (StatementAssignment) statementLValue;
+            LValue lValue = assignment.getlValue();
+            if(lValue instanceof VariableRef) {
+               VariableRef varRef = (VariableRef) lValue;
+               ConstantValue constant = getConstant(assignment.getrValue2());
+               if(assignment.getrValue1() == null && assignment.getOperator() == null && constant != null) {
+                  constants.put(varRef, new ConstantVariableValue(varRef, constant, assignment));
+                  throw new CompileError("Encountered constant variable! " + variable.toString(), statementLValue);
+               }
+            }
+         }
+      }
+
 
       return constants;
    }

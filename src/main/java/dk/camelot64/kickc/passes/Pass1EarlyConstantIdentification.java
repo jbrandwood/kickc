@@ -30,6 +30,9 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
       for(Variable variable : getProgram().getScope().getAllVariables(true)) {
          VariableRef variableRef = variable.getRef();
          if(!variable.isDeclaredConstant() && !variable.isVolatile() && !variableRef.isIntermediate()) {
+            if(variable.isDeclaredNotConstant())
+               // Skip explicit non-constants
+               continue;
             if(!isParameter(variableRef)) {
                Collection<StatementLValue> assignments = getAssignments(variable);
                if(assignments.size() == 1) {

@@ -135,7 +135,7 @@ public class DirectiveParserContext {
       //this.defaultDirectives.add(new Directive.Register(true, null));
       this.registerImpliesDirectives = new ArrayList<>();
       this.typeDirectives = new HashMap<>();
-      this.typeDirectives.put(DirectiveType.ARRAY, Arrays.asList(new Directive.Const(), new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null), new Directive.Register(false, null)));
+      this.typeDirectives.put(DirectiveType.ARRAY, Arrays.asList(new Directive.Const(SymbolVariable.ConstantDeclaration.CONST), new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null)));
       //this.typeDirectives.put(DirectiveType.POINTER, Arrays.asList(new Directive.MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null)));
       this.scopeDirectives = new HashMap<>();
       this.scopeTypeDirectives = new HashMap<>();
@@ -165,10 +165,12 @@ public class DirectiveParserContext {
 
       Directive.Const constDirective = findDirective(Directive.Const.class, sourceDirectives, directiveScope, directiveType);
       if(constDirective != null) {
-         lValue.setDeclaredConstant(true);
-         lValue.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
-         if(!(lValue.getType() instanceof SymbolTypePointer))
-            lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
+         lValue.setConstantDeclaration(constDirective.constantDeclaration);
+         if(SymbolVariable.ConstantDeclaration.CONST.equals(constDirective.constantDeclaration)) {
+            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
+            if(!(lValue.getType() instanceof SymbolTypePointer))
+               lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
+         }
       }
 
       Directive.Volatile volatileDirective = findDirective(Directive.Volatile.class, sourceDirectives, directiveScope, directiveType);

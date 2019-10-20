@@ -1,5 +1,5 @@
-// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
-// Test a fixed main memory address notregister variable
+// Test declaring a variable as "memory", meaning it will be stored in main memory
+// Test a fixed main memory address __notssa variable
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"

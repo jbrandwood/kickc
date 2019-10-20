@@ -21,10 +21,10 @@ public class Pass4AssertZeropageAllocation extends Pass2Base {
       Collection<Variable> allVariables = getSymbols().getAllVariables(true);
       for(Variable variable : allVariables) {
          Registers.Register allocation = variable.getAllocation();
-         if(allocation!=null && allocation.isZp()) {
+         if(allocation != null && Registers.RegisterType.ZP_MEM.equals(allocation.getType())) {
             int zp = ((Registers.RegisterZpMem) allocation).getZp();
             int sizeBytes = variable.getType().getSizeBytes();
-            if(zp+sizeBytes>0x100) {
+            if(zp + sizeBytes > 0x100) {
                // Allocation is outside ZP!
                throw new CompileError("Error! Variables used in program do not fit on zeropage. Maybe try compiling with -Ocoalesce to optimize ZP usage.");
             }

@@ -104,8 +104,7 @@ public class Pass4CodeGeneration {
 
       // Generate global ZP labels
       asm.startChunk(currentScope, null, "Global Constants & labels");
-      addConstants(asm, currentScope);
-      addMemLabels(asm, currentScope);
+      addConstantsAndLabels(asm, currentScope);
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          if(!block.getScope().equals(currentScope)) {
             // The current block is in a different scope. End the old scope.
@@ -127,8 +126,7 @@ public class Pass4CodeGeneration {
             // Start the new scope
             asm.addScopeBegin(AsmFormat.asmFix(block.getLabel().getFullName()));
             // Add all ZP labels for the scope
-            addConstants(asm, currentScope);
-            addMemLabels(asm, currentScope);
+            addConstantsAndLabels(asm, currentScope);
          }
 
          generateComments(asm, block.getComments());
@@ -290,48 +288,6 @@ public class Pass4CodeGeneration {
    }
 
    /**
-    * Add constant declarations for all scope constants
-    *
-    * @param asm The ASM program
-    * @param scopeRef The scope
-    */
-   private void addConstants(AsmProgram asm, ScopeRef scopeRef) {
-      Scope scope = program.getScope().getScope(scopeRef);
-      Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
-      Set<String> added = new LinkedHashSet<>();
-      for(ConstantVar constantVar : scopeConstants) {
-         if(!hasData(constantVar)) {
-            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-            if(asmName != null && !added.contains(asmName)) {
-               added.add(asmName);
-               // Add any comments
-               generateComments(asm, constantVar.getComments());
-               // Ensure encoding is good
-               ensureEncoding(asm, constantVar.getValue());
-               // Find the constant value calculation
-               String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
-               if(constantVar.getType() instanceof SymbolTypePointer) {
-                  // Must use a label for pointers
-                  asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
-               } else if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth() > 0) {
-                  // Use label for integers referenced in other scope - to allow cross-scope referencing
-                  if(useLabelForConst(scopeRef, constantVar)) {
-                     // Use label for integers referenced in other scope - to allow cross-scope referencing
-                     asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
-                  } else {
-                     // Use constant for constant integers not referenced outside scope
-                     asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
-                  }
-               } else {
-                  // Use constant otherwise
-                  asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
-               }
-            }
-         }
-      }
-   }
-
-   /**
     * Add comments to the assembler program
     *
     * @param asm The assembler program
@@ -424,18 +380,55 @@ public class Pass4CodeGeneration {
    }
 
    /**
-    * Add label declarations for all scope variables assigned to memory registers (before the scope code)
+    * Add constant declarations for constants without data and labels for memory variables without data.
+    * Added before the the code of the scope.
     *
     * @param asm The ASM program
-    * @param scope The scope
+    * @param scopeRef The scope
     */
-   private void addMemLabels(AsmProgram asm, ScopeRef scope) {
-      Collection<Variable> scopeVars = program.getScope().getScope(scope).getAllVariables(false);
+   private void addConstantsAndLabels(AsmProgram asm, ScopeRef scopeRef) {
+      Scope scope = program.getScope().getScope(scopeRef);
       Set<String> added = new LinkedHashSet<>();
+      Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
+
+      // Add all constants without data
+      for(ConstantVar constantVar : scopeConstants) {
+         if(!hasData(constantVar)) {
+            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
+            if(asmName != null && !added.contains(asmName)) {
+               added.add(asmName);
+               // Add any comments
+               generateComments(asm, constantVar.getComments());
+               // Ensure encoding is good
+               ensureEncoding(asm, constantVar.getValue());
+               // Find the constant value calculation
+               String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
+               if(constantVar.getType() instanceof SymbolTypePointer) {
+                  // Must use a label for pointers
+                  asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
+               } else if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth() > 0) {
+                  // Use label for integers referenced in other scope - to allow cross-scope referencing
+                  if(useLabelForConst(scopeRef, constantVar)) {
+                     // Use label for integers referenced in other scope - to allow cross-scope referencing
+                     asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
+                  } else {
+                     // Use constant for constant integers not referenced outside scope
+                     asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
+                  }
+               } else {
+                  // Use constant otherwise
+                  asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
+               }
+            }
+         }
+      }
+
+      // Add labels for memory variables without data
+      Collection<Variable> scopeVars = scope.getAllVariables(false);
       for(Variable scopeVar : scopeVars) {
          Registers.Register register = scopeVar.getAllocation();
          if(register != null) {
-            if(register.isZp()) {
+            if(Registers.RegisterType.ZP_MEM.equals(register.getType())) {
                Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
                String asmName = scopeVar.getAsmName();
                if(asmName != null && !added.contains(asmName)) {
@@ -445,7 +438,7 @@ public class Pass4CodeGeneration {
                   asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(registerZp.getZp()));
                   added.add(asmName);
                }
-            } else if(register instanceof Registers.RegisterMainMem && scopeVar.getDeclaredMemoryAddress() != null) {
+            } else if(Registers.RegisterType.MAIN_MEM.equals(register.getType()) && scopeVar.getDeclaredMemoryAddress() != null) {
                String asmName = scopeVar.getAsmName();
                if(asmName != null && !added.contains(asmName)) {
                   // Add any comments
@@ -459,9 +452,9 @@ public class Pass4CodeGeneration {
       }
    }
 
-
    /**
-    * Add data for a scope (after the code)
+    * Add constants with data and memory variables with data for a scope.
+    * Added after the the code of the scope.
     *
     * @param asm The ASM program
     * @param scopeRef The scope
@@ -507,8 +500,7 @@ public class Pass4CodeGeneration {
             if(variable.isStoragePhiMaster())
                continue;
             // Skip if already added
-            String asmName = variable.getAsmName();
-            if(added.contains(asmName)) {
+            if(added.contains(variable.getAsmName())) {
                continue;
             }
             if(variable.isStorageLoadStore() || variable.isStoragePhiVersion() || variable.isStorageIntermediate()) {
@@ -536,12 +528,12 @@ public class Pass4CodeGeneration {
                   }
                   AsmDataChunk asmDataChunk = new AsmDataChunk();
                   addChunkData(asmDataChunk, ZeroConstantValues.zeroValue(variable.getType(), getScope()), variable.getType(), scopeRef);
-                  asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
+                  asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
                }
             } else {
                throw new InternalError("Not handled variable storage " + variable.toString());
             }
-            added.add(asmName);
+            added.add(variable.getAsmName());
          }
       }
    }

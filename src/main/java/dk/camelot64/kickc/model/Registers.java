@@ -56,8 +56,6 @@ public class Registers {
 
       RegisterType getType();
 
-      boolean isZp();
-
       boolean isMem();
 
       int getBytes();
@@ -84,11 +82,6 @@ public class Registers {
       @Override
       public RegisterType getType() {
          return RegisterType.MAIN_MEM;
-      }
-
-      @Override
-      public boolean isZp() {
-         return false;
       }
 
       @Override
@@ -157,11 +150,6 @@ public class Registers {
       }
 
       @Override
-      public boolean isZp() {
-         return true;
-      }
-
-      @Override
       public boolean isMem() {
          return true;
       }
@@ -209,11 +197,6 @@ public class Registers {
    public static abstract class RegisterCpuByte implements Register {
       @Override
       public abstract RegisterType getType();
-
-      @Override
-      public boolean isZp() {
-         return false;
-      }
 
       @Override
       public boolean isMem() {
@@ -322,11 +305,6 @@ public class Registers {
       @Override
       public RegisterType getType() {
          return RegisterType.CONSTANT;
-      }
-
-      @Override
-      public boolean isZp() {
-         return false;
       }
 
       @Override

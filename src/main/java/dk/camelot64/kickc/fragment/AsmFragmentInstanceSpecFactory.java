@@ -457,7 +457,7 @@ public class AsmFragmentInstanceSpecFactory {
             Value boundValue = bindings.get(boundName);
             if(boundValue instanceof Variable) {
                Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
-               if(boundRegister != null && boundRegister.isZp()) {
+               if(boundRegister != null && Registers.RegisterType.ZP_MEM.equals(boundRegister.getType())) {
                   Registers.RegisterZpMem boundRegisterZp = (Registers.RegisterZpMem) boundRegister;
                   if(registerZp.getZp() == boundRegisterZp.getZp()) {
                      // Found other register with same ZP address!

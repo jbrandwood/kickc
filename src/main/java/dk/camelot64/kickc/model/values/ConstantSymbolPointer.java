@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.model.values;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -39,9 +41,11 @@ public class ConstantSymbolPointer implements ConstantValue {
       Symbol symbol = scope.getSymbol(toSymbol);
       if(symbol instanceof Variable) {
          Registers.Register allocation = ((Variable) symbol).getAllocation();
-         if(allocation!=null && allocation.isZp()) {
+         if(allocation!=null && Registers.RegisterType.ZP_MEM.equals(allocation.getType())) {
             int zp = ((Registers.RegisterZpMem) allocation).getZp();
             return new ConstantInteger((long)zp, SymbolType.BYTE);
+         } else if(allocation!=null && Registers.RegisterType.MAIN_MEM.equals(allocation.getType())) {
+            throw new ConstantNotLiteral("Cannot calculate literal var pointer");
          }
       }
       // WE cannot calculate a literal value

@@ -154,11 +154,11 @@ public class Pass4RegistersFinalize extends Pass2Base {
          Registers.Register register = equivalenceClass.getRegister();
          boolean reallocate = true;
          if(register!=null) {
-            if(!register.isZp()) {
+            if(!Registers.RegisterType.ZP_MEM.equals(register.getType())) {
                // Do not allocate non-ZP registers
                reallocate = false;
-            } else if(register.isZp() && register.isNonRelocatable()) {
-               // Do not allocate declared ZP registers
+            } else if(register.isNonRelocatable()) {
+               // Do not allocate non-relocatable ZP registers
                reallocate = false;
             }
          }

@@ -10,7 +10,7 @@ import kickass.nonasm.c64.CharToPetsciiConverter;
 /**
  * SSA form constant char value (a byte)
  */
-public class ConstantChar implements ConstantLiteral<Character> {
+public class ConstantChar implements ConstantEnumerable<Character> {
 
    /** The character. */
    private Character value;
@@ -41,7 +41,8 @@ public class ConstantChar implements ConstantLiteral<Character> {
     * Get the integer value of the character
     * @return The integer value (taking encoding into account)
     */
-   public Long getIntValue() {
+   @Override
+   public Long getInteger() {
       Byte constCharIntValue = null;
       if(ConstantString.Encoding.SCREENCODE_MIXED.equals(encoding)) {
          constCharIntValue = CharToPetsciiConverter.charToScreenCode_mixed.get(value);

@@ -99,7 +99,7 @@ public class AsmFragmentInstanceSpec {
                   if(constantLiteral instanceof ConstantInteger) {
                      constIntValue = ((ConstantInteger) constantLiteral).getValue();
                   } else if(constantLiteral instanceof ConstantChar) {
-                     constIntValue = ((ConstantChar) constantLiteral).getIntValue();
+                     constIntValue = ((ConstantChar) constantLiteral).getInteger();
                   }
                   if(constIntValue != null) {
                      List<SymbolTypeIntegerFixed> types = getVariationTypes(constIntValue);

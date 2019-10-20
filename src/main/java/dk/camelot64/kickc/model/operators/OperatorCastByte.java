@@ -22,7 +22,7 @@ public class OperatorCastByte extends OperatorCast {
       } else if(value instanceof ConstantPointer) {
          return new ConstantInteger(0xff & ((ConstantPointer) value).getLocation(), SymbolType.BYTE);
       } else if(value instanceof ConstantChar) {
-         return new ConstantInteger(((ConstantChar) value).getIntValue(), SymbolType.BYTE);
+         return new ConstantInteger(((ConstantChar) value).getInteger(), SymbolType.BYTE);
       }
       throw new CompileError("Calculation not implemented " + getOperator() + " " + value );
    }

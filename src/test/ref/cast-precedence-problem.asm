@@ -9,8 +9,8 @@ main: {
     .label BGCOL = $d021
     .const sumw = min+max
     .const sumb = min+max
-    .const midb = (sumb>>1)+1
     .const midw = (sumw>>1)+1
+    .const midb = (sumb>>1)+1
     lda #midw
     sta SCREEN
     lda #midb

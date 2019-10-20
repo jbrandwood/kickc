@@ -145,52 +145,47 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
     */
    private Map<VariableRef, ConstantVariableValue> findConstantVariables() {
       final Map<VariableRef, ConstantVariableValue> constants = new LinkedHashMap<>();
+
+      // Look for constants among versions, intermediates & declared constants
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               findConstantsAssignment(constants, assignment);
+               LValue lValue = assignment.getlValue();
+               if(lValue instanceof VariableRef) {
+                  VariableRef varRef = (VariableRef) lValue;
+                  Variable var = getScope().getVariable(varRef);
+                  if(var.isVolatile() || var.isStorageLoadStore())
+                     // Do not examine volatiles and non-versioned variables
+                     continue;
+                  ConstantValue constant = getConstant(assignment.getrValue2());
+                  if(assignment.getrValue1() == null && assignment.getOperator() == null && constant !=null) {
+                     constants.put(varRef, new ConstantVariableValue(varRef, constant, assignment));
+                  }
+               }
             } else if(statement instanceof StatementPhiBlock) {
                StatementPhiBlock phi = (StatementPhiBlock) statement;
-               findConstantsPhi(constants, phi);
+               for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+                  if(phiVariable.getValues().size() == 1) {
+                     StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
+                     if(getConstant(phiRValue.getrValue()) != null) {
+                        VariableRef varRef = phiVariable.getVariable();
+                        Variable var = getScope().getVariable(varRef);
+                        if(var.isVolatile() || var.isStorageLoadStore())
+                           // Do not examine volatiles and non-versioned variables
+                           continue;
+                        ConstantValue constant = getConstant(phiRValue.getrValue());
+                        constants.put(varRef, new ConstantVariableValue(varRef, constant, phi));
+                     }
+                  }
+               }
             }
          }
       }
+
+      // Look for constants among non-versioned variables
 
       return constants;
-   }
-
-   private void findConstantsPhi(Map<VariableRef, ConstantVariableValue> constants, StatementPhiBlock phi) {
-      for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-         if(phiVariable.getValues().size() == 1) {
-            StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
-            if(getConstant(phiRValue.getrValue()) != null) {
-               VariableRef variable = phiVariable.getVariable();
-               Variable var = getScope().getVariable(variable);
-               if(var.isVolatile() || var.isStorageLoadStore()) {
-                  // Volatile variables cannot be constant
-                  continue;
-               }
-               ConstantValue constant = getConstant(phiRValue.getrValue());
-               constants.put(variable, new ConstantVariableValue(variable, constant, phi));
-            }
-         }
-      }
-   }
-
-   private void findConstantsAssignment(Map<VariableRef, ConstantVariableValue> constants, StatementAssignment assignment) {
-      LValue lValue = assignment.getlValue();
-      if(lValue instanceof VariableRef) {
-         VariableRef variable = (VariableRef) lValue;
-         Variable var = getScope().getVariable(variable);
-         if(var.isVolatile() || var.isStorageLoadStore()) {
-            // Volatile or memory variables cannot be constant
-            return;
-         }
-         if(assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof ConstantValue) {
-            constants.put(variable, new ConstantVariableValue(variable, (ConstantValue) assignment.getrValue2(), assignment));
-         }
-      }
    }
 
    /**

@@ -438,13 +438,14 @@ public class Pass4CodeGeneration {
                   asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(registerZp.getZp()));
                   added.add(asmName);
                }
-            } else if(Registers.RegisterType.MAIN_MEM.equals(register.getType()) && scopeVar.getDeclaredMemoryAddress() != null) {
+            } else if(Registers.RegisterType.MAIN_MEM.equals(register.getType()) && ((Registers.RegisterMainMem) register).getAddress() != null) {
                String asmName = scopeVar.getAsmName();
                if(asmName != null && !added.contains(asmName)) {
                   // Add any comments
                   generateComments(asm, scopeVar.getComments());
                   // Add the label declaration
-                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(scopeVar.getDeclaredMemoryAddress()));
+                  Long address = ((Registers.RegisterMainMem) register).getAddress();
+                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(address));
                   added.add(asmName);
                }
             }
@@ -504,17 +505,17 @@ public class Pass4CodeGeneration {
                continue;
             }
             if(variable.isStorageLoadStore() || variable.isStoragePhiVersion() || variable.isStorageIntermediate()) {
-               if(variable.getDeclaredMemoryAddress() == null) {
-                  Registers.Register allocation = variable.getAllocation();
-                  if(allocation instanceof Registers.RegisterCpuByte)
-                     continue;
-                  if(!(allocation instanceof Registers.RegisterMainMem)) {
-                     throw new InternalError("Expected main memory allocation " + variable.toString(program));
-                  }
-                  Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
-                  if(!registerMainMem.getVariableRef().equals(variable.getRef())) {
-                     continue;
-                  }
+               Registers.Register allocation = variable.getAllocation();
+               if(allocation instanceof Registers.RegisterCpuByte)
+                  continue;
+               if(!(allocation instanceof Registers.RegisterMainMem)) {
+                  throw new InternalError("Expected main memory allocation " + variable.toString(program));
+               }
+               Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
+               if(!registerMainMem.getVariableRef().equals(variable.getRef())) {
+                  continue;
+               }
+               if(registerMainMem.getAddress() == null) {
                   // Generate into the data segment
                   // Set segment
                   setCurrentSegment(variable.getDataSegment(), asm);
@@ -529,11 +530,11 @@ public class Pass4CodeGeneration {
                   AsmDataChunk asmDataChunk = new AsmDataChunk();
                   addChunkData(asmDataChunk, ZeroConstantValues.zeroValue(variable.getType(), getScope()), variable.getType(), scopeRef);
                   asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
+                  added.add(variable.getAsmName());
                }
             } else {
                throw new InternalError("Not handled variable storage " + variable.toString());
             }
-            added.add(variable.getAsmName());
          }
       }
    }

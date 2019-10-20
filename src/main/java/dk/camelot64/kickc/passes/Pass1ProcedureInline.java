@@ -307,7 +307,6 @@ public class Pass1ProcedureInline extends Pass1Base {
             inlineVar.setDeclaredAsRegister(procVar.isDeclaredAsRegister());
             inlineVar.setDeclaredNotRegister(procVar.isDeclaredAsNotRegister());
             inlineVar.setDeclaredRegister(procVar.getDeclaredRegister());
-            inlineVar.setDeclaredMemoryAddress(procVar.getDeclaredMemoryAddress());
             inlineVar.setStorageStrategy(procVar.getStorageStrategy());
             inlineVar.setMemoryArea(procVar.getMemoryArea());
             inlineVar.setDeclaredVolatile(procVar.isDeclaredVolatile());

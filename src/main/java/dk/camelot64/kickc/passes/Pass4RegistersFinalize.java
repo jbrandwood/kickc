@@ -60,6 +60,11 @@ public class Pass4RegistersFinalize extends Pass2Base {
                   int zp = ((Registers.RegisterZpMem) declaredRegister).getZp();
                   int bytes = variable.getType().getSizeBytes();
                   register = new Registers.RegisterZpMem(zp, bytes, true);
+               } else if(declaredRegister instanceof Registers.RegisterMainMem) {
+                  Long address = ((Registers.RegisterMainMem) declaredRegister).getAddress();
+                  VariableRef varRef = ((Registers.RegisterMainMem) declaredRegister).getVariableRef();
+                  int bytes = variable.getType().getSizeBytes();
+                  register = new Registers.RegisterMainMem(varRef, bytes, address);
                } else if(equivalenceClass.getRegister()!=null && !declaredRegister.equals(equivalenceClass.getRegister())) {
                   throw new CompileError("Equivalence class has variables with different declared registers \n" +
                         " - equivalence class: " + equivalenceClass.toString(true) + "\n" +
@@ -167,7 +172,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
             Variable variable = getProgram().getSymbolInfos().getVariable(variableRef);
             if(variable.isMemoryAreaMain()) {
-               register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes());
+               register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes(), null);
             }  else {
                register = allocateNewRegisterZp(variable);
             }

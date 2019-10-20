@@ -234,7 +234,6 @@ public class Unroller {
             newVar.setDeclaredAsRegister(definedVar.isDeclaredAsRegister());
             newVar.setDeclaredRegister(definedVar.getDeclaredRegister());
             newVar.setDeclaredNotRegister(definedVar.isDeclaredAsNotRegister());
-            newVar.setDeclaredMemoryAddress(definedVar.getDeclaredMemoryAddress());
             newVar.setStorageStrategy(definedVar.getStorageStrategy());
             newVar.setMemoryArea(definedVar.getMemoryArea());
             newVar.setDeclaredVolatile(definedVar.isDeclaredVolatile());

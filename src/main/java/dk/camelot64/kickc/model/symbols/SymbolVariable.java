@@ -50,9 +50,6 @@ public abstract class SymbolVariable implements Symbol {
    /** Specifies that the variable must live in memory. */
    private boolean declaredAsNotRegister;
 
-   /** Specifies a specific address where the variable must reside in memory. */
-   private Long declaredMemoryAddress;
-
    /** Strategy being used for storing and accessing the variable. The value depends on the directives memory/register/volatile/const - and on the compilers optimization decisions.
     * <ul>
     * <li>PHI variables are turned into versions and PHI-nodes are used for them throughout the entire program. They cannot be "volatile" and the "address-of" operator cannot be used on them.</li>
@@ -234,14 +231,6 @@ public abstract class SymbolVariable implements Symbol {
 
    public void setDeclaredNotRegister(boolean declaredAsMemory) {
       this.declaredAsNotRegister = declaredAsMemory;
-   }
-
-   public Long getDeclaredMemoryAddress() {
-      return declaredMemoryAddress;
-   }
-
-   public void setDeclaredMemoryAddress(Long declaredMemoryAddress) {
-      this.declaredMemoryAddress = declaredMemoryAddress;
    }
 
    public StorageStrategy getStorageStrategy() {

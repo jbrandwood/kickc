@@ -43,7 +43,6 @@ public class Variable extends SymbolVariable {
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       this.setDeclaredNotRegister(phiMaster.isDeclaredAsNotRegister());
       this.setDeclaredRegister(phiMaster.getDeclaredRegister());
-      this.setDeclaredMemoryAddress(phiMaster.getDeclaredMemoryAddress());
       this.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
       this.setDeclaredExport(phiMaster.isDeclaredExport());
       this.setInferedVolatile(phiMaster.isInferedVolatile());

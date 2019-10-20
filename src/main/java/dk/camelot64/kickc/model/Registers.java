@@ -70,9 +70,13 @@ public class Registers {
 
       private int bytes;
 
-      public RegisterMainMem(VariableRef variableRef, int bytes) {
+      /** If the address is hardcoded this contains it. */
+      private Long address;
+
+      public RegisterMainMem(VariableRef variableRef, int bytes, Long address) {
          this.variableRef = variableRef;
          this.bytes = bytes;
+         this.address = address;
       }
 
       public VariableRef getVariableRef() {
@@ -82,6 +86,10 @@ public class Registers {
       @Override
       public RegisterType getType() {
          return RegisterType.MAIN_MEM;
+      }
+
+      public Long getAddress() {
+         return address;
       }
 
       @Override
@@ -96,12 +104,12 @@ public class Registers {
 
       @Override
       public boolean isNonRelocatable() {
-         return false;
+         return true;
       }
 
       @Override
       public String toString() {
-         return "mem[" + getBytes() + "]:" + variableRef.toString();
+         return "mem[" + getBytes() + "]" + ((address==null)?"":(":"+address));
       }
 
       @Override
@@ -114,31 +122,33 @@ public class Registers {
          if(this == o) return true;
          if(o == null || getClass() != o.getClass()) return false;
          RegisterMainMem that = (RegisterMainMem) o;
-         return Objects.equals(variableRef, that.variableRef);
+         return bytes == that.bytes &&
+               Objects.equals(variableRef, that.variableRef) &&
+               Objects.equals(address, that.address);
       }
 
       @Override
       public int hashCode() {
-         return Objects.hash(variableRef);
+         return Objects.hash(variableRef, bytes, address);
       }
    }
 
    /** Two zero page addresses used as a register for a single unsigned word variable. */
    public static class RegisterZpMem implements Register {
 
-      /** The ZP address used for the byte. */
-      private int zp;
-
       /** The number of bytes that the register takes up */
       private int bytes;
 
-      /** True if the address of the register is delcared in the code (non-relocatable) */
-      private boolean isNonRelocatable;
+      /** The ZP address used for the byte. */
+      private int zp;
 
-      public RegisterZpMem(int zp, int bytes, boolean isNonRelocatable) {
+      /** True if the address of the register is declared in the code (non-relocatable) */
+      private boolean nonRelocatable;
+
+      public RegisterZpMem(int zp, int bytes, boolean nonRelocatable) {
          this.zp = zp;
          this.bytes = bytes;
-         this.isNonRelocatable = isNonRelocatable;
+         this.nonRelocatable = nonRelocatable;
       }
 
       public RegisterZpMem(int zp, int bytes) {
@@ -164,7 +174,7 @@ public class Registers {
       }
 
       public boolean isNonRelocatable() {
-         return isNonRelocatable;
+         return nonRelocatable;
       }
 
       @Override
@@ -184,12 +194,12 @@ public class Registers {
          RegisterZpMem that = (RegisterZpMem) o;
          return zp == that.zp &&
                bytes == that.bytes &&
-               isNonRelocatable == that.isNonRelocatable;
+               nonRelocatable == that.nonRelocatable;
       }
 
       @Override
       public int hashCode() {
-         return Objects.hash(zp, bytes, isNonRelocatable);
+         return Objects.hash(zp, bytes, nonRelocatable);
       }
    }
 

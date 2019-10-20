@@ -106,12 +106,12 @@ public class AsmFragmentTemplate {
          Variable v4 = new Variable("m4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY);
          Variable v5 = new Variable("m5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY);
          Variable v6 = new Variable("m6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY);
-         v1.setAllocation(new Registers.RegisterMainMem(v1.getRef(), 1));
-         v2.setAllocation(new Registers.RegisterMainMem(v2.getRef(), 1));
-         v3.setAllocation(new Registers.RegisterMainMem(v3.getRef(), 1));
-         v4.setAllocation(new Registers.RegisterMainMem(v4.getRef(), 1));
-         v5.setAllocation(new Registers.RegisterMainMem(v5.getRef(), 1));
-         v6.setAllocation(new Registers.RegisterMainMem(v6.getRef(), 1));
+         v1.setAllocation(new Registers.RegisterMainMem(v1.getRef(), 1, null));
+         v2.setAllocation(new Registers.RegisterMainMem(v2.getRef(), 1, null));
+         v3.setAllocation(new Registers.RegisterMainMem(v3.getRef(), 1, null));
+         v4.setAllocation(new Registers.RegisterMainMem(v4.getRef(), 1, null));
+         v5.setAllocation(new Registers.RegisterMainMem(v5.getRef(), 1, null));
+         v6.setAllocation(new Registers.RegisterMainMem(v6.getRef(), 1, null));
          if(signature.contains("m1")) bindings.put("m1", v1);
          if(signature.contains("m2")) bindings.put("m2", v2);
          if(signature.contains("m3")) bindings.put("m3", v3);

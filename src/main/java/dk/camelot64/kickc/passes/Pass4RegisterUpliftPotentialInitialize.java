@@ -46,8 +46,9 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
                Registers.RegisterZpMem zpRegister = new Registers.RegisterZpMem(zp, bytes, true);
                registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(zpRegister));
             } else if(declaredRegister instanceof Registers.RegisterMainMem) {
-               VariableRef variableRef = ((Registers.RegisterMainMem) declaredRegister).getVariableRef();
-               Registers.RegisterMainMem memRegister = new Registers.RegisterMainMem(variableRef, bytes);
+               VariableRef varRef = ((Registers.RegisterMainMem) declaredRegister).getVariableRef();
+               Long address = ((Registers.RegisterMainMem) declaredRegister).getAddress();
+               Registers.RegisterMainMem memRegister = new Registers.RegisterMainMem(varRef, bytes, address);
                registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(memRegister));
             } else {
                registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(declaredRegister));

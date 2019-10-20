@@ -804,7 +804,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       try {
          ConstantInteger memoryAddress = NumberParser.parseIntegerLiteral(ctx.NUMBER().getText());
          Long address = memoryAddress.getInteger();
-         SymbolVariable.MemoryArea memoryArea = (address<0x100)? SymbolVariable.MemoryArea.ZEROPAGE_MEMORY : SymbolVariable.MemoryArea.MAIN_MEMORY;
+         SymbolVariable.MemoryArea memoryArea = (address < 0x100) ? SymbolVariable.MemoryArea.ZEROPAGE_MEMORY : SymbolVariable.MemoryArea.MAIN_MEMORY;
          return new Directive.MemoryArea(memoryArea, address);
       } catch(NumberFormatException e) {
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
@@ -1314,7 +1314,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       CharStream stream = tokenStart.getInputStream();
       int startIndex = tokenStart.getStartIndex();
       int stopIndex = tokenStop.getStopIndex();
-      if(stopIndex<startIndex)
+      if(stopIndex < startIndex)
          return "";
       Interval interval = new Interval(startIndex, stopIndex);
       return stream.getText(interval);
@@ -2150,7 +2150,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       return commentBlocks.get(commentBlocks.size() - 1);
    }
-
 
 
    private static class PrePostModifierHandler extends KickCParserBaseVisitor<Void> {

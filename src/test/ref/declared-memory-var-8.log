@@ -34,7 +34,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (byte*) SCREEN
-(byte) idx notregister
+(byte) idx notregister !mem[-1]:4096
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -109,7 +109,7 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) idx notregister 5.0
+(byte) idx notregister !mem[-1]:4096 5.0
 (void()) main()
 (byte) main::i
 (byte) main::i#1 16.5
@@ -122,7 +122,6 @@ Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ idx ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
-Allocated mem[1]:idx [ idx ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -202,16 +201,16 @@ Statement [0] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] ) always clobbers reg b
 Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ idx main::i#2 ] ( main:2 [ idx main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
-Potential registers mem[1]:idx [ idx ] : mem[1]:idx , 
+Potential registers mem[1]:4096 [ idx ] : mem[1]:4096 , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 31.17: zp[1]:2 [ main::i#2 main::i#1 ] 
-Uplift Scope [] 5: mem[1]:idx [ idx ] 
+Uplift Scope [] 5: mem[1]:4096 [ idx ] 
 
 Uplifting [main] best 409 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 409 combination mem[1]:idx [ idx ] 
-Attempting to uplift remaining variables inmem[1]:idx [ idx ]
-Uplifting [] best 409 combination mem[1]:idx [ idx ] 
+Uplifting [] best 409 combination mem[1]:4096 [ idx ] 
+Attempting to uplift remaining variables inmem[1]:4096 [ idx ]
+Uplifting [] best 409 combination mem[1]:4096 [ idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -304,7 +303,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*) 1024
-(byte) idx notregister mem[1]:idx 5.0
+(byte) idx notregister !mem[-1]:4096 mem[1]:4096 5.0
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -313,7 +312,7 @@ FINAL SYMBOL TABLE
 (byte) main::i#2 reg byte x 14.666666666666666
 
 reg byte x [ main::i#2 main::i#1 ]
-mem[1]:idx [ idx ]
+mem[1]:4096 [ idx ]
 
 
 FINAL ASSEMBLER

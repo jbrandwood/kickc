@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.*;
 
@@ -185,14 +186,11 @@ public class DirectiveParserContext {
          lValue.setMemoryArea(memoryAreaDirective.memoryArea);
          if(memoryAreaDirective.address != null) {
             if(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY.equals(memoryAreaDirective.memoryArea)) {
-               // Allocate to specific address
-               if(memoryAreaDirective.address > 255) {
-                  throw new CompileError("Error! Address not on zeropage " + memoryAreaDirective.address, source);
-               }
                Registers.Register register = new Registers.RegisterZpMem(memoryAreaDirective.address.intValue(), -1, true);
                lValue.setDeclaredRegister(register);
             } else {
-               lValue.setDeclaredMemoryAddress(memoryAreaDirective.address);
+               Registers.Register register = new Registers.RegisterMainMem((VariableRef)lValue.getRef(), -1, memoryAreaDirective.address);
+               lValue.setDeclaredRegister(register);
             }
          }
       }

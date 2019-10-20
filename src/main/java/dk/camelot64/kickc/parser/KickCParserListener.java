@@ -1,4 +1,4 @@
-// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickCParser.g4 by ANTLR 4.7.2
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 
 
@@ -394,6 +394,30 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code directiveFormSsa}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveFormSsa}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveFormNotSsa}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveFormNotSsa(KickCParser.DirectiveFormNotSsaContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveFormNotSsa}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveFormNotSsa(KickCParser.DirectiveFormNotSsaContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code directiveInline}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -417,6 +441,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveNotVolatile}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveNotVolatile}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveInterrupt}
 	 * labeled alternative in {@link KickCParser#directive}.

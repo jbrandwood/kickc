@@ -104,8 +104,12 @@ directive
     | ADDRESS_ZEROPAGE #directiveMemoryAreaZp
     | ADDRESS_MAINMEM #directiveMemoryAreaMain
     | ADDRESS PAR_BEGIN ( NUMBER ) PAR_END #directiveMemoryAreaAddress
+    | FORM_SSA #directiveFormSsa
+    | FORM_NOTSSA #directiveFormNotSsa
+    | ADDRESS PAR_BEGIN ( NUMBER ) PAR_END #directiveMemoryAreaAddress
     | INLINE #directiveInline
     | VOLATILE #directiveVolatile
+    | NOTVOLATILE #directiveNotVolatile
     | INTERRUPT ( PAR_BEGIN NAME PAR_END )? #directiveInterrupt
     | RESERVE PAR_BEGIN NUMBER ( COMMA NUMBER )* PAR_END  #directiveReserveZp
     | CALLINGCONVENTION #directiveCallingConvention

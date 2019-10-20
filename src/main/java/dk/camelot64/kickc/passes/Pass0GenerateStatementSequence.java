@@ -812,8 +812,23 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public Object visitDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx) {
+      return new Directive.FormSsa(true);
+   }
+
+   @Override
+   public Object visitDirectiveFormNotSsa(KickCParser.DirectiveFormNotSsaContext ctx) {
+      return new Directive.FormSsa(false);
+   }
+
+   @Override
    public Directive visitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx) {
-      return new Directive.Volatile();
+      return new Directive.Volatile(true);
+   }
+
+   @Override
+   public Object visitDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx) {
+      return new Directive.Volatile(false);
    }
 
    @Override

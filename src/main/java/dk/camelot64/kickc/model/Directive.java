@@ -28,13 +28,34 @@ public interface Directive {
    class Inline implements Directive {
    }
 
-   /** Variable declared volatile. */
+   /** Variable declared volatile or __notvolatile. */
    class Volatile implements Directive {
+
+      /** True if declared volatile, false if declared __notvolatile */
+      boolean isVolatile;
+
+      public Volatile(boolean isVolatile) {
+         this.isVolatile = isVolatile;
+      }
+
    }
 
    /** Variable declared as export. */
    class Export implements Directive {
    }
+
+   /** Variable declared SSA or not SSA . */
+   class FormSsa implements Directive {
+
+      /** True if declared SSA false if declared NOT SSA */
+      boolean ssa;
+
+      public FormSsa(boolean ssa) {
+         this.ssa = ssa;
+      }
+
+   }
+
 
    /** Function declared interrupt. */
    class Interrupt implements Directive {
@@ -59,7 +80,7 @@ public interface Directive {
    /** Variable register or __notregister directive . */
    class Register implements Directive {
 
-      /** true if the directive is a register directive. false if it is a notregister directive. */
+      /** true if the directive is a register directive. false if it is a __notregister directive. */
       boolean isRegister;
 
       /** Name of register to use for the variable (if named) */

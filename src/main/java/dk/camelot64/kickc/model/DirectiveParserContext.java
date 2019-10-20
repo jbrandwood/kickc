@@ -161,9 +161,18 @@ public class DirectiveParserContext {
             lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
       }
 
+      Directive.FormSsa ssaDirective = findDirective(Directive.FormSsa.class, sourceDirectives, directiveScope, directiveType);
+      if(ssaDirective != null) {
+         if(ssaDirective.ssa) {
+            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_MASTER);
+         }  else {
+            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.LOAD_STORE);
+         }
+      }
+
       Directive.Volatile volatileDirective = findDirective(Directive.Volatile.class, sourceDirectives, directiveScope, directiveType);
       if(volatileDirective != null) {
-         lValue.setDeclaredVolatile(true);
+         lValue.setDeclaredVolatile(volatileDirective.isVolatile);
       }
 
       Directive.Export exportDirective = findDirective(Directive.Export.class, sourceDirectives, directiveScope, directiveType);

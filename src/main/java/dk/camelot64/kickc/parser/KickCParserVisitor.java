@@ -1,4 +1,4 @@
-// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickCParser.g4 by ANTLR 4.7.2
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7
 package dk.camelot64.kickc.parser;
 
 
@@ -239,6 +239,20 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code directiveFormSsa}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code directiveFormNotSsa}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveFormNotSsa(KickCParser.DirectiveFormNotSsaContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code directiveInline}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -252,6 +266,13 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code directiveNotVolatile}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code directiveInterrupt}
 	 * labeled alternative in {@link KickCParser#directive}.

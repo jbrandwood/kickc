@@ -24,9 +24,9 @@ kickasm(pc PLAYFIELD_SPRITES, resource "playfield-sprites.png") {{
 void sprites_init() {
     *SPRITES_ENABLE = %00001111;
     *SPRITES_EXPAND_X = *SPRITES_EXPAND_Y = *SPRITES_MC = 0;
-    byte xpos = 24+15*8;
-    for(byte s:0..3) {
-    	byte s2 = s*2;
+    char xpos = 24+15*8;
+    for(char s:0..3) {
+    	char s2 = s*2;
 		SPRITES_XPOS[s2] = xpos;
 		SPRITES_COLS[s] = BLACK;
 		xpos = xpos+24;
@@ -34,17 +34,17 @@ void sprites_init() {
 }
 
 // The Y-position of the first sprite row
-const byte SPRITES_FIRST_YPOS = 49;
+const char SPRITES_FIRST_YPOS = 49;
 // The line of the first IRQ
-const byte IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS + 19;
+const char IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS + 19;
 // The raster line of the next IRQ
-volatile byte irq_raster_next = IRQ_RASTER_FIRST;
+volatile char irq_raster_next = IRQ_RASTER_FIRST;
 // Y-pos of the sprites on the next IRQ
-volatile byte irq_sprite_ypos = SPRITES_FIRST_YPOS + 21;
+volatile char irq_sprite_ypos = SPRITES_FIRST_YPOS + 21;
 // Index of the sprites to show on the next IRQ
-volatile byte irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES) + 3;
+volatile char irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES) + 3;
 // Counting the 10 IRQs
-volatile byte irq_cnt = 0;
+volatile char irq_cnt = 0;
 
 // Setup the IRQ
 void sprites_irq_init() {
@@ -77,18 +77,18 @@ interrupt(hardware_clobber) void sprites_irq() {
     // Clear decimal flag (because it is used by the score algorithm)
     asm { cld }
     // Place the sprites
-    byte ypos = irq_sprite_ypos;
+    char ypos = irq_sprite_ypos;
 	SPRITES_YPOS[0] = ypos;
 	SPRITES_YPOS[2] = ypos;
 	SPRITES_YPOS[4] = ypos;
 	SPRITES_YPOS[6] = ypos;
 
 	// Wait for the y-position before changing sprite pointers
-	volatile byte raster_sprite_gfx_modify = irq_raster_next+1;
+	volatile char raster_sprite_gfx_modify = irq_raster_next+1;
 	do {
 	} while(*RASTER<raster_sprite_gfx_modify);
 
-	byte ptr = irq_sprite_ptr;
+	char ptr = irq_sprite_ptr;
 	if(render_screen_showing==0) {
 	    PLAYFIELD_SPRITE_PTRS_1[0] = ptr++;
 	    PLAYFIELD_SPRITE_PTRS_1[1] = ptr;

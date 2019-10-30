@@ -40,9 +40,9 @@ char[] PIECES_COLORS_2 = {
         };
 
 // Pointers to the screen address for rendering each playfield line
-// The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
-align($80) char*[PLAYFIELD_LINES] screen_lines_1;
-align($40) char*[PLAYFIELD_LINES] screen_lines_2;
+// The lines for screen 1 is aligned with 0x80 and screen 2 with 0x40 - so XOR'ing with 0x40 gives screen 2 lines.
+align(0x80) char*[PLAYFIELD_LINES] screen_lines_1;
+align(0x40) char*[PLAYFIELD_LINES] screen_lines_2;
 
 // Initialize rendering
 void render_init() {
@@ -71,10 +71,10 @@ void render_init() {
 
     // Show showing screen 1 and rendering to screen 2
     render_screen_show = 0;
-    render_screen_render = $20;
+    render_screen_render = 0x20;
 }
 
-// Update $D018 to show the current screen (used for double buffering)
+// Update 0xD018 to show the current screen (used for double buffering)
 void render_show() {
     char d018val = 0;
     if(render_screen_show==0) {
@@ -90,8 +90,8 @@ void render_show() {
 
 // Swap rendering to the other screen (used for double buffering)
 void render_screen_swap() {
-    render_screen_render ^= $20;
-    render_screen_show ^= $20;
+    render_screen_render ^= 0x20;
+    render_screen_show ^= 0x20;
 }
 
 // Show the current score
@@ -104,16 +104,16 @@ void render_score() {
     }
 
     char* score_bytes = (byte*)(&score_bcd);
-    unsigned int score_offset = 40*$05 + $1c;
+    unsigned int score_offset = 40*0x05 + 0x1c;
     render_bcd( screen, score_offset, score_bytes[2], 0);
     render_bcd( screen, score_offset+2, score_bytes[1], 0);
     render_bcd( screen, score_offset+4, score_bytes[0], 0);
 
-    unsigned int lines_offset = 40*$01 + $16;
+    unsigned int lines_offset = 40*0x01 + 0x16;
     render_bcd( screen, lines_offset, >lines_bcd, 1);
     render_bcd( screen, lines_offset+1, <lines_bcd, 0);
 
-    unsigned int level_offset = 40*19 + $1f;
+    unsigned int level_offset = 40*19 + 0x1f;
     render_bcd( screen, level_offset, level_bcd, 0);
 
 }
@@ -129,11 +129,11 @@ void render_bcd(char* screen, unsigned int offset, char bcd, char only_low) {
     if(only_low==0) {
         *screen_pos++ = ZERO_CHAR + (bcd >> 4);
     }
-    *screen_pos++ = ZERO_CHAR + (bcd & $0f);
+    *screen_pos++ = ZERO_CHAR + (bcd & 0x0f);
 }
 
 // Copy the original screen data to the passed screen
-// Also copies colors to $d800
+// Also copies colors to 0xd800
 void render_screen_original(char* screen) {
     char SPACE = 0;
 	char* oscr = PLAYFIELD_SCREEN_ORIGINAL+32*2;

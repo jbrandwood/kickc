@@ -17,7 +17,7 @@ char next_piece_idx = 0;
 // The current moving piece. Points to the start of the piece definition.
 char* current_piece = 0;
 
-// The curent piece orientation - each piece have 4 orientations (00/$10/$20/$30).
+// The curent piece orientation - each piece have 4 orientations (00/0x10/0x20/0x30).
 // The orientation chooses one of the 4 sub-graphics of the piece.
 char current_orientation = 0;
 
@@ -36,7 +36,7 @@ char current_movedown_counter = 0;
 
 // Base Score values for removing 0-4 lines (in BCD)
 // These values are added to score_add_bcd for each level gained.
-const unsigned long[] SCORE_BASE_BCD = { $0000, $0040, $0100, $0300, $1200 };
+const unsigned long[] SCORE_BASE_BCD = { 0x0000, 0x0040, 0x0100, 0x0300, 0x1200 };
 
 // Score values for removing 0-4 lines (in BCD)
 // These values are updated based on the players level and the base values from SCORE_BASE_BCD
@@ -65,7 +65,7 @@ void play_init() {
 }
 
 // Perform any movement of the current piece
-// key_event is the next keyboard_event() og $ff if no keyboard event is pending
+// key_event is the next keyboard_event() og 0xff if no keyboard event is pending
 // Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
 char play_movement(char key_event) {
     char render = 0;
@@ -141,11 +141,11 @@ char play_move_leftright(char key_event) {
 // Return non-zero if a render is needed
 char play_move_rotate(char key_event) {
 	// Handle keyboard events
-	char orientation = $80;
+	char orientation = 0x80;
 	if(key_event==KEY_Z) {
-		orientation = (current_orientation-$10)&$3f;
+		orientation = (current_orientation-0x10)&0x3f;
 	} else if(key_event==KEY_X) {
-		orientation = (current_orientation+$10)&$3f;
+		orientation = (current_orientation+0x10)&0x3f;
 	} else {
 		return 0;
 	}
@@ -183,7 +183,7 @@ char play_collision(char xpos, char ypos, char orientation) {
 					// Below the playfield bottom
 					return COLLISION_BOTTOM;
 				}
-				if((xp&$80)!=0) {
+				if((xp&0x80)!=0) {
 					// Beyond left side of the playfield
 					return COLLISION_LEFT;
 				}
@@ -273,7 +273,7 @@ char play_remove_lines() {
 	}
 
 	// Write zeros in the rest of the lines
-	while(w!=$ff) {
+	while(w!=0xff) {
 		playfield[w--] = 0;
 	}
 	// Return the number of removed lines
@@ -283,7 +283,7 @@ char play_remove_lines() {
 // Update the score based on the number of lines removed
 void play_update_score(char removed) {
     if(removed!=0){
-        char lines_before = <lines_bcd&$f0;
+        char lines_before = <lines_bcd&0xf0;
         unsigned long add_bcd = score_add_bcd[removed];
 
         asm { sed }
@@ -292,7 +292,7 @@ void play_update_score(char removed) {
         asm { cld }
 
         // If line 10-part updated increase the level
-        char lines_after = <lines_bcd&$f0;
+        char lines_after = <lines_bcd&0xf0;
         if(lines_before!=lines_after) {
             play_increase_level();
         }
@@ -311,8 +311,8 @@ void play_increase_level() {
     }
     // Increase BCD-format level
     level_bcd++;
-    if((level_bcd&$f)==$a) {
-         // If level low nybble hits $a change to $10
+    if((level_bcd&0xf)==0xa) {
+         // If level low nybble hits 0xa change to 0x10
         level_bcd += 6;
     }
     // Increase the score values gained

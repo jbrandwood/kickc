@@ -6,48 +6,48 @@ import "tetris-data"
 import "tetris-pieces"
 
 // Pointers to the playfield address for each playfield line
-byte*[PLAYFIELD_LINES] playfield_lines;
+char*[PLAYFIELD_LINES] playfield_lines;
 
 // Indixes into the playfield  for each playfield line
-byte[PLAYFIELD_LINES+1] playfield_lines_idx;
+char[PLAYFIELD_LINES+1] playfield_lines_idx;
 
 // The index of the next moving piece. (0-6)
-byte next_piece_idx = 0;
+char next_piece_idx = 0;
 
 // The current moving piece. Points to the start of the piece definition.
-byte* current_piece = 0;
+char* current_piece = 0;
 
-// The curent piece orientation - each piece have 4 orientations (00/$10/$20/$30).
+// The curent piece orientation - each piece have 4 orientations (00/0x10/0x20/0x30).
 // The orientation chooses one of the 4 sub-graphics of the piece.
-byte current_orientation = 0;
+char current_orientation = 0;
 
 // The speed of moving down the piece when soft-drop is not activated
 // This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
-const byte[] MOVEDOWN_SLOW_SPEEDS = { 48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1 };
+const char[] MOVEDOWN_SLOW_SPEEDS = { 48, 43, 38, 33, 28, 23, 18, 13, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1 };
 
 // The rate of moving down the current piece (number of frames between moves if movedown is  not forced)
-byte current_movedown_slow = 48;
+char current_movedown_slow = 48;
 
 // The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
-const byte current_movedown_fast = 10;
+const char current_movedown_fast = 10;
 
 // Counts up to the next movedown of current piece
-byte current_movedown_counter = 0;
+char current_movedown_counter = 0;
 
 // Base Score values for removing 0-4 lines (in BCD)
 // These values are added to score_add_bcd for each level gained.
-const dword[] SCORE_BASE_BCD = { $0000, $0040, $0100, $0300, $1200 };
+const unsigned long[] SCORE_BASE_BCD = { 0x0000, 0x0040, 0x0100, 0x0300, 0x1200 };
 
 // Score values for removing 0-4 lines (in BCD)
 // These values are updated based on the players level and the base values from SCORE_BASE_BCD
-dword[5] score_add_bcd;
+unsigned long[5] score_add_bcd;
 
 // Initialize play data tables
 void play_init() {
 	// Initialize the playfield line pointers;
-	byte idx = 0;
-	byte* pli = playfield;
-	for(byte j:0..PLAYFIELD_LINES-1) {
+	char idx = 0;
+	char* pli = playfield;
+	for(char j:0..PLAYFIELD_LINES-1) {
 		playfield_lines[j] = pli;
 		playfield_lines_idx[j] = idx;
 		pli += PLAYFIELD_COLS;
@@ -58,17 +58,17 @@ void play_init() {
 	// Set initial speed of moving down a tetromino
 	current_movedown_slow = MOVEDOWN_SLOW_SPEEDS[level];
 	// Set the initial score add values
-    for(byte b: 0..4) {
+    for(char b: 0..4) {
         score_add_bcd[b] = SCORE_BASE_BCD[b];
     }
 
 }
 
 // Perform any movement of the current piece
-// key_event is the next keyboard_event() og $ff if no keyboard event is pending
+// key_event is the next keyboard_event() og 0xff if no keyboard event is pending
 // Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
-byte play_movement(byte key_event) {
-    byte render = 0;
+char play_movement(char key_event) {
+    char render = 0;
 	render += play_move_down(key_event);
 	if(game_over!=0) {
 	    return render;
@@ -80,10 +80,10 @@ byte play_movement(byte key_event) {
 
 // Move down the current piece
 // Return non-zero if a render is needed
-byte play_move_down(byte key_event) {
+char play_move_down(byte key_event) {
 		// Handle moving down current piece
 		++current_movedown_counter;
-		byte movedown = 0;
+		char movedown = 0;
 		// As soon as space is pressed move down once
 		if(key_event==KEY_SPACE) {
 			movedown++;
@@ -107,7 +107,7 @@ byte play_move_down(byte key_event) {
 				// Lock current piece
 				play_lock_current();
 				// Check for any lines and remove them
-				byte removed = play_remove_lines();
+				char removed = play_remove_lines();
 				// Tally up the score
 				play_update_score(removed);
 				// Spawn a new piece
@@ -121,7 +121,7 @@ byte play_move_down(byte key_event) {
 
 // Move left/right or rotate the current piece
 // Return non-zero if a render is needed
-byte play_move_leftright(byte key_event) {
+char play_move_leftright(char key_event) {
 		// Handle keyboard events
 		if(key_event==KEY_COMMA) {
 			if(play_collision(current_xpos-1,current_ypos,current_orientation)==COLLISION_NONE) {
@@ -139,13 +139,13 @@ byte play_move_leftright(byte key_event) {
 
 // Rotate the current piece  based on key-presses
 // Return non-zero if a render is needed
-byte play_move_rotate(byte key_event) {
+char play_move_rotate(char key_event) {
 	// Handle keyboard events
-	byte orientation = $80;
+	char orientation = 0x80;
 	if(key_event==KEY_Z) {
-		orientation = (current_orientation-$10)&$3f;
+		orientation = (current_orientation-0x10)&0x3f;
 	} else if(key_event==KEY_X) {
-		orientation = (current_orientation+$10)&$3f;
+		orientation = (current_orientation+0x10)&0x3f;
 	} else {
 		return 0;
 	}
@@ -158,32 +158,32 @@ byte play_move_rotate(byte key_event) {
 }
 
 // No collision
-const byte COLLISION_NONE = 0;
+const char COLLISION_NONE = 0;
 // Playfield piece collision (cell on top of other cell on the playfield)
-const byte COLLISION_PLAYFIELD = 1;
+const char COLLISION_PLAYFIELD = 1;
 // Bottom collision (cell below bottom of the playfield)
-const byte COLLISION_BOTTOM = 2;
+const char COLLISION_BOTTOM = 2;
 // Left side collision (cell beyond the left side of the playfield)
-const byte COLLISION_LEFT = 4;
+const char COLLISION_LEFT = 4;
 // Right side collision (cell beyond the right side of the playfield)
-const byte COLLISION_RIGHT = 8;
+const char COLLISION_RIGHT = 8;
 
 // Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
 // Returns information about the type of the collision detected
-byte play_collision(byte xpos, byte ypos, byte orientation) {
-	byte* piece_gfx = current_piece + orientation;
-	byte i = 0;
-	byte yp = ypos;
-	for(byte l:0..3) {
-		byte* playfield_line = playfield_lines[yp];
-		byte xp = xpos;
-		for(byte c:0..3) {
+char play_collision(char xpos, char ypos, char orientation) {
+	char* piece_gfx = current_piece + orientation;
+	char i = 0;
+	char yp = ypos;
+	for(char l:0..3) {
+		char* playfield_line = playfield_lines[yp];
+		char xp = xpos;
+		for(char c:0..3) {
 			if(piece_gfx[i++]!=0) {
 				if(yp>=PLAYFIELD_LINES) {
 					// Below the playfield bottom
 					return COLLISION_BOTTOM;
 				}
-				if((xp&$80)!=0) {
+				if((xp&0x80)!=0) {
 					// Beyond left side of the playfield
 					return COLLISION_LEFT;
 				}
@@ -205,12 +205,12 @@ byte play_collision(byte xpos, byte ypos, byte orientation) {
 
 // Lock the current piece onto the playfield
 void play_lock_current() {
-	byte i = 0;
-	byte yp = current_ypos;
-	for(byte l:0..3) {
-		byte* playfield_line = playfield_lines[yp];
-		byte xp = current_xpos;
-		for(byte c:0..3) {
+	char i = 0;
+	char yp = current_ypos;
+	for(char l:0..3) {
+		char* playfield_line = playfield_lines[yp];
+		char xp = current_xpos;
+		for(char c:0..3) {
 			if(current_piece_gfx[i++]!=0) {
 				playfield_line[xp] = current_piece_char;
 			}
@@ -224,7 +224,7 @@ void play_lock_current() {
 // Moves the next piece into the current and spawns a new next piece
 void play_spawn_current() {
     // Move next piece into current
-	byte current_piece_idx = next_piece_idx;
+	char current_piece_idx = next_piece_idx;
 	current_piece = PIECES[current_piece_idx];
 	current_piece_char = PIECES_CHARS[current_piece_idx];
 	current_orientation = 0;
@@ -237,7 +237,7 @@ void play_spawn_current() {
 
     // Spawn a new next piece
 	// Pick a random piece (0-6)
-	byte piece_idx = 7;
+	char piece_idx = 7;
 	while(piece_idx==7) {
 		piece_idx = sid_rnd()&7;
 	}
@@ -249,17 +249,17 @@ void play_spawn_current() {
 // Utilizes two cursors on the playfield - one reading cells and one writing cells
 // Whenever a full line is detected the writing cursor is instructed to write to the same line once more.
 // Returns the number of lines removed
-byte play_remove_lines() {
+char play_remove_lines() {
 	// Start both cursors at the end of the playfield
-	byte r = PLAYFIELD_LINES*PLAYFIELD_COLS-1;
-	byte w = PLAYFIELD_LINES*PLAYFIELD_COLS-1;
+	char r = PLAYFIELD_LINES*PLAYFIELD_COLS-1;
+	char w = PLAYFIELD_LINES*PLAYFIELD_COLS-1;
 
-    byte removed = 0;
+    char removed = 0;
 	// Read all lines and rewrite them
-	for(byte y:0..PLAYFIELD_LINES-1) {
-		byte full = 1;
-		for(byte x:0..PLAYFIELD_COLS-1) {
-			byte c = playfield[r--];
+	for(char y:0..PLAYFIELD_LINES-1) {
+		char full = 1;
+		for(char x:0..PLAYFIELD_COLS-1) {
+			char c = playfield[r--];
 			if(c==0) {
 				full = 0;
 			}
@@ -273,7 +273,7 @@ byte play_remove_lines() {
 	}
 
 	// Write zeros in the rest of the lines
-	while(w!=$ff) {
+	while(w!=0xff) {
 		playfield[w--] = 0;
 	}
 	// Return the number of removed lines
@@ -281,10 +281,10 @@ byte play_remove_lines() {
 }
 
 // Update the score based on the number of lines removed
-void play_update_score(byte removed) {
+void play_update_score(char removed) {
     if(removed!=0){
-        byte lines_before = <lines_bcd&$f0;
-        dword add_bcd = score_add_bcd[removed];
+        char lines_before = <lines_bcd&0xf0;
+        unsigned long add_bcd = score_add_bcd[removed];
 
         asm { sed }
         lines_bcd += removed;
@@ -292,7 +292,7 @@ void play_update_score(byte removed) {
         asm { cld }
 
         // If line 10-part updated increase the level
-        byte lines_after = <lines_bcd&$f0;
+        char lines_after = <lines_bcd&0xf0;
         if(lines_before!=lines_after) {
             play_increase_level();
         }
@@ -311,13 +311,13 @@ void play_increase_level() {
     }
     // Increase BCD-format level
     level_bcd++;
-    if((level_bcd&$f)==$a) {
-         // If level low nybble hits $a change to $10
+    if((level_bcd&0xf)==0xa) {
+         // If level low nybble hits 0xa change to 0x10
         level_bcd += 6;
     }
     // Increase the score values gained
  	asm { sed }
-    for(byte b: 0..4) {
+    for(char b: 0..4) {
         score_add_bcd[b] += SCORE_BASE_BCD[b];
     }
  	asm { cld }

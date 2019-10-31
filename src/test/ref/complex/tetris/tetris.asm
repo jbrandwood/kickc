@@ -146,7 +146,7 @@
   .label current_piece_gfx_1 = $24
   .label current_piece_char_1 = $f
 __b1:
-  // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
+  // The screen currently being showed to the user. 0x00 for screen 1 / 0x20 for screen 2.
   lda #0
   sta.z render_screen_showing
   // Current score in BCD-format
@@ -551,7 +551,7 @@ render_playfield: {
     rts
 }
 // Perform any movement of the current piece
-// key_event is the next keyboard_event() og $ff if no keyboard event is pending
+// key_event is the next keyboard_event() og 0xff if no keyboard event is pending
 // Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
 // play_movement(byte zeropage($20) key_event)
 play_movement: {
@@ -948,7 +948,7 @@ play_increase_level: {
     and.z level_bcd
     cmp #$a
     bne __b2
-    // If level low nybble hits $a change to $10
+    // If level low nybble hits 0xa change to 0x10
     lax.z level_bcd
     axs #-[6]
     stx.z level_bcd
@@ -1224,7 +1224,7 @@ keyboard_matrix_read: {
     eor #$ff
     rts
 }
-// Update $D018 to show the current screen (used for double buffering)
+// Update 0xD018 to show the current screen (used for double buffering)
 render_show: {
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
     .const toD0182_return = (>(PLAYFIELD_SCREEN_2&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
@@ -1437,7 +1437,7 @@ render_init: {
     rts
 }
 // Copy the original screen data to the passed screen
-// Also copies colors to $d800
+// Also copies colors to 0xd800
 // render_screen_original(byte* zeropage($24) screen)
 render_screen_original: {
     .const SPACE = 0
@@ -1683,7 +1683,7 @@ sprites_irq: {
   // These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
   // Pointers to the screen address for rendering each playfield line
-  // The lines for screen 1 is aligned with $80 and screen 2 with $40 - so XOR'ing with $40 gives screen 2 lines.
+  // The lines for screen 1 is aligned with 0x80 and screen 2 with 0x40 - so XOR'ing with 0x40 gives screen 2 lines.
   .align $80
   screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
   .align $40

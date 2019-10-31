@@ -13,7 +13,6 @@ main: {
     beq __b3
     lda #<-1
     sta.z w
-    lda #>-1
     sta.z w+1
     jmp __b2
   __b3:

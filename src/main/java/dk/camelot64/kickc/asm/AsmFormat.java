@@ -3,10 +3,7 @@ package dk.camelot64.kickc.asm;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.*;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -311,19 +308,7 @@ public class AsmFormat {
     * @param boundVar The variable
     * @return The ASM parameter to use in the ASM code
     */
-   public static String getAsmParamName(Variable boundVar, ScopeRef codeScopeRef) {
-      ScopeRef varScopeRef = boundVar.getScope().getRef();
-      String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
-      return getAsmParamName(varScopeRef, asmName, codeScopeRef);
-   }
-
-   /**
-    * Get the ASM parameter for a specific bound constant
-    *
-    * @param boundVar The constant
-    * @return The ASM parameter to use in the ASM code
-    */
-   public static String getAsmParamName(ConstantVar boundVar, ScopeRef codeScopeRef) {
+   public static String getAsmParamName(SymbolVariable boundVar, ScopeRef codeScopeRef) {
       ScopeRef varScopeRef = boundVar.getScope().getRef();
       String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
       return getAsmParamName(varScopeRef, asmName, codeScopeRef);

@@ -316,7 +316,6 @@ sgn_u16: {
   __b1:
     lda #<-1
     sta.z return
-    lda #>-1
     sta.z return+1
     rts
 }

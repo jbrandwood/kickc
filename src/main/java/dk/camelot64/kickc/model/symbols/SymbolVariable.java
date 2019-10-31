@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.symbols;
 
 import dk.camelot64.kickc.model.Comment;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -21,7 +22,7 @@ public abstract class SymbolVariable implements Symbol {
    /** The type of the variable. VAR means tha type is unknown, and has not been inferred yet. */
    private SymbolType type;
 
-   /** true if the symbol type is infered (not declared) */
+   /** true if the symbol type is inferred (not declared) */
    private boolean inferredType;
 
    /** A short name used for the variable in ASM code. If possible variable names of variables are shortened in ASM code. This is possible, when several versions of the var use the same register. */
@@ -56,7 +57,8 @@ public abstract class SymbolVariable implements Symbol {
    /** Specifies that the variable must live in memory. */
    private boolean declaredAsNotRegister;
 
-   /** Strategy being used for storing and accessing the variable. The value depends on the directives memory/register/volatile/const - and on the compilers optimization decisions.
+   /**
+    * Strategy being used for storing and accessing the variable. The value depends on the directives memory/register/volatile/const - and on the compilers optimization decisions.
     * <ul>
     * <li>PHI variables are turned into versions and PHI-nodes are used for them throughout the entire program. They cannot be "volatile" and the "address-of" operator cannot be used on them.</li>
     * <li>INTERMEDIATE variables are created when expressions are broken into smaller statements. </li>
@@ -64,13 +66,17 @@ public abstract class SymbolVariable implements Symbol {
     * <li>CONSTANT variables are constant.
     * </ul>
     **/
-   public enum StorageStrategy { PHI_MASTER, PHI_VERSION, INTERMEDIATE, LOAD_STORE, CONSTANT }
+   public enum StorageStrategy {
+      PHI_MASTER, PHI_VERSION, INTERMEDIATE, LOAD_STORE, CONSTANT
+   }
 
    /** The storage strategy for the variable. */
    private StorageStrategy storageStrategy;
 
    /** Memory area used for storing the variable (if is is stored in memory). */
-   public enum MemoryArea { ZEROPAGE_MEMORY, MAIN_MEMORY }
+   public enum MemoryArea {
+      ZEROPAGE_MEMORY, MAIN_MEMORY
+   }
 
    /** The memory area where the variable lives (if stored in memory). */
    private MemoryArea memoryArea;
@@ -87,6 +93,12 @@ public abstract class SymbolVariable implements Symbol {
    /** The constant value if the variable is a constant. Null otherwise. */
    private ConstantValue constantValue;
 
+   /** The number of the next version (only used for PHI masters) */
+   private Integer nextPhiVersionNumber;
+
+   /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
+   private Registers.Register allocation;
+
    public SymbolVariable(String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, MemoryArea memoryArea, String dataSegment) {
       this.name = name;
       this.scope = scope;
@@ -98,11 +110,49 @@ public abstract class SymbolVariable implements Symbol {
       this.memoryArea = memoryArea;
       this.constantDeclaration = ConstantDeclaration.MAYBE_CONST;
       setFullName();
+      if(isStoragePhiMaster())
+         this.nextPhiVersionNumber = 0;
+
    }
 
    private void setFullName() {
       String scopeName = (scope == null) ? "" : scope.getFullName();
       fullName = (scopeName.length() > 0) ? scopeName + "::" + name : name;
+   }
+
+   /**
+    * Creates a new PHI-version from a PHI-master
+    *
+    * @return The new version of the PHI master
+    */
+   public Variable createVersion() {
+      if(!isStoragePhiMaster())
+         throw new InternalError("Cannot version non-PHI variable " + this.toString());
+      Variable version = new Variable(this, nextPhiVersionNumber++);
+      getScope().add(version);
+      return version;
+   }
+
+   /**
+    * If the variable is a version of a variable returns the original variable.
+    *
+    * @return The original variable. Null if this is not a version.
+    */
+   public Variable getVersionOf() {
+      if(!isStoragePhiVersion())
+         throw new InternalError("Cannot get master for non-PHI version variable " + this.toString());
+      String name = getName();
+      String versionOfName = name.substring(0, name.indexOf("#"));
+      return getScope().getVariable(versionOfName);
+   }
+
+
+   public Registers.Register getAllocation() {
+      return allocation;
+   }
+
+   public void setAllocation(Registers.Register allocation) {
+      this.allocation = allocation;
    }
 
    public ConstantValue getConstantValue() {
@@ -318,13 +368,13 @@ public abstract class SymbolVariable implements Symbol {
 
    @Override
    public String toString(Program program) {
-      String s = new StringBuilder()
+      return new StringBuilder()
             .append("(")
-            .append(type.getTypeName())
-            .append(inferredType ? "~" : "")
+            .append((constantValue != null) ? "const " : "")
+            .append(getType().getTypeName())
+            .append((constantValue==null&&inferredType) ? "~" : "")
             .append(") ")
             .append(getFullName()).toString();
-      return s;
    }
 
    @Override

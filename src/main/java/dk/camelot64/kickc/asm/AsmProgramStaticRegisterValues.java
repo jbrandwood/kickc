@@ -31,7 +31,7 @@ public class AsmProgramStaticRegisterValues {
          } else if(parameter.startsWith(">")) {
             try {
                int parValue = Integer.parseInt(parameter.substring(1));
-               return 0xff & (parValue / 0x100);
+               return 0xff & ((parValue & 0xffff) / 0x100);
             } catch(NumberFormatException e) {
                // ignore
             }

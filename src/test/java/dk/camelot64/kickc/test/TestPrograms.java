@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStaticRegisterOptimizationProblem() throws IOException, URISyntaxException {
+      compileAndCompare("static-register-optimization-problem");
+   }
+
+   @Test
    public void testDeclaredNotConstVar1() throws IOException, URISyntaxException {
       compileAndCompare("declared-notconst-var-1");
    }

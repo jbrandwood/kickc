@@ -8,20 +8,9 @@ import dk.camelot64.kickc.model.values.ConstantValue;
 /** A named constant or a variable that has been inferred to be constant in the symbol table */
 public class ConstantVar extends SymbolVariable {
 
-   /** The constant value. */
-   private ConstantValue value;
-
    public ConstantVar(String name, Scope scope, SymbolType type, ConstantValue value, String dataSegment) {
       super(name, scope, type, StorageStrategy.CONSTANT, MemoryArea.MAIN_MEMORY, dataSegment);
-      this.value = value;
-   }
-
-   public ConstantValue getValue() {
-      return value;
-   }
-
-   public void setValue(ConstantValue value) {
-      this.value = value;
+      setValue(value);
    }
 
    @Override
@@ -45,21 +34,4 @@ public class ConstantVar extends SymbolVariable {
       return toString(null);
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if(this == o) return true;
-      if(o == null || getClass() != o.getClass()) return false;
-      if(!super.equals(o)) return false;
-
-      ConstantVar that = (ConstantVar) o;
-
-      return value != null ? value.equals(that.value) : that.value == null;
-   }
-
-   @Override
-   public int hashCode() {
-      int result = super.hashCode();
-      result = 31 * result + (value != null ? value.hashCode() : 0);
-      return result;
-   }
 }

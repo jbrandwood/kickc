@@ -98,19 +98,18 @@ directive
     : CONST #directiveConst
     | NOTCONST #directiveNotConst
     | MAYBECONST #directiveMaybeConst
-    | EXTERN #directiveExtern
-    | EXPORT #directiveExport
     | ALIGN PAR_BEGIN NUMBER PAR_END #directiveAlign
     | REGISTER ( PAR_BEGIN ( NAME ) PAR_END)? #directiveRegister
     | ADDRESS_ZEROPAGE #directiveMemoryAreaZp
     | ADDRESS_MAINMEM #directiveMemoryAreaMain
     | ADDRESS PAR_BEGIN ( NUMBER ) PAR_END #directiveMemoryAreaAddress
-    | FORM_SSA #directiveFormSsa
-    | FORM_NOTSSA #directiveFormNotSsa
-    | ADDRESS PAR_BEGIN ( NUMBER ) PAR_END #directiveMemoryAreaAddress
-    | INLINE #directiveInline
     | VOLATILE #directiveVolatile
     | NOTVOLATILE #directiveNotVolatile
+    | FORM_SSA #directiveFormSsa
+    | FORM_NOTSSA #directiveFormNotSsa
+    | EXTERN #directiveExtern
+    | EXPORT #directiveExport
+    | INLINE #directiveInline
     | INTERRUPT ( PAR_BEGIN NAME PAR_END )? #directiveInterrupt
     | RESERVE PAR_BEGIN NUMBER ( COMMA NUMBER )* PAR_END  #directiveReserveZp
     | CALLINGCONVENTION #directiveCallingConvention

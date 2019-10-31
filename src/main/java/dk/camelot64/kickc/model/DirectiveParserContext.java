@@ -29,7 +29,7 @@ public class DirectiveParserContext {
 
    /** The different scopes deciding directive defaults. */
    public enum DirectiveScope {
-      GLOBAL, LOCAL, PARAMETER, STRUCT_MEMBER;
+      GLOBAL, LOCAL, PARAMETER, MEMBER;
 
       public static DirectiveScope getFor(SymbolVariable lValue, boolean isParameter) {
          if(isParameter) {
@@ -45,7 +45,7 @@ public class DirectiveParserContext {
          } else if(scope instanceof Procedure) {
             return LOCAL;
          } else if(scope instanceof StructDefinition) {
-            return STRUCT_MEMBER;
+            return MEMBER;
          } else if(scope instanceof BlockScope) {
             return getFor(scope.getScope());
          } else {

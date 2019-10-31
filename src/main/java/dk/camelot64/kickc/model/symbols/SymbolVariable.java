@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.values.ConstantValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +84,9 @@ public abstract class SymbolVariable implements Symbol {
    /** The data segment to put the variable into (if it is allocated in memory). */
    private String dataSegment;
 
+   /** The constant value if the variable is a constant. Null otherwise. */
+   private ConstantValue value;
+
    public SymbolVariable(String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, MemoryArea memoryArea, String dataSegment) {
       this.name = name;
       this.scope = scope;
@@ -99,6 +103,14 @@ public abstract class SymbolVariable implements Symbol {
    private void setFullName() {
       String scopeName = (scope == null) ? "" : scope.getFullName();
       fullName = (scopeName.length() > 0) ? scopeName + "::" + name : name;
+   }
+
+   public ConstantValue getValue() {
+      return value;
+   }
+
+   public void setValue(ConstantValue value) {
+      this.value = value;
    }
 
    public String getDataSegment() {
@@ -325,10 +337,6 @@ public abstract class SymbolVariable implements Symbol {
       }
 
       SymbolVariable variable = (SymbolVariable) o;
-
-      if(inferredType != variable.inferredType) {
-         return false;
-      }
       if(name != null ? !name.equals(variable.name) : variable.name != null) {
          return false;
       }
@@ -346,7 +354,6 @@ public abstract class SymbolVariable implements Symbol {
       int result = name != null ? name.hashCode() : 0;
       result = 31 * result + (scope != null ? scope.hashCode() : 0);
       result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (inferredType ? 1 : 0);
       result = 31 * result + (asmName != null ? asmName.hashCode() : 0);
       return result;
    }

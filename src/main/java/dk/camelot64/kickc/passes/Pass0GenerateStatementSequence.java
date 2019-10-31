@@ -1500,7 +1500,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          Scope parentScope = getCurrentScope();
          while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
          for(ConstantVar member : enumDefinition.getAllConstants(false)) {
-            parentScope.add(new ConstantVar(member.getLocalName(), parentScope, SymbolType.BYTE, member.getValue(), currentDataSegment));
+            parentScope.add(new ConstantVar(member.getLocalName(), parentScope, SymbolType.BYTE, member.getConstantValue(), currentDataSegment));
          }
          return SymbolType.BYTE;
       } catch(CompileError e) {
@@ -1525,7 +1525,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             enumValue = new ConstantInteger(0L, SymbolType.BYTE);
          } else {
             ConstantVar prevEnumMember = values.get(values.size() - 1);
-            ConstantValue prevValue = prevEnumMember.getValue();
+            ConstantValue prevValue = prevEnumMember.getConstantValue();
             if(prevValue instanceof ConstantInteger) {
                enumValue = new ConstantInteger(((ConstantInteger) prevValue).getInteger() + 1, SymbolType.BYTE);
             } else {

@@ -94,7 +94,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          constScope.remove(variable);
          constScope.add(constantVar);
          constAliases.put(constRef, constantVar.getRef());
-         getLog().append("Constant " + constantVar.toString(getProgram()) + " = " + constantVar.getValue());
+         getLog().append("Constant " + constantVar.toString(getProgram()) + " = " + constantVar.getConstantValue());
       }
       // Remove assignments to constants in the code
       removeAssignments(getGraph(), constants.keySet());

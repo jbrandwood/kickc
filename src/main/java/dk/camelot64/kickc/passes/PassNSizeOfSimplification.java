@@ -80,9 +80,9 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
                ConstantRef sizeOfConstantVar = OperatorSizeOf.getSizeOfConstantVar(getScope(), arrayType.getElementType());
                programValue.set(new ConstantBinary((ConstantValue) arraySize, Operators.MULTIPLY, sizeOfConstantVar));
                modified.set(true);
-            } else if(constant.getValue() instanceof ConstantArrayList) {
+            } else if(constant.getConstantValue() instanceof ConstantArrayList) {
                getLog().append("Resolving array sizeof() " + unary.toString(getProgram()));
-               int size = ((ConstantArrayList) constant.getValue()).getElements().size();
+               int size = ((ConstantArrayList) constant.getConstantValue()).getElements().size();
                ConstantRef sizeOfConstantVar = OperatorSizeOf.getSizeOfConstantVar(getScope(), arrayType.getElementType());
                programValue.set(new ConstantBinary(new ConstantInteger((long) size), Operators.MULTIPLY, sizeOfConstantVar));
                modified.set(true);
@@ -90,7 +90,7 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
                // Try to calculate the literal to check if it is a string
                ConstantLiteral stringLiteral = null;
                try {
-                  stringLiteral = constant.getValue().calculateLiteral(getProgram().getScope());
+                  stringLiteral = constant.getConstantValue().calculateLiteral(getProgram().getScope());
                } catch(ConstantNotLiteral e) {
                   // Ignore
                }

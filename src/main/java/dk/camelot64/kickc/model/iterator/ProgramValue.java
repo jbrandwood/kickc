@@ -638,12 +638,12 @@ public interface ProgramValue {
 
       @Override
       public Value get() {
-         return constantVar.getValue();
+         return constantVar.getConstantValue();
       }
 
       @Override
       public void set(Value val) {
-         constantVar.setValue((ConstantValue) val);
+         constantVar.setConstantValue((ConstantValue) val);
       }
 
    }

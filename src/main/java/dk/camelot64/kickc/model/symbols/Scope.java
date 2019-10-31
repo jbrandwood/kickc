@@ -368,7 +368,7 @@ public abstract class Scope implements Symbol, Serializable {
                   }
                   if(symbol instanceof ConstantVar) {
                      ConstantVar constVar = (ConstantVar) symbol;
-                     res.append(" = " + constVar.getValue().toString(program));
+                     res.append(" = " + constVar.getConstantValue().toString(program));
                   }
                }
                res.append("\n");

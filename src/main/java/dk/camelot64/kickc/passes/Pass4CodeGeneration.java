@@ -300,7 +300,7 @@ public class Pass4CodeGeneration {
    }
 
    private boolean hasData(ConstantVar constantVar) {
-      ConstantValue constantValue = constantVar.getValue();
+      ConstantValue constantValue = constantVar.getConstantValue();
       if(constantValue instanceof ConstantArray) {
          return true;
       } else {
@@ -400,9 +400,9 @@ public class Pass4CodeGeneration {
                // Add any comments
                generateComments(asm, constantVar.getComments());
                // Ensure encoding is good
-               ensureEncoding(asm, constantVar.getValue());
+               ensureEncoding(asm, constantVar.getConstantValue());
                // Find the constant value calculation
-               String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
+               String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getConstantValue(), 99, scopeRef);
                if(constantVar.getType() instanceof SymbolTypePointer) {
                   // Must use a label for pointers
                   asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
@@ -482,7 +482,7 @@ public class Pass4CodeGeneration {
                String alignment = AsmFormat.getAsmNumber(declaredAlignment);
                asm.addDataAlignment(alignment);
             }
-            ConstantValue constantValue = constantVar.getValue();
+            ConstantValue constantValue = constantVar.getConstantValue();
             if(constantValue instanceof ConstantArrayList || constantValue instanceof ConstantArrayFilled || constantValue instanceof ConstantArrayKickAsm || constantValue instanceof ConstantString) {
                AsmDataChunk asmDataChunk = new AsmDataChunk();
                addChunkData(asmDataChunk, constantValue, constantVar.getType(), scopeRef);

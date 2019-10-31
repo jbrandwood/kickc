@@ -35,7 +35,7 @@ public class Pass3AssertArrayLengths extends Pass2SsaAssertion {
                }
                Integer declaredSizeInt = ((ConstantInteger) declaredSizeVal).getInteger().intValue();
                // A constant size was found - Check that a value with the same size is present
-               ConstantValue constantValue = constantVar.getValue();
+               ConstantValue constantValue = constantVar.getConstantValue();
                if(constantValue == null) {
                   throw new CompileError("Error! Array with a size not initialized " + constantVar.toString(getProgram()));
                } else if(constantValue instanceof ConstantArrayFilled) {

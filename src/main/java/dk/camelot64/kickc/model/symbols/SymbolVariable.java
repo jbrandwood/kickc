@@ -85,7 +85,7 @@ public abstract class SymbolVariable implements Symbol {
    private String dataSegment;
 
    /** The constant value if the variable is a constant. Null otherwise. */
-   private ConstantValue value;
+   private ConstantValue constantValue;
 
    public SymbolVariable(String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, MemoryArea memoryArea, String dataSegment) {
       this.name = name;
@@ -105,12 +105,12 @@ public abstract class SymbolVariable implements Symbol {
       fullName = (scopeName.length() > 0) ? scopeName + "::" + name : name;
    }
 
-   public ConstantValue getValue() {
-      return value;
+   public ConstantValue getConstantValue() {
+      return constantValue;
    }
 
-   public void setValue(ConstantValue value) {
-      this.value = value;
+   public void setConstantValue(ConstantValue value) {
+      this.constantValue = value;
    }
 
    public String getDataSegment() {

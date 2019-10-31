@@ -322,30 +322,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code directiveExtern}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveExtern(KickCParser.DirectiveExternContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code directiveExtern}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveExtern(KickCParser.DirectiveExternContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code directiveExport}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveExport(KickCParser.DirectiveExportContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code directiveExport}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveExport(KickCParser.DirectiveExportContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code directiveAlign}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -406,6 +382,30 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code directiveVolatile}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveVolatile}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveNotVolatile}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveNotVolatile}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code directiveFormSsa}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -430,6 +430,30 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveFormNotSsa(KickCParser.DirectiveFormNotSsaContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code directiveExtern}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveExtern(KickCParser.DirectiveExternContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveExtern}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveExtern(KickCParser.DirectiveExternContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveExport}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveExport(KickCParser.DirectiveExportContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveExport}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveExport(KickCParser.DirectiveExportContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code directiveInline}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -441,30 +465,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDirectiveInline(KickCParser.DirectiveInlineContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code directiveVolatile}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code directiveVolatile}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code directiveNotVolatile}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code directiveNotVolatile}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveInterrupt}
 	 * labeled alternative in {@link KickCParser#directive}.

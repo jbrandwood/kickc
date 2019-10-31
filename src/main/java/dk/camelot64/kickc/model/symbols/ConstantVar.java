@@ -10,7 +10,7 @@ public class ConstantVar extends SymbolVariable {
 
    public ConstantVar(String name, Scope scope, SymbolType type, ConstantValue value, String dataSegment) {
       super(name, scope, type, StorageStrategy.CONSTANT, MemoryArea.MAIN_MEMORY, dataSegment);
-      setValue(value);
+      setConstantValue(value);
    }
 
    @Override

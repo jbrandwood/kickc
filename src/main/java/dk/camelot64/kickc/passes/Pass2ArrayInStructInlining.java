@@ -66,7 +66,7 @@ public class Pass2ArrayInStructInlining extends Pass2SsaOptimization {
                      if(constantValue.getType(getProgram().getScope()).equals(SymbolType.STRING)) {
                         if(constantValue instanceof ConstantRef) {
                            ConstantVar constantStringVar = getScope().getConstant((ConstantRef) constantValue);
-                           inline.put((ConstantRef) constantValue, constantStringVar.getValue());
+                           inline.put((ConstantRef) constantValue, constantStringVar.getConstantValue());
                         }
                      }
                   }

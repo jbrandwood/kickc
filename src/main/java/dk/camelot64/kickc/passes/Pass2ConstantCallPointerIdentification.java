@@ -83,7 +83,7 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
    private ProcedureRef findConstProcedure(RValue procedurePointer) {
       if(procedurePointer instanceof ConstantRef) {
          ConstantVar constant = getScope().getConstant((ConstantRef) procedurePointer);
-         return findConstProcedure(constant.getValue());
+         return findConstProcedure(constant.getConstantValue());
       } else if(procedurePointer instanceof ConstantSymbolPointer) {
          ConstantSymbolPointer pointer = (ConstantSymbolPointer) procedurePointer;
          if(pointer.getToSymbol() instanceof ProcedureRef) {

@@ -2,7 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
 
@@ -187,8 +187,8 @@ public class PhiTransitions {
             PhiTransition.PhiAssignment assignment = assignments.get(i);
             PhiTransition.PhiAssignment otherAssignment = otherAssignments.get(i);
             if(assignment.getVariable() != null && otherAssignment.getVariable() != null) {
-               SymbolVariable var = program.getSymbolInfos().getVariable(assignment.getVariable());
-               SymbolVariable otherVar = program.getSymbolInfos().getVariable(otherAssignment.getVariable());
+               Variable var = program.getSymbolInfos().getVariable(assignment.getVariable());
+               Variable otherVar = program.getSymbolInfos().getVariable(otherAssignment.getVariable());
                if(!var.getAllocation().equals(otherVar.getAllocation())) {
                   return false;
                }
@@ -196,8 +196,8 @@ public class PhiTransitions {
                return false;
             }
             if(assignment.getrValue() instanceof VariableRef && otherAssignment.getrValue() instanceof VariableRef) {
-               SymbolVariable var = program.getSymbolInfos().getVariable((VariableRef) assignment.getrValue());
-               SymbolVariable otherVar = program.getSymbolInfos().getVariable((VariableRef) otherAssignment.getrValue());
+               Variable var = program.getSymbolInfos().getVariable((VariableRef) assignment.getrValue());
+               Variable otherVar = program.getSymbolInfos().getVariable((VariableRef) otherAssignment.getrValue());
                if(!var.getAllocation().equals(otherVar.getAllocation())) {
                   return false;
                }

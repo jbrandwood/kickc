@@ -44,7 +44,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** Used to build the scopes of the source file. */
    private Stack<Scope> scopeStack;
    /** The memory area used by default for variables. */
-   private SymbolVariable.MemoryArea defaultMemoryArea;
+   private Variable.MemoryArea defaultMemoryArea;
    /** Context used for adding directives to variables. */
    private DirectiveParserContext directiveContext;
 
@@ -54,7 +54,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.program = program;
       this.sequence = program.getStatementSequence();
       this.scopeStack = new Stack<>();
-      this.defaultMemoryArea = SymbolVariable.MemoryArea.ZEROPAGE_MEMORY;
+      this.defaultMemoryArea = Variable.MemoryArea.ZEROPAGE_MEMORY;
       this.directiveContext = new DirectiveParserContext();
       scopeStack.push(program.getScope());
    }
@@ -205,19 +205,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
       scopeStack.push(procedure);
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
-      SymbolVariable returnVar = null;
+      Variable returnVar = null;
       if(!SymbolType.VOID.equals(type)) {
          returnVar = procedure.addVariablePhiMaster("return", type, defaultMemoryArea, procedure.getSegmentData());
       }
-      List<SymbolVariable> parameterList = new ArrayList<>();
+      List<Variable> parameterList = new ArrayList<>();
       if(ctx.parameterListDecl() != null) {
-         parameterList = (List<SymbolVariable>) this.visit(ctx.parameterListDecl());
+         parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
       }
       procedure.setParameters(parameterList);
       sequence.addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
       // Add parameter assignments
       if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
-         for(SymbolVariable param : parameterList) {
+         for(Variable param : parameterList) {
             sequence.addStatement(new StatementAssignment((LValue) param.getRef(), new ParamValue((VariableRef) param.getRef()), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
          }
       }
@@ -241,8 +241,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
 
    @Override
-   public List<SymbolVariable> visitParameterListDecl(KickCParser.ParameterListDeclContext ctx) {
-      ArrayList<SymbolVariable> parameterDecls = new ArrayList<>();
+   public List<Variable> visitParameterListDecl(KickCParser.ParameterListDeclContext ctx) {
+      ArrayList<Variable> parameterDecls = new ArrayList<>();
       for(KickCParser.ParameterDeclContext parameterDeclCtx : ctx.parameterDecl()) {
          Object parameterDecl = this.visit(parameterDeclCtx);
          if(parameterDecl.equals(SymbolType.VOID)) {
@@ -252,8 +252,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             } else {
                throw new CompileError("Illegal void parameter.", new StatementSource(ctx));
             }
-         } else if(parameterDecl instanceof SymbolVariable) {
-            parameterDecls.add((SymbolVariable) parameterDecl);
+         } else if(parameterDecl instanceof Variable) {
+            parameterDecls.add((Variable) parameterDecl);
          } else {
             throw new CompileError("Unknown parameter " + ctx.getText(), new StatementSource(ctx));
          }
@@ -266,7 +266,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
-      SymbolVariable param = new SymbolVariable( false, ctx.NAME().getText(), getCurrentScope(), type, SymbolVariable.StorageStrategy.PHI_MASTER, defaultMemoryArea, currentDataSegment);
+      Variable param = new Variable( ctx.NAME().getText(), getCurrentScope(), type, Variable.StorageStrategy.PHI_MASTER, defaultMemoryArea, currentDataSegment);
       // Add directives
       addDirectives(param, true, directives, new StatementSource(ctx));
       exitDeclTypes();
@@ -557,7 +557,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDeclVariableInitExpr(KickCParser.DeclVariableInitExprContext ctx) {
       String varName = ctx.NAME().getText();
-      SymbolVariable lValue = visitDeclVariableInit(varName, ctx);
+      Variable lValue = visitDeclVariableInit(varName, ctx);
       SymbolType type = declVarType;
       List<Comment> comments = declVarComments;
       KickCParser.ExprContext initializer = ctx.expr();
@@ -582,7 +582,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx) {
       String varName = ctx.NAME().getText();
-      SymbolVariable lValue = visitDeclVariableInit(varName, ctx);
+      Variable lValue = visitDeclVariableInit(varName, ctx);
       SymbolType type = this.declVarType;
       List<Comment> comments = this.declVarComments;
       if(!(type instanceof SymbolTypeArray)) {
@@ -611,12 +611,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return null;
    }
 
-   private SymbolVariable visitDeclVariableInit(String varName, KickCParser.DeclVariableInitContext ctx) {
+   private Variable visitDeclVariableInit(String varName, KickCParser.DeclVariableInitContext ctx) {
       List<Directive> directives = declVarDirectives;
       SymbolType type = declVarType;
       List<Comment> comments = declVarComments;
 
-      SymbolVariable lValue;
+      Variable lValue;
       try {
          lValue = getCurrentScope().addVariablePhiMaster(varName, type, defaultMemoryArea, currentDataSegment);
       } catch(CompileError e) {
@@ -626,9 +626,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       addDirectives(lValue, false, directives, new StatementSource(ctx));
       // Array / String variables are implicitly constant
       if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
-         lValue.setConstantDeclaration(SymbolVariable.ConstantDeclaration.CONST);
-         lValue.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
-         lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
+         lValue.setConstantDeclaration(Variable.ConstantDeclaration.CONST);
+         lValue.setStorageStrategy(Variable.StorageStrategy.CONSTANT);
+         lValue.setMemoryArea(Variable.MemoryArea.MAIN_MEMORY);
       }
       if(lValue.isDeclaredConstant()) {
          // Add comments to constant
@@ -682,7 +682,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     * @param isParameter True if the lValue is a parameter
     * @param directives The directives to add
     */
-   private void addDirectives(SymbolVariable lValue, boolean isParameter, List<Directive> directives, StatementSource source) {
+   private void addDirectives(Variable lValue, boolean isParameter, List<Directive> directives, StatementSource source) {
       directiveContext.applyDirectives(lValue, isParameter, directives, source);
    }
 
@@ -742,17 +742,17 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Directive visitDirectiveConst(KickCParser.DirectiveConstContext ctx) {
-      return new Directive.Const(SymbolVariable.ConstantDeclaration.CONST);
+      return new Directive.Const(Variable.ConstantDeclaration.CONST);
    }
 
    @Override
    public Object visitDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx) {
-      return new Directive.Const(SymbolVariable.ConstantDeclaration.NOT_CONST);
+      return new Directive.Const(Variable.ConstantDeclaration.NOT_CONST);
    }
 
    @Override
    public Object visitDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx) {
-      return new Directive.Const(SymbolVariable.ConstantDeclaration.MAYBE_CONST);
+      return new Directive.Const(Variable.ConstantDeclaration.MAYBE_CONST);
    }
 
    @Override
@@ -796,12 +796,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitDirectiveMemoryAreaZp(KickCParser.DirectiveMemoryAreaZpContext ctx) {
-      return new Directive.MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
+      return new Directive.MemoryArea(Variable.MemoryArea.ZEROPAGE_MEMORY, null);
    }
 
    @Override
    public Object visitDirectiveMemoryAreaMain(KickCParser.DirectiveMemoryAreaMainContext ctx) {
-      return new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null);
+      return new Directive.MemoryArea(Variable.MemoryArea.MAIN_MEMORY, null);
    }
 
    @Override
@@ -809,7 +809,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       try {
          ConstantInteger memoryAddress = NumberParser.parseIntegerLiteral(ctx.NUMBER().getText());
          Long address = memoryAddress.getInteger();
-         SymbolVariable.MemoryArea memoryArea = (address < 0x100) ? SymbolVariable.MemoryArea.ZEROPAGE_MEMORY : SymbolVariable.MemoryArea.MAIN_MEMORY;
+         Variable.MemoryArea memoryArea = (address < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;
          return new Directive.MemoryArea(memoryArea, address);
       } catch(NumberFormatException e) {
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
@@ -877,7 +877,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       RValue exprVal = (RValue) this.visit(ctx.commaExpr());
       if(notConsumed(exprVal)) {
          // Make a tmpVar to create the statement
-         SymbolVariable tmpVar = getCurrentScope().addVariableIntermediate();
+         Variable tmpVar = getCurrentScope().addVariableIntermediate();
          List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
          RValue rVal = exprVal;
          if(exprVal instanceof LValue) {
@@ -1184,7 +1184,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       SymbolType varType = declVarType;
       List<Directive> varDirectives = declVarDirectives;
       String varName = ctx.NAME().getText();
-      SymbolVariable lValue;
+      Variable lValue;
       if(varType != null) {
          try {
             lValue = getCurrentScope().addVariablePhiMaster(varName, varType, defaultMemoryArea, currentDataSegment);
@@ -1225,7 +1225,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       sequence.addStatement(stmtNxt);
       // Add condition i!=last+1 or i!=last-1
       RValue beyondLastVal = new RangeComparison(rangeFirstValue, rangeLastValue, lValue.getType());
-      SymbolVariable tmpVar = getCurrentScope().addVariableIntermediate();
+      Variable tmpVar = getCurrentScope().addVariableIntermediate();
       SymbolVariableRef tmpVarRef = tmpVar.getRef();
       Statement stmtTmpVar = new StatementAssignment((LValue) tmpVarRef, lValue.getRef(), Operators.NEQ, beyondLastVal, statementSource, Comment.NO_COMMENTS);
       sequence.addStatement(stmtTmpVar);
@@ -1411,7 +1411,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(exprCtx != null) {
          PrePostModifierHandler.addPreModifiers(this, exprCtx, new StatementSource(ctx));
          rValue = (RValue) this.visit(exprCtx);
-         SymbolVariable returnVar = procedure.getVariable("return");
+         Variable returnVar = procedure.getVariable("return");
          sequence.addStatement(new StatementAssignment((LValue) returnVar.getRef(), rValue, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
          PrePostModifierHandler.addPostModifiers(this, exprCtx, new StatementSource(ctx));
       }
@@ -1420,7 +1420,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return null;
    }
 
-   private void addInitialAssignment(KickCParser.ExprContext initializer, SymbolVariable lValue, List<Comment> comments, StatementSource statementSource) {
+   private void addInitialAssignment(KickCParser.ExprContext initializer, Variable lValue, List<Comment> comments, StatementSource statementSource) {
       PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
       RValue rValue = (RValue) visit(initializer);
       Statement stmt = new StatementAssignment((LValue) lValue.getRef(), rValue, statementSource, ensureUnusedComments(comments));
@@ -1499,8 +1499,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          // Copy all members to upper-level scope
          Scope parentScope = getCurrentScope();
          while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
-         for(SymbolVariable member : enumDefinition.getAllConstants(false)) {
-            parentScope.add(new SymbolVariable(member.getLocalName(), parentScope, SymbolType.BYTE, currentDataSegment, member.getConstantValue()));
+         for(Variable member : enumDefinition.getAllConstants(false)) {
+            parentScope.add(new Variable(member.getLocalName(), parentScope, SymbolType.BYTE, currentDataSegment, member.getConstantValue()));
          }
          return SymbolType.BYTE;
       } catch(CompileError e) {
@@ -1520,11 +1520,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          enumValue = (ConstantValue) exprVal;
       } else {
          // No specific value - find previous value
-         List<SymbolVariable> values = new ArrayList<>(currentEnum.getAllConstants(false));
+         List<Variable> values = new ArrayList<>(currentEnum.getAllConstants(false));
          if(values.isEmpty()) {
             enumValue = new ConstantInteger(0L, SymbolType.BYTE);
          } else {
-            SymbolVariable prevEnumMember = values.get(values.size() - 1);
+            Variable prevEnumMember = values.get(values.size() - 1);
             ConstantValue prevValue = prevEnumMember.getConstantValue();
             if(prevValue instanceof ConstantInteger) {
                enumValue = new ConstantInteger(((ConstantInteger) prevValue).getInteger() + 1, SymbolType.BYTE);
@@ -1534,7 +1534,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             }
          }
       }
-      currentEnum.add(new SymbolVariable(memberName, getCurrentScope(), SymbolType.BYTE, currentDataSegment, enumValue));
+      currentEnum.add(new Variable(memberName, getCurrentScope(), SymbolType.BYTE, currentDataSegment, enumValue));
       return null;
    }
 
@@ -1556,7 +1556,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) {
       Scope typeDefScope = program.getScope().getTypeDefScope();
-      SymbolVariable typeDefVariable = typeDefScope.getVariable(ctx.getText());
+      Variable typeDefVariable = typeDefScope.getVariable(ctx.getText());
       if(typeDefVariable != null) {
          return typeDefVariable.getType();
       }
@@ -1771,7 +1771,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       RValue child = (RValue) this.visit(ctx.expr());
       SymbolType castType = (SymbolType) this.visit(ctx.typeDecl());
       Operator operator = Operators.getCastUnary(castType);
-      SymbolVariable tmpVar = getCurrentScope().addVariableIntermediate();
+      Variable tmpVar = getCurrentScope().addVariableIntermediate();
       SymbolVariableRef tmpVarRef = tmpVar.getRef();
       Statement stmt = new StatementAssignment((LValue) tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
       sequence.addStatement(stmt);
@@ -1788,7 +1788,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else {
          // sizeof(expression) - add a unary expression to be resolved later
          RValue child = (RValue) this.visit(ctx.expr());
-         SymbolVariable tmpVar = getCurrentScope().addVariableIntermediate();
+         Variable tmpVar = getCurrentScope().addVariableIntermediate();
          SymbolVariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment((LValue) tmpVarRef, Operators.SIZEOF, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
@@ -1806,7 +1806,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else {
          // typeid(expression) - add a unary expression to be resolved later
          RValue child = (RValue) this.visit(ctx.expr());
-         SymbolVariable tmpVar = getCurrentScope().addVariableIntermediate();
+         Variable tmpVar = getCurrentScope().addVariableIntermediate();
          SymbolVariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment((LValue) tmpVarRef, Operators.TYPEID, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
@@ -1824,7 +1824,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else {
          parameters = new ArrayList<>();
       }
-      SymbolVariable tmpVar = getCurrentScope().addVariableIntermediate();
+      Variable tmpVar = getCurrentScope().addVariableIntermediate();
       SymbolVariableRef tmpVarRef = tmpVar.getRef();
 
       String procedureName;
@@ -1953,7 +1953,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(left instanceof ConstantValue && right instanceof ConstantValue) {
          return new ConstantBinary((ConstantValue) left, (OperatorBinary) operator, (ConstantValue) right);
       } else {
-         SymbolVariable tmpVar = getCurrentScope().addVariableIntermediate();
+         Variable tmpVar = getCurrentScope().addVariableIntermediate();
          SymbolVariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment((LValue) tmpVarRef, left, operator, right, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
@@ -1982,7 +1982,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else if(child instanceof ConstantValue) {
          return new ConstantUnary((OperatorUnary) operator, (ConstantValue) child);
       } else {
-         SymbolVariable tmpVar = getCurrentScope().addVariableIntermediate();
+         Variable tmpVar = getCurrentScope().addVariableIntermediate();
          SymbolVariableRef tmpVarRef = tmpVar.getRef();
          Statement stmt = new StatementAssignment((LValue) tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
          sequence.addStatement(stmt);
@@ -2052,8 +2052,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public RValue visitExprId(KickCParser.ExprIdContext ctx) {
       Symbol symbol = getCurrentScope().getSymbol(ctx.NAME().getText());
-      if(symbol instanceof SymbolVariable) {
-         SymbolVariable variable = (SymbolVariable) symbol;
+      if(symbol instanceof Variable) {
+         Variable variable = (Variable) symbol;
          return variable.getRef();
       } else if(symbol instanceof Procedure) {
          Procedure procedure = (Procedure) symbol;

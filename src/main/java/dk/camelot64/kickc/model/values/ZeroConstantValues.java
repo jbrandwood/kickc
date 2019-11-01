@@ -3,7 +3,7 @@ package dk.camelot64.kickc.model.values;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -21,7 +21,7 @@ public class ZeroConstantValues {
          SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
          LinkedHashMap<SymbolVariableRef, ConstantValue> zeroValues = new LinkedHashMap<>();
          StructDefinition structDefinition = typeStruct.getStructDefinition(programScope);
-         for(SymbolVariable memberVar : structDefinition.getAllVariables(false)) {
+         for(Variable memberVar : structDefinition.getAllVariables(false)) {
             zeroValues.put(memberVar.getRef(), zeroValue(memberVar.getType(), programScope));
          }
          return new ConstantStructValue(typeStruct, zeroValues);

@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
@@ -32,7 +32,7 @@ public class Pass2DeInlineWordDerefIdx extends Pass2SsaOptimization {
                // Index is multiple bytes - de-inline it
                getLog().append("De-inlining pointer[w] to *(pointer+w)   "+currentStmt.toString(getProgram(), false));
                Scope currentScope = getScope().getScope(currentBlock.getScope());
-               SymbolVariable tmpVar = currentScope.addVariableIntermediate();
+               Variable tmpVar = currentScope.addVariableIntermediate();
                stmtIt.previous();
                StatementAssignment tmpVarAssignment = new StatementAssignment((LValue) tmpVar.getRef(), dereferenceIndexed.getPointer(), Operators.PLUS, indexValue, currentStmt.getSource(), Comment.NO_COMMENTS);
                stmtIt.add(tmpVarAssignment);

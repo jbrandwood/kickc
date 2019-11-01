@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 
@@ -20,8 +20,8 @@ public class SymbolInfos {
       return symbols.get(ref);
    }
 
-   public SymbolVariable getVariable(VariableRef ref) {
-      return (SymbolVariable) getSymbol(ref);
+   public Variable getVariable(VariableRef ref) {
+      return (Variable) getSymbol(ref);
    }
 
 }

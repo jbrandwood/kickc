@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.LiveRangeEquivalenceClassSet;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -73,8 +73,8 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
                   VariableRef phiRVar = (VariableRef) phiRValue.getrValue();
                   LiveRangeEquivalenceClass rValEquivalenceClass = phiEquivalenceClasses.getOrCreateEquivalenceClass(phiRVar);
                   if(!rValEquivalenceClass.equals(equivalenceClass)) {
-                     SymbolVariable var = program.getScope().getVariable(variable);
-                     SymbolVariable rVar = program.getScope().getVariable(phiRVar);
+                     Variable var = program.getScope().getVariable(variable);
+                     Variable rVar = program.getScope().getVariable(phiRVar);
                      SymbolType varType = var.getType();
                      SymbolType rVarType = rVar.getType();
                      if(varType.getSizeBytes()==rVarType.getSizeBytes()) {

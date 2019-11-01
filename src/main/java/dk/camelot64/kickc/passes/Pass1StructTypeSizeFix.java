@@ -2,7 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
@@ -21,7 +21,7 @@ public class Pass1StructTypeSizeFix extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       AtomicBoolean modified = new AtomicBoolean(false);
-      for(SymbolVariable variable : getScope().getAllVariables(true)) {
+      for(Variable variable : getScope().getAllVariables(true)) {
          modified.set(fixStructSize(variable.getType()));
       }
       return modified.get();

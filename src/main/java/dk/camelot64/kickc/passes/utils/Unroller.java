@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.Pass1GenerateSingleStaticAssignmentForm;
 import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
@@ -170,7 +170,7 @@ public class Unroller {
     * @return The new version
     */
    private SymbolVariableRef createNewVersion(SymbolVariableRef origVarRef) {
-      SymbolVariable origVar = program.getScope().getVariable(origVarRef);
+      Variable origVar = program.getScope().getVariable(origVarRef);
       Scope scope = origVar.getScope();
       SymbolVariableRef newVarRef;
       if(origVarRef.isIntermediate()) {
@@ -226,8 +226,8 @@ public class Unroller {
    private static Map<SymbolVariableRef, SymbolVariableRef> copyDefinedVars(BlockSet unrollBlocks, Program program) {
       Map<SymbolVariableRef, SymbolVariableRef> definedToNewVar = new LinkedHashMap<>();
       for(VariableRef definedVarRef : getVarsDefinedIn(unrollBlocks, program)) {
-         SymbolVariable definedVar = program.getScope().getVariable(definedVarRef);
-         SymbolVariable newVar;
+         Variable definedVar = program.getScope().getVariable(definedVarRef);
+         Variable newVar;
          if(definedVarRef.isIntermediate()) {
             newVar = definedVar.getScope().addVariableIntermediate();
             newVar.setType(definedVar.getType());

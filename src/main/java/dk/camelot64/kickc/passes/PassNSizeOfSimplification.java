@@ -10,7 +10,7 @@ import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -38,7 +38,7 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
                if(Operators.SIZEOF.equals(assignment.getOperator())) {
                   if(assignment.getrValue2() instanceof SymbolVariableRef) {
                      SymbolVariableRef symbolRef = (SymbolVariableRef) assignment.getrValue2();
-                     SymbolVariable symbolVar = (SymbolVariable) getScope().getSymbol(symbolRef);
+                     Variable symbolVar = (Variable) getScope().getSymbol(symbolRef);
                      SymbolType symbolType = symbolVar.getType();
                      if(!(symbolType instanceof SymbolTypeArray)) {
                         getLog().append("Resolving sizeof() " + assignment.toString(getProgram(), false));
@@ -69,7 +69,7 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
 
    public void resolveConstantSizeOf(AtomicBoolean modified, ProgramValue programValue, ConstantUnary unary, ConstantValue operand) {
       if(operand instanceof ConstantRef) {
-         SymbolVariable constant = getScope().getConstant((ConstantRef) operand);
+         Variable constant = getScope().getConstant((ConstantRef) operand);
          SymbolType symbolType = constant.getType();
          if(symbolType instanceof SymbolTypeArray) {
             SymbolTypeArray arrayType = (SymbolTypeArray) symbolType;

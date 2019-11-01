@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.AssignmentRValue;
 import dk.camelot64.kickc.model.values.LValue;
@@ -61,7 +61,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       ProgramScope programScope = program.getScope();
       LValue lValue = call.getlValue();
       if(lValue instanceof VariableRef) {
-         SymbolVariable symbol = programScope.getVariable((VariableRef) lValue);
+         Variable symbol = programScope.getVariable((VariableRef) lValue);
          if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType())|| SymbolType.SNUMBER.equals(symbol.getType())) {
             Procedure procedure = programScope.getProcedure(call.getProcedure());
             SymbolType type = procedure.getReturnType();
@@ -74,7 +74,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       ProgramScope programScope = program.getScope();
       LValue lValue = call.getlValue();
       if(lValue instanceof VariableRef) {
-         SymbolVariable symbol = programScope.getVariable((VariableRef) lValue);
+         Variable symbol = programScope.getVariable((VariableRef) lValue);
          if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType())|| SymbolType.SNUMBER.equals(symbol.getType())) {
             Procedure procedure = programScope.getProcedure(call.getProcedure());
             SymbolType type = procedure.getReturnType();
@@ -87,7 +87,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       ProgramScope programScope = program.getScope();
       LValue lValue = call.getlValue();
       if(lValue instanceof VariableRef) {
-         SymbolVariable symbol = programScope.getVariable((VariableRef) lValue);
+         Variable symbol = programScope.getVariable((VariableRef) lValue);
          if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType())|| SymbolType.SNUMBER.equals(symbol.getType())) {
             SymbolType procedureType = SymbolTypeInference.inferType(programScope, call.getProcedure());
             if(procedureType instanceof SymbolTypeProcedure) {
@@ -100,7 +100,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
 
    private static void updateInferedTypePhiVariable(Program program, StatementPhiBlock.PhiVariable phiVariable) {
       ProgramScope programScope = program.getScope();
-      SymbolVariable symbol = programScope.getVariable(phiVariable.getVariable());
+      Variable symbol = programScope.getVariable(phiVariable.getVariable());
       if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType())|| SymbolType.SNUMBER.equals(symbol.getType())) {
          SymbolType type = null;
          for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
@@ -128,25 +128,25 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       ProgramScope programScope = program.getScope();
       LValue lValue = assignment.getlValue();
       if(lValue instanceof VariableRef) {
-         SymbolVariable symbol = programScope.getVariable((VariableRef) lValue);
+         Variable symbol = programScope.getVariable((VariableRef) lValue);
          if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType()) || SymbolType.SNUMBER.equals(symbol.getType())) {
             SymbolType type = SymbolTypeInference.inferType(programScope, new AssignmentRValue(assignment));
             setInferedType(program, assignment, symbol, type);
             // If the type is an array or a string the symbol is constant
             if(symbol.getType() instanceof SymbolTypeArray) {
-               symbol.setConstantDeclaration(SymbolVariable.ConstantDeclaration.CONST);
-               symbol.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
-               symbol.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
+               symbol.setConstantDeclaration(Variable.ConstantDeclaration.CONST);
+               symbol.setStorageStrategy(Variable.StorageStrategy.CONSTANT);
+               symbol.setMemoryArea(Variable.MemoryArea.MAIN_MEMORY);
             } else if(SymbolType.STRING.equals(symbol.getType())) {
-               symbol.setConstantDeclaration(SymbolVariable.ConstantDeclaration.CONST);
-               symbol.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
-               symbol.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
+               symbol.setConstantDeclaration(Variable.ConstantDeclaration.CONST);
+               symbol.setStorageStrategy(Variable.StorageStrategy.CONSTANT);
+               symbol.setMemoryArea(Variable.MemoryArea.MAIN_MEMORY);
             }
          }
       }
    }
 
-   private static void setInferedType(Program program, Statement statement, SymbolVariable symbol, SymbolType type) {
+   private static void setInferedType(Program program, Statement statement, Variable symbol, SymbolType type) {
       if(!SymbolType.VAR.equals(symbol.getType()) && !type.equals(symbol.getType())) {
          program.getLog().append("Inferred type updated to " + type + " in " + statement.toString(program, false));
       }

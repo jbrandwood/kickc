@@ -2,7 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
@@ -109,7 +109,7 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
    private static Collection<ScopeRef> getEquivalenceClassThreads(LiveRangeEquivalenceClass equivalenceClass, Program program, Collection<ScopeRef> threadHeads, CallGraph callGraph) {
       Collection<ScopeRef> threads = new ArrayList<>();
       for(VariableRef varRef : equivalenceClass.getVariables()) {
-         SymbolVariable variable = program.getScope().getVariable(varRef);
+         Variable variable = program.getScope().getVariable(varRef);
          ScopeRef scopeRef = variable.getScope().getRef();
          if(scopeRef.equals(ScopeRef.ROOT)) {
             ProcedureRef mainThreadHead = program.getScope().getProcedure(SymbolRef.MAIN_PROC_NAME).getRef();
@@ -183,8 +183,8 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
    private static boolean canCoalesceVolatile(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Program program) {
       // If any variable inside is volatile only allow coalesceing with itself
       if(ec1.hasVolatile(program) || ec2.hasVolatile(program)) {
-         SymbolVariable baseVar1 = ec1.getSingleVariableBase(program);
-         SymbolVariable baseVar2 = ec2.getSingleVariableBase(program);
+         Variable baseVar1 = ec1.getSingleVariableBase(program);
+         Variable baseVar2 = ec2.getSingleVariableBase(program);
          if(baseVar1 == null || baseVar2 == null) {
             // One of the equivalence classes have different base variables inside
             return false;

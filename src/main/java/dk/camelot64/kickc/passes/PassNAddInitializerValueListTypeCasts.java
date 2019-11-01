@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
@@ -74,7 +74,7 @@ public class PassNAddInitializerValueListTypeCasts extends Pass2SsaOptimization 
             SymbolTypeStruct declaredStructType = (SymbolTypeStruct) declaredType;
             // Recursively cast all sub-elements
             StructDefinition structDefinition = declaredStructType.getStructDefinition(getScope());
-            Collection<SymbolVariable> memberDefinitions = structDefinition.getAllVariables(false);
+            Collection<Variable> memberDefinitions = structDefinition.getAllVariables(false);
             int size = memberDefinitions.size();
             if(size!=valueList.getList().size()) {
                throw new CompileError(
@@ -83,9 +83,9 @@ public class PassNAddInitializerValueListTypeCasts extends Pass2SsaOptimization 
                            " Struct initializer: "+valueList.toString(getProgram()),
                      currentStmt);
             }
-            Iterator<SymbolVariable> memberDefIt = memberDefinitions.iterator();
+            Iterator<Variable> memberDefIt = memberDefinitions.iterator();
             for(int i = 0; i < size; i++) {
-               SymbolVariable memberDef = memberDefIt.next();
+               Variable memberDef = memberDefIt.next();
                exprModified |= addValueCasts(memberDef.getType(), new ProgramValue.ProgramValueListElement(valueList, i), currentStmt);
             }
             // Add a cast to the value list itself

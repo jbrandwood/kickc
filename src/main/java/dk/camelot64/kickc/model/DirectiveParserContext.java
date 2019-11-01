@@ -31,7 +31,7 @@ public class DirectiveParserContext {
    public enum DirectiveScope {
       GLOBAL, LOCAL, PARAMETER, MEMBER;
 
-      public static DirectiveScope getFor(SymbolVariable lValue, boolean isParameter) {
+      public static DirectiveScope getFor(Variable lValue, boolean isParameter) {
          if(isParameter) {
             return PARAMETER;
          }
@@ -130,22 +130,22 @@ public class DirectiveParserContext {
       this.statementDirectives = null;
       // Setup default directives
       this.defaultDirectives = Arrays.asList(
-            new Directive.MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null),
+            new Directive.MemoryArea(Variable.MemoryArea.ZEROPAGE_MEMORY, null),
             new Directive.FormSsa(true),
-            new Directive.Const(SymbolVariable.ConstantDeclaration.MAYBE_CONST)
+            new Directive.Const(Variable.ConstantDeclaration.MAYBE_CONST)
       );
       this.registerImpliesDirectives = new ArrayList<>();
       this.typeDirectives = new HashMap<>();
       this.typeDirectives.put(DirectiveType.ARRAY, Arrays.asList(
-            new Directive.Const(SymbolVariable.ConstantDeclaration.CONST),
-            new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null)
+            new Directive.Const(Variable.ConstantDeclaration.CONST),
+            new Directive.MemoryArea(Variable.MemoryArea.MAIN_MEMORY, null)
       ));
       this.typeDirectives.put(DirectiveType.POINTER, Arrays.asList(
-            new Directive.MemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null)
+            new Directive.MemoryArea(Variable.MemoryArea.ZEROPAGE_MEMORY, null)
       ));
       this.scopeDirectives = new HashMap<>();
       //this.scopeDirectives.put(DirectiveScope.GLOBAL, Arrays.asList(
-      //      new Directive.MemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY, null),
+      //      new Directive.MemoryArea(Variable.MemoryArea.MAIN_MEMORY, null),
       //      new Directive.FormSsa(false)
       //));
       this.scopeTypeDirectives = new HashMap<>();
@@ -159,26 +159,26 @@ public class DirectiveParserContext {
     * @param source The source line.
     * @return
     */
-   public void applyDirectives(SymbolVariable lValue, boolean isParameter, List<Directive> sourceDirectives, StatementSource source) {
+   public void applyDirectives(Variable lValue, boolean isParameter, List<Directive> sourceDirectives, StatementSource source) {
       DirectiveType directiveType = DirectiveType.getFor(lValue.getType());
       DirectiveScope directiveScope = DirectiveScope.getFor(lValue, isParameter);
 
       Directive.FormSsa ssaDirective = findDirective(Directive.FormSsa.class, sourceDirectives, directiveScope, directiveType);
       if(ssaDirective != null) {
          if(ssaDirective.ssa) {
-            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_MASTER);
+            lValue.setStorageStrategy(Variable.StorageStrategy.PHI_MASTER);
          } else {
-            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.LOAD_STORE);
+            lValue.setStorageStrategy(Variable.StorageStrategy.LOAD_STORE);
          }
       }
 
       Directive.Const constDirective = findDirective(Directive.Const.class, sourceDirectives, directiveScope, directiveType);
       if(constDirective != null) {
          lValue.setConstantDeclaration(constDirective.constantDeclaration);
-         if(SymbolVariable.ConstantDeclaration.CONST.equals(constDirective.constantDeclaration)) {
-            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
+         if(Variable.ConstantDeclaration.CONST.equals(constDirective.constantDeclaration)) {
+            lValue.setStorageStrategy(Variable.StorageStrategy.CONSTANT);
             if(!(lValue.getType() instanceof SymbolTypePointer))
-               lValue.setMemoryArea(SymbolVariable.MemoryArea.MAIN_MEMORY);
+               lValue.setMemoryArea(Variable.MemoryArea.MAIN_MEMORY);
          }
       }
 
@@ -206,7 +206,7 @@ public class DirectiveParserContext {
       if(memoryAreaDirective != null) {
          lValue.setMemoryArea(memoryAreaDirective.memoryArea);
          if(memoryAreaDirective.address != null) {
-            if(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY.equals(memoryAreaDirective.memoryArea)) {
+            if(Variable.MemoryArea.ZEROPAGE_MEMORY.equals(memoryAreaDirective.memoryArea)) {
                Registers.Register register = new Registers.RegisterZpMem(memoryAreaDirective.address.intValue(), -1, true);
                lValue.setDeclaredRegister(register);
             } else {
@@ -220,7 +220,7 @@ public class DirectiveParserContext {
       if(registerDirective != null) {
          if(registerDirective.isRegister) {
             lValue.setDeclaredAsRegister(true);
-            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.PHI_MASTER);
+            lValue.setStorageStrategy(Variable.StorageStrategy.PHI_MASTER);
             if(registerDirective.name != null) {
                // Ignore register directive without parameter (all variables are placed on ZP and attempted register uplift anyways)
                Registers.Register register = Registers.getRegister(registerDirective.name);
@@ -231,7 +231,7 @@ public class DirectiveParserContext {
             }
          } else {
             lValue.setDeclaredNotRegister(true);
-            lValue.setStorageStrategy(SymbolVariable.StorageStrategy.LOAD_STORE);
+            lValue.setStorageStrategy(Variable.StorageStrategy.LOAD_STORE);
          }
       }
 

@@ -3,7 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 
 import java.util.Collection;
 
@@ -18,8 +18,8 @@ public class Pass4AssertZeropageAllocation extends Pass2Base {
     * Check that all variables fit onto zeropage
     */
    public void check() {
-      Collection<SymbolVariable> allVariables = getSymbols().getAllVariables(true);
-      for(SymbolVariable variable : allVariables) {
+      Collection<Variable> allVariables = getSymbols().getAllVariables(true);
+      for(Variable variable : allVariables) {
          Registers.Register allocation = variable.getAllocation();
          if(allocation != null && Registers.RegisterType.ZP_MEM.equals(allocation.getType())) {
             int zp = ((Registers.RegisterZpMem) allocation).getZp();

@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.LvalueIntermediate;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
@@ -75,10 +75,10 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
          StatementAssignment intermediateAssignment,
          Operator loHiOperator) {
       VariableRef loHiVar = (VariableRef) intermediateAssignment.getrValue2();
-      SymbolVariable intermediateVar = programScope.getVariable(intermediate.getVariable());
+      Variable intermediateVar = programScope.getVariable(intermediate.getVariable());
       Scope currentScope = intermediateVar.getScope();
       // Let assignment put value into a tmp Var
-      SymbolVariable tmpVar = currentScope.addVariableIntermediate();
+      Variable tmpVar = currentScope.addVariableIntermediate();
       SymbolVariableRef tmpVarRef = tmpVar.getRef();
       statementLValue.setlValue((LValue) tmpVarRef);
       PassNTypeInference.updateInferedTypeLValue(getProgram(), statementLValue);

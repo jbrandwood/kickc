@@ -35,23 +35,23 @@ public class ProgramValueIterator {
     * @param handler The handler to execute
     */
    public static void execute(ProgramScope programScope, ProgramValueHandler handler) {
-      for(SymbolVariable symbolVariable : programScope.getAllSymbolVariables(true)) {
-         execute(symbolVariable, handler);
+      for(Variable variable : programScope.getAllSymbolVariables(true)) {
+         execute(variable, handler);
       }
    }
 
    /**
     * Execute a programValueHandler on all values in a variable symbol (variable or constant).
     *
-    * @param symbolVariable The symbol variable
+    * @param variable The symbol variable
     * @param programValueHandler The programValueHandler to execute
     */
-   public static void execute(SymbolVariable symbolVariable, ProgramValueHandler programValueHandler) {
-      if(symbolVariable.getType() instanceof SymbolTypeArray) {
-         execute(new ProgramValue.ProgramValueTypeArraySize((SymbolTypeArray) symbolVariable.getType()), programValueHandler, null, null, null);
+   public static void execute(Variable variable, ProgramValueHandler programValueHandler) {
+      if(variable.getType() instanceof SymbolTypeArray) {
+         execute(new ProgramValue.ProgramValueTypeArraySize((SymbolTypeArray) variable.getType()), programValueHandler, null, null, null);
       }
-      if(symbolVariable.isConstant()) {
-         execute(new ProgramValue.ProgramValueConstantVar(symbolVariable), programValueHandler, null, null, null);
+      if(variable.isConstant()) {
+         execute(new ProgramValue.ProgramValueConstantVar(variable), programValueHandler, null, null, null);
       }
    }
 
@@ -250,7 +250,7 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueStackIdxValue((StackIdxValue) value));
       } else if(value == null ||
             value instanceof SymbolVariableRef ||
-            value instanceof SymbolVariable ||
+            value instanceof Variable ||
             value instanceof ProcedureRef ||
             value instanceof ConstantLiteral ||
             value instanceof StructZero ||

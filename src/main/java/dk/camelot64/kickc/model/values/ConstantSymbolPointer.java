@@ -5,7 +5,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
@@ -39,8 +39,8 @@ public class ConstantSymbolPointer implements ConstantValue {
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
       // If the symbol has been allocated we can calculate a literal value!
       Symbol symbol = scope.getSymbol(toSymbol);
-      if(symbol instanceof SymbolVariable) {
-         SymbolVariable variable = (SymbolVariable) symbol;
+      if(symbol instanceof Variable) {
+         Variable variable = (Variable) symbol;
          if(variable.isVariable()) {
             Registers.Register allocation = variable.getAllocation();
             if(allocation != null && Registers.RegisterType.ZP_MEM.equals(allocation.getType())) {

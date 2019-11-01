@@ -32,14 +32,14 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
                   LValue lValue = assignment.getlValue();
                   if(lValue instanceof VariableRef) {
                      getLog().append("Eliminating variable " + lValue.toString(getProgram()) + " from unused block " + block.getLabel());
-                     SymbolVariable variable = getScope().getVariable((VariableRef) lValue);
+                     Variable variable = getScope().getVariable((VariableRef) lValue);
                      variable.getScope().remove(variable);
                   }
                } else if(stmt instanceof StatementPhiBlock) {
                   for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) stmt).getPhiVariables()) {
                      VariableRef phiVar = phiVariable.getVariable();
                      getLog().append("Eliminating variable " + phiVar.toString(getProgram()) + " from unused block " + block.getLabel());
-                     SymbolVariable variable = getScope().getVariable(phiVar);
+                     Variable variable = getScope().getVariable(phiVar);
                      variable.getScope().remove(variable);
 
                   }

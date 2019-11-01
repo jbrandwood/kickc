@@ -2,7 +2,7 @@ package dk.camelot64.kickc.model.iterator;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.*;
 
@@ -630,9 +630,9 @@ public interface ProgramValue {
    }
 
    class ProgramValueConstantVar implements ProgramValue {
-      private final SymbolVariable constantVar;
+      private final Variable constantVar;
 
-      ProgramValueConstantVar(SymbolVariable constantVar) {
+      ProgramValueConstantVar(Variable constantVar) {
          this.constantVar = constantVar;
       }
 

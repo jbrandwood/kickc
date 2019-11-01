@@ -244,7 +244,7 @@ public class Pass4CodeGeneration {
     * @param procedureVariable The variable containing the function pointer
     * @param codeScopeRef The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
     */
-   private void generateIndirectCall(AsmProgram asm, SymbolVariable procedureVariable, ScopeRef codeScopeRef) {
+   private void generateIndirectCall(AsmProgram asm, Variable procedureVariable, ScopeRef codeScopeRef) {
       String varAsmName = AsmFormat.getAsmParamName(procedureVariable, codeScopeRef);
       indirectCallAsmNames.add(varAsmName);
       asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_" + varAsmName, false);
@@ -260,10 +260,10 @@ public class Pass4CodeGeneration {
       StringBuilder signature = new StringBuilder();
       signature.append(" ").append(procedure.getLocalName()).append("(");
       int i = 0;
-      for(SymbolVariable parameter : procedure.getParameters()) {
-         List<SymbolVariable> versions = new ArrayList<>(procedure.getVersions(parameter));
+      for(Variable parameter : procedure.getParameters()) {
+         List<Variable> versions = new ArrayList<>(procedure.getVersions(parameter));
          if(versions.size() > 0) {
-            SymbolVariable param = versions.get(0);
+            Variable param = versions.get(0);
             Registers.Register allocation = param.getAllocation();
             if(i++ > 0) signature.append(", ");
             signature.append(param.getType().getTypeName()).append(" ");
@@ -299,7 +299,7 @@ public class Pass4CodeGeneration {
       }
    }
 
-   private boolean hasData(SymbolVariable constantVar) {
+   private boolean hasData(Variable constantVar) {
       ConstantValue constantValue = constantVar.getConstantValue();
       if(constantValue instanceof ConstantArray) {
          return true;
@@ -325,7 +325,7 @@ public class Pass4CodeGeneration {
     * @param constantVar The constant to examine
     * @return true if a .label should be used in the generated ASM
     */
-   private boolean useLabelForConst(ScopeRef scopeRef, SymbolVariable constantVar) {
+   private boolean useLabelForConst(ScopeRef scopeRef, Variable constantVar) {
       boolean useLabel = false;
       Collection<Integer> constRefStatements = program.getVariableReferenceInfos().getConstRefStatements(constantVar.getConstantRef());
       if(constRefStatements != null) {
@@ -368,7 +368,7 @@ public class Pass4CodeGeneration {
       Collection<SymbolVariableRef> symbolRefConsts = program.getVariableReferenceInfos().getSymbolRefConsts(constantVar.getConstantRef());
       if(symbolRefConsts != null) {
          for(SymbolVariableRef symbolRefConst : symbolRefConsts) {
-            SymbolVariable symbolRefVar = (SymbolVariable) program.getScope().getSymbol(symbolRefConst);
+            Variable symbolRefVar = (Variable) program.getScope().getSymbol(symbolRefConst);
             if(!symbolRefVar.getScope().getRef().equals(scopeRef)) {
                // Used in constant in another scope - generate label
                useLabel = true;
@@ -389,10 +389,10 @@ public class Pass4CodeGeneration {
    private void addConstantsAndLabels(AsmProgram asm, ScopeRef scopeRef) {
       Scope scope = program.getScope().getScope(scopeRef);
       Set<String> added = new LinkedHashSet<>();
-      Collection<SymbolVariable> scopeConstants = scope.getAllConstants(false);
+      Collection<Variable> scopeConstants = scope.getAllConstants(false);
 
       // Add all constants without data
-      for(SymbolVariable constantVar : scopeConstants) {
+      for(Variable constantVar : scopeConstants) {
          if(!hasData(constantVar)) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if(asmName != null && !added.contains(asmName)) {
@@ -424,8 +424,8 @@ public class Pass4CodeGeneration {
       }
 
       // Add labels for memory variables without data
-      Collection<SymbolVariable> scopeVars = scope.getAllVariables(false);
-      for(SymbolVariable scopeVar : scopeVars) {
+      Collection<Variable> scopeVars = scope.getAllVariables(false);
+      for(Variable scopeVar : scopeVars) {
          Registers.Register register = scopeVar.getAllocation();
          if(register != null) {
             if(Registers.RegisterType.ZP_MEM.equals(register.getType())) {
@@ -462,10 +462,10 @@ public class Pass4CodeGeneration {
     */
    private void addData(AsmProgram asm, ScopeRef scopeRef) {
       Scope scope = program.getScope().getScope(scopeRef);
-      Collection<SymbolVariable> scopeConstants = scope.getAllConstants(false);
+      Collection<Variable> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       // Add all constants arrays incl. strings with data
-      for(SymbolVariable constantVar : scopeConstants) {
+      for(Variable constantVar : scopeConstants) {
          if(hasData(constantVar)) {
             // Skip if already added
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
@@ -494,8 +494,8 @@ public class Pass4CodeGeneration {
          }
       }
       // Add all memory variables
-      Collection<SymbolVariable> scopeVariables = scope.getAllVariables(false);
-      for(SymbolVariable variable : scopeVariables) {
+      Collection<Variable> scopeVariables = scope.getAllVariables(false);
+      for(Variable variable : scopeVariables) {
          if(variable.isMemoryAreaMain()) {
             // Skip PHI masters
             if(variable.isStoragePhiMaster())
@@ -575,7 +575,7 @@ public class Pass4CodeGeneration {
          ConstantStructValue structValue = (ConstantStructValue) value;
          for(SymbolVariableRef memberRef : structValue.getMembers()) {
             ConstantValue memberValue = structValue.getValue(memberRef);
-            SymbolVariable memberVariable = getScope().getVariable(memberRef);
+            Variable memberVariable = getScope().getVariable(memberRef);
             addChunkData(dataChunk, memberValue, memberVariable.getType(), scopeRef);
          }
       } else if(valueType instanceof SymbolTypeArray) {
@@ -809,9 +809,9 @@ public class Pass4CodeGeneration {
             if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
                // Push parameters to the stack
                List<RValue> callParameters = call.getParameters();
-               List<SymbolVariable> procParameters = procedure.getParameters();
+               List<Variable> procParameters = procedure.getParameters();
                for(int i = 0; i < procParameters.size(); i++) {
-                  SymbolVariable procParameter = procParameters.get(i);
+                  Variable procParameter = procParameters.get(i);
                   RValue callParameter = callParameters.get(i);
                   SymbolType parameterType = procParameter.getType();
                   AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackPushValue(parameterType), callParameter, program, block.getScope());
@@ -928,16 +928,16 @@ public class Pass4CodeGeneration {
                   asm.addInstruction("jsr", AsmAddressingMode.ABS, AsmFormat.getAsmConstant(program, (ConstantValue) pointer, 99, block.getScope()), false);
                   supported = true;
                } else if(pointer instanceof VariableRef) {
-                  SymbolVariable variable = getScope().getVariable((VariableRef) pointer);
+                  Variable variable = getScope().getVariable((VariableRef) pointer);
                   generateIndirectCall(asm, variable, block.getScope());
                   supported = true;
                } else if(pointer instanceof CastValue && ((CastValue) pointer).getValue() instanceof VariableRef) {
-                  SymbolVariable variable = getScope().getVariable((VariableRef) ((CastValue) pointer).getValue());
+                  Variable variable = getScope().getVariable((VariableRef) ((CastValue) pointer).getValue());
                   generateIndirectCall(asm, variable, block.getScope());
                   supported = true;
                }
             } else if(procedure instanceof VariableRef) {
-               SymbolVariable procedureVariable = getScope().getVariable((VariableRef) procedure);
+               Variable procedureVariable = getScope().getVariable((VariableRef) procedure);
                SymbolType procedureVariableType = procedureVariable.getType();
                if(procedureVariableType instanceof SymbolTypePointer) {
                   if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
@@ -946,7 +946,7 @@ public class Pass4CodeGeneration {
                   }
                }
             } else if(procedure instanceof ConstantRef) {
-               SymbolVariable procedureVariable = getScope().getConstant((ConstantRef) procedure);
+               Variable procedureVariable = getScope().getConstant((ConstantRef) procedure);
                SymbolType procedureVariableType = procedureVariable.getType();
                if(procedureVariableType instanceof SymbolTypePointer) {
                   if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {

@@ -11,7 +11,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -60,7 +60,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                   getLog().append("Fixing pointer array-indexing " + deref.toString(getProgram()));
                   SymbolVariableRef idx2VarRef = handled.getOrDefault(currentStmt, new LinkedHashMap<>()).get(deref.getIndex());
                   if(idx2VarRef == null) {
-                     SymbolVariable idx2Var = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
+                     Variable idx2Var = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
                      idx2Var.setTypeInferred(SymbolTypeInference.inferType(getScope(), deref.getIndex()));
                      ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
                      StatementAssignment idx2 = new StatementAssignment((LValue) idx2Var.getRef(), deref.getIndex(), Operators.MULTIPLY, sizeOfTargetType, currentStmt.getSource(), Comment.NO_COMMENTS);
@@ -103,7 +103,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                      isPointerPlusConst = false;
                      getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
                      LValue lValue = assignment.getlValue();
-                     SymbolVariable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
+                     Variable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
                      tmpVar.setTypeInferred(SymbolTypeInference.inferType(getScope(), assignment.getlValue()));
                      assignment.setlValue((LValue) tmpVar.getRef());
                      ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
@@ -115,7 +115,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                   // Binary operation on a non-byte pointer - sizeof()-handling is probably needed!
                   // Adding to a pointer - multiply by sizeof()
                   getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
-                  SymbolVariable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
+                  Variable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
                   tmpVar.setTypeInferred(SymbolTypeInference.inferType(getScope(), assignment.getrValue2()));
                   stmtIt.remove();
                   ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
@@ -170,7 +170,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
    private SymbolTypePointer getPointerType(RValue pointer) {
       if(pointer instanceof VariableRef) {
          VariableRef varRef = (VariableRef) pointer;
-         SymbolVariable variable = getScope().getVariable(varRef);
+         Variable variable = getScope().getVariable(varRef);
          SymbolType type = variable.getType();
          if(type instanceof SymbolTypePointer) {
             return (SymbolTypePointer) type;
@@ -181,7 +181,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
          SymbolType structType = SymbolTypeInference.inferType(getScope(), struct);
          if(structType instanceof SymbolTypeStruct) {
             StructDefinition structDefinition = ((SymbolTypeStruct) structType).getStructDefinition(getScope());
-            SymbolVariable memberVariable = structDefinition.getMember(structMemberRef.getMemberName());
+            Variable memberVariable = structDefinition.getMember(structMemberRef.getMemberName());
             SymbolType memberType = memberVariable.getType();
             if(memberType instanceof SymbolTypePointer) {
                return (SymbolTypePointer) memberType;

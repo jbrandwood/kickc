@@ -22,7 +22,7 @@ public class AsmFormat {
     */
    public static String getAsmConstant(Program program, ConstantValue value, int precedence, ScopeRef codeScope) {
       if(value instanceof ConstantRef) {
-         SymbolVariable constantVar = program.getScope().getConstant((ConstantRef) value);
+         Variable constantVar = program.getScope().getConstant((ConstantRef) value);
          String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
          return getAsmParamName(constantVar.getScope().getRef(), asmName, codeScope);
       } else if(value instanceof ConstantInteger) {
@@ -58,8 +58,8 @@ public class AsmFormat {
       } else if(value instanceof ConstantSymbolPointer) {
          SymbolRef toSym = ((ConstantSymbolPointer) value).getToSymbol();
          Symbol symbol = program.getScope().getSymbol(toSym);
-         if(symbol instanceof SymbolVariable) {
-            return getAsmParamName((SymbolVariable) symbol, codeScope);
+         if(symbol instanceof Variable) {
+            return getAsmParamName((Variable) symbol, codeScope);
          } else if(symbol instanceof Procedure) {
             return getAsmParamName((Procedure) symbol, codeScope);
          } else {
@@ -308,7 +308,7 @@ public class AsmFormat {
     * @param boundVar The variable
     * @return The ASM parameter to use in the ASM code
     */
-   public static String getAsmParamName(SymbolVariable boundVar, ScopeRef codeScopeRef) {
+   public static String getAsmParamName(Variable boundVar, ScopeRef codeScopeRef) {
       ScopeRef varScopeRef = boundVar.getScope().getRef();
       String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
       return getAsmParamName(varScopeRef, asmName, codeScopeRef);

@@ -4,7 +4,7 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementCallFinalize;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
@@ -32,10 +32,10 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
 
 
       // Add all versions of volatile variables to the same equivalence class
-      for(SymbolVariable variable : getSymbols().getAllVariables(true)) {
+      for(Variable variable : getSymbols().getAllVariables(true)) {
          if(variable.isStoragePhiVersion() && variable.isVolatile()) {
             // Found a volatile non-versioned variable
-            for(SymbolVariable otherVariable : variable.getScope().getAllVariables(false)) {
+            for(Variable otherVariable : variable.getScope().getAllVariables(false)) {
                if(otherVariable.isStoragePhiVersion()) {
                   if((otherVariable).getVersionOf().equals((variable).getVersionOf())) {
                      // They share the same main variable
@@ -115,8 +115,8 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
             for(VariableRef preference : preferences) {
                LiveRangeEquivalenceClass preferenceEquivalenceClass = liveRangeEquivalenceClassSet.getEquivalenceClass(preference);
                if(preferenceEquivalenceClass != null) {
-                  SymbolVariable potentialVariable = getProgram().getSymbolInfos().getVariable(preference);
-                  SymbolVariable lValVariable = getProgram().getSymbolInfos().getVariable(lValVar);
+                  Variable potentialVariable = getProgram().getSymbolInfos().getVariable(preference);
+                  Variable lValVariable = getProgram().getSymbolInfos().getVariable(lValVar);
                   if(lValVariable.getType().equals(potentialVariable.getType())) {
                      if(!lValLiveRange.overlaps(preferenceEquivalenceClass.getLiveRange())) {
                         chosen = preferenceEquivalenceClass;

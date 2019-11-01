@@ -4,7 +4,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -86,8 +86,8 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                               // 3. Delete the cast variable
                               delete.add((SymbolRef) castValue.getValue());
                               // Change the type of the assignment variable
-                              SymbolVariable assignmentVar = getScope().getVariable((VariableRef) assignment.getlValue());
-                              SymbolVariable castVar = getScope().getVariable((VariableRef) castValue.getValue());
+                              Variable assignmentVar = getScope().getVariable((VariableRef) assignment.getlValue());
+                              Variable castVar = getScope().getVariable((VariableRef) castValue.getValue());
                               assignmentVar.setType(castVar.getType());
                               // Remove the assignment
                               stmtIt.remove();

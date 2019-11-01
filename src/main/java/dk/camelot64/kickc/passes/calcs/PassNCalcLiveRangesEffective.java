@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.Pass2AliasElimination;
 import dk.camelot64.kickc.passes.Pass2ConstantIdentification;
@@ -153,7 +153,7 @@ public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariabl
             StatementAssignment assignment = (StatementAssignment) statement;
             LValue lValue = assignment.getlValue();
             if(lValue instanceof VariableRef) {
-               SymbolVariable lValueVar = getProgram().getScope().getVariable((VariableRef) lValue);
+               Variable lValueVar = getProgram().getScope().getVariable((VariableRef) lValue);
                if(lValueVar.getScope().equals(procedure)) {
                   // Assigning into the procedure scope
                   if(assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {

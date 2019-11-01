@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.StructUnwinding;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.StructUnwoundPlaceholder;
@@ -38,12 +38,12 @@ public class Pass1UnwindStructVersions extends Pass1Base {
                      StructUnwoundPlaceholder placeholder = (StructUnwoundPlaceholder) assignment.getrValue2();
                      SymbolTypeStruct typeStruct = placeholder.getTypeStruct();
                      StructDefinition structDefinition = typeStruct.getStructDefinition(getProgram().getScope());
-                     Collection<SymbolVariable> members = structDefinition.getAllVariables(false);
-                     Iterator<SymbolVariable> memberDefIt = members.iterator();
+                     Collection<Variable> members = structDefinition.getAllVariables(false);
+                     Iterator<Variable> memberDefIt = members.iterator();
                      List<RValue> unwoundMembers = placeholder.getUnwoundMembers();
                      Iterator<RValue> memberUnwoundIt = unwoundMembers.iterator();
                      while(memberDefIt.hasNext()) {
-                        SymbolVariable memberVar = memberDefIt.next();
+                        Variable memberVar = memberDefIt.next();
                         RValue memberVal = memberUnwoundIt.next();
                         versionedUnwinding.setMemberUnwinding(memberVar.getLocalName(), (VariableRef) memberVal);
                      }

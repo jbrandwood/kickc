@@ -1,10 +1,12 @@
 package dk.camelot64.kickc.model.operators;
 
-import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
-import dk.camelot64.kickc.model.types.*;
+import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeNamed;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantRef;
@@ -41,11 +43,11 @@ public class OperatorTypeId extends OperatorUnary {
     */
    public static ConstantRef getTypeIdConstantVar(ProgramScope programScope, SymbolType type) {
       String typeConstName = "TYPEID_" + getTypeIdConstantName(type);
-      SymbolVariable typeIdConstant = programScope.getConstant(typeConstName);
+      Variable typeIdConstant = programScope.getConstant(typeConstName);
       if(typeIdConstant == null) {
          // Constant not found - create it
          long typeSize = getTypeId(type);
-         typeIdConstant = new SymbolVariable(typeConstName, programScope, SymbolType.BYTE, Scope.SEGMENT_DATA_DEFAULT, new ConstantInteger(typeSize));
+         typeIdConstant = new Variable(typeConstName, programScope, SymbolType.BYTE, Scope.SEGMENT_DATA_DEFAULT, new ConstantInteger(typeSize));
          programScope.add(typeIdConstant);
       }
       return typeIdConstant.getConstantRef();

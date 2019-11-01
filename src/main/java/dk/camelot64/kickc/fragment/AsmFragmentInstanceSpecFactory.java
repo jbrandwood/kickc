@@ -103,7 +103,7 @@ public class AsmFragmentInstanceSpecFactory {
          throw new AsmFragmentInstance.AluNotApplicableException("Error! ALU register only allowed as rValue2. " + assignment);
       }
       VariableRef assignmentRValue2 = (VariableRef) assignment.getrValue2();
-      SymbolVariable assignmentRValue2Var = program.getSymbolInfos().getVariable(assignmentRValue2);
+      Variable assignmentRValue2Var = program.getSymbolInfos().getVariable(assignmentRValue2);
       Registers.Register rVal2Register = assignmentRValue2Var.getAllocation();
 
       if(!rVal2Register.getType().equals(Registers.RegisterType.REG_ALU)) {
@@ -335,7 +335,7 @@ public class AsmFragmentInstanceSpecFactory {
             return bindValue.toString();
          }
       } else if(value instanceof VariableRef) {
-         SymbolVariable variable = program.getSymbolInfos().getVariable((VariableRef) value);
+         Variable variable = program.getSymbolInfos().getVariable((VariableRef) value);
          if(castType == null) {
             castType = variable.getType();
          }
@@ -452,8 +452,8 @@ public class AsmFragmentInstanceSpecFactory {
          String zpNameIdx = null;
          for(String boundName : bindings.keySet()) {
             Value boundValue = bindings.get(boundName);
-            if(boundValue instanceof SymbolVariable && ((SymbolVariable) boundValue).isVariable()) {
-               SymbolVariable boundVariable = (SymbolVariable) boundValue;
+            if(boundValue instanceof Variable && ((Variable) boundValue).isVariable()) {
+               Variable boundVariable = (Variable) boundValue;
                Registers.Register boundRegister = boundVariable.getAllocation();
                if(boundRegister != null && Registers.RegisterType.ZP_MEM.equals(boundRegister.getType())) {
                   Registers.RegisterZpMem boundRegisterZp = (Registers.RegisterZpMem) boundRegister;
@@ -474,8 +474,8 @@ public class AsmFragmentInstanceSpecFactory {
          String memNameIdx = null;
          for(String boundName : bindings.keySet()) {
             Value boundValue = bindings.get(boundName);
-            if(boundValue instanceof SymbolVariable && ((SymbolVariable) boundValue).isVariable()) {
-               SymbolVariable boundVariable = (SymbolVariable) boundValue;
+            if(boundValue instanceof Variable && ((Variable) boundValue).isVariable()) {
+               Variable boundVariable = (Variable) boundValue;
                Registers.Register boundRegister = boundVariable.getAllocation();
                if(boundRegister instanceof Registers.RegisterMainMem) {
                   if(boundRegister.equals(register)) {
@@ -506,7 +506,7 @@ public class AsmFragmentInstanceSpecFactory {
       // If the constant is already bound - reuse the index
       for(String boundName : bindings.keySet()) {
          Value boundValue = bindings.get(boundName);
-         if(boundValue instanceof ConstantValue || (boundValue instanceof SymbolVariable && ((SymbolVariable) boundValue).isConstant())) {
+         if(boundValue instanceof ConstantValue || (boundValue instanceof Variable && ((Variable) boundValue).isConstant())) {
             if(boundValue.equals(constant)) {
                return "c" + boundName.substring(boundName.length() - 1);
             }

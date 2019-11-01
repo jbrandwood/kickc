@@ -47,12 +47,12 @@ public class Pass3PhiLifting {
                      LabelRef predecessorRef = phiRValue.getPredecessor();
                      ControlFlowBlock predecessorBlock = graph.getBlock(predecessorRef);
                      //VariableRef rValVarRef = (VariableRef) phiRValue.getrValue();
-                     SymbolVariable newVar;
+                     Variable newVar;
                      if(phiVariable.getVariable().isVersion()) {
-                        SymbolVariable lValVar = program.getScope().getVariable(phiVariable.getVariable());
+                        Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
                         newVar = lValVar.getVersionOf().createVersion();
                      } else {
-                        SymbolVariable lValVar = program.getScope().getVariable(phiVariable.getVariable());
+                        Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
                         newVar = lValVar.getScope().addVariableIntermediate();
                      }
                      Symbol phiLValue = programScope.getSymbol(phiVariable.getVariable());

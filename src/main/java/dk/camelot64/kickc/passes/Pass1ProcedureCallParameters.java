@@ -59,18 +59,18 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
          return copyCall;
       }
 
-      List<SymbolVariable> parameterDecls = procedure.getParameters();
+      List<Variable> parameterDecls = procedure.getParameters();
       List<RValue> parameterValues = origCall.getParameters();
       if(parameterDecls.size()!=parameterValues.size()) {
          throw new CompileError("Wrong number of parameters in call "+origCall.toString(program, false)+" expected "+procedure.toString(program), origCall);
       }
       for(int i = 0; i < parameterDecls.size(); i++) {
-         SymbolVariable parameterDecl = parameterDecls.get(i);
+         Variable parameterDecl = parameterDecls.get(i);
          RValue parameterValue = parameterValues.get(i);
          addStatementToCurrentBlock(new StatementAssignment((LValue) parameterDecl.getRef(), parameterValue, origCall.getSource(), Comment.NO_COMMENTS));
       }
       String procedureName = origCall.getProcedureName();
-      SymbolVariable procReturnVar = procedure.getVariable("return");
+      Variable procReturnVar = procedure.getVariable("return");
       LValue procReturnVarRef = null;
       if(procReturnVar != null) {
          procReturnVarRef = (LValue) procReturnVar.getRef();
@@ -108,7 +108,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
          LValue lValue = origCall.getlValue();
          if(lValue instanceof VariableRef) {
             VariableRef lValueRef = (VariableRef) lValue;
-            SymbolVariable lValueVar = getScope().getVariable(lValueRef);
+            Variable lValueVar = getScope().getVariable(lValueRef);
             lValueVar.getScope().remove(lValueVar);
          }
       }

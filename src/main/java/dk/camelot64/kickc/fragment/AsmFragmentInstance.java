@@ -7,7 +7,7 @@ import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.symbols.Label;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCParser;
@@ -75,8 +75,8 @@ public class AsmFragmentInstance {
       if(boundValue == null) {
          throw new RuntimeException("Binding '" + name + "' not found in fragment " + this.name);
       }
-      if(boundValue instanceof SymbolVariable && ((SymbolVariable) boundValue).isVariable()) {
-         SymbolVariable boundVar = (SymbolVariable) boundValue;
+      if(boundValue instanceof Variable && ((Variable) boundValue).isVariable()) {
+         Variable boundVar = (Variable) boundValue;
          Registers.Register register = boundVar.getAllocation();
          if(register != null && register instanceof Registers.RegisterZpMem) {
             return new AsmParameter(AsmFormat.getAsmParamName(boundVar, codeScopeRef), true);
@@ -85,8 +85,8 @@ public class AsmFragmentInstance {
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }
-      } else if(boundValue instanceof SymbolVariable && ((SymbolVariable) boundValue).isConstant()) {
-         SymbolVariable constantVar = (SymbolVariable) boundValue;
+      } else if(boundValue instanceof Variable && ((Variable) boundValue).isConstant()) {
+         Variable constantVar = (Variable) boundValue;
          String constantValueAsm = AsmFormat.getAsmConstant(program, constantVar.getConstantRef(), 99, codeScopeRef);
          boolean constantValueZp = SymbolType.BYTE.equals(constantVar.getType());
          if(!constantValueZp) {
@@ -126,7 +126,7 @@ public class AsmFragmentInstance {
          // ignore
       }
       if(boundConst instanceof ConstantRef) {
-         SymbolVariable reffedConstant = program.getScope().getConstant((ConstantRef) boundConst);
+         Variable reffedConstant = program.getScope().getConstant((ConstantRef) boundConst);
          return isConstantValueZp(reffedConstant.getConstantValue());
       }
       if(boundConst instanceof ConstantCastValue) {

@@ -110,9 +110,9 @@ public class Pass1ProcedureInline extends Pass1Base {
       blocksIt.add(restBlock);
       // Generate return assignment
       if(!procedure.getReturnType().equals(SymbolType.VOID)) {
-         SymbolVariable procReturnVar = procedure.getVariable("return");
+         Variable procReturnVar = procedure.getVariable("return");
          String inlinedReturnVarName = getInlineSymbolName(procedure, procReturnVar, serial);
-         SymbolVariable inlinedReturnVar = callScope.getVariable(inlinedReturnVarName);
+         Variable inlinedReturnVar = callScope.getVariable(inlinedReturnVarName);
          restBlock.addStatement(new StatementAssignment(call.getlValue(), inlinedReturnVar.getRef(), call.getSource(), Comment.NO_COMMENTS));
       } else {
          // Remove the tmp var receiving the result
@@ -246,10 +246,10 @@ public class Pass1ProcedureInline extends Pass1Base {
          Value rValue = programValue.get();
          if(rValue instanceof VariableRef) {
             VariableRef procVarRef = (VariableRef) rValue;
-            SymbolVariable procVar = Pass1ProcedureInline.this.getScope().getVariable(procVarRef);
+            Variable procVar = Pass1ProcedureInline.this.getScope().getVariable(procVarRef);
             if(procVar.getScope().equals(procedure)) {
                String inlineSymbolName = Pass1ProcedureInline.this.getInlineSymbolName(procedure, procVar, serial);
-               SymbolVariable inlineVar = callScope.getVariable(inlineSymbolName);
+               Variable inlineVar = callScope.getVariable(inlineSymbolName);
                programValue.set(inlineVar.getRef());
             }
          } else if(rValue instanceof PointerDereferenceSimple) {
@@ -274,12 +274,12 @@ public class Pass1ProcedureInline extends Pass1Base {
     * @param serial The serial number (counted up for each inlined call to the same function within the called calling scope).
     */
    private void inlineParameterAssignments(ListIterator<Statement> statementsIt, StatementCall call, Procedure procedure, Scope callScope, int serial) {
-      List<SymbolVariable> parameterDecls = procedure.getParameters();
+      List<Variable> parameterDecls = procedure.getParameters();
       List<RValue> parameterValues = call.getParameters();
       for(int i = 0; i < parameterDecls.size(); i++) {
-         SymbolVariable parameterDecl = parameterDecls.get(i);
+         Variable parameterDecl = parameterDecls.get(i);
          String inlineParameterVarName = getInlineSymbolName(procedure, parameterDecl, serial);
-         SymbolVariable inlineParameterVar = callScope.getVariable(inlineParameterVarName);
+         Variable inlineParameterVar = callScope.getVariable(inlineParameterVarName);
          RValue parameterValue = parameterValues.get(i);
          statementsIt.add(new StatementAssignment((VariableRef)inlineParameterVar.getRef(), parameterValue, call.getSource(), Comment.NO_COMMENTS));
       }
@@ -297,10 +297,10 @@ public class Pass1ProcedureInline extends Pass1Base {
       callScope.addLabel(procedure.getLocalName() + serial);
       // And copy all procedure symbols
       for(Symbol procSymbol : procedure.getAllSymbols()) {
-         if(procSymbol instanceof SymbolVariable) {
-            SymbolVariable procVar = (SymbolVariable) procSymbol;
+         if(procSymbol instanceof Variable) {
+            Variable procVar = (Variable) procSymbol;
             String inlineVarName = getInlineSymbolName(procedure, procSymbol, serial);
-            SymbolVariable inlineVar = callScope.addVariablePhiMaster(inlineVarName, procSymbol.getType(), procVar.getMemoryArea(), procVar.getDataSegment());
+            Variable inlineVar = callScope.addVariablePhiMaster(inlineVarName, procSymbol.getType(), procVar.getMemoryArea(), procVar.getDataSegment());
             inlineVar.setInferredType(procVar.isInferredType());
             inlineVar.setDeclaredAlignment(procVar.getDeclaredAlignment());
             inlineVar.setConstantDeclaration(procVar.getConstantDeclaration());

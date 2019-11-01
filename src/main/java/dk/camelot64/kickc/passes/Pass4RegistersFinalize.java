@@ -36,7 +36,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
          }
       }
       // Add all ZP's declared hardcoded register for a live variable
-      for(SymbolVariable variable : getSymbols().getAllVariables(true)) {
+      for(Variable variable : getSymbols().getAllVariables(true)) {
          if(variable.getDeclaredRegister() instanceof Registers.RegisterZpMem) {
             int zp = ((Registers.RegisterZpMem) variable.getDeclaredRegister()).getZp();
             int sizeBytes = variable.getType().getSizeBytes();
@@ -52,7 +52,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          for(VariableRef variableRef : equivalenceClass.getVariables()) {
-            SymbolVariable variable = getProgram().getScope().getVariable(variableRef);
+            Variable variable = getProgram().getScope().getVariable(variableRef);
             Registers.Register declaredRegister = variable.getDeclaredRegister(); //TODO: Handle register/memory/storage strategy differently!
             Registers.Register register = declaredRegister;
             if(declaredRegister !=null) {
@@ -95,27 +95,27 @@ public class Pass4RegistersFinalize extends Pass2Base {
       allScopes.add(getProgram().getScope());
       for(Scope scope : allScopes) {
          // Create initial short names
-         for(SymbolVariable variable : scope.getAllVariables(false)) {
+         for(Variable variable : scope.getAllVariables(false)) {
             if(variable.getAllocation() != null && variable.getAllocation().isMem()) {
                variable.setAsmName(variable.getLocalName());
             } else {
                variable.setAsmName(null);
             }
          }
-         for(SymbolVariable constantVar : scope.getAllConstants(false)) {
+         for(Variable constantVar : scope.getAllConstants(false)) {
             constantVar.setAsmName(constantVar.getLocalName());
          }
 
          // Maps short name to the allocated register.
          Map<String, Registers.Register> shortNames = new LinkedHashMap<>();
          // Shorten variable and constant names
-         for(SymbolVariable variable : scope.getAllVariables(false)) {
+         for(Variable variable : scope.getAllVariables(false)) {
             Registers.Register allocation = variable.getAllocation();
             if(allocation != null && allocation.isMem()) {
                shortenAsmName(shortNames, variable, allocation);
             }
          }
-         for(SymbolVariable constantVar : scope.getAllConstants(false)) {
+         for(Variable constantVar : scope.getAllConstants(false)) {
             Registers.Register allocation = new Registers.RegisterConstant(constantVar.getConstantValue());
             shortenAsmName(shortNames, constantVar, allocation);
          }
@@ -129,7 +129,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
     * @param variable The variable to shorten the name for
     * @param allocation The register allocation for the variable
     */
-   private void shortenAsmName(Map<String, Registers.Register> shortNames, SymbolVariable variable, Registers.Register allocation) {
+   private void shortenAsmName(Map<String, Registers.Register> shortNames, Variable variable, Registers.Register allocation) {
       String asmName = variable.getAsmName();
       String prefix = asmName;
       if(asmName.contains("#")) {
@@ -170,7 +170,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
          if(reallocate) {
             String before = register == null ? null : register.toString();
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
-            SymbolVariable variable = getProgram().getSymbolInfos().getVariable(variableRef);
+            Variable variable = getProgram().getSymbolInfos().getVariable(variableRef);
             if(variable.isMemoryAreaMain()) {
                register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes(), null);
             }  else {
@@ -217,7 +217,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
     * The register type created uses one or more zero page locations based on the variable type
     * @return The new zeropage register
     */
-   private Registers.Register allocateNewRegisterZp(SymbolVariable variable) {
+   private Registers.Register allocateNewRegisterZp(Variable variable) {
       SymbolType varType = variable.getType();
       if(SymbolType.BYTE.equals(varType)) {
          return new Registers.RegisterZpMem(allocateZp(1), 1);

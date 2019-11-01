@@ -8,10 +8,9 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
-import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,7 +26,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
    @Override
    public boolean step() {
       Collection<SymbolVariableRef> earlyConstants = new ArrayList<>();
-      for(SymbolVariable variable : getProgram().getScope().getAllVariables(true)) {
+      for(Variable variable : getProgram().getScope().getAllVariables(true)) {
          SymbolVariableRef variableRef = variable.getRef();
          if(!variable.isDeclaredConstant() && !variable.isVolatile() && !variableRef.isIntermediate()) {
             if(variable.isDeclaredNotConstant())
@@ -42,11 +41,11 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
                      if(assign.getrValue1() == null && assign.getOperator() == null && assign.getrValue2() instanceof ConstantValue) {
                         getLog().append("Identified constant variable " + variable.toString(getProgram()));
                         earlyConstants.add(variableRef);
-                        variable.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
+                        variable.setStorageStrategy(Variable.StorageStrategy.CONSTANT);
                      } else if(assign.getrValue1() == null && assign.getOperator() instanceof OperatorCastPtr && assign.getrValue2() instanceof ConstantValue) {
                         getLog().append("Identified constant variable " + variable.toString(getProgram()));
                         earlyConstants.add(variableRef);
-                        variable.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
+                        variable.setStorageStrategy(Variable.StorageStrategy.CONSTANT);
                      }
                   }
                }
@@ -64,10 +63,10 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
     * @return true if the variable is a procedure parameter
     */
    public boolean isParameter(SymbolVariableRef variableRef) {
-      SymbolVariable var = getScope().getVariable(variableRef);
+      Variable var = getScope().getVariable(variableRef);
       Scope varScope = var.getScope();
       if(varScope instanceof Procedure) {
-         List<SymbolVariable> parameters = ((Procedure) varScope).getParameters();
+         List<Variable> parameters = ((Procedure) varScope).getParameters();
          if(parameters.contains(var))
             return true;
 
@@ -81,7 +80,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
     * @param variable The variable
     * @return all assignments
     */
-   private Collection<StatementLValue> getAssignments(SymbolVariable variable) {
+   private Collection<StatementLValue> getAssignments(Variable variable) {
       Collection<StatementLValue> assignments = new ArrayList<>();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {

@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
@@ -107,7 +107,7 @@ public class LiveRangeEquivalenceClassSet {
       for(LiveRangeEquivalenceClass equivalenceClass : getEquivalenceClasses()) {
          Registers.Register register = equivalenceClass.getRegister();
          for(VariableRef variable : equivalenceClass.getVariables()) {
-            SymbolVariable var = program.getSymbolInfos().getVariable(variable);
+            Variable var = program.getSymbolInfos().getVariable(variable);
             var.setAllocation(register);
          }
       }

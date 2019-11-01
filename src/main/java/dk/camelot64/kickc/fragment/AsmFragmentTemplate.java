@@ -7,7 +7,7 @@ import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ScopeRef;
@@ -79,12 +79,12 @@ public class AsmFragmentTemplate {
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
       {
-         SymbolVariable v1 = new SymbolVariable( false, "z1", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
-         SymbolVariable v2 = new SymbolVariable( false, "z2", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
-         SymbolVariable v3 = new SymbolVariable( false, "z3", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
-         SymbolVariable v4 = new SymbolVariable( false, "z4", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
-         SymbolVariable v5 = new SymbolVariable( false, "z5", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
-         SymbolVariable v6 = new SymbolVariable( false, "z6", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v1 = new Variable( "z1", scope, SymbolType.BYTE, Variable.StorageStrategy.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v2 = new Variable( "z2", scope, SymbolType.BYTE, Variable.StorageStrategy.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v3 = new Variable( "z3", scope, SymbolType.BYTE, Variable.StorageStrategy.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v4 = new Variable( "z4", scope, SymbolType.BYTE, Variable.StorageStrategy.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v5 = new Variable( "z5", scope, SymbolType.BYTE, Variable.StorageStrategy.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v6 = new Variable( "z6", scope, SymbolType.BYTE, Variable.StorageStrategy.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
          v1.setAllocation(new Registers.RegisterZpMem(2, 1));
          v2.setAllocation(new Registers.RegisterZpMem(4, 1));
          v3.setAllocation(new Registers.RegisterZpMem(6, 1));
@@ -99,12 +99,12 @@ public class AsmFragmentTemplate {
          if(signature.contains("z6")) bindings.put("z6", v6);
       }
       {
-         SymbolVariable v1 = new SymbolVariable( false, "m1", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
-         SymbolVariable v2 = new SymbolVariable( false, "m2", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
-         SymbolVariable v3 = new SymbolVariable( false, "m3", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
-         SymbolVariable v4 = new SymbolVariable( false, "m4", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
-         SymbolVariable v5 = new SymbolVariable( false, "m5", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
-         SymbolVariable v6 = new SymbolVariable( false, "m6", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
+         Variable v1 = new Variable( "m1", scope, SymbolType.BYTE, Variable.StorageStrategy.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v2 = new Variable(  "m2", scope, SymbolType.BYTE, Variable.StorageStrategy.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v3 = new Variable( "m3", scope, SymbolType.BYTE, Variable.StorageStrategy.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v4 = new Variable( "m4", scope, SymbolType.BYTE, Variable.StorageStrategy.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v5 = new Variable(  "m5", scope, SymbolType.BYTE, Variable.StorageStrategy.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v6 = new Variable( "m6", scope, SymbolType.BYTE, Variable.StorageStrategy.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
          v1.setAllocation(new Registers.RegisterMainMem(v1.getVariableRef(),  1, null));
          v2.setAllocation(new Registers.RegisterMainMem(v2.getVariableRef(), 1, null));
          v3.setAllocation(new Registers.RegisterMainMem(v3.getVariableRef(), 1, null));

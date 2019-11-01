@@ -5,7 +5,7 @@ import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -100,7 +100,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
 
             // Non-assigned alive variables must not be clobbered
             for(VariableRef aliveVar : aliveVars) {
-               SymbolVariable variable = getProgram().getSymbolInfos().getVariable(aliveVar);
+               Variable variable = getProgram().getSymbolInfos().getVariable(aliveVar);
                Registers.Register aliveVarRegister = variable.getAllocation();
                if(aliveVarRegister.isMem()) {
                   // No need to check a zp-register - here we are only interested in CPU registers

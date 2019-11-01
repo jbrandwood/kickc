@@ -13,8 +13,8 @@ import dk.camelot64.kickc.model.values.VariableRef;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Abstract Variable or a Constant Variable */
-public class SymbolVariable implements Symbol {
+/** A Variable symbol (can either be a runtime variable or a compile-time constant)*/
+public class Variable implements Symbol {
 
    /** The name of the variable. */
    private String name;
@@ -31,7 +31,7 @@ public class SymbolVariable implements Symbol {
    /** A short name used for the variable in ASM code. If possible variable names of variables are shortened in ASM code. This is possible, when several versions of the var use the same register. */
    private String asmName;
 
-   /** True of the variable is a compile-time constant (previously ConstantVar*/
+   /** True of the variable is a compile-time constant (previously ConstantVar */
    private boolean isConstant;
 
    /** Specifies whether the symbol is declared to be constant, never constant or maybe constant. */
@@ -105,35 +105,64 @@ public class SymbolVariable implements Symbol {
    /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
    private Registers.Register allocation;
 
-   public SymbolVariable(boolean isConstant, String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, MemoryArea memoryArea, String dataSegment) {
-      this.isConstant = isConstant;
+
+   /**
+    * Create a compile-time constant variable
+    * @param name The name
+    * @param scope The scope
+    * @param type The type
+    * @param dataSegment The data segment (in main memory)
+    * @param value The constant value
+    */
+   public Variable(String name, Scope scope, SymbolType type, String dataSegment, ConstantValue value) {
+      this.isConstant = true;
       this.name = name;
       this.scope = scope;
       this.type = type;
+      this.dataSegment = dataSegment;
+      this.storageStrategy = StorageStrategy.CONSTANT;
+      this.memoryArea = MemoryArea.MAIN_MEMORY;
+      this.constantDeclaration = ConstantDeclaration.MAYBE_CONST;
+      this.constantValue = value;
       this.inferredType = false;
       this.comments = new ArrayList<>();
+      setFullName();
+   }
+
+   /**
+    * Create a runtime variable
+    * @param name The name
+    * @param scope The scope
+    * @param type The type
+    * @param storageStrategy The storage strategy (PHI-master/PHI-version/Intermediate/load store/constant)
+    * @param memoryArea  The memory area (zeropage/main memory)
+    * @param dataSegment The data segment (in main memory)
+    */
+   public Variable(String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, MemoryArea memoryArea, String dataSegment) {
+      this.isConstant = false;
+      this.name = name;
+      this.scope = scope;
+      this.type = type;
       this.dataSegment = dataSegment;
       this.storageStrategy = storageStrategy;
       this.memoryArea = memoryArea;
       this.constantDeclaration = ConstantDeclaration.MAYBE_CONST;
-      setFullName();
-      if(isStoragePhiMaster())
+      if(StorageStrategy.PHI_MASTER.equals(storageStrategy))
          this.nextPhiVersionNumber = 0;
+      this.inferredType = false;
+      this.comments = new ArrayList<>();
+      setFullName();
    }
 
-   public SymbolVariable(String name, Scope scope, SymbolType type, String dataSegment, ConstantValue value) {
-      this(true, name, scope, type, StorageStrategy.CONSTANT, MemoryArea.MAIN_MEMORY, dataSegment);
-      setConstantValue(value);
-   }
 
-      /**
-       * Create a version of a PHI master variable
-       *
-       * @param phiMaster The PHI master variable.
-       * @param version The version number
-       */
-   public SymbolVariable(SymbolVariable phiMaster, int version) {
-      this(false, phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), StorageStrategy.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
+   /**
+    * Create a version of a PHI master variable
+    *
+    * @param phiMaster The PHI master variable.
+    * @param version The version number
+    */
+   public Variable(Variable phiMaster, int version) {
+      this(phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), StorageStrategy.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       this.setDeclaredNotRegister(phiMaster.isDeclaredAsNotRegister());
@@ -148,6 +177,7 @@ public class SymbolVariable implements Symbol {
 
    /**
     * True if the variable is a compile time constant. (Previously this was ConstantVar)
+    *
     * @return True if the variable is a compile time constant.
     */
    public boolean isConstant() {
@@ -156,6 +186,7 @@ public class SymbolVariable implements Symbol {
 
    /**
     * True if the variable is a not compile time constant. (Previously this was Variable)
+    *
     * @return True if the variable is not a compile-time constant
     */
    public boolean isVariable() {
@@ -187,10 +218,10 @@ public class SymbolVariable implements Symbol {
     *
     * @return The new version of the PHI master
     */
-   public SymbolVariable createVersion() {
+   public Variable createVersion() {
       if(!isStoragePhiMaster())
          throw new InternalError("Cannot version non-PHI variable " + this.toString());
-      SymbolVariable version = new SymbolVariable(this, nextPhiVersionNumber++);
+      Variable version = new Variable(this, nextPhiVersionNumber++);
       getScope().add(version);
       return version;
    }
@@ -200,7 +231,7 @@ public class SymbolVariable implements Symbol {
     *
     * @return The original variable. Null if this is not a version.
     */
-   public SymbolVariable getVersionOf() {
+   public Variable getVersionOf() {
       if(!isStoragePhiVersion())
          throw new InternalError("Cannot get master for non-PHI version variable " + this.toString());
       String name = getName();
@@ -434,7 +465,7 @@ public class SymbolVariable implements Symbol {
             .append("(")
             .append((constantValue != null) ? "const " : "")
             .append(getType().getTypeName())
-            .append((constantValue==null&&inferredType) ? "~" : "")
+            .append((constantValue == null && inferredType) ? "~" : "")
             .append(") ")
             .append(getFullName()).toString();
    }
@@ -448,7 +479,7 @@ public class SymbolVariable implements Symbol {
          return false;
       }
 
-      SymbolVariable variable = (SymbolVariable) o;
+      Variable variable = (Variable) o;
       if(name != null ? !name.equals(variable.name) : variable.name != null) {
          return false;
       }

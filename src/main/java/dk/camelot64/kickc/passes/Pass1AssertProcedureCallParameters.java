@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -30,13 +30,13 @@ public class Pass1AssertProcedureCallParameters extends Pass1Base {
             if(statement instanceof StatementCall) {
                StatementCall call = (StatementCall) statement;
                Procedure procedure = getScope().getProcedure(call.getProcedure());
-               List<SymbolVariable> declParameters = procedure.getParameters();
+               List<Variable> declParameters = procedure.getParameters();
                List<RValue> callParameters = call.getParameters();
                if(callParameters.size()!=declParameters.size()) {
                   throw new CompileError("Wrong number of parameters in call "+call.toString(getProgram(), false)+" expected "+procedure.toString(getProgram()), statement);
                }
                for(int i = 0; i < declParameters.size(); i++) {
-                  SymbolVariable declParameter = declParameters.get(i);
+                  Variable declParameter = declParameters.get(i);
                   RValue callParameter = callParameters.get(i);
                   SymbolType callParameterType = SymbolTypeInference.inferType(getScope(), callParameter);
                   SymbolType declParameterType = declParameter.getType();

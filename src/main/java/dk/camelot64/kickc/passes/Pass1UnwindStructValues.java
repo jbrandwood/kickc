@@ -169,7 +169,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
       for(Procedure procedure : getScope().getAllProcedures(true)) {
          ArrayList<String> unwoundParameterNames = new ArrayList<>();
          boolean procedureUnwound = false;
-         for(SymbolVariable parameter : procedure.getParameters()) {
+         for(Variable parameter : procedure.getParameters()) {
             if(parameter.getType() instanceof SymbolTypeStruct) {
                StructUnwinding structUnwinding = getProgram().getStructUnwinding();
                StructUnwinding.VariableUnwinding parameterUnwinding = structUnwinding.getVariableUnwinding(parameter.getRef());
@@ -199,7 +199,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
    private boolean unwindStructVariables() {
       boolean modified = false;
       // Iterate through all scopes generating member-variables for each struct
-      for(SymbolVariable variable : getScope().getAllVariables(true)) {
+      for(Variable variable : getScope().getAllVariables(true)) {
          if(variable.getType() instanceof SymbolTypeStruct) {
             StructUnwinding structUnwinding = getProgram().getStructUnwinding();
             if(structUnwinding.getVariableUnwinding(variable.getRef()) == null) {
@@ -209,14 +209,14 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   // Not inside another struct
                   StructDefinition structDefinition = ((SymbolTypeStruct) variable.getType()).getStructDefinition(getProgram().getScope());
                   StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef());
-                  for(SymbolVariable member : structDefinition.getAllVariables(false)) {
-                     SymbolVariable memberVariable;
+                  for(Variable member : structDefinition.getAllVariables(false)) {
+                     Variable memberVariable;
                      if(variable.getRef().isIntermediate()) {
-                        memberVariable = scope.add(new SymbolVariable( false, variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), SymbolVariable.StorageStrategy.INTERMEDIATE, variable.getMemoryArea(), variable.getDataSegment()));
+                        memberVariable = scope.add(new Variable( variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), Variable.StorageStrategy.INTERMEDIATE, variable.getMemoryArea(), variable.getDataSegment()));
                      } else {
                         if(member.getType() instanceof SymbolTypePointer) {
                            // Always put pointers in ZP memory area
-                           memberVariable = scope.addVariablePhiMaster(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, variable.getDataSegment());
+                           memberVariable = scope.addVariablePhiMaster(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), Variable.MemoryArea.ZEROPAGE_MEMORY, variable.getDataSegment());
                         }  else {
                            memberVariable = scope.addVariablePhiMaster(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), member.getMemoryArea(), variable.getDataSegment());
                         }
@@ -227,7 +227,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                      memberVariable.setDeclaredExport(variable.isDeclaredExport());
                      memberVariable.setStorageStrategy(variable.getStorageStrategy());
                      if(memberVariable.getType() instanceof SymbolTypePointer) {
-                        memberVariable.setMemoryArea(SymbolVariable.MemoryArea.ZEROPAGE_MEMORY);
+                        memberVariable.setMemoryArea(Variable.MemoryArea.ZEROPAGE_MEMORY);
                      }  else {
                         memberVariable.setMemoryArea(variable.getMemoryArea());
                      }
@@ -267,7 +267,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
             for(String memberName : memberUnwinding.getMemberNames()) {
                VariableRef memberVarRef = (VariableRef) memberUnwinding.getMemberUnwinding(memberName);
                membersUnwound.add(memberVarRef);
-               SymbolVariable memberVar = getScope().getVariable(memberVarRef);
+               Variable memberVar = getScope().getVariable(memberVarRef);
                Statement initStmt = Pass0GenerateStatementSequence.createDefaultInitializationStatement(memberVarRef, memberVar.getType(), assignment.getSource(), Comment.NO_COMMENTS);
                stmtIt.add(initStmt);
                getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));
@@ -405,9 +405,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
       @Override
       public List<String> getMemberNames() {
-         Collection<SymbolVariable> structMemberVars = structDefinition.getAllVariables(false);
+         Collection<Variable> structMemberVars = structDefinition.getAllVariables(false);
          ArrayList<String> memberNames = new ArrayList<>();
-         for(SymbolVariable structMemberVar : structMemberVars) {
+         for(Variable structMemberVar : structMemberVars) {
             memberNames.add(structMemberVar.getLocalName());
          }
          return memberNames;
@@ -416,9 +416,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
       @Override
       public LValue getMemberUnwinding(String memberName) {
          ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(getScope(), structDefinition, memberName);
-         SymbolVariable member = structDefinition.getMember(memberName);
+         Variable member = structDefinition.getMember(memberName);
          Scope scope = getScope().getScope(currentBlock.getScope());
-         SymbolVariable memberAddress = scope.addVariableIntermediate();
+         Variable memberAddress = scope.addVariableIntermediate();
          memberAddress.setType(new SymbolTypePointer(member.getType()));
          CastValue structTypedPointer = new CastValue(new SymbolTypePointer(member.getType()), pointerDeref.getPointer());
          // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
@@ -446,9 +446,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
       @Override
       public List<String> getMemberNames() {
-         Collection<SymbolVariable> structMemberVars = structDefinition.getAllVariables(false);
+         Collection<Variable> structMemberVars = structDefinition.getAllVariables(false);
          ArrayList<String> memberNames = new ArrayList<>();
-         for(SymbolVariable structMemberVar : structMemberVars) {
+         for(Variable structMemberVar : structMemberVars) {
             memberNames.add(structMemberVar.getLocalName());
          }
          return memberNames;
@@ -457,9 +457,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
       @Override
       public LValue getMemberUnwinding(String memberName) {
          ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(getScope(), structDefinition, memberName);
-         SymbolVariable member = structDefinition.getMember(memberName);
+         Variable member = structDefinition.getMember(memberName);
          Scope scope = getScope().getScope(currentBlock.getScope());
-         SymbolVariable memberAddress = scope.addVariableIntermediate();
+         Variable memberAddress = scope.addVariableIntermediate();
          memberAddress.setType(new SymbolTypePointer(member.getType()));
          CastValue structTypedPointer = new CastValue(new SymbolTypePointer(member.getType()), pointerDeref.getPointer());
          // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER

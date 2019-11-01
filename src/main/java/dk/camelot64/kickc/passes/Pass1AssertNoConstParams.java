@@ -3,7 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 
 /**
  * Check that no parameters are declared const
@@ -17,7 +17,7 @@ public class Pass1AssertNoConstParams extends Pass1Base {
    @Override
    public boolean step() {
       for(Procedure procedure : getScope().getAllProcedures(true)) {
-         for(SymbolVariable parameter : procedure.getParameters()) {
+         for(Variable parameter : procedure.getParameters()) {
             if(parameter.isDeclaredConstant()) {
                throw new CompileError("Error! Const parameters not supported "+parameter.getName()+" in "+ procedure.getFullName()+"()");
             }

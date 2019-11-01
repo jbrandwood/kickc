@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ public interface Directive {
    class Const implements Directive {
 
       /** The const declaration. */
-      SymbolVariable.ConstantDeclaration constantDeclaration;
+      Variable.ConstantDeclaration constantDeclaration;
 
-      public Const(SymbolVariable.ConstantDeclaration constantDeclaration) {
+      public Const(Variable.ConstantDeclaration constantDeclaration) {
          this.constantDeclaration = constantDeclaration;
       }
 
@@ -105,12 +105,12 @@ public interface Directive {
    class MemoryArea implements Directive {
 
       /** The memory area. */
-      SymbolVariable.MemoryArea memoryArea;
+      Variable.MemoryArea memoryArea;
 
       /** Optional hard-coded address to use for storing the variable. */
       public Long address;
 
-      public MemoryArea(SymbolVariable.MemoryArea memoryArea, Long address) {
+      public MemoryArea(Variable.MemoryArea memoryArea, Long address) {
          this.memoryArea = memoryArea;
          this.address = address;
       }

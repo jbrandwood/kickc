@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
 
@@ -29,8 +29,8 @@ public class Pass1AddressOfVolatile extends Pass2SsaOptimization {
                   RValue rValue = assignment.getrValue2();
                   if(rValue instanceof SymbolVariableRef) {
                      Symbol toSymbol = getScope().getSymbol((SymbolVariableRef) rValue);
-                     if(toSymbol instanceof SymbolVariable) {
-                        ((SymbolVariable) toSymbol).setInferedVolatile(true);
+                     if(toSymbol instanceof Variable) {
+                        ((Variable) toSymbol).setInferedVolatile(true);
                         getLog().append("Setting inferred volatile on symbol affected by address-of "+statement.toString(getProgram(), false));
                      }
                   }

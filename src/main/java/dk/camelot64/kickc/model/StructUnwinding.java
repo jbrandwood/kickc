@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.values.LValue;
-import dk.camelot64.kickc.model.values.SymbolRef;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class StructUnwinding {
     * @param ref The variable to look for
     * @return Information about the unwinding. Null if not unwound
     */
-   public VariableUnwinding getVariableUnwinding(VariableRef ref) {
+   public VariableUnwinding getVariableUnwinding(SymbolVariableRef ref) {
       return structVariables.get(ref);
    }
 

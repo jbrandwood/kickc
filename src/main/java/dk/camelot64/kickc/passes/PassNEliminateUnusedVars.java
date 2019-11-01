@@ -4,10 +4,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.EnumDefinition;
-import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.StructUnwoundPlaceholder;
@@ -42,7 +39,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                StatementAssignment assignment = (StatementAssignment) statement;
                LValue lValue = assignment.getlValue();
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
-                  Variable variable = getScope().getVariable((VariableRef) lValue);
+                  SymbolVariable variable = getScope().getVariable((VariableRef) lValue);
                   boolean eliminate = false;
                   if(variable == null) {
                      // Already deleted
@@ -74,7 +71,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                StatementCall call = (StatementCall) statement;
                LValue lValue = call.getlValue();
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
-                  Variable variable = getScope().getVariable((VariableRef) lValue);
+                  SymbolVariable variable = getScope().getVariable((VariableRef) lValue);
                   if(!variable.isVolatile()) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
@@ -90,7 +87,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                StatementCallFinalize call = (StatementCallFinalize) statement;
                LValue lValue = call.getlValue();
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
-                  Variable variable = getScope().getVariable((VariableRef) lValue);
+                  SymbolVariable variable = getScope().getVariable((VariableRef) lValue);
                   if(!variable.isVolatile()) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
@@ -106,7 +103,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                StatementCallPointer call = (StatementCallPointer) statement;
                LValue lValue = call.getlValue();
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
-                  Variable variable = getScope().getVariable((VariableRef) lValue);
+                  SymbolVariable variable = getScope().getVariable((VariableRef) lValue);
                   if(!variable.isVolatile()) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
@@ -125,7 +122,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   StatementPhiBlock.PhiVariable phiVariable = phiVarIt.next();
                   VariableRef variableRef = phiVariable.getVariable();
                   if(referenceInfos.isUnused(variableRef)) {
-                     Variable variable = getScope().getVariable(variableRef);
+                     SymbolVariable variable = getScope().getVariable(variableRef);
                      if(!variable.isVolatile()) {
                         if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                            getLog().append("Eliminating unused variable - keeping the phi block " + variableRef.toString(getProgram()));
@@ -170,7 +167,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
     * @param variable The variable
     * @return true if this is the return variable for a function
     */
-   private boolean isReturnValue(Variable variable) {
+   private boolean isReturnValue(SymbolVariable variable) {
       if(variable == null) return false;
       return variable.getScope() instanceof Procedure && variable.getLocalName().equals("return");
    }

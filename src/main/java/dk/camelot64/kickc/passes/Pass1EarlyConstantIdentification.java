@@ -11,6 +11,7 @@ import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
 
    @Override
    public boolean step() {
-      Collection<VariableRef> earlyConstants = new ArrayList<>();
+      Collection<SymbolVariableRef> earlyConstants = new ArrayList<>();
       for(Variable variable : getProgram().getScope().getAllVariables(true)) {
          VariableRef variableRef = variable.getRef();
          if(!variable.isDeclaredConstant() && !variable.isVolatile() && !variableRef.isIntermediate()) {
@@ -64,10 +65,10 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
     * @return true if the variable is a procedure parameter
     */
    public boolean isParameter(VariableRef variableRef) {
-      Variable var = getScope().getVariable(variableRef);
+      SymbolVariable var = getScope().getVariable(variableRef);
       Scope varScope = var.getScope();
       if(varScope instanceof Procedure) {
-         List<Variable> parameters = ((Procedure) varScope).getParameters();
+         List<SymbolVariable> parameters = ((Procedure) varScope).getParameters();
          if(parameters.contains(var))
             return true;
 

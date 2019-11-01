@@ -244,7 +244,7 @@ public class Pass4CodeGeneration {
     * @param procedureVariable The variable containing the function pointer
     * @param codeScopeRef The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
     */
-   private void generateIndirectCall(AsmProgram asm, Variable procedureVariable, ScopeRef codeScopeRef) {
+   private void generateIndirectCall(AsmProgram asm, SymbolVariable procedureVariable, ScopeRef codeScopeRef) {
       String varAsmName = AsmFormat.getAsmParamName(procedureVariable, codeScopeRef);
       indirectCallAsmNames.add(varAsmName);
       asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_" + varAsmName, false);
@@ -260,10 +260,10 @@ public class Pass4CodeGeneration {
       StringBuilder signature = new StringBuilder();
       signature.append(" ").append(procedure.getLocalName()).append("(");
       int i = 0;
-      for(Variable parameter : procedure.getParameters()) {
-         List<Variable> versions = new ArrayList<>(procedure.getVersions(parameter));
+      for(SymbolVariable parameter : procedure.getParameters()) {
+         List<SymbolVariable> versions = new ArrayList<>(procedure.getVersions(parameter));
          if(versions.size() > 0) {
-            Variable param = versions.get(0);
+            SymbolVariable param = versions.get(0);
             Registers.Register allocation = param.getAllocation();
             if(i++ > 0) signature.append(", ");
             signature.append(param.getType().getTypeName()).append(" ");
@@ -575,7 +575,7 @@ public class Pass4CodeGeneration {
          ConstantStructValue structValue = (ConstantStructValue) value;
          for(VariableRef memberRef : structValue.getMembers()) {
             ConstantValue memberValue = structValue.getValue(memberRef);
-            Variable memberVariable = getScope().getVariable(memberRef);
+            SymbolVariable memberVariable = getScope().getVariable(memberRef);
             addChunkData(dataChunk, memberValue, memberVariable.getType(), scopeRef);
          }
       } else if(valueType instanceof SymbolTypeArray) {
@@ -809,9 +809,9 @@ public class Pass4CodeGeneration {
             if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
                // Push parameters to the stack
                List<RValue> callParameters = call.getParameters();
-               List<Variable> procParameters = procedure.getParameters();
+               List<SymbolVariable> procParameters = procedure.getParameters();
                for(int i = 0; i < procParameters.size(); i++) {
-                  Variable procParameter = procParameters.get(i);
+                  SymbolVariable procParameter = procParameters.get(i);
                   RValue callParameter = callParameters.get(i);
                   SymbolType parameterType = procParameter.getType();
                   AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackPushValue(parameterType), callParameter, program, block.getScope());
@@ -928,16 +928,16 @@ public class Pass4CodeGeneration {
                   asm.addInstruction("jsr", AsmAddressingMode.ABS, AsmFormat.getAsmConstant(program, (ConstantValue) pointer, 99, block.getScope()), false);
                   supported = true;
                } else if(pointer instanceof VariableRef) {
-                  Variable variable = getScope().getVariable((VariableRef) pointer);
+                  SymbolVariable variable = getScope().getVariable((VariableRef) pointer);
                   generateIndirectCall(asm, variable, block.getScope());
                   supported = true;
                } else if(pointer instanceof CastValue && ((CastValue) pointer).getValue() instanceof VariableRef) {
-                  Variable variable = getScope().getVariable((VariableRef) ((CastValue) pointer).getValue());
+                  SymbolVariable variable = getScope().getVariable((VariableRef) ((CastValue) pointer).getValue());
                   generateIndirectCall(asm, variable, block.getScope());
                   supported = true;
                }
             } else if(procedure instanceof VariableRef) {
-               Variable procedureVariable = getScope().getVariable((VariableRef) procedure);
+               SymbolVariable procedureVariable = getScope().getVariable((VariableRef) procedure);
                SymbolType procedureVariableType = procedureVariable.getType();
                if(procedureVariableType instanceof SymbolTypePointer) {
                   if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {

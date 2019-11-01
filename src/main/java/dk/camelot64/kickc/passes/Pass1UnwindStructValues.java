@@ -169,7 +169,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
       for(Procedure procedure : getScope().getAllProcedures(true)) {
          ArrayList<String> unwoundParameterNames = new ArrayList<>();
          boolean procedureUnwound = false;
-         for(Variable parameter : procedure.getParameters()) {
+         for(SymbolVariable parameter : procedure.getParameters()) {
             if(parameter.getType() instanceof SymbolTypeStruct) {
                StructUnwinding structUnwinding = getProgram().getStructUnwinding();
                StructUnwinding.VariableUnwinding parameterUnwinding = structUnwinding.getVariableUnwinding(parameter.getRef());
@@ -267,7 +267,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
             for(String memberName : memberUnwinding.getMemberNames()) {
                VariableRef memberVarRef = (VariableRef) memberUnwinding.getMemberUnwinding(memberName);
                membersUnwound.add(memberVarRef);
-               Variable memberVar = getScope().getVariable(memberVarRef);
+               SymbolVariable memberVar = getScope().getVariable(memberVarRef);
                Statement initStmt = Pass0GenerateStatementSequence.createDefaultInitializationStatement(memberVarRef, memberVar.getType(), assignment.getSource(), Comment.NO_COMMENTS);
                stmtIt.add(initStmt);
                getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));

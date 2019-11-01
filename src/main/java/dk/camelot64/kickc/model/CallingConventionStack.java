@@ -36,7 +36,7 @@ public class CallingConventionStack {
     * @param parameter The parameter
     * @return The constant variable
     */
-   public static ConstantRef getParameterOffsetConstant(Procedure procedure, Variable parameter) {
+   public static ConstantRef getParameterOffsetConstant(Procedure procedure, SymbolVariable parameter) {
       String paramOffsetConstantName = getParameterOffsetConstantName(parameter.getName());
       ConstantVar paramOffsetConstant = procedure.getConstant(paramOffsetConstantName);
       if(paramOffsetConstant == null) {
@@ -80,7 +80,7 @@ public class CallingConventionStack {
     */
    public static long getParametersByteSize(Procedure procedure) {
       long byteSize = 0;
-      for(Variable procedureParameter : procedure.getParameters()) {
+      for(SymbolVariable procedureParameter : procedure.getParameters()) {
          byteSize += procedureParameter.getType().getSizeBytes();
       }
       return byteSize;
@@ -92,9 +92,9 @@ public class CallingConventionStack {
     * @param parameter The parameter to find offset for
     * @return The byte offset of the start of the member data
     */
-   public static long getParameterByteOffset(Procedure procedure, Variable parameter) {
+   public static long getParameterByteOffset(Procedure procedure, SymbolVariable parameter) {
       long byteOffset = 0;
-      for(Variable procedureParameter : procedure.getParameters()) {
+      for(SymbolVariable procedureParameter : procedure.getParameters()) {
          if(parameter.equals(procedureParameter)) {
             break;
          } else {

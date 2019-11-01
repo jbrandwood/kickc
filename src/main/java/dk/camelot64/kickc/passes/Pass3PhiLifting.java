@@ -48,10 +48,10 @@ public class Pass3PhiLifting {
                      //VariableRef rValVarRef = (VariableRef) phiRValue.getrValue();
                      Variable newVar;
                      if(phiVariable.getVariable().isVersion()) {
-                        Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
+                        SymbolVariable lValVar = program.getScope().getVariable(phiVariable.getVariable());
                         newVar = lValVar.getVersionOf().createVersion();
                      } else {
-                        Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
+                        SymbolVariable lValVar = program.getScope().getVariable(phiVariable.getVariable());
                         newVar = lValVar.getScope().addVariableIntermediate();
                      }
                      Symbol phiLValue = programScope.getSymbol(phiVariable.getVariable());

@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.values.LvalueIntermediate;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -72,7 +73,7 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
          StatementAssignment intermediateAssignment,
          Operator loHiOperator) {
       VariableRef loHiVar = (VariableRef) intermediateAssignment.getrValue2();
-      Variable intermediateVar = programScope.getVariable(intermediate.getVariable());
+      SymbolVariable intermediateVar = programScope.getVariable(intermediate.getVariable());
       Scope currentScope = intermediateVar.getScope();
       // Let assignment put value into a tmp Var
       Variable tmpVar = currentScope.addVariableIntermediate();

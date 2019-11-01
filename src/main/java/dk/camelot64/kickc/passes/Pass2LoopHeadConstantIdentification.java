@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.utils.Unroller;
@@ -138,7 +139,7 @@ public class Pass2LoopHeadConstantIdentification extends Pass2SsaOptimization {
             isVol.set(true);
          }
          if(programValue.get() instanceof VariableRef) {
-            Variable variable = getScope().getVariable((VariableRef) programValue.get());
+            SymbolVariable variable = getScope().getVariable((VariableRef) programValue.get());
             if(variable.isVolatile())
                isVol.set(true);
          }

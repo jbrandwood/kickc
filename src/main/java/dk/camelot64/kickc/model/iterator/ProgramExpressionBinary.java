@@ -10,6 +10,7 @@ import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -251,7 +252,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       @Override
       public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
          if(assignment.getlValue() instanceof VariableRef) {
-            Variable variable = symbols.getVariable((VariableRef) assignment.getlValue());
+            SymbolVariable variable = symbols.getVariable((VariableRef) assignment.getlValue());
             if(variable.isInferredType())
                variable.setTypeInferred(toType);
             else
@@ -457,7 +458,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
          if(getPointerDereferenceIndexed().getIndex() instanceof ConstantValue) {
             getPointerDereferenceIndexed().setIndex(new ConstantCastValue(toType, (ConstantValue) getPointerDereferenceIndexed().getIndex()));
          } else if(getPointerDereferenceIndexed().getIndex() instanceof VariableRef) {
-            Variable variable = symbols.getVariable((VariableRef) getPointerDereferenceIndexed().getIndex());
+            SymbolVariable variable = symbols.getVariable((VariableRef) getPointerDereferenceIndexed().getIndex());
             if(variable.isInferredType())
                variable.setTypeInferred(toType);
             else
@@ -514,7 +515,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
 
       @Override
       public void addLeftCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
-         Variable variable = symbols.getVariable(phiVariable.getVariable());
+         SymbolVariable variable = symbols.getVariable(phiVariable.getVariable());
          if(variable.isInferredType())
             variable.setTypeInferred(toType);
          else
@@ -524,7 +525,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       @Override
       public void addRightCast(SymbolType toType, ListIterator<Statement> stmtIt, ScopeRef currentScope, ProgramScope symbols) {
          if(getRight() instanceof VariableRef) {
-            Variable variable = symbols.getVariable((VariableRef) getRight());
+            SymbolVariable variable = symbols.getVariable((VariableRef) getRight());
             if(variable.isInferredType())
                variable.setTypeInferred(toType);
          } else if(getRight() instanceof ConstantValue) {

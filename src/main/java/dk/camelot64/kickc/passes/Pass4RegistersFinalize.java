@@ -52,7 +52,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
       LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          for(VariableRef variableRef : equivalenceClass.getVariables()) {
-            Variable variable = getProgram().getScope().getVariable(variableRef);
+            SymbolVariable variable = getProgram().getScope().getVariable(variableRef);
             Registers.Register declaredRegister = variable.getDeclaredRegister(); //TODO: Handle register/memory/storage strategy differently!
             Registers.Register register = declaredRegister;
             if(declaredRegister !=null) {

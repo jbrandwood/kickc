@@ -59,21 +59,21 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
          return copyCall;
       }
 
-      List<Variable> parameterDecls = procedure.getParameters();
+      List<SymbolVariable> parameterDecls = procedure.getParameters();
       List<RValue> parameterValues = origCall.getParameters();
       if(parameterDecls.size()!=parameterValues.size()) {
          throw new CompileError("Wrong number of parameters in call "+origCall.toString(program, false)+" expected "+procedure.toString(program), origCall);
       }
       for(int i = 0; i < parameterDecls.size(); i++) {
-         Variable parameterDecl = parameterDecls.get(i);
+         SymbolVariable parameterDecl = parameterDecls.get(i);
          RValue parameterValue = parameterValues.get(i);
-         addStatementToCurrentBlock(new StatementAssignment(parameterDecl.getRef(), parameterValue, origCall.getSource(), Comment.NO_COMMENTS));
+         addStatementToCurrentBlock(new StatementAssignment((LValue) parameterDecl.getRef(), parameterValue, origCall.getSource(), Comment.NO_COMMENTS));
       }
       String procedureName = origCall.getProcedureName();
-      Variable procReturnVar = procedure.getVariable("return");
+      SymbolVariable procReturnVar = procedure.getVariable("return");
       LValue procReturnVarRef = null;
       if(procReturnVar != null) {
-         procReturnVarRef = procReturnVar.getRef();
+         procReturnVarRef = (LValue) procReturnVar.getRef();
          // Special handing of struct value returns
          if(procReturnVar.getType() instanceof SymbolTypeStruct) {
             StructUnwinding.VariableUnwinding returnVarUnwinding = program.getStructUnwinding().getVariableUnwinding((VariableRef) procReturnVarRef);
@@ -108,7 +108,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
          LValue lValue = origCall.getlValue();
          if(lValue instanceof VariableRef) {
             VariableRef lValueRef = (VariableRef) lValue;
-            Variable lValueVar = getScope().getVariable(lValueRef);
+            SymbolVariable lValueVar = getScope().getVariable(lValueRef);
             lValueVar.getScope().remove(lValueVar);
          }
       }

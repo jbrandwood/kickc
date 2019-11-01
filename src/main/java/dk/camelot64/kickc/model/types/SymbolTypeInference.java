@@ -16,7 +16,7 @@ public class SymbolTypeInference {
    public static SymbolType inferType(ProgramScope symbols, RValue rValue) {
       SymbolType type = null;
       if(rValue instanceof VariableRef) {
-         Variable variable = symbols.getVariable((VariableRef) rValue);
+         SymbolVariable variable = symbols.getVariable((VariableRef) rValue);
          type = variable.getType();
       } else if(rValue instanceof ConstantRef) {
          ConstantVar constVar = symbols.getConstant((ConstantRef) rValue);
@@ -107,7 +107,7 @@ public class SymbolTypeInference {
          if(structType instanceof SymbolTypeStruct) {
             String typeName = ((SymbolTypeStruct) structType).getStructTypeName();
             StructDefinition structDefinition = symbols.getStructDefinition(typeName);
-            Variable structMember = structDefinition.getVariable(structMemberRef.getMemberName());
+            SymbolVariable structMember = structDefinition.getVariable(structMemberRef.getMemberName());
             return structMember.getType();
          } else {
             throw new CompileError("Dot applied to non-struct "+ structMemberRef.getStruct().toString());

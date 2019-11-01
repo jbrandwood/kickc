@@ -209,16 +209,16 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(!SymbolType.VOID.equals(type)) {
          returnVar = procedure.addVariablePhiMaster("return", type, defaultMemoryArea, procedure.getSegmentData());
       }
-      List<Variable> parameterList = new ArrayList<>();
+      List<SymbolVariable> parameterList = new ArrayList<>();
       if(ctx.parameterListDecl() != null) {
-         parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
+         parameterList = (List<SymbolVariable>) this.visit(ctx.parameterListDecl());
       }
       procedure.setParameters(parameterList);
       sequence.addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
       // Add parameter assignments
       if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
-         for(Variable param : parameterList) {
-            sequence.addStatement(new StatementAssignment(param.getRef(), new ParamValue(param.getRef()), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+         for(SymbolVariable param : parameterList) {
+            sequence.addStatement(new StatementAssignment((LValue) param.getRef(), new ParamValue((VariableRef) param.getRef()), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
          }
       }
       if(ctx.stmtSeq() != null) {
@@ -1184,7 +1184,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       SymbolType varType = declVarType;
       List<Directive> varDirectives = declVarDirectives;
       String varName = ctx.NAME().getText();
-      Variable lValue;
+      SymbolVariable lValue;
       if(varType != null) {
          try {
             lValue = getCurrentScope().addVariablePhiMaster(varName, varType, defaultMemoryArea, currentDataSegment);
@@ -1210,7 +1210,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(rangeFirstValue instanceof ConstantInteger) ((ConstantInteger) rangeFirstValue).setType(varType);
          if(rangeLastValue instanceof ConstantInteger) ((ConstantInteger) rangeLastValue).setType(varType);
       }
-      Statement stmtInit = new StatementAssignment(lValue.getRef(), rangeFirstValue, statementSource, Comment.NO_COMMENTS);
+      Statement stmtInit = new StatementAssignment((LValue) lValue.getRef(), rangeFirstValue, statementSource, Comment.NO_COMMENTS);
       sequence.addStatement(stmtInit);
       // Add label
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(stmtForCtx));
@@ -1221,7 +1221,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       addLoopBody(stmtForCtx.stmt());
       addLoopContinueLabel(loopStack.peek(), ctx);
       // Add increment
-      Statement stmtNxt = new StatementAssignment(lValue.getRef(), lValue.getRef(), Operators.PLUS, new RangeNext(rangeFirstValue, rangeLastValue), statementSource, Comment.NO_COMMENTS);
+      Statement stmtNxt = new StatementAssignment((LValue) lValue.getRef(), lValue.getRef(), Operators.PLUS, new RangeNext(rangeFirstValue, rangeLastValue), statementSource, Comment.NO_COMMENTS);
       sequence.addStatement(stmtNxt);
       // Add condition i!=last+1 or i!=last-1
       RValue beyondLastVal = new RangeComparison(rangeFirstValue, rangeLastValue, lValue.getType());
@@ -1411,8 +1411,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(exprCtx != null) {
          PrePostModifierHandler.addPreModifiers(this, exprCtx, new StatementSource(ctx));
          rValue = (RValue) this.visit(exprCtx);
-         Variable returnVar = procedure.getVariable("return");
-         sequence.addStatement(new StatementAssignment(returnVar.getRef(), rValue, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
+         SymbolVariable returnVar = procedure.getVariable("return");
+         sequence.addStatement(new StatementAssignment((LValue) returnVar.getRef(), rValue, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
          PrePostModifierHandler.addPostModifiers(this, exprCtx, new StatementSource(ctx));
       }
       Label returnLabel = procedure.getLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
@@ -1556,7 +1556,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) {
       Scope typeDefScope = program.getScope().getTypeDefScope();
-      Variable typeDefVariable = typeDefScope.getVariable(ctx.getText());
+      SymbolVariable typeDefVariable = typeDefScope.getVariable(ctx.getText());
       if(typeDefVariable != null) {
          return typeDefVariable.getType();
       }

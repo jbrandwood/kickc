@@ -114,8 +114,8 @@ public abstract class Scope implements Symbol, Serializable {
     * @param unversioned The unversioned PHI-master variable
     * @return All versions of the variable
     */
-   public Collection<Variable> getVersions(Variable unversioned) {
-      LinkedHashSet<Variable> versions = new LinkedHashSet<>();
+   public Collection<SymbolVariable> getVersions(SymbolVariable unversioned) {
+      LinkedHashSet<SymbolVariable> versions = new LinkedHashSet<>();
       for(Symbol symbol : symbols.values()) {
          if(symbol instanceof Variable) {
             if(((Variable) symbol).isStoragePhiVersion()) {
@@ -163,11 +163,11 @@ public abstract class Scope implements Symbol, Serializable {
       return symbols.get(name);
    }
 
-   public Variable getVariable(String name) {
-      return (Variable) getSymbol(name);
+   public SymbolVariable getVariable(String name) {
+      return (SymbolVariable) getSymbol(name);
    }
 
-   public Variable getVariable(VariableRef variableRef) {
+   public SymbolVariable getVariable(SymbolVariableRef variableRef) {
       return getVariable(variableRef.getFullName());
    }
 

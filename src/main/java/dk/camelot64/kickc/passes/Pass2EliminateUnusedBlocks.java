@@ -7,10 +7,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.Label;
-import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -35,14 +32,14 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
                   LValue lValue = assignment.getlValue();
                   if(lValue instanceof VariableRef) {
                      getLog().append("Eliminating variable " + lValue.toString(getProgram()) + " from unused block " + block.getLabel());
-                     Variable variable = getScope().getVariable((VariableRef) lValue);
+                     SymbolVariable variable = getScope().getVariable((VariableRef) lValue);
                      variable.getScope().remove(variable);
                   }
                } else if(stmt instanceof StatementPhiBlock) {
                   for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) stmt).getPhiVariables()) {
                      VariableRef phiVar = phiVariable.getVariable();
                      getLog().append("Eliminating variable " + phiVar.toString(getProgram()) + " from unused block " + block.getLabel());
-                     Variable variable = getScope().getVariable(phiVar);
+                     SymbolVariable variable = getScope().getVariable(phiVar);
                      variable.getScope().remove(variable);
 
                   }

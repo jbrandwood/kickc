@@ -92,17 +92,17 @@ public class Procedure extends Scope {
       return returnType;
    }
 
-   public List<Variable> getParameters() {
-      ArrayList<Variable> parameters = new ArrayList<>();
+   public List<SymbolVariable> getParameters() {
+      ArrayList<SymbolVariable> parameters = new ArrayList<>();
       for(String name : parameterNames) {
          parameters.add(this.getVariable(name));
       }
       return parameters;
    }
 
-   public void setParameters(List<Variable> parameters) {
+   public void setParameters(List<SymbolVariable> parameters) {
       this.parameterNames = new ArrayList<>();
-      for(Variable parameter : parameters) {
+      for(SymbolVariable parameter : parameters) {
          add(parameter);
          parameterNames.add(parameter.getLocalName());
       }
@@ -215,7 +215,7 @@ public class Procedure extends Scope {
       res.append("(");
       boolean first = true;
       if(parameterNames != null) {
-         for(Variable parameter : getParameters()) {
+         for(SymbolVariable parameter : getParameters()) {
             if(!first) res.append(" , ");
             first = false;
             res.append(parameter.toString(program));

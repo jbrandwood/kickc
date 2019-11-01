@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.VariableRef;
 
@@ -27,7 +28,7 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
          Registers.Register declaredRegister = null;
          int bytes = -1;
          for(VariableRef varRef : equivalenceClass.getVariables()) {
-            Variable variable = getProgram().getScope().getVariable(varRef);
+            SymbolVariable variable = getProgram().getScope().getVariable(varRef);
             if(variable.getDeclaredRegister() != null) {
                if(declaredRegister != null && !declaredRegister.equals(variable.getDeclaredRegister())) {
                   throw new CompileError("Equivalence class has variables with different declared registers \n" +
@@ -77,7 +78,7 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
     */
    private boolean varVolatile(LiveRangeEquivalenceClass equivalenceClass) {
       for(VariableRef variableRef : equivalenceClass.getVariables()) {
-         Variable variable = getSymbols().getVariable(variableRef);
+         SymbolVariable variable = getSymbols().getVariable(variableRef);
          if(variable.isVolatile() || variable.isStorageLoadStore()) {
             return true;
          }

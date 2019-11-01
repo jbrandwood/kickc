@@ -24,14 +24,14 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       // Offset-constants for all stack-call parameters
-      Map<VariableRef, ConstantRef> offsetConstants = new HashMap<>();
+      Map<SymbolVariableRef, ConstantRef> offsetConstants = new HashMap<>();
 
       // Introduce STACK_OFFSET constants
       boolean createStackBase = false;
       for(Procedure procedure : getScope().getAllProcedures(true)) {
          if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
             // Introduce the parameter offsets
-            for(Variable parameter : procedure.getParameters()) {
+            for(SymbolVariable parameter : procedure.getParameters()) {
                ConstantRef parameterOffsetConstant = CallingConventionStack.getParameterOffsetConstant(procedure, parameter);
                offsetConstants.put(parameter.getRef(), parameterOffsetConstant);
                createStackBase = true;

@@ -11,6 +11,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -170,7 +171,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
    private SymbolTypePointer getPointerType(RValue pointer) {
       if(pointer instanceof VariableRef) {
          VariableRef varRef = (VariableRef) pointer;
-         Variable variable = getScope().getVariable(varRef);
+         SymbolVariable variable = getScope().getVariable(varRef);
          SymbolType type = variable.getType();
          if(type instanceof SymbolTypePointer) {
             return (SymbolTypePointer) type;

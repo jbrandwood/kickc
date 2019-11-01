@@ -51,7 +51,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
     * @param defined Variables already assigned a value at the point of the first execution of the block
     * @param visited Blocks already visited
     */
-   public void assertUsedVars(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<VariableRef> defined, Collection<LabelRef> visited) {
+   public void assertUsedVars(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<SymbolVariableRef> defined, Collection<LabelRef> visited) {
       // If the block has a phi statement it is always examined (to not skip any of the predecessor checks)
       assertUsedVarsPhi(block, predecessor, referenceInfos, defined);
       // If we have already visited the block - skip it
@@ -113,7 +113,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
     * @param visited Blocks already visited
     */
 
-   private void assertUsedVarsPhi(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<VariableRef> defined) {
+   private void assertUsedVarsPhi(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<SymbolVariableRef> defined) {
       if(predecessor != null && block.hasPhiBlock()) {
          StatementPhiBlock phiBlock = block.getPhiBlock();
          ArrayList<SymbolVariableRef> used = new ArrayList<>();

@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,8 +113,9 @@ public abstract class SymbolVariable implements Symbol {
       setFullName();
       if(isStoragePhiMaster())
          this.nextPhiVersionNumber = 0;
-
    }
+
+   public abstract SymbolVariableRef getRef();
 
    private void setFullName() {
       String scopeName = (scope == null) ? "" : scope.getFullName();
@@ -138,7 +140,7 @@ public abstract class SymbolVariable implements Symbol {
     *
     * @return The original variable. Null if this is not a version.
     */
-   public Variable getVersionOf() {
+   public SymbolVariable getVersionOf() {
       if(!isStoragePhiVersion())
          throw new InternalError("Cannot get master for non-PHI version variable " + this.toString());
       String name = getName();

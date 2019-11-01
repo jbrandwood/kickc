@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 
@@ -92,7 +93,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          boolean sameBaseVar = true;
          String unversionedFullName = null;
          for(VariableRef variableRef : aliasSet.getVars()) {
-            Variable variable = programScope.getVariable(variableRef);
+            SymbolVariable variable = programScope.getVariable(variableRef);
             if(variable.isVolatile() || variable.isStorageLoadStore()) {
                anyVolatile = true;
             }
@@ -419,7 +420,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          for(VariableRef var : vars) {
             String name;
             int score;
-            Variable variable = scope.getVariable(var);
+            SymbolVariable variable = scope.getVariable(var);
             if(variable.isDeclaredConstant() || variable.isStorageConstant()) {
                name = var.getFullNameUnversioned();
                score = 100;

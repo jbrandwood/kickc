@@ -58,8 +58,8 @@ public class AsmFormat {
       } else if(value instanceof ConstantSymbolPointer) {
          SymbolRef toSym = ((ConstantSymbolPointer) value).getToSymbol();
          Symbol symbol = program.getScope().getSymbol(toSym);
-         if(symbol instanceof Variable) {
-            return getAsmParamName((Variable) symbol, codeScope);
+         if(symbol instanceof SymbolVariable) {
+            return getAsmParamName((SymbolVariable) symbol, codeScope);
          } else if(symbol instanceof Procedure) {
             return getAsmParamName((Procedure) symbol, codeScope);
          } else {

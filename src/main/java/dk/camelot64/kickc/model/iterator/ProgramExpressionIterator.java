@@ -4,7 +4,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.List;
@@ -69,20 +69,20 @@ public class ProgramExpressionIterator {
                StatementCall call = (StatementCall) stmt;
                List<RValue> paramValues = call.getParameters();
                Procedure procedure = program.getScope().getProcedure(call.getProcedure());
-               List<Variable> paramDefs = procedure.getParameters();
+               List<SymbolVariable> paramDefs = procedure.getParameters();
                if(paramValues != null && paramDefs.size() == paramValues.size()) {
                   for(int i = 0; i < paramDefs.size(); i++) {
-                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter(paramDefs.get(i).getRef(), new ProgramValue.CallParameter(call, i)), stmt, stmtIt, block);
+                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter((VariableRef) paramDefs.get(i).getRef(), new ProgramValue.CallParameter(call, i)), stmt, stmtIt, block);
                   }
                }
             } else if(stmt instanceof StatementCallPrepare) {
                StatementCallPrepare call = (StatementCallPrepare) stmt;
                List<RValue> paramValues = call.getParameters();
                Procedure procedure = program.getScope().getProcedure(call.getProcedure());
-               List<Variable> paramDefs = procedure.getParameters();
+               List<SymbolVariable> paramDefs = procedure.getParameters();
                if(paramValues != null && paramDefs.size() == paramValues.size()) {
                   for(int i = 0; i < paramDefs.size(); i++) {
-                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter(paramDefs.get(i).getRef(), new ProgramValue.CallPrepareParameter(call, i)), stmt, stmtIt, block);
+                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter((VariableRef) paramDefs.get(i).getRef(), new ProgramValue.CallPrepareParameter(call, i)), stmt, stmtIt, block);
                   }
                }
             }

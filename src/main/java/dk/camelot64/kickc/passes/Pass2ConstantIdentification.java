@@ -12,10 +12,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -44,7 +41,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       // Update symbol table with the constant value
       Set<VariableRef> constVars = new LinkedHashSet<>(constants.keySet());
       for(VariableRef constRef : constVars) {
-         Variable variable = getProgram().getScope().getVariable(constRef);
+         SymbolVariable variable = getProgram().getScope().getVariable(constRef);
          ConstantVariableValue constVarVal = constants.get(constRef);
          Scope constScope = variable.getScope();
          ConstantValue constVal = constVarVal.getConstantValue();
@@ -155,7 +152,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                LValue lValue = assignment.getlValue();
                if(lValue instanceof VariableRef) {
                   VariableRef varRef = (VariableRef) lValue;
-                  Variable var = getScope().getVariable(varRef);
+                  SymbolVariable var = getScope().getVariable(varRef);
                   if(var.isVolatile() || var.isDeclaredNotConstant() || var.isStorageLoadStore())
                      // Do not examine volatiles and non-versioned variables
                      continue;
@@ -171,7 +168,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                      StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
                      if(getConstant(phiRValue.getrValue()) != null) {
                         VariableRef varRef = phiVariable.getVariable();
-                        Variable var = getScope().getVariable(varRef);
+                        SymbolVariable var = getScope().getVariable(varRef);
                         if(var.isVolatile() || var.isDeclaredNotConstant() || var.isStorageLoadStore())
                            // Do not examine volatiles and non-versioned variables
                            continue;

@@ -10,7 +10,6 @@ import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
@@ -70,7 +69,7 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
 
    public void resolveConstantSizeOf(AtomicBoolean modified, ProgramValue programValue, ConstantUnary unary, ConstantValue operand) {
       if(operand instanceof ConstantRef) {
-         ConstantVar constant = getScope().getConstant((ConstantRef) operand);
+         SymbolVariable constant = getScope().getConstant((ConstantRef) operand);
          SymbolType symbolType = constant.getType();
          if(symbolType instanceof SymbolTypeArray) {
             SymbolTypeArray arrayType = (SymbolTypeArray) symbolType;

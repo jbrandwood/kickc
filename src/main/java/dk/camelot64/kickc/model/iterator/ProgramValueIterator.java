@@ -50,8 +50,8 @@ public class ProgramValueIterator {
       if(symbolVariable.getType() instanceof SymbolTypeArray) {
          execute(new ProgramValue.ProgramValueTypeArraySize((SymbolTypeArray) symbolVariable.getType()), programValueHandler, null, null, null);
       }
-      if(symbolVariable instanceof ConstantVar) {
-         execute(new ProgramValue.ProgramValueConstantVar((ConstantVar) symbolVariable), programValueHandler, null, null, null);
+      if(symbolVariable.isConstant()) {
+         execute(new ProgramValue.ProgramValueConstantVar(symbolVariable), programValueHandler, null, null, null);
       }
    }
 

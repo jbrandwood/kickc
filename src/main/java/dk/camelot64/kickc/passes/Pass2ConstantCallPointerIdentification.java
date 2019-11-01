@@ -5,7 +5,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementCallPointer;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
@@ -38,7 +38,7 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
                      optimized = true;
                   }
                } else if(procedure instanceof ConstantRef) {
-                  ConstantVar procedureVariable = getScope().getConstant((ConstantRef) procedure);
+                  SymbolVariable procedureVariable = getScope().getConstant((ConstantRef) procedure);
                   SymbolType procedureVariableType = procedureVariable.getType();
                   if(procedureVariableType instanceof SymbolTypePointer) {
                      if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
@@ -82,7 +82,7 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
     */
    private ProcedureRef findConstProcedure(RValue procedurePointer) {
       if(procedurePointer instanceof ConstantRef) {
-         ConstantVar constant = getScope().getConstant((ConstantRef) procedurePointer);
+         SymbolVariable constant = getScope().getConstant((ConstantRef) procedurePointer);
          return findConstProcedure(constant.getConstantValue());
       } else if(procedurePointer instanceof ConstantSymbolPointer) {
          ConstantSymbolPointer pointer = (ConstantSymbolPointer) procedurePointer;

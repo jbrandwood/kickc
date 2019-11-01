@@ -1499,8 +1499,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          // Copy all members to upper-level scope
          Scope parentScope = getCurrentScope();
          while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
-         for(ConstantVar member : enumDefinition.getAllConstants(false)) {
-            parentScope.add(new ConstantVar(member.getLocalName(), parentScope, SymbolType.BYTE, member.getConstantValue(), currentDataSegment));
+         for(SymbolVariable member : enumDefinition.getAllConstants(false)) {
+            parentScope.add(new SymbolVariable(member.getLocalName(), parentScope, SymbolType.BYTE, currentDataSegment, member.getConstantValue()));
          }
          return SymbolType.BYTE;
       } catch(CompileError e) {
@@ -1520,11 +1520,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          enumValue = (ConstantValue) exprVal;
       } else {
          // No specific value - find previous value
-         List<ConstantVar> values = new ArrayList<>(currentEnum.getAllConstants(false));
+         List<SymbolVariable> values = new ArrayList<>(currentEnum.getAllConstants(false));
          if(values.isEmpty()) {
             enumValue = new ConstantInteger(0L, SymbolType.BYTE);
          } else {
-            ConstantVar prevEnumMember = values.get(values.size() - 1);
+            SymbolVariable prevEnumMember = values.get(values.size() - 1);
             ConstantValue prevValue = prevEnumMember.getConstantValue();
             if(prevValue instanceof ConstantInteger) {
                enumValue = new ConstantInteger(((ConstantInteger) prevValue).getInteger() + 1, SymbolType.BYTE);
@@ -1534,7 +1534,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             }
          }
       }
-      currentEnum.add(new ConstantVar(memberName, getCurrentScope(), SymbolType.BYTE, enumValue, currentDataSegment));
+      currentEnum.add(new SymbolVariable(memberName, getCurrentScope(), SymbolType.BYTE, currentDataSegment, enumValue));
       return null;
    }
 

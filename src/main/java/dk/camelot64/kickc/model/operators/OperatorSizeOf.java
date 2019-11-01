@@ -3,6 +3,7 @@ package dk.camelot64.kickc.model.operators;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.ConstantInteger;
@@ -38,11 +39,11 @@ public class OperatorSizeOf extends OperatorUnary {
     */
    public static ConstantRef getSizeOfConstantVar(ProgramScope programScope, SymbolType type) {
       String typeConstName = getSizeofConstantName(type);
-      ConstantVar typeSizeConstant = programScope.getConstant(typeConstName);
+      SymbolVariable typeSizeConstant = programScope.getConstant(typeConstName);
       if(typeSizeConstant == null) {
          // Constant not found - create it
          long typeSize = type.getSizeBytes();
-         typeSizeConstant = new ConstantVar(typeConstName, programScope, SymbolType.BYTE, new ConstantInteger(typeSize&0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
+         typeSizeConstant = new SymbolVariable(typeConstName, programScope, SymbolType.BYTE, Scope.SEGMENT_DATA_DEFAULT, new ConstantInteger(typeSize&0xff, SymbolType.BYTE));
          programScope.add(typeSizeConstant);
       }
       return typeSizeConstant.getConstantRef();

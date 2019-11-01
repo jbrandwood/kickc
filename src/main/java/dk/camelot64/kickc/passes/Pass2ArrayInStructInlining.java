@@ -3,11 +3,13 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.ConstantRef;
+import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
+import dk.camelot64.kickc.model.values.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +64,7 @@ public class Pass2ArrayInStructInlining extends Pass2SsaOptimization {
                      ConstantValue constantValue = (ConstantValue) value;
                      if(constantValue.getType(getProgram().getScope()).equals(SymbolType.STRING)) {
                         if(constantValue instanceof ConstantRef) {
-                           ConstantVar constantStringVar = getScope().getConstant((ConstantRef) constantValue);
+                           SymbolVariable constantStringVar = getScope().getConstant((ConstantRef) constantValue);
                            inline.put((ConstantRef) constantValue, constantStringVar.getConstantValue());
                         }
                      }

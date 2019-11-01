@@ -121,12 +121,17 @@ public class SymbolVariable implements Symbol {
          this.nextPhiVersionNumber = 0;
    }
 
-   /**
-    * Create a version of a PHI master variable
-    *
-    * @param phiMaster The PHI master variable.
-    * @param version The version number
-    */
+   public SymbolVariable(String name, Scope scope, SymbolType type, String dataSegment, ConstantValue value) {
+      this(true, name, scope, type, StorageStrategy.CONSTANT, MemoryArea.MAIN_MEMORY, dataSegment);
+      setConstantValue(value);
+   }
+
+      /**
+       * Create a version of a PHI master variable
+       *
+       * @param phiMaster The PHI master variable.
+       * @param version The version number
+       */
    public SymbolVariable(SymbolVariable phiMaster, int version) {
       this(false, phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), StorageStrategy.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
@@ -159,7 +164,7 @@ public class SymbolVariable implements Symbol {
 
    public SymbolVariableRef getRef() {
       if(isConstant)
-         return new ConstantRef((ConstantVar) this);
+         return new ConstantRef(this);
       else
          return new VariableRef(this);
    }

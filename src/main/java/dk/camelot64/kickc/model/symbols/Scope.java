@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.symbols;
 
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.VariableRegisterWeights;
@@ -163,18 +164,22 @@ public abstract class Scope implements Symbol, Serializable {
    }
 
    public SymbolVariable getVariable(String name) {
-      return (SymbolVariable) getSymbol(name);
+      SymbolVariable symbol = (SymbolVariable) getSymbol(name);
+      if(symbol!=null && !symbol.isVariable()) throw new InternalError("Symbol is not a variable! "+symbol.toString());
+      return symbol;
    }
 
    public SymbolVariable getVariable(SymbolVariableRef variableRef) {
       return getVariable(variableRef.getFullName());
    }
 
-   public ConstantVar getConstant(String name) {
-      return (ConstantVar) getSymbol(name);
+   public SymbolVariable getConstant(String name) {
+      SymbolVariable symbol = (SymbolVariable) getSymbol(name);
+      if(symbol!=null && !symbol.isConstant()) throw new InternalError("Symbol is not a constant! "+symbol.toString());
+      return symbol;
    }
 
-   public ConstantVar getConstant(ConstantRef constantRef) {
+   public SymbolVariable getConstant(ConstantRef constantRef) {
       return getConstant(constantRef.getFullName());
    }
 
@@ -201,12 +206,12 @@ public abstract class Scope implements Symbol, Serializable {
       return vars;
    }
 
-   public Collection<ConstantVar> getAllConstants(boolean includeSubScopes) {
+   public Collection<SymbolVariable> getAllConstants(boolean includeSubScopes) {
       Collection<SymbolVariable> symbolVariables = getAllSymbolVariables(includeSubScopes);
-      Collection<ConstantVar> vars = new ArrayList<>();
+      Collection<SymbolVariable> vars = new ArrayList<>();
       symbolVariables.stream().
-            filter(symbolVariable -> (symbolVariable instanceof ConstantVar)).
-            forEach(symbolVariable -> vars.add((ConstantVar) symbolVariable));
+            filter(SymbolVariable::isConstant).
+            forEach(vars::add);
       return vars;
    }
 

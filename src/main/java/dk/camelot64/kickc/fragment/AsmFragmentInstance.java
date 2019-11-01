@@ -6,7 +6,6 @@ import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -127,7 +126,7 @@ public class AsmFragmentInstance {
          // ignore
       }
       if(boundConst instanceof ConstantRef) {
-         ConstantVar reffedConstant = program.getScope().getConstant((ConstantRef) boundConst);
+         SymbolVariable reffedConstant = program.getScope().getConstant((ConstantRef) boundConst);
          return isConstantValueZp(reffedConstant.getConstantValue());
       }
       if(boundConst instanceof ConstantCastValue) {

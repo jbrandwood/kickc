@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.StatementCallPrepare;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.values.ConstantString;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.statements.StatementCall;
@@ -55,14 +56,14 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
          Scope blockScope = Pass1ExtractInlineStrings.this.getProgram().getScope().getScope(currentBlock.getScope());
          Value value = programValue.get();
          if(value instanceof ConstantString) {
-            ConstantVar strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(blockScope, (ConstantString) programValue.get(), nameHint);
+            SymbolVariable strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(blockScope, (ConstantString) programValue.get(), nameHint);
             programValue.set(strConst.getRef());
          }
       });
       return false;
    }
 
-   private ConstantVar createStringConstantVar(Scope blockScope, ConstantString constantString, String nameHint) {
+   private SymbolVariable createStringConstantVar(Scope blockScope, ConstantString constantString, String nameHint) {
       String name;
       if(nameHint == null) {
          name = blockScope.allocateIntermediateVariableName();
@@ -73,7 +74,7 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
             name = nameHint + nameHintIdx++;
          }
       }
-      ConstantVar strConst = new ConstantVar(name, blockScope, SymbolType.STRING, constantString, blockScope.getSegmentData());
+      SymbolVariable strConst = new SymbolVariable(name, blockScope, SymbolType.STRING, blockScope.getSegmentData(), constantString);
       blockScope.add(strConst);
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("Creating constant string variable for inline " + strConst.toString(getProgram()) + " \"" + constantString.getValue() + "\"");

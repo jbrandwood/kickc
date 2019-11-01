@@ -69,12 +69,11 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             );
          }
 
-         ConstantVar constantVar = new ConstantVar(
+         SymbolVariable constantVar = new SymbolVariable(
                variable.getName(),
                constScope,
                variableType,
-               constVal,
-               variable.getDataSegment()
+               variable.getDataSegment(), constVal
          );
 
          constantVar.setInferredType(variable.isInferredType());
@@ -217,8 +216,8 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    public static ConstantValue getConstant(RValue rValue) {
       if(rValue instanceof ConstantValue) {
          return (ConstantValue) rValue;
-      } else if(rValue instanceof ConstantVar) {
-         ConstantVar constantVar = (ConstantVar) rValue;
+      } else if(rValue instanceof SymbolVariable && ((SymbolVariable) rValue).isConstant()) {
+         SymbolVariable constantVar = (SymbolVariable) rValue;
          return constantVar.getConstantRef();
       } else if(rValue instanceof CastValue) {
          CastValue castValue = (CastValue) rValue;

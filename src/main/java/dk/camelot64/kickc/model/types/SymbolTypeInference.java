@@ -19,7 +19,7 @@ public class SymbolTypeInference {
          SymbolVariable variable = symbols.getVariable((VariableRef) rValue);
          type = variable.getType();
       } else if(rValue instanceof ConstantRef) {
-         ConstantVar constVar = symbols.getConstant((ConstantRef) rValue);
+         SymbolVariable constVar = symbols.getConstant((ConstantRef) rValue);
          type = constVar.getType();
       } else if(rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;

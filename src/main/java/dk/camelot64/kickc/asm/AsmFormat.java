@@ -22,7 +22,7 @@ public class AsmFormat {
     */
    public static String getAsmConstant(Program program, ConstantValue value, int precedence, ScopeRef codeScope) {
       if(value instanceof ConstantRef) {
-         ConstantVar constantVar = program.getScope().getConstant((ConstantRef) value);
+         SymbolVariable constantVar = program.getScope().getConstant((ConstantRef) value);
          String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
          return getAsmParamName(constantVar.getScope().getRef(), asmName, codeScope);
       } else if(value instanceof ConstantInteger) {

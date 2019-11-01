@@ -46,7 +46,7 @@ public class Pass2AssertSymbols extends Pass2SsaAssertion {
          if(tableSymbol instanceof SymbolVariable && ((SymbolVariable) tableSymbol).isStoragePhiMaster()) continue;
          if(tableSymbol instanceof SymbolVariable && ((SymbolVariable) tableSymbol).isStorageConstant()) continue;
          if(tableSymbol instanceof SymbolVariable && ((SymbolVariable) tableSymbol).isStorageLoadStore()) continue;
-         if(tableSymbol instanceof ConstantVar) continue;
+         if(tableSymbol instanceof SymbolVariable && (((SymbolVariable) tableSymbol).isConstant()) ) continue;
          if(tableSymbol instanceof StructDefinition) continue;
          if(tableSymbol instanceof EnumDefinition) continue;
          if(tableSymbol instanceof TypeDefsScope) continue;

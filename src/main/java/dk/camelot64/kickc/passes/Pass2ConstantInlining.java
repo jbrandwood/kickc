@@ -89,8 +89,8 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
     */
    private Map<ConstantRef, ConstantValue> findUnnamedConstants() {
       Map<ConstantRef, ConstantValue> unnamed = new HashMap<>();
-      Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
-      for(ConstantVar constant : allConstants) {
+      Collection<SymbolVariable> allConstants = getProgram().getScope().getAllConstants(true);
+      for(SymbolVariable constant : allConstants) {
          if(constant.getRef().isIntermediate()) {
             if(!(constant.getType().equals(SymbolType.STRING)) && !(constant.getConstantValue() instanceof ConstantArray)) {
                unnamed.put(constant.getConstantRef(), constant.getConstantValue());
@@ -108,8 +108,8 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
    private Map<ConstantRef, ConstantValue> findAliasConstants() {
       Map<ConstantRef, ConstantValue> aliases = new HashMap<>();
       ProgramScope programScope = getProgram().getScope();
-      Collection<ConstantVar> allConstants = programScope.getAllConstants(true);
-      for(ConstantVar constant : allConstants) {
+      Collection<SymbolVariable> allConstants = programScope.getAllConstants(true);
+      for(SymbolVariable constant : allConstants) {
          ConstantValue constantValue = constant.getConstantValue();
          if(constantValue instanceof ConstantRef) {
             if(((ConstantRef) constantValue).isIntermediate()) {
@@ -134,8 +134,8 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
    private Map<ConstantRef, ConstantValue> findConstVarVersions() {
       Map<ConstantRef, ConstantValue> aliases = new HashMap<>();
 
-      Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
-      for(ConstantVar constant : allConstants) {
+      Collection<SymbolVariable> allConstants = getProgram().getScope().getAllConstants(true);
+      for(SymbolVariable constant : allConstants) {
          if(constant.getRef().isVersion()) {
             // Constant is a version - find the other versions
             String baseName = constant.getRef().getFullNameUnversioned();
@@ -147,8 +147,8 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
                      aliases.put(constant.getConstantRef(), value);
                      getLog().append("Inlining constant with var siblings " + constant);
                      break;
-                  } else if(symbol instanceof ConstantVar) {
-                     ConstantValue otherValue = ((ConstantVar) symbol).getConstantValue();
+                  } else if(symbol instanceof SymbolVariable && ((SymbolVariable) symbol).isConstant()) {
+                     ConstantValue otherValue = ((SymbolVariable) symbol).getConstantValue();
                      if(!otherValue.equals(value) && !(value instanceof ConstantString) && !(value instanceof ConstantArray) && !(otherValue instanceof ConstantRef)) {
                         aliases.put(constant.getConstantRef(), value);
                         getLog().append("Inlining constant with different constant siblings " + constant);

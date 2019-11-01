@@ -139,8 +139,8 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
          }
       }
 
-      Collection<ConstantVar> allConstants = getScope().getAllConstants(true);
-      for(ConstantVar constant : allConstants) {
+      Collection<SymbolVariable> allConstants = getScope().getAllConstants(true);
+      for(SymbolVariable constant : allConstants) {
          if(!(constant.getScope() instanceof EnumDefinition)) {
             if(referenceInfos.isUnused(constant.getRef())) {
                if(constant.isDeclaredExport()) {

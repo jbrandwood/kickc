@@ -3,10 +3,13 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.ConstantCastValue;
+import dk.camelot64.kickc.model.values.ConstantInteger;
+import dk.camelot64.kickc.model.values.ConstantLiteral;
+import dk.camelot64.kickc.model.values.ConstantRef;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -42,7 +45,7 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
             if(SymbolType.UNUMBER.equals(toType)) {
                if(constantCastValue.getValue() instanceof ConstantRef) {
                   ConstantRef constRef = (ConstantRef) constantCastValue.getValue();
-                  ConstantVar constant = getScope().getConstant(constRef);
+                  SymbolVariable constant = getScope().getConstant(constRef);
                   if(constant.isInferredType())
                      constant.setTypeInferred(toType);
                   else
@@ -57,7 +60,7 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
             } else if(SymbolType.SNUMBER.equals(toType)) {
                if(constantCastValue.getValue() instanceof ConstantRef) {
                   ConstantRef constRef = (ConstantRef) constantCastValue.getValue();
-                  ConstantVar constant = getScope().getConstant(constRef);
+                  SymbolVariable constant = getScope().getConstant(constRef);
                   if(constant.isInferredType())
                      constant.setTypeInferred(toType);
                   else

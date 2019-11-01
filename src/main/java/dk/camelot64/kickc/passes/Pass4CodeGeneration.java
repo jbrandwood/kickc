@@ -299,7 +299,7 @@ public class Pass4CodeGeneration {
       }
    }
 
-   private boolean hasData(ConstantVar constantVar) {
+   private boolean hasData(SymbolVariable constantVar) {
       ConstantValue constantValue = constantVar.getConstantValue();
       if(constantValue instanceof ConstantArray) {
          return true;
@@ -325,7 +325,7 @@ public class Pass4CodeGeneration {
     * @param constantVar The constant to examine
     * @return true if a .label should be used in the generated ASM
     */
-   private boolean useLabelForConst(ScopeRef scopeRef, ConstantVar constantVar) {
+   private boolean useLabelForConst(ScopeRef scopeRef, SymbolVariable constantVar) {
       boolean useLabel = false;
       Collection<Integer> constRefStatements = program.getVariableReferenceInfos().getConstRefStatements(constantVar.getConstantRef());
       if(constRefStatements != null) {
@@ -389,10 +389,10 @@ public class Pass4CodeGeneration {
    private void addConstantsAndLabels(AsmProgram asm, ScopeRef scopeRef) {
       Scope scope = program.getScope().getScope(scopeRef);
       Set<String> added = new LinkedHashSet<>();
-      Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
+      Collection<SymbolVariable> scopeConstants = scope.getAllConstants(false);
 
       // Add all constants without data
-      for(ConstantVar constantVar : scopeConstants) {
+      for(SymbolVariable constantVar : scopeConstants) {
          if(!hasData(constantVar)) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if(asmName != null && !added.contains(asmName)) {
@@ -462,10 +462,10 @@ public class Pass4CodeGeneration {
     */
    private void addData(AsmProgram asm, ScopeRef scopeRef) {
       Scope scope = program.getScope().getScope(scopeRef);
-      Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
+      Collection<SymbolVariable> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       // Add all constants arrays incl. strings with data
-      for(ConstantVar constantVar : scopeConstants) {
+      for(SymbolVariable constantVar : scopeConstants) {
          if(hasData(constantVar)) {
             // Skip if already added
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
@@ -946,7 +946,7 @@ public class Pass4CodeGeneration {
                   }
                }
             } else if(procedure instanceof ConstantRef) {
-               ConstantVar procedureVariable = getScope().getConstant((ConstantRef) procedure);
+               SymbolVariable procedureVariable = getScope().getConstant((ConstantRef) procedure);
                SymbolType procedureVariableType = procedureVariable.getType();
                if(procedureVariableType instanceof SymbolTypePointer) {
                   if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {

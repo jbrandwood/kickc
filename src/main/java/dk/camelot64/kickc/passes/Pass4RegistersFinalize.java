@@ -102,7 +102,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
                variable.setAsmName(null);
             }
          }
-         for(ConstantVar constantVar : scope.getAllConstants(false)) {
+         for(SymbolVariable constantVar : scope.getAllConstants(false)) {
             constantVar.setAsmName(constantVar.getLocalName());
          }
 
@@ -115,7 +115,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
                shortenAsmName(shortNames, variable, allocation);
             }
          }
-         for(ConstantVar constantVar : scope.getAllConstants(false)) {
+         for(SymbolVariable constantVar : scope.getAllConstants(false)) {
             Registers.Register allocation = new Registers.RegisterConstant(constantVar.getConstantValue());
             shortenAsmName(shortNames, constantVar, allocation);
          }

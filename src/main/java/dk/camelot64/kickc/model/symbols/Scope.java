@@ -99,13 +99,13 @@ public abstract class Scope implements Symbol, Serializable {
       symbols.remove(symbol.getLocalName());
    }
 
-   public Variable addVariablePhiMaster(String name, SymbolType type, SymbolVariable.MemoryArea memoryArea, String dataSegment) {
-      return add(new Variable(name, this, type, dataSegment, SymbolVariable.StorageStrategy.PHI_MASTER, memoryArea));
+   public SymbolVariable addVariablePhiMaster(String name, SymbolType type, SymbolVariable.MemoryArea memoryArea, String dataSegment) {
+      return add(new SymbolVariable( false, name, this, type, SymbolVariable.StorageStrategy.PHI_MASTER, memoryArea, dataSegment));
    }
 
-   public Variable addVariableIntermediate() {
+   public SymbolVariable addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
-      return add(new Variable(name, this, SymbolType.VAR, getSegmentData(), SymbolVariable.StorageStrategy.INTERMEDIATE, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY));
+      return add(new SymbolVariable( false, name, this, SymbolType.VAR, SymbolVariable.StorageStrategy.INTERMEDIATE, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, getSegmentData()));
    }
 
    /**
@@ -117,11 +117,10 @@ public abstract class Scope implements Symbol, Serializable {
    public Collection<SymbolVariable> getVersions(SymbolVariable unversioned) {
       LinkedHashSet<SymbolVariable> versions = new LinkedHashSet<>();
       for(Symbol symbol : symbols.values()) {
-         if(symbol instanceof Variable) {
-            if(((Variable) symbol).isStoragePhiVersion()) {
-               if(((Variable) symbol).getVersionOf().equals(unversioned)) {
-                  versions.add((Variable) symbol);
-               }
+         if(symbol instanceof SymbolVariable) {
+            SymbolVariable variable = (SymbolVariable) symbol;
+            if(variable.isVariable() && variable.isStoragePhiVersion() && variable.getVersionOf().equals(unversioned)) {
+               versions.add(variable);
             }
          }
       }
@@ -193,12 +192,12 @@ public abstract class Scope implements Symbol, Serializable {
       return vars;
    }
 
-   public Collection<Variable> getAllVariables(boolean includeSubScopes) {
+   public Collection<SymbolVariable> getAllVariables(boolean includeSubScopes) {
       Collection<SymbolVariable> symbolVariables = getAllSymbolVariables(includeSubScopes);
-      Collection<Variable> vars = new ArrayList<>();
+      Collection<SymbolVariable> vars = new ArrayList<>();
       symbolVariables.stream().
-            filter(symbolVariable -> (symbolVariable instanceof Variable)).
-            forEach(symbolVariable -> vars.add((Variable) symbolVariable));
+            filter(SymbolVariable::isVariable).
+            forEach(vars::add);
       return vars;
    }
 
@@ -253,7 +252,6 @@ public abstract class Scope implements Symbol, Serializable {
    }
 
 
-
    public Label addLabel(String name) {
       return add(new Label(name, this, false));
    }
@@ -296,6 +294,7 @@ public abstract class Scope implements Symbol, Serializable {
    /**
     * Add a struct definition.
     * The name can be either defined in the program or an intermediate name.
+    *
     * @param name
     */
    public StructDefinition addStructDefinition(String name) {
@@ -328,7 +327,7 @@ public abstract class Scope implements Symbol, Serializable {
       return (Procedure) getSymbol(ref);
    }
 
-   public String toString(Program program, Class symbolClass) {
+   public String toString(Program program, boolean onlyVars) {
       VariableRegisterWeights registerWeights = program.getOrNullVariableRegisterWeights();
       StringBuilder res = new StringBuilder();
       Set<String> names = symbols.keySet();
@@ -337,42 +336,44 @@ public abstract class Scope implements Symbol, Serializable {
       for(String name : sortedNames) {
          Symbol symbol = symbols.get(name);
          if(symbol instanceof Scope) {
-            res.append(((Scope) symbol).toString(program, symbolClass));
-         } else {
-            if(symbolClass == null || symbolClass.isInstance(symbol)) {
+            // Always output scopes
+            res.append(((Scope) symbol).toString(program, onlyVars));
+         } else if(symbol instanceof SymbolVariable) {
+            SymbolVariable symVar = (SymbolVariable) symbol;
+            if(!onlyVars || symVar.isVariable()) {
+               // Output if not instructed to only output variables - or if it is a variable
                res.append(symbol.toString(program));
-               if(symbol instanceof SymbolVariable) {
-                  SymbolVariable symVar = (SymbolVariable) symbol;
-                  if(symVar.getAsmName()!=null && !symVar.getName().equals(symVar.getAsmName())) {
-                     res.append(" " + symVar.getAsmName());
+               if(symVar.getAsmName() != null && !symVar.getName().equals(symVar.getAsmName())) {
+                  res.append(" " + symVar.getAsmName());
+               }
+               if(symVar.isStorageLoadStore()) {
+                  res.append(" notregister");
+               }
+               Registers.Register declRegister = symVar.getDeclaredRegister();
+               if(declRegister != null) {
+                  res.append(" !" + declRegister);
+               }
+               if(symVar.isVariable()) {
+                  Registers.Register register = symVar.getAllocation();
+                  if(register != null && !register.equals(declRegister)) {
+                     res.append(" " + register);
                   }
-                  if(symVar.isStorageLoadStore()) {
-                     res.append(" notregister");
-                  }
-                  Registers.Register declRegister = symVar.getDeclaredRegister();
-                  if(declRegister != null) {
-                     res.append(" !" + declRegister);
-                  }
-                  if(symbol instanceof Variable) {
-                     Variable var = (Variable) symVar;
-                     Registers.Register register = var.getAllocation();
-                     if(register != null && !register.equals(declRegister)) {
-                        res.append(" " + register);
-                     }
-                     if(registerWeights != null) {
-                        Double weight = registerWeights.getWeight(var.getRef());
-                        if(weight != null) {
-                           res.append(" " + weight);
-                        }
+                  if(registerWeights != null) {
+                     Double weight = registerWeights.getWeight(symVar.getVariableRef());
+                     if(weight != null) {
+                        res.append(" " + weight);
                      }
                   }
-                  if(symbol instanceof ConstantVar) {
-                     ConstantVar constVar = (ConstantVar) symbol;
-                     res.append(" = " + constVar.getConstantValue().toString(program));
-                  }
+               }
+               if(symVar.isConstant()) {
+                  res.append(" = " + symVar.getConstantValue().toString(program));
                }
                res.append("\n");
             }
+         } else if(!onlyVars) {
+            // Only output if not instructed to only output variables
+            res.append(symbol.toString(program));
+            res.append("\n");
          }
       }
       return res.toString();
@@ -384,6 +385,7 @@ public abstract class Scope implements Symbol, Serializable {
 
    /**
     * Set the value of the counter used to number intermediate labels
+    *
     * @param intermediateLabelCount The new counter value
     */
    public void setIntermediateLabelCount(int intermediateLabelCount) {

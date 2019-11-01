@@ -15,7 +15,7 @@ import java.util.Map;
 public class StructUnwinding {
 
    /** Maps struct variables to unwinding of each member. */
-   Map<VariableRef, VariableUnwinding> structVariables = new LinkedHashMap<>();
+   Map<SymbolVariableRef, VariableUnwinding> structVariables = new LinkedHashMap<>();
 
    /**
     * Get information about how a struct variable was unwound into member variables
@@ -33,7 +33,7 @@ public class StructUnwinding {
     * @param ref The variable to add information for
     * @return The new information about the unwinding.
     */
-   public VariableUnwinding createVariableUnwinding(VariableRef ref) {
+   public VariableUnwinding createVariableUnwinding(SymbolVariableRef ref) {
       VariableUnwinding existing = structVariables.put(ref, new VariableUnwinding());
       if(existing != null) {
          throw new InternalError("ERROR! Struct unwinding was already created once! " + ref.toString());
@@ -46,10 +46,10 @@ public class StructUnwinding {
    public static class VariableUnwinding implements StructMemberUnwinding {
 
       /** Maps member names to the unwound variables. */
-      Map<String, VariableRef> memberUnwinding = new LinkedHashMap<>();
+      Map<String, SymbolVariableRef> memberUnwinding = new LinkedHashMap<>();
 
       /** Set how a member variable was unwound to a specific (new) variable. */
-      public void setMemberUnwinding(String memberName, VariableRef memberVariableUnwound) {
+      public void setMemberUnwinding(String memberName, SymbolVariableRef memberVariableUnwound) {
          this.memberUnwinding.put(memberName, memberVariableUnwound);
       }
 
@@ -69,7 +69,7 @@ public class StructUnwinding {
        * @return The new variable
        */
       public LValue getMemberUnwinding(String memberName) {
-         return this.memberUnwinding.get(memberName);
+         return (LValue) this.memberUnwinding.get(memberName);
       }
    }
 

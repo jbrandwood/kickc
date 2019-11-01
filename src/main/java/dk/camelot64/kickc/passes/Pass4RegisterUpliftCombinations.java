@@ -1,14 +1,14 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.AsmChunk;
+import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentInstance;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.symbols.Variable;
 
 import java.util.*;
 
@@ -204,7 +204,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
          Collection<VariableRef> alive = aliveCombinations.getEffectiveAliveAtStmt(callPath);
          Pass2AliasElimination.Aliases callPathAliases = aliveCombinations.getEffectiveAliasesAtStmt(callPath);
          for(VariableRef varRef : alive) {
-            Variable var = program.getSymbolInfos().getVariable(varRef);
+            SymbolVariable var = program.getSymbolInfos().getVariable(varRef);
             Registers.Register allocation = var.getAllocation();
             LiveRangeEquivalenceClass allocationClass = usedRegisters.get(allocation);
             if(allocationClass != null && !allocationClass.contains(varRef)) {

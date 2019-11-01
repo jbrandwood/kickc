@@ -12,7 +12,6 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
-import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -50,7 +49,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
       }
 
       // For each statement maps RValues used as index to the new *sizeof() variable created
-      Map<Statement, Map<RValue, VariableRef>> handled = new LinkedHashMap<>();
+      Map<Statement, Map<RValue, SymbolVariableRef>> handled = new LinkedHashMap<>();
       ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof PointerDereferenceIndexed) {
             PointerDereferenceIndexed deref = (PointerDereferenceIndexed) programValue.get();
@@ -59,12 +58,12 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                if(pointerType.getElementType().getSizeBytes() > 1) {
                   // Array-indexing into a non-byte pointer - multiply by sizeof()
                   getLog().append("Fixing pointer array-indexing " + deref.toString(getProgram()));
-                  VariableRef idx2VarRef = handled.getOrDefault(currentStmt, new LinkedHashMap<>()).get(deref.getIndex());
+                  SymbolVariableRef idx2VarRef = handled.getOrDefault(currentStmt, new LinkedHashMap<>()).get(deref.getIndex());
                   if(idx2VarRef == null) {
-                     Variable idx2Var = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
+                     SymbolVariable idx2Var = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
                      idx2Var.setTypeInferred(SymbolTypeInference.inferType(getScope(), deref.getIndex()));
                      ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
-                     StatementAssignment idx2 = new StatementAssignment(idx2Var.getRef(), deref.getIndex(), Operators.MULTIPLY, sizeOfTargetType, currentStmt.getSource(), Comment.NO_COMMENTS);
+                     StatementAssignment idx2 = new StatementAssignment((LValue) idx2Var.getRef(), deref.getIndex(), Operators.MULTIPLY, sizeOfTargetType, currentStmt.getSource(), Comment.NO_COMMENTS);
                      stmtIt.previous();
                      stmtIt.add(idx2);
                      stmtIt.next();
@@ -104,9 +103,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                      isPointerPlusConst = false;
                      getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
                      LValue lValue = assignment.getlValue();
-                     Variable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
+                     SymbolVariable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
                      tmpVar.setTypeInferred(SymbolTypeInference.inferType(getScope(), assignment.getlValue()));
-                     assignment.setlValue(tmpVar.getRef());
+                     assignment.setlValue((LValue) tmpVar.getRef());
                      ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
                      stmtIt.add(new StatementAssignment(lValue, tmpVar.getRef(), Operators.DIVIDE, sizeOfTargetType, assignment.getSource(), Comment.NO_COMMENTS));
                   }
@@ -116,11 +115,11 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                   // Binary operation on a non-byte pointer - sizeof()-handling is probably needed!
                   // Adding to a pointer - multiply by sizeof()
                   getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
-                  Variable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
+                  SymbolVariable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
                   tmpVar.setTypeInferred(SymbolTypeInference.inferType(getScope(), assignment.getrValue2()));
                   stmtIt.remove();
                   ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
-                  stmtIt.add(new StatementAssignment(tmpVar.getRef(), assignment.getrValue2(), Operators.MULTIPLY, sizeOfTargetType, assignment.getSource(), Comment.NO_COMMENTS));
+                  stmtIt.add(new StatementAssignment((LValue) tmpVar.getRef(), assignment.getrValue2(), Operators.MULTIPLY, sizeOfTargetType, assignment.getSource(), Comment.NO_COMMENTS));
                   stmtIt.add(assignment);
                   assignment.setrValue2(tmpVar.getRef());
                }
@@ -182,7 +181,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
          SymbolType structType = SymbolTypeInference.inferType(getScope(), struct);
          if(structType instanceof SymbolTypeStruct) {
             StructDefinition structDefinition = ((SymbolTypeStruct) structType).getStructDefinition(getScope());
-            Variable memberVariable = structDefinition.getMember(structMemberRef.getMemberName());
+            SymbolVariable memberVariable = structDefinition.getMember(structMemberRef.getMemberName());
             SymbolType memberType = memberVariable.getType();
             if(memberType instanceof SymbolTypePointer) {
                return (SymbolTypePointer) memberType;

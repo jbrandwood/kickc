@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Label;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCParser;
@@ -76,8 +76,8 @@ public class AsmFragmentInstance {
       if(boundValue == null) {
          throw new RuntimeException("Binding '" + name + "' not found in fragment " + this.name);
       }
-      if(boundValue instanceof Variable) {
-         Variable boundVar = (Variable) boundValue;
+      if(boundValue instanceof SymbolVariable && ((SymbolVariable) boundValue).isVariable()) {
+         SymbolVariable boundVar = (SymbolVariable) boundValue;
          Registers.Register register = boundVar.getAllocation();
          if(register != null && register instanceof Registers.RegisterZpMem) {
             return new AsmParameter(AsmFormat.getAsmParamName(boundVar, codeScopeRef), true);
@@ -86,9 +86,9 @@ public class AsmFragmentInstance {
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }
-      } else if(boundValue instanceof ConstantVar) {
-         ConstantVar constantVar = (ConstantVar) boundValue;
-         String constantValueAsm = AsmFormat.getAsmConstant(program, constantVar.getRef(), 99, codeScopeRef);
+      } else if(boundValue instanceof SymbolVariable && ((SymbolVariable) boundValue).isConstant()) {
+         SymbolVariable constantVar = (SymbolVariable) boundValue;
+         String constantValueAsm = AsmFormat.getAsmConstant(program, constantVar.getConstantRef(), 99, codeScopeRef);
          boolean constantValueZp = SymbolType.BYTE.equals(constantVar.getType());
          if(!constantValueZp) {
             constantValueZp = isConstantValueZp(constantVar.getConstantValue());

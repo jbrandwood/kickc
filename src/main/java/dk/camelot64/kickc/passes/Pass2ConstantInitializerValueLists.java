@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
@@ -86,7 +86,7 @@ public class Pass2ConstantInitializerValueLists extends Pass2SsaOptimization {
          // Check that type of constant values match the struct member types
          SymbolTypeStruct declaredStructType = (SymbolTypeStruct) declaredType;
          StructDefinition structDefinition = declaredStructType.getStructDefinition(getScope());
-         Collection<Variable> memberDefs = structDefinition.getAllVariables(false);
+         Collection<SymbolVariable> memberDefs = structDefinition.getAllVariables(false);
          if(memberDefs.size()!=constantValues.size()) {
             throw new CompileError(
                   "Struct initializer has wrong size ("+valueList.getList().size()+"), " +
@@ -94,10 +94,10 @@ public class Pass2ConstantInitializerValueLists extends Pass2SsaOptimization {
                         " Struct initializer: "+valueList.toString(getProgram()),
                   currentStmt);
          }
-         Iterator<Variable> memberDefIt = memberDefs.iterator();
-         LinkedHashMap<VariableRef, ConstantValue> memberValues = new LinkedHashMap<>();
+         Iterator<SymbolVariable> memberDefIt = memberDefs.iterator();
+         LinkedHashMap<SymbolVariableRef, ConstantValue> memberValues = new LinkedHashMap<>();
          for(int i = 0; i < constantValues.size(); i++) {
-            Variable memberDef = memberDefIt.next();
+            SymbolVariable memberDef = memberDefIt.next();
             SymbolType declaredElementType = memberDef.getType();
             ConstantValue memberValue = constantValues.get(i);
             SymbolType elmType = memberValue.getType(getScope());

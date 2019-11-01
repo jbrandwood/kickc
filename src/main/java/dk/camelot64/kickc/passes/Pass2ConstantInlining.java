@@ -3,10 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantArray;
 import dk.camelot64.kickc.model.values.ConstantRef;
@@ -96,7 +93,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       for(ConstantVar constant : allConstants) {
          if(constant.getRef().isIntermediate()) {
             if(!(constant.getType().equals(SymbolType.STRING)) && !(constant.getConstantValue() instanceof ConstantArray)) {
-               unnamed.put(constant.getRef(), constant.getConstantValue());
+               unnamed.put(constant.getConstantRef(), constant.getConstantValue());
             }
          }
       }
@@ -117,10 +114,10 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
          if(constantValue instanceof ConstantRef) {
             if(((ConstantRef) constantValue).isIntermediate()) {
                // The value is an intermediate constant - replace all uses of the intermediate with uses of the referrer instead.
-               aliases.put((ConstantRef) constant.getConstantValue(), constant.getRef());
+               aliases.put((ConstantRef) constant.getConstantValue(), constant.getConstantRef());
                constant.setConstantValue(programScope.getConstant((ConstantRef) constantValue).getConstantValue());
             } else {
-               aliases.put(constant.getRef(), constant.getConstantValue());
+               aliases.put(constant.getConstantRef(), constant.getConstantValue());
             }
          }
       }
@@ -146,14 +143,14 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
             for(Symbol symbol : scopeSymbols) {
                if(symbol.getRef().isVersion() && symbol.getRef().getFullNameUnversioned().equals(baseName)) {
                   ConstantValue value = constant.getConstantValue();
-                  if(symbol instanceof Variable) {
-                     aliases.put(constant.getRef(), value);
+                  if(symbol instanceof SymbolVariable && ((SymbolVariable) symbol).isVariable()) {
+                     aliases.put(constant.getConstantRef(), value);
                      getLog().append("Inlining constant with var siblings " + constant);
                      break;
                   } else if(symbol instanceof ConstantVar) {
                      ConstantValue otherValue = ((ConstantVar) symbol).getConstantValue();
                      if(!otherValue.equals(value) && !(value instanceof ConstantString) && !(value instanceof ConstantArray) && !(otherValue instanceof ConstantRef)) {
-                        aliases.put(constant.getRef(), value);
+                        aliases.put(constant.getConstantRef(), value);
                         getLog().append("Inlining constant with different constant siblings " + constant);
                         break;
                      }

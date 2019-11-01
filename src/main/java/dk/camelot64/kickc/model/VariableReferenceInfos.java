@@ -305,7 +305,7 @@ public class VariableReferenceInfos {
     * @param varRef The variable to look for
     * @return Index of all statements referencing the constant
     */
-   public Collection<Integer> getVarRefStatements(VariableRef varRef) {
+   public Collection<Integer> getVarRefStatements(SymbolVariableRef varRef) {
       Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(varRef);
       LinkedHashSet<Integer> stmts = new LinkedHashSet<>();
       if(refs != null) {

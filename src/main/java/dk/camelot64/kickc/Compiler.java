@@ -5,12 +5,11 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
-import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.RuleContext;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -174,7 +173,7 @@ public class Compiler {
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");
-         getLog().append(program.getScope().toString(program, null));
+         getLog().append(program.getScope().toString(program, false));
       }
 
       new Pass1AddressOfVolatile(program).execute();
@@ -249,7 +248,7 @@ public class Compiler {
       getLog().append(program.getGraph().toString(program));
 
       getLog().append("SYMBOL TABLE SSA");
-      getLog().append(program.getScope().toString(program, null));
+      getLog().append(program.getScope().toString(program, false));
 
       program.endPass1();
 
@@ -543,7 +542,7 @@ public class Compiler {
 
       getLog().append("\nVARIABLE REGISTER WEIGHTS");
       program.getVariableRegisterWeights();
-      getLog().append(program.getScope().toString(program, Variable.class));
+      getLog().append(program.getScope().toString(program, true));
 
       new Pass4LiveRangeEquivalenceClassesFinalize(program).allocate();
       new Pass4RegistersFinalize(program).allocate(true);
@@ -650,7 +649,7 @@ public class Compiler {
       new Pass5FixLongBranches(program).optimize();
 
       getLog().append("\nFINAL SYMBOL TABLE");
-      getLog().append(program.getScope().toString(program, null));
+      getLog().append(program.getScope().toString(program, false));
 
       getLog().append("\nFINAL ASSEMBLER");
       getLog().append("Score: " + Pass4RegisterUpliftCombinations.getAsmScore(program) + "\n");

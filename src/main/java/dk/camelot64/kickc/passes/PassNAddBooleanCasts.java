@@ -10,7 +10,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -41,7 +41,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
                   if(SymbolType.isInteger(type) || type instanceof SymbolTypePointer) {
                      // Found integer condition - add boolean cast
                      getLog().append("Warning! Adding boolean cast to non-boolean condition "+rValue2.toString(getProgram()));
-                     Variable tmpVar = addBooleanCast(rValue2, type, currentStmt, stmtIt, currentBlock);
+                     SymbolVariable tmpVar = addBooleanCast(rValue2, type, currentStmt, stmtIt, currentBlock);
                      conditionalJump.setrValue2(tmpVar.getRef());
                   }
                }
@@ -59,7 +59,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
                   unaryExpression.setOperand(new ConstantBinary(new ConstantInteger(0L, SymbolType.NUMBER), Operators.NEQ, (ConstantValue) operand));
                }  else {
                   SymbolType type = SymbolTypeInference.inferType(getScope(), operand);
-                  Variable tmpVar = addBooleanCast(operand, type, currentStmt, stmtIt, currentBlock);
+                  SymbolVariable tmpVar = addBooleanCast(operand, type, currentStmt, stmtIt, currentBlock);
                   unaryExpression.setOperand(tmpVar.getRef());
                }
             }
@@ -68,10 +68,10 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
       return false;
    }
 
-   public Variable addBooleanCast(RValue rValue, SymbolType rValueType, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   public SymbolVariable addBooleanCast(RValue rValue, SymbolType rValueType, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       Scope currentScope = getScope().getScope(currentBlock.getScope());
       stmtIt.previous();
-      Variable tmpVar = currentScope.addVariableIntermediate();
+      SymbolVariable tmpVar = currentScope.addVariableIntermediate();
       tmpVar.setTypeInferred(SymbolType.BOOLEAN);
       // Go straight to xxx!=0 instead of casting to bool
       ConstantValue nullValue;
@@ -80,7 +80,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
       }  else {
          nullValue = new ConstantInteger(0L, SymbolType.NUMBER);
       }
-      stmtIt.add(new StatementAssignment(tmpVar.getRef(), nullValue, Operators.NEQ, rValue, currentStmt.getSource(), Comment.NO_COMMENTS));
+      stmtIt.add(new StatementAssignment((LValue) tmpVar.getRef(), nullValue, Operators.NEQ, rValue, currentStmt.getSource(), Comment.NO_COMMENTS));
       stmtIt.next();
       return tmpVar;
    }

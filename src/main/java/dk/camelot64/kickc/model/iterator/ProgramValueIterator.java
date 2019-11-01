@@ -215,7 +215,7 @@ public class ProgramValueIterator {
          }
       } else if(value instanceof ConstantStructValue) {
          ConstantStructValue constantStructValue = (ConstantStructValue) value;
-         for(VariableRef memberRef : constantStructValue.getMembers()) {
+         for(SymbolVariableRef memberRef : constantStructValue.getMembers()) {
             subValues.add(new ProgramValue.ProgramValueConstantStructMember(constantStructValue, memberRef));
          }
       } else if(value instanceof CastValue) {
@@ -249,11 +249,10 @@ public class ProgramValueIterator {
       } else if(value instanceof StackIdxValue) {
          subValues.add(new ProgramValue.ProgramValueStackIdxValue((StackIdxValue) value));
       } else if(value == null ||
-            value instanceof VariableRef ||
-            value instanceof Variable ||
+            value instanceof SymbolVariableRef ||
+            value instanceof SymbolVariable ||
             value instanceof ProcedureRef ||
             value instanceof ConstantLiteral ||
-            value instanceof ConstantRef ||
             value instanceof StructZero ||
             value instanceof Label ||
             value instanceof LabelRef

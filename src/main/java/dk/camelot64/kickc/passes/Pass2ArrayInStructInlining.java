@@ -5,13 +5,9 @@ import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
-import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
-import dk.camelot64.kickc.model.values.ConstantRef;
-import dk.camelot64.kickc.model.values.ConstantValue;
-import dk.camelot64.kickc.model.values.Value;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +54,7 @@ public class Pass2ArrayInStructInlining extends Pass2SsaOptimization {
       ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          Value value = programValue.get();
          if(programValue instanceof ProgramValue.ProgramValueConstantStructMember) {
-            VariableRef memberRef = ((ProgramValue.ProgramValueConstantStructMember) programValue).getMemberRef();
+            SymbolVariableRef memberRef = ((ProgramValue.ProgramValueConstantStructMember) programValue).getMemberRef();
             SymbolVariable structMemberVar = getScope().getVariable(memberRef);
             if(structMemberVar.getType() instanceof SymbolTypeArray) {
                if(((SymbolTypeArray) structMemberVar.getType()).getSize() != null) {

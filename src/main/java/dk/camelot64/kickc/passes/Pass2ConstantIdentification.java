@@ -182,7 +182,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       }
 
       // Look for constants among non-versioned variables
-      for(Variable variable : getScope().getAllVariables(true)) {
+      for(SymbolVariable variable : getScope().getAllVariables(true)) {
          if(variable.isVolatile() || variable.isDeclaredNotConstant() || !variable.isStorageLoadStore())
             // Do not examine volatiles, non-constants or versioned variables
             continue;
@@ -219,7 +219,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          return (ConstantValue) rValue;
       } else if(rValue instanceof ConstantVar) {
          ConstantVar constantVar = (ConstantVar) rValue;
-         return constantVar.getRef();
+         return constantVar.getConstantRef();
       } else if(rValue instanceof CastValue) {
          CastValue castValue = (CastValue) rValue;
          ConstantValue castConstant = getConstant(castValue.getValue());

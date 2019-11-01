@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.LabelRef;
 
 import java.util.*;
@@ -46,7 +47,7 @@ public class Pass3PhiLifting {
                      LabelRef predecessorRef = phiRValue.getPredecessor();
                      ControlFlowBlock predecessorBlock = graph.getBlock(predecessorRef);
                      //VariableRef rValVarRef = (VariableRef) phiRValue.getrValue();
-                     Variable newVar;
+                     SymbolVariable newVar;
                      if(phiVariable.getVariable().isVersion()) {
                         SymbolVariable lValVar = program.getScope().getVariable(phiVariable.getVariable());
                         newVar = lValVar.getVersionOf().createVersion();
@@ -62,7 +63,7 @@ public class Pass3PhiLifting {
                      if(predecessorStatements.size() > 0) {
                         lastPredecessorStatement = predecessorStatements.get(predecessorStatements.size() - 1);
                      }
-                     StatementAssignment newAssignment = new StatementAssignment(newVar.getRef(), phiRValue.getrValue(), phiBlock.getSource(), Comment.NO_COMMENTS);
+                     StatementAssignment newAssignment = new StatementAssignment((LValue) newVar.getRef(), phiRValue.getrValue(), phiBlock.getSource(), Comment.NO_COMMENTS);
                      if(lastPredecessorStatement instanceof StatementConditionalJump) {
                         // Use or Create a new block between the predecessor and this one - replace labels where appropriate
                         ControlFlowBlock newBlock;

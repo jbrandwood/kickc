@@ -2,7 +2,7 @@ package dk.camelot64.kickc.model.types;
 
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantValue;
@@ -53,7 +53,7 @@ public class SymbolTypeStruct implements SymbolType {
     */
    public int calculateSizeBytes(StructDefinition structDefinition, ProgramScope programScope) {
       int sizeBytes = 0;
-      for(Variable member : structDefinition.getAllVariables(false)) {
+      for(SymbolVariable member : structDefinition.getAllVariables(false)) {
          SymbolType memberType = member.getType();
          int memberSize = getMemberSizeBytes(memberType, programScope);
          sizeBytes += memberSize;

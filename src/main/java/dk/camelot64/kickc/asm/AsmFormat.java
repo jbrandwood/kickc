@@ -16,7 +16,7 @@ public class AsmFormat {
     * Get ASM code for a constant value
     *
     * @param value The constant value
-    * @param precedence The precedence of the outer expression operator. Used to generate perenthesis when needed.
+    * @param precedence The precedence of the outer expression operator. Used to generate parenthesis when needed.
     * @param codeScope The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
     * @return The ASM string representing the constant value
     */

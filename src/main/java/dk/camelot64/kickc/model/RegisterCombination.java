@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.model.symbols.Variable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class RegisterCombination {
       for(LiveRangeEquivalenceClass equivalenceClass : allocation.keySet()) {
          Registers.Register register = allocation.get(equivalenceClass);
          for(VariableRef variable : equivalenceClass.getVariables()) {
-            Variable var = program.getSymbolInfos().getVariable(variable);
+            SymbolVariable var = program.getSymbolInfos().getVariable(variable);
             var.setAllocation(register);
          }
       }

@@ -327,7 +327,7 @@ public class Pass4CodeGeneration {
     */
    private boolean useLabelForConst(ScopeRef scopeRef, ConstantVar constantVar) {
       boolean useLabel = false;
-      Collection<Integer> constRefStatements = program.getVariableReferenceInfos().getConstRefStatements(constantVar.getRef());
+      Collection<Integer> constRefStatements = program.getVariableReferenceInfos().getConstRefStatements(constantVar.getConstantRef());
       if(constRefStatements != null) {
          for(Integer constRefStmtIdx : constRefStatements) {
             Statement statement = program.getStatementInfos().getStatement(constRefStmtIdx);
@@ -365,7 +365,7 @@ public class Pass4CodeGeneration {
             }
          }
       }
-      Collection<SymbolVariableRef> symbolRefConsts = program.getVariableReferenceInfos().getSymbolRefConsts(constantVar.getRef());
+      Collection<SymbolVariableRef> symbolRefConsts = program.getVariableReferenceInfos().getSymbolRefConsts(constantVar.getConstantRef());
       if(symbolRefConsts != null) {
          for(SymbolVariableRef symbolRefConst : symbolRefConsts) {
             SymbolVariable symbolRefVar = (SymbolVariable) program.getScope().getSymbol(symbolRefConst);
@@ -424,8 +424,8 @@ public class Pass4CodeGeneration {
       }
 
       // Add labels for memory variables without data
-      Collection<Variable> scopeVars = scope.getAllVariables(false);
-      for(Variable scopeVar : scopeVars) {
+      Collection<SymbolVariable> scopeVars = scope.getAllVariables(false);
+      for(SymbolVariable scopeVar : scopeVars) {
          Registers.Register register = scopeVar.getAllocation();
          if(register != null) {
             if(Registers.RegisterType.ZP_MEM.equals(register.getType())) {
@@ -494,8 +494,8 @@ public class Pass4CodeGeneration {
          }
       }
       // Add all memory variables
-      Collection<Variable> scopeVariables = scope.getAllVariables(false);
-      for(Variable variable : scopeVariables) {
+      Collection<SymbolVariable> scopeVariables = scope.getAllVariables(false);
+      for(SymbolVariable variable : scopeVariables) {
          if(variable.isMemoryAreaMain()) {
             // Skip PHI masters
             if(variable.isStoragePhiMaster())
@@ -573,7 +573,7 @@ public class Pass4CodeGeneration {
       if(valueType instanceof SymbolTypeStruct) {
          // Add each struct member recursively
          ConstantStructValue structValue = (ConstantStructValue) value;
-         for(VariableRef memberRef : structValue.getMembers()) {
+         for(SymbolVariableRef memberRef : structValue.getMembers()) {
             ConstantValue memberValue = structValue.getValue(memberRef);
             SymbolVariable memberVariable = getScope().getVariable(memberRef);
             addChunkData(dataChunk, memberValue, memberVariable.getType(), scopeRef);

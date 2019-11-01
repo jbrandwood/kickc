@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.values;
 
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.InternalError;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 
 /** A reference to a variable from the symbol table */
 public class VariableRef extends SymbolVariableRef implements RValue, LValue {
@@ -9,8 +10,10 @@ public class VariableRef extends SymbolVariableRef implements RValue, LValue {
       super(fullName);
    }
 
-   public VariableRef(Variable variable) {
+   public VariableRef(SymbolVariable variable) {
       this(variable.getFullName());
+      if(!variable.isVariable())
+         throw new InternalError("VariableRef not allowed for non-variable "+variable.toString());
    }
 
 }

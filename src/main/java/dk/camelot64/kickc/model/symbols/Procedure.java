@@ -125,11 +125,11 @@ public class Procedure extends Scope {
       return super.getFullName();
    }
 
-   public String toString(Program program, Class symbolClass) {
+   public String toString(Program program, boolean onlyVars) {
       StringBuilder res = new StringBuilder();
       res.append(toString(program));
       res.append("\n");
-      res.append(super.toString(program, symbolClass));
+      res.append(super.toString(program, onlyVars));
       return res.toString();
    }
 

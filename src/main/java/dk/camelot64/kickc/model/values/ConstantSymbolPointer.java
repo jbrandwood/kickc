@@ -5,7 +5,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
@@ -39,13 +39,16 @@ public class ConstantSymbolPointer implements ConstantValue {
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
       // If the symbol has been allocated we can calculate a literal value!
       Symbol symbol = scope.getSymbol(toSymbol);
-      if(symbol instanceof Variable) {
-         Registers.Register allocation = ((Variable) symbol).getAllocation();
-         if(allocation!=null && Registers.RegisterType.ZP_MEM.equals(allocation.getType())) {
-            int zp = ((Registers.RegisterZpMem) allocation).getZp();
-            return new ConstantInteger((long)zp, SymbolType.BYTE);
-         } else if(allocation!=null && Registers.RegisterType.MAIN_MEM.equals(allocation.getType())) {
-            throw new ConstantNotLiteral("Cannot calculate literal var pointer");
+      if(symbol instanceof SymbolVariable) {
+         SymbolVariable variable = (SymbolVariable) symbol;
+         if(variable.isVariable()) {
+            Registers.Register allocation = variable.getAllocation();
+            if(allocation != null && Registers.RegisterType.ZP_MEM.equals(allocation.getType())) {
+               int zp = ((Registers.RegisterZpMem) allocation).getZp();
+               return new ConstantInteger((long) zp, SymbolType.BYTE);
+            } else if(allocation != null && Registers.RegisterType.MAIN_MEM.equals(allocation.getType())) {
+               throw new ConstantNotLiteral("Cannot calculate literal var pointer");
+            }
          }
       }
       // WE cannot calculate a literal value

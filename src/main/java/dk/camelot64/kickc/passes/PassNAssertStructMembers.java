@@ -4,7 +4,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
@@ -28,7 +28,7 @@ public class PassNAssertStructMembers extends Pass2SsaOptimization {
             if(type instanceof SymbolTypeStruct) {
                SymbolTypeStruct structType = (SymbolTypeStruct) type;
                StructDefinition structDefinition = structType.getStructDefinition(getScope());
-               Variable member = structDefinition.getMember(structMemberRef.getMemberName());
+               SymbolVariable member = structDefinition.getMember(structMemberRef.getMemberName());
                if(member==null) {
                   throw new CompileError("Unknown struct member "+structMemberRef.getMemberName()+" in struct "+structType.getTypeName(), currentStmt);
                }

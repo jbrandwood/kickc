@@ -5,14 +5,16 @@ import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.values.ConstantRef;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /** Abstract Variable or a Constant Variable */
-public abstract class SymbolVariable implements Symbol {
+public class SymbolVariable implements Symbol {
 
    /** The name of the variable. */
    private String name;
@@ -28,6 +30,9 @@ public abstract class SymbolVariable implements Symbol {
 
    /** A short name used for the variable in ASM code. If possible variable names of variables are shortened in ASM code. This is possible, when several versions of the var use the same register. */
    private String asmName;
+
+   /** True of the variable is a compile-time constant (previously ConstantVar*/
+   private boolean isConstant;
 
    /** Specifies whether the symbol is declared to be constant, never constant or maybe constant. */
    public enum ConstantDeclaration {
@@ -100,7 +105,8 @@ public abstract class SymbolVariable implements Symbol {
    /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
    private Registers.Register allocation;
 
-   public SymbolVariable(String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, MemoryArea memoryArea, String dataSegment) {
+   public SymbolVariable(boolean isConstant, String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, MemoryArea memoryArea, String dataSegment) {
+      this.isConstant = isConstant;
       this.name = name;
       this.scope = scope;
       this.type = type;
@@ -115,7 +121,56 @@ public abstract class SymbolVariable implements Symbol {
          this.nextPhiVersionNumber = 0;
    }
 
-   public abstract SymbolVariableRef getRef();
+   /**
+    * Create a version of a PHI master variable
+    *
+    * @param phiMaster The PHI master variable.
+    * @param version The version number
+    */
+   public SymbolVariable(SymbolVariable phiMaster, int version) {
+      this(false, phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), StorageStrategy.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
+      this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
+      this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
+      this.setDeclaredNotRegister(phiMaster.isDeclaredAsNotRegister());
+      this.setConstantDeclaration(phiMaster.getConstantDeclaration());
+      this.setDeclaredRegister(phiMaster.getDeclaredRegister());
+      this.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
+      this.setDeclaredExport(phiMaster.isDeclaredExport());
+      this.setInferedVolatile(phiMaster.isInferedVolatile());
+      this.setInferredType(phiMaster.isInferredType());
+      this.setComments(phiMaster.getComments());
+   }
+
+   /**
+    * True if the variable is a compile time constant. (Previously this was ConstantVar)
+    * @return True if the variable is a compile time constant.
+    */
+   public boolean isConstant() {
+      return isConstant;
+   }
+
+   /**
+    * True if the variable is a not compile time constant. (Previously this was Variable)
+    * @return True if the variable is not a compile-time constant
+    */
+   public boolean isVariable() {
+      return !isConstant;
+   }
+
+   public SymbolVariableRef getRef() {
+      if(isConstant)
+         return new ConstantRef((ConstantVar) this);
+      else
+         return new VariableRef(this);
+   }
+
+   public ConstantRef getConstantRef() {
+      return (ConstantRef) getRef();
+   }
+
+   public VariableRef getVariableRef() {
+      return (VariableRef) getRef();
+   }
 
    private void setFullName() {
       String scopeName = (scope == null) ? "" : scope.getFullName();
@@ -127,10 +182,10 @@ public abstract class SymbolVariable implements Symbol {
     *
     * @return The new version of the PHI master
     */
-   public Variable createVersion() {
+   public SymbolVariable createVersion() {
       if(!isStoragePhiMaster())
          throw new InternalError("Cannot version non-PHI variable " + this.toString());
-      Variable version = new Variable(this, nextPhiVersionNumber++);
+      SymbolVariable version = new SymbolVariable(this, nextPhiVersionNumber++);
       getScope().add(version);
       return version;
    }

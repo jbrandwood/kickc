@@ -297,10 +297,10 @@ public class Pass1ProcedureInline extends Pass1Base {
       callScope.addLabel(procedure.getLocalName() + serial);
       // And copy all procedure symbols
       for(Symbol procSymbol : procedure.getAllSymbols()) {
-         if(procSymbol instanceof Variable) {
-            Variable procVar = (Variable) procSymbol;
+         if(procSymbol instanceof SymbolVariable) {
+            SymbolVariable procVar = (SymbolVariable) procSymbol;
             String inlineVarName = getInlineSymbolName(procedure, procSymbol, serial);
-            Variable inlineVar = callScope.addVariablePhiMaster(inlineVarName, procSymbol.getType(), procVar.getMemoryArea(), procVar.getDataSegment());
+            SymbolVariable inlineVar = callScope.addVariablePhiMaster(inlineVarName, procSymbol.getType(), procVar.getMemoryArea(), procVar.getDataSegment());
             inlineVar.setInferredType(procVar.isInferredType());
             inlineVar.setDeclaredAlignment(procVar.getDeclaredAlignment());
             inlineVar.setConstantDeclaration(procVar.getConstantDeclaration());

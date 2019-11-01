@@ -8,13 +8,10 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
-import dk.camelot64.kickc.model.values.ConstantInteger;
-import dk.camelot64.kickc.model.values.ConstantLiteral;
-import dk.camelot64.kickc.model.values.ConstantValue;
-import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.ListIterator;
 
@@ -74,14 +71,14 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
                            long powVal = 1L <<pow2;
                            if(remains>=powVal) {
                               // First add shifts
-                              Variable varShift = scope.addVariableIntermediate();
+                              SymbolVariable varShift = scope.addVariableIntermediate();
                               varShift.setType(resultType);
-                              stmtIt.add(new StatementAssignment(varShift.getRef(), building, Operators.SHIFT_LEFT, new ConstantInteger(shiftCount, SymbolType.BYTE), assignment.getSource(), Comment.NO_COMMENTS));
+                              stmtIt.add(new StatementAssignment((LValue) varShift.getRef(), building, Operators.SHIFT_LEFT, new ConstantInteger(shiftCount, SymbolType.BYTE), assignment.getSource(), Comment.NO_COMMENTS));
                               shiftCount = 0;
                               // Then add rvalue1
-                              Variable varAdd = scope.addVariableIntermediate();
+                              SymbolVariable varAdd = scope.addVariableIntermediate();
                               varAdd.setType(resultType);
-                              stmtIt.add(new StatementAssignment(varAdd.getRef(), varShift.getRef(), Operators.PLUS, assignment.getrValue1(), assignment.getSource(), Comment.NO_COMMENTS));
+                              stmtIt.add(new StatementAssignment((LValue) varAdd.getRef(), varShift.getRef(), Operators.PLUS, assignment.getrValue1(), assignment.getSource(), Comment.NO_COMMENTS));
                               building = varAdd.getRef();
                               remains -= powVal;
                            }
@@ -93,9 +90,9 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
                         }
                         // add remaining shifts
                         if(shiftCount>0) {
-                           Variable varShift = scope.addVariableIntermediate();
+                           SymbolVariable varShift = scope.addVariableIntermediate();
                            varShift.setType(resultType);
-                           stmtIt.add(new StatementAssignment(varShift.getRef(), building, Operators.SHIFT_LEFT, new ConstantInteger(shiftCount, SymbolType.BYTE), assignment.getSource(), Comment.NO_COMMENTS));
+                           stmtIt.add(new StatementAssignment((LValue) varShift.getRef(), building, Operators.SHIFT_LEFT, new ConstantInteger(shiftCount, SymbolType.BYTE), assignment.getSource(), Comment.NO_COMMENTS));
                            building = varShift.getRef();
                         }
                         stmtIt.next();

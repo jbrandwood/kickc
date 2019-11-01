@@ -71,12 +71,12 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                   Label unwound = procedure.addLabel(name);
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                }
-            } else if(symbol instanceof Variable) {
-               Variable variable = (Variable) symbol;
+            } else if(symbol instanceof SymbolVariable) {
+               SymbolVariable variable = (SymbolVariable) symbol;
                if(variable.isStoragePhiMaster() || variable.isStorageConstant()) {
                   String name = findLocalName(procedure, symbol);
-                  Variable var = (Variable) symbol;
-                  Variable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getMemoryArea(), var.getDataSegment());
+                  SymbolVariable var = (SymbolVariable) symbol;
+                  SymbolVariable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getMemoryArea(), var.getDataSegment());
                   unwound.setDeclaredAlignment(var.getDeclaredAlignment());
                   unwound.setConstantDeclaration(var.getConstantDeclaration());
                   unwound.setDeclaredVolatile(var.isDeclaredVolatile());
@@ -87,7 +87,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                   unwound.setStorageStrategy(var.getStorageStrategy());
                   unwound.setMemoryArea(var.getMemoryArea());
                } else if(variable.isStorageIntermediate()) {
-                  Variable unwound = procedure.addVariableIntermediate();
+                  SymbolVariable unwound = procedure.addVariableIntermediate();
                   unwound.setStorageStrategy(variable.getStorageStrategy());
                   unwound.setMemoryArea(variable.getMemoryArea());
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());

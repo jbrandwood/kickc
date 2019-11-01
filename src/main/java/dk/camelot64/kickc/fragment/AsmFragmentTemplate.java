@@ -8,7 +8,6 @@ import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
-import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ScopeRef;
@@ -80,12 +79,12 @@ public class AsmFragmentTemplate {
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
       {
-         Variable v1 = new Variable("z1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY);
-         Variable v2 = new Variable("z2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY);
-         Variable v3 = new Variable("z3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY);
-         Variable v4 = new Variable("z4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY);
-         Variable v5 = new Variable("z5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY);
-         Variable v6 = new Variable("z6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY);
+         SymbolVariable v1 = new SymbolVariable( false, "z1", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
+         SymbolVariable v2 = new SymbolVariable( false, "z2", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
+         SymbolVariable v3 = new SymbolVariable( false, "z3", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
+         SymbolVariable v4 = new SymbolVariable( false, "z4", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
+         SymbolVariable v5 = new SymbolVariable( false, "z5", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
+         SymbolVariable v6 = new SymbolVariable( false, "z6", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.PHI_VERSION, SymbolVariable.MemoryArea.ZEROPAGE_MEMORY, null);
          v1.setAllocation(new Registers.RegisterZpMem(2, 1));
          v2.setAllocation(new Registers.RegisterZpMem(4, 1));
          v3.setAllocation(new Registers.RegisterZpMem(6, 1));
@@ -100,18 +99,18 @@ public class AsmFragmentTemplate {
          if(signature.contains("z6")) bindings.put("z6", v6);
       }
       {
-         Variable v1 = new Variable("m1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY);
-         Variable v2 = new Variable("m2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY);
-         Variable v3 = new Variable("m3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY);
-         Variable v4 = new Variable("m4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY);
-         Variable v5 = new Variable("m5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY);
-         Variable v6 = new Variable("m6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY);
-         v1.setAllocation(new Registers.RegisterMainMem(v1.getRef(), 1, null));
-         v2.setAllocation(new Registers.RegisterMainMem(v2.getRef(), 1, null));
-         v3.setAllocation(new Registers.RegisterMainMem(v3.getRef(), 1, null));
-         v4.setAllocation(new Registers.RegisterMainMem(v4.getRef(), 1, null));
-         v5.setAllocation(new Registers.RegisterMainMem(v5.getRef(), 1, null));
-         v6.setAllocation(new Registers.RegisterMainMem(v6.getRef(), 1, null));
+         SymbolVariable v1 = new SymbolVariable( false, "m1", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
+         SymbolVariable v2 = new SymbolVariable( false, "m2", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
+         SymbolVariable v3 = new SymbolVariable( false, "m3", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
+         SymbolVariable v4 = new SymbolVariable( false, "m4", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
+         SymbolVariable v5 = new SymbolVariable( false, "m5", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
+         SymbolVariable v6 = new SymbolVariable( false, "m6", scope, SymbolType.BYTE, SymbolVariable.StorageStrategy.LOAD_STORE, SymbolVariable.MemoryArea.MAIN_MEMORY, null);
+         v1.setAllocation(new Registers.RegisterMainMem(v1.getVariableRef(),  1, null));
+         v2.setAllocation(new Registers.RegisterMainMem(v2.getVariableRef(), 1, null));
+         v3.setAllocation(new Registers.RegisterMainMem(v3.getVariableRef(), 1, null));
+         v4.setAllocation(new Registers.RegisterMainMem(v4.getVariableRef(), 1, null));
+         v5.setAllocation(new Registers.RegisterMainMem(v5.getVariableRef(), 1, null));
+         v6.setAllocation(new Registers.RegisterMainMem(v6.getVariableRef(), 1, null));
          if(signature.contains("m1")) bindings.put("m1", v1);
          if(signature.contains("m2")) bindings.put("m2", v2);
          if(signature.contains("m3")) bindings.put("m3", v3);

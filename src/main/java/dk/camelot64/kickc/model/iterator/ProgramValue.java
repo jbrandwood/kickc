@@ -481,9 +481,9 @@ public interface ProgramValue {
    /** Member of a constant struct value. */
    class ProgramValueConstantStructMember implements ProgramValue {
       private final ConstantStructValue structValue;
-      private final VariableRef memberRef;
+      private final SymbolVariableRef memberRef;
 
-      public ProgramValueConstantStructMember(ConstantStructValue structValue, VariableRef memberRef) {
+      public ProgramValueConstantStructMember(ConstantStructValue structValue, SymbolVariableRef memberRef) {
          this.structValue = structValue;
          this.memberRef = memberRef;
       }
@@ -498,7 +498,7 @@ public interface ProgramValue {
          structValue.setValue(memberRef, (ConstantValue) value);
       }
 
-      public VariableRef getMemberRef() {
+      public SymbolVariableRef getMemberRef() {
          return memberRef;
       }
    }

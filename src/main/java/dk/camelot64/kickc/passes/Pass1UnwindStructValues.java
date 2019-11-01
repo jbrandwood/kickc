@@ -199,7 +199,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
    private boolean unwindStructVariables() {
       boolean modified = false;
       // Iterate through all scopes generating member-variables for each struct
-      for(Variable variable : getScope().getAllVariables(true)) {
+      for(SymbolVariable variable : getScope().getAllVariables(true)) {
          if(variable.getType() instanceof SymbolTypeStruct) {
             StructUnwinding structUnwinding = getProgram().getStructUnwinding();
             if(structUnwinding.getVariableUnwinding(variable.getRef()) == null) {
@@ -209,10 +209,10 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   // Not inside another struct
                   StructDefinition structDefinition = ((SymbolTypeStruct) variable.getType()).getStructDefinition(getProgram().getScope());
                   StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef());
-                  for(Variable member : structDefinition.getAllVariables(false)) {
-                     Variable memberVariable;
+                  for(SymbolVariable member : structDefinition.getAllVariables(false)) {
+                     SymbolVariable memberVariable;
                      if(variable.getRef().isIntermediate()) {
-                        memberVariable = scope.add(new Variable(variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), variable.getDataSegment(), SymbolVariable.StorageStrategy.INTERMEDIATE, variable.getMemoryArea()));
+                        memberVariable = scope.add(new SymbolVariable( false, variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), SymbolVariable.StorageStrategy.INTERMEDIATE, variable.getMemoryArea(), variable.getDataSegment()));
                      } else {
                         if(member.getType() instanceof SymbolTypePointer) {
                            // Always put pointers in ZP memory area
@@ -405,9 +405,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
       @Override
       public List<String> getMemberNames() {
-         Collection<Variable> structMemberVars = structDefinition.getAllVariables(false);
+         Collection<SymbolVariable> structMemberVars = structDefinition.getAllVariables(false);
          ArrayList<String> memberNames = new ArrayList<>();
-         for(Variable structMemberVar : structMemberVars) {
+         for(SymbolVariable structMemberVar : structMemberVars) {
             memberNames.add(structMemberVar.getLocalName());
          }
          return memberNames;
@@ -416,13 +416,13 @@ public class Pass1UnwindStructValues extends Pass1Base {
       @Override
       public LValue getMemberUnwinding(String memberName) {
          ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(getScope(), structDefinition, memberName);
-         Variable member = structDefinition.getMember(memberName);
+         SymbolVariable member = structDefinition.getMember(memberName);
          Scope scope = getScope().getScope(currentBlock.getScope());
-         Variable memberAddress = scope.addVariableIntermediate();
+         SymbolVariable memberAddress = scope.addVariableIntermediate();
          memberAddress.setType(new SymbolTypePointer(member.getType()));
          CastValue structTypedPointer = new CastValue(new SymbolTypePointer(member.getType()), pointerDeref.getPointer());
          // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
-         stmtIt.add(new StatementAssignment(memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+         stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
          // Unwind to *(ptr_struct+OFFSET_STRUCT_NAME_MEMBER)
          return new PointerDereferenceSimple(memberAddress.getRef());
       }
@@ -446,9 +446,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
       @Override
       public List<String> getMemberNames() {
-         Collection<Variable> structMemberVars = structDefinition.getAllVariables(false);
+         Collection<SymbolVariable> structMemberVars = structDefinition.getAllVariables(false);
          ArrayList<String> memberNames = new ArrayList<>();
-         for(Variable structMemberVar : structMemberVars) {
+         for(SymbolVariable structMemberVar : structMemberVars) {
             memberNames.add(structMemberVar.getLocalName());
          }
          return memberNames;
@@ -457,13 +457,13 @@ public class Pass1UnwindStructValues extends Pass1Base {
       @Override
       public LValue getMemberUnwinding(String memberName) {
          ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(getScope(), structDefinition, memberName);
-         Variable member = structDefinition.getMember(memberName);
+         SymbolVariable member = structDefinition.getMember(memberName);
          Scope scope = getScope().getScope(currentBlock.getScope());
-         Variable memberAddress = scope.addVariableIntermediate();
+         SymbolVariable memberAddress = scope.addVariableIntermediate();
          memberAddress.setType(new SymbolTypePointer(member.getType()));
          CastValue structTypedPointer = new CastValue(new SymbolTypePointer(member.getType()), pointerDeref.getPointer());
          // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
-         stmtIt.add(new StatementAssignment(memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+         stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
          // Unwind to *(ptr_struct+OFFSET_STRUCT_NAME_MEMBER[idx]
          return new PointerDereferenceIndexed(memberAddress.getRef(), pointerDeref.getIndex());
       }

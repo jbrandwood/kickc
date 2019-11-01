@@ -45,7 +45,7 @@ public class OperatorSizeOf extends OperatorUnary {
          typeSizeConstant = new ConstantVar(typeConstName, programScope, SymbolType.BYTE, new ConstantInteger(typeSize&0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          programScope.add(typeSizeConstant);
       }
-      return typeSizeConstant.getRef();
+      return typeSizeConstant.getConstantRef();
    }
 
    /**

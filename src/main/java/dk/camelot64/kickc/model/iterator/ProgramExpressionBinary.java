@@ -11,7 +11,6 @@ import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
-import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
@@ -119,9 +118,9 @@ public interface ProgramExpressionBinary extends ProgramExpression {
             assignment.setrValue1(new ConstantCastValue(toType, (ConstantValue) assignment.getrValue1()));
          } else {
             Scope blockScope = symbols.getScope(currentScope);
-            Variable tmpVar = blockScope.addVariableIntermediate();
+            SymbolVariable tmpVar = blockScope.addVariableIntermediate();
             tmpVar.setTypeInferred(toType);
-            StatementAssignment newAssignment = new StatementAssignment(tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue1(), assignment.getSource(), Comment.NO_COMMENTS);
+            StatementAssignment newAssignment = new StatementAssignment((LValue) tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue1(), assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setrValue1(tmpVar.getRef());
             stmtIt.previous();
             stmtIt.add(newAssignment);
@@ -135,9 +134,9 @@ public interface ProgramExpressionBinary extends ProgramExpression {
             assignment.setrValue2(new ConstantCastValue(toType, (ConstantValue) assignment.getrValue2()));
          } else {
             Scope blockScope = symbols.getScope(currentScope);
-            Variable tmpVar = blockScope.addVariableIntermediate();
+            SymbolVariable tmpVar = blockScope.addVariableIntermediate();
             tmpVar.setTypeInferred(toType);
-            StatementAssignment newAssignment = new StatementAssignment(tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue2(), assignment.getSource(), Comment.NO_COMMENTS);
+            StatementAssignment newAssignment = new StatementAssignment((LValue) tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue2(), assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setrValue2(tmpVar.getRef());
             stmtIt.previous();
             stmtIt.add(newAssignment);
@@ -259,11 +258,11 @@ public interface ProgramExpressionBinary extends ProgramExpression {
                throw new InternalError("Cannot cast declared type!" + variable.toString());
          } else {
             Scope blockScope = symbols.getScope(currentScope);
-            Variable tmpVar = blockScope.addVariableIntermediate();
+            SymbolVariable tmpVar = blockScope.addVariableIntermediate();
             SymbolType rightType = SymbolTypeInference.inferType(symbols, getRight());
             tmpVar.setTypeInferred(rightType);
             StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.getSource(), Comment.NO_COMMENTS);
-            assignment.setlValue(tmpVar.getRef());
+            assignment.setlValue((LValue) tmpVar.getRef());
             stmtIt.add(newAssignment);
          }
       }
@@ -274,11 +273,11 @@ public interface ProgramExpressionBinary extends ProgramExpression {
             assignment.setOperator(Operators.getCastUnary(toType));
          } else {
             Scope blockScope = symbols.getScope(currentScope);
-            Variable tmpVar = blockScope.addVariableIntermediate();
+            SymbolVariable tmpVar = blockScope.addVariableIntermediate();
             SymbolType rightType = SymbolTypeInference.inferType(symbols, getRight());
             tmpVar.setTypeInferred(rightType);
             StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.getSource(), Comment.NO_COMMENTS);
-            assignment.setlValue(tmpVar.getRef());
+            assignment.setlValue((LValue) tmpVar.getRef());
             stmtIt.add(newAssignment);
          }
       }

@@ -26,7 +26,7 @@ public class CallingConventionStack {
          returnOffsetConstant = new ConstantVar(returnOffsetConstantName, procedure, SymbolType.BYTE, new ConstantInteger(returnByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          procedure.add(returnOffsetConstant);
       }
-      return returnOffsetConstant.getRef();
+      return returnOffsetConstant.getConstantRef();
    }
 
    /**
@@ -45,7 +45,7 @@ public class CallingConventionStack {
          paramOffsetConstant = new ConstantVar(paramOffsetConstantName, procedure, SymbolType.BYTE, new ConstantInteger(paramByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          procedure.add(paramOffsetConstant);
       }
-      return paramOffsetConstant.getRef();
+      return paramOffsetConstant.getConstantRef();
    }
 
    /**
@@ -125,7 +125,7 @@ public class CallingConventionStack {
       long STACK_BASE_ADDRESS = 0x103L;
       ConstantVar stackBase = new ConstantVar("STACK_BASE", programScope, SymbolType.WORD, new ConstantInteger(STACK_BASE_ADDRESS, SymbolType.WORD), Scope.SEGMENT_DATA_DEFAULT);
       programScope.add(stackBase);
-      return stackBase.getRef();
+      return stackBase.getConstantRef();
    }
 
 }

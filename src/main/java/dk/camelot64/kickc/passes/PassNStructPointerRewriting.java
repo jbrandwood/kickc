@@ -44,11 +44,11 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   CastValue structTypedPointer = new CastValue(memberType, structPointer);
                   // Create temporary variable to hold pointer to member ($1)
                   Scope scope = getScope().getScope(currentBlock.getScope());
-                  Variable memberAddress1 = scope.addVariableIntermediate();
+                  SymbolVariable memberAddress1 = scope.addVariableIntermediate();
                   memberAddress1.setType(memberType);
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();
-                  stmtIt.add(new StatementAssignment(memberAddress1.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+                  stmtIt.add(new StatementAssignment((LValue) memberAddress1.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
                   stmtIt.next();
                   // Replace (*ptr_struct).x with *($1)
                   programValue.set(memberAddress1.getRef());
@@ -57,11 +57,11 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   CastValue structTypedPointer = new CastValue(new SymbolTypePointer(memberType), structPointer);
                   // Create temporary variable to hold pointer to member ($1)
                   Scope scope = getScope().getScope(currentBlock.getScope());
-                  Variable memberAddress = scope.addVariableIntermediate();
+                  SymbolVariable memberAddress = scope.addVariableIntermediate();
                   memberAddress.setType(new SymbolTypePointer(memberType));
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();
-                  stmtIt.add(new StatementAssignment(memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+                  stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
                   stmtIt.next();
                   // Replace (*ptr_struct).x with *($1)
                   programValue.set(new PointerDereferenceSimple(memberAddress.getRef()));
@@ -83,14 +83,14 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   CastValue structTypedPointer = new CastValue(memberType, structPointer);
                   // Create temporary variable to hold pointer to member ($1)
                   Scope scope = getScope().getScope(currentBlock.getScope());
-                  Variable memberAddress1 = scope.addVariableIntermediate();
+                  SymbolVariable memberAddress1 = scope.addVariableIntermediate();
                   memberAddress1.setType(memberType);
-                  Variable memberAddress2 = scope.addVariableIntermediate();
+                  SymbolVariable memberAddress2 = scope.addVariableIntermediate();
                   memberAddress2.setType(memberType);
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();
-                  stmtIt.add(new StatementAssignment(memberAddress1.getRef(), structTypedPointer, Operators.PLUS, ((PointerDereferenceIndexed) struct).getIndex(), currentStmt.getSource(), currentStmt.getComments()));
-                  stmtIt.add(new StatementAssignment(memberAddress2.getRef(), memberAddress1.getRef(), Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+                  stmtIt.add(new StatementAssignment((LValue) memberAddress1.getRef(), structTypedPointer, Operators.PLUS, ((PointerDereferenceIndexed) struct).getIndex(), currentStmt.getSource(), currentStmt.getComments()));
+                  stmtIt.add(new StatementAssignment((LValue) memberAddress2.getRef(), memberAddress1.getRef(), Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
                   stmtIt.next();
                   // Replace ptr_struct[idx].x with ($1)[idx]
                   programValue.set(memberAddress2.getRef());
@@ -100,11 +100,11 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   CastValue structTypedPointer = new CastValue(new SymbolTypePointer(memberType), structPointer);
                   // Create temporary variable to hold pointer to member ($1)
                   Scope scope = getScope().getScope(currentBlock.getScope());
-                  Variable memberAddress = scope.addVariableIntermediate();
+                  SymbolVariable memberAddress = scope.addVariableIntermediate();
                   memberAddress.setType(new SymbolTypePointer(memberType));
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();
-                  stmtIt.add(new StatementAssignment(memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+                  stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
                   stmtIt.next();
                   // Replace ptr_struct[idx].x with ($1)[idx]
                   programValue.set(new PointerDereferenceIndexed(memberAddress.getRef(), ((PointerDereferenceIndexed) struct).getIndex()));
@@ -129,12 +129,12 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
       ConstantVar memberOffsetConstant = programScope.getConstant(typeConstName);
       if(memberOffsetConstant == null) {
          // Constant not found - create it
-         Variable memberDef = structDefinition.getMember(memberName);
+         SymbolVariable memberDef = structDefinition.getMember(memberName);
          long memberByteOffset = structDefinition.getMemberByteOffset(memberDef, programScope);
          memberOffsetConstant = new ConstantVar(typeConstName, programScope, SymbolType.BYTE, new ConstantInteger(memberByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          programScope.add(memberOffsetConstant);
       }
-      return memberOffsetConstant.getRef();
+      return memberOffsetConstant.getConstantRef();
    }
 
    /**

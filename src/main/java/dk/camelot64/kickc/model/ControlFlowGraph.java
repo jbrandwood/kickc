@@ -6,10 +6,7 @@ import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.ScopeRef;
-import dk.camelot64.kickc.model.values.SymbolRef;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.Pass2ConstantIdentification;
 
 import java.io.Serializable;
@@ -92,7 +89,7 @@ public class ControlFlowGraph implements Serializable {
     * @param variable The variable to find the assignment for
     * @return All assignments.
     */
-   public List<StatementLValue> getAssignments(VariableRef variable) {
+   public List<StatementLValue> getAssignments(SymbolVariableRef variable) {
       ArrayList<StatementLValue> assignments = new ArrayList<>();
       for(ControlFlowBlock block : getAllBlocks()) {
          for(Statement statement : block.getStatements()) {

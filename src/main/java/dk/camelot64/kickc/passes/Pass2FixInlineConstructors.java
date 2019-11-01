@@ -10,11 +10,12 @@ import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.CastValue;
+import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.ValueList;
 
@@ -82,12 +83,12 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
    public void addLiteralWordConstructor(OperatorBinary constructOperator, SymbolType constructType, SymbolType subType, ProgramExpression programExpression, List<RValue> listValues, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       // Convert list to a word constructor in a new tmp variable
       Scope currentScope = Pass2FixInlineConstructors.this.getScope().getScope(currentBlock.getScope());
-      Variable tmpVar = currentScope.addVariableIntermediate();
+      SymbolVariable tmpVar = currentScope.addVariableIntermediate();
       //tmpVar.setTypeInferred(constructType);
       // Move backward - to insert before the current statement
       stmtIt.previous();
       // Add assignment of the new tmpVar
-      StatementAssignment assignment = new StatementAssignment(tmpVar.getRef(), new CastValue(subType, listValues.get(0)), constructOperator, new CastValue(subType, listValues.get(1)), currentStmt.getSource(), Comment.NO_COMMENTS);
+      StatementAssignment assignment = new StatementAssignment((LValue) tmpVar.getRef(), new CastValue(subType, listValues.get(0)), constructOperator, new CastValue(subType, listValues.get(1)), currentStmt.getSource(), Comment.NO_COMMENTS);
       stmtIt.add(assignment);
       // Move back before the current statement
       stmtIt.next();

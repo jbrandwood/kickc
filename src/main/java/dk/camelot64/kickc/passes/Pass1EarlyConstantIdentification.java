@@ -9,7 +9,6 @@ import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
-import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -28,8 +27,8 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
    @Override
    public boolean step() {
       Collection<SymbolVariableRef> earlyConstants = new ArrayList<>();
-      for(Variable variable : getProgram().getScope().getAllVariables(true)) {
-         VariableRef variableRef = variable.getRef();
+      for(SymbolVariable variable : getProgram().getScope().getAllVariables(true)) {
+         SymbolVariableRef variableRef = variable.getRef();
          if(!variable.isDeclaredConstant() && !variable.isVolatile() && !variableRef.isIntermediate()) {
             if(variable.isDeclaredNotConstant())
                // Skip explicit non-constants
@@ -64,7 +63,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
     * @param variableRef The variable
     * @return true if the variable is a procedure parameter
     */
-   public boolean isParameter(VariableRef variableRef) {
+   public boolean isParameter(SymbolVariableRef variableRef) {
       SymbolVariable var = getScope().getVariable(variableRef);
       Scope varScope = var.getScope();
       if(varScope instanceof Procedure) {
@@ -82,7 +81,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
     * @param variable The variable
     * @return all assignments
     */
-   private Collection<StatementLValue> getAssignments(Variable variable) {
+   private Collection<StatementLValue> getAssignments(SymbolVariable variable) {
       Collection<StatementLValue> assignments = new ArrayList<>();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {

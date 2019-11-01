@@ -6,8 +6,10 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
-import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.PointerDereference;
+import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.passes.utils.Unroller;
 
 import java.util.ArrayList;

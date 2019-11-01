@@ -81,7 +81,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       if(assignedVar.isStoragePhiMaster()) {
          if(assignedVar.isDeclaredConstant() || earlyIdentifiedConstants.contains(assignedVar.getRef()))
             throw new InternalError("Error! Constants can not be versioned ", source);
-         Variable version = assignedVar.createVersion();
+         SymbolVariable version = assignedVar.createVersion();
          programLValue.set(version.getRef());
       }
    }

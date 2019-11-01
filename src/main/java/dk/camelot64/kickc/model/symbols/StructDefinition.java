@@ -23,8 +23,8 @@ public class StructDefinition extends Scope {
     * @param name The name of the member
     * @return The member variable
     */
-   public Variable getMember(String name) {
-      for(Variable member : getAllVariables(false)) {
+   public SymbolVariable getMember(String name) {
+      for(SymbolVariable member : getAllVariables(false)) {
          if(member.getLocalName().equals(name)) {
             return member;
          }
@@ -37,9 +37,9 @@ public class StructDefinition extends Scope {
     * @param member The member to find offset for
     * @return The byte offset of the start of the member data
     */
-   public long getMemberByteOffset(Variable member, ProgramScope programScope) {
+   public long getMemberByteOffset(SymbolVariable member, ProgramScope programScope) {
       long byteOffset=0;
-      for(Variable structMember : getAllVariables(false)) {
+      for(SymbolVariable structMember : getAllVariables(false)) {
          if(structMember.equals(member)) {
             break;
          } else {

@@ -17,9 +17,9 @@ public class ConstantStructValue implements ConstantValue {
    private SymbolTypeStruct structType;
 
    /** The values of the members. */
-   private Map<VariableRef, ConstantValue> values;
+   private Map<SymbolVariableRef, ConstantValue> values;
 
-   public ConstantStructValue(SymbolTypeStruct structType, Map<VariableRef, ConstantValue> values) {
+   public ConstantStructValue(SymbolTypeStruct structType, Map<SymbolVariableRef, ConstantValue> values) {
       this.structType = structType;
       this.values = values;
    }
@@ -42,7 +42,7 @@ public class ConstantStructValue implements ConstantValue {
     * Get the members of the struct
     * @return list of variable refs representing the members
     */
-   public List<VariableRef> getMembers() {
+   public List<SymbolVariableRef> getMembers() {
       return new ArrayList<>(values.keySet());
    }
 
@@ -51,7 +51,7 @@ public class ConstantStructValue implements ConstantValue {
     * @param memberRef The variable ref of the member
     * @return The constant value of the member
     */
-   public ConstantValue getValue(VariableRef memberRef) {
+   public ConstantValue getValue(SymbolVariableRef memberRef) {
       return values.get(memberRef);
    }
 
@@ -60,7 +60,7 @@ public class ConstantStructValue implements ConstantValue {
     * @param memberRef The variable ref of the member
     * @param value The new constant value of the member
     */
-   public void setValue(VariableRef memberRef, ConstantValue value) {
+   public void setValue(SymbolVariableRef memberRef, ConstantValue value) {
       values.put(memberRef, value);
    }
 
@@ -74,7 +74,7 @@ public class ConstantStructValue implements ConstantValue {
       StringBuilder out = new StringBuilder();
       boolean first = true;
       out.append("{ ");
-      for(VariableRef memberRef : getMembers()) {
+      for(SymbolVariableRef memberRef : getMembers()) {
          if(!first) {
             out.append(", ");
          }

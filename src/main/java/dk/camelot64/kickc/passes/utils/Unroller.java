@@ -7,7 +7,6 @@ import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.SymbolVariable;
-import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.Pass1GenerateSingleStaticAssignmentForm;
 import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
@@ -43,7 +42,7 @@ public class Unroller {
    /** The strategy used for rewriting transitions into the block / inside the block. */
    private UnrollStrategy strategy;
    /** Maps variables defined in the original block to the copies of these variables defined in the new block. */
-   private Map<VariableRef, VariableRef> varsOriginalToCopied;
+   private Map<SymbolVariableRef, SymbolVariableRef> varsOriginalToCopied;
    /** Maps labels of blocks in the original block to the labels of the copied blocks. */
    private Map<LabelRef, LabelRef> blocksOriginalToCopied;
 
@@ -76,12 +75,12 @@ public class Unroller {
     */
    private void prepare() {
       // TODO Handle variables modified inside called functions!
-      for(VariableRef origVarRef : getVarsDefinedIn(unrollBlocks, program)) {
+      for(SymbolVariableRef origVarRef : getVarsDefinedIn(unrollBlocks, program)) {
          // Find out if the variable is ever referenced outside the loop
          if(isReferencedOutside(origVarRef, unrollBlocks, program)) {
             // Re-version all usages of the specific variable version
-            Map<LabelRef, VariableRef> newPhis = new LinkedHashMap<>();
-            Map<LabelRef, VariableRef> varVersions = new LinkedHashMap<>();
+            Map<LabelRef, SymbolVariableRef> newPhis = new LinkedHashMap<>();
+            Map<LabelRef, SymbolVariableRef> varVersions = new LinkedHashMap<>();
             reVersionAllUsages(origVarRef, newPhis, varVersions);
             if(program.getLog().isVerboseLoopUnroll()) {
                program.getLog().append("Created new versions for " + origVarRef + ")");
@@ -100,7 +99,7 @@ public class Unroller {
     * @param newPhis Map that will be populated with all new (empty) PHI-variables for the new versionw - these will be populated later.
     * @param varVersions Map that will be populated with the version of the origVariable at the end of each block where it has a defined version.
     */
-   private void reVersionAllUsages(VariableRef origVarRef, Map<LabelRef, VariableRef> newPhis, Map<LabelRef, VariableRef> varVersions) {
+   private void reVersionAllUsages(SymbolVariableRef origVarRef, Map<LabelRef, SymbolVariableRef> newPhis, Map<LabelRef, SymbolVariableRef> varVersions) {
 
       // First add the definition of origVar to varVersions
       for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
@@ -113,7 +112,7 @@ public class Unroller {
       }
       // Next iterate the entire graph ensuring that all usages create new versions (except usages right after the definition)
       for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
-         AtomicReference<VariableRef> currentVersion = new AtomicReference<>();
+         AtomicReference<SymbolVariableRef> currentVersion = new AtomicReference<>();
          // Set current version from map
          currentVersion.set(varVersions.get(block.getLabel()));
          for(Statement statement : block.getStatements()) {
@@ -132,7 +131,7 @@ public class Unroller {
                   } else if(statement instanceof StatementPhiBlock && programValue instanceof ProgramValue.PhiValue) {
                      // The reference is inside a PHI-value - we need a version in the predecessor
                      LabelRef predecessor = ((ProgramValue.PhiValue) programValue).getPredecessor();
-                     VariableRef predecessorVersion = varVersions.get(predecessor);
+                     SymbolVariableRef predecessorVersion = varVersions.get(predecessor);
                      if(predecessorVersion == null) {
                         // Add a new PHI to the predecessor
                         predecessorVersion = createNewVersion(origVarRef);
@@ -143,7 +142,7 @@ public class Unroller {
                      programValue.set(predecessorVersion);
                   } else if(currentVersion.get() == null) {
                      // Found a reference - no definition - create a new version
-                     VariableRef newVarRef = createNewVersion(origVarRef);
+                     SymbolVariableRef newVarRef = createNewVersion(origVarRef);
                      currentVersion.set(newVarRef);
                      varVersions.put(block.getLabel(), newVarRef);
                      newPhis.put(block.getLabel(), currentVersion.get());
@@ -159,8 +158,8 @@ public class Unroller {
       // Add the new empty PHI-blocks()
       for(LabelRef blockRef : newPhis.keySet()) {
          ControlFlowBlock block = program.getGraph().getBlock(blockRef);
-         VariableRef newVersion = newPhis.get(blockRef);
-         block.getPhiBlock().addPhiVariable(newVersion);
+         SymbolVariableRef newVersion = newPhis.get(blockRef);
+         block.getPhiBlock().addPhiVariable((VariableRef) newVersion);
       }
 
    }
@@ -170,10 +169,10 @@ public class Unroller {
     * @param origVarRef The original variable
     * @return The new version
     */
-   private VariableRef createNewVersion(VariableRef origVarRef) {
+   private SymbolVariableRef createNewVersion(SymbolVariableRef origVarRef) {
       SymbolVariable origVar = program.getScope().getVariable(origVarRef);
       Scope scope = origVar.getScope();
-      VariableRef newVarRef;
+      SymbolVariableRef newVarRef;
       if(origVarRef.isIntermediate()) {
          newVarRef = scope.addVariableIntermediate().getRef();
       } else {
@@ -189,22 +188,22 @@ public class Unroller {
     * @param newPhis New (empty) PHI-variables for the new versions that need to be populated
     * @param varVersions Map with the version of the origVariable at the end of each block where it has a defined version.
     */
-   private void completePhiFunctions(Map<LabelRef, VariableRef> newPhis, Map<LabelRef, VariableRef> varVersions) {
-      Map<LabelRef, VariableRef> todo = newPhis;
+   private void completePhiFunctions(Map<LabelRef, SymbolVariableRef> newPhis, Map<LabelRef, SymbolVariableRef> varVersions) {
+      Map<LabelRef, SymbolVariableRef> todo = newPhis;
       while(todo.size() > 0) {
-         Map<LabelRef, VariableRef> doing = todo;
+         Map<LabelRef, SymbolVariableRef> doing = todo;
          todo = new LinkedHashMap<>();
          for(LabelRef blockRef : doing.keySet()) {
-            VariableRef doingVarRef = doing.get(blockRef);
+            SymbolVariableRef doingVarRef = doing.get(blockRef);
             ControlFlowBlock block = program.getGraph().getBlock(blockRef);
-            StatementPhiBlock.PhiVariable doingPhiVariable = block.getPhiBlock().getPhiVariable(doingVarRef);
+            StatementPhiBlock.PhiVariable doingPhiVariable = block.getPhiBlock().getPhiVariable((VariableRef) doingVarRef);
             List<ControlFlowBlock> predecessors = Pass1GenerateSingleStaticAssignmentForm.getPhiPredecessors(block, program);
             for(ControlFlowBlock predecessor : predecessors) {
-               VariableRef predecessorVarRef = varVersions.get(predecessor.getLabel());
+               SymbolVariableRef predecessorVarRef = varVersions.get(predecessor.getLabel());
                if(predecessorVarRef == null) {
                   // Variable has no version in the predecessor block - add a new PHI and populate later!
-                  VariableRef newVarRef = createNewVersion(doingVarRef);
-                  predecessor.getPhiBlock().addPhiVariable(newVarRef);
+                  SymbolVariableRef newVarRef = createNewVersion(doingVarRef);
+                  predecessor.getPhiBlock().addPhiVariable((VariableRef) newVarRef);
                   //program.getLog().append("Adding PHI for "+newVarRef+" to "+predecessor.getLabel());
                   varVersions.put(predecessor.getLabel(), newVarRef);
                   todo.put(predecessor.getLabel(), newVarRef);
@@ -224,11 +223,11 @@ public class Unroller {
     * @param unrollBlocks The blocks being unrolled
     * @return A map from variables assigned inside the unroll blocks to the new copy of the variable
     */
-   private static Map<VariableRef, VariableRef> copyDefinedVars(BlockSet unrollBlocks, Program program) {
-      Map<VariableRef, VariableRef> definedToNewVar = new LinkedHashMap<>();
+   private static Map<SymbolVariableRef, SymbolVariableRef> copyDefinedVars(BlockSet unrollBlocks, Program program) {
+      Map<SymbolVariableRef, SymbolVariableRef> definedToNewVar = new LinkedHashMap<>();
       for(VariableRef definedVarRef : getVarsDefinedIn(unrollBlocks, program)) {
          SymbolVariable definedVar = program.getScope().getVariable(definedVarRef);
-         Variable newVar;
+         SymbolVariable newVar;
          if(definedVarRef.isIntermediate()) {
             newVar = definedVar.getScope().addVariableIntermediate();
             newVar.setType(definedVar.getType());
@@ -463,9 +462,9 @@ public class Unroller {
    private Statement unrollStatementPhi(StatementPhiBlock origPhiBlock, LabelRef origBlock) {
       StatementPhiBlock newPhiBlock = new StatementPhiBlock(Comment.NO_COMMENTS);
       for(StatementPhiBlock.PhiVariable origPhiVariable : origPhiBlock.getPhiVariables()) {
-         VariableRef origPhiVar = origPhiVariable.getVariable();
-         VariableRef newPhiVar = varsOriginalToCopied.get(origPhiVar);
-         StatementPhiBlock.PhiVariable newPhiVariable = newPhiBlock.addPhiVariable(newPhiVar);
+         SymbolVariableRef origPhiVar = origPhiVariable.getVariable();
+         SymbolVariableRef newPhiVar = varsOriginalToCopied.get(origPhiVar);
+         StatementPhiBlock.PhiVariable newPhiVariable = newPhiBlock.addPhiVariable((VariableRef) newPhiVar);
          List<StatementPhiBlock.PhiRValue> origPhiRValues = origPhiVariable.getValues();
          ListIterator<StatementPhiBlock.PhiRValue> origPhiRValuesIt = origPhiRValues.listIterator();
          while(origPhiRValuesIt.hasNext()) {
@@ -533,7 +532,7 @@ public class Unroller {
     * @param definedToNewVar Map from variables defined in the original loop to the variables in the new unrolled "rest" loop
     * @return A copy of the RValue with all relevant variable references updated
     */
-   private static RValue valueToNew(RValue rValue, Map<VariableRef, VariableRef> definedToNewVar) {
+   private static RValue valueToNew(RValue rValue, Map<SymbolVariableRef, SymbolVariableRef> definedToNewVar) {
       if(rValue == null) return null;
       RValue rValueCopy = valueToOrig(rValue);
       ProgramValue.GenericValue genericValue = new ProgramValue.GenericValue(rValueCopy);
@@ -649,7 +648,7 @@ public class Unroller {
     * @param program The program
     * @return true if the variable is ever referenced outside the block set
     */
-   private static boolean isReferencedOutside(VariableRef variableRef, BlockSet blockSet, Program program) {
+   private static boolean isReferencedOutside(SymbolVariableRef variableRef, BlockSet blockSet, Program program) {
       boolean referencedOutside = false;
       VariableReferenceInfos variableReferenceInfos = program.getVariableReferenceInfos();
       StatementInfos statementInfos = program.getStatementInfos();

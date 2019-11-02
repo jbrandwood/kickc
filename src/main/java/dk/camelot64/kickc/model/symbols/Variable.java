@@ -16,43 +16,60 @@ import java.util.List;
 /** A Variable symbol (can either be a runtime variable or a compile-time constant)*/
 public class Variable implements Symbol {
 
-   /** The name of the variable. */
-   private String name;
-
-   /** The scope containing the variable */
-   private Scope scope;
-
-   /** The type of the variable. VAR means tha type is unknown, and has not been inferred yet. */
-   private SymbolType type;
-
-   /** true if the symbol type is inferred (not declared) */
-   private boolean inferredType;
-
-   /** A short name used for the variable in ASM code. If possible variable names of variables are shortened in ASM code. This is possible, when several versions of the var use the same register. */
-   private String asmName;
-
-   /** True of the variable is a compile-time constant (previously ConstantVar */
-   private boolean isConstant;
-
-   /** Specifies whether the symbol is declared to be constant, never constant or maybe constant. */
-   public enum ConstantDeclaration {
-      CONST, NOT_CONST, MAYBE_CONST
+   /**
+    * The kind of the variable. The kind is the most significant property of the variable since it drives most of the behavior.
+    *
+    * The value depends on the directives memory/register/volatile/const - and on the compilers optimization decisions.
+    * <ul>
+    * <li>PHI_MASTER variables are turned into PHI-versions and PHI-nodes are used for them throughout the entire program. The PHI-master itself is only an information container and does not live in memory at runtime.</li>
+    * <li>PHI_VERSION variables are versions of a PHI-master. A PHI-version lives in memory or a register at runtime.</li>
+    * <li>INTERMEDIATE variables are created when expressions are broken into smaller statements. The type of intermediate variables must be inferred by the compiler. An intermediate variable lives in memory or a register at runtime.</li>
+    * <li>LOAD_STORE variables are accessed through load/store operations. They can have hardcoded memory addresses. A load/store-variable lives in memory or a register at runtime</li>
+    * <li>CONSTANT variables are compile-time constants. They do not live in memory at runtime. An array is a compile-time constant pointer. The array itself lives in memory but the pointer does not.
+    * </ul>
+    **/
+   public enum Kind {
+      PHI_MASTER, PHI_VERSION, INTERMEDIATE, LOAD_STORE, CONSTANT
    }
 
-   /** Specifies that the variable is declared a constant. It will be replaced by a ConstantVar when possible. */
+   /** The storage strategy for the variable.  */
+   private Kind kind;
+
+   /** The local name of the variable. [ALL] */
+   private String name;
+
+   /** Full name of variable including scope (scope::name or name) [ALL] */
+   private String fullName;
+
+   /** A short name used for the variable in ASM code. If possible variable names of variables are shortened in ASM code. This is possible, when several versions of the var use the same register. [ALL]*/
+   private String asmName;
+
+   /** The scope containing the variable. [ALL] */
+   private Scope scope;
+
+   /** The type of the variable. VAR means tha type is unknown, and has not been inferred yet. [ALL]*/
+   private SymbolType type;
+
+   /** true if the symbol type is inferred (not declared) [kind:INTERMEDIATE] TODO: Collapse with kind==INTERMEDIATE? */
+   private boolean inferredType;
+
+   /** True of the variable is a compile-time constant (previously ConstantVar) [ALL] */
+   private boolean isConstant;
+
+   /** Specifies that the variable is declared a constant. It will be replaced by a ConstantVar when possible. [ALL] TODO: Collapse with isConstant?*/
    private ConstantDeclaration constantDeclaration;
 
-   /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. */
+   /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. [Only Variables in memory and arrays] */
    private Integer declaredAlignment;
 
-   /** Specifies the register the variable must be put into during execution. */
+   /** Specifies the register the variable must be put into during execution. [Only variables] */
    private Registers.Register declaredRegister;
 
-   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). */
+   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only Variables]*/
    private boolean declaredVolatile;
 
-   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). */
-   private boolean inferedVolatile;
+   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only variables] TODO: Remove this */
+   private boolean inferredVolatile;
 
    /** Specifies that the variable must always be added to the output ASM even if it is never used anywhere. */
    private boolean declaredExport;
@@ -60,51 +77,36 @@ public class Variable implements Symbol {
    /** Specifies that the variable must live in a register if possible (CPU register or ZP-address). */
    private boolean declaredAsRegister;
 
-   /** Specifies that the variable must live in memory. */
+   /** Specifies that the variable must live in memory. TODO: Remove this */
    private boolean declaredAsNotRegister;
 
-   /**
-    * Strategy being used for storing and accessing the variable. The value depends on the directives memory/register/volatile/const - and on the compilers optimization decisions.
-    * <ul>
-    * <li>PHI variables are turned into versions and PHI-nodes are used for them throughout the entire program. They cannot be "volatile" and the "address-of" operator cannot be used on them.</li>
-    * <li>INTERMEDIATE variables are created when expressions are broken into smaller statements. </li>
-    * <li>LOAD_STORE variables are accessed through load/store operations. </li>
-    * <li>CONSTANT variables are constant.
-    * </ul>
-    **/
-   public enum StorageStrategy {
-      PHI_MASTER, PHI_VERSION, INTERMEDIATE, LOAD_STORE, CONSTANT
-   }
+   /** The memory area where the variable lives (if stored in memory). [Only variables] */
+   private MemoryArea memoryArea;
 
-   /** The storage strategy for the variable. */
-   private StorageStrategy storageStrategy;
+   /** Comments preceding the procedure in the source code. [ALL] */
+   private List<Comment> comments;
+
+   /** The data segment to put the variable into (if it is allocated in memory). [Only variables stored in memory and arrays] */
+   private String dataSegment;
+
+   /** The constant value if the variable is a constant. Null otherwise. [Only constants] */
+   private ConstantValue constantValue;
+
+   /** The number of the next version (only used for PHI masters) [Only PHI masters] */
+   private Integer nextPhiVersionNumber;
+
+   /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. [Only variables - not constants and not PHI masters] */
+   private Registers.Register allocation;
+
+   /** Specifies whether the symbol is declared to be constant, never constant or maybe constant.  */
+   public enum ConstantDeclaration {
+      CONST, NOT_CONST, MAYBE_CONST
+   }
 
    /** Memory area used for storing the variable (if is is stored in memory). */
    public enum MemoryArea {
       ZEROPAGE_MEMORY, MAIN_MEMORY
    }
-
-   /** The memory area where the variable lives (if stored in memory). */
-   private MemoryArea memoryArea;
-
-   /** Comments preceding the procedure in the source code. */
-   private List<Comment> comments;
-
-   /** Full name of variable (scope::name or name) */
-   private String fullName;
-
-   /** The data segment to put the variable into (if it is allocated in memory). */
-   private String dataSegment;
-
-   /** The constant value if the variable is a constant. Null otherwise. */
-   private ConstantValue constantValue;
-
-   /** The number of the next version (only used for PHI masters) */
-   private Integer nextPhiVersionNumber;
-
-   /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. */
-   private Registers.Register allocation;
-
 
    /**
     * Create a compile-time constant variable
@@ -120,7 +122,7 @@ public class Variable implements Symbol {
       this.scope = scope;
       this.type = type;
       this.dataSegment = dataSegment;
-      this.storageStrategy = StorageStrategy.CONSTANT;
+      this.kind = Kind.CONSTANT;
       this.memoryArea = MemoryArea.MAIN_MEMORY;
       this.constantDeclaration = ConstantDeclaration.MAYBE_CONST;
       this.constantValue = value;
@@ -134,20 +136,20 @@ public class Variable implements Symbol {
     * @param name The name
     * @param scope The scope
     * @param type The type
-    * @param storageStrategy The storage strategy (PHI-master/PHI-version/Intermediate/load store/constant)
+    * @param kind The storage strategy (PHI-master/PHI-version/Intermediate/load store/constant)
     * @param memoryArea  The memory area (zeropage/main memory)
     * @param dataSegment The data segment (in main memory)
     */
-   public Variable(String name, Scope scope, SymbolType type, StorageStrategy storageStrategy, MemoryArea memoryArea, String dataSegment) {
+   public Variable(String name, Scope scope, SymbolType type, Kind kind, MemoryArea memoryArea, String dataSegment) {
       this.isConstant = false;
       this.name = name;
       this.scope = scope;
       this.type = type;
       this.dataSegment = dataSegment;
-      this.storageStrategy = storageStrategy;
+      this.kind = kind;
       this.memoryArea = memoryArea;
       this.constantDeclaration = ConstantDeclaration.MAYBE_CONST;
-      if(StorageStrategy.PHI_MASTER.equals(storageStrategy))
+      if(Kind.PHI_MASTER.equals(kind))
          this.nextPhiVersionNumber = 0;
       this.inferredType = false;
       this.comments = new ArrayList<>();
@@ -162,7 +164,7 @@ public class Variable implements Symbol {
     * @param version The version number
     */
    public Variable(Variable phiMaster, int version) {
-      this(phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), StorageStrategy.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
+      this(phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), Kind.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       this.setDeclaredNotRegister(phiMaster.isDeclaredAsNotRegister());
@@ -170,9 +172,38 @@ public class Variable implements Symbol {
       this.setDeclaredRegister(phiMaster.getDeclaredRegister());
       this.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
       this.setDeclaredExport(phiMaster.isDeclaredExport());
-      this.setInferedVolatile(phiMaster.isInferedVolatile());
+      this.setInferredVolatile(phiMaster.isInferredVolatile());
       this.setInferredType(phiMaster.isInferredType());
       this.setComments(phiMaster.getComments());
+   }
+
+
+   public Kind getKind() {
+      return kind;
+   }
+
+   public void setKind(Kind kind) {
+      this.kind = kind;
+   }
+
+   public boolean isKindConstant() {
+      return Kind.CONSTANT.equals(getKind());
+   }
+
+   public boolean isKindPhiMaster() {
+      return Kind.PHI_MASTER.equals(getKind());
+   }
+
+   public boolean isKindPhiVersion() {
+      return Kind.PHI_VERSION.equals(getKind());
+   }
+
+   public boolean isKindLoadStore() {
+      return Kind.LOAD_STORE.equals(getKind());
+   }
+
+   public boolean isKindIntermediate() {
+      return Kind.INTERMEDIATE.equals(getKind());
    }
 
    /**
@@ -190,11 +221,11 @@ public class Variable implements Symbol {
     * @return True if the variable is not a compile-time constant
     */
    public boolean isVariable() {
-      return !isConstant;
+      return !isConstant();
    }
 
    public SymbolVariableRef getRef() {
-      if(isConstant)
+      if(isConstant())
          return new ConstantRef(this);
       else
          return new VariableRef(this);
@@ -219,7 +250,7 @@ public class Variable implements Symbol {
     * @return The new version of the PHI master
     */
    public Variable createVersion() {
-      if(!isStoragePhiMaster())
+      if(!isKindPhiMaster())
          throw new InternalError("Cannot version non-PHI variable " + this.toString());
       Variable version = new Variable(this, nextPhiVersionNumber++);
       getScope().add(version);
@@ -232,7 +263,7 @@ public class Variable implements Symbol {
     * @return The original variable. Null if this is not a version.
     */
    public Variable getVersionOf() {
-      if(!isStoragePhiVersion())
+      if(!isKindPhiVersion())
          throw new InternalError("Cannot get master for non-PHI version variable " + this.toString());
       String name = getName();
       String versionOfName = name.substring(0, name.indexOf("#"));
@@ -366,16 +397,16 @@ public class Variable implements Symbol {
       this.declaredVolatile = declaredVolatile;
    }
 
-   public void setInferedVolatile(boolean inferedVolatile) {
-      this.inferedVolatile = inferedVolatile;
+   public void setInferredVolatile(boolean inferredVolatile) {
+      this.inferredVolatile = inferredVolatile;
    }
 
-   public boolean isInferedVolatile() {
-      return inferedVolatile;
+   public boolean isInferredVolatile() {
+      return inferredVolatile;
    }
 
    public boolean isVolatile() {
-      return declaredVolatile || inferedVolatile;
+      return declaredVolatile || inferredVolatile;
    }
 
    public boolean isDeclaredExport() {
@@ -400,34 +431,6 @@ public class Variable implements Symbol {
 
    public void setDeclaredNotRegister(boolean declaredAsMemory) {
       this.declaredAsNotRegister = declaredAsMemory;
-   }
-
-   public StorageStrategy getStorageStrategy() {
-      return storageStrategy;
-   }
-
-   public void setStorageStrategy(StorageStrategy storageStrategy) {
-      this.storageStrategy = storageStrategy;
-   }
-
-   public boolean isStorageConstant() {
-      return StorageStrategy.CONSTANT.equals(getStorageStrategy());
-   }
-
-   public boolean isStoragePhiMaster() {
-      return StorageStrategy.PHI_MASTER.equals(getStorageStrategy());
-   }
-
-   public boolean isStoragePhiVersion() {
-      return StorageStrategy.PHI_VERSION.equals(getStorageStrategy());
-   }
-
-   public boolean isStorageLoadStore() {
-      return StorageStrategy.LOAD_STORE.equals(getStorageStrategy());
-   }
-
-   public boolean isStorageIntermediate() {
-      return StorageStrategy.INTERMEDIATE.equals(getStorageStrategy());
    }
 
    public MemoryArea getMemoryArea() {

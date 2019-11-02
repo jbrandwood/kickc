@@ -73,22 +73,22 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                }
             } else if(symbol instanceof Variable) {
                Variable variable = (Variable) symbol;
-               if(variable.isStoragePhiMaster() || variable.isStorageConstant()) {
+               if(variable.isKindPhiMaster() || variable.isKindConstant()) {
                   String name = findLocalName(procedure, symbol);
                   Variable var = (Variable) symbol;
                   Variable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getMemoryArea(), var.getDataSegment());
                   unwound.setDeclaredAlignment(var.getDeclaredAlignment());
                   unwound.setConstantDeclaration(var.getConstantDeclaration());
                   unwound.setDeclaredVolatile(var.isDeclaredVolatile());
-                  unwound.setInferedVolatile(var.isInferedVolatile());
+                  unwound.setInferredVolatile(var.isInferredVolatile());
                   unwound.setDeclaredRegister((var.getDeclaredRegister()));
                   unwound.setDeclaredExport(var.isDeclaredExport());
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
-                  unwound.setStorageStrategy(var.getStorageStrategy());
+                  unwound.setKind(var.getKind());
                   unwound.setMemoryArea(var.getMemoryArea());
-               } else if(variable.isStorageIntermediate()) {
+               } else if(variable.isKindIntermediate()) {
                   Variable unwound = procedure.addVariableIntermediate();
-                  unwound.setStorageStrategy(variable.getStorageStrategy());
+                  unwound.setKind(variable.getKind());
                   unwound.setMemoryArea(variable.getMemoryArea());
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                } else {

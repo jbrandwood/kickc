@@ -266,9 +266,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
-      Variable param = new Variable( ctx.NAME().getText(), getCurrentScope(), type, Variable.StorageStrategy.PHI_MASTER, defaultMemoryArea, currentDataSegment);
+      Variable param = new Variable(ctx.NAME().getText(), getCurrentScope(), type, Variable.Kind.PHI_MASTER, defaultMemoryArea, currentDataSegment);
       // Add directives
-      addDirectives(param, true, directives, new StatementSource(ctx));
+      directiveContext.applyDirectives(param, true, directives, new StatementSource(ctx));
       exitDeclTypes();
       return param;
    }
@@ -612,29 +612,24 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    private Variable visitDeclVariableInit(String varName, KickCParser.DeclVariableInitContext ctx) {
-      List<Directive> directives = declVarDirectives;
-      SymbolType type = declVarType;
-      List<Comment> comments = declVarComments;
-
-      Variable lValue;
       try {
-         lValue = getCurrentScope().addVariablePhiMaster(varName, type, defaultMemoryArea, currentDataSegment);
+         List<Directive> directives = declVarDirectives;
+         SymbolType type = declVarType;
+         List<Comment> comments = declVarComments;
+         // Find kind
+         Variable.Kind kind = directiveContext.getKind(type, getCurrentScope(), false, directives, new StatementSource(ctx));
+         // Create variable
+         Variable lValue = getCurrentScope().addVariable(kind, varName, type, defaultMemoryArea, currentDataSegment);
+         // Add directives
+         directiveContext.applyDirectives(lValue, false, directives, new StatementSource(ctx));
+         if(lValue.isDeclaredConstant()) {
+            // Add comments to constant
+            lValue.setComments(ensureUnusedComments(comments));
+         }
+         return lValue;
       } catch(CompileError e) {
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }
-      // Add directives
-      addDirectives(lValue, false, directives, new StatementSource(ctx));
-      // Array / String variables are implicitly constant
-      if(type instanceof SymbolTypeArray || type.equals(SymbolType.STRING)) {
-         lValue.setConstantDeclaration(Variable.ConstantDeclaration.CONST);
-         lValue.setStorageStrategy(Variable.StorageStrategy.CONSTANT);
-         lValue.setMemoryArea(Variable.MemoryArea.MAIN_MEMORY);
-      }
-      if(lValue.isDeclaredConstant()) {
-         // Add comments to constant
-         lValue.setComments(ensureUnusedComments(comments));
-      }
-      return lValue;
    }
 
    /**
@@ -673,17 +668,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          throw new CompileError("Default initializer not implemented for type " + type.getTypeName(), statementSource);
       }
       return initStmt;
-   }
-
-   /**
-    * Add declared directives to an lValue (typically a variable).
-    *
-    * @param lValue The lValue
-    * @param isParameter True if the lValue is a parameter
-    * @param directives The directives to add
-    */
-   private void addDirectives(Variable lValue, boolean isParameter, List<Directive> directives, StatementSource source) {
-      directiveContext.applyDirectives(lValue, isParameter, directives, source);
    }
 
    /**
@@ -742,17 +726,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Directive visitDirectiveConst(KickCParser.DirectiveConstContext ctx) {
-      return new Directive.Const(Variable.ConstantDeclaration.CONST);
+      return new Directive.Const();
    }
 
    @Override
    public Object visitDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx) {
-      return new Directive.Const(Variable.ConstantDeclaration.NOT_CONST);
-   }
-
-   @Override
-   public Object visitDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx) {
-      return new Directive.Const(Variable.ConstantDeclaration.MAYBE_CONST);
+      return new Directive.NotConst();
    }
 
    @Override
@@ -791,53 +770,50 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(ctx.NAME() != null) {
          name = ctx.NAME().getText();
       }
-      return new Directive.Register(true, name);
+      if(name != null)
+         return new Directive.NamedRegister(name);
+      else
+         return new Directive.Register();
    }
 
    @Override
-   public Object visitDirectiveMemoryAreaZp(KickCParser.DirectiveMemoryAreaZpContext ctx) {
-      return new Directive.MemoryArea(Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+   public Directive visitDirectiveMemoryAreaZp(KickCParser.DirectiveMemoryAreaZpContext ctx) {
+      return new Directive.MemZp();
    }
 
    @Override
-   public Object visitDirectiveMemoryAreaMain(KickCParser.DirectiveMemoryAreaMainContext ctx) {
-      return new Directive.MemoryArea(Variable.MemoryArea.MAIN_MEMORY, null);
+   public Directive visitDirectiveMemoryAreaMain(KickCParser.DirectiveMemoryAreaMainContext ctx) {
+      return new Directive.MemMain();
    }
 
    @Override
-   public Object visitDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx) {
+   public Directive visitDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx) {
       try {
          ConstantInteger memoryAddress = NumberParser.parseIntegerLiteral(ctx.NUMBER().getText());
          Long address = memoryAddress.getInteger();
-         Variable.MemoryArea memoryArea = (address < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;
-         return new Directive.MemoryArea(memoryArea, address);
+         return new Directive.Address(address);
       } catch(NumberFormatException e) {
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }
    }
 
    @Override
-   public Object visitDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx) {
-      return new Directive.FormSsa(true);
+   public Directive visitDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx) {
+      return new Directive.FormSsa();
    }
 
    @Override
-   public Object visitDirectiveFormNotSsa(KickCParser.DirectiveFormNotSsaContext ctx) {
-      return new Directive.FormSsa(false);
+   public Directive visitDirectiveFormMa(KickCParser.DirectiveFormMaContext ctx) {
+      return new Directive.FormMa();
    }
 
    @Override
    public Directive visitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx) {
-      return new Directive.Volatile(true);
+      return new Directive.Volatile();
    }
 
    @Override
-   public Object visitDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx) {
-      return new Directive.Volatile(false);
-   }
-
-   @Override
-   public Object visitDirectiveExport(KickCParser.DirectiveExportContext ctx) {
+   public Directive visitDirectiveExport(KickCParser.DirectiveExportContext ctx) {
       return new Directive.Export();
    }
 
@@ -1192,7 +1168,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             throw new CompileError(e.getMessage(), statementSource);
          }
          // Add directives
-         addDirectives(lValue, false, varDirectives, statementSource);
+         directiveContext.applyDirectives(lValue, false, varDirectives, statementSource);
       } else {
          lValue = getCurrentScope().getVariable(varName);
          if(lValue == null) {

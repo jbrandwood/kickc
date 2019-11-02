@@ -342,18 +342,6 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterDirectiveAlign(KickCParser.DirectiveAlignContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -426,18 +414,6 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -450,13 +426,13 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDirectiveFormNotSsa(KickCParser.DirectiveFormNotSsaContext ctx) { }
+	@Override public void enterDirectiveFormMa(KickCParser.DirectiveFormMaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDirectiveFormNotSsa(KickCParser.DirectiveFormNotSsaContext ctx) { }
+	@Override public void exitDirectiveFormMa(KickCParser.DirectiveFormMaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -41,11 +41,11 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
                      if(assign.getrValue1() == null && assign.getOperator() == null && assign.getrValue2() instanceof ConstantValue) {
                         getLog().append("Identified constant variable " + variable.toString(getProgram()));
                         earlyConstants.add(variableRef);
-                        variable.setStorageStrategy(Variable.StorageStrategy.CONSTANT);
+                        variable.setKind(Variable.Kind.CONSTANT);
                      } else if(assign.getrValue1() == null && assign.getOperator() instanceof OperatorCastPtr && assign.getrValue2() instanceof ConstantValue) {
                         getLog().append("Identified constant variable " + variable.toString(getProgram()));
                         earlyConstants.add(variableRef);
-                        variable.setStorageStrategy(Variable.StorageStrategy.CONSTANT);
+                        variable.setKind(Variable.Kind.CONSTANT);
                      }
                   }
                }

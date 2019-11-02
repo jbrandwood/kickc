@@ -93,7 +93,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          String unversionedFullName = null;
          for(VariableRef variableRef : aliasSet.getVars()) {
             Variable variable = programScope.getVariable(variableRef);
-            if(variable.isVolatile() || variable.isStorageLoadStore()) {
+            if(variable.isVolatile() || variable.isKindLoadStore()) {
                anyVolatile = true;
             }
             if(unversionedFullName == null) {
@@ -420,7 +420,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             String name;
             int score;
             Variable variable = scope.getVariable(var);
-            if(variable.isDeclaredConstant() || variable.isStorageConstant()) {
+            if(variable.isDeclaredConstant() || variable.isKindConstant()) {
                name = var.getFullNameUnversioned();
                score = 100;
             } else if(var.isVersion()) {

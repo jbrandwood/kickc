@@ -100,13 +100,17 @@ public abstract class Scope implements Symbol, Serializable {
       symbols.remove(symbol.getLocalName());
    }
 
+   public Variable addVariable(Variable.Kind kind, String name, SymbolType type, Variable.MemoryArea memoryArea, String dataSegment) {
+      return add(new Variable( name, this, type, kind, memoryArea, dataSegment));
+   }
+
    public Variable addVariablePhiMaster(String name, SymbolType type, Variable.MemoryArea memoryArea, String dataSegment) {
-      return add(new Variable( name, this, type, Variable.StorageStrategy.PHI_MASTER, memoryArea, dataSegment));
+      return add(new Variable( name, this, type, Variable.Kind.PHI_MASTER, memoryArea, dataSegment));
    }
 
    public Variable addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
-      return add(new Variable( name, this, SymbolType.VAR, Variable.StorageStrategy.INTERMEDIATE, Variable.MemoryArea.ZEROPAGE_MEMORY, getSegmentData()));
+      return add(new Variable( name, this, SymbolType.VAR, Variable.Kind.INTERMEDIATE, Variable.MemoryArea.ZEROPAGE_MEMORY, getSegmentData()));
    }
 
    /**
@@ -120,7 +124,7 @@ public abstract class Scope implements Symbol, Serializable {
       for(Symbol symbol : symbols.values()) {
          if(symbol instanceof Variable) {
             Variable variable = (Variable) symbol;
-            if(variable.isVariable() && variable.isStoragePhiVersion() && variable.getVersionOf().equals(unversioned)) {
+            if(variable.isVariable() && variable.isKindPhiVersion() && variable.getVersionOf().equals(unversioned)) {
                versions.add(variable);
             }
          }
@@ -163,6 +167,15 @@ public abstract class Scope implements Symbol, Serializable {
       return symbols.get(name);
    }
 
+   public Variable getVar(String name) {
+      Variable symbol = (Variable) getSymbol(name);
+      return symbol;
+   }
+
+   public Variable getVar(SymbolVariableRef variableRef) {
+      return getVar(variableRef.getFullName());
+   }
+
    public Variable getVariable(String name) {
       Variable symbol = (Variable) getSymbol(name);
       if(symbol!=null && !symbol.isVariable()) throw new InternalError("Symbol is not a variable! "+symbol.toString());
@@ -183,7 +196,12 @@ public abstract class Scope implements Symbol, Serializable {
       return getConstant(constantRef.getFullName());
    }
 
-   public Collection<Variable> getAllSymbolVariables(boolean includeSubScopes) {
+   /**
+    * Get all variables/constants
+    * @param includeSubScopes true to include sub-scopes
+    * @return all variables/constants
+    */
+   public Collection<Variable> getAllVars(boolean includeSubScopes) {
       Collection<Variable> vars = new ArrayList<>();
       for(Symbol symbol : symbols.values()) {
          if(symbol instanceof Variable) {
@@ -191,25 +209,33 @@ public abstract class Scope implements Symbol, Serializable {
          }
          if(includeSubScopes && symbol instanceof Scope) {
             Scope subScope = (Scope) symbol;
-            vars.addAll(subScope.getAllSymbolVariables(true));
+            vars.addAll(subScope.getAllVars(true));
          }
       }
       return vars;
    }
 
+   /**
+    * Get all runtime variables (excluding constants)
+    * @param includeSubScopes true to include sub-scopes
+    * @return all runtime variables (excluding constants)
+    */
    public Collection<Variable> getAllVariables(boolean includeSubScopes) {
-      Collection<Variable> variables = getAllSymbolVariables(includeSubScopes);
       Collection<Variable> vars = new ArrayList<>();
-      variables.stream().
+      getAllVars(includeSubScopes).stream().
             filter(Variable::isVariable).
             forEach(vars::add);
       return vars;
    }
 
+   /**
+    * Get all constants
+    * @param includeSubScopes true to include sub-scopes
+    * @return all constants
+    */
    public Collection<Variable> getAllConstants(boolean includeSubScopes) {
-      Collection<Variable> variables = getAllSymbolVariables(includeSubScopes);
       Collection<Variable> vars = new ArrayList<>();
-      variables.stream().
+      getAllVars(includeSubScopes).stream().
             filter(Variable::isConstant).
             forEach(vars::add);
       return vars;
@@ -351,7 +377,7 @@ public abstract class Scope implements Symbol, Serializable {
                if(symVar.getAsmName() != null && !symVar.getName().equals(symVar.getAsmName())) {
                   res.append(" " + symVar.getAsmName());
                }
-               if(symVar.isStorageLoadStore()) {
+               if(symVar.isKindLoadStore()) {
                   res.append(" notregister");
                }
                Registers.Register declRegister = symVar.getDeclaredRegister();

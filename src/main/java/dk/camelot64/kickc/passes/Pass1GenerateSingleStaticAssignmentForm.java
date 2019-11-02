@@ -78,7 +78,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private void versionAssignment(VariableRef lValueRef, ProgramValue programLValue, StatementSource source) {
       Collection<SymbolVariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       Variable assignedVar = getScope().getVariable(lValueRef);
-      if(assignedVar.isStoragePhiMaster()) {
+      if(assignedVar.isKindPhiMaster()) {
          if(assignedVar.isDeclaredConstant() || earlyIdentifiedConstants.contains(assignedVar.getRef()))
             throw new InternalError("Error! Constants can not be versioned ", source);
          Variable version = assignedVar.createVersion();
@@ -145,9 +145,8 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    }
 
    private void updateBlockVersions(VariableRef lValue, Map<Variable, Variable> blockVersions) {
-      VariableRef lValueRef = lValue;
-      Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValueRef);
-      if(variable.isStoragePhiVersion()) {
+      Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValue);
+      if(variable.isKindPhiVersion()) {
          blockVersions.put(variable.getVersionOf(), variable);
       }
    }
@@ -169,7 +168,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       Variable version = null;
       if(rValue instanceof VariableRef) {
          Variable rValueVar = getScope().getVariable((VariableRef) rValue);
-         if(rValueVar.isStoragePhiMaster()) {
+         if(rValueVar.isKindPhiMaster()) {
             // rValue needs versioning - look for version in statements
             Variable rSymbol = rValueVar;
             if(rSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(rSymbol.getRef())) {
@@ -311,7 +310,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private void addSymbolToMap(LValue lValue, ControlFlowBlock block, Map<LabelRef, Map<Variable, Variable>> symbolMap) {
       if(lValue instanceof VariableRef) {
          Variable lValueVar = getScope().getVariable((VariableRef) lValue);
-         if(lValueVar.isStoragePhiVersion()) {
+         if(lValueVar.isKindPhiVersion()) {
             Variable versioned = lValueVar;
             LabelRef label = block.getLabel();
             Variable unversioned = versioned.getVersionOf();

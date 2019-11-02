@@ -310,18 +310,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code directiveMaybeConst}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code directiveMaybeConst}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code directiveAlign}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -394,18 +382,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code directiveNotVolatile}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code directiveNotVolatile}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code directiveFormSsa}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -418,17 +394,17 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code directiveFormNotSsa}
+	 * Enter a parse tree produced by the {@code directiveFormMa}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
 	 */
-	void enterDirectiveFormNotSsa(KickCParser.DirectiveFormNotSsaContext ctx);
+	void enterDirectiveFormMa(KickCParser.DirectiveFormMaContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code directiveFormNotSsa}
+	 * Exit a parse tree produced by the {@code directiveFormMa}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
 	 */
-	void exitDirectiveFormNotSsa(KickCParser.DirectiveFormNotSsaContext ctx);
+	void exitDirectiveFormMa(KickCParser.DirectiveFormMaContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveExtern}
 	 * labeled alternative in {@link KickCParser#directive}.

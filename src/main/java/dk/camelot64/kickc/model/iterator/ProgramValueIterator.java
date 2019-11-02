@@ -35,7 +35,7 @@ public class ProgramValueIterator {
     * @param handler The handler to execute
     */
    public static void execute(ProgramScope programScope, ProgramValueHandler handler) {
-      for(Variable variable : programScope.getAllSymbolVariables(true)) {
+      for(Variable variable : programScope.getAllVars(true)) {
          execute(variable, handler);
       }
    }

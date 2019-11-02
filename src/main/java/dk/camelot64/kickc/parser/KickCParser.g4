@@ -97,16 +97,14 @@ globalDirective
 directive
     : CONST #directiveConst
     | NOTCONST #directiveNotConst
-    | MAYBECONST #directiveMaybeConst
     | ALIGN PAR_BEGIN NUMBER PAR_END #directiveAlign
     | REGISTER ( PAR_BEGIN ( NAME ) PAR_END)? #directiveRegister
     | ADDRESS_ZEROPAGE #directiveMemoryAreaZp
     | ADDRESS_MAINMEM #directiveMemoryAreaMain
     | ADDRESS PAR_BEGIN ( NUMBER ) PAR_END #directiveMemoryAreaAddress
     | VOLATILE #directiveVolatile
-    | NOTVOLATILE #directiveNotVolatile
     | FORM_SSA #directiveFormSsa
-    | FORM_NOTSSA #directiveFormNotSsa
+    | FORM_MA #directiveFormMa
     | EXTERN #directiveExtern
     | EXPORT #directiveExport
     | INLINE #directiveInline

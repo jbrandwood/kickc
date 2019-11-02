@@ -498,13 +498,13 @@ public class Pass4CodeGeneration {
       for(Variable variable : scopeVariables) {
          if(variable.isMemoryAreaMain()) {
             // Skip PHI masters
-            if(variable.isStoragePhiMaster())
+            if(variable.isKindPhiMaster())
                continue;
             // Skip if already added
             if(added.contains(variable.getAsmName())) {
                continue;
             }
-            if(variable.isStorageLoadStore() || variable.isStoragePhiVersion() || variable.isStorageIntermediate()) {
+            if(variable.isKindLoadStore() || variable.isKindPhiVersion() || variable.isKindIntermediate()) {
                Registers.Register allocation = variable.getAllocation();
                if(allocation instanceof Registers.RegisterCpuByte)
                   continue;

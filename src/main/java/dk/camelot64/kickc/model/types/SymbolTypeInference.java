@@ -15,12 +15,9 @@ public class SymbolTypeInference {
 
    public static SymbolType inferType(ProgramScope symbols, RValue rValue) {
       SymbolType type = null;
-      if(rValue instanceof VariableRef) {
-         Variable variable = symbols.getVariable((VariableRef) rValue);
+      if(rValue instanceof SymbolVariableRef) {
+         Variable variable = symbols.getVar((SymbolVariableRef) rValue);
          type = variable.getType();
-      } else if(rValue instanceof ConstantRef) {
-         Variable constVar = symbols.getConstant((ConstantRef) rValue);
-         type = constVar.getType();
       } else if(rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;
          type = rSymbol.getType();

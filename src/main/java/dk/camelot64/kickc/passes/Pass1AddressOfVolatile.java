@@ -30,7 +30,7 @@ public class Pass1AddressOfVolatile extends Pass2SsaOptimization {
                   if(rValue instanceof SymbolVariableRef) {
                      Symbol toSymbol = getScope().getSymbol((SymbolVariableRef) rValue);
                      if(toSymbol instanceof Variable) {
-                        ((Variable) toSymbol).setInferedVolatile(true);
+                        ((Variable) toSymbol).setInferredVolatile(true);
                         getLog().append("Setting inferred volatile on symbol affected by address-of "+statement.toString(getProgram(), false));
                      }
                   }

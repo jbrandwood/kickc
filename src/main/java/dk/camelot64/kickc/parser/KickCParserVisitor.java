@@ -190,13 +190,6 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code directiveMaybeConst}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDirectiveMaybeConst(KickCParser.DirectiveMaybeConstContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code directiveAlign}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -239,13 +232,6 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code directiveNotVolatile}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDirectiveNotVolatile(KickCParser.DirectiveNotVolatileContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code directiveFormSsa}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -253,12 +239,12 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code directiveFormNotSsa}
+	 * Visit a parse tree produced by the {@code directiveFormMa}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDirectiveFormNotSsa(KickCParser.DirectiveFormNotSsaContext ctx);
+	T visitDirectiveFormMa(KickCParser.DirectiveFormMaContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code directiveExtern}
 	 * labeled alternative in {@link KickCParser#directive}.

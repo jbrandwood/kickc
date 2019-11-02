@@ -74,7 +74,7 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
          blockSuccessors.put(blockLabel, successorClosure);
       }
       // Gather symbols in the symbol table referencing other variables/constants
-      Collection<Variable> allVariables = getProgram().getScope().getAllSymbolVariables(true);
+      Collection<Variable> allVariables = getProgram().getScope().getAllVars(true);
       for(Variable referencingVar : allVariables) {
          ProgramValueIterator.execute(referencingVar,
                (programValue, currentStmt, stmtIt, currentBlock) -> {

@@ -1,24 +1,54 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Variable;
 
 import java.util.List;
 
 /** A declaration directive. */
 public interface Directive {
 
-
-   /** Variable declared const, __notconst or __maybeconst. */
+   /** Variable declared const */
    class Const implements Directive {
+   }
 
-      /** The const declaration. */
-      Variable.ConstantDeclaration constantDeclaration;
+   /** Variable declared volatile */
+   class Volatile implements Directive {
+   }
 
-      public Const(Variable.ConstantDeclaration constantDeclaration) {
-         this.constantDeclaration = constantDeclaration;
-      }
+   /** Variable declared register. */
+   class Register implements Directive {
+   }
 
+   /** Function declared inline. */
+   class Inline implements Directive {
+   }
+
+   /** Variable declared as extern. */
+   class Extern implements Directive {
+   }
+
+   /** Variable declared as export. */
+   class Export implements Directive {
+   }
+
+   /** Variable declared __notconst */
+   class NotConst implements Directive {
+   }
+
+   /** Variable __ssa */
+   class FormSsa implements Directive {
+   }
+
+   /** Variable __ma */
+   class FormMa implements Directive {
+   }
+
+   /** Variable __zp */
+   class MemZp implements Directive {
+   }
+
+   /** Variable __mem */
+   class MemMain implements Directive {
    }
 
    /** Function with specific declared calling convention. */
@@ -31,39 +61,6 @@ public interface Directive {
       }
 
    }
-
-   /** Function declared inline. */
-   class Inline implements Directive {
-   }
-
-   /** Variable declared volatile or __notvolatile. */
-   class Volatile implements Directive {
-
-      /** True if declared volatile, false if declared __notvolatile */
-      boolean isVolatile;
-
-      public Volatile(boolean isVolatile) {
-         this.isVolatile = isVolatile;
-      }
-
-   }
-
-   /** Variable declared as export. */
-   class Export implements Directive {
-   }
-
-   /** Variable declared SSA or not SSA . */
-   class FormSsa implements Directive {
-
-      /** True if declared SSA false if declared NOT SSA */
-      boolean ssa;
-
-      public FormSsa(boolean ssa) {
-         this.ssa = ssa;
-      }
-
-   }
-
 
    /** Function declared interrupt. */
    class Interrupt implements Directive {
@@ -85,33 +82,25 @@ public interface Directive {
 
    }
 
-   /** Variable register or __notregister directive . */
-   class Register implements Directive {
-
-      /** true if the directive is a register directive. false if it is a __notregister directive. */
-      boolean isRegister;
+   /** Variable hardcoded register directive. */
+   class NamedRegister implements Directive {
 
       /** Name of register to use for the variable (if named) */
       public String name;
 
-      public Register(boolean isRegister, String name) {
-         this.isRegister = isRegister;
+      public NamedRegister(String name) {
          this.name = name;
       }
 
    }
 
-   /** Variable memory area declaration. */
-   class MemoryArea implements Directive {
-
-      /** The memory area. */
-      Variable.MemoryArea memoryArea;
+   /** Variable hardcoded __address() directive */
+   class Address implements Directive {
 
       /** Optional hard-coded address to use for storing the variable. */
       public Long address;
 
-      public MemoryArea(Variable.MemoryArea memoryArea, Long address) {
-         this.memoryArea = memoryArea;
+      public Address(Long address) {
          this.address = address;
       }
 
@@ -124,7 +113,6 @@ public interface Directive {
       public ReserveZp(List<Integer> reservedZp) {
          this.reservedZp = reservedZp;
       }
-
    }
 
 

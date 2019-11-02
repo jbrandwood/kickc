@@ -135,11 +135,11 @@ public class PassNTypeInference extends Pass2SsaOptimization {
             // If the type is an array or a string the symbol is constant
             if(symbol.getType() instanceof SymbolTypeArray) {
                symbol.setConstantDeclaration(Variable.ConstantDeclaration.CONST);
-               symbol.setStorageStrategy(Variable.StorageStrategy.CONSTANT);
+               symbol.setKind(Variable.Kind.CONSTANT);
                symbol.setMemoryArea(Variable.MemoryArea.MAIN_MEMORY);
             } else if(SymbolType.STRING.equals(symbol.getType())) {
                symbol.setConstantDeclaration(Variable.ConstantDeclaration.CONST);
-               symbol.setStorageStrategy(Variable.StorageStrategy.CONSTANT);
+               symbol.setKind(Variable.Kind.CONSTANT);
                symbol.setMemoryArea(Variable.MemoryArea.MAIN_MEMORY);
             }
          }

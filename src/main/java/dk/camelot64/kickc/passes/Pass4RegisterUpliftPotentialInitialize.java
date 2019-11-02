@@ -78,7 +78,7 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
    private boolean varVolatile(LiveRangeEquivalenceClass equivalenceClass) {
       for(VariableRef variableRef : equivalenceClass.getVariables()) {
          Variable variable = getSymbols().getVariable(variableRef);
-         if(variable.isVolatile() || variable.isStorageLoadStore()) {
+         if(variable.isVolatile() || variable.isKindLoadStore()) {
             return true;
          }
       }

@@ -28,9 +28,8 @@ public class Pass2AssertRValues extends Pass2SsaAssertion {
             return;
          }
          if(rValue instanceof VariableRef) {
-            VariableRef variableRef = (VariableRef) rValue;
-            Variable variable = getScope().getVariable(variableRef);
-            if(variable.isStoragePhiMaster()) {
+            Variable variable = getScope().getVariable((VariableRef) rValue);
+            if(variable.isKindPhiMaster()) {
                throw new CompileError("No unversioned variable references allowed "+currentStmt.toString(getProgram(), false), currentStmt.getSource());
             }
          }

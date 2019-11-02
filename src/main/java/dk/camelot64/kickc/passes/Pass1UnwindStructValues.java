@@ -212,7 +212,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   for(Variable member : structDefinition.getAllVariables(false)) {
                      Variable memberVariable;
                      if(variable.getRef().isIntermediate()) {
-                        memberVariable = scope.add(new Variable( variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), Variable.StorageStrategy.INTERMEDIATE, variable.getMemoryArea(), variable.getDataSegment()));
+                        memberVariable = scope.add(new Variable( variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), Variable.Kind.INTERMEDIATE, variable.getMemoryArea(), variable.getDataSegment()));
                      } else {
                         if(member.getType() instanceof SymbolTypePointer) {
                            // Always put pointers in ZP memory area
@@ -222,10 +222,10 @@ public class Pass1UnwindStructValues extends Pass1Base {
                         }
                      }
                      memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
-                     memberVariable.setInferedVolatile(variable.isInferedVolatile());
+                     memberVariable.setInferredVolatile(variable.isInferredVolatile());
                      memberVariable.setConstantDeclaration(variable.getConstantDeclaration());
                      memberVariable.setDeclaredExport(variable.isDeclaredExport());
-                     memberVariable.setStorageStrategy(variable.getStorageStrategy());
+                     memberVariable.setKind(variable.getKind());
                      if(memberVariable.getType() instanceof SymbolTypePointer) {
                         memberVariable.setMemoryArea(Variable.MemoryArea.ZEROPAGE_MEMORY);
                      }  else {

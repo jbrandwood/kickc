@@ -307,10 +307,10 @@ public class Pass1ProcedureInline extends Pass1Base {
             inlineVar.setDeclaredAsRegister(procVar.isDeclaredAsRegister());
             inlineVar.setDeclaredNotRegister(procVar.isDeclaredAsNotRegister());
             inlineVar.setDeclaredRegister(procVar.getDeclaredRegister());
-            inlineVar.setStorageStrategy(procVar.getStorageStrategy());
+            inlineVar.setKind(procVar.getKind());
             inlineVar.setMemoryArea(procVar.getMemoryArea());
             inlineVar.setDeclaredVolatile(procVar.isDeclaredVolatile());
-            inlineVar.setInferedVolatile(procVar.isInferedVolatile());
+            inlineVar.setInferredVolatile(procVar.isInferredVolatile());
             inlineVar.setDeclaredExport(procVar.isDeclaredExport());
          } else if(procSymbol instanceof Label) {
             String inlineLabelName = getInlineSymbolName(procedure, procSymbol, serial);

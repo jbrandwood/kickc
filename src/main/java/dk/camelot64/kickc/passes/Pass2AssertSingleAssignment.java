@@ -41,7 +41,7 @@ public class Pass2AssertSingleAssignment extends Pass2SsaAssertion {
    }
 
    private void checkAssignment(Map<VariableRef, Statement> assignments, VariableRef lValue, Statement statement) {
-      if(getScope().getVariable(lValue).isStorageLoadStore())
+      if(getScope().getVariable(lValue).isKindLoadStore())
          return;
       if(assignments.get(lValue) != null) {
          throw new AssertionFailed("Multiple assignments to variable " + lValue + " 1: " + assignments.get(lValue) + " 2:" + statement);

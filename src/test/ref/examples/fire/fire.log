@@ -252,7 +252,6 @@ fire::@return: scope:[fire]  from fire::@9
 (void()) makecharset((byte*) makecharset::charset)
 makecharset: scope:[makecharset]  from main::@13
   (byte*) makecharset::charset#1 ← phi( main::@13/(byte*) makecharset::charset#0 )
-  (byte[8]) makecharset::bittab ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
   (byte*) makecharset::font#0 ← (byte*) makecharset::charset#1
   to:makecharset::@1
 makecharset::@1: scope:[makecharset]  from makecharset makecharset::@2
@@ -379,7 +378,7 @@ makecharset::@25: scope:[makecharset]  from makecharset::@20
   (number~) makecharset::$11 ← (byte) makecharset::i#4 & (number) 1
   (number~) makecharset::$12 ← (byte) makecharset::ii#4 + (number~) makecharset::$11
   (number~) makecharset::$13 ← (number~) makecharset::$12 & (number) 7
-  (byte) makecharset::b#1 ← (byte) makecharset::b#3 + *((byte[8]) makecharset::bittab + (number~) makecharset::$13)
+  (byte) makecharset::b#1 ← (byte) makecharset::b#3 + *((const byte[8]) makecharset::bittab + (number~) makecharset::$13)
   to:makecharset::@22
 makecharset::@return: scope:[makecharset]  from makecharset::@13
   return 
@@ -631,7 +630,7 @@ SYMBOL TABLE SSA
 (byte) makecharset::bc#7
 (byte) makecharset::bc#8
 (byte) makecharset::bc#9
-(byte[8]) makecharset::bittab
+(const byte[8]) makecharset::bittab = { (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
 (byte) makecharset::c
 (byte) makecharset::c#0
 (byte) makecharset::c#1
@@ -766,8 +765,6 @@ Adding number conversion cast (unumber) makecharset::$12 in (number~) makecharse
 Adding number conversion cast (unumber) 7 in (number~) makecharset::$13 ← (unumber~) makecharset::$12 & (number) 7
 Adding number conversion cast (unumber) makecharset::$13 in (number~) makecharset::$13 ← (unumber~) makecharset::$12 & (unumber)(number) 7
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[8]) makecharset::bittab ← (byte[8]){ (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast *((const word*) SID_VOICE3_FREQ) ← (unumber)(number) $ffff
 Inlining cast (byte) fillscreen::fill#0 ← (unumber)(number) 0
 Inlining cast (byte) fillscreen::fill#1 ← (unumber)(number) 0
@@ -792,6 +789,14 @@ Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (word*) 54286
 Simplifying constant pointer cast (byte*) 54290
 Simplifying constant pointer cast (byte*) 54299
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 4
+Simplifying constant integer cast 8
+Simplifying constant integer cast $10
+Simplifying constant integer cast $20
+Simplifying constant integer cast $40
+Simplifying constant integer cast $80
 Simplifying constant pointer cast (byte*) 14336
 Simplifying constant pointer cast (byte*) 15360
 Simplifying constant pointer cast (byte*) 16384
@@ -815,14 +820,6 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Simplifying constant integer cast $10
 Simplifying constant integer cast $30
-Simplifying constant integer cast 1
-Simplifying constant integer cast 2
-Simplifying constant integer cast 4
-Simplifying constant integer cast 8
-Simplifying constant integer cast $10
-Simplifying constant integer cast $20
-Simplifying constant integer cast $40
-Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 0
@@ -894,7 +891,7 @@ Inferred type updated to byte in (unumber~) makecharset::$11 ← (byte) makechar
 Inferred type updated to byte in (unumber~) makecharset::$12 ← (byte) makecharset::ii#4 + (byte~) makecharset::$11
 Inferred type updated to byte in (unumber~) makecharset::$13 ← (byte~) makecharset::$12 & (byte) 7
 Inversing boolean not [81] (bool~) fire::$9 ← (byte) fire::c#0 <= (byte) 2 from [80] (bool~) fire::$8 ← (byte) fire::c#0 > (byte) 2
-Inversing boolean not [153] (bool~) makecharset::$9 ← (byte) makecharset::bc#1 <= (byte) $3f from [152] (bool~) makecharset::$8 ← (byte) makecharset::bc#1 > (byte) $3f
+Inversing boolean not [152] (bool~) makecharset::$9 ← (byte) makecharset::bc#1 <= (byte) $3f from [151] (bool~) makecharset::$8 ← (byte) makecharset::bc#1 > (byte) $3f
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) sid_rnd::return#0 = (byte) sid_rnd::return#3 (byte) sid_rnd::return#1 
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
@@ -959,20 +956,18 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) fire::$3 [73] if((byte*) fire::buffer#4!=(byte*~) fire::$2) goto fire::@2
 Simple Condition (bool~) fire::$9 [82] if((byte) fire::c#0<=(byte) 2) goto fire::@4
 Simple Condition (bool~) fire::$11 [98] if((byte*) fire::buffer#10!=(byte*~) fire::$10) goto fire::@10
-Simple Condition (bool~) makecharset::$1 [117] if((byte*) makecharset::font#2!=(byte*~) makecharset::$0) goto makecharset::@2
-Simple Condition (bool~) makecharset::$4 [127] if((byte*) makecharset::font1#2!=(byte*~) makecharset::$3) goto makecharset::@8
-Simple Condition (bool~) makecharset::$5 [135] if((byte) makecharset::c#2<(byte) $40) goto makecharset::@14
-Simple Condition (bool~) makecharset::$6 [141] if((byte) makecharset::i#2<(byte) 8) goto makecharset::@17
-Simple Condition (bool~) makecharset::$7 [149] if((byte) makecharset::ii#2<(byte) 8) goto makecharset::@20
-Simple Condition (bool~) makecharset::$9 [154] if((byte) makecharset::bc#1<=(byte) $3f) goto makecharset::@22
-Simple Condition (bool~) fillscreen::$0 [179] if((word) fillscreen::i#1!=rangelast(0,$3e7)) goto fillscreen::@1
+Simple Condition (bool~) makecharset::$1 [116] if((byte*) makecharset::font#2!=(byte*~) makecharset::$0) goto makecharset::@2
+Simple Condition (bool~) makecharset::$4 [126] if((byte*) makecharset::font1#2!=(byte*~) makecharset::$3) goto makecharset::@8
+Simple Condition (bool~) makecharset::$5 [134] if((byte) makecharset::c#2<(byte) $40) goto makecharset::@14
+Simple Condition (bool~) makecharset::$6 [140] if((byte) makecharset::i#2<(byte) 8) goto makecharset::@17
+Simple Condition (bool~) makecharset::$7 [148] if((byte) makecharset::ii#2<(byte) 8) goto makecharset::@20
+Simple Condition (bool~) makecharset::$9 [153] if((byte) makecharset::bc#1<=(byte) $3f) goto makecharset::@22
+Simple Condition (bool~) fillscreen::$0 [178] if((word) fillscreen::i#1!=rangelast(0,$3e7)) goto fillscreen::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [71] (byte*~) fire::$2 ← (const byte*) BUFFER + (word)(number) $18*(number) $28
 Constant right-side identified [86] (byte*) fire::buffer#1 ← (const byte*) BUFFER + (word)(number) $18*(number) $28
 Constant right-side identified [96] (byte*~) fire::$10 ← (const byte*) BUFFER + (word)(number) $19*(number) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[8]) { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte*) fillscreen::screen#0 = BUFFER
 Constant (const byte) fillscreen::fill#0 = 0
 Constant (const byte*) fillscreen::screen#1 = SCREEN1
@@ -992,7 +987,6 @@ Constant (const byte*) fire::buffer#0 = BUFFER
 Constant (const byte*) fire::$2 = BUFFER+(word)$18*$28
 Constant (const byte*) fire::buffer#1 = BUFFER+(word)$18*$28
 Constant (const byte*) fire::$10 = BUFFER+(word)$19*$28
-Constant (const byte[8]) makecharset::bittab = { 1, 2, 4, 8, $10, $20, $40, $80 }
 Constant (const byte) makecharset::c#0 = 0
 Constant (const byte) makecharset::bc#0 = 0
 Constant (const byte) makecharset::i#0 = 0
@@ -1007,11 +1001,11 @@ Constant (const word) main::toD0182_$4 = (word)main::toD0182_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [25] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [177] fillscreen::i#1 ← ++ fillscreen::i#2 to ++
-Resolved ranged comparison value [179] if(fillscreen::i#1!=rangelast(0,$3e7)) goto fillscreen::@1 to (number) $3e8
+Resolved ranged next value [176] fillscreen::i#1 ← ++ fillscreen::i#2 to ++
+Resolved ranged comparison value [178] if(fillscreen::i#1!=rangelast(0,$3e7)) goto fillscreen::@1 to (number) $3e8
 Rewriting conditional comparison [82] if((byte) fire::c#0<=(byte) 2) goto fire::@4
-Rewriting conditional comparison [154] if((byte) makecharset::bc#1<=(byte) $3f) goto makecharset::@22
-De-inlining pointer[w] to *(pointer+w)   [160] *((byte*~) makecharset::$14 + (word~) makecharset::$17) ← (byte) makecharset::b#2
+Rewriting conditional comparison [153] if((byte) makecharset::bc#1<=(byte) $3f) goto makecharset::@22
+De-inlining pointer[w] to *(pointer+w)   [159] *((byte*~) makecharset::$14 + (word~) makecharset::$17) ← (byte) makecharset::b#2
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks

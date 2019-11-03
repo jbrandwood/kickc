@@ -1,4 +1,4 @@
-Fixing pointer array-indexing *((word[]) charset_spec_row + (byte) main::c)
+Fixing pointer array-indexing *((const word[]) charset_spec_row + (byte) main::c)
 Identified constant variable (byte*) VIC_MEMORY
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) CHARSET
@@ -10,7 +10,6 @@ Culled Empty Block (label) gen_char3::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (word[]) charset_spec_row ← { (number) $f7da, (number) $f7de, (number) $f24e, (number) $d6de }
   to:@2
 
 (void()) main()
@@ -30,7 +29,7 @@ main::@2: scope:[main]  from main::@1
   (byte) main::c#3 ← phi( main::@1/(byte) main::c#2 )
   (byte~) main::$10 ← (byte) main::c#3 * (const byte) SIZEOF_WORD
   (byte*) gen_char3::dst#0 ← (byte*) main::charset#2
-  (word) gen_char3::spec#0 ← *((word[]) charset_spec_row + (byte~) main::$10)
+  (word) gen_char3::spec#0 ← *((const word[]) charset_spec_row + (byte~) main::$10)
   call gen_char3 
   to:main::@7
 main::@7: scope:[main]  from main::@2
@@ -130,7 +129,7 @@ SYMBOL TABLE SSA
 (const byte*) SCREEN = (byte*)(number) $400
 (const byte) SIZEOF_WORD = (byte) 2
 (const byte*) VIC_MEMORY = (byte*)(number) $d018
-(word[]) charset_spec_row
+(const word[]) charset_spec_row = { (word)(number) $f7da, (word)(number) $f7de, (word)(number) $f24e, (word)(number) $d6de }
 (void()) gen_char3((byte*) gen_char3::dst , (word) gen_char3::spec)
 (byte~) gen_char3::$0
 (number~) gen_char3::$1
@@ -235,21 +234,19 @@ Adding number conversion cast (unumber) gen_char3::$6 in (number~) gen_char3::$6
 Adding number conversion cast (unumber) 1 in (number~) gen_char3::$4 ← (byte) gen_char3::b#4 | (number) 1
 Adding number conversion cast (unumber) gen_char3::$4 in (number~) gen_char3::$4 ← (byte) gen_char3::b#4 | (unumber)(number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (word[]) charset_spec_row ← (word[]){ (word)(number) $f7da, (word)(number) $f7de, (word)(number) $f24e, (word)(number) $d6de }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (byte) main::c#0 ← (unumber)(number) 0
 Inlining cast (word~) main::$1 ← (word)(const byte*) SCREEN
 Inlining cast (word~) main::$3 ← (word)(const byte*) CHARSET
 Inlining cast (byte~) main::$6 ← (byte)(unumber~) main::$5
 Inlining cast (byte) gen_char3::b#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53272
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 12288
 Simplifying constant integer cast $f7da
 Simplifying constant integer cast $f7de
 Simplifying constant integer cast $f24e
 Simplifying constant integer cast $d6de
+Simplifying constant pointer cast (byte*) 53272
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 12288
 Simplifying constant integer cast 8
 Simplifying constant integer cast 0
 Simplifying constant integer cast 4
@@ -283,7 +280,7 @@ Inferred type updated to byte in (unumber~) gen_char3::$1 ← (byte~) gen_char3:
 Inferred type updated to byte in (unumber~) gen_char3::$5 ← (byte) gen_char3::b#3 * (byte) 2
 Inferred type updated to word in (unumber~) gen_char3::$6 ← (word) gen_char3::spec#3 * (byte) 2
 Inferred type updated to byte in (unumber~) gen_char3::$4 ← (byte) gen_char3::b#4 | (byte) 1
-Inversing boolean not [33] (bool~) gen_char3::$3 ← (byte~) gen_char3::$1 == (byte) 0 from [32] (bool~) gen_char3::$2 ← (byte~) gen_char3::$1 != (byte) 0
+Inversing boolean not [32] (bool~) gen_char3::$3 ← (byte~) gen_char3::$1 == (byte) 0 from [31] (bool~) gen_char3::$2 ← (byte~) gen_char3::$1 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte*) main::charset#0 = (byte*~) main::$0 
 Alias (byte) main::c#2 = (byte) main::c#3 (byte) main::c#4 
@@ -312,18 +309,15 @@ Identical Phi Values (byte) gen_char3::r#2 (byte) gen_char3::r#6
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) gen_char3::dst#5 (byte*) gen_char3::dst#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$7 [6] if((byte) main::c#2!=(byte) 4) goto main::@2
-Simple Condition (bool~) gen_char3::$3 [34] if((byte~) gen_char3::$1==(byte) 0) goto gen_char3::@3
-Simple Condition (bool~) gen_char3::$7 [42] if((byte) gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2
-Simple Condition (bool~) gen_char3::$8 [50] if((byte) gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1
+Simple Condition (bool~) main::$7 [5] if((byte) main::c#2!=(byte) 4) goto main::@2
+Simple Condition (bool~) gen_char3::$3 [33] if((byte~) gen_char3::$1==(byte) 0) goto gen_char3::@3
+Simple Condition (bool~) gen_char3::$7 [41] if((byte) gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2
+Simple Condition (bool~) gen_char3::$8 [49] if((byte) gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [1] (byte*) main::charset#0 ← (const byte*) CHARSET + (byte) 8
-Constant right-side identified [16] (word~) main::$1 ← (word)(const byte*) SCREEN
-Constant right-side identified [18] (word~) main::$3 ← (word)(const byte*) CHARSET
+Constant right-side identified [0] (byte*) main::charset#0 ← (const byte*) CHARSET + (byte) 8
+Constant right-side identified [15] (word~) main::$1 ← (word)(const byte*) SCREEN
+Constant right-side identified [17] (word~) main::$3 ← (word)(const byte*) CHARSET
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (word[]) { (word) $f7da, (word) $f7de, (word) $f24e, (word) $d6de }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const word[]) charset_spec_row = { $f7da, $f7de, $f24e, $d6de }
 Constant (const byte*) main::charset#0 = CHARSET+8
 Constant (const byte) main::c#0 = 0
 Constant (const word) main::$1 = (word)SCREEN
@@ -332,10 +326,10 @@ Constant (const byte) gen_char3::r#0 = 0
 Constant (const byte) gen_char3::b#0 = 0
 Constant (const byte) gen_char3::c#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [40] gen_char3::c#1 ← ++ gen_char3::c#2 to ++
-Resolved ranged comparison value [42] if(gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2 to (number) 3
-Resolved ranged next value [48] gen_char3::r#1 ← ++ gen_char3::r#6 to ++
-Resolved ranged comparison value [50] if(gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1 to (number) 5
+Resolved ranged next value [39] gen_char3::c#1 ← ++ gen_char3::c#2 to ++
+Resolved ranged comparison value [41] if(gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2 to (number) 3
+Resolved ranged next value [47] gen_char3::r#1 ← ++ gen_char3::r#6 to ++
+Resolved ranged comparison value [49] if(gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1 to (number) 5
 Adding number conversion cast (unumber) 3 in if((byte) gen_char3::c#1!=(number) 3) goto gen_char3::@2
 Adding number conversion cast (unumber) 5 in if((byte) gen_char3::r#1!=(number) 5) goto gen_char3::@1
 Successful SSA optimization PassNAddNumberTypeConversions

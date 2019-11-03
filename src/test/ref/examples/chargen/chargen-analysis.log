@@ -13,6 +13,7 @@ Culled Empty Block (label) @5
 Culled Empty Block (label) @6
 Culled Empty Block (label) @7
 Culled Empty Block (label) @8
+Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) keyboard_matrix_read::@1
 Culled Empty Block (label) @11
@@ -37,7 +38,7 @@ Culled Empty Block (label) @18
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@9
+  to:@19
 
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
 mul8u: scope:[mul8u]  from plot_chargen::@1
@@ -87,16 +88,11 @@ mul8u::@return: scope:[mul8u]  from mul8u::@3
   (word) mul8u::return#1 ← (word) mul8u::return#3
   return 
   to:@return
-@9: scope:[]  from @begin
-  (byte[]) keyboard_char_keycodes ← { (const byte) KEY_AT, (const byte) KEY_A, (const byte) KEY_B, (const byte) KEY_C, (const byte) KEY_D, (const byte) KEY_E, (const byte) KEY_F, (const byte) KEY_G, (const byte) KEY_H, (const byte) KEY_I, (const byte) KEY_J, (const byte) KEY_K, (const byte) KEY_L, (const byte) KEY_M, (const byte) KEY_N, (const byte) KEY_O, (const byte) KEY_P, (const byte) KEY_Q, (const byte) KEY_R, (const byte) KEY_S, (const byte) KEY_T, (const byte) KEY_U, (const byte) KEY_V, (const byte) KEY_W, (const byte) KEY_X, (const byte) KEY_Y, (const byte) KEY_Z, (number) $3f, (const byte) KEY_POUND, (number) $3f, (const byte) KEY_ARROW_UP, (const byte) KEY_ARROW_LEFT, (const byte) KEY_SPACE, (number) $3f, (number) $3f, (number) $3f, (number) $3f, (number) $3f, (number) $3f, (number) $3f, (number) $3f, (number) $3f, (const byte) KEY_ASTERISK, (const byte) KEY_PLUS, (const byte) KEY_COMMA, (const byte) KEY_MINUS, (const byte) KEY_DOT, (const byte) KEY_SLASH, (const byte) KEY_0, (const byte) KEY_1, (const byte) KEY_2, (const byte) KEY_3, (const byte) KEY_4, (const byte) KEY_5, (const byte) KEY_6, (const byte) KEY_7, (const byte) KEY_8, (const byte) KEY_9, (const byte) KEY_COLON, (const byte) KEY_SEMICOLON, (number) $3f, (const byte) KEY_EQUALS, (number) $3f, (number) $3f }
-  (byte[8]) keyboard_matrix_row_bitmask ← { (number) $fe, (number) $fd, (number) $fb, (number) $f7, (number) $ef, (number) $df, (number) $bf, (number) $7f }
-  (byte[8]) keyboard_matrix_col_bitmask ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
-  to:@19
 
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   (byte) keyboard_matrix_read::rowid#1 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 )
-  *((const byte*) CIA1_PORT_A) ← *((byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
+  *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
   (byte~) keyboard_matrix_read::$0 ← ~ *((const byte*) CIA1_PORT_B)
   (byte) keyboard_matrix_read::row_pressed_bits#0 ← (byte~) keyboard_matrix_read::$0
   (byte) keyboard_matrix_read::return#0 ← (byte) keyboard_matrix_read::row_pressed_bits#0
@@ -122,7 +118,7 @@ keyboard_key_pressed::@2: scope:[keyboard_key_pressed]  from keyboard_key_presse
   (byte) keyboard_key_pressed::colidx#1 ← phi( keyboard_key_pressed/(byte) keyboard_key_pressed::colidx#0 )
   (byte) keyboard_matrix_read::return#4 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::return#2 )
   (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#4
-  (byte~) keyboard_key_pressed::$3 ← (byte~) keyboard_key_pressed::$2 & *((byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#1)
+  (byte~) keyboard_key_pressed::$3 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#1)
   (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$3
   to:keyboard_key_pressed::@return
 keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@2
@@ -134,7 +130,7 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 (byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@16
   (byte) keyboard_get_keycode::ch#1 ← phi( main::@16/(byte) keyboard_get_keycode::ch#0 )
-  (byte) keyboard_get_keycode::return#0 ← *((byte[]) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#1)
+  (byte) keyboard_get_keycode::return#0 ← *((const byte[]) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#1)
   to:keyboard_get_keycode::@return
 keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_keycode
   (byte) keyboard_get_keycode::return#3 ← phi( keyboard_get_keycode/(byte) keyboard_get_keycode::return#0 )
@@ -495,7 +491,7 @@ plot_chargen::@8: scope:[plot_chargen]  from plot_chargen::@7
 plot_chargen::@return: scope:[plot_chargen]  from plot_chargen::@8
   return 
   to:@return
-@19: scope:[]  from @9
+@19: scope:[]  from @begin
   call main 
   to:@20
 @20: scope:[]  from @19
@@ -505,7 +501,6 @@ plot_chargen::@return: scope:[plot_chargen]  from plot_chargen::@8
 SYMBOL TABLE SSA
 (label) @19
 (label) @20
-(label) @9
 (label) @begin
 (label) @end
 (const byte*) CHARGEN = (byte*)(number) $d000
@@ -568,7 +563,7 @@ SYMBOL TABLE SSA
 (const byte) KEY_Z = (number) $c
 (const byte*) PROCPORT = (byte*)(number) 1
 (const byte*) SCREEN = (byte*)(number) $400
-(byte[]) keyboard_char_keycodes
+(const byte[]) keyboard_char_keycodes = { (const byte) KEY_AT, (const byte) KEY_A, (const byte) KEY_B, (const byte) KEY_C, (const byte) KEY_D, (const byte) KEY_E, (const byte) KEY_F, (const byte) KEY_G, (const byte) KEY_H, (const byte) KEY_I, (const byte) KEY_J, (const byte) KEY_K, (const byte) KEY_L, (const byte) KEY_M, (const byte) KEY_N, (const byte) KEY_O, (const byte) KEY_P, (const byte) KEY_Q, (const byte) KEY_R, (const byte) KEY_S, (const byte) KEY_T, (const byte) KEY_U, (const byte) KEY_V, (const byte) KEY_W, (const byte) KEY_X, (const byte) KEY_Y, (const byte) KEY_Z, (byte)(number) $3f, (const byte) KEY_POUND, (byte)(number) $3f, (const byte) KEY_ARROW_UP, (const byte) KEY_ARROW_LEFT, (const byte) KEY_SPACE, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (const byte) KEY_ASTERISK, (const byte) KEY_PLUS, (const byte) KEY_COMMA, (const byte) KEY_MINUS, (const byte) KEY_DOT, (const byte) KEY_SLASH, (const byte) KEY_0, (const byte) KEY_1, (const byte) KEY_2, (const byte) KEY_3, (const byte) KEY_4, (const byte) KEY_5, (const byte) KEY_6, (const byte) KEY_7, (const byte) KEY_8, (const byte) KEY_9, (const byte) KEY_COLON, (const byte) KEY_SEMICOLON, (byte)(number) $3f, (const byte) KEY_EQUALS, (byte)(number) $3f, (byte)(number) $3f }
 (byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 (label) keyboard_get_keycode::@return
 (byte) keyboard_get_keycode::ch
@@ -616,7 +611,7 @@ SYMBOL TABLE SSA
 (byte) keyboard_key_pressed::return#9
 (byte) keyboard_key_pressed::rowidx
 (byte) keyboard_key_pressed::rowidx#0
-(byte[8]) keyboard_matrix_col_bitmask
+(const byte[8]) keyboard_matrix_col_bitmask = { (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (byte~) keyboard_matrix_read::$0
 (label) keyboard_matrix_read::@return
@@ -631,7 +626,7 @@ SYMBOL TABLE SSA
 (byte) keyboard_matrix_read::rowid
 (byte) keyboard_matrix_read::rowid#0
 (byte) keyboard_matrix_read::rowid#1
-(byte[8]) keyboard_matrix_row_bitmask
+(const byte[8]) keyboard_matrix_row_bitmask = { (byte)(number) $fe, (byte)(number) $fd, (byte)(number) $fb, (byte)(number) $f7, (byte)(number) $ef, (byte)(number) $df, (byte)(number) $bf, (byte)(number) $7f }
 (void()) main()
 (byte*~) main::$0
 (byte*~) main::$11
@@ -984,10 +979,6 @@ Adding number conversion cast (unumber) plot_chargen::$13 in (number~) plot_char
 Adding number conversion cast (unumber) $20 in (byte*~) plot_chargen::$15 ← (byte*) plot_chargen::sc#4 + (number) $20
 Adding number conversion cast (unumber) $37 in *((const byte*) PROCPORT) ← (number) $37
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[]) keyboard_char_keycodes ← (byte[]){ (const byte) KEY_AT, (const byte) KEY_A, (const byte) KEY_B, (const byte) KEY_C, (const byte) KEY_D, (const byte) KEY_E, (const byte) KEY_F, (const byte) KEY_G, (const byte) KEY_H, (const byte) KEY_I, (const byte) KEY_J, (const byte) KEY_K, (const byte) KEY_L, (const byte) KEY_M, (const byte) KEY_N, (const byte) KEY_O, (const byte) KEY_P, (const byte) KEY_Q, (const byte) KEY_R, (const byte) KEY_S, (const byte) KEY_T, (const byte) KEY_U, (const byte) KEY_V, (const byte) KEY_W, (const byte) KEY_X, (const byte) KEY_Y, (const byte) KEY_Z, (byte)(number) $3f, (const byte) KEY_POUND, (byte)(number) $3f, (const byte) KEY_ARROW_UP, (const byte) KEY_ARROW_LEFT, (const byte) KEY_SPACE, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (byte)(number) $3f, (const byte) KEY_ASTERISK, (const byte) KEY_PLUS, (const byte) KEY_COMMA, (const byte) KEY_MINUS, (const byte) KEY_DOT, (const byte) KEY_SLASH, (const byte) KEY_0, (const byte) KEY_1, (const byte) KEY_2, (const byte) KEY_3, (const byte) KEY_4, (const byte) KEY_5, (const byte) KEY_6, (const byte) KEY_7, (const byte) KEY_8, (const byte) KEY_9, (const byte) KEY_COLON, (const byte) KEY_SEMICOLON, (byte)(number) $3f, (const byte) KEY_EQUALS, (byte)(number) $3f, (byte)(number) $3f }
-Added casts to value list in (byte[8]) keyboard_matrix_row_bitmask ← (byte[8]){ (byte)(number) $fe, (byte)(number) $fd, (byte)(number) $fb, (byte)(number) $f7, (byte)(number) $ef, (byte)(number) $df, (byte)(number) $bf, (byte)(number) $7f }
-Added casts to value list in (byte[8]) keyboard_matrix_col_bitmask ← (byte[8]){ (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (word) mul8u::res#0 ← (unumber)(number) 0
 Inlining cast (byte) plot_chargen::ch#0 ← (unumber)(number) $20
 Inlining cast (byte) plot_chargen::shift#0 ← (unumber)(number) 0
@@ -1009,13 +1000,6 @@ Simplifying constant pointer cast (byte*) 1
 Simplifying constant pointer cast (byte*) 53248
 Simplifying constant pointer cast (byte*) 56320
 Simplifying constant pointer cast (byte*) 56321
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 1
 Simplifying constant integer cast $3f
 Simplifying constant integer cast $3f
 Simplifying constant integer cast $3f
@@ -1046,6 +1030,13 @@ Simplifying constant integer cast $10
 Simplifying constant integer cast $20
 Simplifying constant integer cast $40
 Simplifying constant integer cast $80
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 1
 Simplifying constant integer cast 7
 Simplifying constant integer cast 3
 Simplifying constant integer cast $3e8
@@ -1142,14 +1133,14 @@ Inferred type updated to word in (unumber~) plot_chargen::$1 ← (word~) plot_ch
 Inferred type updated to byte in (unumber~) plot_chargen::$10 ← (byte) plot_chargen::bits#2 & (byte) $80
 Inferred type updated to byte in (unumber~) plot_chargen::$13 ← (byte) plot_chargen::bits#3 * (byte) 2
 Inversing boolean not [9] (bool~) mul8u::$3 ← (byte~) mul8u::$1 == (byte) 0 from [8] (bool~) mul8u::$2 ← (byte~) mul8u::$1 != (byte) 0
-Inversing boolean not [101] (bool~) main::$17 ← (byte~) main::$15 == (byte) 0 from [100] (bool~) main::$16 ← (byte~) main::$15 != (byte) 0
-Inversing boolean not [110] (bool~) main::$20 ← (byte~) main::$18 == (byte) 0 from [109] (bool~) main::$19 ← (byte~) main::$18 != (byte) 0
-Inversing boolean not [120] (bool~) main::$23 ← (byte~) main::$21 == (byte) 0 from [119] (bool~) main::$22 ← (byte~) main::$21 != (byte) 0
-Inversing boolean not [130] (bool~) main::$26 ← (byte~) main::$24 == (byte) 0 from [129] (bool~) main::$25 ← (byte~) main::$24 != (byte) 0
-Inversing boolean not [157] (bool~) main::$31 ← (byte) main::key#0 == (byte) $3f from [156] (bool~) main::$30 ← (byte) main::key#0 != (byte) $3f
-Inversing boolean not [161] (bool~) main::$34 ← (byte) main::pressed#2 == (byte) 0 from [160] (bool~) main::$33 ← (byte) main::pressed#2 != (byte) 0
-Inversing boolean not [199] (bool~) plot_chargen::$4 ← (byte) plot_chargen::shift#2 == (byte) 0 from [198] (bool~) plot_chargen::$3 ← (byte) plot_chargen::shift#2 != (byte) 0
-Inversing boolean not [224] (bool~) plot_chargen::$12 ← (byte~) plot_chargen::$10 == (byte) 0 from [223] (bool~) plot_chargen::$11 ← (byte~) plot_chargen::$10 != (byte) 0
+Inversing boolean not [98] (bool~) main::$17 ← (byte~) main::$15 == (byte) 0 from [97] (bool~) main::$16 ← (byte~) main::$15 != (byte) 0
+Inversing boolean not [107] (bool~) main::$20 ← (byte~) main::$18 == (byte) 0 from [106] (bool~) main::$19 ← (byte~) main::$18 != (byte) 0
+Inversing boolean not [117] (bool~) main::$23 ← (byte~) main::$21 == (byte) 0 from [116] (bool~) main::$22 ← (byte~) main::$21 != (byte) 0
+Inversing boolean not [127] (bool~) main::$26 ← (byte~) main::$24 == (byte) 0 from [126] (bool~) main::$25 ← (byte~) main::$24 != (byte) 0
+Inversing boolean not [154] (bool~) main::$31 ← (byte) main::key#0 == (byte) $3f from [153] (bool~) main::$30 ← (byte) main::key#0 != (byte) $3f
+Inversing boolean not [158] (bool~) main::$34 ← (byte) main::pressed#2 == (byte) 0 from [157] (bool~) main::$33 ← (byte) main::pressed#2 != (byte) 0
+Inversing boolean not [196] (bool~) plot_chargen::$4 ← (byte) plot_chargen::shift#2 == (byte) 0 from [195] (bool~) plot_chargen::$3 ← (byte) plot_chargen::shift#2 != (byte) 0
+Inversing boolean not [221] (bool~) plot_chargen::$12 ← (byte~) plot_chargen::$10 == (byte) 0 from [220] (bool~) plot_chargen::$11 ← (byte~) plot_chargen::$10 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) mul8u::mb#0 = (byte) mul8u::b#1 
 Alias (byte) mul8u::a#2 = (byte) mul8u::a#3 (byte) mul8u::a#6 
@@ -1237,37 +1228,30 @@ Identical Phi Values (byte*) plot_chargen::chargen#3 (byte*) plot_chargen::charg
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) mul8u::$0 [5] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2
 Simple Condition (bool~) mul8u::$3 [10] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@4
-Simple Condition (bool~) main::$12 [59] if((byte*) main::sc#2<(byte*~) main::$11) goto main::@2
-Simple Condition (bool~) main::$14 [91] if((byte) main::i#1!=rangelast(0,3)) goto main::@7
-Simple Condition (bool~) main::$17 [102] if((byte~) main::$15==(byte) 0) goto main::@10
-Simple Condition (bool~) main::$20 [111] if((byte~) main::$18==(byte) 0) goto main::@11
-Simple Condition (bool~) main::$23 [121] if((byte~) main::$21==(byte) 0) goto main::@12
-Simple Condition (bool~) main::$26 [131] if((byte~) main::$24==(byte) 0) goto main::@13
-Simple Condition (bool~) main::$28 [140] if((byte~) main::$27!=(byte) 0) goto main::@14
-Simple Condition (bool~) main::$31 [158] if((byte) main::key#0==(byte) $3f) goto main::@17
-Simple Condition (bool~) main::$34 [162] if((byte) main::pressed#2==(byte) 0) goto main::@18
-Simple Condition (bool~) main::$36 [173] if((byte) main::ch#1!=rangelast(0,$3f)) goto main::@16
-Simple Condition (bool~) print_str_at::$0 [186] if((byte) 0!=*((byte*) print_str_at::str#5)) goto print_str_at::@2
-Simple Condition (bool~) plot_chargen::$4 [200] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1
-Simple Condition (bool~) plot_chargen::$12 [225] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5
-Simple Condition (bool~) plot_chargen::$14 [233] if((byte) plot_chargen::x#1!=rangelast(0,7)) goto plot_chargen::@4
-Simple Condition (bool~) plot_chargen::$16 [241] if((byte) plot_chargen::y#1!=rangelast(0,7)) goto plot_chargen::@3
+Simple Condition (bool~) main::$12 [56] if((byte*) main::sc#2<(byte*~) main::$11) goto main::@2
+Simple Condition (bool~) main::$14 [88] if((byte) main::i#1!=rangelast(0,3)) goto main::@7
+Simple Condition (bool~) main::$17 [99] if((byte~) main::$15==(byte) 0) goto main::@10
+Simple Condition (bool~) main::$20 [108] if((byte~) main::$18==(byte) 0) goto main::@11
+Simple Condition (bool~) main::$23 [118] if((byte~) main::$21==(byte) 0) goto main::@12
+Simple Condition (bool~) main::$26 [128] if((byte~) main::$24==(byte) 0) goto main::@13
+Simple Condition (bool~) main::$28 [137] if((byte~) main::$27!=(byte) 0) goto main::@14
+Simple Condition (bool~) main::$31 [155] if((byte) main::key#0==(byte) $3f) goto main::@17
+Simple Condition (bool~) main::$34 [159] if((byte) main::pressed#2==(byte) 0) goto main::@18
+Simple Condition (bool~) main::$36 [170] if((byte) main::ch#1!=rangelast(0,$3f)) goto main::@16
+Simple Condition (bool~) print_str_at::$0 [183] if((byte) 0!=*((byte*) print_str_at::str#5)) goto print_str_at::@2
+Simple Condition (bool~) plot_chargen::$4 [197] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1
+Simple Condition (bool~) plot_chargen::$12 [222] if((byte~) plot_chargen::$10==(byte) 0) goto plot_chargen::@5
+Simple Condition (bool~) plot_chargen::$14 [230] if((byte) plot_chargen::x#1!=rangelast(0,7)) goto plot_chargen::@4
+Simple Condition (bool~) plot_chargen::$16 [238] if((byte) plot_chargen::y#1!=rangelast(0,7)) goto plot_chargen::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [57] (byte*~) main::$11 ← (const byte*) SCREEN + (word) $3e8
-Constant right-side identified [63] (byte*) print_str_at::at#0 ← (const byte*) SCREEN + (byte) 1
-Constant right-side identified [67] (byte*~) main::$2 ← (const byte*) SCREEN + (byte) 1
-Constant right-side identified [72] (byte*~) main::$5 ← (const byte*) SCREEN + (byte) 1
-Constant right-side identified [77] (byte*~) main::$8 ← (const byte*) SCREEN + (byte) 1
-Constant right-side identified [203] (byte*~) plot_chargen::$5 ← (const byte*) SCREEN + (byte) $28
+Constant right-side identified [54] (byte*~) main::$11 ← (const byte*) SCREEN + (word) $3e8
+Constant right-side identified [60] (byte*) print_str_at::at#0 ← (const byte*) SCREEN + (byte) 1
+Constant right-side identified [64] (byte*~) main::$2 ← (const byte*) SCREEN + (byte) 1
+Constant right-side identified [69] (byte*~) main::$5 ← (const byte*) SCREEN + (byte) 1
+Constant right-side identified [74] (byte*~) main::$8 ← (const byte*) SCREEN + (byte) 1
+Constant right-side identified [200] (byte*~) plot_chargen::$5 ← (const byte*) SCREEN + (byte) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[]) { (const byte) KEY_AT, (const byte) KEY_A, (const byte) KEY_B, (const byte) KEY_C, (const byte) KEY_D, (const byte) KEY_E, (const byte) KEY_F, (const byte) KEY_G, (const byte) KEY_H, (const byte) KEY_I, (const byte) KEY_J, (const byte) KEY_K, (const byte) KEY_L, (const byte) KEY_M, (const byte) KEY_N, (const byte) KEY_O, (const byte) KEY_P, (const byte) KEY_Q, (const byte) KEY_R, (const byte) KEY_S, (const byte) KEY_T, (const byte) KEY_U, (const byte) KEY_V, (const byte) KEY_W, (const byte) KEY_X, (const byte) KEY_Y, (const byte) KEY_Z, (byte) $3f, (const byte) KEY_POUND, (byte) $3f, (const byte) KEY_ARROW_UP, (const byte) KEY_ARROW_LEFT, (const byte) KEY_SPACE, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (const byte) KEY_ASTERISK, (const byte) KEY_PLUS, (const byte) KEY_COMMA, (const byte) KEY_MINUS, (const byte) KEY_DOT, (const byte) KEY_SLASH, (const byte) KEY_0, (const byte) KEY_1, (const byte) KEY_2, (const byte) KEY_3, (const byte) KEY_4, (const byte) KEY_5, (const byte) KEY_6, (const byte) KEY_7, (const byte) KEY_8, (const byte) KEY_9, (const byte) KEY_COLON, (const byte) KEY_SEMICOLON, (byte) $3f, (const byte) KEY_EQUALS, (byte) $3f, (byte) $3f }
-Identified constant from value list (byte[8]) { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
-Identified constant from value list (byte[8]) { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const word) mul8u::res#0 = 0
-Constant (const byte[]) keyboard_char_keycodes = { KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f }
-Constant (const byte[8]) keyboard_matrix_row_bitmask = { $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f }
-Constant (const byte[8]) keyboard_matrix_col_bitmask = { 1, 2, 4, 8, $10, $20, $40, $80 }
 Constant (const byte*) main::sc#0 = SCREEN
 Constant (const byte*) main::$11 = SCREEN+$3e8
 Constant (const byte*) print_str_at::at#0 = SCREEN+1
@@ -1303,16 +1287,16 @@ Constant (const byte) plot_chargen::x#0 = 0
 Constant (const byte) plot_chargen::c#0 = '.'
 Constant (const byte) plot_chargen::c#1 = '*'
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [181] if(true) goto main::@9
+if() condition always true - replacing block destination [178] if(true) goto main::@9
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [89] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [91] if(main::i#1!=rangelast(0,3)) goto main::@7 to (number) 4
-Resolved ranged next value [171] main::ch#1 ← ++ main::ch#2 to ++
-Resolved ranged comparison value [173] if(main::ch#1!=rangelast(0,$3f)) goto main::@16 to (number) $40
-Resolved ranged next value [231] plot_chargen::x#1 ← ++ plot_chargen::x#2 to ++
-Resolved ranged comparison value [233] if(plot_chargen::x#1!=rangelast(0,7)) goto plot_chargen::@4 to (number) 8
-Resolved ranged next value [239] plot_chargen::y#1 ← ++ plot_chargen::y#2 to ++
-Resolved ranged comparison value [241] if(plot_chargen::y#1!=rangelast(0,7)) goto plot_chargen::@3 to (number) 8
+Resolved ranged next value [86] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [88] if(main::i#1!=rangelast(0,3)) goto main::@7 to (number) 4
+Resolved ranged next value [168] main::ch#1 ← ++ main::ch#2 to ++
+Resolved ranged comparison value [170] if(main::ch#1!=rangelast(0,$3f)) goto main::@16 to (number) $40
+Resolved ranged next value [228] plot_chargen::x#1 ← ++ plot_chargen::x#2 to ++
+Resolved ranged comparison value [230] if(plot_chargen::x#1!=rangelast(0,7)) goto plot_chargen::@4 to (number) 8
+Resolved ranged next value [236] plot_chargen::y#1 ← ++ plot_chargen::y#2 to ++
+Resolved ranged comparison value [238] if(plot_chargen::y#1!=rangelast(0,7)) goto plot_chargen::@3 to (number) 8
 Eliminating unused constant (const byte) main::shift#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
@@ -1425,7 +1409,6 @@ Added new block during phi lifting plot_chargen::@10(between plot_chargen and pl
 Added new block during phi lifting plot_chargen::@11(between plot_chargen::@7 and plot_chargen::@3)
 Added new block during phi lifting plot_chargen::@12(between plot_chargen::@5 and plot_chargen::@4)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @9
 Adding NOP phi() at start of @19
 Adding NOP phi() at start of @20
 Adding NOP phi() at start of @end
@@ -1446,48 +1429,47 @@ Adding NOP phi() at start of main::@14
 Adding NOP phi() at start of plot_chargen::@6
 Adding NOP phi() at start of mul8u::@3
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to print_str_at:10 print_str_at:12 print_str_at:14 print_str_at:16 plot_chargen:21 keyboard_key_pressed:26 keyboard_key_pressed:32 keyboard_key_pressed:38 keyboard_key_pressed:44 keyboard_key_pressed:50 keyboard_get_keycode:58 keyboard_key_pressed:64 plot_chargen:76 
-Calls in [plot_chargen] to mul8u:102 
-Calls in [keyboard_key_pressed] to keyboard_matrix_read:153 
+Calls in [] to main:2 
+Calls in [main] to print_str_at:9 print_str_at:11 print_str_at:13 print_str_at:15 plot_chargen:20 keyboard_key_pressed:25 keyboard_key_pressed:31 keyboard_key_pressed:37 keyboard_key_pressed:43 keyboard_key_pressed:49 keyboard_get_keycode:57 keyboard_key_pressed:63 plot_chargen:75 
+Calls in [plot_chargen] to mul8u:101 
+Calls in [keyboard_key_pressed] to keyboard_matrix_read:152 
 
 Created 29 initial phi equivalence classes
-Coalesced [20] plot_chargen::pos#6 ← plot_chargen::pos#0
-Coalesced [63] keyboard_key_pressed::key#7 ← keyboard_key_pressed::key#5
-Coalesced [67] main::pressed#4 ← main::pressed#1
-Coalesced [73] plot_chargen::ch#3 ← plot_chargen::ch#1
-Coalesced [74] plot_chargen::shift#3 ← plot_chargen::shift#1
-Coalesced [75] plot_chargen::pos#5 ← plot_chargen::pos#1
-Coalesced [80] main::cur_pos#27 ← main::cur_pos#11
-Coalesced [81] main::ch#10 ← main::ch#1
-Coalesced [83] main::cur_pos#31 ← main::cur_pos#18
-Coalesced [84] main::cur_pos#30 ← main::cur_pos#20
-Coalesced [85] main::cur_pos#29 ← main::cur_pos#22
-Coalesced (already) [86] main::cur_pos#28 ← main::cur_pos#24
-Coalesced [87] main::i#4 ← main::i#1
-Coalesced [90] main::sc#4 ← main::sc#1
-Coalesced [98] plot_chargen::chargen#11 ← plot_chargen::chargen#1
-Coalesced [106] plot_chargen::sc#9 ← plot_chargen::sc#0
-Coalesced [109] plot_chargen::bits#5 ← plot_chargen::bits#0
-Coalesced [110] plot_chargen::sc#10 ← plot_chargen::sc#7
-Coalesced [127] plot_chargen::y#7 ← plot_chargen::y#1
-Coalesced [128] plot_chargen::sc#8 ← plot_chargen::sc#2
-Coalesced [129] plot_chargen::bits#6 ← plot_chargen::bits#1
-Coalesced [130] plot_chargen::sc#11 ← plot_chargen::sc#1
-Coalesced [131] plot_chargen::x#5 ← plot_chargen::x#1
-Coalesced [132] plot_chargen::chargen#10 ← plot_chargen::chargen#0
-Coalesced [133] mul8u::a#7 ← mul8u::a#1
-Coalesced [141] mul8u::res#9 ← mul8u::res#1
-Coalesced [145] mul8u::a#8 ← mul8u::a#0
-Coalesced [146] mul8u::res#7 ← mul8u::res#6
-Coalesced [147] mul8u::mb#6 ← mul8u::mb#1
-Coalesced (already) [148] mul8u::res#8 ← mul8u::res#2
-Coalesced [164] print_str_at::str#8 ← print_str_at::str#7
-Coalesced [165] print_str_at::at#8 ← print_str_at::at#7
-Coalesced [172] print_str_at::str#9 ← print_str_at::str#4
-Coalesced [173] print_str_at::at#9 ← print_str_at::at#4
+Coalesced [19] plot_chargen::pos#6 ← plot_chargen::pos#0
+Coalesced [62] keyboard_key_pressed::key#7 ← keyboard_key_pressed::key#5
+Coalesced [66] main::pressed#4 ← main::pressed#1
+Coalesced [72] plot_chargen::ch#3 ← plot_chargen::ch#1
+Coalesced [73] plot_chargen::shift#3 ← plot_chargen::shift#1
+Coalesced [74] plot_chargen::pos#5 ← plot_chargen::pos#1
+Coalesced [79] main::cur_pos#27 ← main::cur_pos#11
+Coalesced [80] main::ch#10 ← main::ch#1
+Coalesced [82] main::cur_pos#31 ← main::cur_pos#18
+Coalesced [83] main::cur_pos#30 ← main::cur_pos#20
+Coalesced [84] main::cur_pos#29 ← main::cur_pos#22
+Coalesced (already) [85] main::cur_pos#28 ← main::cur_pos#24
+Coalesced [86] main::i#4 ← main::i#1
+Coalesced [89] main::sc#4 ← main::sc#1
+Coalesced [97] plot_chargen::chargen#11 ← plot_chargen::chargen#1
+Coalesced [105] plot_chargen::sc#9 ← plot_chargen::sc#0
+Coalesced [108] plot_chargen::bits#5 ← plot_chargen::bits#0
+Coalesced [109] plot_chargen::sc#10 ← plot_chargen::sc#7
+Coalesced [126] plot_chargen::y#7 ← plot_chargen::y#1
+Coalesced [127] plot_chargen::sc#8 ← plot_chargen::sc#2
+Coalesced [128] plot_chargen::bits#6 ← plot_chargen::bits#1
+Coalesced [129] plot_chargen::sc#11 ← plot_chargen::sc#1
+Coalesced [130] plot_chargen::x#5 ← plot_chargen::x#1
+Coalesced [131] plot_chargen::chargen#10 ← plot_chargen::chargen#0
+Coalesced [132] mul8u::a#7 ← mul8u::a#1
+Coalesced [140] mul8u::res#9 ← mul8u::res#1
+Coalesced [144] mul8u::a#8 ← mul8u::a#0
+Coalesced [145] mul8u::res#7 ← mul8u::res#6
+Coalesced [146] mul8u::mb#6 ← mul8u::mb#1
+Coalesced (already) [147] mul8u::res#8 ← mul8u::res#2
+Coalesced [163] print_str_at::str#8 ← print_str_at::str#7
+Coalesced [164] print_str_at::at#8 ← print_str_at::at#7
+Coalesced [171] print_str_at::str#9 ← print_str_at::str#4
+Coalesced [172] print_str_at::at#9 ← print_str_at::at#4
 Coalesced down to 21 phi equivalence classes
-Culled Empty Block (label) @9
 Culled Empty Block (label) @20
 Culled Empty Block (label) main::@32
 Culled Empty Block (label) main::@8

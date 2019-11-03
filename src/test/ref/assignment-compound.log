@@ -8,7 +8,6 @@ Culled Empty Block (label) test::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) ref ← { (number) 3, (number) 4, (number) 3, (number) $12, (number) 9, (number) 1, (number) 4, (number) 2, (number) 4, (number) 5, (number) 1, (number) 0 }
   (byte*~) $0 ← (const byte*) screen1 + (number) $28
   (byte*) screen2#0 ← (byte*~) $0
   to:@2
@@ -136,8 +135,8 @@ test: scope:[test]  from main main::@1 main::@10 main::@2 main::@3 main::@4 main
   (byte) test::i#11 ← phi( main/(byte) test::i#0 main::@1/(byte) test::i#1 main::@10/(byte) test::i#10 main::@2/(byte) test::i#2 main::@3/(byte) test::i#3 main::@4/(byte) test::i#4 main::@5/(byte) test::i#5 main::@6/(byte) test::i#6 main::@7/(byte) test::i#7 main::@8/(byte) test::i#8 main::@9/(byte) test::i#9 )
   (byte) test::a#11 ← phi( main/(byte) test::a#0 main::@1/(byte) test::a#1 main::@10/(byte) test::a#10 main::@2/(byte) test::a#2 main::@3/(byte) test::a#3 main::@4/(byte) test::a#4 main::@5/(byte) test::a#5 main::@6/(byte) test::a#6 main::@7/(byte) test::a#7 main::@8/(byte) test::a#8 main::@9/(byte) test::a#9 )
   *((const byte*) screen1 + (byte) test::i#11) ← (byte) test::a#11
-  *((byte*) screen2#1 + (byte) test::i#11) ← *((byte[]) ref + (byte) test::i#11)
-  (bool~) test::$0 ← *((byte[]) ref + (byte) test::i#11) == (byte) test::a#11
+  *((byte*) screen2#1 + (byte) test::i#11) ← *((const byte[]) ref + (byte) test::i#11)
+  (bool~) test::$0 ← *((const byte[]) ref + (byte) test::i#11) == (byte) test::a#11
   if((bool~) test::$0) goto test::@1
   to:test::@3
 test::@1: scope:[test]  from test
@@ -227,7 +226,7 @@ SYMBOL TABLE SSA
 (byte) main::i#7
 (byte) main::i#8
 (byte) main::i#9
-(byte[]) ref
+(const byte[]) ref = { (byte)(number) 3, (byte)(number) 4, (byte)(number) 3, (byte)(number) $12, (byte)(number) 9, (byte)(number) 1, (byte)(number) 4, (byte)(number) 2, (byte)(number) 4, (byte)(number) 5, (byte)(number) 1, (byte)(number) 0 }
 (const byte*) screen1 = (byte*)(number) $400
 (byte*) screen2
 (byte*) screen2#0
@@ -292,13 +291,9 @@ Adding number conversion cast (unumber) 6 in (byte) main::a#8 ← (byte) main::a
 Adding number conversion cast (unumber) 1 in (byte) main::a#9 ← (byte) main::a#19 | (number) 1
 Adding number conversion cast (unumber) 1 in (byte) main::a#10 ← (byte) main::a#20 & (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[]) ref ← (byte[]){ (byte)(number) 3, (byte)(number) 4, (byte)(number) 3, (byte)(number) $12, (byte)(number) 9, (byte)(number) 1, (byte)(number) 4, (byte)(number) 2, (byte)(number) 4, (byte)(number) 5, (byte)(number) 1, (byte)(number) 0 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Inlining cast (byte) main::a#0 ← (unumber)(number) 3
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 55296
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Simplifying constant integer cast 3
@@ -311,6 +306,8 @@ Simplifying constant integer cast 4
 Simplifying constant integer cast 5
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 55296
 Simplifying constant integer cast $28
 Simplifying constant integer cast 0
 Simplifying constant integer cast 3
@@ -367,13 +364,10 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) screen2#10 (byte*) screen2#0
 Identical Phi Values (byte*) screen2#1 (byte*) screen2#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) test::$0 [76] if(*((byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1
+Simple Condition (bool~) test::$0 [75] if(*((const byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [1] (byte*) screen2#0 ← (const byte*) screen1 + (byte) $28
+Constant right-side identified [0] (byte*) screen2#0 ← (const byte*) screen1 + (byte) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[]) { (byte) 3, (byte) 4, (byte) 3, (byte) $12, (byte) 9, (byte) 1, (byte) 4, (byte) 2, (byte) 4, (byte) 5, (byte) 1, (byte) 0 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[]) ref = { 3, 4, 3, $12, 9, 1, 4, 2, 4, 5, 1, 0 }
 Constant (const byte*) screen2#0 = screen1+$28
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::a#0 = 3

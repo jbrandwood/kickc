@@ -490,6 +490,9 @@ mulf_init: {
     jmp __b1
 }
   print_hextab: .text "0123456789abcdef"
+  // Positions to rotate
+  xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
+  ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // <f(x) = <(( x * x )/4)
   .align $100
@@ -511,9 +514,6 @@ SIN:
 .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
 
-  // Positions to rotate
-  xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
-  ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
 .pc = SPRITE "SPRITE"
   .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)

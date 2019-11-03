@@ -371,6 +371,7 @@ main: {
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     jmp __b1
+    cs: .byte 7, $c7, $37, $97, $67
     op: .text "< "
     .byte 0
     op4: .text "> "
@@ -381,7 +382,6 @@ main: {
     .byte 0
     op16: .text "=="
     .byte 0
-    cs: .byte 7, $c7, $37, $97, $67
 }
 // Print a newline
 print_ln: {

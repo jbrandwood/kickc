@@ -1,24 +1,23 @@
-Fixing pointer array-indexing *((signed word[]) VALS + (number) 1)
-Fixing pointer array-indexing *((signed word[]) VALS + (byte) main::i)
+Fixing pointer array-indexing *((const signed word[]) VALS + (number) 1)
+Fixing pointer array-indexing *((const signed word[]) VALS + (byte) main::i)
 Fixing pointer array-indexing *((const signed word*) SCREEN + (byte) idx)
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (signed word[]) VALS ← { (number) 1, (number) 2, (number) 3, (number) 4 }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) idx#15 ← phi( @2/(byte) idx#17 )
-  (signed word*) print::p#0 ← (signed word[]) VALS
+  (signed word*) print::p#0 ← (const signed word[]) VALS
   call print 
   to:main::@3
 main::@3: scope:[main]  from main
   (byte) idx#8 ← phi( main/(byte) idx#6 )
   (byte) idx#0 ← (byte) idx#8
   (number~) main::$6 ← (number) 1 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word*~) main::$1 ← & *((signed word[]) VALS + (number~) main::$6)
+  (signed word*~) main::$1 ← & *((const signed word[]) VALS + (number~) main::$6)
   (signed word*) print::p#1 ← (signed word*~) main::$1
   call print 
   to:main::@4
@@ -31,7 +30,7 @@ main::@1: scope:[main]  from main::@4 main::@5
   (byte) idx#16 ← phi( main::@4/(byte) idx#1 main::@5/(byte) idx#2 )
   (byte) main::i#2 ← phi( main::@4/(byte) main::i#0 main::@5/(byte) main::i#1 )
   (byte~) main::$7 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word*~) main::$3 ← & *((signed word[]) VALS + (byte~) main::$7)
+  (signed word*~) main::$3 ← & *((const signed word[]) VALS + (byte~) main::$7)
   (signed word*) print::p#2 ← (signed word*~) main::$3
   call print 
   to:main::@5
@@ -83,7 +82,7 @@ SYMBOL TABLE SSA
 (label) @end
 (const signed word*) SCREEN = (signed word*)(number) $400
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
-(signed word[]) VALS
+(const signed word[]) VALS = { (signed word)(number) 1, (signed word)(number) 2, (signed word)(number) 3, (signed word)(number) 4 }
 (byte) idx
 (byte) idx#0
 (byte) idx#1
@@ -132,15 +131,13 @@ Adding number conversion cast (unumber) 1 in (number~) main::$6 ← (number) 1 *
 Adding number conversion cast (unumber) main::$6 in (number~) main::$6 ← (unumber)(number) 1 * (const byte) SIZEOF_SIGNED_WORD
 Adding number conversion cast (unumber) 0 in (byte) idx#4 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (signed word[]) VALS ← (signed word[]){ (signed word)(number) 1, (signed word)(number) 2, (signed word)(number) 3, (signed word)(number) 4 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (byte) idx#4 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (signed word*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
+Simplifying constant pointer cast (signed word*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
@@ -166,24 +163,20 @@ Identical Phi Values (byte) idx#14 (byte) idx#10
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte) idx#16 (byte) idx#13
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$5 [22] if((byte) main::i#1!=rangelast(2,3)) goto main::@1
+Simple Condition (bool~) main::$5 [21] if((byte) main::i#1!=rangelast(2,3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting array member address-of to pointer addition [7] (signed word*) print::p#1 ← (signed word[]) VALS + (byte~) main::$6
-Rewriting array member address-of to pointer addition [15] (signed word*) print::p#2 ← (signed word[]) VALS + (byte~) main::$7
+Rewriting array member address-of to pointer addition [6] (signed word*) print::p#1 ← (const signed word[]) VALS + (byte~) main::$6
+Rewriting array member address-of to pointer addition [14] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$7
 Successful SSA optimization PassNArrayElementAddressOfRewriting
-Constant right-side identified [6] (byte~) main::$6 ← (byte) 1 * (const byte) SIZEOF_SIGNED_WORD
+Constant right-side identified [5] (byte~) main::$6 ← (byte) 1 * (const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (signed word[]) { (signed word) 1, (signed word) 2, (signed word) 3, (signed word) 4 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const signed word[]) VALS = { 1, 2, 3, 4 }
+Constant (const signed word*) print::p#0 = VALS
 Constant (const byte) main::$6 = 1*SIZEOF_SIGNED_WORD
 Constant (const byte) main::i#0 = 2
 Constant (const byte) idx#17 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const signed word*) print::p#0 = VALS
-Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [20] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [22] if(main::i#1!=rangelast(2,3)) goto main::@1 to (number) 4
+Resolved ranged next value [19] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [21] if(main::i#1!=rangelast(2,3)) goto main::@1 to (number) 4
 Adding number conversion cast (unumber) 4 in if((byte) main::i#1!=(number) 4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4

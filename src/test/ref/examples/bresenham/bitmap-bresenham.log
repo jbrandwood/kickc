@@ -30,6 +30,7 @@ Culled Empty Block (label) @10
 Culled Empty Block (label) bitmap_line_ydxi::@4
 Culled Empty Block (label) @11
 Culled Empty Block (label) bitmap_line_ydxd::@4
+Culled Empty Block (label) @12
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) @13
 Culled Empty Block (label) lines::@4
@@ -51,7 +52,7 @@ CONTROL FLOW GRAPH SSA
   (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
   (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
   (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-  to:@12
+  to:@15
 
 (void()) bitmap_init((byte*) bitmap_init::bitmap)
 bitmap_init: scope:[bitmap_init]  from main
@@ -612,10 +613,6 @@ bitmap_line_ydxd::@3: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd::@5
 bitmap_line_ydxd::@return: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd::@2
   return 
   to:@return
-@12: scope:[]  from @4
-  (byte[]) lines_x ← { (number) $3c, (number) $50, (number) $6e, (number) $50, (number) $3c, (number) $28, (number) $a, (number) $28, (number) $3c }
-  (byte[]) lines_y ← { (number) $a, (number) $28, (number) $3c, (number) $50, (number) $6e, (number) $50, (number) $3c, (number) $28, (number) $a }
-  to:@15
 
 (void()) main()
 main: scope:[main]  from @15
@@ -665,10 +662,10 @@ lines::@2: scope:[lines]  from lines::@1
   (byte) lines::l#3 ← phi( lines::@1/(byte) lines::l#2 )
   (number~) lines::$1 ← (byte) lines::l#3 + (number) 1
   (number~) lines::$2 ← (byte) lines::l#3 + (number) 1
-  (byte) bitmap_line::x0#0 ← *((byte[]) lines_x + (byte) lines::l#3)
-  (byte) bitmap_line::x1#0 ← *((byte[]) lines_x + (number~) lines::$1)
-  (byte) bitmap_line::y0#0 ← *((byte[]) lines_y + (byte) lines::l#3)
-  (byte) bitmap_line::y1#0 ← *((byte[]) lines_y + (number~) lines::$2)
+  (byte) bitmap_line::x0#0 ← *((const byte[]) lines_x + (byte) lines::l#3)
+  (byte) bitmap_line::x1#0 ← *((const byte[]) lines_x + (number~) lines::$1)
+  (byte) bitmap_line::y0#0 ← *((const byte[]) lines_y + (byte) lines::l#3)
+  (byte) bitmap_line::y1#0 ← *((const byte[]) lines_y + (number~) lines::$2)
   call bitmap_line 
   to:lines::@7
 lines::@7: scope:[lines]  from lines::@2
@@ -696,7 +693,7 @@ init_screen::@2: scope:[init_screen]  from init_screen::@1
 init_screen::@return: scope:[init_screen]  from init_screen::@1
   return 
   to:@return
-@15: scope:[]  from @12
+@15: scope:[]  from @4
   call main 
   to:@16
 @16: scope:[]  from @15
@@ -704,7 +701,6 @@ init_screen::@return: scope:[init_screen]  from init_screen::@1
 @end: scope:[]  from @16
 
 SYMBOL TABLE SSA
-(label) @12
 (label) @15
 (label) @16
 (label) @4
@@ -1229,8 +1225,8 @@ SYMBOL TABLE SSA
 (byte) lines::l#3
 (byte) lines::l#4
 (const byte) lines_cnt = (byte) 8
-(byte[]) lines_x
-(byte[]) lines_y
+(const byte[]) lines_x = { (byte)(number) $3c, (byte)(number) $50, (byte)(number) $6e, (byte)(number) $50, (byte)(number) $3c, (byte)(number) $28, (byte)(number) $a, (byte)(number) $28, (byte)(number) $3c }
+(const byte[]) lines_y = { (byte)(number) $a, (byte)(number) $28, (byte)(number) $3c, (byte)(number) $50, (byte)(number) $6e, (byte)(number) $50, (byte)(number) $3c, (byte)(number) $28, (byte)(number) $a }
 (void()) main()
 (word~) main::$0
 (number~) main::$1
@@ -1300,9 +1296,6 @@ Adding number conversion cast (unumber) lines::$2 in (number~) lines::$2 ← (by
 Adding number conversion cast (unumber) $400 in (bool~) init_screen::$0 ← (byte*) init_screen::c#2 != (const byte*) SCREEN+(number) $400
 Adding number conversion cast (unumber) $14 in *((byte*) init_screen::c#3) ← (number) $14
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[]) lines_x ← (byte[]){ (byte)(number) $3c, (byte)(number) $50, (byte)(number) $6e, (byte)(number) $50, (byte)(number) $3c, (byte)(number) $28, (byte)(number) $a, (byte)(number) $28, (byte)(number) $3c }
-Added casts to value list in (byte[]) lines_y ← (byte[]){ (byte)(number) $a, (byte)(number) $28, (byte)(number) $3c, (byte)(number) $50, (byte)(number) $6e, (byte)(number) $50, (byte)(number) $3c, (byte)(number) $28, (byte)(number) $a }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (byte) bitmap_init::bits#0 ← (unumber)(number) $80
 Inlining cast (byte) bitmap_init::bits#2 ← (unumber)(number) $80
 Inlining cast (byte*) bitmap_init::yoffs#0 ← (byte*)(number) 0
@@ -1323,6 +1316,24 @@ Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 8192
+Simplifying constant integer cast $3c
+Simplifying constant integer cast $50
+Simplifying constant integer cast $6e
+Simplifying constant integer cast $50
+Simplifying constant integer cast $3c
+Simplifying constant integer cast $28
+Simplifying constant integer cast $a
+Simplifying constant integer cast $28
+Simplifying constant integer cast $3c
+Simplifying constant integer cast $a
+Simplifying constant integer cast $28
+Simplifying constant integer cast $3c
+Simplifying constant integer cast $50
+Simplifying constant integer cast $6e
+Simplifying constant integer cast $50
+Simplifying constant integer cast $3c
+Simplifying constant integer cast $28
+Simplifying constant integer cast $a
 Simplifying constant integer cast $80
 Simplifying constant integer cast $f8
 Simplifying constant integer cast 1
@@ -1349,24 +1360,6 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $50
-Simplifying constant integer cast $6e
-Simplifying constant integer cast $50
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $28
-Simplifying constant integer cast $a
-Simplifying constant integer cast $28
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $a
-Simplifying constant integer cast $28
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $50
-Simplifying constant integer cast $6e
-Simplifying constant integer cast $50
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $28
-Simplifying constant integer cast $a
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
@@ -1564,20 +1557,17 @@ Simple Condition (bool~) bitmap_line_ydxi::$4 [224] if((byte) bitmap_line_ydxi::
 Simple Condition (bool~) bitmap_line_ydxi::$7 [228] if((byte) bitmap_line_ydxi::y#2!=(byte~) bitmap_line_ydxi::$6) goto bitmap_line_ydxi::@1
 Simple Condition (bool~) bitmap_line_ydxd::$4 [248] if((byte) bitmap_line_ydxd::yd#5>=(byte) bitmap_line_ydxd::e#1) goto bitmap_line_ydxd::@2
 Simple Condition (bool~) bitmap_line_ydxd::$7 [252] if((byte) bitmap_line_ydxd::y#3!=(byte~) bitmap_line_ydxd::$6) goto bitmap_line_ydxd::@1
-Simple Condition (bool~) lines::$0 [282] if((byte) lines::l#2<(const byte) lines_cnt) goto lines::@2
-Simple Condition (bool~) init_screen::$0 [297] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@2
+Simple Condition (bool~) lines::$0 [280] if((byte) lines::l#2<(const byte) lines_cnt) goto lines::@2
+Simple Condition (bool~) init_screen::$0 [295] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [0] (byte[$100]) bitmap_plot_xlo ← { fill( $100, 0) }
 Constant right-side identified [1] (byte[$100]) bitmap_plot_xhi ← { fill( $100, 0) }
 Constant right-side identified [2] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
 Constant right-side identified [3] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
 Constant right-side identified [4] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-Constant right-side identified [263] (word~) main::$0 ← (word)(const byte*) SCREEN
-Constant right-side identified [266] (word~) main::$3 ← (word)(const byte*) BITMAP
+Constant right-side identified [261] (word~) main::$0 ← (word)(const byte*) SCREEN
+Constant right-side identified [264] (word~) main::$3 ← (word)(const byte*) BITMAP
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[]) { (byte) $3c, (byte) $50, (byte) $6e, (byte) $50, (byte) $3c, (byte) $28, (byte) $a, (byte) $28, (byte) $3c }
-Identified constant from value list (byte[]) { (byte) $a, (byte) $28, (byte) $3c, (byte) $50, (byte) $6e, (byte) $50, (byte) $3c, (byte) $28, (byte) $a }
-Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte[$100]) bitmap_plot_xlo = { fill( $100, 0) }
 Constant (const byte[$100]) bitmap_plot_xhi = { fill( $100, 0) }
 Constant (const byte[$100]) bitmap_plot_ylo = { fill( $100, 0) }
@@ -1592,15 +1582,13 @@ Constant (const byte) bitmap_clear::y#0 = 0
 Constant (const byte) bitmap_clear::x#0 = 0
 Constant (const byte) bitmap_line::xd#0 = 0
 Constant (const byte) bitmap_line::yd#0 = 0
-Constant (const byte[]) lines_x = { $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c }
-Constant (const byte[]) lines_y = { $a, $28, $3c, $50, $6e, $50, $3c, $28, $a }
 Constant (const word) main::$0 = (word)SCREEN
 Constant (const word) main::$3 = (word)BITMAP
 Constant (const byte*) bitmap_init::bitmap#0 = BITMAP
 Constant (const byte) lines::l#0 = 0
 Constant (const byte*) init_screen::c#0 = SCREEN
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [277] if(true) goto main::@1
+if() condition always true - replacing block destination [275] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [20] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
 Resolved ranged comparison value [22] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
@@ -1710,7 +1698,6 @@ Added new block during phi lifting bitmap_line_ydxd::@6(between bitmap_line_ydxd
 Added new block during phi lifting bitmap_line_ydxd::@7(between bitmap_line_ydxd::@5 and bitmap_line_ydxd::@2)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
-Adding NOP phi() at start of @12
 Adding NOP phi() at start of @15
 Adding NOP phi() at start of @16
 Adding NOP phi() at start of @end
@@ -1733,121 +1720,120 @@ Adding NOP phi() at start of bitmap_init
 Adding NOP phi() at start of bitmap_init::@3
 Adding NOP phi() at start of bitmap_init::@4
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to bitmap_init:11 bitmap_clear:13 init_screen:15 lines:18 
-Calls in [lines] to bitmap_line:28 
-Calls in [bitmap_line] to bitmap_line_ydxi:46 bitmap_line_xdyi:59 bitmap_line_ydxd:73 bitmap_line_xdyd:85 bitmap_line_ydxd:101 bitmap_line_xdyd:113 bitmap_line_ydxi:127 bitmap_line_xdyi:139 
-Calls in [bitmap_line_xdyi] to bitmap_plot:151 
-Calls in [bitmap_line_ydxi] to bitmap_plot:185 
-Calls in [bitmap_line_xdyd] to bitmap_plot:212 
-Calls in [bitmap_line_ydxd] to bitmap_plot:239 
+Calls in [] to main:3 
+Calls in [main] to bitmap_init:10 bitmap_clear:12 init_screen:14 lines:17 
+Calls in [lines] to bitmap_line:27 
+Calls in [bitmap_line] to bitmap_line_ydxi:45 bitmap_line_xdyi:58 bitmap_line_ydxd:72 bitmap_line_xdyd:84 bitmap_line_ydxd:100 bitmap_line_xdyd:112 bitmap_line_ydxi:126 bitmap_line_xdyi:138 
+Calls in [bitmap_line_xdyi] to bitmap_plot:150 
+Calls in [bitmap_line_ydxi] to bitmap_plot:184 
+Calls in [bitmap_line_xdyd] to bitmap_plot:211 
+Calls in [bitmap_line_ydxd] to bitmap_plot:238 
 
 Created 54 initial phi equivalence classes
-Coalesced [30] lines::l#5 ← lines::l#1
-Coalesced [41] bitmap_line_ydxi::xd#8 ← bitmap_line_ydxi::xd#0
-Coalesced [42] bitmap_line_ydxi::x#9 ← bitmap_line_ydxi::x#0
-Coalesced [43] bitmap_line_ydxi::y#9 ← bitmap_line_ydxi::y#0
-Coalesced [44] bitmap_line_ydxi::yd#8 ← bitmap_line_ydxi::yd#0
-Coalesced [45] bitmap_line_ydxi::y1#8 ← bitmap_line_ydxi::y1#0
-Coalesced [54] bitmap_line_xdyi::yd#7 ← bitmap_line_xdyi::yd#0
-Coalesced [55] bitmap_line_xdyi::x#8 ← bitmap_line_xdyi::x#0
-Coalesced [56] bitmap_line_xdyi::y#8 ← bitmap_line_xdyi::y#0
-Coalesced [57] bitmap_line_xdyi::xd#7 ← bitmap_line_xdyi::xd#0
-Coalesced [58] bitmap_line_xdyi::x1#7 ← bitmap_line_xdyi::x1#0
-Coalesced [68] bitmap_line_ydxd::xd#7 ← bitmap_line_ydxd::xd#0
-Coalesced [69] bitmap_line_ydxd::x#8 ← bitmap_line_ydxd::x#0
-Coalesced [70] bitmap_line_ydxd::y#9 ← bitmap_line_ydxd::y#0
-Coalesced [71] bitmap_line_ydxd::yd#7 ← bitmap_line_ydxd::yd#0
-Coalesced [72] bitmap_line_ydxd::y1#7 ← bitmap_line_ydxd::y1#0
-Coalesced [80] bitmap_line_xdyd::yd#7 ← bitmap_line_xdyd::yd#0
-Coalesced [81] bitmap_line_xdyd::x#8 ← bitmap_line_xdyd::x#0
-Coalesced [82] bitmap_line_xdyd::y#8 ← bitmap_line_xdyd::y#0
-Coalesced [83] bitmap_line_xdyd::xd#7 ← bitmap_line_xdyd::xd#0
-Coalesced [84] bitmap_line_xdyd::x1#7 ← bitmap_line_xdyd::x1#0
-Coalesced [96] bitmap_line_ydxd::xd#8 ← bitmap_line_ydxd::xd#1
-Coalesced [97] bitmap_line_ydxd::x#9 ← bitmap_line_ydxd::x#1
-Coalesced [98] bitmap_line_ydxd::y#10 ← bitmap_line_ydxd::y#1
-Coalesced [99] bitmap_line_ydxd::yd#8 ← bitmap_line_ydxd::yd#1
-Coalesced [100] bitmap_line_ydxd::y1#8 ← bitmap_line_ydxd::y1#1
-Coalesced [108] bitmap_line_xdyd::yd#8 ← bitmap_line_xdyd::yd#1
-Coalesced [109] bitmap_line_xdyd::x#9 ← bitmap_line_xdyd::x#1
-Coalesced [110] bitmap_line_xdyd::y#9 ← bitmap_line_xdyd::y#1
-Coalesced [111] bitmap_line_xdyd::xd#8 ← bitmap_line_xdyd::xd#1
-Coalesced [112] bitmap_line_xdyd::x1#8 ← bitmap_line_xdyd::x1#1
-Coalesced [122] bitmap_line_ydxi::xd#7 ← bitmap_line_ydxi::xd#1
-Coalesced [123] bitmap_line_ydxi::x#8 ← bitmap_line_ydxi::x#1
-Coalesced [124] bitmap_line_ydxi::y#8 ← bitmap_line_ydxi::y#1
-Coalesced [125] bitmap_line_ydxi::yd#7 ← bitmap_line_ydxi::yd#1
-Coalesced [126] bitmap_line_ydxi::y1#7 ← bitmap_line_ydxi::y1#1
-Coalesced [134] bitmap_line_xdyi::yd#8 ← bitmap_line_xdyi::yd#1
-Coalesced [135] bitmap_line_xdyi::x#9 ← bitmap_line_xdyi::x#1
-Coalesced [136] bitmap_line_xdyi::y#9 ← bitmap_line_xdyi::y#1
-Coalesced [137] bitmap_line_xdyi::xd#8 ← bitmap_line_xdyi::xd#1
-Coalesced [138] bitmap_line_xdyi::x1#8 ← bitmap_line_xdyi::x1#1
-Coalesced [143] bitmap_line_xdyi::x#10 ← bitmap_line_xdyi::x#6
-Coalesced [144] bitmap_line_xdyi::y#10 ← bitmap_line_xdyi::y#5
-Coalesced [145] bitmap_line_xdyi::e#7 ← bitmap_line_xdyi::e#0
-Coalesced [149] bitmap_plot::x#6 ← bitmap_plot::x#0
-Coalesced [150] bitmap_plot::y#6 ← bitmap_plot::y#0
-Coalesced [157] bitmap_line_xdyi::y#12 ← bitmap_line_xdyi::y#2
-Coalesced [158] bitmap_line_xdyi::e#9 ← bitmap_line_xdyi::e#2
-Coalesced [163] bitmap_line_xdyi::x#11 ← bitmap_line_xdyi::x#2
-Coalesced [164] bitmap_line_xdyi::y#11 ← bitmap_line_xdyi::y#6
-Coalesced [165] bitmap_line_xdyi::e#8 ← bitmap_line_xdyi::e#6
-Coalesced (already) [166] bitmap_line_xdyi::y#13 ← bitmap_line_xdyi::y#3
-Coalesced [167] bitmap_line_xdyi::e#10 ← bitmap_line_xdyi::e#1
-Coalesced [177] bitmap_line_ydxi::x#10 ← bitmap_line_ydxi::x#5
-Coalesced [178] bitmap_line_ydxi::y#10 ← bitmap_line_ydxi::y#6
-Coalesced [179] bitmap_line_ydxi::e#7 ← bitmap_line_ydxi::e#0
-Coalesced [183] bitmap_plot::x#8 ← bitmap_plot::x#2
-Coalesced [184] bitmap_plot::y#8 ← bitmap_plot::y#2
-Coalesced [191] bitmap_line_ydxi::x#12 ← bitmap_line_ydxi::x#2
-Coalesced [192] bitmap_line_ydxi::e#9 ← bitmap_line_ydxi::e#2
-Coalesced [197] bitmap_line_ydxi::x#11 ← bitmap_line_ydxi::x#6
-Coalesced [198] bitmap_line_ydxi::y#11 ← bitmap_line_ydxi::y#2
-Coalesced [199] bitmap_line_ydxi::e#8 ← bitmap_line_ydxi::e#6
-Coalesced (already) [200] bitmap_line_ydxi::x#13 ← bitmap_line_ydxi::x#3
-Coalesced [201] bitmap_line_ydxi::e#10 ← bitmap_line_ydxi::e#1
-Coalesced [204] bitmap_line_xdyd::x#10 ← bitmap_line_xdyd::x#6
-Coalesced [205] bitmap_line_xdyd::y#10 ← bitmap_line_xdyd::y#5
-Coalesced [206] bitmap_line_xdyd::e#7 ← bitmap_line_xdyd::e#0
-Coalesced [210] bitmap_plot::x#5 ← bitmap_plot::x#1
-Coalesced [211] bitmap_plot::y#5 ← bitmap_plot::y#1
-Coalesced [218] bitmap_line_xdyd::y#12 ← bitmap_line_xdyd::y#2
-Coalesced [219] bitmap_line_xdyd::e#9 ← bitmap_line_xdyd::e#2
-Coalesced [224] bitmap_line_xdyd::x#11 ← bitmap_line_xdyd::x#2
-Coalesced [225] bitmap_line_xdyd::y#11 ← bitmap_line_xdyd::y#6
-Coalesced [226] bitmap_line_xdyd::e#8 ← bitmap_line_xdyd::e#6
-Coalesced (already) [227] bitmap_line_xdyd::y#13 ← bitmap_line_xdyd::y#3
-Coalesced [228] bitmap_line_xdyd::e#10 ← bitmap_line_xdyd::e#1
-Coalesced [231] bitmap_line_ydxd::x#10 ← bitmap_line_ydxd::x#5
-Coalesced [232] bitmap_line_ydxd::y#11 ← bitmap_line_ydxd::y#7
-Coalesced [233] bitmap_line_ydxd::e#7 ← bitmap_line_ydxd::e#0
-Coalesced [237] bitmap_plot::x#7 ← bitmap_plot::x#3
-Coalesced [238] bitmap_plot::y#7 ← bitmap_plot::y#3
-Coalesced [245] bitmap_line_ydxd::x#12 ← bitmap_line_ydxd::x#2
-Coalesced [246] bitmap_line_ydxd::e#9 ← bitmap_line_ydxd::e#2
-Coalesced [251] bitmap_line_ydxd::x#11 ← bitmap_line_ydxd::x#6
-Coalesced [252] bitmap_line_ydxd::y#12 ← bitmap_line_ydxd::y#3
-Coalesced [253] bitmap_line_ydxd::e#8 ← bitmap_line_ydxd::e#6
-Coalesced (already) [254] bitmap_line_ydxd::x#13 ← bitmap_line_ydxd::x#3
-Coalesced [255] bitmap_line_ydxd::e#10 ← bitmap_line_ydxd::e#1
-Coalesced [262] init_screen::c#4 ← init_screen::c#1
-Coalesced [266] bitmap_clear::bitmap#7 ← bitmap_clear::bitmap#3
-Coalesced [275] bitmap_clear::bitmap#6 ← bitmap_clear::bitmap#1
-Coalesced [276] bitmap_clear::y#5 ← bitmap_clear::y#1
-Coalesced (already) [277] bitmap_clear::bitmap#8 ← bitmap_clear::bitmap#1
-Coalesced [278] bitmap_clear::x#3 ← bitmap_clear::x#1
-Coalesced [301] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
-Coalesced [306] bitmap_init::y#5 ← bitmap_init::y#1
-Coalesced [307] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
-Coalesced (already) [308] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
-Coalesced [309] bitmap_init::x#5 ← bitmap_init::x#1
-Coalesced [310] bitmap_init::bits#5 ← bitmap_init::bits#4
-Coalesced [311] bitmap_init::bits#6 ← bitmap_init::bits#1
+Coalesced [29] lines::l#5 ← lines::l#1
+Coalesced [40] bitmap_line_ydxi::xd#8 ← bitmap_line_ydxi::xd#0
+Coalesced [41] bitmap_line_ydxi::x#9 ← bitmap_line_ydxi::x#0
+Coalesced [42] bitmap_line_ydxi::y#9 ← bitmap_line_ydxi::y#0
+Coalesced [43] bitmap_line_ydxi::yd#8 ← bitmap_line_ydxi::yd#0
+Coalesced [44] bitmap_line_ydxi::y1#8 ← bitmap_line_ydxi::y1#0
+Coalesced [53] bitmap_line_xdyi::yd#7 ← bitmap_line_xdyi::yd#0
+Coalesced [54] bitmap_line_xdyi::x#8 ← bitmap_line_xdyi::x#0
+Coalesced [55] bitmap_line_xdyi::y#8 ← bitmap_line_xdyi::y#0
+Coalesced [56] bitmap_line_xdyi::xd#7 ← bitmap_line_xdyi::xd#0
+Coalesced [57] bitmap_line_xdyi::x1#7 ← bitmap_line_xdyi::x1#0
+Coalesced [67] bitmap_line_ydxd::xd#7 ← bitmap_line_ydxd::xd#0
+Coalesced [68] bitmap_line_ydxd::x#8 ← bitmap_line_ydxd::x#0
+Coalesced [69] bitmap_line_ydxd::y#9 ← bitmap_line_ydxd::y#0
+Coalesced [70] bitmap_line_ydxd::yd#7 ← bitmap_line_ydxd::yd#0
+Coalesced [71] bitmap_line_ydxd::y1#7 ← bitmap_line_ydxd::y1#0
+Coalesced [79] bitmap_line_xdyd::yd#7 ← bitmap_line_xdyd::yd#0
+Coalesced [80] bitmap_line_xdyd::x#8 ← bitmap_line_xdyd::x#0
+Coalesced [81] bitmap_line_xdyd::y#8 ← bitmap_line_xdyd::y#0
+Coalesced [82] bitmap_line_xdyd::xd#7 ← bitmap_line_xdyd::xd#0
+Coalesced [83] bitmap_line_xdyd::x1#7 ← bitmap_line_xdyd::x1#0
+Coalesced [95] bitmap_line_ydxd::xd#8 ← bitmap_line_ydxd::xd#1
+Coalesced [96] bitmap_line_ydxd::x#9 ← bitmap_line_ydxd::x#1
+Coalesced [97] bitmap_line_ydxd::y#10 ← bitmap_line_ydxd::y#1
+Coalesced [98] bitmap_line_ydxd::yd#8 ← bitmap_line_ydxd::yd#1
+Coalesced [99] bitmap_line_ydxd::y1#8 ← bitmap_line_ydxd::y1#1
+Coalesced [107] bitmap_line_xdyd::yd#8 ← bitmap_line_xdyd::yd#1
+Coalesced [108] bitmap_line_xdyd::x#9 ← bitmap_line_xdyd::x#1
+Coalesced [109] bitmap_line_xdyd::y#9 ← bitmap_line_xdyd::y#1
+Coalesced [110] bitmap_line_xdyd::xd#8 ← bitmap_line_xdyd::xd#1
+Coalesced [111] bitmap_line_xdyd::x1#8 ← bitmap_line_xdyd::x1#1
+Coalesced [121] bitmap_line_ydxi::xd#7 ← bitmap_line_ydxi::xd#1
+Coalesced [122] bitmap_line_ydxi::x#8 ← bitmap_line_ydxi::x#1
+Coalesced [123] bitmap_line_ydxi::y#8 ← bitmap_line_ydxi::y#1
+Coalesced [124] bitmap_line_ydxi::yd#7 ← bitmap_line_ydxi::yd#1
+Coalesced [125] bitmap_line_ydxi::y1#7 ← bitmap_line_ydxi::y1#1
+Coalesced [133] bitmap_line_xdyi::yd#8 ← bitmap_line_xdyi::yd#1
+Coalesced [134] bitmap_line_xdyi::x#9 ← bitmap_line_xdyi::x#1
+Coalesced [135] bitmap_line_xdyi::y#9 ← bitmap_line_xdyi::y#1
+Coalesced [136] bitmap_line_xdyi::xd#8 ← bitmap_line_xdyi::xd#1
+Coalesced [137] bitmap_line_xdyi::x1#8 ← bitmap_line_xdyi::x1#1
+Coalesced [142] bitmap_line_xdyi::x#10 ← bitmap_line_xdyi::x#6
+Coalesced [143] bitmap_line_xdyi::y#10 ← bitmap_line_xdyi::y#5
+Coalesced [144] bitmap_line_xdyi::e#7 ← bitmap_line_xdyi::e#0
+Coalesced [148] bitmap_plot::x#6 ← bitmap_plot::x#0
+Coalesced [149] bitmap_plot::y#6 ← bitmap_plot::y#0
+Coalesced [156] bitmap_line_xdyi::y#12 ← bitmap_line_xdyi::y#2
+Coalesced [157] bitmap_line_xdyi::e#9 ← bitmap_line_xdyi::e#2
+Coalesced [162] bitmap_line_xdyi::x#11 ← bitmap_line_xdyi::x#2
+Coalesced [163] bitmap_line_xdyi::y#11 ← bitmap_line_xdyi::y#6
+Coalesced [164] bitmap_line_xdyi::e#8 ← bitmap_line_xdyi::e#6
+Coalesced (already) [165] bitmap_line_xdyi::y#13 ← bitmap_line_xdyi::y#3
+Coalesced [166] bitmap_line_xdyi::e#10 ← bitmap_line_xdyi::e#1
+Coalesced [176] bitmap_line_ydxi::x#10 ← bitmap_line_ydxi::x#5
+Coalesced [177] bitmap_line_ydxi::y#10 ← bitmap_line_ydxi::y#6
+Coalesced [178] bitmap_line_ydxi::e#7 ← bitmap_line_ydxi::e#0
+Coalesced [182] bitmap_plot::x#8 ← bitmap_plot::x#2
+Coalesced [183] bitmap_plot::y#8 ← bitmap_plot::y#2
+Coalesced [190] bitmap_line_ydxi::x#12 ← bitmap_line_ydxi::x#2
+Coalesced [191] bitmap_line_ydxi::e#9 ← bitmap_line_ydxi::e#2
+Coalesced [196] bitmap_line_ydxi::x#11 ← bitmap_line_ydxi::x#6
+Coalesced [197] bitmap_line_ydxi::y#11 ← bitmap_line_ydxi::y#2
+Coalesced [198] bitmap_line_ydxi::e#8 ← bitmap_line_ydxi::e#6
+Coalesced (already) [199] bitmap_line_ydxi::x#13 ← bitmap_line_ydxi::x#3
+Coalesced [200] bitmap_line_ydxi::e#10 ← bitmap_line_ydxi::e#1
+Coalesced [203] bitmap_line_xdyd::x#10 ← bitmap_line_xdyd::x#6
+Coalesced [204] bitmap_line_xdyd::y#10 ← bitmap_line_xdyd::y#5
+Coalesced [205] bitmap_line_xdyd::e#7 ← bitmap_line_xdyd::e#0
+Coalesced [209] bitmap_plot::x#5 ← bitmap_plot::x#1
+Coalesced [210] bitmap_plot::y#5 ← bitmap_plot::y#1
+Coalesced [217] bitmap_line_xdyd::y#12 ← bitmap_line_xdyd::y#2
+Coalesced [218] bitmap_line_xdyd::e#9 ← bitmap_line_xdyd::e#2
+Coalesced [223] bitmap_line_xdyd::x#11 ← bitmap_line_xdyd::x#2
+Coalesced [224] bitmap_line_xdyd::y#11 ← bitmap_line_xdyd::y#6
+Coalesced [225] bitmap_line_xdyd::e#8 ← bitmap_line_xdyd::e#6
+Coalesced (already) [226] bitmap_line_xdyd::y#13 ← bitmap_line_xdyd::y#3
+Coalesced [227] bitmap_line_xdyd::e#10 ← bitmap_line_xdyd::e#1
+Coalesced [230] bitmap_line_ydxd::x#10 ← bitmap_line_ydxd::x#5
+Coalesced [231] bitmap_line_ydxd::y#11 ← bitmap_line_ydxd::y#7
+Coalesced [232] bitmap_line_ydxd::e#7 ← bitmap_line_ydxd::e#0
+Coalesced [236] bitmap_plot::x#7 ← bitmap_plot::x#3
+Coalesced [237] bitmap_plot::y#7 ← bitmap_plot::y#3
+Coalesced [244] bitmap_line_ydxd::x#12 ← bitmap_line_ydxd::x#2
+Coalesced [245] bitmap_line_ydxd::e#9 ← bitmap_line_ydxd::e#2
+Coalesced [250] bitmap_line_ydxd::x#11 ← bitmap_line_ydxd::x#6
+Coalesced [251] bitmap_line_ydxd::y#12 ← bitmap_line_ydxd::y#3
+Coalesced [252] bitmap_line_ydxd::e#8 ← bitmap_line_ydxd::e#6
+Coalesced (already) [253] bitmap_line_ydxd::x#13 ← bitmap_line_ydxd::x#3
+Coalesced [254] bitmap_line_ydxd::e#10 ← bitmap_line_ydxd::e#1
+Coalesced [261] init_screen::c#4 ← init_screen::c#1
+Coalesced [265] bitmap_clear::bitmap#7 ← bitmap_clear::bitmap#3
+Coalesced [274] bitmap_clear::bitmap#6 ← bitmap_clear::bitmap#1
+Coalesced [275] bitmap_clear::y#5 ← bitmap_clear::y#1
+Coalesced (already) [276] bitmap_clear::bitmap#8 ← bitmap_clear::bitmap#1
+Coalesced [277] bitmap_clear::x#3 ← bitmap_clear::x#1
+Coalesced [300] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
+Coalesced [305] bitmap_init::y#5 ← bitmap_init::y#1
+Coalesced [306] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
+Coalesced (already) [307] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
+Coalesced [308] bitmap_init::x#5 ← bitmap_init::x#1
+Coalesced [309] bitmap_init::bits#5 ← bitmap_init::bits#4
+Coalesced [310] bitmap_init::bits#6 ← bitmap_init::bits#1
 Coalesced down to 35 phi equivalence classes
 Culled Empty Block (label) @4
-Culled Empty Block (label) @12
 Culled Empty Block (label) @16
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
@@ -3772,14 +3758,14 @@ bitmap_init: {
     rts
 }
   // File Data
+  lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
+  lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a
   // Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
-  lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
-  lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Equivalence Class zp[1]:65 [ bitmap_init::$7 ] has ALU potential.
@@ -5077,14 +5063,14 @@ bitmap_init: {
     rts
 }
   // File Data
+  lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
+  lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a
   // Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
-  lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
-  lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -6502,12 +6488,12 @@ bitmap_init: {
     rts
 }
   // File Data
+  lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
+  lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a
   // Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
-  lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
-  lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a
 

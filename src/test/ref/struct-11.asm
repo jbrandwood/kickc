@@ -263,11 +263,11 @@ ultoa_append: {
 }
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
+  // Values of decimal digits
+  RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
   jesper_initials: .text "jg"
   .byte 0
   henry_initials: .text "hg"
   .byte 0
-  // Values of decimal digits
-  RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
   // Digits used for storing the decimal word
   decimal_digits_long: .fill $b, 0

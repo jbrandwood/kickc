@@ -2,8 +2,8 @@ Setting inferred volatile on symbol affected by address-of (byte**~) utoa16w::$2
 Setting inferred volatile on symbol affected by address-of (byte**~) utoa16w::$6 ← & (byte*) utoa16w::dst
 Setting inferred volatile on symbol affected by address-of (byte**~) utoa16w::$10 ← & (byte*) utoa16w::dst
 Setting inferred volatile on symbol affected by address-of (byte**~) utoa16w::$14 ← & (byte*) utoa16w::dst
-Fixing pointer array-indexing *((word[]) UTOA10_SUB + (byte) utoa10w::i)
-Fixing pointer array-indexing *((word[]) UTOA10_SUB + (byte) utoa10w::i)
+Fixing pointer array-indexing *((const word[]) UTOA10_SUB + (byte) utoa10w::i)
+Fixing pointer array-indexing *((const word[]) UTOA10_SUB + (byte) utoa10w::i)
 Identified constant variable (byte*) cls::screen
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@13
@@ -16,6 +16,7 @@ Culled Empty Block (label) main::@11
 Culled Empty Block (label) main::@12
 Culled Empty Block (label) @1
 Culled Empty Block (label) cls::@2
+Culled Empty Block (label) @2
 Culled Empty Block (label) utoa10w::@1
 Culled Empty Block (label) utoa10w::@5
 Culled Empty Block (label) utoa10w::@6
@@ -26,7 +27,7 @@ Culled Empty Block (label) utoa16n::@5
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@2
+  to:@5
 
 (void()) main()
 main: scope:[main]  from @5
@@ -140,10 +141,6 @@ cls::@1: scope:[cls]  from cls cls::@1
 cls::@return: scope:[cls]  from cls::@1
   return 
   to:@return
-@2: scope:[]  from @begin
-  (word[]) UTOA10_SUB ← { (number) $7530, (number) $2710, (number) $bb8, (number) $3e8, (number) $12c, (number) $64, (number) $1e, (number) $a }
-  (byte[]) UTOA10_VAL ← { (number) 3, (number) 1, (number) 3, (number) 1, (number) 3, (number) 1, (number) 3, (number) 1 }
-  to:@5
 
 (void()) utoa10w((word) utoa10w::value , (byte*) utoa10w::dst)
 utoa10w: scope:[utoa10w]  from main::@20
@@ -160,7 +157,7 @@ utoa10w::@2: scope:[utoa10w]  from utoa10w utoa10w::@10 utoa10w::@3
   (word) utoa10w::value#2 ← phi( utoa10w/(word) utoa10w::value#5 utoa10w::@10/(word) utoa10w::value#6 utoa10w::@3/(word) utoa10w::value#1 )
   (byte) utoa10w::i#2 ← phi( utoa10w/(byte) utoa10w::i#0 utoa10w::@10/(byte) utoa10w::i#1 utoa10w::@3/(byte) utoa10w::i#3 )
   (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 * (const byte) SIZEOF_WORD
-  (bool~) utoa10w::$1 ← (word) utoa10w::value#2 >= *((word[]) UTOA10_SUB + (byte~) utoa10w::$8)
+  (bool~) utoa10w::$1 ← (word) utoa10w::value#2 >= *((const word[]) UTOA10_SUB + (byte~) utoa10w::$8)
   if((bool~) utoa10w::$1) goto utoa10w::@3
   to:utoa10w::@4
 utoa10w::@3: scope:[utoa10w]  from utoa10w::@2
@@ -168,9 +165,9 @@ utoa10w::@3: scope:[utoa10w]  from utoa10w::@2
   (word) utoa10w::value#3 ← phi( utoa10w::@2/(word) utoa10w::value#2 )
   (byte) utoa10w::i#3 ← phi( utoa10w::@2/(byte) utoa10w::i#2 )
   (byte) utoa10w::digit#3 ← phi( utoa10w::@2/(byte) utoa10w::digit#5 )
-  (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((byte[]) UTOA10_VAL + (byte) utoa10w::i#3)
+  (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte[]) UTOA10_VAL + (byte) utoa10w::i#3)
   (byte~) utoa10w::$9 ← (byte) utoa10w::i#3 * (const byte) SIZEOF_WORD
-  (word) utoa10w::value#1 ← (word) utoa10w::value#3 - *((word[]) UTOA10_SUB + (byte~) utoa10w::$9)
+  (word) utoa10w::value#1 ← (word) utoa10w::value#3 - *((const word[]) UTOA10_SUB + (byte~) utoa10w::$9)
   (byte) utoa10w::bStarted#1 ← (number) 1
   to:utoa10w::@2
 utoa10w::@4: scope:[utoa10w]  from utoa10w::@2
@@ -337,7 +334,7 @@ utoa16n::@return: scope:[utoa16n]  from utoa16n::@2
   (byte) utoa16n::return#5 ← (byte) utoa16n::return#9
   return 
   to:@return
-@5: scope:[]  from @2
+@5: scope:[]  from @begin
   call main 
   to:@6
 @6: scope:[]  from @5
@@ -345,15 +342,14 @@ utoa16n::@return: scope:[utoa16n]  from utoa16n::@2
 @end: scope:[]  from @6
 
 SYMBOL TABLE SSA
-(label) @2
 (label) @5
 (label) @6
 (label) @begin
 (label) @end
 (const byte[]) DIGITS = (string) "0123456789abcdef"
 (const byte) SIZEOF_WORD = (byte) 2
-(word[]) UTOA10_SUB
-(byte[]) UTOA10_VAL
+(const word[]) UTOA10_SUB = { (word)(number) $7530, (word)(number) $2710, (word)(number) $bb8, (word)(number) $3e8, (word)(number) $12c, (word)(number) $64, (word)(number) $1e, (word)(number) $a }
+(const byte[]) UTOA10_VAL = { (byte)(number) 3, (byte)(number) 1, (byte)(number) 3, (byte)(number) 1, (byte)(number) 3, (byte)(number) 1, (byte)(number) 3, (byte)(number) 1 }
 (const byte*) bordercol = (byte*)(number) $d020
 (void()) cls()
 (byte*~) cls::$0
@@ -639,9 +635,6 @@ Adding number conversion cast (unumber) 0 in (bool~) utoa16n::$0 ← (byte) utoa
 Adding number conversion cast (unumber) 0 in (bool~) utoa16n::$2 ← (byte) utoa16n::started#5 != (number) 0
 Adding number conversion cast (unumber) 1 in (byte) utoa16n::started#4 ← (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (word[]) UTOA10_SUB ← (word[]){ (word)(number) $7530, (word)(number) $2710, (word)(number) $bb8, (word)(number) $3e8, (word)(number) $12c, (word)(number) $64, (word)(number) $1e, (word)(number) $a }
-Added casts to value list in (byte[]) UTOA10_VAL ← (byte[]){ (byte)(number) 3, (byte)(number) 1, (byte)(number) 3, (byte)(number) 1, (byte)(number) 3, (byte)(number) 1, (byte)(number) 3, (byte)(number) 1 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
 Inlining cast *((const byte*) bordercol) ← (unumber)(number) 1
 Inlining cast (word) utoa16w::value#0 ← (unumber)(number) 0
@@ -667,6 +660,22 @@ Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $7530
+Simplifying constant integer cast $2710
+Simplifying constant integer cast $bb8
+Simplifying constant integer cast $3e8
+Simplifying constant integer cast $12c
+Simplifying constant integer cast $64
+Simplifying constant integer cast $1e
+Simplifying constant integer cast $a
+Simplifying constant integer cast 3
+Simplifying constant integer cast 1
+Simplifying constant integer cast 3
+Simplifying constant integer cast 1
+Simplifying constant integer cast 3
+Simplifying constant integer cast 1
+Simplifying constant integer cast 3
+Simplifying constant integer cast 1
 Simplifying constant integer cast $80
 Simplifying constant integer cast 1
 Simplifying constant integer cast $30
@@ -688,22 +697,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $50
 Simplifying constant integer cast 3
 Simplifying constant integer cast $3e7
-Simplifying constant integer cast $7530
-Simplifying constant integer cast $2710
-Simplifying constant integer cast $bb8
-Simplifying constant integer cast $3e8
-Simplifying constant integer cast $12c
-Simplifying constant integer cast $64
-Simplifying constant integer cast $1e
-Simplifying constant integer cast $a
-Simplifying constant integer cast 3
-Simplifying constant integer cast 1
-Simplifying constant integer cast 3
-Simplifying constant integer cast 1
-Simplifying constant integer cast 3
-Simplifying constant integer cast 1
-Simplifying constant integer cast 3
-Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -767,10 +760,10 @@ Inferred type updated to byte in (unumber~) main::$3 ← (byte~) main::$1 | (byt
 Inferred type updated to byte in (unumber~) utoa10w::$2 ← (byte) utoa10w::i#4 & (byte) 1
 Inferred type updated to byte in (unumber~) utoa16w::$5 ← (byte~) utoa16w::$4 & (byte) $f
 Inferred type updated to byte in (unumber~) utoa16w::$13 ← (byte~) utoa16w::$12 & (byte) $f
-Inversing boolean not [86] (bool~) utoa10w::$4 ← (byte~) utoa10w::$2 == (byte) 0 from [85] (bool~) utoa10w::$3 ← (byte~) utoa10w::$2 != (byte) 0
-Inversing boolean not [94] (bool~) utoa10w::$6 ← (byte) utoa10w::bStarted#2 == (byte) 0 from [93] (bool~) utoa10w::$5 ← (byte) utoa10w::bStarted#2 != (byte) 0
-Inversing boolean not [155] (bool~) utoa16n::$1 ← (byte) utoa16n::nybble#4 == (byte) 0 from [154] (bool~) utoa16n::$0 ← (byte) utoa16n::nybble#4 != (byte) 0
-Inversing boolean not [159] (bool~) utoa16n::$3 ← (byte) utoa16n::started#5 == (byte) 0 from [158] (bool~) utoa16n::$2 ← (byte) utoa16n::started#5 != (byte) 0
+Inversing boolean not [84] (bool~) utoa10w::$4 ← (byte~) utoa10w::$2 == (byte) 0 from [83] (bool~) utoa10w::$3 ← (byte~) utoa10w::$2 != (byte) 0
+Inversing boolean not [92] (bool~) utoa10w::$6 ← (byte) utoa10w::bStarted#2 == (byte) 0 from [91] (bool~) utoa10w::$5 ← (byte) utoa10w::bStarted#2 != (byte) 0
+Inversing boolean not [153] (bool~) utoa16n::$1 ← (byte) utoa16n::nybble#4 == (byte) 0 from [152] (bool~) utoa16n::$0 ← (byte) utoa16n::nybble#4 != (byte) 0
+Inversing boolean not [157] (bool~) utoa16n::$3 ← (byte) utoa16n::started#5 == (byte) 0 from [156] (bool~) utoa16n::$2 ← (byte) utoa16n::started#5 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::rst#0 = (byte~) main::$3 
 Alias (byte*) main::screen#0 = (byte*) main::screen#5 
@@ -832,22 +825,19 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$4 [8] if((byte) main::rst#0!=(byte) $30) goto main::@4
 Simple Condition (bool~) main::$18 [53] if(*((const byte[]) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@7
 Simple Condition (bool~) cls::$1 [66] if((byte*) cls::sc#1!=rangelast(cls::screen,cls::$0)) goto cls::@1
-Simple Condition (bool~) utoa10w::$1 [77] if((word) utoa10w::value#10>=*((word[]) UTOA10_SUB + (byte~) utoa10w::$8)) goto utoa10w::@3
-Simple Condition (bool~) utoa10w::$4 [87] if((byte~) utoa10w::$2==(byte) 0) goto utoa10w::@10
-Simple Condition (bool~) utoa10w::$7 [91] if((byte) utoa10w::i#1!=rangelast(0,7)) goto utoa10w::@2
-Simple Condition (bool~) utoa10w::$6 [95] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@11
-Simple Condition (bool~) utoa16n::$1 [156] if((byte) utoa16n::nybble#4==(byte) 0) goto utoa16n::@1
-Simple Condition (bool~) utoa16n::$3 [160] if((byte) utoa16n::return#4==(byte) 0) goto utoa16n::@2
+Simple Condition (bool~) utoa10w::$1 [75] if((word) utoa10w::value#10>=*((const word[]) UTOA10_SUB + (byte~) utoa10w::$8)) goto utoa10w::@3
+Simple Condition (bool~) utoa10w::$4 [85] if((byte~) utoa10w::$2==(byte) 0) goto utoa10w::@10
+Simple Condition (bool~) utoa10w::$7 [89] if((byte) utoa10w::i#1!=rangelast(0,7)) goto utoa10w::@2
+Simple Condition (bool~) utoa10w::$6 [93] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@11
+Simple Condition (bool~) utoa16n::$1 [154] if((byte) utoa16n::nybble#4==(byte) 0) goto utoa16n::@1
+Simple Condition (bool~) utoa16n::$3 [158] if((byte) utoa16n::return#4==(byte) 0) goto utoa16n::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [60] (byte*~) cls::$0 ← (const byte*) cls::screen + (word) $3e7
-Constant right-side identified [111] (word**) utoa16n::dst#0 ← & (byte*) utoa16w::dst#5
-Constant right-side identified [122] (word**) utoa16n::dst#1 ← & (byte*) utoa16w::dst#5
-Constant right-side identified [133] (word**) utoa16n::dst#2 ← & (byte*) utoa16w::dst#5
-Constant right-side identified [144] (word**) utoa16n::dst#3 ← & (byte*) utoa16w::dst#5
+Constant right-side identified [109] (word**) utoa16n::dst#0 ← & (byte*) utoa16w::dst#5
+Constant right-side identified [120] (word**) utoa16n::dst#1 ← & (byte*) utoa16w::dst#5
+Constant right-side identified [131] (word**) utoa16n::dst#2 ← & (byte*) utoa16w::dst#5
+Constant right-side identified [142] (word**) utoa16n::dst#3 ← & (byte*) utoa16w::dst#5
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (word[]) { (word) $7530, (word) $2710, (word) $bb8, (word) $3e8, (word) $12c, (word) $64, (word) $1e, (word) $a }
-Identified constant from value list (byte[]) { (byte) 3, (byte) 1, (byte) 3, (byte) 1, (byte) 3, (byte) 1, (byte) 3, (byte) 1 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const word) utoa16w::value#0 = 0
 Constant (const word) utoa16w::value#1 = $4d2
@@ -857,8 +847,6 @@ Constant (const word) utoa16w::value#4 = $e608
 Constant (const byte) main::i#0 = 0
 Constant (const byte*) cls::$0 = cls::screen+$3e7
 Constant (const byte*) cls::sc#0 = cls::screen
-Constant (const word[]) UTOA10_SUB = { $7530, $2710, $bb8, $3e8, $12c, $64, $1e, $a }
-Constant (const byte[]) UTOA10_VAL = { 3, 1, 3, 1, 3, 1, 3, 1 }
 Constant (const byte) utoa10w::bStarted#0 = 0
 Constant (const byte) utoa10w::digit#0 = 0
 Constant (const byte) utoa10w::i#0 = 0
@@ -878,8 +866,8 @@ if() condition always true - replacing block destination [2] if(true) goto main:
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [64] cls::sc#1 ← ++ cls::sc#2 to ++
 Resolved ranged comparison value [66] if(cls::sc#1!=rangelast(cls::screen,cls::$0)) goto cls::@1 to (byte*)(const byte*) cls::$0+(number) 1
-Resolved ranged next value [89] utoa10w::i#1 ← ++ utoa10w::i#2 to ++
-Resolved ranged comparison value [91] if(utoa10w::i#1!=rangelast(0,7)) goto utoa10w::@2 to (number) 8
+Resolved ranged next value [87] utoa10w::i#1 ← ++ utoa10w::i#2 to ++
+Resolved ranged comparison value [89] if(utoa10w::i#1!=rangelast(0,7)) goto utoa10w::@2 to (number) 8
 Eliminating unused variable (byte) utoa16w::started#3 and assignment [81] (byte) utoa16w::started#3 ← (byte) utoa16n::return#2
 Eliminating unused variable (byte) utoa16n::return#3 and assignment [85] (byte) utoa16n::return#3 ← (byte) utoa16n::return#4
 Successful SSA optimization PassNEliminateUnusedVars
@@ -992,7 +980,6 @@ Added new block during phi lifting utoa10w::@14(between utoa10w::@4 and utoa10w:
 Added new block during phi lifting utoa10w::@15(between utoa10w::@8 and utoa10w::@11)
 Added new block during phi lifting utoa16n::@6(between utoa16n and utoa16n::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
 Adding NOP phi() at start of @5
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @end
@@ -1003,42 +990,41 @@ Adding NOP phi() at start of utoa16n::@3
 Adding NOP phi() at start of utoa16n::@2
 Adding NOP phi() at start of cls
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to cls:7 utoa16w:18 utoa16w:22 utoa16w:26 utoa16w:30 utoa16w:34 utoa10w:39 
-Calls in [utoa16w] to utoa16n:85 utoa16n:93 utoa16n:101 utoa16n:105 
+Calls in [] to main:2 
+Calls in [main] to cls:6 utoa16w:17 utoa16w:21 utoa16w:25 utoa16w:29 utoa16w:33 utoa10w:38 
+Calls in [utoa16w] to utoa16n:84 utoa16n:92 utoa16n:100 utoa16n:104 
 
 Created 15 initial phi equivalence classes
-Coalesced [17] utoa16w::dst#14 ← utoa16w::dst#0
-Coalesced [21] utoa16w::dst#10 ← utoa16w::dst#1
-Coalesced [25] utoa16w::dst#11 ← utoa16w::dst#2
-Coalesced [29] utoa16w::dst#12 ← utoa16w::dst#3
-Coalesced [33] utoa16w::dst#13 ← utoa16w::dst#4
-Coalesced [45] main::i#4 ← main::i#1
-Coalesced [46] utoa10w::value#11 ← utoa10w::value#0
-Coalesced [55] utoa10w::dst#17 ← utoa10w::dst#1
-Coalesced [57] utoa10w::dst#14 ← utoa10w::dst#7
-Coalesced [66] utoa10w::i#9 ← utoa10w::i#1
-Coalesced (already) [67] utoa10w::value#12 ← utoa10w::value#10
-Coalesced [68] utoa10w::digit#9 ← utoa10w::digit#7
-Coalesced (already) [69] utoa10w::bStarted#8 ← utoa10w::bStarted#2
-Coalesced [70] utoa10w::dst#12 ← utoa10w::dst#4
-Coalesced (already) [71] utoa10w::dst#16 ← utoa10w::dst#11
-Coalesced (already) [72] utoa10w::dst#15 ← utoa10w::dst#11
-Coalesced (already) [73] utoa10w::digit#11 ← utoa10w::digit#3
-Coalesced (already) [77] utoa10w::i#10 ← utoa10w::i#2
-Coalesced [78] utoa10w::value#13 ← utoa10w::value#1
-Coalesced [79] utoa10w::digit#10 ← utoa10w::digit#1
-Coalesced (already) [80] utoa10w::dst#13 ← utoa10w::dst#11
-Coalesced [84] utoa16n::nybble#8 ← utoa16n::nybble#0
-Coalesced [91] utoa16n::nybble#9 ← utoa16n::nybble#1
-Coalesced [92] utoa16n::started#9 ← utoa16n::started#1
-Coalesced [99] utoa16n::nybble#10 ← utoa16n::nybble#2
-Coalesced [100] utoa16n::started#10 ← utoa16n::started#2
-Coalesced [104] utoa16n::nybble#11 ← utoa16n::nybble#3
-Coalesced [117] utoa16n::return#10 ← utoa16n::started#7
-Coalesced [124] cls::sc#3 ← cls::sc#1
+Coalesced [16] utoa16w::dst#14 ← utoa16w::dst#0
+Coalesced [20] utoa16w::dst#10 ← utoa16w::dst#1
+Coalesced [24] utoa16w::dst#11 ← utoa16w::dst#2
+Coalesced [28] utoa16w::dst#12 ← utoa16w::dst#3
+Coalesced [32] utoa16w::dst#13 ← utoa16w::dst#4
+Coalesced [44] main::i#4 ← main::i#1
+Coalesced [45] utoa10w::value#11 ← utoa10w::value#0
+Coalesced [54] utoa10w::dst#17 ← utoa10w::dst#1
+Coalesced [56] utoa10w::dst#14 ← utoa10w::dst#7
+Coalesced [65] utoa10w::i#9 ← utoa10w::i#1
+Coalesced (already) [66] utoa10w::value#12 ← utoa10w::value#10
+Coalesced [67] utoa10w::digit#9 ← utoa10w::digit#7
+Coalesced (already) [68] utoa10w::bStarted#8 ← utoa10w::bStarted#2
+Coalesced [69] utoa10w::dst#12 ← utoa10w::dst#4
+Coalesced (already) [70] utoa10w::dst#16 ← utoa10w::dst#11
+Coalesced (already) [71] utoa10w::dst#15 ← utoa10w::dst#11
+Coalesced (already) [72] utoa10w::digit#11 ← utoa10w::digit#3
+Coalesced (already) [76] utoa10w::i#10 ← utoa10w::i#2
+Coalesced [77] utoa10w::value#13 ← utoa10w::value#1
+Coalesced [78] utoa10w::digit#10 ← utoa10w::digit#1
+Coalesced (already) [79] utoa10w::dst#13 ← utoa10w::dst#11
+Coalesced [83] utoa16n::nybble#8 ← utoa16n::nybble#0
+Coalesced [90] utoa16n::nybble#9 ← utoa16n::nybble#1
+Coalesced [91] utoa16n::started#9 ← utoa16n::started#1
+Coalesced [98] utoa16n::nybble#10 ← utoa16n::nybble#2
+Coalesced [99] utoa16n::started#10 ← utoa16n::started#2
+Coalesced [103] utoa16n::nybble#11 ← utoa16n::nybble#3
+Coalesced [116] utoa16n::return#10 ← utoa16n::started#7
+Coalesced [123] cls::sc#3 ← cls::sc#1
 Coalesced down to 11 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) @6
 Culled Empty Block (label) main::@15
 Culled Empty Block (label) main::@1

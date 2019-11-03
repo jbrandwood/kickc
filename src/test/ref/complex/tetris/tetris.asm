@@ -1641,23 +1641,6 @@ sprites_irq: {
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  // Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
-  keyboard_events: .fill 8, 0
-  // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
-  keyboard_scan_values: .fill 8, 0
-  // The playfield.  0 is empty non-zero is color.
-  // The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
-  playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
-  // The color #1 to use for the pieces for each level
-  PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
-  // The color #2 to use for the pieces for each level
-  PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
-  // Pointers to the screen address for rendering each playfield line
-  // The lines for screen 1 is aligned with 0x80 and screen 2 with 0x40 - so XOR'ing with 0x40 gives screen 2 lines.
-  .align $80
-  screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
-  .align $40
-  screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
   // The T-piece
   .align $40
   PIECE_T: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
@@ -1686,16 +1669,33 @@ sprites_irq: {
   // The initial X/Y for each piece
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
-  // Pointers to the playfield address for each playfield line
-  playfield_lines: .fill 2*PLAYFIELD_LINES, 0
-  // Indixes into the playfield  for each playfield line
-  playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
   // The speed of moving down the piece when soft-drop is not activated
   // This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
   MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
   // Base Score values for removing 0-4 lines (in BCD)
   // These values are added to score_add_bcd for each level gained.
   SCORE_BASE_BCD: .dword 0, $40, $100, $300, $1200
+  // Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
+  keyboard_events: .fill 8, 0
+  // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
+  keyboard_scan_values: .fill 8, 0
+  // The playfield.  0 is empty non-zero is color.
+  // The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
+  playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
+  // The color #1 to use for the pieces for each level
+  PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
+  // The color #2 to use for the pieces for each level
+  PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
+  // Pointers to the screen address for rendering each playfield line
+  // The lines for screen 1 is aligned with 0x80 and screen 2 with 0x40 - so XOR'ing with 0x40 gives screen 2 lines.
+  .align $80
+  screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
+  .align $40
+  screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
+  // Pointers to the playfield address for each playfield line
+  playfield_lines: .fill 2*PLAYFIELD_LINES, 0
+  // Indixes into the playfield  for each playfield line
+  playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
   // Score values for removing 0-4 lines (in BCD)
   // These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0

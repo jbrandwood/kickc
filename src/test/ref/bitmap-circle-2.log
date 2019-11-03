@@ -3,6 +3,7 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
@@ -25,9 +26,6 @@ Culled Empty Block (label) fill::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@4
-@4: scope:[]  from @begin
-  (byte[]) bitmask ← { (number) $80, (number) $40, (number) $20, (number) $10, (number) 8, (number) 4, (number) 2, (number) 1 }
   to:@8
 
 (void()) main()
@@ -269,7 +267,7 @@ plot::@1: scope:[plot]  from plot
   (number~) plot::$12 ← (signed word~) plot::$11 * (number) $140
   (byte*) plot::location#3 ← (byte*) plot::location#2 + (number~) plot::$12
   (number~) plot::$13 ← (signed word) plot::x#9 & (number) 7
-  (byte~) plot::$14 ← *((byte*) plot::location#3) | *((byte[]) bitmask + (number~) plot::$13)
+  (byte~) plot::$14 ← *((byte*) plot::location#3) | *((const byte[]) bitmask + (number~) plot::$13)
   *((byte*) plot::location#3) ← (byte~) plot::$14
   to:plot::@return
 plot::@return: scope:[plot]  from plot plot::@1
@@ -302,7 +300,7 @@ fill::@2: scope:[fill]  from fill::@1
 fill::@return: scope:[fill]  from fill::@1
   return 
   to:@return
-@8: scope:[]  from @4
+@8: scope:[]  from @begin
   call main 
   to:@9
 @9: scope:[]  from @8
@@ -310,7 +308,6 @@ fill::@return: scope:[fill]  from fill::@1
 @end: scope:[]  from @9
 
 SYMBOL TABLE SSA
-(label) @4
 (label) @8
 (label) @9
 (label) @begin
@@ -324,7 +321,7 @@ SYMBOL TABLE SSA
 (const byte) VIC_DEN = (number) $10
 (const byte*) VIC_MEMORY = (byte*)(number) $d018
 (const byte) VIC_RSEL = (number) 8
-(byte[]) bitmask
+(const byte[]) bitmask = { (byte)(number) $80, (byte)(number) $40, (byte)(number) $20, (byte)(number) $10, (byte)(number) 8, (byte)(number) 4, (byte)(number) 2, (byte)(number) 1 }
 (void()) circle((signed word) circle::xc , (signed word) circle::yc , (signed word) circle::r)
 (signed word~) circle::$0
 (number~) circle::$1
@@ -597,8 +594,6 @@ Adding number conversion cast (snumber) plot::$12 in (number~) plot::$12 ← (si
 Adding number conversion cast (snumber) 7 in (number~) plot::$13 ← (signed word) plot::x#9 & (number) 7
 Adding number conversion cast (snumber) plot::$13 in (number~) plot::$13 ← (signed word) plot::x#9 & (snumber)(number) 7
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[]) bitmask ← (byte[]){ (byte)(number) $80, (byte)(number) $40, (byte)(number) $20, (byte)(number) $10, (byte)(number) 8, (byte)(number) 4, (byte)(number) 2, (byte)(number) 1 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (signed word) fill::size#0 ← (snumber)(number) $28*(number) $19*(number) 8
 Inlining cast (byte) fill::val#0 ← (unumber)(number) 0
 Inlining cast (signed word) fill::size#1 ← (snumber)(number) $28*(number) $19
@@ -753,24 +748,21 @@ Identical Phi Values (signed word) circle::yc#1 (signed word) circle::yc#13
 Identical Phi Values (byte*) fill::end#1 (byte*) fill::end#0
 Identical Phi Values (byte) fill::val#2 (byte) fill::val#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$10 [23] if((signed word) main::i#2<(signed word) $b4) goto main::@2
-Simple Condition (bool~) circle::$2 [41] if((signed word) circle::x1#10<=(signed word) circle::y#13) goto circle::@2
-Simple Condition (bool~) circle::$3 [44] if((signed word) circle::p#3<(signed byte) 0) goto circle::@4
-Simple Condition (bool~) fill::$1 [139] if((byte*) fill::addr#2!=(byte*) fill::end#0) goto fill::@2
+Simple Condition (bool~) main::$10 [22] if((signed word) main::i#2<(signed word) $b4) goto main::@2
+Simple Condition (bool~) circle::$2 [40] if((signed word) circle::x1#10<=(signed word) circle::y#13) goto circle::@2
+Simple Condition (bool~) circle::$3 [43] if((signed word) circle::p#3<(signed byte) 0) goto circle::@4
+Simple Condition (bool~) fill::$1 [138] if((byte*) fill::addr#2!=(byte*) fill::end#0) goto fill::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [117] (bool~) plot::$7 ← ! (bool~) plot::$6
-Rewriting || if()-condition to two if()s [116] (bool~) plot::$6 ← (bool~) plot::$4 || (bool~) plot::$5
-Rewriting || if()-condition to two if()s [114] (bool~) plot::$4 ← (bool~) plot::$2 || (bool~) plot::$3
-Rewriting || if()-condition to two if()s [112] (bool~) plot::$2 ← (bool~) plot::$0 || (bool~) plot::$1
+Rewriting ! if()-condition to reversed if() [116] (bool~) plot::$7 ← ! (bool~) plot::$6
+Rewriting || if()-condition to two if()s [115] (bool~) plot::$6 ← (bool~) plot::$4 || (bool~) plot::$5
+Rewriting || if()-condition to two if()s [113] (bool~) plot::$4 ← (bool~) plot::$2 || (bool~) plot::$3
+Rewriting || if()-condition to two if()s [111] (bool~) plot::$2 ← (bool~) plot::$0 || (bool~) plot::$1
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant right-side identified [2] (signed word) fill::size#0 ← (snumber)(number) $28*(number) $19*(number) 8
-Constant right-side identified [6] (signed word) fill::size#1 ← (snumber)(number) $28*(number) $19
-Constant right-side identified [11] (word~) main::$2 ← (word)(const byte*) SCREEN
-Constant right-side identified [14] (word~) main::$5 ← (word)(const byte*) BITMAP
+Constant right-side identified [1] (signed word) fill::size#0 ← (snumber)(number) $28*(number) $19*(number) 8
+Constant right-side identified [5] (signed word) fill::size#1 ← (snumber)(number) $28*(number) $19
+Constant right-side identified [10] (word~) main::$2 ← (word)(const byte*) SCREEN
+Constant right-side identified [13] (word~) main::$5 ← (word)(const byte*) BITMAP
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[]) { (byte) $80, (byte) $40, (byte) $20, (byte) $10, (byte) 8, (byte) 4, (byte) 2, (byte) 1 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[]) bitmask = { $80, $40, $20, $10, 8, 4, 2, 1 }
 Constant (const byte*) fill::start#0 = BITMAP
 Constant (const signed word) fill::size#0 = (snumber)$28*$19*8
 Constant (const byte) fill::val#0 = 0
@@ -785,7 +777,7 @@ Constant (const signed word) circle::yc#0 = $64
 Constant (const signed word) circle::x1#0 = 0
 Constant (const byte*) plot::location#0 = BITMAP
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [31] if(true) goto main::@7
+if() condition always true - replacing block destination [30] if(true) goto main::@7
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -850,7 +842,6 @@ Successful SSA optimization Pass2ConstantInlining
 Alias (signed word~) plot::$12 = (signed word) plot::$17 
 Successful SSA optimization Pass2AliasElimination
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @8
 Adding NOP phi() at start of @9
 Adding NOP phi() at start of @end
@@ -858,41 +849,40 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@9
 Adding NOP phi() at start of main::@7
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to fill:7 fill:9 circle:17 
-Calls in [circle] to plot:40 plot:45 plot:50 plot:55 plot:60 plot:65 plot:70 plot:75 
+Calls in [] to main:2 
+Calls in [main] to fill:6 fill:8 circle:16 
+Calls in [circle] to plot:39 plot:44 plot:49 plot:54 plot:59 plot:64 plot:69 plot:74 
 
 Created 12 initial phi equivalence classes
-Coalesced [19] main::i#5 ← main::i#1
-Coalesced [22] circle::y#15 ← circle::r#0
-Coalesced [23] circle::p#16 ← circle::p#0
-Coalesced [33] circle::y#18 ← circle::y#1
-Coalesced [34] circle::p#19 ← circle::p#2
-Coalesced [38] plot::x#17 ← plot::x#0
-Coalesced [39] plot::y#17 ← plot::y#0
-Coalesced [43] plot::x#10 ← plot::x#1
-Coalesced [44] plot::y#10 ← plot::y#1
-Coalesced [48] plot::x#11 ← plot::x#2
-Coalesced [49] plot::y#11 ← plot::y#2
-Coalesced [53] plot::x#12 ← plot::x#3
-Coalesced [54] plot::y#12 ← plot::y#3
-Coalesced [58] plot::x#13 ← plot::x#4
-Coalesced [59] plot::y#13 ← plot::y#4
-Coalesced [63] plot::x#14 ← plot::x#5
-Coalesced [64] plot::y#14 ← plot::y#5
-Coalesced [68] plot::x#15 ← plot::x#6
-Coalesced [69] plot::y#15 ← plot::y#6
-Coalesced [73] plot::x#16 ← plot::x#7
-Coalesced [74] plot::y#16 ← plot::y#7
-Coalesced [77] circle::x1#15 ← circle::x1#1
-Coalesced [78] circle::y#16 ← circle::y#10
-Coalesced [79] circle::p#17 ← circle::p#10
-Coalesced (already) [83] circle::y#17 ← circle::y#13
-Coalesced [84] circle::p#18 ← circle::p#1
-Coalesced [106] fill::addr#4 ← fill::addr#0
-Coalesced [112] fill::addr#5 ← fill::addr#1
+Coalesced [18] main::i#5 ← main::i#1
+Coalesced [21] circle::y#15 ← circle::r#0
+Coalesced [22] circle::p#16 ← circle::p#0
+Coalesced [32] circle::y#18 ← circle::y#1
+Coalesced [33] circle::p#19 ← circle::p#2
+Coalesced [37] plot::x#17 ← plot::x#0
+Coalesced [38] plot::y#17 ← plot::y#0
+Coalesced [42] plot::x#10 ← plot::x#1
+Coalesced [43] plot::y#10 ← plot::y#1
+Coalesced [47] plot::x#11 ← plot::x#2
+Coalesced [48] plot::y#11 ← plot::y#2
+Coalesced [52] plot::x#12 ← plot::x#3
+Coalesced [53] plot::y#12 ← plot::y#3
+Coalesced [57] plot::x#13 ← plot::x#4
+Coalesced [58] plot::y#13 ← plot::y#4
+Coalesced [62] plot::x#14 ← plot::x#5
+Coalesced [63] plot::y#14 ← plot::y#5
+Coalesced [67] plot::x#15 ← plot::x#6
+Coalesced [68] plot::y#15 ← plot::y#6
+Coalesced [72] plot::x#16 ← plot::x#7
+Coalesced [73] plot::y#16 ← plot::y#7
+Coalesced [76] circle::x1#15 ← circle::x1#1
+Coalesced [77] circle::y#16 ← circle::y#10
+Coalesced [78] circle::p#17 ← circle::p#10
+Coalesced (already) [82] circle::y#17 ← circle::y#13
+Coalesced [83] circle::p#18 ← circle::p#1
+Coalesced [105] fill::addr#4 ← fill::addr#0
+Coalesced [111] fill::addr#5 ← fill::addr#1
 Coalesced down to 9 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @9
 Renumbering block @8 to @1
 Renumbering block main::@7 to main::@3

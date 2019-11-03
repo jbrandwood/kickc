@@ -31,8 +31,6 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 @5: scope:[]  from @begin
-  (byte[]) IRQ_CHANGE_IDX ← { (number) $20, (number) $21, (const byte) IRQ_CHANGE_NEXT, (number) $20, (number) $21, (const byte) IRQ_CHANGE_NEXT, (number) $20, (number) $21, (const byte) IRQ_CHANGE_NEXT, (number) $20, (number) $21, (const byte) IRQ_CHANGE_NEXT }
-  (byte[]) IRQ_CHANGE_VAL ← { (number) $b, (number) $b, (number) $63, (number) 0, (number) 0, (number) $80, (number) 7, (number) 7, (number) $83, (number) 0, (number) 0, (number) $60 }
   (byte) irq_idx#0 ← (number) 0
   to:@6
 
@@ -42,8 +40,8 @@ table_driven_irq: scope:[table_driven_irq]  from
   to:table_driven_irq::@1
 table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driven_irq::@8
   (byte) irq_idx#4 ← phi( table_driven_irq/(byte) irq_idx#6 table_driven_irq::@8/(byte) irq_idx#7 )
-  (byte) table_driven_irq::idx#0 ← *((byte[]) IRQ_CHANGE_IDX + (byte) irq_idx#4)
-  (byte) table_driven_irq::val#0 ← *((byte[]) IRQ_CHANGE_VAL + (byte) irq_idx#4)
+  (byte) table_driven_irq::idx#0 ← *((const byte[]) IRQ_CHANGE_IDX + (byte) irq_idx#4)
+  (byte) table_driven_irq::val#0 ← *((const byte[]) IRQ_CHANGE_VAL + (byte) irq_idx#4)
   (byte) irq_idx#1 ← ++ (byte) irq_idx#4
   (bool~) table_driven_irq::$0 ← (byte) table_driven_irq::idx#0 < (const byte) VIC_SIZE
   if((bool~) table_driven_irq::$0) goto table_driven_irq::@2
@@ -106,9 +104,9 @@ SYMBOL TABLE SSA
 (label) @end
 (const byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
 (const byte) CIA_INTERRUPT_CLEAR = (number) $7f
-(byte[]) IRQ_CHANGE_IDX
+(const byte[]) IRQ_CHANGE_IDX = { (byte)(number) $20, (byte)(number) $21, (const byte) IRQ_CHANGE_NEXT, (byte)(number) $20, (byte)(number) $21, (const byte) IRQ_CHANGE_NEXT, (byte)(number) $20, (byte)(number) $21, (const byte) IRQ_CHANGE_NEXT, (byte)(number) $20, (byte)(number) $21, (const byte) IRQ_CHANGE_NEXT }
 (const byte) IRQ_CHANGE_NEXT = (number) $7f
-(byte[]) IRQ_CHANGE_VAL
+(const byte[]) IRQ_CHANGE_VAL = { (byte)(number) $b, (byte)(number) $b, (byte)(number) $63, (byte)(number) 0, (byte)(number) 0, (byte)(number) $80, (byte)(number) 7, (byte)(number) 7, (byte)(number) $83, (byte)(number) 0, (byte)(number) 0, (byte)(number) $60 }
 (const byte*) IRQ_ENABLE = (byte*)(number) $d01a
 (const byte) IRQ_RASTER = (number) 1
 (const byte*) IRQ_STATUS = (byte*)(number) $d019
@@ -172,9 +170,6 @@ Adding number conversion cast (unumber) table_driven_irq::$4 in (number~) table_
 Adding number conversion cast (unumber) table_driven_irq::$5 in (number~) table_driven_irq::$5 ← (unumber~) table_driven_irq::$4 - (const byte) VIC_SIZE
 Adding number conversion cast (unumber) 0 in (byte) irq_idx#2 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[]) IRQ_CHANGE_IDX ← (byte[]){ (byte)(number) $20, (byte)(number) $21, (const byte) IRQ_CHANGE_NEXT, (byte)(number) $20, (byte)(number) $21, (const byte) IRQ_CHANGE_NEXT, (byte)(number) $20, (byte)(number) $21, (const byte) IRQ_CHANGE_NEXT, (byte)(number) $20, (byte)(number) $21, (const byte) IRQ_CHANGE_NEXT }
-Added casts to value list in (byte[]) IRQ_CHANGE_VAL ← (byte[]){ (byte)(number) $b, (byte)(number) $b, (byte)(number) $63, (byte)(number) 0, (byte)(number) 0, (byte)(number) $80, (byte)(number) 7, (byte)(number) 7, (byte)(number) $83, (byte)(number) 0, (byte)(number) 0, (byte)(number) $60 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast *((const byte*) RASTER) ← (unumber)(number) $60
 Inlining cast (byte) irq_idx#0 ← (unumber)(number) 0
 Inlining cast (byte) irq_idx#2 ← (unumber)(number) 0
@@ -187,8 +182,6 @@ Simplifying constant pointer cast (byte*) 56333
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 53248
-Simplifying constant integer cast $7f
-Simplifying constant integer cast $60
 Simplifying constant integer cast $20
 Simplifying constant integer cast $21
 Simplifying constant integer cast $20
@@ -209,6 +202,8 @@ Simplifying constant integer cast $83
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $60
+Simplifying constant integer cast $7f
+Simplifying constant integer cast $60
 Simplifying constant integer cast 0
 Simplifying constant integer cast (const byte) VIC_SIZE+(unumber)(number) 8
 Simplifying constant integer cast 8
@@ -224,7 +219,7 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in (unumber~) table_driven_irq::$4 ← (byte) table_driven_irq::idx#3 + (word) $3f8
 Inferred type updated to word in (unumber~) table_driven_irq::$5 ← (word~) table_driven_irq::$4 - (const byte) VIC_SIZE
-Inversing boolean not [33] (bool~) table_driven_irq::$3 ← (byte) table_driven_irq::val#3 >= *((const byte*) RASTER) from [32] (bool~) table_driven_irq::$2 ← (byte) table_driven_irq::val#3 < *((const byte*) RASTER)
+Inversing boolean not [31] (bool~) table_driven_irq::$3 ← (byte) table_driven_irq::val#3 >= *((const byte*) RASTER) from [30] (bool~) table_driven_irq::$2 ← (byte) table_driven_irq::val#3 < *((const byte*) RASTER)
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) table_driven_irq::val#0 = (byte) table_driven_irq::val#1 (byte) table_driven_irq::val#4 (byte) table_driven_irq::val#2 (byte) table_driven_irq::val#3 
 Alias (byte) table_driven_irq::idx#0 = (byte) table_driven_irq::idx#1 (byte) table_driven_irq::idx#2 (byte) table_driven_irq::idx#3 
@@ -236,23 +231,18 @@ Alias (byte) irq_idx#1 = (byte) irq_idx#7
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) irq_idx#6 (byte) irq_idx#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) table_driven_irq::$0 [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE) goto table_driven_irq::@2
-Simple Condition (bool~) table_driven_irq::$1 [24] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3
-Simple Condition (bool~) table_driven_irq::$3 [34] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER)) goto table_driven_irq::@return
+Simple Condition (bool~) table_driven_irq::$0 [17] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE) goto table_driven_irq::@2
+Simple Condition (bool~) table_driven_irq::$1 [22] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3
+Simple Condition (bool~) table_driven_irq::$3 [32] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER)) goto table_driven_irq::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [6] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) table_driven_irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[]) { (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT }
-Identified constant from value list (byte[]) { (byte) $b, (byte) $b, (byte) $63, (byte) 0, (byte) 0, (byte) $80, (byte) 7, (byte) 7, (byte) $83, (byte) 0, (byte) 0, (byte) $60 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const void()*) main::$0 = &table_driven_irq
-Constant (const byte[]) IRQ_CHANGE_IDX = { $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT }
-Constant (const byte[]) IRQ_CHANGE_VAL = { $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60 }
 Successful SSA optimization Pass2ConstantIdentification
 Removing PHI-reference to removed block (table_driven_irq::@8) in block table_driven_irq::@return
-if() condition always true - replacing block destination [40] if(true) goto table_driven_irq::@1
+if() condition always true - replacing block destination [38] if(true) goto table_driven_irq::@1
 Successful SSA optimization Pass2ConstantIfs
-De-inlining pointer[w] to *(pointer+w)   [28] *((const byte*) SCREEN + (word~) table_driven_irq::$5) ← (byte) table_driven_irq::val#0
+De-inlining pointer[w] to *(pointer+w)   [26] *((const byte*) SCREEN + (word~) table_driven_irq::$5) ← (byte) table_driven_irq::val#0
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) table_driven_irq()
 Successful SSA optimization Pass2ConstantInlining

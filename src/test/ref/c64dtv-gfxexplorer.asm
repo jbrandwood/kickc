@@ -126,6 +126,41 @@
   .label FORM_SCREEN = $400
   // Charset used for the FORM
   .label FORM_CHARSET = $1800
+  .label form_ctrl_bmm = form_fields_val+1
+  .label form_ctrl_mcm = form_fields_val+2
+  .label form_ctrl_ecm = form_fields_val+3
+  .label form_ctrl_hicol = form_fields_val+4
+  .label form_ctrl_line = form_fields_val+5
+  .label form_ctrl_colof = form_fields_val+6
+  .label form_ctrl_chunk = form_fields_val+7
+  .label form_ctrl_borof = form_fields_val+8
+  .label form_ctrl_overs = form_fields_val+9
+  .label form_a_pattern = form_fields_val+$a
+  .label form_a_start_hi = form_fields_val+$b
+  .label form_a_start_lo = form_fields_val+$c
+  .label form_a_step_hi = form_fields_val+$d
+  .label form_a_step_lo = form_fields_val+$e
+  .label form_a_mod_hi = form_fields_val+$f
+  .label form_a_mod_lo = form_fields_val+$10
+  .label form_b_pattern = form_fields_val+$11
+  .label form_b_start_hi = form_fields_val+$12
+  .label form_b_start_lo = form_fields_val+$13
+  .label form_b_step_hi = form_fields_val+$14
+  .label form_b_step_lo = form_fields_val+$15
+  .label form_b_mod_hi = form_fields_val+$16
+  .label form_b_mod_lo = form_fields_val+$17
+  .label form_vic_screen = form_fields_val+$18
+  .label form_vic_gfx = form_fields_val+$19
+  .label form_vic_cols = form_fields_val+$1a
+  .label form_dtv_palet = form_fields_val+$1b
+  .label form_vic_bg0_hi = form_fields_val+$1c
+  .label form_vic_bg0_lo = form_fields_val+$1d
+  .label form_vic_bg1_hi = form_fields_val+$1e
+  .label form_vic_bg1_lo = form_fields_val+$1f
+  .label form_vic_bg2_hi = form_fields_val+$20
+  .label form_vic_bg2_lo = form_fields_val+$21
+  .label form_vic_bg3_hi = form_fields_val+$22
+  .label form_vic_bg3_lo = form_fields_val+$23
   // The number of frames to use for a full blink cycle
   .const FORM_CURSOR_BLINK = $28
   // Number of form fields
@@ -177,7 +212,7 @@ gfx_mode: {
     .label vic_colors = 6
     .label col = $b
     .label cy = $a
-    lda form_fields_val+5
+    lda form_ctrl_line
     cmp #0
     beq b1
     ldx #DTV_LINEAR
@@ -185,35 +220,35 @@ gfx_mode: {
   b1:
     ldx #0
   __b1:
-    lda form_fields_val+8
+    lda form_ctrl_borof
     cmp #0
     beq __b2
     txa
     ora #DTV_BORDER_OFF
     tax
   __b2:
-    lda form_fields_val+4
+    lda form_ctrl_hicol
     cmp #0
     beq __b3
     txa
     ora #DTV_HIGHCOLOR
     tax
   __b3:
-    lda form_fields_val+9
+    lda form_ctrl_overs
     cmp #0
     beq __b4
     txa
     ora #DTV_OVERSCAN
     tax
   __b4:
-    lda form_fields_val+6
+    lda form_ctrl_colof
     cmp #0
     beq __b5
     txa
     ora #DTV_COLORRAM_OFF
     tax
   __b5:
-    lda form_fields_val+7
+    lda form_ctrl_chunk
     cmp #0
     beq __b6
     txa
@@ -221,7 +256,7 @@ gfx_mode: {
     tax
   __b6:
     stx DTV_CONTROL
-    lda form_fields_val+3
+    lda form_ctrl_ecm
     cmp #0
     beq b2
     ldx #VIC_DEN|VIC_RSEL|3|VIC_ECM
@@ -229,7 +264,7 @@ gfx_mode: {
   b2:
     ldx #VIC_DEN|VIC_RSEL|3
   __b7:
-    lda form_fields_val+1
+    lda form_ctrl_bmm
     cmp #0
     beq __b8
     txa
@@ -237,7 +272,7 @@ gfx_mode: {
     tax
   __b8:
     stx VIC_CONTROL
-    lda form_fields_val+2
+    lda form_ctrl_mcm
     cmp #0
     beq b3
     lda #VIC_CSEL|VIC_MCM
@@ -246,14 +281,14 @@ gfx_mode: {
     lda #VIC_CSEL
   __b9:
     sta VIC_CONTROL2
-    lda form_fields_val+$b
+    lda form_a_start_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$c
+    ora form_a_start_lo
     tax
-    lda form_fields_val+$a
+    lda form_a_pattern
     jsr get_plane
     txa
     clc
@@ -282,30 +317,30 @@ gfx_mode: {
     sta.z __26+1
     lda.z __26
     sta DTV_PLANEA_START_HI
-    lda form_fields_val+$d
+    lda form_a_step_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$e
+    ora form_a_step_lo
     sta DTV_PLANEA_STEP
-    lda form_fields_val+$f
+    lda form_a_mod_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$10
+    ora form_a_mod_lo
     sta DTV_PLANEA_MODULO_LO
     lda #0
     sta DTV_PLANEA_MODULO_HI
-    lda form_fields_val+$12
+    lda form_b_start_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$13
+    ora form_b_start_lo
     tax
-    lda form_fields_val+$11
+    lda form_b_pattern
     jsr get_plane
     txa
     clc
@@ -334,19 +369,19 @@ gfx_mode: {
     sta.z __40+1
     lda.z __40
     sta DTV_PLANEB_START_HI
-    lda form_fields_val+$14
+    lda form_b_step_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$15
+    ora form_b_step_lo
     sta DTV_PLANEB_STEP
-    lda form_fields_val+$16
+    lda form_b_mod_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$17
+    ora form_b_mod_lo
     sta DTV_PLANEB_MODULO_LO
     lda #0
     sta DTV_PLANEB_MODULO_HI
@@ -356,7 +391,7 @@ gfx_mode: {
     // Set VIC Bank bits to output - all others to input
     lda #3^VIC_SCREEN0/$4000
     sta CIA2_PORT_A
-    lda form_fields_val+$18
+    lda form_vic_screen
     jsr get_vic_screen
     lda.z __52
     and #<$3fff
@@ -372,7 +407,7 @@ gfx_mode: {
     bne !-
     lda.z __53
     sta.z __54
-    lda form_fields_val+$19
+    lda form_vic_gfx
     jsr get_vic_charset
     lda.z __57
     and #<$3fff
@@ -386,7 +421,7 @@ gfx_mode: {
     // Set VIC Bank
     // VIC memory
     sta VIC_MEMORY
-    lda form_fields_val+$1a
+    lda form_vic_cols
     jsr get_vic_screen
     lda #0
     sta.z cy
@@ -418,36 +453,36 @@ gfx_mode: {
     // Background colors
     lda #0
     sta BORDERCOL
-    lda form_fields_val+$1c
+    lda form_vic_bg0_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$1d
+    ora form_vic_bg0_lo
     sta BGCOL1
-    lda form_fields_val+$1e
+    lda form_vic_bg1_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$1f
+    ora form_vic_bg1_lo
     sta BGCOL2
-    lda form_fields_val+$20
+    lda form_vic_bg2_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$21
+    ora form_vic_bg2_lo
     sta BGCOL3
-    lda form_fields_val+$22
+    lda form_vic_bg3_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$23
+    ora form_vic_bg3_lo
     sta BGCOL4
     // DTV Palette
-    lda form_fields_val+$1b
+    lda form_dtv_palet
     cmp #0
     beq b4
     ldx #0
@@ -2539,28 +2574,18 @@ keyboard_init: {
     sta CIA1_PORT_B_DDR
     rts
 }
+  // Default vallues for the palette
+  DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
   print_hextab: .text "0123456789abcdef"
+  // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
+  keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
+  // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
+  keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
   // Charset ROM
   FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @                                        @ PRESET 0 Standard Charset              @                                        @ CONTROL        PLANE  A     VIC II     @ bmm        0   pattern p0   screen s0  @ mcm        0   start   00   gfx    g0  @ ecm        0   step    00   colors c0  @ hicolor    0   modulo  00              @ linear     0                COLORS     @ color off  0   PLANE  B     palet   0  @ chunky     0   pattern p0   bgcol0 00  @ border off 0   start   00   bgcol1 00  @ overscan   0   step    00   bgcol2 00  @                modulo  00   bgcol3 00  @"
   .byte 0
   FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm              @ nnnnnnnnnnnn                jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"
   .byte 0
-  // Default vallues for the palette
-  DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
-  // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
-  keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
-  // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
-  keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  // Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
-  keyboard_events: .fill 8, 0
-  // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
-  keyboard_scan_values: .fill 8, 0
-  // Tables for the plotter - initialized by calling bitmap_draw_init();
-  bitmap_plot_xlo: .fill $100, 0
-  bitmap_plot_xhi: .fill $100, 0
-  bitmap_plot_ylo: .fill $100, 0
-  bitmap_plot_yhi: .fill $100, 0
-  bitmap_plot_bit: .fill $100, 0
   // Form fields x/y-positions
   form_fields_x: .byte 8, $c, $c, $c, $c, $c, $c, $c, $c, $c, $19, $18, $19, $18, $19, $18, $19, $19, $18, $19, $18, $19, $18, $19, $25, $25, $25, $25, $24, $25, $24, $25, $24, $25, $24, $25
   form_fields_y: .byte 2, 5, 6, 7, 8, 9, $a, $b, $c, $d, 5, 6, 6, 7, 7, 8, 8, $b, $c, $c, $d, $d, $e, $e, 5, 6, 7, $a, $b, $b, $c, $c, $d, $d, $e, $e
@@ -2590,6 +2615,16 @@ keyboard_init: {
   preset_sixsfred2: .byte 9, 1, 1, 1, 0, 1, 0, 0, 0, 0, 9, 0, 0, 0, 1, 0, 0, $a, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
   // Preset: 8bpp Pixel Cell
   preset_8bpppixelcell: .byte $a, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, $b, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
+  // Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
+  keyboard_events: .fill 8, 0
+  // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
+  keyboard_scan_values: .fill 8, 0
+  // Tables for the plotter - initialized by calling bitmap_draw_init();
+  bitmap_plot_xlo: .fill $100, 0
+  bitmap_plot_xhi: .fill $100, 0
+  bitmap_plot_ylo: .fill $100, 0
+  bitmap_plot_yhi: .fill $100, 0
+  bitmap_plot_bit: .fill $100, 0
   // Table with addresses of the y-lines of the form. The first line contains the address of the form screen.
   form_line_lo: .fill $19, 0
   form_line_hi: .fill $19, 0

@@ -4,7 +4,7 @@ import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.InternalError;
+import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
@@ -1403,9 +1403,30 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private void addInitialAssignment(KickCParser.ExprContext initializer, Variable lValue, List<Comment> comments, StatementSource statementSource) {
       PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
       RValue rValue = (RValue) visit(initializer);
+      // Forward references are not allowed
       if(lValue.isDeclaredConst() && rValue instanceof ForwardVariableRef) {
          throw new CompileError("Variable used before being defined " + rValue.toString(), statementSource);
       }
+
+      // Handle initializer value lists for constants
+      if(lValue.isDeclaredConst() && (rValue instanceof ValueList)) {
+         SymbolType declaredType = lValue.getType();
+         ProgramValue programValue = new ProgramValue.GenericValue(rValue);
+         boolean modified = PassNAddInitializerValueListTypeCasts.addValueCasts(declaredType, programValue, program, statementSource);
+         if(modified && programValue.get() instanceof CastValue) {
+            CastValue castValue = (CastValue) programValue.get();
+            if(castValue.getValue() instanceof ValueList) {
+               // Found value list with cast - look through all elements
+               ConstantValue constantValue = Pass2ConstantInitializerValueLists.getConstantValueFromList(castValue.getToType(), (ValueList) castValue.getValue(), program, statementSource);
+               if(constantValue != null) {
+                  // Converted value list to constant!!
+                  rValue = constantValue;
+               }
+            }
+         }
+
+      }
+
 /*      if(lValue.isDeclaredConst() && !(rValue instanceof ConstantValue)) {
          throw new InternalError("RValue is not constant!");
       }

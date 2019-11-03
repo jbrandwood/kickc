@@ -16,6 +16,7 @@ Identified constant variable (byte*) SCREEN
 Identified constant variable (byte) plots_cnt
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@4
+Culled Empty Block (label) @1
 Culled Empty Block (label) plots::@4
 Culled Empty Block (label) plots::@3
 Culled Empty Block (label) plots::@5
@@ -33,7 +34,7 @@ Culled Empty Block (label) init_screen::@12
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@1
+  to:@2
 
 (void()) main()
 main: scope:[main]  from @5
@@ -72,10 +73,6 @@ main::@7: scope:[main]  from main::@3
 main::@return: scope:[main]  from main::@7
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte[]) plots_x ← { (number) $3c, (number) $50, (number) $6e, (number) $50, (number) $3c, (number) $28, (number) $a, (number) $28 }
-  (byte[]) plots_y ← { (number) $a, (number) $28, (number) $3c, (number) $50, (number) $6e, (number) $50, (number) $3c, (number) $28 }
-  to:@2
 
 (void()) plots()
 plots: scope:[plots]  from main::@3
@@ -88,8 +85,8 @@ plots::@1: scope:[plots]  from plots plots::@7
   to:plots::@return
 plots::@2: scope:[plots]  from plots::@1
   (byte) plots::i#3 ← phi( plots::@1/(byte) plots::i#2 )
-  (byte) plot::x#0 ← *((byte[]) plots_x + (byte) plots::i#3)
-  (byte) plot::y#0 ← *((byte[]) plots_y + (byte) plots::i#3)
+  (byte) plot::x#0 ← *((const byte[]) plots_x + (byte) plots::i#3)
+  (byte) plot::y#0 ← *((const byte[]) plots_y + (byte) plots::i#3)
   call plot 
   to:plots::@7
 plots::@7: scope:[plots]  from plots::@2
@@ -99,7 +96,7 @@ plots::@7: scope:[plots]  from plots::@2
 plots::@return: scope:[plots]  from plots::@1
   return 
   to:@return
-@2: scope:[]  from @1
+@2: scope:[]  from @begin
   (byte[$100]) plot_xlo ← { fill( $100, 0) }
   (byte[$100]) plot_xhi ← { fill( $100, 0) }
   (byte[$100]) plot_ylo ← { fill( $100, 0) }
@@ -233,7 +230,6 @@ init_screen::@return: scope:[init_screen]  from init_screen::@7
 @end: scope:[]  from @6
 
 SYMBOL TABLE SSA
-(label) @1
 (label) @2
 (label) @5
 (label) @6
@@ -375,8 +371,8 @@ SYMBOL TABLE SSA
 (byte) plots::i#3
 (byte) plots::i#4
 (const byte) plots_cnt = (byte) 8
-(byte[]) plots_x
-(byte[]) plots_y
+(const byte[]) plots_x = { (byte)(number) $3c, (byte)(number) $50, (byte)(number) $6e, (byte)(number) $50, (byte)(number) $3c, (byte)(number) $28, (byte)(number) $a, (byte)(number) $28 }
+(const byte[]) plots_y = { (byte)(number) $a, (byte)(number) $28, (byte)(number) $3c, (byte)(number) $50, (byte)(number) $6e, (byte)(number) $50, (byte)(number) $3c, (byte)(number) $28 }
 
 Adding number conversion cast (unumber) 0 in *((const byte*) BGCOL) ← (number) 0
 Adding number conversion cast (unumber) 0 in *((const byte*) FGCOL) ← (number) 0
@@ -409,9 +405,6 @@ Adding number conversion cast (unumber) 0 in *((byte*) init_screen::b#3) ← (nu
 Adding number conversion cast (unumber) $400 in (byte*~) init_screen::$1 ← (const byte*) SCREEN + (number) $400
 Adding number conversion cast (unumber) $14 in *((byte*) init_screen::c#3) ← (number) $14
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[]) plots_x ← (byte[]){ (byte)(number) $3c, (byte)(number) $50, (byte)(number) $6e, (byte)(number) $50, (byte)(number) $3c, (byte)(number) $28, (byte)(number) $a, (byte)(number) $28 }
-Added casts to value list in (byte[]) plots_y ← (byte[]){ (byte)(number) $a, (byte)(number) $28, (byte)(number) $3c, (byte)(number) $50, (byte)(number) $6e, (byte)(number) $50, (byte)(number) $3c, (byte)(number) $28 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 0
 Inlining cast *((const byte*) FGCOL) ← (unumber)(number) 0
 Inlining cast (word~) main::$3 ← (word)(const byte*) SCREEN
@@ -427,6 +420,22 @@ Inlining cast *((byte*) init_screen::b#3) ← (unumber)(number) 0
 Inlining cast *((byte*) init_screen::c#3) ← (unumber)(number) $14
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 8192
+Simplifying constant integer cast $3c
+Simplifying constant integer cast $50
+Simplifying constant integer cast $6e
+Simplifying constant integer cast $50
+Simplifying constant integer cast $3c
+Simplifying constant integer cast $28
+Simplifying constant integer cast $a
+Simplifying constant integer cast $28
+Simplifying constant integer cast $a
+Simplifying constant integer cast $28
+Simplifying constant integer cast $3c
+Simplifying constant integer cast $50
+Simplifying constant integer cast $6e
+Simplifying constant integer cast $50
+Simplifying constant integer cast $3c
+Simplifying constant integer cast $28
 Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53272
@@ -439,22 +448,6 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast $40
 Simplifying constant integer cast $400
 Simplifying constant integer cast $ff
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $50
-Simplifying constant integer cast $6e
-Simplifying constant integer cast $50
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $28
-Simplifying constant integer cast $a
-Simplifying constant integer cast $28
-Simplifying constant integer cast $a
-Simplifying constant integer cast $28
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $50
-Simplifying constant integer cast $6e
-Simplifying constant integer cast $50
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $28
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 0
 Simplifying constant integer cast 0
@@ -502,8 +495,8 @@ Inferred type updated to byte in (unumber~) init_plot_tables::$1 ← (byte) init
 Inferred type updated to byte in (unumber~) init_plot_tables::$5 ← (byte) init_plot_tables::y#2 & (byte) 7
 Inferred type updated to byte in (unumber~) init_plot_tables::$7 ← (byte~) init_plot_tables::$5 | (byte~) init_plot_tables::$6
 Inferred type updated to byte in (unumber~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7
-Inversing boolean not [66] (bool~) init_plot_tables::$3 ← (byte) init_plot_tables::bits#1 != (byte) 0 from [65] (bool~) init_plot_tables::$2 ← (byte) init_plot_tables::bits#1 == (byte) 0
-Inversing boolean not [85] (bool~) init_plot_tables::$11 ← (byte~) init_plot_tables::$9 != (byte) 7 from [84] (bool~) init_plot_tables::$10 ← (byte~) init_plot_tables::$9 == (byte) 7
+Inversing boolean not [64] (bool~) init_plot_tables::$3 ← (byte) init_plot_tables::bits#1 != (byte) 0 from [63] (bool~) init_plot_tables::$2 ← (byte) init_plot_tables::bits#1 == (byte) 0
+Inversing boolean not [83] (bool~) init_plot_tables::$11 ← (byte~) init_plot_tables::$9 != (byte) 7 from [82] (bool~) init_plot_tables::$10 ← (byte~) init_plot_tables::$9 == (byte) 7
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) plots::i#2 = (byte) plots::i#3 (byte) plots::i#4 
 Alias (byte*) plot::plotter#0 = (byte*~) plot::$4 
@@ -521,35 +514,30 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) plot::x#1 (byte) plot::x#0
 Identical Phi Values (byte) plot::y#1 (byte) plot::y#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [83] (byte~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7
+Identified duplicate assignment right side [81] (byte~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) main::$11 [16] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
-Simple Condition (bool~) plots::$0 [27] if((byte) plots::i#2<(const byte) plots_cnt) goto plots::@2
-Simple Condition (bool~) init_plot_tables::$3 [67] if((byte) init_plot_tables::bits#1!=(byte) 0) goto init_plot_tables::@2
-Simple Condition (bool~) init_plot_tables::$4 [71] if((byte) init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1
-Simple Condition (bool~) init_plot_tables::$11 [86] if((byte~) init_plot_tables::$9!=(byte) 7) goto init_plot_tables::@6
-Simple Condition (bool~) init_plot_tables::$13 [90] if((byte) init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5
-Simple Condition (bool~) init_screen::$0 [98] if((byte*) init_screen::b#2!=(const byte*) BITMAP+(word) $2000) goto init_screen::@2
-Simple Condition (bool~) init_screen::$2 [106] if((byte*) init_screen::c#2!=(byte*~) init_screen::$1) goto init_screen::@8
+Simple Condition (bool~) plots::$0 [25] if((byte) plots::i#2<(const byte) plots_cnt) goto plots::@2
+Simple Condition (bool~) init_plot_tables::$3 [65] if((byte) init_plot_tables::bits#1!=(byte) 0) goto init_plot_tables::@2
+Simple Condition (bool~) init_plot_tables::$4 [69] if((byte) init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1
+Simple Condition (bool~) init_plot_tables::$11 [84] if((byte~) init_plot_tables::$9!=(byte) 7) goto init_plot_tables::@6
+Simple Condition (bool~) init_plot_tables::$13 [88] if((byte) init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5
+Simple Condition (bool~) init_screen::$0 [96] if((byte*) init_screen::b#2!=(const byte*) BITMAP+(word) $2000) goto init_screen::@2
+Simple Condition (bool~) init_screen::$2 [104] if((byte*) init_screen::c#2!=(byte*~) init_screen::$1) goto init_screen::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [2] (byte~) main::$0 ← (const byte) BMM | (const byte) DEN
 Constant right-side identified [6] (word~) main::$3 ← (word)(const byte*) SCREEN
 Constant right-side identified [8] (word~) main::$5 ← (word)(const byte*) BITMAP
-Constant right-side identified [35] (byte[$100]) plot_xlo ← { fill( $100, 0) }
-Constant right-side identified [36] (byte[$100]) plot_xhi ← { fill( $100, 0) }
-Constant right-side identified [37] (byte[$100]) plot_ylo ← { fill( $100, 0) }
-Constant right-side identified [38] (byte[$100]) plot_yhi ← { fill( $100, 0) }
-Constant right-side identified [39] (byte[$100]) plot_bit ← { fill( $100, 0) }
-Constant right-side identified [104] (byte*~) init_screen::$1 ← (const byte*) SCREEN + (word) $400
+Constant right-side identified [33] (byte[$100]) plot_xlo ← { fill( $100, 0) }
+Constant right-side identified [34] (byte[$100]) plot_xhi ← { fill( $100, 0) }
+Constant right-side identified [35] (byte[$100]) plot_ylo ← { fill( $100, 0) }
+Constant right-side identified [36] (byte[$100]) plot_yhi ← { fill( $100, 0) }
+Constant right-side identified [37] (byte[$100]) plot_bit ← { fill( $100, 0) }
+Constant right-side identified [102] (byte*~) init_screen::$1 ← (const byte*) SCREEN + (word) $400
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[]) { (byte) $3c, (byte) $50, (byte) $6e, (byte) $50, (byte) $3c, (byte) $28, (byte) $a, (byte) $28 }
-Identified constant from value list (byte[]) { (byte) $a, (byte) $28, (byte) $3c, (byte) $50, (byte) $6e, (byte) $50, (byte) $3c, (byte) $28 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte) main::$0 = BMM|DEN
 Constant (const word) main::$3 = (word)SCREEN
 Constant (const word) main::$5 = (word)BITMAP
-Constant (const byte[]) plots_x = { $3c, $50, $6e, $50, $3c, $28, $a, $28 }
-Constant (const byte[]) plots_y = { $a, $28, $3c, $50, $6e, $50, $3c, $28 }
 Constant (const byte) plots::i#0 = 0
 Constant (const byte[$100]) plot_xlo = { fill( $100, 0) }
 Constant (const byte[$100]) plot_xhi = { fill( $100, 0) }
@@ -569,10 +557,10 @@ Constant (const byte*) init_screen::$1 = SCREEN+$400
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [20] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [69] init_plot_tables::x#1 ← ++ init_plot_tables::x#2 to ++
-Resolved ranged comparison value [71] if(init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1 to (number) 0
-Resolved ranged next value [88] init_plot_tables::y#1 ← ++ init_plot_tables::y#2 to ++
-Resolved ranged comparison value [90] if(init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5 to (number) 0
+Resolved ranged next value [67] init_plot_tables::x#1 ← ++ init_plot_tables::x#2 to ++
+Resolved ranged comparison value [69] if(init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1 to (number) 0
+Resolved ranged next value [86] init_plot_tables::y#1 ← ++ init_plot_tables::y#2 to ++
+Resolved ranged comparison value [88] if(init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5 to (number) 0
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) 0 in if((byte) init_plot_tables::x#1!=(number) 0) goto init_plot_tables::@1
@@ -640,7 +628,6 @@ Added new block during phi lifting init_plot_tables::@10(between init_plot_table
 Added new block during phi lifting init_plot_tables::@11(between init_plot_tables::@6 and init_plot_tables::@5)
 Added new block during phi lifting init_plot_tables::@12(between init_plot_tables::@5 and init_plot_tables::@6)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @5
 Adding NOP phi() at start of @6
@@ -654,23 +641,22 @@ Adding NOP phi() at start of init_plot_tables::@4
 Adding NOP phi() at start of init_screen
 Adding NOP phi() at start of init_screen::@3
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to init_screen:11 init_plot_tables:13 plots:17 
-Calls in [plots] to plot:25 
+Calls in [] to main:3 
+Calls in [main] to init_screen:10 init_plot_tables:12 plots:16 
+Calls in [plots] to plot:24 
 
 Created 9 initial phi equivalence classes
-Coalesced [27] plots::i#5 ← plots::i#1
-Coalesced [62] init_plot_tables::yoffs#7 ← init_plot_tables::yoffs#1
-Coalesced [67] init_plot_tables::y#5 ← init_plot_tables::y#1
-Coalesced [68] init_plot_tables::yoffs#5 ← init_plot_tables::yoffs#4
-Coalesced (already) [69] init_plot_tables::yoffs#6 ← init_plot_tables::yoffs#2
-Coalesced [70] init_plot_tables::x#5 ← init_plot_tables::x#1
-Coalesced [71] init_plot_tables::bits#5 ← init_plot_tables::bits#4
-Coalesced [72] init_plot_tables::bits#6 ← init_plot_tables::bits#1
-Coalesced [82] init_screen::c#4 ← init_screen::c#1
-Coalesced [85] init_screen::b#4 ← init_screen::b#1
+Coalesced [26] plots::i#5 ← plots::i#1
+Coalesced [61] init_plot_tables::yoffs#7 ← init_plot_tables::yoffs#1
+Coalesced [66] init_plot_tables::y#5 ← init_plot_tables::y#1
+Coalesced [67] init_plot_tables::yoffs#5 ← init_plot_tables::yoffs#4
+Coalesced (already) [68] init_plot_tables::yoffs#6 ← init_plot_tables::yoffs#2
+Coalesced [69] init_plot_tables::x#5 ← init_plot_tables::x#1
+Coalesced [70] init_plot_tables::bits#5 ← init_plot_tables::bits#4
+Coalesced [71] init_plot_tables::bits#6 ← init_plot_tables::bits#1
+Coalesced [81] init_screen::c#4 ← init_screen::c#1
+Coalesced [84] init_screen::b#4 ← init_screen::b#1
 Coalesced down to 7 phi equivalence classes
-Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @6
 Culled Empty Block (label) main::@6

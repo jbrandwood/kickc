@@ -2,13 +2,12 @@ Setting inferred volatile on symbol affected by address-of (signed word*~) main:
 Setting inferred volatile on symbol affected by address-of (signed word*~) main::$2 ← & (signed word) main::y2
 Fixing pointer increment (signed word*) main::SCREEN ← ++ (signed word*) main::SCREEN
 Fixing pointer increment (signed word*) main::SCREEN ← ++ (signed word*) main::SCREEN
-Fixing pointer array-indexing *((signed word[4]) wow + (byte) foo::x)
+Fixing pointer array-indexing *((const signed word[4]) wow + (byte) foo::x)
 Culled Empty Block (label) foo::@1
 Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (signed word[4]) wow ← { (number) $cafe, (number) $babe, (number) $1234, (number) $5678 }
   to:@2
 
 (signed word()) foo((byte) foo::x , (signed word*) foo::y)
@@ -16,7 +15,7 @@ foo: scope:[foo]  from main main::@1
   (signed word*) foo::y#2 ← phi( main/(signed word*) foo::y#0 main::@1/(signed word*) foo::y#1 )
   (byte) foo::x#2 ← phi( main/(byte) foo::x#0 main::@1/(byte) foo::x#1 )
   (byte~) foo::$1 ← (byte) foo::x#2 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word~) foo::$0 ← *((signed word[4]) wow + (byte~) foo::$1) + *((signed word*) foo::y#2)
+  (signed word~) foo::$0 ← *((const signed word[4]) wow + (byte~) foo::$1) + *((signed word*) foo::y#2)
   (signed word) foo::return#0 ← (signed word~) foo::$0
   to:foo::@return
 foo::@return: scope:[foo]  from foo
@@ -111,15 +110,13 @@ SYMBOL TABLE SSA
 (signed word) main::y2
 (signed word) main::y2#0
 (signed word) main::y2#1
-(signed word[4]) wow
+(const signed word[4]) wow = { (signed word)(number) $cafe, (signed word)(number) $babe, (signed word)(number) $1234, (signed word)(number) $5678 }
 
 Adding number conversion cast (snumber) $1234 in (signed word) main::y1#0 ← (number) $1234
 Adding number conversion cast (snumber) $1234 in (signed word) main::y2#0 ← (number) $1234
 Adding number conversion cast (unumber) 1 in (byte) foo::x#0 ← (number) 1
 Adding number conversion cast (unumber) 2 in (byte) foo::x#1 ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (signed word[4]) wow ← (signed word[4]){ (signed word)(number) $cafe, (signed word)(number) $babe, (signed word)(number) $1234, (signed word)(number) $5678 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (signed word*) main::SCREEN#0 ← (signed word*)(number) $400
 Inlining cast (signed word) main::y1#0 ← (snumber)(number) $1234
 Inlining cast (signed word) main::y2#0 ← (snumber)(number) $1234
@@ -150,19 +147,16 @@ Alias (signed word*) foo::y#1 = (signed word*~) main::$2
 Alias (signed word) foo::return#3 = (signed word) foo::return#6 
 Alias (signed word*) main::SCREEN#1 = (signed word*) main::SCREEN#4 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [11] (signed word*) foo::y#0 ← & (signed word) main::y1#0
-Constant right-side identified [20] (signed word*) foo::y#1 ← & (signed word) main::y2#0
+Constant right-side identified [10] (signed word*) foo::y#0 ← & (signed word) main::y1#0
+Constant right-side identified [19] (signed word*) foo::y#1 ← & (signed word) main::y2#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (signed word[4]) { (signed word) $cafe, (signed word) $babe, (signed word) $1234, (signed word) $5678 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const signed word[4]) wow = { $cafe, $babe, $1234, $5678 }
 Constant (const signed word*) main::SCREEN#0 = (signed word*) 1024
 Constant (const signed word*) foo::y#0 = &main::y1#0
 Constant (const byte) foo::x#0 = 1
 Constant (const signed word*) foo::y#1 = &main::y2#0
 Constant (const byte) foo::x#1 = 2
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [27] *((signed word*) main::SCREEN#1) ← (signed word~) main::$3  -- *(main::SCREEN#0 + SIZEOF_SIGNED_WORD)
+Converting *(pointer+n) to pointer[n] [26] *((signed word*) main::SCREEN#1) ← (signed word~) main::$3  -- *(main::SCREEN#0 + SIZEOF_SIGNED_WORD)
 Successful SSA optimization Pass2InlineDerefIdx
 Eliminating unused variable (signed word*) main::SCREEN#2 and assignment [15] (signed word*) main::SCREEN#2 ← (signed word*) main::SCREEN#1 + (const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization PassNEliminateUnusedVars

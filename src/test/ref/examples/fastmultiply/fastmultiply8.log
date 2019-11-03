@@ -56,6 +56,7 @@ Culled Empty Block (label) @32
 Culled Empty Block (label) @33
 Culled Empty Block (label) @34
 Culled Empty Block (label) @35
+Culled Empty Block (label) @36
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) @37
 Culled Empty Block (label) init_screen::@4
@@ -111,7 +112,7 @@ memset::@return: scope:[memset]  from memset::@1
   to:@return
 @12: scope:[]  from @begin
   (byte*) print_screen#0 ← ((byte*)) (number) $400
-  to:@36
+  to:@39
 
 (void()) print_sbyte_at((signed byte) print_sbyte_at::b , (byte*) print_sbyte_at::at)
 print_sbyte_at: scope:[print_sbyte_at]  from main::@1 main::@10 main::@3
@@ -207,10 +208,6 @@ print_cls::@1: scope:[print_cls]  from print_cls
 print_cls::@return: scope:[print_cls]  from print_cls::@1
   return 
   to:@return
-@36: scope:[]  from @12
-  (byte*) print_screen#5 ← phi( @12/(byte*) print_screen#0 )
-  (signed byte[]) vals ← { (number) -$5f, (number) -$40, (number) -$20, (number) -$10, (number) 0, (number) $10, (number) $20, (number) $40, (number) $5f }
-  to:@39
 
 (void()) main()
 main: scope:[main]  from @39
@@ -227,7 +224,7 @@ main::@1: scope:[main]  from main::@7 main::@8
   (byte*) main::at_line#7 ← phi( main::@7/(byte*) main::at_line#0 main::@8/(byte*) main::at_line#5 )
   (byte*) main::at#4 ← phi( main::@7/(byte*) main::at#0 main::@8/(byte*) main::at#1 )
   (byte) main::k#2 ← phi( main::@7/(byte) main::k#0 main::@8/(byte) main::k#1 )
-  (signed byte) print_sbyte_at::b#1 ← *((signed byte[]) vals + (byte) main::k#2)
+  (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals + (byte) main::k#2)
   (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4
   call print_sbyte_at 
   to:main::@8
@@ -249,7 +246,7 @@ main::@3: scope:[main]  from main::@2 main::@5
   (byte*) main::at_line#2 ← phi( main::@2/(byte*) main::at_line#3 main::@5/(byte*) main::at_line#4 )
   (byte*) main::at_line#1 ← (byte*) main::at_line#2 + (number) $28
   (byte*) main::at#2 ← (byte*) main::at_line#1
-  (signed byte) print_sbyte_at::b#2 ← *((signed byte[]) vals + (byte) main::i#2)
+  (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals + (byte) main::i#2)
   (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2
   call print_sbyte_at 
   to:main::@9
@@ -265,8 +262,8 @@ main::@4: scope:[main]  from main::@11 main::@9
   (byte) main::i#3 ← phi( main::@11/(byte) main::i#5 main::@9/(byte) main::i#6 )
   (byte*) main::at#6 ← phi( main::@11/(byte*) main::at#8 main::@9/(byte*) main::at#9 )
   (byte*) main::at#3 ← (byte*) main::at#6 + (number) 4
-  (signed byte) fmul8::a#0 ← *((signed byte[]) vals + (byte) main::i#3)
-  (signed byte) fmul8::b#0 ← *((signed byte[]) vals + (byte) main::j#2)
+  (signed byte) fmul8::a#0 ← *((const signed byte[]) vals + (byte) main::i#3)
+  (signed byte) fmul8::b#0 ← *((const signed byte[]) vals + (byte) main::j#2)
   call fmul8 
   (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#2
   to:main::@10
@@ -353,8 +350,8 @@ fmul8::@return: scope:[fmul8]  from fmul8
   (signed byte) fmul8::return#2 ← (signed byte) fmul8::return#4
   return 
   to:@return
-@39: scope:[]  from @36
-  (byte*) print_screen#4 ← phi( @36/(byte*) print_screen#5 )
+@39: scope:[]  from @12
+  (byte*) print_screen#4 ← phi( @12/(byte*) print_screen#0 )
   (byte[$200]) mulf_sqr1 ← kickasm {{ .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
@@ -375,7 +372,6 @@ fmul8::@return: scope:[fmul8]  from fmul8
 
 SYMBOL TABLE SSA
 (label) @12
-(label) @36
 (label) @39
 (label) @40
 (label) @begin
@@ -602,8 +598,7 @@ SYMBOL TABLE SSA
 (byte*) print_screen#2
 (byte*) print_screen#3
 (byte*) print_screen#4
-(byte*) print_screen#5
-(signed byte[]) vals
+(const signed byte[]) vals = { (signed byte)(number) -$5f, (signed byte)(number) -$40, (signed byte)(number) -$20, (signed byte)(number) -$10, (signed byte)(number) 0, (signed byte)(number) $10, (signed byte)(number) $20, (signed byte)(number) $40, (signed byte)(number) $5f }
 
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) print_sbyte_at::$0 ← (signed byte) print_sbyte_at::b#4 < (number) 0
@@ -623,8 +618,6 @@ Adding number conversion cast (unumber) 2 in *((byte*) init_screen::COLS#3 + (nu
 Adding number conversion cast (unumber) 3 in *((byte*) init_screen::COLS#3 + (number) 3) ← (const byte) init_screen::WHITE
 Adding number conversion cast (unumber) $28 in (byte*) init_screen::COLS#1 ← (byte*) init_screen::COLS#3 + (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (signed byte[]) vals ← (signed byte[]){ (signed byte)(number) -$5f, (signed byte)(number) -$40, (signed byte)(number) -$20, (signed byte)(number) -$10, (signed byte)(number) 0, (signed byte)(number) $10, (signed byte)(number) $20, (signed byte)(number) $40, (signed byte)(number) $5f }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
@@ -633,6 +626,15 @@ Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (byte*) main::at_line#0 ← (byte*)(number) $400
 Inlining cast (byte*) init_screen::COLS#0 ← (byte*)(number) $d800
 Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast -$5f
+Simplifying constant integer cast -$40
+Simplifying constant integer cast -$20
+Simplifying constant integer cast -$10
+Simplifying constant integer cast 0
+Simplifying constant integer cast $10
+Simplifying constant integer cast $20
+Simplifying constant integer cast $40
+Simplifying constant integer cast $5f
 Simplifying constant pointer cast (signed byte*) 253
 Simplifying constant pointer cast (signed byte*) 254
 Simplifying constant pointer cast (signed byte*) 255
@@ -644,15 +646,6 @@ Simplifying constant integer cast 4
 Simplifying constant integer cast $f
 Simplifying constant integer cast 1
 Simplifying constant integer cast $3e8
-Simplifying constant integer cast -$5f
-Simplifying constant integer cast -$40
-Simplifying constant integer cast -$20
-Simplifying constant integer cast -$10
-Simplifying constant integer cast 0
-Simplifying constant integer cast $10
-Simplifying constant integer cast $20
-Simplifying constant integer cast $40
-Simplifying constant integer cast $5f
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 4
 Simplifying constant integer cast 4
@@ -702,7 +695,6 @@ Alias (byte*) print_byte_at::at#0 = (byte*~) print_sbyte_at::$2
 Alias (byte) print_byte_at::b#1 = (byte) print_byte_at::b#2 
 Alias (byte*) print_byte_at::at#1 = (byte*) print_byte_at::at#2 
 Alias (byte*) print_char_at::at#3 = (byte*~) print_byte_at::$3 
-Alias (byte*) print_screen#0 = (byte*) print_screen#5 (byte*) print_screen#4 
 Alias (byte*) main::at#0 = (byte*~) main::$1 
 Alias (byte*) main::at#4 = (byte*) main::at#5 
 Alias (byte) main::k#2 = (byte) main::k#3 
@@ -717,6 +709,7 @@ Alias (byte*) main::at_line#4 = (byte*) main::at_line#8 (byte*) main::at_line#9 
 Alias (signed byte) main::r#0 = (signed byte~) main::$5 
 Alias (byte*) init_screen::COLS#2 = (byte*) init_screen::COLS#4 
 Alias (signed byte) fmul8::return#1 = (signed byte) fmul8::return#4 (signed byte) fmul8::return#2 
+Alias (byte*) print_screen#0 = (byte*) print_screen#4 
 Successful SSA optimization Pass2AliasElimination
 Alias (byte*) print_sbyte_at::at#3 = (byte*) print_sbyte_at::at#5 
 Successful SSA optimization Pass2AliasElimination
@@ -743,20 +736,17 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [3] if((word) memset::num#0<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_sbyte_at::$0 [23] if((signed byte) print_sbyte_at::b#4<(signed byte) 0) goto print_sbyte_at::@1
-Simple Condition (bool~) main::$3 [81] if((byte) main::k#1!=rangelast(0,8)) goto main::@1
-Simple Condition (bool~) main::$7 [107] if((byte) main::j#1!=rangelast(0,8)) goto main::@4
-Simple Condition (bool~) main::$8 [111] if((byte) main::i#1!=rangelast(0,8)) goto main::@3
-Simple Condition (bool~) init_screen::$1 [121] if((byte) init_screen::l#1!=rangelast(0,$27)) goto init_screen::@1
-Simple Condition (bool~) init_screen::$2 [132] if((byte) init_screen::m#1!=rangelast(0,$18)) goto init_screen::@3
+Simple Condition (bool~) main::$3 [79] if((byte) main::k#1!=rangelast(0,8)) goto main::@1
+Simple Condition (bool~) main::$7 [105] if((byte) main::j#1!=rangelast(0,8)) goto main::@4
+Simple Condition (bool~) main::$8 [109] if((byte) main::i#1!=rangelast(0,8)) goto main::@3
+Simple Condition (bool~) init_screen::$1 [119] if((byte) init_screen::l#1!=rangelast(0,$27)) goto init_screen::@1
+Simple Condition (bool~) init_screen::$2 [130] if((byte) init_screen::m#1!=rangelast(0,$18)) goto init_screen::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Identified constant from value list (signed byte[]) { (signed byte) -$5f, (signed byte) -$40, (signed byte) -$20, (signed byte) -$10, (signed byte) 0, (signed byte) $10, (signed byte) $20, (signed byte) $40, (signed byte) $5f }
-Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte*) print_screen#0 = (byte*) 1024
 Constant (const byte) print_char_at::ch#0 = '-'
 Constant (const byte) print_char_at::ch#1 = ' '
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const signed byte[]) vals = { -$5f, -$40, -$20, -$10, 0, $10, $20, $40, $5f }
 Constant (const byte*) main::at_line#0 = (byte*) 1024
 Constant (const byte) main::k#0 = 0
 Constant (const byte) main::i#0 = 0
@@ -785,17 +775,17 @@ Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [3] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [79] main::k#1 ← ++ main::k#2 to ++
-Resolved ranged comparison value [81] if(main::k#1!=rangelast(0,8)) goto main::@1 to (number) 9
-Resolved ranged next value [105] main::j#1 ← ++ main::j#2 to ++
-Resolved ranged comparison value [107] if(main::j#1!=rangelast(0,8)) goto main::@4 to (number) 9
-Resolved ranged next value [109] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [111] if(main::i#1!=rangelast(0,8)) goto main::@3 to (number) 9
-Resolved ranged next value [119] init_screen::l#1 ← ++ init_screen::l#2 to ++
-Resolved ranged comparison value [121] if(init_screen::l#1!=rangelast(0,$27)) goto init_screen::@1 to (number) $28
-Resolved ranged next value [130] init_screen::m#1 ← ++ init_screen::m#2 to ++
-Resolved ranged comparison value [132] if(init_screen::m#1!=rangelast(0,$18)) goto init_screen::@3 to (number) $19
-Simplifying expression containing zero init_screen::COLS#3 in [125] *((byte*) init_screen::COLS#3 + (byte) 0) ← (const byte) init_screen::WHITE
+Resolved ranged next value [77] main::k#1 ← ++ main::k#2 to ++
+Resolved ranged comparison value [79] if(main::k#1!=rangelast(0,8)) goto main::@1 to (number) 9
+Resolved ranged next value [103] main::j#1 ← ++ main::j#2 to ++
+Resolved ranged comparison value [105] if(main::j#1!=rangelast(0,8)) goto main::@4 to (number) 9
+Resolved ranged next value [107] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [109] if(main::i#1!=rangelast(0,8)) goto main::@3 to (number) 9
+Resolved ranged next value [117] init_screen::l#1 ← ++ init_screen::l#2 to ++
+Resolved ranged comparison value [119] if(init_screen::l#1!=rangelast(0,$27)) goto init_screen::@1 to (number) $28
+Resolved ranged next value [128] init_screen::m#1 ← ++ init_screen::m#2 to ++
+Resolved ranged comparison value [130] if(init_screen::m#1!=rangelast(0,$18)) goto init_screen::@3 to (number) $19
+Simplifying expression containing zero init_screen::COLS#3 in [123] *((byte*) init_screen::COLS#3 + (byte) 0) ← (const byte) init_screen::WHITE
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const void*) memset::return#2
 Successful SSA optimization PassNEliminateUnusedVars
@@ -854,7 +844,6 @@ Added new block during phi lifting init_screen::@6(between init_screen::@1 and i
 Added new block during phi lifting init_screen::@7(between init_screen::@3 and init_screen::@3)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @12
-Adding NOP phi() at start of @36
 Adding NOP phi() at start of @39
 Adding NOP phi() at start of @40
 Adding NOP phi() at start of @end
@@ -872,42 +861,41 @@ Adding NOP phi() at start of memset
 Adding NOP phi() at start of memset::@2
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to init_screen:8 print_sbyte_at:15 print_sbyte_at:26 fmul8:32 print_sbyte_at:39 
-Calls in [print_sbyte_at] to print_char_at:55 print_byte_at:60 print_char_at:65 
-Calls in [print_byte_at] to print_char_at:76 print_char_at:82 
-Calls in [init_screen] to print_cls:91 
-Calls in [print_cls] to memset:111 
+Calls in [] to main:3 
+Calls in [main] to init_screen:7 print_sbyte_at:14 print_sbyte_at:25 fmul8:31 print_sbyte_at:38 
+Calls in [print_sbyte_at] to print_char_at:54 print_byte_at:59 print_char_at:64 
+Calls in [print_byte_at] to print_char_at:75 print_char_at:81 
+Calls in [init_screen] to print_cls:90 
+Calls in [print_cls] to memset:110 
 
 Created 15 initial phi equivalence classes
-Coalesced [13] print_sbyte_at::b#10 ← print_sbyte_at::b#1
-Coalesced [14] print_sbyte_at::at#9 ← print_sbyte_at::at#0
-Coalesced [24] print_sbyte_at::b#12 ← print_sbyte_at::b#2
-Coalesced [25] print_sbyte_at::at#11 ← print_sbyte_at::at#1
-Not coalescing [27] main::at#12 ← main::at#2
-Coalesced [37] print_sbyte_at::b#11 ← print_sbyte_at::b#3
-Coalesced [38] print_sbyte_at::at#10 ← print_sbyte_at::at#2
-Coalesced [45] main::at_line#11 ← main::at#2
-Coalesced [46] main::i#8 ← main::i#1
-Coalesced [47] main::at#11 ← main::at#3
-Coalesced [48] main::j#5 ← main::j#1
-Coalesced [49] main::k#4 ← main::k#1
-Coalesced [50] main::at#10 ← main::at#1
-Coalesced [54] print_char_at::at#8 ← print_char_at::at#1
-Coalesced [56] print_sbyte_at::b#14 ← print_sbyte_at::b#4
-Coalesced [64] print_char_at::at#7 ← print_char_at::at#0
-Coalesced [67] print_sbyte_at::b#13 ← print_sbyte_at::b#0
-Coalesced [74] print_char_at::ch#5 ← print_char_at::ch#2
-Coalesced [75] print_char_at::at#5 ← print_char_at::at#2
-Coalesced [80] print_char_at::ch#6 ← print_char_at::ch#3
-Coalesced [81] print_char_at::at#6 ← print_char_at::at#3
-Coalesced [107] init_screen::COLS#5 ← init_screen::COLS#1
-Coalesced [108] init_screen::m#3 ← init_screen::m#1
-Coalesced [109] init_screen::l#3 ← init_screen::l#1
-Coalesced [122] memset::dst#4 ← memset::dst#1
+Coalesced [12] print_sbyte_at::b#10 ← print_sbyte_at::b#1
+Coalesced [13] print_sbyte_at::at#9 ← print_sbyte_at::at#0
+Coalesced [23] print_sbyte_at::b#12 ← print_sbyte_at::b#2
+Coalesced [24] print_sbyte_at::at#11 ← print_sbyte_at::at#1
+Not coalescing [26] main::at#12 ← main::at#2
+Coalesced [36] print_sbyte_at::b#11 ← print_sbyte_at::b#3
+Coalesced [37] print_sbyte_at::at#10 ← print_sbyte_at::at#2
+Coalesced [44] main::at_line#11 ← main::at#2
+Coalesced [45] main::i#8 ← main::i#1
+Coalesced [46] main::at#11 ← main::at#3
+Coalesced [47] main::j#5 ← main::j#1
+Coalesced [48] main::k#4 ← main::k#1
+Coalesced [49] main::at#10 ← main::at#1
+Coalesced [53] print_char_at::at#8 ← print_char_at::at#1
+Coalesced [55] print_sbyte_at::b#14 ← print_sbyte_at::b#4
+Coalesced [63] print_char_at::at#7 ← print_char_at::at#0
+Coalesced [66] print_sbyte_at::b#13 ← print_sbyte_at::b#0
+Coalesced [73] print_char_at::ch#5 ← print_char_at::ch#2
+Coalesced [74] print_char_at::at#5 ← print_char_at::at#2
+Coalesced [79] print_char_at::ch#6 ← print_char_at::ch#3
+Coalesced [80] print_char_at::at#6 ← print_char_at::at#3
+Coalesced [106] init_screen::COLS#5 ← init_screen::COLS#1
+Coalesced [107] init_screen::m#3 ← init_screen::m#1
+Coalesced [108] init_screen::l#3 ← init_screen::l#1
+Coalesced [121] memset::dst#4 ← memset::dst#1
 Coalesced down to 14 phi equivalence classes
 Culled Empty Block (label) @12
-Culled Empty Block (label) @36
 Culled Empty Block (label) @40
 Culled Empty Block (label) main::@7
 Culled Empty Block (label) main::@2

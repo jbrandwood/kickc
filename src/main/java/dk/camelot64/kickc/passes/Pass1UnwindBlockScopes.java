@@ -75,22 +75,13 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                Variable variable = (Variable) symbol;
                if(variable.isKindPhiMaster() || variable.isKindConstant()) {
                   String name = findLocalName(procedure, symbol);
-                  Variable var = (Variable) symbol;
-                  Variable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getMemoryArea(), var.getDataSegment());
-                  unwound.setDeclaredAlignment(var.getDeclaredAlignment());
-                  unwound.setDeclaredConst(var.isDeclaredConst());
-                  unwound.setDeclaredNotConst((var.isDeclaredNotConst()));
-                  unwound.setDeclaredVolatile(var.isDeclaredVolatile());
-                  unwound.setInferredVolatile(var.isInferredVolatile());
-                  unwound.setDeclaredRegister((var.getDeclaredRegister()));
-                  unwound.setDeclaredExport(var.isDeclaredExport());
+                  Variable unwound = new Variable(name, procedure, (Variable) symbol);
+                  procedure.add(unwound);
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
-                  unwound.setKind(var.getKind());
-                  unwound.setMemoryArea(var.getMemoryArea());
                } else if(variable.isKindIntermediate()) {
-                  Variable unwound = procedure.addVariableIntermediate();
-                  unwound.setKind(variable.getKind());
-                  unwound.setMemoryArea(variable.getMemoryArea());
+                  String name = procedure.allocateIntermediateVariableName();
+                  Variable unwound = new Variable(name, procedure, (Variable) symbol);
+                  procedure.add(unwound);
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                } else {
                   throw new CompileError("ERROR! Unexpected symbol encountered in block scope " + symbol.toString(getProgram()));

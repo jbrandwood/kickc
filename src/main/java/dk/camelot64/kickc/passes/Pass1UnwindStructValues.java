@@ -210,28 +210,14 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   StructDefinition structDefinition = ((SymbolTypeStruct) variable.getType()).getStructDefinition(getProgram().getScope());
                   StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef());
                   for(Variable member : structDefinition.getAllVariables(false)) {
-                     Variable memberVariable;
-                     if(variable.getRef().isIntermediate()) {
-                        memberVariable = scope.add(new Variable( variable.getLocalName() + "_" + member.getLocalName(), scope, member.getType(), Variable.Kind.INTERMEDIATE, variable.getMemoryArea(), variable.getDataSegment()));
-                     } else {
-                        if(member.getType() instanceof SymbolTypePointer) {
-                           // Always put pointers in ZP memory area
-                           memberVariable = scope.addVariablePhiMaster(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), Variable.MemoryArea.ZEROPAGE_MEMORY, variable.getDataSegment());
-                        }  else {
-                           memberVariable = scope.addVariablePhiMaster(variable.getLocalName() + "_" + member.getLocalName(), member.getType(), member.getMemoryArea(), variable.getDataSegment());
-                        }
-                     }
+                     String name = variable.getLocalName() + "_" + member.getLocalName();
+                     Variable.MemoryArea memoryArea = (member.getType() instanceof SymbolTypePointer)?Variable.MemoryArea.ZEROPAGE_MEMORY:variable.getMemoryArea();
+                     Variable memberVariable = scope.add(new Variable(name, scope, member.getType(), variable.getKind(), memoryArea, variable.getDataSegment()));
                      memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
                      memberVariable.setInferredVolatile(variable.isInferredVolatile());
                      memberVariable.setDeclaredConst(variable.isDeclaredConst());
                      memberVariable.setDeclaredNotConst(variable.isDeclaredNotConst());
                      memberVariable.setDeclaredExport(variable.isDeclaredExport());
-                     memberVariable.setKind(variable.getKind());
-                     if(memberVariable.getType() instanceof SymbolTypePointer) {
-                        memberVariable.setMemoryArea(Variable.MemoryArea.ZEROPAGE_MEMORY);
-                     }  else {
-                        memberVariable.setMemoryArea(variable.getMemoryArea());
-                     }
                      variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
                      getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
                   }

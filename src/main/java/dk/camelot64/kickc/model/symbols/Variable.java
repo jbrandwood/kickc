@@ -32,17 +32,11 @@ public class Variable implements Symbol {
       PHI_MASTER, PHI_VERSION, INTERMEDIATE, LOAD_STORE, CONSTANT
    }
 
-   /** The storage strategy for the variable.  */
+   /** The kind of the variable.  */
    private Kind kind;
 
    /** True of the variable is a compile-time constant (previously ConstantVar) [ALL] */
    private boolean isConstant;
-
-   /** Specifies that the variable is declared as const */
-   private boolean declaredConst;
-
-   /** Specifies that the variable is declared as __notconst */
-   private boolean declaredNotConst;
 
    /** The local name of the variable. [ALL] */
    private String name;
@@ -67,6 +61,12 @@ public class Variable implements Symbol {
 
    /** Specifies the register the variable must be put into during execution. [Only variables] */
    private Registers.Register declaredRegister;
+
+   /** Specifies that the variable is declared as const */
+   private boolean declaredConst;
+
+   /** Specifies that the variable is declared as __notconst */
+   private boolean declaredNotConst;
 
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only Variables]*/
    private boolean declaredVolatile;
@@ -174,7 +174,27 @@ public class Variable implements Symbol {
       this.setComments(phiMaster.getComments());
    }
 
-
+   /**
+    * Create a copy of a variable with a different name in a different scope
+    *
+    * @param name The name
+    * @param scope The scope
+    * @param original The original variable
+    */
+   public Variable(String name, Scope scope, Variable original) {
+      this(name, scope, original.getType(), original.getKind(), original.getMemoryArea(), original.getDataSegment());
+      this.setDeclaredAlignment(original.getDeclaredAlignment());
+      this.setDeclaredAsRegister(original.isDeclaredAsRegister());
+      this.setDeclaredNotRegister(original.isDeclaredAsNotRegister());
+      this.setDeclaredConst(original.isDeclaredConst());
+      this.setDeclaredNotConst(original.isDeclaredNotConst());
+      this.setDeclaredVolatile(original.isDeclaredVolatile());
+      this.setDeclaredExport(original.isDeclaredExport());
+      this.setDeclaredRegister(original.getDeclaredRegister());
+      this.setInferredVolatile(original.isInferredVolatile());
+      this.setInferredType(original.isInferredType());
+      this.setComments(original.getComments());
+   }
 
    public Kind getKind() {
       return kind;
@@ -287,6 +307,10 @@ public class Variable implements Symbol {
 
    public String getDataSegment() {
       return dataSegment;
+   }
+
+   public void setDataSegment(String dataSegment) {
+      this.dataSegment = dataSegment;
    }
 
    @Override

@@ -229,18 +229,10 @@ public class Unroller {
          Variable definedVar = program.getScope().getVariable(definedVarRef);
          Variable newVar;
          if(definedVarRef.isIntermediate()) {
-            newVar = definedVar.getScope().addVariableIntermediate();
-            newVar.setType(definedVar.getType());
-            newVar.setDeclaredAsRegister(definedVar.isDeclaredAsRegister());
-            newVar.setDeclaredRegister(definedVar.getDeclaredRegister());
-            newVar.setDeclaredNotRegister(definedVar.isDeclaredAsNotRegister());
-            newVar.setKind(definedVar.getKind());
-            newVar.setMemoryArea(definedVar.getMemoryArea());
-            newVar.setDeclaredVolatile(definedVar.isDeclaredVolatile());
-            newVar.setInferredVolatile(definedVar.isInferredVolatile());
-            newVar.setDeclaredExport(definedVar.isDeclaredExport());
-            newVar.setDeclaredAlignment(definedVar.getDeclaredAlignment());
-            newVar.setInferredType(definedVar.isInferredType());
+            Scope scope = definedVar.getScope();
+            String name = scope.allocateIntermediateVariableName();
+            newVar = new Variable(name, scope, definedVar);
+            scope.add(newVar);
          } else if(definedVarRef.isVersion()) {
             newVar = (definedVar).getVersionOf().createVersion();
          } else {

@@ -300,19 +300,8 @@ public class Pass1ProcedureInline extends Pass1Base {
          if(procSymbol instanceof Variable) {
             Variable procVar = (Variable) procSymbol;
             String inlineVarName = getInlineSymbolName(procedure, procSymbol, serial);
-            Variable inlineVar = callScope.addVariablePhiMaster(inlineVarName, procSymbol.getType(), procVar.getMemoryArea(), procVar.getDataSegment());
-            inlineVar.setInferredType(procVar.isInferredType());
-            inlineVar.setDeclaredAlignment(procVar.getDeclaredAlignment());
-            inlineVar.setDeclaredConst(procVar.isDeclaredConst());
-            inlineVar.setDeclaredNotConst(procVar.isDeclaredNotConst());
-            inlineVar.setDeclaredAsRegister(procVar.isDeclaredAsRegister());
-            inlineVar.setDeclaredNotRegister(procVar.isDeclaredAsNotRegister());
-            inlineVar.setDeclaredRegister(procVar.getDeclaredRegister());
-            inlineVar.setKind(procVar.getKind());
-            inlineVar.setMemoryArea(procVar.getMemoryArea());
-            inlineVar.setDeclaredVolatile(procVar.isDeclaredVolatile());
-            inlineVar.setInferredVolatile(procVar.isInferredVolatile());
-            inlineVar.setDeclaredExport(procVar.isDeclaredExport());
+            Variable inlineVar = new Variable(inlineVarName, callScope, procVar);
+            callScope.add(inlineVar);
          } else if(procSymbol instanceof Label) {
             String inlineLabelName = getInlineSymbolName(procedure, procSymbol, serial);
             callScope.addLabel(inlineLabelName);

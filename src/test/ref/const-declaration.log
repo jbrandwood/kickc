@@ -1,0 +1,315 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte*) SCREEN ← ((byte*)) (number) $400
+  (byte) LINE_LEN ← (number) $28
+  (byte) MARGIN_TOP ← (number) 4
+  (byte) MARGIN_LEFT ← (number) 4
+  (word) OFFSET ← (number) $28*(number) 5+(number) 5
+  (byte~) $0 ← (byte) MARGIN_TOP * (byte) LINE_LEN
+  (byte*~) $1 ← (byte*) SCREEN + (byte~) $0
+  (byte*~) $2 ← (byte*~) $1 + (byte) MARGIN_LEFT
+  (byte*) BODY1 ← (byte*~) $2
+  (byte*~) $3 ← (byte*) SCREEN + (word) OFFSET
+  (byte*) BODY2 ← (byte*~) $3
+  to:@1
+
+(void()) main()
+main: scope:[main]  from @1
+  *((byte*) BODY1) ← (byte) '*'
+  *((byte*) BODY2) ← (byte) '*'
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(byte~) $0
+(byte*~) $1
+(byte*~) $2
+(byte*~) $3
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(byte*) BODY1
+(byte*) BODY2
+(byte) LINE_LEN
+(byte) MARGIN_LEFT
+(byte) MARGIN_TOP
+(word) OFFSET
+(byte*) SCREEN
+(void()) main()
+(label) main::@return
+
+Adding number conversion cast (unumber) $28 in (byte) LINE_LEN ← (number) $28
+Adding number conversion cast (unumber) 4 in (byte) MARGIN_TOP ← (number) 4
+Adding number conversion cast (unumber) 4 in (byte) MARGIN_LEFT ← (number) 4
+Adding number conversion cast (unumber) $28*5+5 in (word) OFFSET ← (number) $28*(number) 5+(number) 5
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) SCREEN ← (byte*)(number) $400
+Inlining cast (byte) LINE_LEN ← (unumber)(number) $28
+Inlining cast (byte) MARGIN_TOP ← (unumber)(number) 4
+Inlining cast (byte) MARGIN_LEFT ← (unumber)(number) 4
+Inlining cast (word) OFFSET ← (unumber)(number) $28*(number) 5+(number) 5
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $28
+Simplifying constant integer cast 4
+Simplifying constant integer cast 4
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias (byte*) BODY1 = (byte*~) $2 
+Alias (byte*) BODY2 = (byte*~) $3 
+Successful SSA optimization Pass2AliasElimination
+Constant right-side identified [4] (word) OFFSET ← (unumber)(number) $28*(number) 5+(number) 5
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) SCREEN = (byte*) 1024
+Constant (const byte) LINE_LEN = $28
+Constant (const byte) MARGIN_TOP = 4
+Constant (const byte) MARGIN_LEFT = 4
+Constant (const word) OFFSET = (unumber)$28*5+5
+Successful SSA optimization Pass2ConstantIdentification
+Converting *(pointer+n) to pointer[n] [11] *((byte*) BODY1) ← (byte) '*'  -- *($1 + MARGIN_LEFT)
+Successful SSA optimization Pass2InlineDerefIdx
+Eliminating unused variable (byte*) BODY1 and assignment [2] (byte*) BODY1 ← (byte*~) $1 + (const byte) MARGIN_LEFT
+Successful SSA optimization PassNEliminateUnusedVars
+Constant right-side identified [0] (byte~) $0 ← (const byte) MARGIN_TOP * (const byte) LINE_LEN
+Constant right-side identified [2] (byte*) BODY2 ← (const byte*) SCREEN + (const word) OFFSET
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) $0 = MARGIN_TOP*LINE_LEN
+Constant (const byte*) BODY2 = SCREEN+OFFSET
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [0] (byte*~) $1 ← (const byte*) SCREEN + (const byte) $0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) $1 = SCREEN+$0
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined $0 = (const byte) MARGIN_TOP*(const byte) LINE_LEN
+Constant inlined $1 = (const byte*) SCREEN+(const byte) MARGIN_TOP*(const byte) LINE_LEN
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(SCREEN+MARGIN_TOP*LINE_LEN+MARGIN_LEFT)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [4] *((const byte*) SCREEN+(const byte) MARGIN_TOP*(const byte) LINE_LEN+(const byte) MARGIN_LEFT) ← (byte) '*'
+  [5] *((const byte*) BODY2) ← (byte) '*'
+  to:main::@return
+main::@return: scope:[main]  from main
+  [6] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Tests a number of constant declarations
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const LINE_LEN = $28
+  .const MARGIN_TOP = 4
+  .const MARGIN_LEFT = 4
+  .const OFFSET = $28*5+5
+  .label BODY2 = SCREEN+OFFSET
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [4] *((const byte*) SCREEN+(const byte) MARGIN_TOP*(const byte) LINE_LEN+(const byte) MARGIN_LEFT) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    lda #'*'
+    sta SCREEN+MARGIN_TOP*LINE_LEN+MARGIN_LEFT
+    // [5] *((const byte*) BODY2) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    lda #'*'
+    sta BODY2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) SCREEN+(const byte) MARGIN_TOP*(const byte) LINE_LEN+(const byte) MARGIN_LEFT) ← (byte) '*' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) BODY2) ← (byte) '*' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 33 combination 
+Uplifting [] best 33 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests a number of constant declarations
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const LINE_LEN = $28
+  .const MARGIN_TOP = 4
+  .const MARGIN_LEFT = 4
+  .const OFFSET = $28*5+5
+  .label BODY2 = SCREEN+OFFSET
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [4] *((const byte*) SCREEN+(const byte) MARGIN_TOP*(const byte) LINE_LEN+(const byte) MARGIN_LEFT) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    lda #'*'
+    sta SCREEN+MARGIN_TOP*LINE_LEN+MARGIN_LEFT
+    // [5] *((const byte*) BODY2) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    lda #'*'
+    sta BODY2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #'*'
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __bend:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(const byte*) BODY2 = (const byte*) SCREEN+(const word) OFFSET
+(const byte) LINE_LEN = (byte) $28
+(const byte) MARGIN_LEFT = (byte) 4
+(const byte) MARGIN_TOP = (byte) 4
+(const word) OFFSET = (byte)(number) $28*(number) 5+(number) 5
+(const byte*) SCREEN = (byte*) 1024
+(void()) main()
+(label) main::@return
+
+
+
+FINAL ASSEMBLER
+Score: 16
+
+  // File Comments
+// Tests a number of constant declarations
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .const LINE_LEN = $28
+  .const MARGIN_TOP = 4
+  .const MARGIN_LEFT = 4
+  .const OFFSET = $28*5+5
+  .label BODY2 = SCREEN+OFFSET
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // *BODY1 = '*'
+    // [4] *((const byte*) SCREEN+(const byte) MARGIN_TOP*(const byte) LINE_LEN+(const byte) MARGIN_LEFT) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    lda #'*'
+    sta SCREEN+MARGIN_TOP*LINE_LEN+MARGIN_LEFT
+    // *BODY2 = '*'
+    // [5] *((const byte*) BODY2) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    sta BODY2
+    // main::@return
+    // }
+    // [6] return 
+    rts
+}
+  // File Data
+

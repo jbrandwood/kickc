@@ -223,7 +223,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
                      }
                      memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
                      memberVariable.setInferredVolatile(variable.isInferredVolatile());
-                     memberVariable.setConstantDeclaration(variable.getConstantDeclaration());
+                     memberVariable.setDeclaredConst(variable.isDeclaredConst());
+                     memberVariable.setDeclaredNotConst(variable.isDeclaredNotConst());
                      memberVariable.setDeclaredExport(variable.isDeclaredExport());
                      memberVariable.setKind(variable.getKind());
                      if(memberVariable.getType() instanceof SymbolTypePointer) {

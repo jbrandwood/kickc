@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConstDeclaration() throws IOException, URISyntaxException {
+      compileAndCompare("const-declaration", log());
+   }
+
+   @Test
    public void testStaticRegisterOptimizationProblem() throws IOException, URISyntaxException {
       compileAndCompare("static-register-optimization-problem");
    }

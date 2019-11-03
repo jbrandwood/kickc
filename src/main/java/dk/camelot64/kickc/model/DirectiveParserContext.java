@@ -113,11 +113,11 @@ public class DirectiveParserContext {
    public void applyDirectives(Variable lValue, boolean isParameter, List<Directive> sourceDirectives, StatementSource source) {
       DirectiveType directiveType = DirectiveType.getFor(lValue.getType());
       if(hasDirective(Directive.Const.class, sourceDirectives))
-         lValue.setConstantDeclaration(Variable.ConstantDeclaration.CONST);
+         lValue.setDeclaredConst(true);
       if(directiveType.equals(DirectiveType.ARRAY))
-         lValue.setConstantDeclaration(Variable.ConstantDeclaration.CONST);
+         lValue.setDeclaredConst(true);
       if(hasDirective(Directive.NotConst.class, sourceDirectives))
-         lValue.setConstantDeclaration(Variable.ConstantDeclaration.NOT_CONST);
+         lValue.setDeclaredNotConst(true);
       if(hasDirective(Directive.Volatile.class, sourceDirectives))
          lValue.setDeclaredVolatile(true);
       if(hasDirective(Directive.Export.class, sourceDirectives))

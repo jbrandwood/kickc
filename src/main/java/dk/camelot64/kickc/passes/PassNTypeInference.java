@@ -132,16 +132,6 @@ public class PassNTypeInference extends Pass2SsaOptimization {
          if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType()) || SymbolType.SNUMBER.equals(symbol.getType())) {
             SymbolType type = SymbolTypeInference.inferType(programScope, new AssignmentRValue(assignment));
             setInferedType(program, assignment, symbol, type);
-            // If the type is an array or a string the symbol is constant
-            if(symbol.getType() instanceof SymbolTypeArray) {
-               symbol.setConstantDeclaration(Variable.ConstantDeclaration.CONST);
-               symbol.setKind(Variable.Kind.CONSTANT);
-               symbol.setMemoryArea(Variable.MemoryArea.MAIN_MEMORY);
-            } else if(SymbolType.STRING.equals(symbol.getType())) {
-               symbol.setConstantDeclaration(Variable.ConstantDeclaration.CONST);
-               symbol.setKind(Variable.Kind.CONSTANT);
-               symbol.setMemoryArea(Variable.MemoryArea.MAIN_MEMORY);
-            }
          }
       }
    }

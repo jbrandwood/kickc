@@ -622,7 +622,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          Variable lValue = getCurrentScope().addVariable(kind, varName, type, defaultMemoryArea, currentDataSegment);
          // Add directives
          directiveContext.applyDirectives(lValue, false, directives, new StatementSource(ctx));
-         if(lValue.isDeclaredConstant()) {
+         if(lValue.isDeclaredConst()) {
             // Add comments to constant
             lValue.setComments(ensureUnusedComments(comments));
          }

@@ -79,7 +79,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       Collection<SymbolVariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       Variable assignedVar = getScope().getVariable(lValueRef);
       if(assignedVar.isKindPhiMaster()) {
-         if(assignedVar.isDeclaredConstant() || earlyIdentifiedConstants.contains(assignedVar.getRef()))
+         if(assignedVar.isDeclaredConst() || earlyIdentifiedConstants.contains(assignedVar.getRef()))
             throw new InternalError("Error! Constants can not be versioned ", source);
          Variable version = assignedVar.createVersion();
          programLValue.set(version.getRef());
@@ -171,7 +171,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          if(rValueVar.isKindPhiMaster()) {
             // rValue needs versioning - look for version in statements
             Variable rSymbol = rValueVar;
-            if(rSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(rSymbol.getRef())) {
+            if(rSymbol.isDeclaredConst() || earlyIdentifiedConstants.contains(rSymbol.getRef())) {
                // A constant - find the single created version
                Scope scope = rSymbol.getScope();
                Collection<Variable> versions = scope.getVersions(rSymbol);

@@ -35,6 +35,15 @@ public class Variable implements Symbol {
    /** The storage strategy for the variable.  */
    private Kind kind;
 
+   /** True of the variable is a compile-time constant (previously ConstantVar) [ALL] */
+   private boolean isConstant;
+
+   /** Specifies that the variable is declared as const */
+   private boolean declaredConst;
+
+   /** Specifies that the variable is declared as __notconst */
+   private boolean declaredNotConst;
+
    /** The local name of the variable. [ALL] */
    private String name;
 
@@ -52,12 +61,6 @@ public class Variable implements Symbol {
 
    /** true if the symbol type is inferred (not declared) [kind:INTERMEDIATE] TODO: Collapse with kind==INTERMEDIATE? */
    private boolean inferredType;
-
-   /** True of the variable is a compile-time constant (previously ConstantVar) [ALL] */
-   private boolean isConstant;
-
-   /** Specifies that the variable is declared a constant. It will be replaced by a ConstantVar when possible. [ALL] TODO: Collapse with isConstant?*/
-   private ConstantDeclaration constantDeclaration;
 
    /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. [Only Variables in memory and arrays] */
    private Integer declaredAlignment;
@@ -98,11 +101,6 @@ public class Variable implements Symbol {
    /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. [Only variables - not constants and not PHI masters] */
    private Registers.Register allocation;
 
-   /** Specifies whether the symbol is declared to be constant, never constant or maybe constant.  */
-   public enum ConstantDeclaration {
-      CONST, NOT_CONST, MAYBE_CONST
-   }
-
    /** Memory area used for storing the variable (if is is stored in memory). */
    public enum MemoryArea {
       ZEROPAGE_MEMORY, MAIN_MEMORY
@@ -124,7 +122,6 @@ public class Variable implements Symbol {
       this.dataSegment = dataSegment;
       this.kind = Kind.CONSTANT;
       this.memoryArea = MemoryArea.MAIN_MEMORY;
-      this.constantDeclaration = ConstantDeclaration.MAYBE_CONST;
       this.constantValue = value;
       this.inferredType = false;
       this.comments = new ArrayList<>();
@@ -148,7 +145,6 @@ public class Variable implements Symbol {
       this.dataSegment = dataSegment;
       this.kind = kind;
       this.memoryArea = memoryArea;
-      this.constantDeclaration = ConstantDeclaration.MAYBE_CONST;
       if(Kind.PHI_MASTER.equals(kind))
          this.nextPhiVersionNumber = 0;
       this.inferredType = false;
@@ -168,7 +164,8 @@ public class Variable implements Symbol {
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       this.setDeclaredNotRegister(phiMaster.isDeclaredAsNotRegister());
-      this.setConstantDeclaration(phiMaster.getConstantDeclaration());
+      this.setDeclaredConst(phiMaster.isDeclaredConst());
+      this.setDeclaredNotConst(phiMaster.isDeclaredNotConst());
       this.setDeclaredRegister(phiMaster.getDeclaredRegister());
       this.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
       this.setDeclaredExport(phiMaster.isDeclaredExport());
@@ -176,6 +173,7 @@ public class Variable implements Symbol {
       this.setInferredType(phiMaster.isInferredType());
       this.setComments(phiMaster.getComments());
    }
+
 
 
    public Kind getKind() {
@@ -357,20 +355,20 @@ public class Variable implements Symbol {
       }
    }
 
-   public void setConstantDeclaration(ConstantDeclaration constantDeclaration) {
-      this.constantDeclaration = constantDeclaration;
+   public boolean isDeclaredConst() {
+      return declaredConst;
    }
 
-   public ConstantDeclaration getConstantDeclaration() {
-      return constantDeclaration;
+   public void setDeclaredConst(boolean declaredConst) {
+      this.declaredConst = declaredConst;
    }
 
-   public boolean isDeclaredConstant() {
-      return ConstantDeclaration.CONST.equals(constantDeclaration);
+   public boolean isDeclaredNotConst() {
+      return declaredNotConst;
    }
 
-   public boolean isDeclaredNotConstant() {
-      return ConstantDeclaration.NOT_CONST.equals(constantDeclaration);
+   public void setDeclaredNotConst(boolean declaredNotConst) {
+      this.declaredNotConst = declaredNotConst;
    }
 
    public Integer getDeclaredAlignment() {

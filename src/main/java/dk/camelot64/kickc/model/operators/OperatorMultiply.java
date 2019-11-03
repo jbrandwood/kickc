@@ -24,7 +24,7 @@ public class OperatorMultiply extends OperatorBinary {
    public SymbolType inferType(SymbolType left, SymbolType right) {
       if(left instanceof SymbolTypePointer) {
          if(SymbolType.BYTE.equals(right) || SymbolType.WORD.equals(right) || SymbolType.NUMBER.equals(right)) {
-            return left;
+            return new SymbolTypePointer(((SymbolTypePointer) left).getElementType());
          } else {
             throw new NoMatchingType("Cannot multiply pointer by "+right.toString());
          }

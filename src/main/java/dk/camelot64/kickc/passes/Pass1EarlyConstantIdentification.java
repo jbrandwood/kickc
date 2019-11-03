@@ -28,8 +28,8 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
       Collection<SymbolVariableRef> earlyConstants = new ArrayList<>();
       for(Variable variable : getProgram().getScope().getAllVariables(true)) {
          SymbolVariableRef variableRef = variable.getRef();
-         if(!variable.isDeclaredConstant() && !variable.isVolatile() && !variableRef.isIntermediate()) {
-            if(variable.isDeclaredNotConstant())
+         if(!variable.isDeclaredConst() && !variable.isVolatile() && !variableRef.isIntermediate()) {
+            if(variable.isDeclaredNotConst())
                // Skip explicit non-constants
                continue;
             if(!isParameter(variableRef)) {

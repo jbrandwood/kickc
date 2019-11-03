@@ -12,6 +12,7 @@ import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /** A Variable symbol (can either be a runtime variable or a compile-time constant)*/
 public class Variable implements Symbol {
@@ -137,8 +138,8 @@ public class Variable implements Symbol {
     * @param memoryArea  The memory area (zeropage/main memory)
     * @param dataSegment The data segment (in main memory)
     */
-   public Variable(String name, Scope scope, SymbolType type, Kind kind, MemoryArea memoryArea, String dataSegment) {
-      this.isConstant = false;
+   public Variable(boolean isConstant, String name, Scope scope, SymbolType type, Kind kind, MemoryArea memoryArea, String dataSegment) {
+      this.isConstant = isConstant;
       this.name = name;
       this.scope = scope;
       this.type = type;
@@ -160,7 +161,7 @@ public class Variable implements Symbol {
     * @param version The version number
     */
    public Variable(Variable phiMaster, int version) {
-      this(phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), Kind.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
+      this(false, phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), Kind.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       this.setDeclaredNotRegister(phiMaster.isDeclaredAsNotRegister());
@@ -182,7 +183,7 @@ public class Variable implements Symbol {
     * @param original The original variable
     */
    public Variable(String name, Scope scope, Variable original) {
-      this(name, scope, original.getType(), original.getKind(), original.getMemoryArea(), original.getDataSegment());
+      this(original.isConstant(), name, scope, original.getType(), original.getKind(), original.getMemoryArea(), original.getDataSegment());
       this.setDeclaredAlignment(original.getDeclaredAlignment());
       this.setDeclaredAsRegister(original.isDeclaredAsRegister());
       this.setDeclaredNotRegister(original.isDeclaredAsNotRegister());
@@ -194,6 +195,7 @@ public class Variable implements Symbol {
       this.setInferredVolatile(original.isInferredVolatile());
       this.setInferredType(original.isInferredType());
       this.setComments(original.getComments());
+      this.setConstantValue(original.getConstantValue());
    }
 
    public Kind getKind() {
@@ -497,33 +499,18 @@ public class Variable implements Symbol {
 
    @Override
    public boolean equals(Object o) {
-      if(this == o) {
-         return true;
-      }
-      if(o == null || getClass() != o.getClass()) {
-         return false;
-      }
-
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
       Variable variable = (Variable) o;
-      if(name != null ? !name.equals(variable.name) : variable.name != null) {
-         return false;
-      }
-      if(scope != null ? !scope.equals(variable.scope) : variable.scope != null) {
-         return false;
-      }
-      if(type != null ? !type.equals(variable.type) : variable.type != null) {
-         return false;
-      }
-      return asmName != null ? asmName.equals(variable.asmName) : variable.asmName == null;
+      return kind == variable.kind &&
+            Objects.equals(name, variable.name) &&
+            Objects.equals(scope, variable.scope) &&
+            Objects.equals(type, variable.type);
    }
 
    @Override
    public int hashCode() {
-      int result = name != null ? name.hashCode() : 0;
-      result = 31 * result + (scope != null ? scope.hashCode() : 0);
-      result = 31 * result + (type != null ? type.hashCode() : 0);
-      result = 31 * result + (asmName != null ? asmName.hashCode() : 0);
-      return result;
+      return Objects.hash(kind, name, scope, type);
    }
-
 }
+

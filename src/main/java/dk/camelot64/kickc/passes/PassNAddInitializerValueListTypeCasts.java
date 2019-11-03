@@ -79,7 +79,7 @@ public class PassNAddInitializerValueListTypeCasts extends Pass2SsaOptimization 
             if(size!=valueList.getList().size()) {
                throw new CompileError(
                      "Struct initializer has wrong size ("+valueList.getList().size()+"), " +
-                           "which does not match the number of members in "+declaredStructType.getTypeName()+" (\"+size+\" members).\n" +
+                           "which does not match the number of members in "+declaredStructType.getTypeName()+" ("+size+" members).\n" +
                            " Struct initializer: "+valueList.toString(getProgram()),
                      currentStmt);
             }

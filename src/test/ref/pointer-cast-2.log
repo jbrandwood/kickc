@@ -7,21 +7,19 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::ub_screen ← ((byte*)) (number) $400
   (byte) main::ub#0 ← (number) $ff
   (byte*~) main::$0 ← & (byte) main::ub#0
   (signed byte*~) main::$1 ← ((signed byte*)) (byte*~) main::$0
   (signed byte*) main::sb_ptr#0 ← (signed byte*~) main::$1
   *((signed byte*) main::sb_ptr#0) ← (number) 1
-  *((byte*) main::ub_screen) ← (byte) main::ub#0
-  (signed byte*) main::sb_screen ← ((signed byte*)) (number) $428
+  *((const byte*) main::ub_screen) ← (byte) main::ub#0
   (signed byte~) main::$2 ← ((signed byte)) (number) $7f
   (signed byte) main::sb#0 ← (signed byte~) main::$2
   (signed byte*~) main::$3 ← & (signed byte) main::sb#0
   (byte*~) main::$4 ← ((byte*)) (signed byte*~) main::$3
   (byte*) main::ub_ptr#0 ← (byte*~) main::$4
   *((byte*) main::ub_ptr#0) ← (number) 1
-  *((signed byte*) main::sb_screen) ← (signed byte) main::sb#0
+  *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -49,30 +47,28 @@ SYMBOL TABLE SSA
 (signed byte) main::sb#0
 (signed byte*) main::sb_ptr
 (signed byte*) main::sb_ptr#0
-(signed byte*) main::sb_screen
+(const signed byte*) main::sb_screen = (signed byte*)(number) $428
 (byte) main::ub
 (byte) main::ub#0
 (byte*) main::ub_ptr
 (byte*) main::ub_ptr#0
-(byte*) main::ub_screen
+(const byte*) main::ub_screen = (byte*)(number) $400
 
 Adding number conversion cast (unumber) $ff in (byte) main::ub#0 ← (number) $ff
 Adding number conversion cast (snumber) 1 in *((signed byte*) main::sb_ptr#0) ← (number) 1
 Adding number conversion cast (unumber) 1 in *((byte*) main::ub_ptr#0) ← (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::ub_screen ← (byte*)(number) $400
 Inlining cast (byte) main::ub#0 ← (unumber)(number) $ff
 Inlining cast (signed byte*~) main::$1 ← (signed byte*)(byte*~) main::$0
 Inlining cast *((signed byte*) main::sb_ptr#0) ← (snumber)(number) 1
-Inlining cast (signed byte*) main::sb_screen ← (signed byte*)(number) $428
 Inlining cast (signed byte~) main::$2 ← (signed byte)(number) $7f
 Inlining cast (byte*~) main::$4 ← (byte*)(signed byte*~) main::$3
 Inlining cast *((byte*) main::ub_ptr#0) ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (signed byte*) 1064
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (signed byte*) 1064
 Simplifying constant integer cast $7f
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
@@ -85,12 +81,10 @@ Alias (signed byte*) main::sb_ptr#0 = (signed byte*~) main::$1
 Alias (byte*) main::ub_ptr#0 = (byte*~) main::$4 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)(signed byte) main::sb#0 = (signed byte~) main::$2 
-Constant right-side identified [2] (byte*~) main::$0 ← & (byte) main::ub#0
-Constant right-side identified [10] (signed byte*~) main::$3 ← & (signed byte) main::sb#0
+Constant right-side identified [1] (byte*~) main::$0 ← & (byte) main::ub#0
+Constant right-side identified [8] (signed byte*~) main::$3 ← & (signed byte) main::sb#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::ub_screen = (byte*) 1024
 Constant (const byte*) main::$0 = &main::ub#0
-Constant (const signed byte*) main::sb_screen = (signed byte*) 1064
 Constant (const signed byte) main::$2 = $7f
 Constant (const signed byte*) main::$3 = &main::sb#0
 Successful SSA optimization Pass2ConstantIdentification

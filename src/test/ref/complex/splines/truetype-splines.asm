@@ -2,13 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const MOVE_TO = 0
-  .const SPLINE_TO = 1
-  .const LINE_TO = 2
-  .const SIZEOF_STRUCT_SPLINEVECTOR16 = 4
-  .const OFFSET_STRUCT_SPLINEVECTOR16_Y = 2
-  .const OFFSET_STRUCT_SEGMENT_TO = 1
-  .const OFFSET_STRUCT_SEGMENT_VIA = 5
   .label RASTER = $d012
   .label D011 = $d011
   .const VIC_BMM = $20
@@ -22,6 +15,13 @@
   .const WHITE = 1
   .label BITMAP_SCREEN = $5c00
   .label BITMAP_GRAPHICS = $6000
+  .const MOVE_TO = 0
+  .const SPLINE_TO = 1
+  .const LINE_TO = 2
+  .const SIZEOF_STRUCT_SPLINEVECTOR16 = 4
+  .const OFFSET_STRUCT_SPLINEVECTOR16_Y = 2
+  .const OFFSET_STRUCT_SEGMENT_TO = 1
+  .const OFFSET_STRUCT_SEGMENT_VIA = 5
   .label COS = SIN+$40
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>BITMAP_SCREEN)/$40

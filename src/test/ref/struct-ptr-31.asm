@@ -2,9 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SCREEN = $400
   .const SIZEOF_STRUCT_PERSON = $11
   .const OFFSET_STRUCT_PERSON_NAME = 1
-  .label SCREEN = $400
 main: {
     ldx #0
     lda #<persons
@@ -63,6 +63,8 @@ print_person: {
     iny
     jmp __b1
 }
+  DIGIT: .text "0123456789"
+  .byte 0
   persons: .byte 4
   .text "jesper"
   .byte 0
@@ -71,5 +73,3 @@ print_person: {
   .text "henriette"
   .byte 0
   .fill 6, 0
-  DIGIT: .text "0123456789"
-  .byte 0

@@ -37,7 +37,6 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) idx#3 ← (number) 0
   to:@2
 
@@ -47,20 +46,20 @@ print_person: scope:[print_person]  from main main::@1
   (struct Person*) print_person::person#2 ← phi( main/(struct Person*) print_person::person#0 main::@1/(struct Person*) print_person::person#1 )
   (byte*) print_person::$1 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
   (byte~) print_person::$0 ← (byte) '0' + *((byte*) print_person::$1)
-  *((byte*) SCREEN + (byte) idx#15) ← (byte~) print_person::$0
+  *((const byte*) SCREEN + (byte) idx#15) ← (byte~) print_person::$0
   (byte) idx#4 ← ++ (byte) idx#15
-  *((byte*) SCREEN + (byte) idx#4) ← (byte) ' '
+  *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' '
   (byte) idx#5 ← ++ (byte) idx#4
   (byte[4]) print_person::$2 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS
-  *((byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2 + (number) 0)
+  *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2 + (number) 0)
   (byte) idx#6 ← ++ (byte) idx#5
   (byte[4]) print_person::$3 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS
-  *((byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (number) 1)
+  *((const byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (number) 1)
   (byte) idx#7 ← ++ (byte) idx#6
   (byte[4]) print_person::$4 ← (byte[4])(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_INITIALS
-  *((byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (number) 2)
+  *((const byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (number) 2)
   (byte) idx#8 ← ++ (byte) idx#7
-  *((byte*) SCREEN + (byte) idx#8) ← (byte) ' '
+  *((const byte*) SCREEN + (byte) idx#8) ← (byte) ' '
   (byte) idx#9 ← ++ (byte) idx#8
   to:print_person::@return
 print_person::@return: scope:[print_person]  from print_person
@@ -90,7 +89,7 @@ SYMBOL TABLE SSA
 (const byte) OFFSET_STRUCT_PERSON_INITIALS = (byte) 1
 (byte) Person::id
 (byte[4]) Person::initials
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (const byte) SIZEOF_STRUCT_PERSON = (byte) 5
 (byte) idx
 (byte) idx#0
@@ -135,18 +134,17 @@ SYMBOL TABLE SSA
 (struct Person*) print_person::person#2
 
 Adding number conversion cast (unumber) 0 in (byte) idx#3 ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2 + (number) 0)
-Adding number conversion cast (unumber) 1 in *((byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (number) 1)
-Adding number conversion cast (unumber) 2 in *((byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (number) 2)
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2 + (number) 0)
+Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (byte) idx#6) ← *((byte[4]) print_person::$3 + (number) 1)
+Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (byte) idx#7) ← *((byte[4]) print_person::$4 + (number) 2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (struct Person[]) persons ← (struct Person[]){ (struct Person){ (byte)(number) 1, (const string) $0 }, (struct Person){ (byte)(number) 8, (const string) $1 } }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) idx#3 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 8
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -175,18 +173,17 @@ Successful SSA optimization Pass2ConstantInitializerValueLists
 Identified constant from value list (struct Person[]) { { id: (byte) 1, initials: (const string) $0 }, { id: (byte) 8, initials: (const string) $1 } }
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const struct Person[]) persons = { { id: 1, initials: $0 }, { id: 8, initials: $1 } }
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) idx#19 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const struct Person*) main::person#0 = persons
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const struct Person*) print_person::person#0 = main::person#0
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [19] (byte~) print_person::$0 ← (byte) '0' + *((byte*) print_person::$1)  -- *((byte*)print_person::person#2 + OFFSET_STRUCT_PERSON_ID)
+Converting *(pointer+n) to pointer[n] [18] (byte~) print_person::$0 ← (byte) '0' + *((byte*) print_person::$1)  -- *((byte*)print_person::person#2 + OFFSET_STRUCT_PERSON_ID)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)print_person::person#2 in [18] (byte*) print_person::$1 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
-Simplifying expression containing zero (byte*)print_person::person#2 in [19] (byte~) print_person::$0 ← (byte) '0' + *((byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID)
-Simplifying expression containing zero print_person::$2 in [25] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2 + (byte) 0)
+Simplifying expression containing zero (byte*)print_person::person#2 in [17] (byte*) print_person::$1 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
+Simplifying expression containing zero (byte*)print_person::person#2 in [18] (byte~) print_person::$0 ← (byte) '0' + *((byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID)
+Simplifying expression containing zero print_person::$2 in [24] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2 + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*) print_person::$1 and assignment [6] (byte*) print_person::$1 ← (byte*)(struct Person*) print_person::person#2
 Eliminating unused constant (const byte) OFFSET_STRUCT_PERSON_ID
@@ -348,9 +345,9 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .label SCREEN = $400
   .const SIZEOF_STRUCT_PERSON = 5
   .const OFFSET_STRUCT_PERSON_INITIALS = 1
-  .label SCREEN = $400
   .label idx = 6
   .label idx_1 = 7
   .label idx_2 = 8
@@ -564,9 +561,9 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .label SCREEN = $400
   .const SIZEOF_STRUCT_PERSON = 5
   .const OFFSET_STRUCT_PERSON_INITIALS = 1
-  .label SCREEN = $400
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -770,9 +767,9 @@ Score: 159
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  .label SCREEN = $400
   .const SIZEOF_STRUCT_PERSON = 5
   .const OFFSET_STRUCT_PERSON_INITIALS = 1
-  .label SCREEN = $400
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1

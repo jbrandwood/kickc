@@ -11,13 +11,12 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (struct Person*) main::person#0 ← (struct Person[2]) persons
   (byte[$d]) main::$0 ← (byte[$d])(struct Person*) main::person#0 + (const byte) OFFSET_STRUCT_PERSON_NAME
-  *((byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$0 + (number) 2)
+  *((const byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$0 + (number) 2)
   (struct Person*) main::person#1 ← (struct Person*) main::person#0 + (const byte) SIZEOF_STRUCT_PERSON
   (byte[$d]) main::$1 ← (byte[$d])(struct Person*) main::person#1 + (const byte) OFFSET_STRUCT_PERSON_NAME
-  *((byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$1 + (number) 2)
+  *((const byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$1 + (number) 2)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -45,26 +44,24 @@ SYMBOL TABLE SSA
 (byte[$d]) main::$0
 (byte[$d]) main::$1
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (struct Person*) main::person
 (struct Person*) main::person#0
 (struct Person*) main::person#1
 (struct Person[2]) persons
 
-Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$0 + (number) 2)
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$0 + (unumber)(number) 2)
-Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$1 + (number) 2)
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$1 + (unumber)(number) 2)
+Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$0 + (number) 2)
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$0 + (unumber)(number) 2)
+Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$1 + (number) 2)
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$1 + (unumber)(number) 2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (struct Person[2]) persons ← (struct Person[2]){ (struct Person){ (byte)(number) 7, (const string) $0, (word)(number) $141 }, (struct Person){ (byte)(number) 9, (const string) $1, (word)(number) $7b } }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 7
 Simplifying constant integer cast $141
 Simplifying constant integer cast 9
 Simplifying constant integer cast $7b
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 2
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
@@ -81,13 +78,12 @@ Successful SSA optimization Pass2ConstantInitializerValueLists
 Identified constant from value list (struct Person[2]) { { id: (byte) 7, name: (const string) $0, age: (word) $141 }, { id: (byte) 9, name: (const string) $1, age: (word) $7b } }
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const struct Person[2]) persons = { { id: 7, name: $0, age: $141 }, { id: 9, name: $1, age: $7b } }
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const struct Person*) main::person#0 = persons
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte[$d])main::person#0 in [3] (byte[$d]) main::$0 ← (byte[$d])(const struct Person*) main::person#0 + (const byte) OFFSET_STRUCT_PERSON_NAME
+Constant value identified (byte[$d])main::person#0 in [2] (byte[$d]) main::$0 ← (byte[$d])(const struct Person*) main::person#0 + (const byte) OFFSET_STRUCT_PERSON_NAME
 Successful SSA optimization Pass2ConstantValues
-Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← *((byte[$d]) main::$0 + (byte) 2)
+Simplifying expression containing zero main::SCREEN in [3] *((const byte*) main::SCREEN + (byte) 0) ← *((byte[$d]) main::$0 + (byte) 2)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [0] (byte[$d]) main::$0 ← (byte[$d])(const struct Person*) main::person#0 + (const byte) OFFSET_STRUCT_PERSON_NAME
 Constant right-side identified [2] (struct Person*) main::person#1 ← (const struct Person*) main::person#0 + (const byte) SIZEOF_STRUCT_PERSON

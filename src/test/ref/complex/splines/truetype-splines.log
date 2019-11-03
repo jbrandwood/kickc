@@ -372,8 +372,8 @@ Warning! Adding boolean cast to non-boolean sub-expression (byte) print_str_line
 Identified constant variable (byte*) HEAP_TOP
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call call mulf8s_prepare (signed byte) mulf8s::a 
-Inlined call call vicSelectGfxBank (byte*) BITMAP_SCREEN 
-Inlined call (byte~) main::$4 ← call toD018 (byte*) BITMAP_SCREEN (byte*) BITMAP_GRAPHICS 
+Inlined call call vicSelectGfxBank (const byte*) BITMAP_SCREEN 
+Inlined call (byte~) main::$4 ← call toD018 (const byte*) BITMAP_SCREEN (const byte*) BITMAP_GRAPHICS 
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
 Culled Empty Block (label) @4
@@ -402,6 +402,7 @@ Culled Empty Block (label) sgn_u16::@4
 Culled Empty Block (label) sgn_u16::@2
 Culled Empty Block (label) sgn_u16::@5
 Culled Empty Block (label) sgn_u16::@6
+Culled Empty Block (label) @13
 Culled Empty Block (label) @14
 Culled Empty Block (label) @15
 Culled Empty Block (label) @16
@@ -623,7 +624,7 @@ memset::@return: scope:[memset]  from memset::@1
   (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
   (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
   (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-  to:@13
+  to:@51
 
 (void()) bitmap_init((byte*) bitmap_init::gfx , (byte*) bitmap_init::screen)
 bitmap_init: scope:[bitmap_init]  from main::@21
@@ -1038,23 +1039,9 @@ sgn_u16::@return: scope:[sgn_u16]  from sgn_u16::@1 sgn_u16::@3
   (word) sgn_u16::return#4 ← (word) sgn_u16::return#7
   return 
   to:@return
-@13: scope:[]  from @7
-  (byte*) bitmap_screen#32 ← phi( @7/(byte*) bitmap_screen#0 )
-  (byte*) bitmap_gfx#33 ← phi( @7/(byte*) bitmap_gfx#0 )
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) D011 ← ((byte*)) (number) $d011
-  (byte) VIC_BMM ← (number) $20
-  (byte) VIC_DEN ← (number) $10
-  (byte) VIC_RSEL ← (number) 8
-  (byte*) D018 ← ((byte*)) (number) $d018
-  (byte*) CIA2_PORT_A ← ((byte*)) (number) $dd00
-  (byte*) CIA2_PORT_A_DDR ← ((byte*)) (number) $dd02
-  (byte) BLACK ← (number) 0
-  (byte) WHITE ← (number) 1
-  to:@51
-@51: scope:[]  from @13
-  (byte*) bitmap_screen#27 ← phi( @13/(byte*) bitmap_screen#32 )
-  (byte*) bitmap_gfx#28 ← phi( @13/(byte*) bitmap_gfx#33 )
+@51: scope:[]  from @7
+  (byte*) bitmap_screen#27 ← phi( @7/(byte*) bitmap_screen#0 )
+  (byte*) bitmap_gfx#28 ← phi( @7/(byte*) bitmap_gfx#0 )
   (byte[$200]) mulf_sqr1_lo ← { fill( $200, 0) }
   (byte[$200]) mulf_sqr1_hi ← { fill( $200, 0) }
   (byte[$200]) mulf_sqr2_lo ← { fill( $200, 0) }
@@ -1176,13 +1163,10 @@ mulf_init::@return: scope:[mulf_init]  from mulf_init::@11
 mulf16u: scope:[mulf16u]  from mulf16s
   (word) mulf16u::b#1 ← phi( mulf16s/(word) mulf16u::b#0 )
   (word) mulf16u::a#1 ← phi( mulf16s/(word) mulf16u::a#0 )
-  (word*) mulf16u::memA ← ((word*)) (number) $f8
-  (word*) mulf16u::memB ← ((word*)) (number) $fa
-  (dword*) mulf16u::memR ← ((dword*)) (number) $fc
-  *((word*) mulf16u::memA) ← (word) mulf16u::a#1
-  *((word*) mulf16u::memB) ← (word) mulf16u::b#1
+  *((const word*) mulf16u::memA) ← (word) mulf16u::a#1
+  *((const word*) mulf16u::memB) ← (word) mulf16u::b#1
   asm { ldamemA stasm1a+1 stasm3a+1 stasm5a+1 stasm7a+1 eor#$ff stasm2a+1 stasm4a+1 stasm6a+1 stasm8a+1 ldamemA+1 stasm1b+1 stasm3b+1 stasm5b+1 stasm7b+1 eor#$ff stasm2b+1 stasm4b+1 stasm6b+1 stasm8b+1 ldxmemB sec sm1a: ldamulf_sqr1_lo,x sm2a: sbcmulf_sqr2_lo,x stamemR+0 sm3a: ldamulf_sqr1_hi,x sm4a: sbcmulf_sqr2_hi,x sta_AA+1 sec sm1b: ldamulf_sqr1_lo,x sm2b: sbcmulf_sqr2_lo,x sta_cc+1 sm3b: ldamulf_sqr1_hi,x sm4b: sbcmulf_sqr2_hi,x sta_CC+1 ldxmemB+1 sec sm5a: ldamulf_sqr1_lo,x sm6a: sbcmulf_sqr2_lo,x sta_bb+1 sm7a: ldamulf_sqr1_hi,x sm8a: sbcmulf_sqr2_hi,x sta_BB+1 sec sm5b: ldamulf_sqr1_lo,x sm6b: sbcmulf_sqr2_lo,x sta_dd+1 sm7b: ldamulf_sqr1_hi,x sm8b: sbcmulf_sqr2_hi,x stamemR+3 clc _AA: lda#0 _bb: adc#0 stamemR+1 _BB: lda#0 _CC: adc#0 stamemR+2 bcc!+ incmemR+3 clc !: _cc: lda#0 adcmemR+1 stamemR+1 _dd: lda#0 adcmemR+2 stamemR+2 bcc!+ incmemR+3 !:  }
-  (dword) mulf16u::return#0 ← *((dword*) mulf16u::memR)
+  (dword) mulf16u::return#0 ← *((const dword*) mulf16u::memR)
   to:mulf16u::@return
 mulf16u::@return: scope:[mulf16u]  from mulf16u
   (dword) mulf16u::return#3 ← phi( mulf16u/(dword) mulf16u::return#0 )
@@ -1251,9 +1235,6 @@ mulf16s::@return: scope:[mulf16s]  from mulf16s::@2
 @60: scope:[]  from @51
   (byte*) bitmap_screen#25 ← phi( @51/(byte*) bitmap_screen#27 )
   (byte*) bitmap_gfx#26 ← phi( @51/(byte*) bitmap_gfx#28 )
-  (byte*) PRINT_SCREEN ← ((byte*)) (number) $400
-  (byte*) BITMAP_SCREEN ← ((byte*)) (number) $5c00
-  (byte*) BITMAP_GRAPHICS ← ((byte*)) (number) $6000
   (struct Segment[$16]) letter_c ← { { (const byte) MOVE_TO, { (number) $6c, (number) $92 }, { (number) 0, (number) 0 } }, { (const byte) SPLINE_TO, { (number) $59, (number) $b6 }, { (number) $67, (number) $a9 } }, { (const byte) SPLINE_TO, { (number) $3b, (number) $c3 }, { (number) $4b, (number) $c3 } }, { (const byte) SPLINE_TO, { (number) $17, (number) $b2 }, { (number) $26, (number) $c3 } }, { (const byte) SPLINE_TO, { (number) 9, (number) $84 }, { (number) 9, (number) $a1 } }, { (const byte) SPLINE_TO, { (number) $19, (number) $57 }, { (number) 9, (number) $68 } }, { (const byte) SPLINE_TO, { (number) $41, (number) $45 }, { (number) $2a, (number) $45 } }, { (const byte) SPLINE_TO, { (number) $5d, (number) $4f }, { (number) $52, (number) $45 } }, { (const byte) SPLINE_TO, { (number) $69, (number) $62 }, { (number) $69, (number) $58 } }, { (const byte) SPLINE_TO, { (number) $66, (number) $6a }, { (number) $69, (number) $67 } }, { (const byte) SPLINE_TO, { (number) $5d, (number) $6d }, { (number) $62, (number) $6d } }, { (const byte) SPLINE_TO, { (number) $51, (number) $68 }, { (number) $55, (number) $6d } }, { (const byte) SPLINE_TO, { (number) $4e, (number) $5d }, { (number) $4f, (number) $65 } }, { (const byte) SPLINE_TO, { (number) $49, (number) $52 }, { (number) $4e, (number) $56 } }, { (const byte) SPLINE_TO, { (number) $3d, (number) $4e }, { (number) $45, (number) $4e } }, { (const byte) SPLINE_TO, { (number) $28, (number) $58 }, { (number) $30, (number) $4e } }, { (const byte) SPLINE_TO, { (number) $1d, (number) $79 }, { (number) $1d, (number) $64 } }, { (const byte) SPLINE_TO, { (number) $28, (number) $9e }, { (number) $1d, (number) $8e } }, { (const byte) SPLINE_TO, { (number) $44, (number) $ae }, { (number) $32, (number) $ae } }, { (const byte) SPLINE_TO, { (number) $5b, (number) $a6 }, { (number) $50, (number) $ae } }, { (const byte) SPLINE_TO, { (number) $68, (number) $90 }, { (number) $62, (number) $a0 } }, { (const byte) LINE_TO, { (number) $6c, (number) $92 }, { (number) 0, (number) 0 } } }
   to:@63
 
@@ -1268,8 +1249,8 @@ main::@21: scope:[main]  from main
   (signed byte*) COS#32 ← phi( main/(signed byte*) COS#33 )
   (byte*) bitmap_screen#13 ← phi( main/(byte*) bitmap_screen#18 )
   (byte*) bitmap_gfx#13 ← phi( main/(byte*) bitmap_gfx#19 )
-  (byte*) bitmap_init::gfx#0 ← (byte*) BITMAP_GRAPHICS
-  (byte*) bitmap_init::screen#0 ← (byte*) BITMAP_SCREEN
+  (byte*) bitmap_init::gfx#0 ← (const byte*) BITMAP_GRAPHICS
+  (byte*) bitmap_init::screen#0 ← (const byte*) BITMAP_SCREEN
   call bitmap_init 
   to:main::@22
 main::@22: scope:[main]  from main::@21
@@ -1278,28 +1259,28 @@ main::@22: scope:[main]  from main::@21
   (byte*) bitmap_gfx#8 ← phi( main::@21/(byte*) bitmap_gfx#2 )
   (byte*) bitmap_gfx#3 ← (byte*) bitmap_gfx#8
   (byte*) bitmap_screen#3 ← (byte*) bitmap_screen#8
-  (byte) bitmap_clear::bgcol#0 ← (byte) BLACK
-  (byte) bitmap_clear::fgcol#0 ← (byte) WHITE
+  (byte) bitmap_clear::bgcol#0 ← (const byte) BLACK
+  (byte) bitmap_clear::fgcol#0 ← (const byte) WHITE
   call bitmap_clear 
   to:main::@23
 main::@23: scope:[main]  from main::@22
   (signed byte*) COS#30 ← phi( main::@22/(signed byte*) COS#31 )
-  (byte*) bitmap_gfx#44 ← phi( main::@22/(byte*) bitmap_gfx#3 )
-  (byte*) bitmap_screen#43 ← phi( main::@22/(byte*) bitmap_screen#3 )
-  (byte*) main::vicSelectGfxBank1_gfx#0 ← (byte*) BITMAP_SCREEN
+  (byte*) bitmap_gfx#43 ← phi( main::@22/(byte*) bitmap_gfx#3 )
+  (byte*) bitmap_screen#42 ← phi( main::@22/(byte*) bitmap_screen#3 )
+  (byte*) main::vicSelectGfxBank1_gfx#0 ← (const byte*) BITMAP_SCREEN
   to:main::vicSelectGfxBank1
 main::vicSelectGfxBank1: scope:[main]  from main::@23
   (signed byte*) COS#29 ← phi( main::@23/(signed byte*) COS#30 )
-  (byte*) bitmap_gfx#43 ← phi( main::@23/(byte*) bitmap_gfx#44 )
-  (byte*) bitmap_screen#42 ← phi( main::@23/(byte*) bitmap_screen#43 )
+  (byte*) bitmap_gfx#42 ← phi( main::@23/(byte*) bitmap_gfx#43 )
+  (byte*) bitmap_screen#41 ← phi( main::@23/(byte*) bitmap_screen#42 )
   (byte*) main::vicSelectGfxBank1_gfx#1 ← phi( main::@23/(byte*) main::vicSelectGfxBank1_gfx#0 )
-  *((byte*) CIA2_PORT_A_DDR) ← (number) 3
+  *((const byte*) CIA2_PORT_A_DDR) ← (number) 3
   (byte*) main::vicSelectGfxBank1_toDd001_gfx#0 ← (byte*) main::vicSelectGfxBank1_gfx#1
   to:main::vicSelectGfxBank1_toDd001
 main::vicSelectGfxBank1_toDd001: scope:[main]  from main::vicSelectGfxBank1
   (signed byte*) COS#28 ← phi( main::vicSelectGfxBank1/(signed byte*) COS#29 )
-  (byte*) bitmap_gfx#42 ← phi( main::vicSelectGfxBank1/(byte*) bitmap_gfx#43 )
-  (byte*) bitmap_screen#41 ← phi( main::vicSelectGfxBank1/(byte*) bitmap_screen#42 )
+  (byte*) bitmap_gfx#41 ← phi( main::vicSelectGfxBank1/(byte*) bitmap_gfx#42 )
+  (byte*) bitmap_screen#40 ← phi( main::vicSelectGfxBank1/(byte*) bitmap_screen#41 )
   (byte*) main::vicSelectGfxBank1_toDd001_gfx#1 ← phi( main::vicSelectGfxBank1/(byte*) main::vicSelectGfxBank1_toDd001_gfx#0 )
   (word~) main::vicSelectGfxBank1_toDd001_$0 ← ((word)) (byte*) main::vicSelectGfxBank1_toDd001_gfx#1
   (byte~) main::vicSelectGfxBank1_toDd001_$1 ← > (word~) main::vicSelectGfxBank1_toDd001_$0
@@ -1309,30 +1290,30 @@ main::vicSelectGfxBank1_toDd001: scope:[main]  from main::vicSelectGfxBank1
   to:main::vicSelectGfxBank1_toDd001_@return
 main::vicSelectGfxBank1_toDd001_@return: scope:[main]  from main::vicSelectGfxBank1_toDd001
   (signed byte*) COS#27 ← phi( main::vicSelectGfxBank1_toDd001/(signed byte*) COS#28 )
-  (byte*) bitmap_gfx#40 ← phi( main::vicSelectGfxBank1_toDd001/(byte*) bitmap_gfx#42 )
-  (byte*) bitmap_screen#39 ← phi( main::vicSelectGfxBank1_toDd001/(byte*) bitmap_screen#41 )
+  (byte*) bitmap_gfx#39 ← phi( main::vicSelectGfxBank1_toDd001/(byte*) bitmap_gfx#41 )
+  (byte*) bitmap_screen#38 ← phi( main::vicSelectGfxBank1_toDd001/(byte*) bitmap_screen#40 )
   (byte) main::vicSelectGfxBank1_toDd001_return#2 ← phi( main::vicSelectGfxBank1_toDd001/(byte) main::vicSelectGfxBank1_toDd001_return#0 )
   (byte) main::vicSelectGfxBank1_toDd001_return#1 ← (byte) main::vicSelectGfxBank1_toDd001_return#2
   to:main::vicSelectGfxBank1_@1
 main::vicSelectGfxBank1_@1: scope:[main]  from main::vicSelectGfxBank1_toDd001_@return
   (signed byte*) COS#25 ← phi( main::vicSelectGfxBank1_toDd001_@return/(signed byte*) COS#27 )
-  (byte*) bitmap_gfx#38 ← phi( main::vicSelectGfxBank1_toDd001_@return/(byte*) bitmap_gfx#40 )
-  (byte*) bitmap_screen#37 ← phi( main::vicSelectGfxBank1_toDd001_@return/(byte*) bitmap_screen#39 )
+  (byte*) bitmap_gfx#37 ← phi( main::vicSelectGfxBank1_toDd001_@return/(byte*) bitmap_gfx#39 )
+  (byte*) bitmap_screen#36 ← phi( main::vicSelectGfxBank1_toDd001_@return/(byte*) bitmap_screen#38 )
   (byte) main::vicSelectGfxBank1_toDd001_return#3 ← phi( main::vicSelectGfxBank1_toDd001_@return/(byte) main::vicSelectGfxBank1_toDd001_return#1 )
   (byte~) main::vicSelectGfxBank1_$0 ← (byte) main::vicSelectGfxBank1_toDd001_return#3
-  *((byte*) CIA2_PORT_A) ← (byte~) main::vicSelectGfxBank1_$0
+  *((const byte*) CIA2_PORT_A) ← (byte~) main::vicSelectGfxBank1_$0
   to:main::@19
 main::@19: scope:[main]  from main::vicSelectGfxBank1_@1
   (signed byte*) COS#23 ← phi( main::vicSelectGfxBank1_@1/(signed byte*) COS#25 )
-  (byte*) bitmap_gfx#36 ← phi( main::vicSelectGfxBank1_@1/(byte*) bitmap_gfx#38 )
-  (byte*) bitmap_screen#35 ← phi( main::vicSelectGfxBank1_@1/(byte*) bitmap_screen#37 )
-  (byte*) main::toD0181_screen#0 ← (byte*) BITMAP_SCREEN
-  (byte*) main::toD0181_gfx#0 ← (byte*) BITMAP_GRAPHICS
+  (byte*) bitmap_gfx#35 ← phi( main::vicSelectGfxBank1_@1/(byte*) bitmap_gfx#37 )
+  (byte*) bitmap_screen#34 ← phi( main::vicSelectGfxBank1_@1/(byte*) bitmap_screen#36 )
+  (byte*) main::toD0181_screen#0 ← (const byte*) BITMAP_SCREEN
+  (byte*) main::toD0181_gfx#0 ← (const byte*) BITMAP_GRAPHICS
   to:main::toD0181
 main::toD0181: scope:[main]  from main::@19
   (signed byte*) COS#21 ← phi( main::@19/(signed byte*) COS#23 )
-  (byte*) bitmap_gfx#34 ← phi( main::@19/(byte*) bitmap_gfx#36 )
-  (byte*) bitmap_screen#33 ← phi( main::@19/(byte*) bitmap_screen#35 )
+  (byte*) bitmap_gfx#33 ← phi( main::@19/(byte*) bitmap_gfx#35 )
+  (byte*) bitmap_screen#32 ← phi( main::@19/(byte*) bitmap_screen#34 )
   (byte*) main::toD0181_gfx#1 ← phi( main::@19/(byte*) main::toD0181_gfx#0 )
   (byte*) main::toD0181_screen#1 ← phi( main::@19/(byte*) main::toD0181_screen#0 )
   (word~) main::toD0181_$0 ← ((word)) (byte*) main::toD0181_screen#1
@@ -1348,8 +1329,8 @@ main::toD0181: scope:[main]  from main::@19
   to:main::toD0181_@return
 main::toD0181_@return: scope:[main]  from main::toD0181
   (signed byte*) COS#19 ← phi( main::toD0181/(signed byte*) COS#21 )
-  (byte*) bitmap_gfx#29 ← phi( main::toD0181/(byte*) bitmap_gfx#34 )
-  (byte*) bitmap_screen#28 ← phi( main::toD0181/(byte*) bitmap_screen#33 )
+  (byte*) bitmap_gfx#29 ← phi( main::toD0181/(byte*) bitmap_gfx#33 )
+  (byte*) bitmap_screen#28 ← phi( main::toD0181/(byte*) bitmap_screen#32 )
   (byte) main::toD0181_return#2 ← phi( main::toD0181/(byte) main::toD0181_return#0 )
   (byte) main::toD0181_return#1 ← (byte) main::toD0181_return#2
   to:main::@20
@@ -1359,11 +1340,8 @@ main::@20: scope:[main]  from main::toD0181_@return
   (byte*) bitmap_screen#23 ← phi( main::toD0181_@return/(byte*) bitmap_screen#28 )
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
   (byte~) main::$4 ← (byte) main::toD0181_return#3
-  *((byte*) D018) ← (byte~) main::$4
-  (byte~) main::$5 ← (byte) VIC_BMM | (byte) VIC_DEN
-  (byte~) main::$6 ← (byte~) main::$5 | (byte) VIC_RSEL
-  (number~) main::$7 ← (byte~) main::$6 | (number) 3
-  *((byte*) D011) ← (number~) main::$7
+  *((const byte*) D018) ← (byte~) main::$4
+  *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
   (byte) main::angle#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main::@20 main::@9
@@ -1378,13 +1356,13 @@ main::@2: scope:[main]  from main::@1
   (byte*) bitmap_gfx#18 ← phi( main::@1/(byte*) bitmap_gfx#20 )
   (byte) main::angle#4 ← phi( main::@1/(byte) main::angle#6 )
   (byte*) bitmap_screen#12 ← phi( main::@1/(byte*) bitmap_screen#19 )
-  (byte) bitmap_clear::bgcol#1 ← (byte) BLACK
-  (byte) bitmap_clear::fgcol#1 ← (byte) WHITE
+  (byte) bitmap_clear::bgcol#1 ← (const byte) BLACK
+  (byte) bitmap_clear::fgcol#1 ← (const byte) WHITE
   call bitmap_clear 
   to:main::@24
 main::@24: scope:[main]  from main::@2
-  (byte*) bitmap_gfx#41 ← phi( main::@2/(byte*) bitmap_gfx#18 )
-  (byte*) bitmap_screen#40 ← phi( main::@2/(byte*) bitmap_screen#12 )
+  (byte*) bitmap_gfx#40 ← phi( main::@2/(byte*) bitmap_gfx#18 )
+  (byte*) bitmap_screen#39 ← phi( main::@2/(byte*) bitmap_screen#12 )
   (signed byte*) COS#6 ← phi( main::@2/(signed byte*) COS#10 )
   (byte) main::angle#2 ← phi( main::@2/(byte) main::angle#4 )
   (byte) show_letter::angle#0 ← (byte) main::angle#2
@@ -1392,38 +1370,38 @@ main::@24: scope:[main]  from main::@2
   to:main::@25
 main::@25: scope:[main]  from main::@24
   (signed byte*) COS#26 ← phi( main::@24/(signed byte*) COS#6 )
-  (byte*) bitmap_gfx#39 ← phi( main::@24/(byte*) bitmap_gfx#41 )
-  (byte*) bitmap_screen#38 ← phi( main::@24/(byte*) bitmap_screen#40 )
+  (byte*) bitmap_gfx#38 ← phi( main::@24/(byte*) bitmap_gfx#40 )
+  (byte*) bitmap_screen#37 ← phi( main::@24/(byte*) bitmap_screen#39 )
   (byte) main::angle#9 ← phi( main::@24/(byte) main::angle#2 )
   (byte) main::w#0 ← (byte) 0
   to:main::@5
 main::@5: scope:[main]  from main::@25 main::@5 main::@8
   (signed byte*) COS#24 ← phi( main::@25/(signed byte*) COS#26 main::@5/(signed byte*) COS#24 main::@8/(signed byte*) COS#20 )
-  (byte*) bitmap_gfx#37 ← phi( main::@25/(byte*) bitmap_gfx#39 main::@5/(byte*) bitmap_gfx#37 main::@8/(byte*) bitmap_gfx#30 )
-  (byte*) bitmap_screen#36 ← phi( main::@25/(byte*) bitmap_screen#38 main::@5/(byte*) bitmap_screen#36 main::@8/(byte*) bitmap_screen#29 )
+  (byte*) bitmap_gfx#36 ← phi( main::@25/(byte*) bitmap_gfx#38 main::@5/(byte*) bitmap_gfx#36 main::@8/(byte*) bitmap_gfx#30 )
+  (byte*) bitmap_screen#35 ← phi( main::@25/(byte*) bitmap_screen#37 main::@5/(byte*) bitmap_screen#35 main::@8/(byte*) bitmap_screen#29 )
   (byte) main::angle#8 ← phi( main::@25/(byte) main::angle#9 main::@5/(byte) main::angle#8 main::@8/(byte) main::angle#5 )
   (byte) main::w#4 ← phi( main::@25/(byte) main::w#0 main::@5/(byte) main::w#4 main::@8/(byte) main::w#1 )
-  (bool~) main::$10 ← *((byte*) RASTER) != (number) $fe
-  if((bool~) main::$10) goto main::@5
+  (bool~) main::$7 ← *((const byte*) RASTER) != (number) $fe
+  if((bool~) main::$7) goto main::@5
   to:main::@7
 main::@7: scope:[main]  from main::@5 main::@7
   (signed byte*) COS#22 ← phi( main::@5/(signed byte*) COS#24 main::@7/(signed byte*) COS#22 )
-  (byte*) bitmap_gfx#35 ← phi( main::@5/(byte*) bitmap_gfx#37 main::@7/(byte*) bitmap_gfx#35 )
-  (byte*) bitmap_screen#34 ← phi( main::@5/(byte*) bitmap_screen#36 main::@7/(byte*) bitmap_screen#34 )
+  (byte*) bitmap_gfx#34 ← phi( main::@5/(byte*) bitmap_gfx#36 main::@7/(byte*) bitmap_gfx#34 )
+  (byte*) bitmap_screen#33 ← phi( main::@5/(byte*) bitmap_screen#35 main::@7/(byte*) bitmap_screen#33 )
   (byte) main::angle#7 ← phi( main::@5/(byte) main::angle#8 main::@7/(byte) main::angle#7 )
   (byte) main::w#3 ← phi( main::@5/(byte) main::w#4 main::@7/(byte) main::w#3 )
-  (bool~) main::$11 ← *((byte*) RASTER) != (number) $ff
-  if((bool~) main::$11) goto main::@7
+  (bool~) main::$8 ← *((const byte*) RASTER) != (number) $ff
+  if((bool~) main::$8) goto main::@7
   to:main::@8
 main::@8: scope:[main]  from main::@7
   (signed byte*) COS#20 ← phi( main::@7/(signed byte*) COS#22 )
-  (byte*) bitmap_gfx#30 ← phi( main::@7/(byte*) bitmap_gfx#35 )
-  (byte*) bitmap_screen#29 ← phi( main::@7/(byte*) bitmap_screen#34 )
+  (byte*) bitmap_gfx#30 ← phi( main::@7/(byte*) bitmap_gfx#34 )
+  (byte*) bitmap_screen#29 ← phi( main::@7/(byte*) bitmap_screen#33 )
   (byte) main::angle#5 ← phi( main::@7/(byte) main::angle#7 )
   (byte) main::w#2 ← phi( main::@7/(byte) main::w#3 )
   (byte) main::w#1 ← (byte) main::w#2 + rangenext(0,$3c)
-  (bool~) main::$12 ← (byte) main::w#1 != rangelast(0,$3c)
-  if((bool~) main::$12) goto main::@5
+  (bool~) main::$9 ← (byte) main::w#1 != rangelast(0,$3c)
+  if((bool~) main::$9) goto main::@5
   to:main::@9
 main::@9: scope:[main]  from main::@8
   (signed byte*) COS#18 ← phi( main::@8/(signed byte*) COS#20 )
@@ -1440,8 +1418,7 @@ main::@13: scope:[main]  from main::@1 main::@14
 main::@14: scope:[main]  from main::@13
   (byte*) bitmap_screen#20 ← phi( main::@13/(byte*) bitmap_screen#14 )
   (byte*) bitmap_gfx#21 ← phi( main::@13/(byte*) bitmap_gfx#14 )
-  (byte*~) main::$16 ← (byte*) PRINT_SCREEN + (number) $3e7
-  *((byte*~) main::$16) ← ++ *((byte*~) main::$16)
+  *((const byte*) PRINT_SCREEN+(number) $3e7) ← ++ *((const byte*) PRINT_SCREEN+(number) $3e7)
   to:main::@13
 main::@return: scope:[main]  from main::@13
   (byte*) bitmap_screen#9 ← phi( main::@13/(byte*) bitmap_screen#14 )
@@ -1691,8 +1668,8 @@ bitmap_plot_spline_8seg::@return: scope:[bitmap_plot_spline_8seg]  from bitmap_p
   (signed byte[$140]) SIN ← kickasm {{ .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
  }}
-  (signed byte*~) $1 ← (signed byte[$140]) SIN + (number) $40
-  (signed byte*) COS#0 ← (signed byte*~) $1
+  (signed byte*~) $0 ← (signed byte[$140]) SIN + (number) $40
+  (signed byte*) COS#0 ← (signed byte*~) $0
   to:@64
 
 (struct SplineVector16()) rotate((signed word) rotate::vector_x , (signed word) rotate::vector_y , (byte) rotate::angle)
@@ -1798,9 +1775,8 @@ rotate::@return: scope:[rotate]  from rotate::@5
 @end: scope:[]  from @65
 
 SYMBOL TABLE SSA
-(signed byte*~) $1
+(signed byte*~) $0
 (label) @1
-(label) @13
 (label) @51
 (label) @60
 (label) @63
@@ -1809,11 +1785,11 @@ SYMBOL TABLE SSA
 (label) @7
 (label) @begin
 (label) @end
-(byte*) BITMAP_GRAPHICS
-(byte*) BITMAP_SCREEN
-(byte) BLACK
-(byte*) CIA2_PORT_A
-(byte*) CIA2_PORT_A_DDR
+(const byte*) BITMAP_GRAPHICS = (byte*)(number) $6000
+(const byte*) BITMAP_SCREEN = (byte*)(number) $5c00
+(const byte) BLACK = (number) 0
+(const byte*) CIA2_PORT_A = (byte*)(number) $dd00
+(const byte*) CIA2_PORT_A_DDR = (byte*)(number) $dd02
 (signed byte*) COS
 (signed byte*) COS#0
 (signed byte*) COS#1
@@ -1850,8 +1826,8 @@ SYMBOL TABLE SSA
 (signed byte*) COS#7
 (signed byte*) COS#8
 (signed byte*) COS#9
-(byte*) D011
-(byte*) D018
+(const byte*) D011 = (byte*)(number) $d011
+(const byte*) D018 = (byte*)(number) $d018
 (const byte) LINE_TO = (byte) 2
 (const byte) MOVE_TO = (byte) 0
 (const byte) OFFSET_STRUCT_SEGMENT_TO = (byte) 1
@@ -1859,12 +1835,12 @@ SYMBOL TABLE SSA
 (const byte) OFFSET_STRUCT_SEGMENT_VIA = (byte) 5
 (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X = (byte) 0
 (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y = (byte) 2
-(byte*) PRINT_SCREEN
+(const byte*) PRINT_SCREEN = (byte*)(number) $400
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(byte*) RASTER
+(const byte*) RASTER = (byte*)(number) $d012
 (signed byte[$140]) SIN
 (const byte) SIZEOF_STRUCT_SEGMENT = (byte) 9
 (const byte) SIZEOF_STRUCT_SPLINEVECTOR16 = (byte) 4
@@ -1880,10 +1856,10 @@ SYMBOL TABLE SSA
 (signed word) SplineVector16::y
 (signed dword) SplineVector32::x
 (signed dword) SplineVector32::y
-(byte) VIC_BMM
-(byte) VIC_DEN
-(byte) VIC_RSEL
-(byte) WHITE
+(const byte) VIC_BMM = (number) $20
+(const byte) VIC_DEN = (number) $10
+(const byte) VIC_RSEL = (number) 8
+(const byte) WHITE = (number) 1
 (word()) abs_u16((word) abs_u16::w)
 (byte~) abs_u16::$0
 (number~) abs_u16::$1
@@ -1963,7 +1939,6 @@ SYMBOL TABLE SSA
 (byte*) bitmap_gfx#41
 (byte*) bitmap_gfx#42
 (byte*) bitmap_gfx#43
-(byte*) bitmap_gfx#44
 (byte*) bitmap_gfx#5
 (byte*) bitmap_gfx#6
 (byte*) bitmap_gfx#7
@@ -2321,7 +2296,6 @@ SYMBOL TABLE SSA
 (byte*) bitmap_screen#40
 (byte*) bitmap_screen#41
 (byte*) bitmap_screen#42
-(byte*) bitmap_screen#43
 (byte*) bitmap_screen#5
 (byte*) bitmap_screen#6
 (byte*) bitmap_screen#7
@@ -2329,14 +2303,10 @@ SYMBOL TABLE SSA
 (byte*) bitmap_screen#9
 (struct Segment[$16]) letter_c
 (void()) main()
-(bool~) main::$10
-(bool~) main::$11
-(bool~) main::$12
-(byte*~) main::$16
 (byte~) main::$4
-(byte~) main::$5
-(byte~) main::$6
-(number~) main::$7
+(bool~) main::$7
+(bool~) main::$8
+(bool~) main::$9
 (label) main::@1
 (label) main::@13
 (label) main::@14
@@ -2528,9 +2498,9 @@ SYMBOL TABLE SSA
 (word) mulf16u::b
 (word) mulf16u::b#0
 (word) mulf16u::b#1
-(word*) mulf16u::memA
-(word*) mulf16u::memB
-(dword*) mulf16u::memR
+(const word*) mulf16u::memA = (word*)(number) $f8
+(const word*) mulf16u::memB = (word*)(number) $fa
+(const dword*) mulf16u::memR = (dword*)(number) $fc
 (dword) mulf16u::return
 (dword) mulf16u::return#0
 (dword) mulf16u::return#1
@@ -3068,11 +3038,6 @@ Adding number conversion cast (unumber) sgn_u16::$1 in (number~) sgn_u16::$1 ←
 Adding number conversion cast (unumber) 0 in (bool~) sgn_u16::$2 ← (number) 0 != (unumber~) sgn_u16::$1
 Adding number conversion cast (unumber) -1 in (word) sgn_u16::return#2 ← (number) -1
 Adding number conversion cast (unumber) 1 in (word) sgn_u16::return#3 ← (number) 1
-Adding number conversion cast (unumber) $20 in (byte) VIC_BMM ← (number) $20
-Adding number conversion cast (unumber) $10 in (byte) VIC_DEN ← (number) $10
-Adding number conversion cast (unumber) 8 in (byte) VIC_RSEL ← (number) 8
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
 Adding number conversion cast (unumber) 0 in (word) mulf_init::sqr#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) mulf_init::x_2#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) mulf_init::c#0 ← (number) 0
@@ -3092,7 +3057,7 @@ Adding number conversion cast (unumber) $100 in (byte*~) mulf_init::$5 ← (byte
 Adding number conversion cast (unumber) 1 in (byte) mulf_init::dir#1 ← (number) 1
 Adding number conversion cast (snumber) 0 in (bool~) mulf16s::$3 ← (signed word) mulf16s::a#5 < (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) mulf16s::$5 ← (signed word) mulf16s::b#5 < (number) 0
-Adding number conversion cast (unumber) 3 in *((byte*) CIA2_PORT_A_DDR) ← (number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) CIA2_PORT_A_DDR) ← (number) 3
 Adding number conversion cast (unumber) $40 in (number~) main::vicSelectGfxBank1_toDd001_$2 ← (byte~) main::vicSelectGfxBank1_toDd001_$1 / (number) $40
 Adding number conversion cast (unumber) main::vicSelectGfxBank1_toDd001_$2 in (number~) main::vicSelectGfxBank1_toDd001_$2 ← (byte~) main::vicSelectGfxBank1_toDd001_$1 / (unumber)(number) $40
 Adding number conversion cast (unumber) 3 in (number~) main::vicSelectGfxBank1_toDd001_$3 ← (number) 3 ^ (unumber~) main::vicSelectGfxBank1_toDd001_$2
@@ -3107,13 +3072,13 @@ Adding number conversion cast (unumber) main::toD0181_$6 in (number~) main::toD0
 Adding number conversion cast (unumber) $f in (number~) main::toD0181_$7 ← (unumber~) main::toD0181_$6 & (number) $f
 Adding number conversion cast (unumber) main::toD0181_$7 in (number~) main::toD0181_$7 ← (unumber~) main::toD0181_$6 & (unumber)(number) $f
 Adding number conversion cast (unumber) main::toD0181_$8 in (number~) main::toD0181_$8 ← (unumber~) main::toD0181_$3 | (unumber~) main::toD0181_$7
-Adding number conversion cast (unumber) 3 in (number~) main::$7 ← (byte~) main::$6 | (number) 3
-Adding number conversion cast (unumber) main::$7 in (number~) main::$7 ← (byte~) main::$6 | (unumber)(number) 3
+Adding number conversion cast (unumber) VIC_BMM|VIC_DEN|VIC_RSEL|3 in *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) D011) ← ((unumber)) (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
 Adding number conversion cast (unumber) 0 in (byte) main::angle#0 ← (number) 0
-Adding number conversion cast (unumber) $fe in (bool~) main::$10 ← *((byte*) RASTER) != (number) $fe
-Adding number conversion cast (unumber) $ff in (bool~) main::$11 ← *((byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) $fe in (bool~) main::$7 ← *((const byte*) RASTER) != (number) $fe
+Adding number conversion cast (unumber) $ff in (bool~) main::$8 ← *((const byte*) RASTER) != (number) $ff
 Adding number conversion cast (unumber) 9 in (byte) main::angle#1 ← (byte) main::angle#3 + (number) 9
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$16 ← (byte*) PRINT_SCREEN + (number) $3e7
+Adding number conversion cast (unumber) $3e7 in *((const byte*) PRINT_SCREEN+(number) $3e7) ← ++ *((const byte*) PRINT_SCREEN+(number) $3e7)
 Adding number conversion cast (snumber) 0 in (signed word) show_letter::current_x#0 ← (number) 0
 Adding number conversion cast (snumber) 0 in (signed word) show_letter::current_y#0 ← (number) 0
 Adding number conversion cast (snumber) $32 in (number~) show_letter::$0 ← (signed word) show_letter::to_x#0 - (number) $32
@@ -3134,7 +3099,7 @@ Adding number conversion cast (snumber) $64 in (number~) show_letter::$9 ← (si
 Adding number conversion cast (snumber) show_letter::$9 in (number~) show_letter::$9 ← (signed word) show_letter::via_y#2 + (snumber)(number) $64
 Adding number conversion cast (unumber) 0 in (number~) bitmap_plot_spline_8seg::$6 ← (number) 0 * (const byte) SIZEOF_STRUCT_SPLINEVECTOR16
 Adding number conversion cast (unumber) bitmap_plot_spline_8seg::$6 in (number~) bitmap_plot_spline_8seg::$6 ← (unumber)(number) 0 * (const byte) SIZEOF_STRUCT_SPLINEVECTOR16
-Adding number conversion cast (unumber) $40 in (signed byte*~) $1 ← (signed byte[$140]) SIN + (number) $40
+Adding number conversion cast (unumber) $40 in (signed byte*~) $0 ← (signed byte[$140]) SIN + (number) $40
 Adding number conversion cast (snumber) 2 in (number~) rotate::$3 ← (signed word~) rotate::$2 * (number) 2
 Adding number conversion cast (snumber) rotate::$3 in (number~) rotate::$3 ← (signed word~) rotate::$2 * (snumber)(number) 2
 Adding number conversion cast (snumber) 2 in (number~) rotate::$6 ← (signed word~) rotate::$5 * (number) 2
@@ -3157,37 +3122,22 @@ Inlining cast (byte~) bitmap_line::$13 ← (byte)(word) bitmap_line::y#7
 Inlining cast (byte~) bitmap_line::$24 ← (byte)(word) bitmap_line::y#8
 Inlining cast (word) sgn_u16::return#2 ← (unumber)(number) -1
 Inlining cast (word) sgn_u16::return#3 ← (unumber)(number) 1
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) D011 ← (byte*)(number) $d011
-Inlining cast (byte) VIC_BMM ← (unumber)(number) $20
-Inlining cast (byte) VIC_DEN ← (unumber)(number) $10
-Inlining cast (byte) VIC_RSEL ← (unumber)(number) 8
-Inlining cast (byte*) D018 ← (byte*)(number) $d018
-Inlining cast (byte*) CIA2_PORT_A ← (byte*)(number) $dd00
-Inlining cast (byte*) CIA2_PORT_A_DDR ← (byte*)(number) $dd02
-Inlining cast (byte) BLACK ← (unumber)(number) 0
-Inlining cast (byte) WHITE ← (unumber)(number) 1
 Inlining cast (word) mulf_init::sqr#0 ← (unumber)(number) 0
 Inlining cast (byte) mulf_init::x_2#0 ← (unumber)(number) 0
 Inlining cast (byte) mulf_init::c#0 ← (unumber)(number) 0
 Inlining cast (byte~) mulf_init::$1 ← (byte)(number) -1
 Inlining cast (byte) mulf_init::dir#0 ← (unumber)(number) $ff
 Inlining cast (byte) mulf_init::dir#1 ← (unumber)(number) 1
-Inlining cast (word*) mulf16u::memA ← (word*)(number) $f8
-Inlining cast (word*) mulf16u::memB ← (word*)(number) $fa
-Inlining cast (dword*) mulf16u::memR ← (dword*)(number) $fc
 Inlining cast (word~) mulf16s::$0 ← (word)(signed word) mulf16s::a#4
 Inlining cast (word~) mulf16s::$1 ← (word)(signed word) mulf16s::b#4
 Inlining cast (word~) mulf16s::$10 ← (word)(signed word) mulf16s::b#6
 Inlining cast (signed dword~) mulf16s::$7 ← (signed dword)(dword) mulf16s::m#4
 Inlining cast (word~) mulf16s::$14 ← (word)(signed word) mulf16s::a#6
-Inlining cast (byte*) PRINT_SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) BITMAP_SCREEN ← (byte*)(number) $5c00
-Inlining cast (byte*) BITMAP_GRAPHICS ← (byte*)(number) $6000
-Inlining cast *((byte*) CIA2_PORT_A_DDR) ← (unumber)(number) 3
+Inlining cast *((const byte*) CIA2_PORT_A_DDR) ← (unumber)(number) 3
 Inlining cast (word~) main::vicSelectGfxBank1_toDd001_$0 ← (word)(byte*) main::vicSelectGfxBank1_toDd001_gfx#1
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
+Inlining cast *((const byte*) D011) ← (unumber)(const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Inlining cast (byte) main::angle#0 ← (unumber)(number) 0
 Inlining cast (signed word) show_letter::current_x#0 ← (snumber)(number) 0
 Inlining cast (signed word) show_letter::current_y#0 ← (snumber)(number) 0
@@ -3210,6 +3160,17 @@ Inlining cast (signed word~) rotate::$16 ← (signed word)(signed byte~) rotate:
 Inlining cast (signed byte~) rotate::$18 ← (signed byte)(byte~) rotate::$17
 Inlining cast (signed word~) rotate::$19 ← (signed word)(signed byte~) rotate::$18
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 53266
+Simplifying constant pointer cast (byte*) 53265
+Simplifying constant pointer cast (byte*) 53272
+Simplifying constant pointer cast (byte*) 56576
+Simplifying constant pointer cast (byte*) 56578
+Simplifying constant pointer cast (word*) 248
+Simplifying constant pointer cast (word*) 250
+Simplifying constant pointer cast (dword*) 252
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 23552
+Simplifying constant pointer cast (byte*) 24576
 Simplifying constant integer cast 2
 Simplifying constant integer cast 2
 Simplifying constant integer cast 2
@@ -3252,16 +3213,6 @@ Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Simplifying constant integer cast -1
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (byte*) 53266
-Simplifying constant pointer cast (byte*) 53265
-Simplifying constant integer cast $20
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
-Simplifying constant pointer cast (byte*) 53272
-Simplifying constant pointer cast (byte*) 56576
-Simplifying constant pointer cast (byte*) 56578
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -3279,14 +3230,8 @@ Simplifying constant integer cast $100
 Simplifying constant integer cast $1ff
 Simplifying constant integer cast $100
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (word*) 248
-Simplifying constant pointer cast (word*) 250
-Simplifying constant pointer cast (dword*) 252
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 23552
-Simplifying constant pointer cast (byte*) 24576
 Simplifying constant integer cast $6c
 Simplifying constant integer cast $92
 Simplifying constant integer cast 0
@@ -3382,6 +3327,7 @@ Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
+Simplifying constant integer cast (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Simplifying constant integer cast 3
 Simplifying constant integer cast 0
 Simplifying constant integer cast $fe
@@ -3444,11 +3390,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $80
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) -1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
@@ -3542,7 +3483,6 @@ Inferred type updated to byte in (unumber~) main::toD0181_$3 ← > (word~) main:
 Inferred type updated to byte in (unumber~) main::toD0181_$6 ← (byte~) main::toD0181_$5 / (byte) 4
 Inferred type updated to byte in (unumber~) main::toD0181_$7 ← (byte~) main::toD0181_$6 & (byte) $f
 Inferred type updated to byte in (unumber~) main::toD0181_$8 ← (byte~) main::toD0181_$3 | (byte~) main::toD0181_$7
-Inferred type updated to byte in (unumber~) main::$7 ← (byte~) main::$6 | (byte) 3
 Inferred type updated to signed word in (snumber~) show_letter::$0 ← (signed word) show_letter::to_x#0 - (signed byte) $32
 Inferred type updated to signed word in (snumber~) show_letter::$1 ← (signed word) show_letter::to_y#0 - (signed word) $96
 Inferred type updated to signed word in (snumber~) show_letter::$3 ← (signed word) show_letter::to_x#2 + (signed byte) $64
@@ -3563,10 +3503,10 @@ Inversing boolean not [97] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#
 Inversing boolean not [117] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [116] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
 Inversing boolean not [215] (bool~) bitmap_line::$21 ← (word) bitmap_line::dy#3 >= (word) bitmap_line::e#1 from [214] (bool~) bitmap_line::$20 ← (word) bitmap_line::dy#3 < (word) bitmap_line::e#1
 Inversing boolean not [237] (bool~) bitmap_line::$27 ← (word) bitmap_line::dx#5 >= (word) bitmap_line::e1#1 from [236] (bool~) bitmap_line::$26 ← (word) bitmap_line::dx#5 < (word) bitmap_line::e1#1
-Inversing boolean not [299] (bool~) mulf_init::$11 ← (byte~) mulf_init::$9 != (byte) 0 from [298] (bool~) mulf_init::$10 ← (byte~) mulf_init::$9 == (byte) 0
-Inversing boolean not [329] (bool~) mulf_init::$19 ← (byte) mulf_init::x_255#1 != (byte) 0 from [328] (bool~) mulf_init::$18 ← (byte) mulf_init::x_255#1 == (byte) 0
-Inversing boolean not [364] (bool~) mulf16s::$4 ← (signed word) mulf16s::a#5 >= (signed byte) 0 from [363] (bool~) mulf16s::$3 ← (signed word) mulf16s::a#5 < (signed byte) 0
-Inversing boolean not [368] (bool~) mulf16s::$6 ← (signed word) mulf16s::b#5 >= (signed byte) 0 from [367] (bool~) mulf16s::$5 ← (signed word) mulf16s::b#5 < (signed byte) 0
+Inversing boolean not [288] (bool~) mulf_init::$11 ← (byte~) mulf_init::$9 != (byte) 0 from [287] (bool~) mulf_init::$10 ← (byte~) mulf_init::$9 == (byte) 0
+Inversing boolean not [318] (bool~) mulf_init::$19 ← (byte) mulf_init::x_255#1 != (byte) 0 from [317] (bool~) mulf_init::$18 ← (byte) mulf_init::x_255#1 == (byte) 0
+Inversing boolean not [350] (bool~) mulf16s::$4 ← (signed word) mulf16s::a#5 >= (signed byte) 0 from [349] (bool~) mulf16s::$3 ← (signed word) mulf16s::a#5 < (signed byte) 0
+Inversing boolean not [354] (bool~) mulf16s::$6 ← (signed word) mulf16s::b#5 >= (signed byte) 0 from [353] (bool~) mulf16s::$5 ← (signed word) mulf16s::b#5 < (signed byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (signed word) spline_8segB::a_x#0 = (signed word~) spline_8segB::$2 
 Alias (signed word) spline_8segB::a_y#0 = (signed word~) spline_8segB::$5 
@@ -3654,8 +3594,8 @@ Alias (word) abs_u16::w#2 = (word) abs_u16::w#3 (word) abs_u16::w#4 (word) abs_u
 Alias (word) abs_u16::return#2 = (word~) abs_u16::$2 
 Alias (word) abs_u16::return#4 = (word) abs_u16::return#7 
 Alias (word) sgn_u16::return#4 = (word) sgn_u16::return#7 
-Alias (byte*) bitmap_gfx#0 = (byte*) bitmap_gfx#33 (byte*) bitmap_gfx#28 (byte*) bitmap_gfx#26 (byte*) bitmap_gfx#22 (byte*) bitmap_gfx#15 
-Alias (byte*) bitmap_screen#0 = (byte*) bitmap_screen#32 (byte*) bitmap_screen#27 (byte*) bitmap_screen#25 (byte*) bitmap_screen#21 (byte*) bitmap_screen#15 
+Alias (byte*) bitmap_gfx#0 = (byte*) bitmap_gfx#28 (byte*) bitmap_gfx#26 (byte*) bitmap_gfx#22 (byte*) bitmap_gfx#15 
+Alias (byte*) bitmap_screen#0 = (byte*) bitmap_screen#27 (byte*) bitmap_screen#25 (byte*) bitmap_screen#21 (byte*) bitmap_screen#15 
 Alias (byte*) mulf_init::sqr1_hi#0 = (byte*~) mulf_init::$0 
 Alias (byte*) mulf_init::sqr1_lo#0 = (byte*~) mulf_init::$6 
 Alias (byte) mulf_init::c#2 = (byte) mulf_init::c#3 
@@ -3687,21 +3627,21 @@ Alias (word~) mulf16s::$17 = (word~) mulf16s::$15
 Alias (byte*) bitmap_gfx#13 = (byte*) bitmap_gfx#19 
 Alias (byte*) bitmap_screen#13 = (byte*) bitmap_screen#18 
 Alias (signed byte*) COS#17 = (signed byte*) COS#32 (signed byte*) COS#33 (signed byte*) COS#31 (signed byte*) COS#30 (signed byte*) COS#29 (signed byte*) COS#28 (signed byte*) COS#27 (signed byte*) COS#25 (signed byte*) COS#23 (signed byte*) COS#21 (signed byte*) COS#19 
-Alias (byte*) bitmap_gfx#24 = (byte*) bitmap_gfx#3 (byte*) bitmap_gfx#8 (byte*) bitmap_gfx#44 (byte*) bitmap_gfx#43 (byte*) bitmap_gfx#42 (byte*) bitmap_gfx#40 (byte*) bitmap_gfx#38 (byte*) bitmap_gfx#36 (byte*) bitmap_gfx#34 (byte*) bitmap_gfx#29 
-Alias (byte*) bitmap_screen#23 = (byte*) bitmap_screen#3 (byte*) bitmap_screen#8 (byte*) bitmap_screen#43 (byte*) bitmap_screen#42 (byte*) bitmap_screen#41 (byte*) bitmap_screen#39 (byte*) bitmap_screen#37 (byte*) bitmap_screen#35 (byte*) bitmap_screen#33 (byte*) bitmap_screen#28 
+Alias (byte*) bitmap_gfx#24 = (byte*) bitmap_gfx#3 (byte*) bitmap_gfx#8 (byte*) bitmap_gfx#43 (byte*) bitmap_gfx#42 (byte*) bitmap_gfx#41 (byte*) bitmap_gfx#39 (byte*) bitmap_gfx#37 (byte*) bitmap_gfx#35 (byte*) bitmap_gfx#33 (byte*) bitmap_gfx#29 
+Alias (byte*) bitmap_screen#23 = (byte*) bitmap_screen#3 (byte*) bitmap_screen#8 (byte*) bitmap_screen#42 (byte*) bitmap_screen#41 (byte*) bitmap_screen#40 (byte*) bitmap_screen#38 (byte*) bitmap_screen#36 (byte*) bitmap_screen#34 (byte*) bitmap_screen#32 (byte*) bitmap_screen#28 
 Alias (byte*) main::vicSelectGfxBank1_gfx#0 = (byte*) main::vicSelectGfxBank1_gfx#1 (byte*) main::vicSelectGfxBank1_toDd001_gfx#0 (byte*) main::vicSelectGfxBank1_toDd001_gfx#1 
 Alias (byte) main::vicSelectGfxBank1_toDd001_return#0 = (byte~) main::vicSelectGfxBank1_toDd001_$3 (byte) main::vicSelectGfxBank1_toDd001_return#2 (byte) main::vicSelectGfxBank1_toDd001_return#1 (byte) main::vicSelectGfxBank1_toDd001_return#3 (byte~) main::vicSelectGfxBank1_$0 
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
 Alias (byte*) main::toD0181_gfx#0 = (byte*) main::toD0181_gfx#1 
 Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$4 
-Alias (byte*) bitmap_screen#12 = (byte*) bitmap_screen#19 (byte*) bitmap_screen#40 (byte*) bitmap_screen#38 
+Alias (byte*) bitmap_screen#12 = (byte*) bitmap_screen#19 (byte*) bitmap_screen#39 (byte*) bitmap_screen#37 
 Alias (byte) main::angle#2 = (byte) main::angle#4 (byte) main::angle#6 (byte) main::angle#9 
-Alias (byte*) bitmap_gfx#18 = (byte*) bitmap_gfx#20 (byte*) bitmap_gfx#41 (byte*) bitmap_gfx#39 
+Alias (byte*) bitmap_gfx#18 = (byte*) bitmap_gfx#20 (byte*) bitmap_gfx#40 (byte*) bitmap_gfx#38 
 Alias (signed byte*) COS#10 = (signed byte*) COS#14 (signed byte*) COS#6 (signed byte*) COS#26 
 Alias (byte) main::w#2 = (byte) main::w#3 
 Alias (byte) main::angle#3 = (byte) main::angle#5 (byte) main::angle#7 
-Alias (byte*) bitmap_screen#24 = (byte*) bitmap_screen#29 (byte*) bitmap_screen#34 
-Alias (byte*) bitmap_gfx#25 = (byte*) bitmap_gfx#30 (byte*) bitmap_gfx#35 
+Alias (byte*) bitmap_screen#24 = (byte*) bitmap_screen#29 (byte*) bitmap_screen#33 
+Alias (byte*) bitmap_gfx#25 = (byte*) bitmap_gfx#30 (byte*) bitmap_gfx#34 
 Alias (signed byte*) COS#18 = (signed byte*) COS#20 (signed byte*) COS#22 
 Alias (byte*) bitmap_gfx#14 = (byte*) bitmap_gfx#21 (byte*) bitmap_gfx#9 (byte*) bitmap_gfx#4 
 Alias (byte*) bitmap_screen#14 = (byte*) bitmap_screen#20 (byte*) bitmap_screen#9 (byte*) bitmap_screen#4 
@@ -3736,7 +3676,7 @@ Alias (word) bitmap_line::y1#1 = (word~) bitmap_plot_spline_8seg::$1
 Alias (word) bitmap_line::x2#1 = (word~) bitmap_plot_spline_8seg::$2 
 Alias (word) bitmap_line::y2#1 = (word~) bitmap_plot_spline_8seg::$3 
 Alias (byte) bitmap_plot_spline_8seg::n#2 = (byte) bitmap_plot_spline_8seg::n#3 
-Alias (signed byte*) COS#0 = (signed byte*~) $1 (signed byte*) COS#34 
+Alias (signed byte*) COS#0 = (signed byte*~) $0 (signed byte*) COS#34 
 Alias (signed word) rotate::cos_a#0 = (signed word~) rotate::$0 (signed word) rotate::cos_a#1 
 Alias (signed dword) mulf16s::return#2 = (signed dword) mulf16s::return#7 
 Alias (signed word) rotate::vector_y#2 = (signed word) rotate::vector_y#4 (signed word) rotate::vector_y#3 
@@ -3824,8 +3764,8 @@ Identical Phi Values (byte*) bitmap_gfx#24 (byte*) bitmap_gfx#11
 Identical Phi Values (byte*) bitmap_screen#23 (byte*) bitmap_screen#11
 Identical Phi Values (byte) main::w#2 (byte) main::w#4
 Identical Phi Values (byte) main::angle#3 (byte) main::angle#8
-Identical Phi Values (byte*) bitmap_screen#24 (byte*) bitmap_screen#36
-Identical Phi Values (byte*) bitmap_gfx#25 (byte*) bitmap_gfx#37
+Identical Phi Values (byte*) bitmap_screen#24 (byte*) bitmap_screen#35
+Identical Phi Values (byte*) bitmap_gfx#25 (byte*) bitmap_gfx#36
 Identical Phi Values (signed byte*) COS#18 (signed byte*) COS#24
 Identical Phi Values (byte*) bitmap_gfx#14 (byte*) bitmap_gfx#18
 Identical Phi Values (byte*) bitmap_screen#14 (byte*) bitmap_screen#12
@@ -3839,8 +3779,8 @@ Identical Phi Values (byte*) bitmap_screen#10 (byte*) bitmap_screen#14
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Identical Phi Values (byte) main::angle#8 (byte) main::angle#2
-Identical Phi Values (byte*) bitmap_screen#36 (byte*) bitmap_screen#12
-Identical Phi Values (byte*) bitmap_gfx#37 (byte*) bitmap_gfx#18
+Identical Phi Values (byte*) bitmap_screen#35 (byte*) bitmap_screen#12
+Identical Phi Values (byte*) bitmap_gfx#36 (byte*) bitmap_gfx#18
 Identical Phi Values (signed byte*) COS#24 (signed byte*) COS#10
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) bitmap_screen#12 (byte*) bitmap_screen#1
@@ -3851,7 +3791,7 @@ Identical Phi Values (byte*) bitmap_screen#7 (byte*) bitmap_screen#1
 Identical Phi Values (byte*) bitmap_gfx#12 (byte*) bitmap_gfx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identified duplicate assignment right side [115] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
-Identified duplicate assignment right side [592] (byte~) bitmap_plot_spline_8seg::$8 ← (byte) bitmap_plot_spline_8seg::n#2 * (const byte) SIZEOF_STRUCT_SPLINEVECTOR16
+Identified duplicate assignment right side [571] (byte~) bitmap_plot_spline_8seg::$8 ← (byte) bitmap_plot_spline_8seg::n#2 * (const byte) SIZEOF_STRUCT_SPLINEVECTOR16
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) spline_8segB::$30 [51] if((byte) spline_8segB::n#1!=rangelast(0,7)) goto spline_8segB::@1
 Simple Condition (bool~) memset::$1 [66] if((word) memset::num#2<=(byte) 0) goto memset::@1
@@ -3867,19 +3807,19 @@ Simple Condition (bool~) bitmap_line::$27 [238] if((word) bitmap_line::dx#0>=(wo
 Simple Condition (bool~) bitmap_line::$28 [241] if((word) bitmap_line::x#15!=(word) bitmap_line::x2#10) goto bitmap_line::@12
 Simple Condition (bool~) abs_u16::$3 [249] if((byte) 0!=(byte~) abs_u16::$1) goto abs_u16::@1
 Simple Condition (bool~) sgn_u16::$2 [262] if((byte) 0!=(byte~) sgn_u16::$1) goto sgn_u16::@1
-Simple Condition (bool~) mulf_init::$8 [294] if((byte*) mulf_init::sqr1_lo#2!=(byte*~) mulf_init::$7) goto mulf_init::@2
-Simple Condition (bool~) mulf_init::$11 [300] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@4
-Simple Condition (bool~) mulf_init::$16 [321] if((byte*) mulf_init::sqr2_lo#2!=(byte*~) mulf_init::$15) goto mulf_init::@10
-Simple Condition (bool~) mulf_init::$19 [330] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@12
-Simple Condition (bool~) mulf16s::$4 [365] if((signed word) mulf16s::a#4>=(signed byte) 0) goto mulf16s::@1
-Simple Condition (bool~) mulf16s::$6 [369] if((signed word) mulf16s::b#4>=(signed byte) 0) goto mulf16s::@2
-Simple Condition (bool~) main::$10 [458] if(*((byte*) RASTER)!=(byte) $fe) goto main::@5
-Simple Condition (bool~) main::$11 [461] if(*((byte*) RASTER)!=(byte) $ff) goto main::@7
-Simple Condition (bool~) main::$12 [465] if((byte) main::w#1!=rangelast(0,$3c)) goto main::@5
-Simple Condition (bool~) show_letter::$10 [542] if((byte) show_letter::segment_type#0==(const byte) MOVE_TO) goto show_letter::@2
-Simple Condition (bool~) show_letter::$11 [548] if((byte) show_letter::segment_type#0==(const byte) SPLINE_TO) goto show_letter::@3
-Simple Condition (bool~) show_letter::$19 [578] if((byte) show_letter::i#1!=rangelast(0,$15)) goto show_letter::@1
-Simple Condition (bool~) bitmap_plot_spline_8seg::$5 [608] if((byte) bitmap_plot_spline_8seg::n#1!=rangelast(1,8)) goto bitmap_plot_spline_8seg::@1
+Simple Condition (bool~) mulf_init::$8 [283] if((byte*) mulf_init::sqr1_lo#2!=(byte*~) mulf_init::$7) goto mulf_init::@2
+Simple Condition (bool~) mulf_init::$11 [289] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@4
+Simple Condition (bool~) mulf_init::$16 [310] if((byte*) mulf_init::sqr2_lo#2!=(byte*~) mulf_init::$15) goto mulf_init::@10
+Simple Condition (bool~) mulf_init::$19 [319] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@12
+Simple Condition (bool~) mulf16s::$4 [351] if((signed word) mulf16s::a#4>=(signed byte) 0) goto mulf16s::@1
+Simple Condition (bool~) mulf16s::$6 [355] if((signed word) mulf16s::b#4>=(signed byte) 0) goto mulf16s::@2
+Simple Condition (bool~) main::$7 [438] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@5
+Simple Condition (bool~) main::$8 [441] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@7
+Simple Condition (bool~) main::$9 [445] if((byte) main::w#1!=rangelast(0,$3c)) goto main::@5
+Simple Condition (bool~) show_letter::$10 [521] if((byte) show_letter::segment_type#0==(const byte) MOVE_TO) goto show_letter::@2
+Simple Condition (bool~) show_letter::$11 [527] if((byte) show_letter::segment_type#0==(const byte) SPLINE_TO) goto show_letter::@3
+Simple Condition (bool~) show_letter::$19 [557] if((byte) show_letter::i#1!=rangelast(0,$15)) goto show_letter::@1
+Simple Condition (bool~) bitmap_plot_spline_8seg::$5 [587] if((byte) bitmap_plot_spline_8seg::n#1!=rangelast(1,8)) goto bitmap_plot_spline_8seg::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Rewriting ! if()-condition to reversed if() [175] (bool~) bitmap_line::$7 ← ! (bool~) bitmap_line::$6
 Rewriting && if()-condition to two if()s [174] (bool~) bitmap_line::$6 ← (bool~) bitmap_line::$4 && (bool~) bitmap_line::$5
@@ -3889,11 +3829,11 @@ Constant right-side identified [57] (byte~) spline_8segB::$32 ← (byte) 8 * (co
 Constant right-side identified [85] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
 Constant right-side identified [86] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
 Constant right-side identified [87] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-Constant right-side identified [280] (byte[$200]) mulf_sqr1_lo ← { fill( $200, 0) }
-Constant right-side identified [281] (byte[$200]) mulf_sqr1_hi ← { fill( $200, 0) }
-Constant right-side identified [282] (byte[$200]) mulf_sqr2_lo ← { fill( $200, 0) }
-Constant right-side identified [283] (byte[$200]) mulf_sqr2_hi ← { fill( $200, 0) }
-Constant right-side identified [580] (byte~) bitmap_plot_spline_8seg::$6 ← (byte) 0 * (const byte) SIZEOF_STRUCT_SPLINEVECTOR16
+Constant right-side identified [269] (byte[$200]) mulf_sqr1_lo ← { fill( $200, 0) }
+Constant right-side identified [270] (byte[$200]) mulf_sqr1_hi ← { fill( $200, 0) }
+Constant right-side identified [271] (byte[$200]) mulf_sqr2_lo ← { fill( $200, 0) }
+Constant right-side identified [272] (byte[$200]) mulf_sqr2_hi ← { fill( $200, 0) }
+Constant right-side identified [559] (byte~) bitmap_plot_spline_8seg::$6 ← (byte) 0 * (const byte) SIZEOF_STRUCT_SPLINEVECTOR16
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (struct SplineVector16) { x: (signed word) $6c, y: (signed word) $92 }
 Identified constant from value list (struct SplineVector16) { x: (signed word) 0, y: (signed word) 0 }
@@ -3982,16 +3922,6 @@ Constant (const byte) memset::c#1 = 0
 Constant (const word) memset::num#1 = $1f40
 Constant (const word) sgn_u16::return#2 = -1
 Constant (const word) sgn_u16::return#3 = 1
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) D011 = (byte*) 53265
-Constant (const byte) VIC_BMM = $20
-Constant (const byte) VIC_DEN = $10
-Constant (const byte) VIC_RSEL = 8
-Constant (const byte*) D018 = (byte*) 53272
-Constant (const byte*) CIA2_PORT_A = (byte*) 56576
-Constant (const byte*) CIA2_PORT_A_DDR = (byte*) 56578
-Constant (const byte) BLACK = 0
-Constant (const byte) WHITE = 1
 Constant (const byte[$200]) mulf_sqr1_lo = { fill( $200, 0) }
 Constant (const byte[$200]) mulf_sqr1_hi = { fill( $200, 0) }
 Constant (const byte[$200]) mulf_sqr2_lo = { fill( $200, 0) }
@@ -4002,14 +3932,17 @@ Constant (const byte) mulf_init::c#0 = 0
 Constant (const byte) mulf_init::x_255#0 = -1
 Constant (const byte) mulf_init::dir#0 = $ff
 Constant (const byte) mulf_init::dir#1 = 1
-Constant (const word*) mulf16u::memA = (word*) 248
-Constant (const word*) mulf16u::memB = (word*) 250
-Constant (const dword*) mulf16u::memR = (dword*) 252
-Constant (const byte*) PRINT_SCREEN = (byte*) 1024
-Constant (const byte*) BITMAP_SCREEN = (byte*) 23552
-Constant (const byte*) BITMAP_GRAPHICS = (byte*) 24576
 Constant (const struct Segment[$16]) letter_c = { { type: MOVE_TO, to: { x: $6c, y: $92 }, via: { x: 0, y: 0 } }, { type: SPLINE_TO, to: { x: $59, y: $b6 }, via: { x: $67, y: $a9 } }, { type: SPLINE_TO, to: { x: $3b, y: $c3 }, via: { x: $4b, y: $c3 } }, { type: SPLINE_TO, to: { x: $17, y: $b2 }, via: { x: $26, y: $c3 } }, { type: SPLINE_TO, to: { x: 9, y: $84 }, via: { x: 9, y: $a1 } }, { type: SPLINE_TO, to: { x: $19, y: $57 }, via: { x: 9, y: $68 } }, { type: SPLINE_TO, to: { x: $41, y: $45 }, via: { x: $2a, y: $45 } }, { type: SPLINE_TO, to: { x: $5d, y: $4f }, via: { x: $52, y: $45 } }, { type: SPLINE_TO, to: { x: $69, y: $62 }, via: { x: $69, y: $58 } }, { type: SPLINE_TO, to: { x: $66, y: $6a }, via: { x: $69, y: $67 } }, { type: SPLINE_TO, to: { x: $5d, y: $6d }, via: { x: $62, y: $6d } }, { type: SPLINE_TO, to: { x: $51, y: $68 }, via: { x: $55, y: $6d } }, { type: SPLINE_TO, to: { x: $4e, y: $5d }, via: { x: $4f, y: $65 } }, { type: SPLINE_TO, to: { x: $49, y: $52 }, via: { x: $4e, y: $56 } }, { type: SPLINE_TO, to: { x: $3d, y: $4e }, via: { x: $45, y: $4e } }, { type: SPLINE_TO, to: { x: $28, y: $58 }, via: { x: $30, y: $4e } }, { type: SPLINE_TO, to: { x: $1d, y: $79 }, via: { x: $1d, y: $64 } }, { type: SPLINE_TO, to: { x: $28, y: $9e }, via: { x: $1d, y: $8e } }, { type: SPLINE_TO, to: { x: $44, y: $ae }, via: { x: $32, y: $ae } }, { type: SPLINE_TO, to: { x: $5b, y: $a6 }, via: { x: $50, y: $ae } }, { type: SPLINE_TO, to: { x: $68, y: $90 }, via: { x: $62, y: $a0 } }, { type: LINE_TO, to: { x: $6c, y: $92 }, via: { x: 0, y: 0 } } }
+Constant (const byte*) bitmap_init::gfx#0 = BITMAP_GRAPHICS
+Constant (const byte*) bitmap_init::screen#0 = BITMAP_SCREEN
+Constant (const byte) bitmap_clear::bgcol#0 = BLACK
+Constant (const byte) bitmap_clear::fgcol#0 = WHITE
+Constant (const byte*) main::vicSelectGfxBank1_gfx#0 = BITMAP_SCREEN
+Constant (const byte*) main::toD0181_screen#0 = BITMAP_SCREEN
+Constant (const byte*) main::toD0181_gfx#0 = BITMAP_GRAPHICS
 Constant (const byte) main::angle#0 = 0
+Constant (const byte) bitmap_clear::bgcol#1 = BLACK
+Constant (const byte) bitmap_clear::fgcol#1 = WHITE
 Constant (const byte) main::w#0 = 0
 Constant (const signed word) show_letter::current_x#0 = 0
 Constant (const signed word) show_letter::current_y#0 = 0
@@ -4020,20 +3953,10 @@ Constant (const signed byte[$140]) SIN = kickasm {{ .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
  }}
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) mulf_init::sqr2_hi#0 = mulf_sqr2_hi
-Constant (const byte*) mulf_init::sqr2_lo#0 = mulf_sqr2_lo
-Constant (const byte*) bitmap_init::gfx#0 = BITMAP_GRAPHICS
-Constant (const byte*) bitmap_init::screen#0 = BITMAP_SCREEN
-Constant (const byte) bitmap_clear::bgcol#0 = BLACK
-Constant (const byte) bitmap_clear::fgcol#0 = WHITE
-Constant (const byte*) main::vicSelectGfxBank1_gfx#0 = BITMAP_SCREEN
-Constant (const byte*) main::toD0181_screen#0 = BITMAP_SCREEN
-Constant (const byte*) main::toD0181_gfx#0 = BITMAP_GRAPHICS
-Constant (const byte) bitmap_clear::bgcol#1 = BLACK
-Constant (const byte) bitmap_clear::fgcol#1 = WHITE
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) bitmap_gfx#1 = bitmap_init::gfx#0
 Constant (const byte*) bitmap_screen#1 = bitmap_init::screen#0
+Constant (const byte*) mulf_init::sqr2_hi#0 = mulf_sqr2_hi
+Constant (const byte*) mulf_init::sqr2_lo#0 = mulf_sqr2_lo
 Constant (const word) main::vicSelectGfxBank1_toDd001_$0 = (word)main::vicSelectGfxBank1_gfx#0
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
@@ -4045,20 +3968,20 @@ Constant value identified (signed word*)SPLINE_8SEG in [37] (signed word*) splin
 Constant value identified (signed word*)SPLINE_8SEG in [39] (signed word*) spline_8segB::$34 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
 Constant value identified (signed word*)SPLINE_8SEG in [58] (signed word*) spline_8segB::$35 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
 Constant value identified (signed word*)SPLINE_8SEG in [60] (signed word*) spline_8segB::$36 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
-Constant value identified (struct SplineVector16*)letter_c in [483] (struct SplineVector16*) show_letter::$23 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TO
-Constant value identified (struct SplineVector16*)letter_c in [486] (struct SplineVector16*) show_letter::$24 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TO
-Constant value identified (struct SplineVector16*)letter_c in [509] (struct SplineVector16*) show_letter::$25 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_VIA
-Constant value identified (struct SplineVector16*)letter_c in [512] (struct SplineVector16*) show_letter::$26 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_VIA
-Constant value identified (byte*)letter_c in [535] (byte*) show_letter::$27 ← (byte*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TYPE
-Constant value identified (signed word*)SPLINE_8SEG in [581] (signed word*) bitmap_plot_spline_8seg::$10 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
-Constant value identified (signed word*)SPLINE_8SEG in [583] (signed word*) bitmap_plot_spline_8seg::$11 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
-Constant value identified (signed word*)SPLINE_8SEG in [590] (signed word*) bitmap_plot_spline_8seg::$14 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
-Constant value identified (signed word*)SPLINE_8SEG in [593] (signed word*) bitmap_plot_spline_8seg::$15 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
-Constant value identified (signed word*)SPLINE_8SEG in [602] (signed word*) bitmap_plot_spline_8seg::$12 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
-Constant value identified (signed word*)SPLINE_8SEG in [604] (signed word*) bitmap_plot_spline_8seg::$13 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
+Constant value identified (struct SplineVector16*)letter_c in [462] (struct SplineVector16*) show_letter::$23 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TO
+Constant value identified (struct SplineVector16*)letter_c in [465] (struct SplineVector16*) show_letter::$24 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TO
+Constant value identified (struct SplineVector16*)letter_c in [488] (struct SplineVector16*) show_letter::$25 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_VIA
+Constant value identified (struct SplineVector16*)letter_c in [491] (struct SplineVector16*) show_letter::$26 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_VIA
+Constant value identified (byte*)letter_c in [514] (byte*) show_letter::$27 ← (byte*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TYPE
+Constant value identified (signed word*)SPLINE_8SEG in [560] (signed word*) bitmap_plot_spline_8seg::$10 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
+Constant value identified (signed word*)SPLINE_8SEG in [562] (signed word*) bitmap_plot_spline_8seg::$11 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
+Constant value identified (signed word*)SPLINE_8SEG in [569] (signed word*) bitmap_plot_spline_8seg::$14 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
+Constant value identified (signed word*)SPLINE_8SEG in [572] (signed word*) bitmap_plot_spline_8seg::$15 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
+Constant value identified (signed word*)SPLINE_8SEG in [581] (signed word*) bitmap_plot_spline_8seg::$12 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
+Constant value identified (signed word*)SPLINE_8SEG in [583] (signed word*) bitmap_plot_spline_8seg::$13 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [446] if(true) goto main::@2
-if() condition always true - replacing block destination [469] if(true) goto main::@14
+if() condition always true - replacing block destination [426] if(true) goto main::@2
+if() condition always true - replacing block destination [449] if(true) goto main::@14
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [49] spline_8segB::n#1 ← ++ spline_8segB::n#2 to ++
 Resolved ranged comparison value [51] if(spline_8segB::n#1!=rangelast(0,7)) goto spline_8segB::@1 to (number) 8
@@ -4066,36 +3989,35 @@ Resolved ranged next value [100] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
 Resolved ranged comparison value [102] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
 Resolved ranged next value [120] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
 Resolved ranged comparison value [122] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
-Resolved ranged next value [463] main::w#1 ← ++ main::w#4 to ++
-Resolved ranged comparison value [465] if(main::w#1!=rangelast(0,$3c)) goto main::@5 to (number) $3d
-Resolved ranged next value [576] show_letter::i#1 ← ++ show_letter::i#10 to ++
-Resolved ranged comparison value [578] if(show_letter::i#1!=rangelast(0,$15)) goto show_letter::@1 to (number) $16
-Resolved ranged next value [606] bitmap_plot_spline_8seg::n#1 ← ++ bitmap_plot_spline_8seg::n#2 to ++
-Resolved ranged comparison value [608] if(bitmap_plot_spline_8seg::n#1!=rangelast(1,8)) goto bitmap_plot_spline_8seg::@1 to (number) 9
+Resolved ranged next value [443] main::w#1 ← ++ main::w#4 to ++
+Resolved ranged comparison value [445] if(main::w#1!=rangelast(0,$3c)) goto main::@5 to (number) $3d
+Resolved ranged next value [555] show_letter::i#1 ← ++ show_letter::i#10 to ++
+Resolved ranged comparison value [557] if(show_letter::i#1!=rangelast(0,$15)) goto show_letter::@1 to (number) $16
+Resolved ranged next value [585] bitmap_plot_spline_8seg::n#1 ← ++ bitmap_plot_spline_8seg::n#2 to ++
+Resolved ranged comparison value [587] if(bitmap_plot_spline_8seg::n#1!=rangelast(1,8)) goto bitmap_plot_spline_8seg::@1 to (number) 9
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_STRUCT_SPLINEVECTOR16 in 
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero (signed word*)SPLINE_8SEG in [37] (signed word*) spline_8segB::$33 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
 Simplifying expression containing zero (signed word*)SPLINE_8SEG in [58] (signed word*) spline_8segB::$35 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
-Simplifying expression containing zero (signed word*)show_letter::$23 in [484] (signed word*) show_letter::$28 ← (signed word*)(struct SplineVector16*) show_letter::$23 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
-Simplifying expression containing zero (signed word*)show_letter::$25 in [510] (signed word*) show_letter::$30 ← (signed word*)(struct SplineVector16*) show_letter::$25 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
-Simplifying expression containing zero (byte*)letter_c in [535] (byte*) show_letter::$27 ← (byte*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TYPE
-Simplifying expression containing zero (signed word*)SPLINE_8SEG in [581] (signed word*) bitmap_plot_spline_8seg::$10 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
-Simplifying expression containing zero bitmap_plot_spline_8seg::$10 in [582] (signed word) bitmap_plot_spline_8seg::current_x#0 ← *((signed word*) bitmap_plot_spline_8seg::$10 + (const byte) bitmap_plot_spline_8seg::$6)
-Simplifying expression containing zero bitmap_plot_spline_8seg::$11 in [584] (signed word) bitmap_plot_spline_8seg::current_y#0 ← *((signed word*) bitmap_plot_spline_8seg::$11 + (const byte) bitmap_plot_spline_8seg::$6)
-Simplifying expression containing zero (signed word*)SPLINE_8SEG in [590] (signed word*) bitmap_plot_spline_8seg::$14 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
-Simplifying expression containing zero (signed word*)SPLINE_8SEG in [602] (signed word*) bitmap_plot_spline_8seg::$12 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
+Simplifying expression containing zero (signed word*)show_letter::$23 in [463] (signed word*) show_letter::$28 ← (signed word*)(struct SplineVector16*) show_letter::$23 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
+Simplifying expression containing zero (signed word*)show_letter::$25 in [489] (signed word*) show_letter::$30 ← (signed word*)(struct SplineVector16*) show_letter::$25 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
+Simplifying expression containing zero (byte*)letter_c in [514] (byte*) show_letter::$27 ← (byte*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TYPE
+Simplifying expression containing zero (signed word*)SPLINE_8SEG in [560] (signed word*) bitmap_plot_spline_8seg::$10 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
+Simplifying expression containing zero bitmap_plot_spline_8seg::$10 in [561] (signed word) bitmap_plot_spline_8seg::current_x#0 ← *((signed word*) bitmap_plot_spline_8seg::$10 + (const byte) bitmap_plot_spline_8seg::$6)
+Simplifying expression containing zero bitmap_plot_spline_8seg::$11 in [563] (signed word) bitmap_plot_spline_8seg::current_y#0 ← *((signed word*) bitmap_plot_spline_8seg::$11 + (const byte) bitmap_plot_spline_8seg::$6)
+Simplifying expression containing zero (signed word*)SPLINE_8SEG in [569] (signed word*) bitmap_plot_spline_8seg::$14 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
+Simplifying expression containing zero (signed word*)SPLINE_8SEG in [581] (signed word*) bitmap_plot_spline_8seg::$12 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (void*) memset::return#2 and assignment [79] (void*) memset::return#2 ← (void*) memset::str#3
 Eliminating unused variable (void*) memset::return#3 and assignment [81] (void*) memset::return#3 ← (void*) memset::str#3
-Eliminating unused variable (struct SplineVector16) rotate::return#0 and assignment [372] (struct SplineVector16) rotate::return#0 ← struct-unwound {(signed word) rotate::return_x#2, (signed word) rotate::return_y#2}
-Eliminating unused variable (struct SplineVector16) rotate::return#1 and assignment [373] (struct SplineVector16) rotate::return#1 ← struct-unwound {(signed word) rotate::return_x#2, (signed word) rotate::return_y#2}
+Eliminating unused variable (struct SplineVector16) rotate::return#0 and assignment [368] (struct SplineVector16) rotate::return#0 ← struct-unwound {(signed word) rotate::return_x#2, (signed word) rotate::return_y#2}
+Eliminating unused variable (struct SplineVector16) rotate::return#1 and assignment [369] (struct SplineVector16) rotate::return#1 ← struct-unwound {(signed word) rotate::return_x#2, (signed word) rotate::return_y#2}
 Eliminating unused constant (const byte) bitmap_plot_spline_8seg::$6
 Eliminating unused constant (const byte) OFFSET_STRUCT_SPLINEVECTOR16_X
 Eliminating unused constant (const byte) OFFSET_STRUCT_SEGMENT_TYPE
 Eliminating unused constant (const byte*) bitmap_screen#0
 Eliminating unused constant (const byte*) bitmap_gfx#0
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating variable (byte*~) main::$16 from unused block main::@14
 Removing unused block main::@13
 Removing unused block main::@14
 Removing unused block main::@return
@@ -4127,7 +4049,7 @@ Alias (byte~) bitmap_init::$7 = (byte~) bitmap_init::$3
 Alias (byte~) bitmap_plot_spline_8seg::$8 = (byte~) bitmap_plot_spline_8seg::$7 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) bitmap_line::$4 [100] if((word) bitmap_line::dx#0==(byte) 0) goto bitmap_line::@24
-Simple Condition (bool~) bitmap_line::$5 [369] if((word) bitmap_line::dy#0==(byte) 0) goto bitmap_line::@4
+Simple Condition (bool~) bitmap_line::$5 [366] if((word) bitmap_line::dy#0==(byte) 0) goto bitmap_line::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Negating conditional jump and destination [100] if((word) bitmap_line::dx#0!=(byte) 0) goto bitmap_line::@1
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
@@ -4144,15 +4066,14 @@ Constant right-side identified [185] (byte*~) mulf_init::$5 ← (const byte[$200
 Constant right-side identified [219] (byte~) main::vicSelectGfxBank1_toDd001_$1 ← > (const word) main::vicSelectGfxBank1_toDd001_$0
 Constant right-side identified [223] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
 Constant right-side identified [226] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
-Constant right-side identified [231] (byte~) main::$5 ← (const byte) VIC_BMM | (const byte) VIC_DEN
-Constant right-side identified [247] (struct SplineVector16*) show_letter::$23 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TO
-Constant right-side identified [250] (struct SplineVector16*) show_letter::$24 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TO
-Constant right-side identified [266] (struct SplineVector16*) show_letter::$25 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_VIA
-Constant right-side identified [269] (struct SplineVector16*) show_letter::$26 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_VIA
-Constant right-side identified [307] (signed word*) bitmap_plot_spline_8seg::$11 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
-Constant right-side identified [316] (signed word*) bitmap_plot_spline_8seg::$15 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
-Constant right-side identified [322] (signed word*) bitmap_plot_spline_8seg::$13 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
-Constant right-side identified [327] (signed byte*) COS#0 ← (const signed byte[$140]) SIN + (byte) $40
+Constant right-side identified [244] (struct SplineVector16*) show_letter::$23 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TO
+Constant right-side identified [247] (struct SplineVector16*) show_letter::$24 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_TO
+Constant right-side identified [263] (struct SplineVector16*) show_letter::$25 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_VIA
+Constant right-side identified [266] (struct SplineVector16*) show_letter::$26 ← (struct SplineVector16*)(const struct Segment[$16]) letter_c + (const byte) OFFSET_STRUCT_SEGMENT_VIA
+Constant right-side identified [304] (signed word*) bitmap_plot_spline_8seg::$11 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
+Constant right-side identified [313] (signed word*) bitmap_plot_spline_8seg::$15 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
+Constant right-side identified [319] (signed word*) bitmap_plot_spline_8seg::$13 ← (signed word*)(const struct SplineVector16[9]) SPLINE_8SEG + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
+Constant right-side identified [324] (signed byte*) COS#0 ← (const signed byte[$140]) SIN + (byte) $40
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const signed word*) spline_8segB::$33 = (signed word*)SPLINE_8SEG
 Constant (const signed word*) spline_8segB::$34 = (signed word*)SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y
@@ -4169,7 +4090,6 @@ Constant (const byte*) mulf_init::$5 = mulf_sqr1_hi+$100
 Constant (const byte) main::vicSelectGfxBank1_toDd001_$1 = >main::vicSelectGfxBank1_toDd001_$0
 Constant (const word) main::toD0181_$1 = main::toD0181_$0&$3fff
 Constant (const byte) main::toD0181_$5 = >main::toD0181_$4
-Constant (const byte) main::$5 = VIC_BMM|VIC_DEN
 Constant (const struct SplineVector16*) show_letter::$23 = (struct SplineVector16*)letter_c+OFFSET_STRUCT_SEGMENT_TO
 Constant (const struct SplineVector16*) show_letter::$24 = (struct SplineVector16*)letter_c+OFFSET_STRUCT_SEGMENT_TO
 Constant (const struct SplineVector16*) show_letter::$25 = (struct SplineVector16*)letter_c+OFFSET_STRUCT_SEGMENT_VIA
@@ -4186,34 +4106,30 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const signed word*) show_letter::$28 = (signed word*)show_letter::$23
 Constant (const signed word*) show_letter::$30 = (signed word*)show_letter::$25
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (signed word*)show_letter::$24 in [251] (signed word*) show_letter::$29 ← (signed word*)(const struct SplineVector16*) show_letter::$24 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
-Constant value identified (signed word*)show_letter::$26 in [270] (signed word*) show_letter::$31 ← (signed word*)(const struct SplineVector16*) show_letter::$26 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
+Constant value identified (signed word*)show_letter::$24 in [248] (signed word*) show_letter::$29 ← (signed word*)(const struct SplineVector16*) show_letter::$24 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
+Constant value identified (signed word*)show_letter::$26 in [267] (signed word*) show_letter::$31 ← (signed word*)(const struct SplineVector16*) show_letter::$26 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
 Successful SSA optimization Pass2ConstantValues
 Eliminating unused constant (const byte*) PRINT_SCREEN
 Successful SSA optimization PassNEliminateUnusedVars
 Constant right-side identified [204] (byte~) main::vicSelectGfxBank1_toDd001_$2 ← (const byte) main::vicSelectGfxBank1_toDd001_$1 / (byte) $40
 Constant right-side identified [207] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
 Constant right-side identified [209] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
-Constant right-side identified [213] (byte~) main::$6 ← (const byte) main::$5 | (const byte) VIC_RSEL
-Constant right-side identified [229] (signed word*) show_letter::$29 ← (signed word*)(const struct SplineVector16*) show_letter::$24 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
-Constant right-side identified [245] (signed word*) show_letter::$31 ← (signed word*)(const struct SplineVector16*) show_letter::$26 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
+Constant right-side identified [227] (signed word*) show_letter::$29 ← (signed word*)(const struct SplineVector16*) show_letter::$24 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
+Constant right-side identified [243] (signed word*) show_letter::$31 ← (signed word*)(const struct SplineVector16*) show_letter::$26 + (const byte) OFFSET_STRUCT_SPLINEVECTOR16_Y
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::vicSelectGfxBank1_toDd001_$2 = main::vicSelectGfxBank1_toDd001_$1/$40
 Constant (const word) main::toD0181_$2 = main::toD0181_$1*4
 Constant (const byte) main::toD0181_$6 = main::toD0181_$5/4
-Constant (const byte) main::$6 = main::$5|VIC_RSEL
 Constant (const signed word*) show_letter::$29 = (signed word*)show_letter::$24+OFFSET_STRUCT_SPLINEVECTOR16_Y
 Constant (const signed word*) show_letter::$31 = (signed word*)show_letter::$26+OFFSET_STRUCT_SPLINEVECTOR16_Y
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [204] (byte) main::vicSelectGfxBank1_toDd001_return#0 ← (byte) 3 ^ (const byte) main::vicSelectGfxBank1_toDd001_$2
 Constant right-side identified [206] (byte~) main::toD0181_$3 ← > (const word) main::toD0181_$2
 Constant right-side identified [207] (byte~) main::toD0181_$7 ← (const byte) main::toD0181_$6 & (byte) $f
-Constant right-side identified [210] (byte~) main::$7 ← (const byte) main::$6 | (byte) 3
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::vicSelectGfxBank1_toDd001_return#0 = 3^main::vicSelectGfxBank1_toDd001_$2
 Constant (const byte) main::toD0181_$3 = >main::toD0181_$2
 Constant (const byte) main::toD0181_$7 = main::toD0181_$6&$f
-Constant (const byte) main::$7 = main::$6|3
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [205] (byte) main::toD0181_return#0 ← (const byte) main::toD0181_$3 | (const byte) main::toD0181_$7
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -4364,11 +4280,8 @@ Constant inlined mulf_init::$7 = (const byte[$200]) mulf_sqr1_lo+(word) $200
 Constant inlined bitmap_clear::fgcol#1 = (const byte) WHITE
 Constant inlined bitmap_screen#1 = (const byte*) BITMAP_SCREEN
 Constant inlined main::vicSelectGfxBank1_gfx#0 = (const byte*) BITMAP_SCREEN
-Constant inlined main::$5 = (const byte) VIC_BMM|(const byte) VIC_DEN
 Constant inlined bitmap_init::y#0 = (byte) 0
-Constant inlined main::$6 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL
 Constant inlined show_letter::i#0 = (byte) 0
-Constant inlined main::$7 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *((signed word*)SPLINE_8SEG+8*SIZEOF_STRUCT_SPLINEVECTOR16)
 Consolidated array index constant in *((signed word*)SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+8*SIZEOF_STRUCT_SPLINEVECTOR16)
@@ -4386,8 +4299,8 @@ Constant (const byte) bitmap_clear::$0 = WHITE<<4
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero bitmap_clear::$0 in [69] (byte) bitmap_clear::col#0 ← (const byte) bitmap_clear::$0 + (const byte) BLACK
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) SIZEOF_STRUCT_SEGMENT
 Eliminating unused constant (const byte) BLACK
+Eliminating unused constant (const byte) SIZEOF_STRUCT_SEGMENT
 Successful SSA optimization PassNEliminateUnusedVars
 Constant inlined bitmap_clear::$0 = (const byte) WHITE<<(byte) 4
 Successful SSA optimization Pass2ConstantInlining
@@ -4420,7 +4333,6 @@ Added new block during phi lifting bitmap_plot_spline_8seg::@4(between bitmap_pl
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @7
-Adding NOP phi() at start of @13
 Adding NOP phi() at start of @51
 Adding NOP phi() at start of @60
 Adding NOP phi() at start of @63
@@ -4458,124 +4370,123 @@ Adding NOP phi() at start of mulf_init
 Adding NOP phi() at start of mulf_init::@3
 Adding NOP phi() at start of mulf_init::@15
 CALL GRAPH
-Calls in [] to main:8 
-Calls in [main] to mulf_init:12 bitmap_init:14 bitmap_clear:16 bitmap_clear:29 show_letter:31 
-Calls in [show_letter] to rotate:56 rotate:75 bitmap_line:95 spline_8segB:109 bitmap_plot_spline_8seg:111 
-Calls in [bitmap_plot_spline_8seg] to bitmap_line:126 
-Calls in [bitmap_line] to abs_u16:139 abs_u16:144 sgn_u16:151 sgn_u16:156 bitmap_plot:169 bitmap_plot:186 bitmap_plot:203 bitmap_plot:224 
-Calls in [rotate] to mulf16s:304 mulf16s:313 mulf16s:323 mulf16s:333 
-Calls in [mulf16s] to mulf16u:347 
-Calls in [bitmap_clear] to memset:372 memset:374 
+Calls in [] to main:7 
+Calls in [main] to mulf_init:11 bitmap_init:13 bitmap_clear:15 bitmap_clear:28 show_letter:30 
+Calls in [show_letter] to rotate:55 rotate:74 bitmap_line:94 spline_8segB:108 bitmap_plot_spline_8seg:110 
+Calls in [bitmap_plot_spline_8seg] to bitmap_line:125 
+Calls in [bitmap_line] to abs_u16:138 abs_u16:143 sgn_u16:150 sgn_u16:155 bitmap_plot:168 bitmap_plot:185 bitmap_plot:202 bitmap_plot:223 
+Calls in [rotate] to mulf16s:303 mulf16s:312 mulf16s:322 mulf16s:332 
+Calls in [mulf16s] to mulf16u:346 
+Calls in [bitmap_clear] to memset:371 memset:373 
 
 Created 64 initial phi equivalence classes
-Coalesced [39] main::angle#10 ← main::angle#1
-Coalesced [40] main::w#6 ← main::w#1
-Coalesced (already) [41] main::w#5 ← main::w#4
-Coalesced [53] rotate::angle#5 ← rotate::angle#0
-Coalesced [54] rotate::vector_x#6 ← rotate::vector_x#0
-Coalesced [55] rotate::vector_y#5 ← rotate::vector_y#0
-Coalesced [72] rotate::angle#6 ← rotate::angle#1
-Coalesced [73] rotate::vector_x#7 ← rotate::vector_x#1
-Coalesced [74] rotate::vector_y#6 ← rotate::vector_y#1
-Coalesced [91] bitmap_line::x#21 ← bitmap_line::x1#0
-Coalesced [92] bitmap_line::y#21 ← bitmap_line::y1#0
-Coalesced [93] bitmap_line::x2#14 ← bitmap_line::x2#0
-Coalesced [94] bitmap_line::y2#14 ← bitmap_line::y2#0
-Coalesced [100] show_letter::i#13 ← show_letter::i#1
-Not coalescing [101] show_letter::current_x#11 ← show_letter::current_x#10
-Not coalescing [102] show_letter::current_y#11 ← show_letter::current_y#10
-Coalesced [116] bitmap_plot_spline_8seg::current_x#3 ← bitmap_plot_spline_8seg::current_x#0
-Coalesced [117] bitmap_plot_spline_8seg::current_y#3 ← bitmap_plot_spline_8seg::current_y#0
-Coalesced [122] bitmap_line::x#20 ← bitmap_line::x1#1
-Coalesced [123] bitmap_line::y#20 ← bitmap_line::y1#1
-Coalesced [133] bitmap_plot_spline_8seg::current_x#4 ← bitmap_plot_spline_8seg::current_x#1
-Coalesced [134] bitmap_plot_spline_8seg::current_y#4 ← bitmap_plot_spline_8seg::current_y#1
-Coalesced [135] bitmap_plot_spline_8seg::n#4 ← bitmap_plot_spline_8seg::n#1
-Coalesced [138] abs_u16::w#5 ← abs_u16::w#0
-Coalesced [143] abs_u16::w#6 ← abs_u16::w#1
-Coalesced [150] sgn_u16::w#3 ← sgn_u16::w#0
-Coalesced [155] sgn_u16::w#4 ← sgn_u16::w#1
-Coalesced [161] bitmap_line::y#22 ← bitmap_line::y#0
-Coalesced [162] bitmap_line::x#22 ← bitmap_line::x#0
-Coalesced [163] bitmap_line::e#7 ← bitmap_line::e#0
-Coalesced [167] bitmap_plot::y#8 ← bitmap_plot::y#1
-Coalesced [168] bitmap_plot::x#8 ← bitmap_plot::x#1
-Coalesced [175] bitmap_line::x#25 ← bitmap_line::x#1
-Coalesced [176] bitmap_line::e#10 ← bitmap_line::e#2
-Coalesced [179] bitmap_line::y#25 ← bitmap_line::y#1
-Coalesced [180] bitmap_line::x#27 ← bitmap_line::x#12
-Coalesced [184] bitmap_plot::y#6 ← bitmap_plot::y#2
-Coalesced [185] bitmap_plot::x#6 ← bitmap_plot::x#2
-Coalesced [189] bitmap_line::y#23 ← bitmap_line::y#1
-Coalesced [190] bitmap_line::x#23 ← bitmap_line::x#12
-Coalesced [191] bitmap_line::e#8 ← bitmap_line::e#6
-Coalesced (already) [192] bitmap_line::x#24 ← bitmap_line::x#13
-Coalesced [193] bitmap_line::e#9 ← bitmap_line::e#1
-Coalesced [195] bitmap_line::y#27 ← bitmap_line::y#0
-Coalesced [196] bitmap_line::x#29 ← bitmap_line::x#0
-Coalesced [197] bitmap_line::e1#8 ← bitmap_line::e1#0
-Coalesced [201] bitmap_plot::y#5 ← bitmap_plot::y#3
-Coalesced [202] bitmap_plot::x#5 ← bitmap_plot::x#3
-Coalesced [209] bitmap_line::y#28 ← bitmap_line::y#2
-Coalesced [210] bitmap_line::e1#9 ← bitmap_line::e1#2
-Coalesced [213] bitmap_line::y#24 ← bitmap_line::y#13
-Coalesced [214] bitmap_line::x#26 ← bitmap_line::x#15
-Coalesced (already) [215] bitmap_line::y#26 ← bitmap_line::y#13
-Coalesced (already) [216] bitmap_line::x#28 ← bitmap_line::x#15
-Coalesced [217] bitmap_line::e1#7 ← bitmap_line::e1#6
-Coalesced (already) [218] bitmap_line::y#29 ← bitmap_line::y#15
-Coalesced [219] bitmap_line::e1#10 ← bitmap_line::e1#1
-Coalesced [222] bitmap_plot::y#7 ← bitmap_plot::y#0
-Coalesced [223] bitmap_plot::x#7 ← bitmap_plot::x#0
-Coalesced [245] abs_u16::return#9 ← abs_u16::w#2
-Coalesced [249] abs_u16::return#8 ← abs_u16::return#2
-Coalesced [268] spline_8segB::p_x#4 ← spline_8segB::p_x#0
-Coalesced [269] spline_8segB::p_y#4 ← spline_8segB::p_y#0
-Coalesced [270] spline_8segB::i_x#3 ← spline_8segB::i_x#0
-Coalesced [271] spline_8segB::i_y#3 ← spline_8segB::i_y#0
-Coalesced [293] spline_8segB::p_x#5 ← spline_8segB::p_x#1
-Coalesced [294] spline_8segB::p_y#5 ← spline_8segB::p_y#1
-Coalesced [295] spline_8segB::n#3 ← spline_8segB::n#1
-Coalesced [296] spline_8segB::i_x#4 ← spline_8segB::i_x#1
-Coalesced [297] spline_8segB::i_y#4 ← spline_8segB::i_y#1
-Coalesced [302] mulf16s::a#9 ← mulf16s::a#0
-Coalesced [303] mulf16s::b#8 ← mulf16s::b#0
-Coalesced [311] mulf16s::a#10 ← mulf16s::a#1
-Coalesced [312] mulf16s::b#9 ← mulf16s::b#1
-Coalesced [321] mulf16s::a#11 ← mulf16s::a#2
-Coalesced [322] mulf16s::b#10 ← mulf16s::b#2
-Coalesced [331] mulf16s::a#12 ← mulf16s::a#3
-Coalesced [332] mulf16s::b#11 ← mulf16s::b#3
-Coalesced [354] mulf16s::m#7 ← mulf16s::m#1
-Coalesced [360] mulf16s::m#10 ← mulf16s::m#2
-Coalesced [364] mulf16s::m#9 ← mulf16s::m#5
-Coalesced [365] mulf16s::m#8 ← mulf16s::m#0
-Coalesced [387] memset::dst#5 ← memset::dst#1
-Coalesced [407] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
-Coalesced [412] bitmap_init::y#5 ← bitmap_init::y#1
-Coalesced [413] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
-Coalesced (already) [414] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
-Coalesced [415] bitmap_init::bits#5 ← bitmap_init::bits#4
-Coalesced [416] bitmap_init::x#5 ← bitmap_init::x#1
-Coalesced [417] bitmap_init::bits#6 ← bitmap_init::bits#1
-Coalesced [435] mulf_init::sqr2_lo#6 ← mulf_init::sqr2_lo#1
-Coalesced [436] mulf_init::x_255#6 ← mulf_init::x_255#1
-Coalesced [437] mulf_init::sqr2_hi#6 ← mulf_init::sqr2_hi#1
-Coalesced [438] mulf_init::dir#5 ← mulf_init::dir#4
-Coalesced (already) [439] mulf_init::dir#6 ← mulf_init::dir#2
-Coalesced [445] mulf_init::sqr#9 ← mulf_init::sqr#2
-Coalesced [446] mulf_init::x_2#8 ← mulf_init::x_2#1
-Coalesced [455] mulf_init::sqr1_lo#6 ← mulf_init::sqr1_lo#1
-Coalesced [456] mulf_init::c#6 ← mulf_init::c#1
-Coalesced [457] mulf_init::sqr#7 ← mulf_init::sqr#1
-Coalesced [458] mulf_init::sqr1_hi#6 ← mulf_init::sqr1_hi#1
-Coalesced [459] mulf_init::x_2#6 ← mulf_init::x_2#2
-Coalesced [460] mulf_init::sqr#8 ← mulf_init::sqr#4
-Coalesced (already) [461] mulf_init::x_2#7 ← mulf_init::x_2#3
+Coalesced [38] main::angle#10 ← main::angle#1
+Coalesced [39] main::w#6 ← main::w#1
+Coalesced (already) [40] main::w#5 ← main::w#4
+Coalesced [52] rotate::angle#5 ← rotate::angle#0
+Coalesced [53] rotate::vector_x#6 ← rotate::vector_x#0
+Coalesced [54] rotate::vector_y#5 ← rotate::vector_y#0
+Coalesced [71] rotate::angle#6 ← rotate::angle#1
+Coalesced [72] rotate::vector_x#7 ← rotate::vector_x#1
+Coalesced [73] rotate::vector_y#6 ← rotate::vector_y#1
+Coalesced [90] bitmap_line::x#21 ← bitmap_line::x1#0
+Coalesced [91] bitmap_line::y#21 ← bitmap_line::y1#0
+Coalesced [92] bitmap_line::x2#14 ← bitmap_line::x2#0
+Coalesced [93] bitmap_line::y2#14 ← bitmap_line::y2#0
+Coalesced [99] show_letter::i#13 ← show_letter::i#1
+Not coalescing [100] show_letter::current_x#11 ← show_letter::current_x#10
+Not coalescing [101] show_letter::current_y#11 ← show_letter::current_y#10
+Coalesced [115] bitmap_plot_spline_8seg::current_x#3 ← bitmap_plot_spline_8seg::current_x#0
+Coalesced [116] bitmap_plot_spline_8seg::current_y#3 ← bitmap_plot_spline_8seg::current_y#0
+Coalesced [121] bitmap_line::x#20 ← bitmap_line::x1#1
+Coalesced [122] bitmap_line::y#20 ← bitmap_line::y1#1
+Coalesced [132] bitmap_plot_spline_8seg::current_x#4 ← bitmap_plot_spline_8seg::current_x#1
+Coalesced [133] bitmap_plot_spline_8seg::current_y#4 ← bitmap_plot_spline_8seg::current_y#1
+Coalesced [134] bitmap_plot_spline_8seg::n#4 ← bitmap_plot_spline_8seg::n#1
+Coalesced [137] abs_u16::w#5 ← abs_u16::w#0
+Coalesced [142] abs_u16::w#6 ← abs_u16::w#1
+Coalesced [149] sgn_u16::w#3 ← sgn_u16::w#0
+Coalesced [154] sgn_u16::w#4 ← sgn_u16::w#1
+Coalesced [160] bitmap_line::y#22 ← bitmap_line::y#0
+Coalesced [161] bitmap_line::x#22 ← bitmap_line::x#0
+Coalesced [162] bitmap_line::e#7 ← bitmap_line::e#0
+Coalesced [166] bitmap_plot::y#8 ← bitmap_plot::y#1
+Coalesced [167] bitmap_plot::x#8 ← bitmap_plot::x#1
+Coalesced [174] bitmap_line::x#25 ← bitmap_line::x#1
+Coalesced [175] bitmap_line::e#10 ← bitmap_line::e#2
+Coalesced [178] bitmap_line::y#25 ← bitmap_line::y#1
+Coalesced [179] bitmap_line::x#27 ← bitmap_line::x#12
+Coalesced [183] bitmap_plot::y#6 ← bitmap_plot::y#2
+Coalesced [184] bitmap_plot::x#6 ← bitmap_plot::x#2
+Coalesced [188] bitmap_line::y#23 ← bitmap_line::y#1
+Coalesced [189] bitmap_line::x#23 ← bitmap_line::x#12
+Coalesced [190] bitmap_line::e#8 ← bitmap_line::e#6
+Coalesced (already) [191] bitmap_line::x#24 ← bitmap_line::x#13
+Coalesced [192] bitmap_line::e#9 ← bitmap_line::e#1
+Coalesced [194] bitmap_line::y#27 ← bitmap_line::y#0
+Coalesced [195] bitmap_line::x#29 ← bitmap_line::x#0
+Coalesced [196] bitmap_line::e1#8 ← bitmap_line::e1#0
+Coalesced [200] bitmap_plot::y#5 ← bitmap_plot::y#3
+Coalesced [201] bitmap_plot::x#5 ← bitmap_plot::x#3
+Coalesced [208] bitmap_line::y#28 ← bitmap_line::y#2
+Coalesced [209] bitmap_line::e1#9 ← bitmap_line::e1#2
+Coalesced [212] bitmap_line::y#24 ← bitmap_line::y#13
+Coalesced [213] bitmap_line::x#26 ← bitmap_line::x#15
+Coalesced (already) [214] bitmap_line::y#26 ← bitmap_line::y#13
+Coalesced (already) [215] bitmap_line::x#28 ← bitmap_line::x#15
+Coalesced [216] bitmap_line::e1#7 ← bitmap_line::e1#6
+Coalesced (already) [217] bitmap_line::y#29 ← bitmap_line::y#15
+Coalesced [218] bitmap_line::e1#10 ← bitmap_line::e1#1
+Coalesced [221] bitmap_plot::y#7 ← bitmap_plot::y#0
+Coalesced [222] bitmap_plot::x#7 ← bitmap_plot::x#0
+Coalesced [244] abs_u16::return#9 ← abs_u16::w#2
+Coalesced [248] abs_u16::return#8 ← abs_u16::return#2
+Coalesced [267] spline_8segB::p_x#4 ← spline_8segB::p_x#0
+Coalesced [268] spline_8segB::p_y#4 ← spline_8segB::p_y#0
+Coalesced [269] spline_8segB::i_x#3 ← spline_8segB::i_x#0
+Coalesced [270] spline_8segB::i_y#3 ← spline_8segB::i_y#0
+Coalesced [292] spline_8segB::p_x#5 ← spline_8segB::p_x#1
+Coalesced [293] spline_8segB::p_y#5 ← spline_8segB::p_y#1
+Coalesced [294] spline_8segB::n#3 ← spline_8segB::n#1
+Coalesced [295] spline_8segB::i_x#4 ← spline_8segB::i_x#1
+Coalesced [296] spline_8segB::i_y#4 ← spline_8segB::i_y#1
+Coalesced [301] mulf16s::a#9 ← mulf16s::a#0
+Coalesced [302] mulf16s::b#8 ← mulf16s::b#0
+Coalesced [310] mulf16s::a#10 ← mulf16s::a#1
+Coalesced [311] mulf16s::b#9 ← mulf16s::b#1
+Coalesced [320] mulf16s::a#11 ← mulf16s::a#2
+Coalesced [321] mulf16s::b#10 ← mulf16s::b#2
+Coalesced [330] mulf16s::a#12 ← mulf16s::a#3
+Coalesced [331] mulf16s::b#11 ← mulf16s::b#3
+Coalesced [353] mulf16s::m#7 ← mulf16s::m#1
+Coalesced [359] mulf16s::m#10 ← mulf16s::m#2
+Coalesced [363] mulf16s::m#9 ← mulf16s::m#5
+Coalesced [364] mulf16s::m#8 ← mulf16s::m#0
+Coalesced [386] memset::dst#5 ← memset::dst#1
+Coalesced [406] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
+Coalesced [411] bitmap_init::y#5 ← bitmap_init::y#1
+Coalesced [412] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
+Coalesced (already) [413] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
+Coalesced [414] bitmap_init::bits#5 ← bitmap_init::bits#4
+Coalesced [415] bitmap_init::x#5 ← bitmap_init::x#1
+Coalesced [416] bitmap_init::bits#6 ← bitmap_init::bits#1
+Coalesced [434] mulf_init::sqr2_lo#6 ← mulf_init::sqr2_lo#1
+Coalesced [435] mulf_init::x_255#6 ← mulf_init::x_255#1
+Coalesced [436] mulf_init::sqr2_hi#6 ← mulf_init::sqr2_hi#1
+Coalesced [437] mulf_init::dir#5 ← mulf_init::dir#4
+Coalesced (already) [438] mulf_init::dir#6 ← mulf_init::dir#2
+Coalesced [444] mulf_init::sqr#9 ← mulf_init::sqr#2
+Coalesced [445] mulf_init::x_2#8 ← mulf_init::x_2#1
+Coalesced [454] mulf_init::sqr1_lo#6 ← mulf_init::sqr1_lo#1
+Coalesced [455] mulf_init::c#6 ← mulf_init::c#1
+Coalesced [456] mulf_init::sqr#7 ← mulf_init::sqr#1
+Coalesced [457] mulf_init::sqr1_hi#6 ← mulf_init::sqr1_hi#1
+Coalesced [458] mulf_init::x_2#6 ← mulf_init::x_2#2
+Coalesced [459] mulf_init::sqr#8 ← mulf_init::sqr#4
+Coalesced (already) [460] mulf_init::x_2#7 ← mulf_init::x_2#3
 Coalesced down to 49 phi equivalence classes
 Culled Empty Block (label) @1
 Culled Empty Block (label) @7
-Culled Empty Block (label) @13
 Culled Empty Block (label) @51
 Culled Empty Block (label) @60
 Culled Empty Block (label) @63
@@ -6202,13 +6113,6 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const MOVE_TO = 0
-  .const SPLINE_TO = 1
-  .const LINE_TO = 2
-  .const SIZEOF_STRUCT_SPLINEVECTOR16 = 4
-  .const OFFSET_STRUCT_SPLINEVECTOR16_Y = 2
-  .const OFFSET_STRUCT_SEGMENT_TO = 1
-  .const OFFSET_STRUCT_SEGMENT_VIA = 5
   .label RASTER = $d012
   .label D011 = $d011
   .const VIC_BMM = $20
@@ -6222,6 +6126,13 @@ Target platform is c64basic / MOS6502X
   .const WHITE = 1
   .label BITMAP_SCREEN = $5c00
   .label BITMAP_GRAPHICS = $6000
+  .const MOVE_TO = 0
+  .const SPLINE_TO = 1
+  .const LINE_TO = 2
+  .const SIZEOF_STRUCT_SPLINEVECTOR16 = 4
+  .const OFFSET_STRUCT_SPLINEVECTOR16_Y = 2
+  .const OFFSET_STRUCT_SEGMENT_TO = 1
+  .const OFFSET_STRUCT_SEGMENT_VIA = 5
   .label COS = SIN+$40
   // @begin
 __bbegin:
@@ -9677,13 +9588,6 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const MOVE_TO = 0
-  .const SPLINE_TO = 1
-  .const LINE_TO = 2
-  .const SIZEOF_STRUCT_SPLINEVECTOR16 = 4
-  .const OFFSET_STRUCT_SPLINEVECTOR16_Y = 2
-  .const OFFSET_STRUCT_SEGMENT_TO = 1
-  .const OFFSET_STRUCT_SEGMENT_VIA = 5
   .label RASTER = $d012
   .label D011 = $d011
   .const VIC_BMM = $20
@@ -9697,6 +9601,13 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const WHITE = 1
   .label BITMAP_SCREEN = $5c00
   .label BITMAP_GRAPHICS = $6000
+  .const MOVE_TO = 0
+  .const SPLINE_TO = 1
+  .const LINE_TO = 2
+  .const SIZEOF_STRUCT_SPLINEVECTOR16 = 4
+  .const OFFSET_STRUCT_SPLINEVECTOR16_Y = 2
+  .const OFFSET_STRUCT_SEGMENT_TO = 1
+  .const OFFSET_STRUCT_SEGMENT_VIA = 5
   .label COS = SIN+$40
   // @begin
 __bbegin:
@@ -12241,10 +12152,10 @@ FINAL SYMBOL TABLE
 (signed word) SplineVector16::y
 (signed dword) SplineVector32::x
 (signed dword) SplineVector32::y
-(const byte) VIC_BMM = (byte) $20
-(const byte) VIC_DEN = (byte) $10
-(const byte) VIC_RSEL = (byte) 8
-(const byte) WHITE = (byte) 1
+(const byte) VIC_BMM = (number) $20
+(const byte) VIC_DEN = (number) $10
+(const byte) VIC_RSEL = (number) 8
+(const byte) WHITE = (number) 1
 (word()) abs_u16((word) abs_u16::w)
 (byte~) abs_u16::$0 reg byte a 4.0
 (byte~) abs_u16::$1 reg byte a 4.0
@@ -12800,13 +12711,6 @@ Score: 678156
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const MOVE_TO = 0
-  .const SPLINE_TO = 1
-  .const LINE_TO = 2
-  .const SIZEOF_STRUCT_SPLINEVECTOR16 = 4
-  .const OFFSET_STRUCT_SPLINEVECTOR16_Y = 2
-  .const OFFSET_STRUCT_SEGMENT_TO = 1
-  .const OFFSET_STRUCT_SEGMENT_VIA = 5
   .label RASTER = $d012
   .label D011 = $d011
   .const VIC_BMM = $20
@@ -12820,6 +12724,13 @@ Score: 678156
   .const WHITE = 1
   .label BITMAP_SCREEN = $5c00
   .label BITMAP_GRAPHICS = $6000
+  .const MOVE_TO = 0
+  .const SPLINE_TO = 1
+  .const LINE_TO = 2
+  .const SIZEOF_STRUCT_SPLINEVECTOR16 = 4
+  .const OFFSET_STRUCT_SPLINEVECTOR16_Y = 2
+  .const OFFSET_STRUCT_SEGMENT_TO = 1
+  .const OFFSET_STRUCT_SEGMENT_VIA = 5
   .label COS = SIN+$40
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]

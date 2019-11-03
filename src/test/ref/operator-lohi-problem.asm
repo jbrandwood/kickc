@@ -11,7 +11,7 @@ main: {
     .const dw = $2000
     .const w1 = dw&$ffff
     .const w2 = dw+1&$ffff
-    lda #<w1
+    lda #0
     sta SCREEN
     lda #>w1
     sta SCREEN+1

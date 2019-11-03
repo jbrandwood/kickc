@@ -45,7 +45,7 @@ SYMBOL TABLE SSA
 (byte~) main::$5
 (byte~) main::$6
 (label) main::@return
-(const dword) main::dw = (number) $2000
+(const dword) main::dw = (dword) $2000
 (word) main::w1
 (word) main::w1#0
 (word) main::w2
@@ -93,6 +93,8 @@ Constant (const word) main::w2#0 = <main::$1
 Constant (const byte) main::$3 = <main::w1#0
 Constant (const byte) main::$4 = >main::w1#0
 Successful SSA optimization Pass2ConstantIdentification
+Simplifying constant evaluating to zero <(const word) main::w1#0 in 
+Successful SSA optimization PassNSimplifyConstantZero
 Constant right-side identified [2] (byte~) main::$5 ← < (const word) main::w2#0
 Constant right-side identified [4] (byte~) main::$6 ← > (const word) main::w2#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -101,7 +103,7 @@ Constant (const byte) main::$6 = >main::w2#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant inlined main::$5 = <(const word) main::w2#0
 Constant inlined main::$6 = >(const word) main::w2#0
-Constant inlined main::$3 = <(const word) main::w1#0
+Constant inlined main::$3 = (byte) 0
 Constant inlined main::$4 = >(const word) main::w1#0
 Constant inlined main::$1 = (const dword) main::dw+(byte) 1
 Successful SSA optimization Pass2ConstantInlining
@@ -136,7 +138,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN) ← <(const word) main::w1#0
+  [4] *((const byte*) SCREEN) ← (byte) 0
   [5] *((const byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0
   [6] *((const byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0
   [7] *((const byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0
@@ -187,8 +189,8 @@ main: {
     .const dw = $2000
     .const w1 = dw&$ffff
     .const w2 = dw+1&$ffff
-    // [4] *((const byte*) SCREEN) ← <(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
-    lda #<w1
+    // [4] *((const byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN
     // [5] *((const byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
     lda #>w1
@@ -208,7 +210,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN) ← <(const word) main::w1#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) SCREEN) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [5] *((const byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -252,8 +254,8 @@ main: {
     .const dw = $2000
     .const w1 = dw&$ffff
     .const w2 = dw+1&$ffff
-    // [4] *((const byte*) SCREEN) ← <(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
-    lda #<w1
+    // [4] *((const byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN
     // [5] *((const byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
     lda #>w1
@@ -298,7 +300,7 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
-(const dword) main::dw = (number) $2000
+(const dword) main::dw = (dword) $2000
 (word) main::w1
 (const word) main::w1#0 w1 = <(const dword) main::dw
 (word) main::w2
@@ -333,8 +335,8 @@ main: {
     .const w1 = dw&$ffff
     .const w2 = dw+1&$ffff
     // SCREEN[0] = <w1
-    // [4] *((const byte*) SCREEN) ← <(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
-    lda #<w1
+    // [4] *((const byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
     sta SCREEN
     // SCREEN[1] = >w1
     // [5] *((const byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 

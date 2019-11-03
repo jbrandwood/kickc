@@ -5,6 +5,8 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 
+import java.util.Objects;
+
 /** Constant integer value */
 public class ConstantInteger implements ConstantEnumerable<Long> {
 
@@ -67,7 +69,7 @@ public class ConstantInteger implements ConstantEnumerable<Long> {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       ConstantInteger that = (ConstantInteger) o;
-      return number != null ? number.equals(that.number) : that.number == null;
+      return Objects.equals(number, that.number);
    }
 
    @Override

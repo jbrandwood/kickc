@@ -38,9 +38,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) idx#3 ← (number) 0
-  (byte[]) DIGIT ← (const string) $2
   to:@2
 
 (void()) print_person((struct Person*) print_person::person)
@@ -48,9 +46,9 @@ print_person: scope:[print_person]  from main main::@1
   (byte) idx#13 ← phi( main/(byte) idx#18 main::@1/(byte) idx#0 )
   (struct Person*) print_person::person#2 ← phi( main/(struct Person*) print_person::person#0 main::@1/(struct Person*) print_person::person#1 )
   (byte*) print_person::$0 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
-  *((byte*) SCREEN + (byte) idx#13) ← *((byte[]) DIGIT + *((byte*) print_person::$0))
+  *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*) print_person::$0))
   (byte) idx#4 ← ++ (byte) idx#13
-  *((byte*) SCREEN + (byte) idx#4) ← (byte) ' '
+  *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' '
   (byte) idx#5 ← ++ (byte) idx#4
   (byte) print_person::i#0 ← (number) 0
   to:print_person::@1
@@ -67,13 +65,13 @@ print_person::@2: scope:[print_person]  from print_person::@1
   (byte) print_person::i#3 ← phi( print_person::@1/(byte) print_person::i#2 )
   (struct Person*) print_person::person#4 ← phi( print_person::@1/(struct Person*) print_person::person#3 )
   (byte[$10]) print_person::$2 ← (byte[$10])(struct Person*) print_person::person#4 + (const byte) OFFSET_STRUCT_PERSON_NAME
-  *((byte*) SCREEN + (byte) idx#14) ← *((byte[$10]) print_person::$2 + (byte) print_person::i#3)
+  *((const byte*) SCREEN + (byte) idx#14) ← *((byte[$10]) print_person::$2 + (byte) print_person::i#3)
   (byte) idx#6 ← ++ (byte) idx#14
   (byte) print_person::i#1 ← ++ (byte) print_person::i#3
   to:print_person::@1
 print_person::@3: scope:[print_person]  from print_person::@1
   (byte) idx#15 ← phi( print_person::@1/(byte) idx#19 )
-  *((byte*) SCREEN + (byte) idx#15) ← (byte) ' '
+  *((const byte*) SCREEN + (byte) idx#15) ← (byte) ' '
   (byte) idx#7 ← ++ (byte) idx#15
   to:print_person::@return
 print_person::@return: scope:[print_person]  from print_person::@3
@@ -94,18 +92,17 @@ print_person::@return: scope:[print_person]  from print_person::@3
 SYMBOL TABLE SSA
 (const string) $0 = (string) "jesper"
 (const string) $1 = (string) "henriette"
-(const string) $2 = (string) "0123456789"
 (label) @1
 (label) @2
 (label) @3
 (label) @begin
 (label) @end
-(byte[]) DIGIT
+(const byte[]) DIGIT = (string) "0123456789"
 (const byte) OFFSET_STRUCT_PERSON_ID = (byte) 0
 (const byte) OFFSET_STRUCT_PERSON_NAME = (byte) 1
 (byte) Person::id
 (byte[$10]) Person::name
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (const byte) SIZEOF_STRUCT_PERSON = (byte) $11
 (byte) idx
 (byte) idx#0
@@ -165,14 +162,13 @@ Adding number conversion cast (unumber) 0 in (bool~) print_person::$3 ← (numbe
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (struct Person[]) persons ← (struct Person[]){ (struct Person){ (byte)(number) 4, (const string) $0 }, (struct Person){ (byte)(number) 7, (const string) $1 } }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) idx#3 ← (unumber)(number) 0
 Inlining cast (byte) print_person::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 4
 Simplifying constant integer cast 7
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -199,7 +195,7 @@ Identical Phi Values (byte) idx#1 (byte) idx#16
 Identical Phi Values (struct Person*) print_person::person#3 (struct Person*) print_person::person#2
 Identical Phi Values (byte) idx#17 (byte) idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) print_person::$3 [28] if((byte) 0!=*((byte[$10]) print_person::$1 + (byte) print_person::i#2)) goto print_person::@2
+Simple Condition (bool~) print_person::$3 [26] if((byte) 0!=*((byte[$10]) print_person::$1 + (byte) print_person::i#2)) goto print_person::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [6] (byte~) main::$3 ← (byte) 1 * (const byte) SIZEOF_STRUCT_PERSON
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -210,17 +206,15 @@ Identified constant from value list (struct Person[]) { { id: (byte) 4, name: (c
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const struct Person[]) persons = { { id: 4, name: $0 }, { id: 7, name: $1 } }
 Constant (const byte) main::$3 = 1*SIZEOF_STRUCT_PERSON
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) idx#20 = 0
-Constant (const byte[]) DIGIT = $2
 Constant (const byte) print_person::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const struct Person*) print_person::person#0 = persons
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [20] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*) print_person::$0))  -- *((byte*)print_person::person#2 + OFFSET_STRUCT_PERSON_ID)
+Converting *(pointer+n) to pointer[n] [18] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*) print_person::$0))  -- *((byte*)print_person::person#2 + OFFSET_STRUCT_PERSON_ID)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)print_person::person#2 in [19] (byte*) print_person::$0 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
-Simplifying expression containing zero (byte*)print_person::person#2 in [20] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID))
+Simplifying expression containing zero (byte*)print_person::person#2 in [17] (byte*) print_person::$0 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
+Simplifying expression containing zero (byte*)print_person::person#2 in [18] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID))
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*) print_person::$0 and assignment [5] (byte*) print_person::$0 ← (byte*)(struct Person*) print_person::person#2
 Eliminating unused constant (const byte) OFFSET_STRUCT_PERSON_ID
@@ -237,7 +231,6 @@ Constant inlined idx#20 = (byte) 0
 Constant inlined main::$3 = (byte) 1*(const byte) SIZEOF_STRUCT_PERSON
 Constant inlined print_person::person#0 = (const struct Person[]) persons
 Constant inlined print_person::i#0 = (byte) 0
-Constant inlined $2 = (const byte[]) DIGIT
 Constant inlined print_person::person#1 = (const struct Person[]) persons+(byte) 1*(const byte) SIZEOF_STRUCT_PERSON
 Successful SSA optimization Pass2ConstantInlining
 Constant array inlined into struct $0 = (string) "jesper"
@@ -377,9 +370,9 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .label SCREEN = $400
   .const SIZEOF_STRUCT_PERSON = $11
   .const OFFSET_STRUCT_PERSON_NAME = 1
-  .label SCREEN = $400
   .label idx = 7
   .label idx_1 = 6
   .label idx_2 = 4
@@ -524,6 +517,8 @@ print_person: {
     jmp __b1
 }
   // File Data
+  DIGIT: .text "0123456789"
+  .byte 0
   persons: .byte 4
   .text "jesper"
   .byte 0
@@ -532,8 +527,6 @@ print_person: {
   .text "henriette"
   .byte 0
   .fill 6, 0
-  DIGIT: .text "0123456789"
-  .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + *((byte*)(struct Person*) print_person::person#2)) [ print_person::person#2 idx#13 ] ( main:2::print_person:5 [ print_person::person#2 idx#13 ] main:2::print_person:7 [ print_person::person#2 idx#13 ] ) always clobbers reg byte a reg byte y 
@@ -584,9 +577,9 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .label SCREEN = $400
   .const SIZEOF_STRUCT_PERSON = $11
   .const OFFSET_STRUCT_PERSON_NAME = 1
-  .label SCREEN = $400
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -713,6 +706,8 @@ print_person: {
     jmp __b1
 }
   // File Data
+  DIGIT: .text "0123456789"
+  .byte 0
   persons: .byte 4
   .text "jesper"
   .byte 0
@@ -721,8 +716,6 @@ print_person: {
   .text "henriette"
   .byte 0
   .fill 6, 0
-  DIGIT: .text "0123456789"
-  .byte 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -809,9 +802,9 @@ Score: 740
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  .label SCREEN = $400
   .const SIZEOF_STRUCT_PERSON = $11
   .const OFFSET_STRUCT_PERSON_NAME = 1
-  .label SCREEN = $400
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -929,6 +922,8 @@ print_person: {
     jmp __b1
 }
   // File Data
+  DIGIT: .text "0123456789"
+  .byte 0
   persons: .byte 4
   .text "jesper"
   .byte 0
@@ -937,6 +932,4 @@ print_person: {
   .text "henriette"
   .byte 0
   .fill 6, 0
-  DIGIT: .text "0123456789"
-  .byte 0
 

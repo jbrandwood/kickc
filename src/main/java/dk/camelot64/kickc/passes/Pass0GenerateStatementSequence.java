@@ -4,6 +4,7 @@ import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
@@ -266,7 +267,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
-      Variable param = new Variable(ctx.NAME().getText(), getCurrentScope(), type, Variable.Kind.PHI_MASTER, defaultMemoryArea, currentDataSegment);
+      Variable param = new Variable(false, ctx.NAME().getText(), getCurrentScope(), type, Variable.Kind.PHI_MASTER, defaultMemoryArea, currentDataSegment);
       // Add directives
       directiveContext.applyDirectives(param, true, directives, new StatementSource(ctx));
       exitDeclTypes();
@@ -561,8 +562,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       SymbolType type = declVarType;
       List<Comment> comments = declVarComments;
       KickCParser.ExprContext initializer = ctx.expr();
-      if(declVarStructMember && initializer != null)
-         throw new CompileError("Initializers not supported inside structs " + type.getTypeName(), new StatementSource(ctx));
+      if(declVarStructMember) {
+         if(initializer != null)
+            throw new CompileError("Initializers not supported inside structs " + type.getTypeName(), new StatementSource(ctx));
+         else
+            // No initializer statements for struct members
+            return null;
+      }
       if(initializer != null) {
          addInitialAssignment(initializer, lValue, comments, new StatementSource(ctx));
       } else {
@@ -1397,6 +1403,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private void addInitialAssignment(KickCParser.ExprContext initializer, Variable lValue, List<Comment> comments, StatementSource statementSource) {
       PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
       RValue rValue = (RValue) visit(initializer);
+      if(lValue.isDeclaredConst() && rValue instanceof ForwardVariableRef) {
+         throw new CompileError("Variable used before being defined " + rValue.toString(), statementSource);
+      }
+      /*
+      if(lValue.isDeclaredConst() && !(rValue instanceof ConstantValue)) {
+         throw new InternalError("RValue is not constant!");
+      }
+      */
+
       if(lValue.isDeclaredConst() && rValue instanceof ConstantValue) {
          Scope scope = lValue.getScope();
          ConstantValue constantValue = (ConstantValue) rValue;
@@ -1674,6 +1689,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitExprAssignment(KickCParser.ExprAssignmentContext ctx) {
       Object val = visit(ctx.expr(0));
+      if(val instanceof ConstantRef) {
+         throw new CompileError("Error! Constants can not be modified " + val.toString(), new StatementSource(ctx));
+      }
       if(!(val instanceof LValue)) {
          throw new CompileError("Error! Illegal assignment Lvalue " + val.toString(), new StatementSource(ctx));
       }
@@ -2198,6 +2216,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             List<PrePostModifier> modifiers,
             StatementSource source) {
          for(PrePostModifier mod : modifiers) {
+            if(mod.child instanceof ConstantRef) {
+               throw new CompileError("Constants can not be modified "+mod.child.toString(), source);
+            }
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, copyLValue((LValue) mod.child), source, Comment.NO_COMMENTS);
             parser.sequence.addStatement(stmt);
             parser.consumeExpr(mod.child);

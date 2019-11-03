@@ -74,17 +74,17 @@ public class AsmFragmentTemplate {
     */
    private void initAsm() {
       // Parse the body ASM
-      this.bodyAsm = AsmParser.parseAsm(this.body, new StatementSource(signature+".asm", 1, this.body, 0, 0));
+      this.bodyAsm = AsmParser.parseAsm(this.body, new StatementSource(signature + ".asm", 1, this.body, 0, 0));
       // Generate a dummy instance to find clobber & cycles
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
       {
-         Variable v1 = new Variable( "z1", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
-         Variable v2 = new Variable( "z2", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
-         Variable v3 = new Variable( "z3", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
-         Variable v4 = new Variable( "z4", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
-         Variable v5 = new Variable( "z5", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
-         Variable v6 = new Variable( "z6", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v1 = new Variable(false, "z1", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v2 = new Variable(false, "z2", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v3 = new Variable(false, "z3", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v4 = new Variable(false, "z4", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v5 = new Variable(false, "z5", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v6 = new Variable(false, "z6", scope, SymbolType.BYTE, Variable.Kind.PHI_VERSION, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
          v1.setAllocation(new Registers.RegisterZpMem(2, 1));
          v2.setAllocation(new Registers.RegisterZpMem(4, 1));
          v3.setAllocation(new Registers.RegisterZpMem(6, 1));
@@ -99,13 +99,13 @@ public class AsmFragmentTemplate {
          if(signature.contains("z6")) bindings.put("z6", v6);
       }
       {
-         Variable v1 = new Variable( "m1", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v2 = new Variable(  "m2", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v3 = new Variable( "m3", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v4 = new Variable( "m4", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v5 = new Variable(  "m5", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v6 = new Variable( "m6", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
-         v1.setAllocation(new Registers.RegisterMainMem(v1.getVariableRef(),  1, null));
+         Variable v1 = new Variable(false, "m1", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v2 = new Variable(false, "m2", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v3 = new Variable(false, "m3", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v4 = new Variable(false, "m4", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v5 = new Variable(false, "m5", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v6 = new Variable(false, "m6", scope, SymbolType.BYTE, Variable.Kind.LOAD_STORE, Variable.MemoryArea.MAIN_MEMORY, null);
+         v1.setAllocation(new Registers.RegisterMainMem(v1.getVariableRef(), 1, null));
          v2.setAllocation(new Registers.RegisterMainMem(v2.getVariableRef(), 1, null));
          v3.setAllocation(new Registers.RegisterMainMem(v3.getVariableRef(), 1, null));
          v4.setAllocation(new Registers.RegisterMainMem(v4.getVariableRef(), 1, null));

@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -9,7 +11,12 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeConversion;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.ArrayList;
@@ -34,6 +41,9 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
          if(!variable.isDeclaredConst() && !variable.isVolatile() && !variableRef.isIntermediate()) {
             if(variable.isDeclaredNotConst())
                // Skip explicit non-constants
+               continue;
+            if(variable.getScope() instanceof StructDefinition)
+               // Skip structs
                continue;
             if(!isParameter(variableRef)) {
                Collection<StatementLValue> assignments = getAssignments(variable);
@@ -78,7 +88,40 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
     * @param constantValue The constant value
     * @param aliases Aliases where the map from var to const is added
     */
-   private void convertToConst(Variable variable, ConstantValue constantValue, Statement assignemnt, HashMap<SymbolRef, RValue> aliases) {
+   private void convertToConst(Variable variable, ConstantValue constantValue, Statement assignment, HashMap<SymbolRef, RValue> aliases) {
+      // Perform type checking
+      SymbolType valueType = SymbolTypeInference.inferType(getScope(), constantValue);
+      SymbolType variableType = variable.getType();
+
+      if(!SymbolTypeConversion.assignmentTypeMatch(variableType, valueType) || SymbolType.NUMBER.equals(valueType)) {
+         boolean typeOk = false;
+         ConstantLiteral constantLiteral = null;
+         try {
+            constantLiteral = constantValue.calculateLiteral(getScope());
+         } catch(ConstantNotLiteral e) {
+            // ignore
+         }
+         String literalStr = (constantLiteral == null) ? "null" : constantLiteral.toString(getProgram());
+         if(SymbolType.NUMBER.equals(valueType)) {
+            if(variableType instanceof SymbolTypeIntegerFixed && constantLiteral instanceof ConstantInteger) {
+               SymbolTypeIntegerFixed variableTypeInt = (SymbolTypeIntegerFixed) variableType;
+               ConstantInteger valueInt = (ConstantInteger) constantLiteral;
+               if(variableTypeInt.contains(valueInt.getInteger())) {
+                  constantValue = new ConstantInteger(valueInt.getInteger(), variableType);
+                  typeOk = true;
+               }
+            }
+         }
+         if(!typeOk) {
+            throw new CompileError(
+                  "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
+                        "\n value: (" + valueType.toString() + ") " + literalStr +
+                        "\n value definition: " + constantValue.toString(getProgram())
+            );
+         }
+      }
+
+      // Convert to constant
       SymbolVariableRef variableRef = variable.getRef();
       Scope scope = variable.getScope();
       scope.remove(variable);
@@ -94,7 +137,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
       constVar.setInferredVolatile(variable.isInferredVolatile());
       constVar.setInferredType(variable.isInferredType());
       constVar.setComments(variable.getComments());
-      constVar.getComments().addAll(assignemnt.getComments());
+      constVar.getComments().addAll(assignment.getComments());
       SymbolVariableRef constRef = constVar.getRef();
       aliases.put(variableRef, constRef);
       scope.add(constVar);

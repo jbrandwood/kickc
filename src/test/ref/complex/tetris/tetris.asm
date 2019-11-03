@@ -274,9 +274,9 @@ render_screen_swap: {
 }
 // Show the current score
 render_score: {
-    .const score_offset = $28*5+$1c
-    .const lines_offset = $28*1+$16
-    .const level_offset = $28*$13+$1f
+    .const score_offset = $e4
+    .const lines_offset = $3e
+    .const level_offset = $317
     .label score_bytes = score_bcd
     .label screen = $24
     lda.z render_screen_render
@@ -384,7 +384,7 @@ render_bcd: {
 // Render the next tetromino in the "next" area
 render_next: {
     // Find the screen area
-    .const next_area_offset = $28*$c+$18+4
+    .const next_area_offset = $1fc
     .label next_piece_char = $21
     .label next_piece_gfx = $24
     .label screen_next_area = $22

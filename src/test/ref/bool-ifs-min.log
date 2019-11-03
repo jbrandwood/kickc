@@ -6,7 +6,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -26,7 +25,7 @@ main::@2: scope:[main]  from main::@1 main::@3
   to:main::@return
 main::@3: scope:[main]  from main::@1
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) main::screen + (byte) main::i#4) ← (byte) '*'
+  *((const byte*) main::screen + (byte) main::i#4) ← (byte) '*'
   to:main::@2
 main::@return: scope:[main]  from main::@2
   return 
@@ -60,15 +59,13 @@ SYMBOL TABLE SSA
 (byte) main::i#2
 (byte) main::i#3
 (byte) main::i#4
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
 Adding number conversion cast (unumber) $a in (bool~) main::$0 ← (byte) main::i#2 < (number) $a
 Adding number conversion cast (unumber) 1 in (number~) main::$1 ← (byte) main::i#2 & (number) 1
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) main::i#2 & (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (unumber~) main::$1 == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $a
 Simplifying constant integer cast 1
@@ -83,16 +80,15 @@ Alias (byte) main::i#2 = (byte) main::i#4
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$5 [12] if((byte) main::i#1!=rangelast(0,$14)) goto main::@1
+Simple Condition (bool~) main::$5 [11] if((byte) main::i#1!=rangelast(0,$14)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [7] (bool~) main::$4 ← ! (bool~) main::$3
-Rewriting && if()-condition to two if()s [6] (bool~) main::$3 ← (bool~) main::$0 && (bool~) main::$2
+Rewriting ! if()-condition to reversed if() [6] (bool~) main::$4 ← ! (bool~) main::$3
+Rewriting && if()-condition to two if()s [5] (bool~) main::$3 ← (bool~) main::$0 && (bool~) main::$2
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [10] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [12] if(main::i#1!=rangelast(0,$14)) goto main::@1 to (number) $15
+Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [11] if(main::i#1!=rangelast(0,$14)) goto main::@1 to (number) $15
 Adding number conversion cast (unumber) $15 in if((byte) main::i#1!=(number) $15) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $15

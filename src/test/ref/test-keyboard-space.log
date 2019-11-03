@@ -21,25 +21,16 @@ Culled Empty Block (label) main::@12
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) CIA1_PORT_A ← ((byte*)) (number) $dc00
-  (byte*) CIA1_PORT_B ← ((byte*)) (number) $dc01
-  (byte*) CIA1_PORT_A_DDR ← ((byte*)) (number) $dc02
-  (byte*) CIA1_PORT_B_DDR ← ((byte*)) (number) $dc03
-  (byte) GREEN ← (number) 5
-  (byte) BLUE ← (number) 6
   to:@4
 @4: scope:[]  from @begin
-  (byte) KEY_SPACE ← (number) $3c
   (byte[8]) keyboard_matrix_row_bitmask ← { (number) $fe, (number) $fd, (number) $fb, (number) $f7, (number) $ef, (number) $df, (number) $bf, (number) $7f }
   (byte[8]) keyboard_matrix_col_bitmask ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
   to:@12
 
 (void()) keyboard_init()
 keyboard_init: scope:[keyboard_init]  from main
-  *((byte*) CIA1_PORT_A_DDR) ← (number) $ff
-  *((byte*) CIA1_PORT_B_DDR) ← (number) 0
+  *((const byte*) CIA1_PORT_A_DDR) ← (number) $ff
+  *((const byte*) CIA1_PORT_B_DDR) ← (number) 0
   to:keyboard_init::@return
 keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
   return 
@@ -48,8 +39,8 @@ keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   (byte) keyboard_matrix_read::rowid#1 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 )
-  *((byte*) CIA1_PORT_A) ← *((byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
-  (byte~) keyboard_matrix_read::$0 ← ~ *((byte*) CIA1_PORT_B)
+  *((const byte*) CIA1_PORT_A) ← *((byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
+  (byte~) keyboard_matrix_read::$0 ← ~ *((const byte*) CIA1_PORT_B)
   (byte) keyboard_matrix_read::row_pressed_bits#0 ← (byte~) keyboard_matrix_read::$0
   (byte) keyboard_matrix_read::return#0 ← (byte) keyboard_matrix_read::row_pressed_bits#0
   to:keyboard_matrix_read::@return
@@ -93,11 +84,11 @@ main::@1: scope:[main]  from main::@13 main::@6 main::@8
   if(true) goto main::@4
   to:main::@return
 main::@4: scope:[main]  from main::@1 main::@4
-  (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
+  (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
   if((bool~) main::$1) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  (byte) keyboard_key_pressed::key#0 ← (byte) KEY_SPACE
+  (byte) keyboard_key_pressed::key#0 ← (const byte) KEY_SPACE
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#1
   to:main::@14
@@ -108,10 +99,10 @@ main::@14: scope:[main]  from main::@5
   if((bool~) main::$3) goto main::@8
   to:main::@6
 main::@8: scope:[main]  from main::@14
-  *((byte*) BGCOL) ← (byte) GREEN
+  *((const byte*) BGCOL) ← (const byte) GREEN
   to:main::@1
 main::@6: scope:[main]  from main::@14
-  *((byte*) BGCOL) ← (byte) BLUE
+  *((const byte*) BGCOL) ← (const byte) BLUE
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -129,15 +120,15 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte) BLUE
-(byte*) CIA1_PORT_A
-(byte*) CIA1_PORT_A_DDR
-(byte*) CIA1_PORT_B
-(byte*) CIA1_PORT_B_DDR
-(byte) GREEN
-(byte) KEY_SPACE
-(byte*) RASTER
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte) BLUE = (number) 6
+(const byte*) CIA1_PORT_A = (byte*)(number) $dc00
+(const byte*) CIA1_PORT_A_DDR = (byte*)(number) $dc02
+(const byte*) CIA1_PORT_B = (byte*)(number) $dc01
+(const byte*) CIA1_PORT_B_DDR = (byte*)(number) $dc03
+(const byte) GREEN = (number) 5
+(const byte) KEY_SPACE = (number) $3c
+(const byte*) RASTER = (byte*)(number) $d012
 (void()) keyboard_init()
 (label) keyboard_init::@return
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
@@ -190,31 +181,19 @@ SYMBOL TABLE SSA
 (label) main::@8
 (label) main::@return
 
-Adding number conversion cast (unumber) 5 in (byte) GREEN ← (number) 5
-Adding number conversion cast (unumber) 6 in (byte) BLUE ← (number) 6
-Adding number conversion cast (unumber) $3c in (byte) KEY_SPACE ← (number) $3c
-Adding number conversion cast (unumber) $ff in *((byte*) CIA1_PORT_A_DDR) ← (number) $ff
-Adding number conversion cast (unumber) 0 in *((byte*) CIA1_PORT_B_DDR) ← (number) 0
+Adding number conversion cast (unumber) $ff in *((const byte*) CIA1_PORT_A_DDR) ← (number) $ff
+Adding number conversion cast (unumber) 0 in *((const byte*) CIA1_PORT_B_DDR) ← (number) 0
 Adding number conversion cast (unumber) 7 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (number) 7
 Adding number conversion cast (unumber) keyboard_key_pressed::$0 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (unumber)(number) 7
 Adding number conversion cast (unumber) 3 in (byte~) keyboard_key_pressed::$1 ← (byte) keyboard_key_pressed::key#1 >> (number) 3
-Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
 Adding number conversion cast (unumber) 0 in (bool~) main::$3 ← (byte~) main::$2 != (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (byte[8]) keyboard_matrix_row_bitmask ← (byte[8]){ (byte)(number) $fe, (byte)(number) $fd, (byte)(number) $fb, (byte)(number) $f7, (byte)(number) $ef, (byte)(number) $df, (byte)(number) $bf, (byte)(number) $7f }
 Added casts to value list in (byte[8]) keyboard_matrix_col_bitmask ← (byte[8]){ (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) CIA1_PORT_A ← (byte*)(number) $dc00
-Inlining cast (byte*) CIA1_PORT_B ← (byte*)(number) $dc01
-Inlining cast (byte*) CIA1_PORT_A_DDR ← (byte*)(number) $dc02
-Inlining cast (byte*) CIA1_PORT_B_DDR ← (byte*)(number) $dc03
-Inlining cast (byte) GREEN ← (unumber)(number) 5
-Inlining cast (byte) BLUE ← (unumber)(number) 6
-Inlining cast (byte) KEY_SPACE ← (unumber)(number) $3c
-Inlining cast *((byte*) CIA1_PORT_A_DDR) ← (unumber)(number) $ff
-Inlining cast *((byte*) CIA1_PORT_B_DDR) ← (unumber)(number) 0
+Inlining cast *((const byte*) CIA1_PORT_A_DDR) ← (unumber)(number) $ff
+Inlining cast *((const byte*) CIA1_PORT_B_DDR) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53281
@@ -222,9 +201,6 @@ Simplifying constant pointer cast (byte*) 56320
 Simplifying constant pointer cast (byte*) 56321
 Simplifying constant pointer cast (byte*) 56322
 Simplifying constant pointer cast (byte*) 56323
-Simplifying constant integer cast 5
-Simplifying constant integer cast 6
-Simplifying constant integer cast $3c
 Simplifying constant integer cast $fe
 Simplifying constant integer cast $fd
 Simplifying constant integer cast $fb
@@ -248,9 +224,6 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) 6
-Finalized unsigned number type (byte) $3c
 Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 7
@@ -269,27 +242,17 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) keyboard_matrix_read::rowid#1 (byte) keyboard_matrix_read::rowid#0
 Identical Phi Values (byte) keyboard_key_pressed::key#1 (byte) keyboard_key_pressed::key#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [40] if(*((byte*) RASTER)!=(byte) $ff) goto main::@4
-Simple Condition (bool~) main::$3 [47] if((byte~) main::$2!=(byte) 0) goto main::@8
+Simple Condition (bool~) main::$1 [31] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4
+Simple Condition (bool~) main::$3 [38] if((byte~) main::$2!=(byte) 0) goto main::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (byte[8]) { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
 Identified constant from value list (byte[8]) { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) CIA1_PORT_A = (byte*) 56320
-Constant (const byte*) CIA1_PORT_B = (byte*) 56321
-Constant (const byte*) CIA1_PORT_A_DDR = (byte*) 56322
-Constant (const byte*) CIA1_PORT_B_DDR = (byte*) 56323
-Constant (const byte) GREEN = 5
-Constant (const byte) BLUE = 6
-Constant (const byte) KEY_SPACE = $3c
 Constant (const byte[8]) keyboard_matrix_row_bitmask = { $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f }
 Constant (const byte[8]) keyboard_matrix_col_bitmask = { 1, 2, 4, 8, $10, $20, $40, $80 }
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) keyboard_key_pressed::key#0 = KEY_SPACE
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [38] if(true) goto main::@4
+if() condition always true - replacing block destination [29] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -825,13 +788,13 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte*) BGCOL = (byte*) 53281
-(const byte) BLUE = (byte) 6
+(const byte) BLUE = (number) 6
 (const byte*) CIA1_PORT_A = (byte*) 56320
 (const byte*) CIA1_PORT_A_DDR = (byte*) 56322
 (const byte*) CIA1_PORT_B = (byte*) 56321
 (const byte*) CIA1_PORT_B_DDR = (byte*) 56323
-(const byte) GREEN = (byte) 5
-(const byte) KEY_SPACE = (byte) $3c
+(const byte) GREEN = (number) 5
+(const byte) KEY_SPACE = (number) $3c
 (const byte*) RASTER = (byte*) 53266
 (void()) keyboard_init()
 (label) keyboard_init::@return

@@ -10,17 +10,14 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
-  (byte*) main::NULL ← ((byte*)) (number) 0
-  (byte*) main::rem ← ((byte*)) (number) $ff
-  (bool~) main::$0 ← (byte*) main::rem != (byte*) main::NULL
+  (bool~) main::$0 ← (const byte*) main::rem != (const byte*) main::NULL
   if((bool~) main::$0) goto main::@1
   to:main::@3
 main::@1: scope:[main]  from main
-  *((byte*) main::screen + (number) 0) ← (byte) '*'
+  *((const byte*) main::screen + (number) 0) ← (byte) '*'
   to:main::@return
 main::@3: scope:[main]  from main
-  *((byte*) main::screen + (number) 0) ← (byte) '.'
+  *((const byte*) main::screen + (number) 0) ← (byte) '.'
   to:main::@return
 main::@return: scope:[main]  from main::@1 main::@3
   return 
@@ -42,17 +39,13 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@3
 (label) main::@return
-(byte*) main::NULL
-(byte*) main::rem
-(byte*) main::screen
+(const byte*) main::NULL = (byte*)(number) 0
+(const byte*) main::rem = (byte*)(number) $ff
+(const byte*) main::screen = (byte*)(number) $400
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) '*'
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) '.'
+Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte) '*'
+Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte) '.'
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Inlining cast (byte*) main::NULL ← (byte*)(number) 0
-Inlining cast (byte*) main::rem ← (byte*)(number) $ff
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 0
 Simplifying constant pointer cast (byte*) 255
@@ -62,16 +55,12 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [4] if((byte*) main::rem!=(byte*) main::NULL) goto main::@1
+Simple Condition (bool~) main::$0 [1] if((const byte*) main::rem!=(const byte*) main::NULL) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen = (byte*) 1024
-Constant (const byte*) main::NULL = (byte*) 0
-Constant (const byte*) main::rem = (byte*) 255
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [4] if((const byte*) main::rem!=(const byte*) main::NULL) goto main::@1
+if() condition always true - replacing block destination [1] if((const byte*) main::rem!=(const byte*) main::NULL) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero main::screen in [5] *((const byte*) main::screen + (byte) 0) ← (byte) '*'
-Simplifying expression containing zero main::screen in [6] *((const byte*) main::screen + (byte) 0) ← (byte) '.'
+Simplifying expression containing zero main::screen in [2] *((const byte*) main::screen + (byte) 0) ← (byte) '*'
+Simplifying expression containing zero main::screen in [3] *((const byte*) main::screen + (byte) 0) ← (byte) '.'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte*) main::NULL
 Eliminating unused constant (const byte*) main::rem

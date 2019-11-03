@@ -10,7 +10,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
   (signed word) main::lasti#0 ← (number) -1
   (signed word) main::i#0 ← (number) 0
   to:main::@1
@@ -24,7 +23,7 @@ main::@2: scope:[main]  from main::@1
   (signed word) main::i#3 ← phi( main::@1/(signed word) main::i#2 )
   (signed word) main::lasti#2 ← phi( main::@1/(signed word) main::lasti#3 )
   (byte~) main::$1 ← < (signed word) main::lasti#2
-  *((byte*) main::screen + (signed word) main::i#3) ← (byte~) main::$1
+  *((const byte*) main::screen + (signed word) main::i#3) ← (byte~) main::$1
   (signed word) main::lasti#1 ← (signed word) main::i#3
   (signed word) main::i#1 ← ++ (signed word) main::i#3
   to:main::@1
@@ -59,13 +58,12 @@ SYMBOL TABLE SSA
 (signed word) main::lasti#1
 (signed word) main::lasti#2
 (signed word) main::lasti#3
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
 Adding number conversion cast (snumber) -1 in (signed word) main::lasti#0 ← (number) -1
 Adding number conversion cast (snumber) 0 in (signed word) main::i#0 ← (number) 0
 Adding number conversion cast (snumber) $a in (bool~) main::$0 ← (signed word) main::i#2 < (number) $a
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Inlining cast (signed word) main::lasti#0 ← (snumber)(number) -1
 Inlining cast (signed word) main::i#0 ← (snumber)(number) 0
 Successful SSA optimization Pass2InlineCast
@@ -84,13 +82,12 @@ Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (phi-usage) (signed word) main::i#2 = (signed word) main::i#3 (signed word) main::lasti#1 
 Identical Phi Values (signed word) main::i#3 (signed word) main::i#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [5] if((signed word) main::i#2<(signed byte) $a) goto main::@2
+Simple Condition (bool~) main::$0 [4] if((signed word) main::i#2<(signed byte) $a) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const signed word) main::lasti#0 = -1
 Constant (const signed word) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [8] *((const byte*) main::screen + (signed word) main::i#2) ← (byte~) main::$1
+De-inlining pointer[w] to *(pointer+w)   [7] *((const byte*) main::screen + (signed word) main::i#2) ← (byte~) main::$1
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Alias candidate removed (phi-usage) (signed word) main::lasti#1 = (signed word) main::i#2 
 Inlining constant with var siblings (const signed word) main::lasti#0

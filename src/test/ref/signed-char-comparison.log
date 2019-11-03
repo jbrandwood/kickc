@@ -1,10 +1,11 @@
 Identified constant variable (byte*) SCREEN
 Culled Empty Block (label) main::@2
+Culled Empty Block (label) @1
 Culled Empty Block (label) debug::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@1
+  to:@2
 
 (void()) main()
 main: scope:[main]  from @2
@@ -24,9 +25,6 @@ main::@3: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  to:@2
 
 (void()) debug((signed byte) debug::dy)
 debug: scope:[debug]  from main::@1
@@ -39,12 +37,12 @@ debug: scope:[debug]  from main::@1
   to:debug::@2
 debug::@2: scope:[debug]  from debug
   (byte) debug::i#1 ← phi( debug/(byte) debug::i#0 )
-  *((byte*) SCREEN + (byte) debug::i#1) ← (number) $a
+  *((const byte*) SCREEN + (byte) debug::i#1) ← (number) $a
   to:debug::@return
 debug::@return: scope:[debug]  from debug debug::@2
   return 
   to:@return
-@2: scope:[]  from @1
+@2: scope:[]  from @begin
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -52,12 +50,11 @@ debug::@return: scope:[debug]  from debug debug::@2
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(label) @1
 (label) @2
 (label) @3
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) debug((signed byte) debug::dy)
 (byte~) debug::$0
 (bool~) debug::$1
@@ -82,11 +79,10 @@ SYMBOL TABLE SSA
 (signed byte) main::dy#3
 
 Adding number conversion cast (snumber) -$78 in (bool~) debug::$1 ← (signed byte) debug::dy#1 > (number) -$78
-Adding number conversion cast (unumber) $a in *((byte*) SCREEN + (byte) debug::i#1) ← (number) $a
+Adding number conversion cast (unumber) $a in *((const byte*) SCREEN + (byte) debug::i#1) ← (number) $a
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte~) debug::$0 ← (byte)(signed byte) debug::dy#1
-Inlining cast *((byte*) SCREEN + (byte) debug::i#1) ← (unumber)(number) $a
+Inlining cast *((const byte*) SCREEN + (byte) debug::i#1) ← (unumber)(number) $a
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast -$78
@@ -95,7 +91,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized signed number type (signed byte) -$78
 Finalized unsigned number type (byte) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [14] (bool~) debug::$2 ← (signed byte) debug::dy#1 <= (signed byte) -$78 from [13] (bool~) debug::$1 ← (signed byte) debug::dy#1 > (signed byte) -$78
+Inversing boolean not [13] (bool~) debug::$2 ← (signed byte) debug::dy#1 <= (signed byte) -$78 from [12] (bool~) debug::$1 ← (signed byte) debug::dy#1 > (signed byte) -$78
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (signed byte) main::dy#2 = (signed byte) main::dy#3 
 Alias (byte) debug::i#0 = (byte~) debug::$0 (byte) debug::i#1 
@@ -103,10 +99,9 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (signed byte) debug::dy#1 (signed byte) debug::dy#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$1 [7] if((signed byte) main::dy#1!=rangelast(-$80,$7f)) goto main::@1
-Simple Condition (bool~) debug::$2 [15] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return
+Simple Condition (bool~) debug::$2 [14] if((signed byte) debug::dy#0<=(signed byte) -$78) goto debug::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const signed byte) main::dy#0 = -$80
-Constant (const byte*) SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [5] main::dy#1 ← ++ main::dy#2 to ++
 Resolved ranged comparison value [7] if(main::dy#1!=rangelast(-$80,$7f)) goto main::@1 to (number) -$80
@@ -123,19 +118,17 @@ Constant inlined main::dy#0 = (signed byte) -$80
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@4(between main::@3 and main::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to debug:9 
+Calls in [] to main:2 
+Calls in [main] to debug:8 
 
 Created 1 initial phi equivalence classes
-Coalesced [13] main::dy#4 ← main::dy#1
+Coalesced [12] main::dy#4 ← main::dy#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @1
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@4
 Renumbering block @2 to @1

@@ -6,6 +6,8 @@ Adding struct value list initializer (byte) bar_thing1 ← (byte) 'a'
 Adding struct value list initializer (byte) bar_thing2 ← (byte) 'b'
 Rewriting struct pointer member access *((struct foo*) main::barp).thing1
 Rewriting struct pointer member access *((struct foo*) main::barp).thing2
+Identified constant variable (byte) foo::thing1
+Identified constant variable (byte) foo::thing2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -18,13 +20,12 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @1
   (struct foo*~) main::$0 ← & (struct foo) bar
   (struct foo*) main::barp#0 ← (struct foo*~) main::$0
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (number) 0
   (byte*) main::$1 ← (byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING1
-  *((byte*) main::SCREEN + (byte) main::i#0) ← *((byte*) main::$1)
+  *((const byte*) main::SCREEN + (byte) main::i#0) ← *((byte*) main::$1)
   (byte) main::i#1 ← ++ (byte) main::i#0
   (byte*) main::$2 ← (byte*)(struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING2
-  *((byte*) main::SCREEN + (byte) main::i#1) ← *((byte*) main::$2)
+  *((const byte*) main::SCREEN + (byte) main::i#1) ← *((byte*) main::$2)
   (byte) main::i#2 ← ++ (byte) main::i#1
   to:main::@return
 main::@return: scope:[main]  from main
@@ -47,14 +48,12 @@ SYMBOL TABLE SSA
 (struct foo) bar notregister
 (byte) bar_thing1 notregister
 (byte) bar_thing2 notregister
-(byte) foo::thing1
-(byte) foo::thing2
 (void()) main()
 (struct foo*~) main::$0
 (byte*) main::$1
 (byte*) main::$2
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (struct foo*) main::barp
 (struct foo*) main::barp#0
 (byte) main::i
@@ -64,7 +63,6 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -77,18 +75,17 @@ Successful SSA optimization Pass2AliasElimination
 Rewriting struct address-of to first member [3] (struct foo*) main::barp#0 ← (struct foo*)&(byte) bar_thing1
 Successful SSA optimization PassNStructAddressOfRewriting
 Constant (const struct foo*) main::barp#0 = (struct foo*)&bar_thing1
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)main::barp#0 in [7] (byte*) main::$1 ← (byte*)(const struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING1
-Constant value identified (byte*)main::barp#0 in [10] (byte*) main::$2 ← (byte*)(const struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING2
+Constant value identified (byte*)main::barp#0 in [6] (byte*) main::$1 ← (byte*)(const struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING1
+Constant value identified (byte*)main::barp#0 in [9] (byte*) main::$2 ← (byte*)(const struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING2
 Successful SSA optimization Pass2ConstantValues
-Converting *(pointer+n) to pointer[n] [8] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*) main::$1)  -- *((byte*)main::barp#0 + OFFSET_STRUCT_FOO_THING1)
-Converting *(pointer+n) to pointer[n] [11] *((const byte*) main::SCREEN + (byte) main::i#1) ← *((byte*) main::$2)  -- *((byte*)main::barp#0 + OFFSET_STRUCT_FOO_THING2)
+Converting *(pointer+n) to pointer[n] [7] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*) main::$1)  -- *((byte*)main::barp#0 + OFFSET_STRUCT_FOO_THING1)
+Converting *(pointer+n) to pointer[n] [10] *((const byte*) main::SCREEN + (byte) main::i#1) ← *((byte*) main::$2)  -- *((byte*)main::barp#0 + OFFSET_STRUCT_FOO_THING2)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)main::barp#0 in [7] (byte*) main::$1 ← (byte*)(const struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING1
-Simplifying expression containing zero (byte*)main::barp#0 in [8] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)(const struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING1)
-Simplifying expression containing zero main::SCREEN in [8] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)(const struct foo*) main::barp#0)
+Simplifying expression containing zero (byte*)main::barp#0 in [6] (byte*) main::$1 ← (byte*)(const struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING1
+Simplifying expression containing zero (byte*)main::barp#0 in [7] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)(const struct foo*) main::barp#0 + (const byte) OFFSET_STRUCT_FOO_THING1)
+Simplifying expression containing zero main::SCREEN in [7] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)(const struct foo*) main::barp#0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (struct foo) bar and assignment [2] (struct foo) bar ← struct-unwound {(byte) bar_thing1, (byte) bar_thing2}
 Eliminating unused variable (byte*) main::$1 and assignment [3] (byte*) main::$1 ← (byte*)(const struct foo*) main::barp#0
@@ -147,8 +144,6 @@ main::@return: scope:[main]  from main
 VARIABLE REGISTER WEIGHTS
 (byte) bar_thing1 notregister 20.0
 (byte) bar_thing2 notregister 20.0
-(byte) foo::thing1
-(byte) foo::thing2
 (void()) main()
 (struct foo*) main::barp
 (byte) main::i
@@ -195,8 +190,8 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label barp = bar_thing1
     .label SCREEN = $400
+    .label barp = bar_thing1
     // [5] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda barp
     sta SCREEN
@@ -266,8 +261,8 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label barp = bar_thing1
     .label SCREEN = $400
+    .label barp = bar_thing1
     // [5] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda barp
     sta SCREEN
@@ -306,8 +301,6 @@ FINAL SYMBOL TABLE
 (const byte) OFFSET_STRUCT_FOO_THING2 = (byte) 1
 (byte) bar_thing1 notregister mem[1] 20.0
 (byte) bar_thing2 notregister mem[1] 20.0
-(byte) foo::thing1
-(byte) foo::thing2
 (void()) main()
 (label) main::@return
 (const byte*) main::SCREEN = (byte*) 1024
@@ -349,8 +342,8 @@ __bbegin:
   // @end
   // main
 main: {
-    .label barp = bar_thing1
     .label SCREEN = $400
+    .label barp = bar_thing1
     // SCREEN[i++] = barp->thing1
     // [5] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda barp

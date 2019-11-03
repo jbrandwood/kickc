@@ -4,32 +4,30 @@ Culled Empty Block (label) print::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) msg1 ← (const string) $0
-  (byte[]) msg2 ← (const string) $1
   to:@2
 
 (void()) main()
 main: scope:[main]  from @3
   (byte*) screen#17 ← phi( @3/(byte*) screen#16 )
-  (byte*) strip::p#0 ← (byte[]) msg1
+  (byte*) strip::p#0 ← (const byte[]) msg1
   (byte) strip::c#0 ← (byte) ' '
   call strip 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte*) screen#13 ← phi( main/(byte*) screen#17 )
-  (byte*) print::msg#0 ← (byte[]) msg1
+  (byte*) print::msg#0 ← (const byte[]) msg1
   call print 
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte*) screen#7 ← phi( main::@1/(byte*) screen#5 )
   (byte*) screen#0 ← (byte*) screen#7
-  (byte*) strip::p#1 ← (byte[]) msg2
+  (byte*) strip::p#1 ← (const byte[]) msg2
   (byte) strip::c#1 ← (byte) 'y'
   call strip 
   to:main::@3
 main::@3: scope:[main]  from main::@2
   (byte*) screen#14 ← phi( main::@2/(byte*) screen#0 )
-  (byte*) print::msg#1 ← (byte[]) msg2
+  (byte*) print::msg#1 ← (const byte[]) msg2
   call print 
   to:main::@4
 main::@4: scope:[main]  from main::@3
@@ -108,8 +106,6 @@ print::@return: scope:[print]  from print::@1
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "hello world!"
-(const string) $1 = (string) "goodbye blue sky!"
 (label) @2
 (label) @3
 (label) @4
@@ -121,8 +117,8 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@4
 (label) main::@return
-(byte[]) msg1
-(byte[]) msg2
+(const byte[]) msg1 = (string) "hello world!"
+(const byte[]) msg2 = (string) "goodbye blue sky!"
 (void()) print((byte*) print::msg)
 (bool~) print::$0
 (label) print::@1
@@ -194,7 +190,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [26] (bool~) strip::$1 ← *((byte*) strip::p#4) == (byte) strip::c#2 from [25] (bool~) strip::$0 ← *((byte*) strip::p#4) != (byte) strip::c#2
+Inversing boolean not [24] (bool~) strip::$1 ← *((byte*) strip::p#4) == (byte) strip::c#2 from [23] (bool~) strip::$0 ← *((byte*) strip::p#4) != (byte) strip::c#2
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte*) screen#13 = (byte*) screen#17 
 Alias (byte*) screen#0 = (byte*) screen#7 (byte*) screen#14 
@@ -216,25 +212,22 @@ Identical Phi Values (byte*) screen#1 (byte*) screen#11
 Identical Phi Values (byte) strip::c#2 (byte) strip::c#3
 Identical Phi Values (byte*) screen#12 (byte*) screen#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) strip::$1 [27] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2
-Simple Condition (bool~) strip::$2 [31] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@1
-Simple Condition (bool~) print::$0 [43] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1
+Simple Condition (bool~) strip::$1 [25] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2
+Simple Condition (bool~) strip::$2 [29] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@1
+Simple Condition (bool~) print::$0 [41] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[]) msg1 = $0
-Constant (const byte[]) msg2 = $1
-Constant (const byte) strip::c#0 = ' '
-Constant (const byte) strip::c#1 = 'y'
-Constant (const byte*) screen#16 = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) strip::p#0 = msg1
+Constant (const byte) strip::c#0 = ' '
 Constant (const byte*) print::msg#0 = msg1
 Constant (const byte*) strip::p#1 = msg2
+Constant (const byte) strip::c#1 = 'y'
 Constant (const byte*) print::msg#1 = msg2
+Constant (const byte*) screen#16 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte) strip::c#0
-Inlining constant with var siblings (const byte) strip::c#1
 Inlining constant with var siblings (const byte*) strip::p#0
+Inlining constant with var siblings (const byte) strip::c#0
 Inlining constant with var siblings (const byte*) strip::p#1
+Inlining constant with var siblings (const byte) strip::c#1
 Inlining constant with var siblings (const byte*) print::msg#0
 Inlining constant with var siblings (const byte*) print::msg#1
 Inlining constant with var siblings (const byte*) screen#16
@@ -244,8 +237,6 @@ Constant inlined strip::p#1 = (const byte[]) msg2
 Constant inlined print::msg#0 = (const byte[]) msg1
 Constant inlined strip::c#0 = (byte) ' '
 Constant inlined strip::c#1 = (byte) 'y'
-Constant inlined $0 = (const byte[]) msg1
-Constant inlined $1 = (const byte[]) msg2
 Constant inlined screen#16 = (byte*) 1024
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting strip::@5(between strip::@2 and strip::@1)

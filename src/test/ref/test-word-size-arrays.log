@@ -16,7 +16,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
   (word) main::line#0 ← (word) 0
   (word) main::line#1 ← (number) 0
   to:main::@1
@@ -45,7 +44,7 @@ main::@5: scope:[main]  from main::@4
   (word~) main::$2 ← (word) main::line#4 + (byte) main::c#3
   (word~) main::$3 ← (word) main::line#4 + (byte) main::c#3
   (number~) main::$4 ← (word~) main::$3 + (number) $28
-  *((byte*) main::screen + (word~) main::$2) ← *((byte*) main::screen + (number~) main::$4)
+  *((const byte*) main::screen + (word~) main::$2) ← *((const byte*) main::screen + (number~) main::$4)
   (byte) main::c#1 ← ++ (byte) main::c#3
   to:main::@4
 main::@6: scope:[main]  from main::@4
@@ -62,7 +61,7 @@ main::@14: scope:[main]  from main::@13
   (byte) main::c1#3 ← phi( main::@13/(byte) main::c1#2 )
   (word) main::line#6 ← phi( main::@13/(word) main::line#8 )
   (word~) main::$6 ← (word) main::line#6 + (byte) main::c1#3
-  *((byte*) main::screen + (word~) main::$6) ← (byte) ' '
+  *((const byte*) main::screen + (word~) main::$6) ← (byte) ' '
   (byte) main::c1#1 ← ++ (byte) main::c1#3
   to:main::@13
 main::@return: scope:[main]  from main::@13
@@ -119,7 +118,7 @@ SYMBOL TABLE SSA
 (word) main::line#7
 (word) main::line#8
 (word) main::line#9
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
 Adding number conversion cast (unumber) 0 in (word) main::line#1 ← (number) 0
 Adding number conversion cast (unumber) $28*$18 in (bool~) main::$0 ← (word) main::line#3 < (number) $28*(number) $18
@@ -131,7 +130,6 @@ Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (word
 Adding number conversion cast (unumber) $28 in (word) main::line#2 ← (word) main::line#5 + (number) $28
 Adding number conversion cast (unumber) $28 in (bool~) main::$5 ← (byte) main::c1#2 < (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Inlining cast (word) main::line#1 ← (unumber)(number) 0
 Inlining cast (byte) main::c#0 ← (unumber)(number) 0
 Inlining cast (byte) main::c1#0 ← (unumber)(number) 0
@@ -163,19 +161,18 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (word) main::line#4 (word) main::line#10
 Identical Phi Values (word) main::line#6 (word) main::line#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [5] if((word) main::line#10<(word)(number) $28*(number) $18) goto main::@2
-Simple Condition (bool~) main::$1 [12] if((byte) main::c#2<(byte) $28) goto main::@5
-Simple Condition (bool~) main::$5 [23] if((byte) main::c1#2<(byte) $28) goto main::@14
+Simple Condition (bool~) main::$0 [4] if((word) main::line#10<(word)(number) $28*(number) $18) goto main::@2
+Simple Condition (bool~) main::$1 [11] if((byte) main::c#2<(byte) $28) goto main::@5
+Simple Condition (bool~) main::$5 [22] if((byte) main::c1#2<(byte) $28) goto main::@14
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const word) main::line#0 = 0
 Constant (const word) main::line#1 = 0
 Constant (const byte) main::c#0 = 0
 Constant (const byte) main::c1#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [17] *((const byte*) main::screen + (word~) main::$2) ← *((const byte*) main::screen + (word~) main::$4)
-De-inlining pointer[w] to *(pointer+w)   [17] *((const byte*) main::screen + (word~) main::$2) ← *((byte*~) main::$7)
-De-inlining pointer[w] to *(pointer+w)   [26] *((const byte*) main::screen + (word~) main::$6) ← (byte) ' '
+De-inlining pointer[w] to *(pointer+w)   [16] *((const byte*) main::screen + (word~) main::$2) ← *((const byte*) main::screen + (word~) main::$4)
+De-inlining pointer[w] to *(pointer+w)   [16] *((const byte*) main::screen + (word~) main::$2) ← *((byte*~) main::$7)
+De-inlining pointer[w] to *(pointer+w)   [25] *((const byte*) main::screen + (word~) main::$6) ← (byte) ' '
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Eliminating unused constant (const word) main::line#0
 Successful SSA optimization PassNEliminateUnusedVars

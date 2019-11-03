@@ -11,6 +11,7 @@
   .label CHARSET = $2000
   .label SCREEN = $2800
 main: {
+    .label col00 = COLS+$c*$28+$13
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label screen = 3
     .label x = $a
@@ -45,10 +46,7 @@ main: {
     cmp.z y
     bne __b1
   __b4:
-    lda COLS+$c*$28+$13
-    clc
-    adc #1
-    sta COLS+$c*$28+$13
+    inc col00
     jmp __b4
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)

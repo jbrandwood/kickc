@@ -2,8 +2,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .const STAR = $51
     .label screen = $400
+    .const STAR = $51
     .const x0 = 0
     .const y0 = 0
     .const x1 = $27

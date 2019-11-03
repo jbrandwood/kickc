@@ -7,13 +7,12 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::b#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@1/(byte) main::b#1 )
   (number~) main::$0 ← (number) $55 << (byte) main::b#2
-  *((byte*) main::screen + (byte) main::b#2) ← (number~) main::$0
+  *((const byte*) main::screen + (byte) main::b#2) ← (number~) main::$0
   (byte) main::b#1 ← (byte) main::b#2 + rangenext(0,7)
   (bool~) main::$1 ← (byte) main::b#1 != rangelast(0,7)
   if((bool~) main::$1) goto main::@1
@@ -42,26 +41,23 @@ SYMBOL TABLE SSA
 (byte) main::b#0
 (byte) main::b#1
 (byte) main::b#2
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
 Adding number conversion cast (unumber) $55 in (number~) main::$0 ← (number) $55 << (byte) main::b#2
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) $55 << (byte) main::b#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $55
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $55
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) $55 << (byte) main::b#2
-Simple Condition (bool~) main::$1 [7] if((byte) main::b#1!=rangelast(0,7)) goto main::@1
+Simple Condition (bool~) main::$1 [6] if((byte) main::b#1!=rangelast(0,7)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::b#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [5] main::b#1 ← ++ main::b#2 to ++
-Resolved ranged comparison value [7] if(main::b#1!=rangelast(0,7)) goto main::@1 to (number) 8
+Resolved ranged next value [4] main::b#1 ← ++ main::b#2 to ++
+Resolved ranged comparison value [6] if(main::b#1!=rangelast(0,7)) goto main::@1 to (number) 8
 Adding number conversion cast (unumber) 8 in if((byte) main::b#1!=(number) 8) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 8

@@ -50,24 +50,19 @@ Culled Empty Block (label) assertType::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) RED ← (byte) 2
-  (byte) GREEN ← (byte) 5
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) COLS ← ((byte*)) (number) $d800
   (byte) idx#0 ← (byte) 0
   to:@4
 
 (void()) main()
 main: scope:[main]  from @4
   (byte) idx#114 ← phi( @4/(byte) idx#112 )
-  (byte*) main::s#0 ← (byte*) SCREEN
+  (byte*) main::s#0 ← (const byte*) SCREEN
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) idx#113 ← phi( main/(byte) idx#114 main::@2/(byte) idx#115 )
   (byte*) main::s#2 ← phi( main/(byte*) main::s#0 main::@2/(byte*) main::s#1 )
-  (byte*~) main::$2 ← (byte*) SCREEN + (number) $3e8
-  (bool~) main::$3 ← (byte*) main::s#2 < (byte*~) main::$2
-  if((bool~) main::$3) goto main::@2
+  (bool~) main::$2 ← (byte*) main::s#2 < (const byte*) SCREEN+(number) $3e8
+  if((bool~) main::$2) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
   (byte) idx#115 ← phi( main::@1/(byte) idx#113 )
@@ -466,17 +461,17 @@ assertType: scope:[assertType]  from testBinaryOperator testBinaryOperator::@1 t
 assertType::@1: scope:[assertType]  from assertType
   (byte) assertType::t1#44 ← phi( assertType/(byte) assertType::t1#42 )
   (byte) idx#105 ← phi( assertType/(byte) idx#111 )
-  *((byte*) COLS + (byte) idx#105) ← (byte) GREEN
+  *((const byte*) COLS + (byte) idx#105) ← (const byte) GREEN
   to:assertType::@2
 assertType::@3: scope:[assertType]  from assertType
   (byte) assertType::t1#45 ← phi( assertType/(byte) assertType::t1#42 )
   (byte) idx#106 ← phi( assertType/(byte) idx#111 )
-  *((byte*) COLS + (byte) idx#106) ← (byte) RED
+  *((const byte*) COLS + (byte) idx#106) ← (const byte) RED
   to:assertType::@2
 assertType::@2: scope:[assertType]  from assertType::@1 assertType::@3
   (byte) idx#107 ← phi( assertType::@1/(byte) idx#105 assertType::@3/(byte) idx#106 )
   (byte) assertType::t1#43 ← phi( assertType::@1/(byte) assertType::t1#44 assertType::@3/(byte) assertType::t1#45 )
-  *((byte*) SCREEN + (byte) idx#107) ← (byte) assertType::t1#43
+  *((const byte*) SCREEN + (byte) idx#107) ← (byte) assertType::t1#43
   (byte) idx#55 ← ++ (byte) idx#107
   to:assertType::@return
 assertType::@return: scope:[assertType]  from assertType::@2
@@ -499,10 +494,10 @@ SYMBOL TABLE SSA
 (label) @5
 (label) @begin
 (label) @end
-(byte*) COLS
-(byte) GREEN
-(byte) RED
-(byte*) SCREEN
+(const byte*) COLS = (byte*)(number) $d800
+(const byte) GREEN = (byte) 5
+(const byte) RED = (byte) 2
+(const byte*) SCREEN = (byte*)(number) $400
 (const byte) TYPEID_BYTE = (number) 1
 (const byte) TYPEID_DWORD = (number) 5
 (const byte) TYPEID_SIGNED_BYTE = (number) 2
@@ -724,8 +719,7 @@ SYMBOL TABLE SSA
 (byte) idx#98
 (byte) idx#99
 (void()) main()
-(byte*~) main::$2
-(bool~) main::$3
+(bool~) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -826,12 +820,10 @@ SYMBOL TABLE SSA
 (label) testUnaryOperator::@6
 (label) testUnaryOperator::@return
 
-Adding number conversion cast (unumber) $3e8 in (byte*~) main::$2 ← (byte*) SCREEN + (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (bool~) main::$2 ← (byte*) main::s#2 < (const byte*) SCREEN+(number) $3e8
 Adding number conversion cast (unumber) 0 in (byte) idx#4 ← (number) 0
 Adding number conversion cast (unumber) $28 in (byte) idx#12 ← (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) COLS ← (byte*)(number) $d800
 Inlining cast (byte) idx#4 ← (unumber)(number) 0
 Inlining cast (byte) idx#12 ← (unumber)(number) $28
 Successful SSA optimization Pass2InlineCast
@@ -990,14 +982,11 @@ Identical Phi Values (byte) idx#102 (byte) idx#108
 Identical Phi Values (byte) idx#103 (byte) idx#108
 Identical Phi Values (byte) idx#109 (byte) idx#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [10] if((byte*) main::s#2<(byte*~) main::$2) goto main::@2
-Simple Condition (bool~) assertType::$0 [291] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1
+Simple Condition (bool~) main::$2 [5] if((byte*) main::s#2<(const byte*) SCREEN+(word) $3e8) goto main::@2
+Simple Condition (bool~) assertType::$0 [286] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) RED = 2
-Constant (const byte) GREEN = 5
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) COLS = (byte*) 55296
 Constant (const byte) idx#0 = 0
+Constant (const byte*) main::s#0 = SCREEN
 Constant (const byte) idx#4 = 0
 Constant (const byte) assertType::t1#0 = TYPEID_BYTE
 Constant (const byte) assertType::t2#0 = TYPEID_BYTE
@@ -1086,14 +1075,8 @@ Constant (const byte) assertType::t2#40 = TYPEID_DWORD
 Constant (const byte) assertType::t1#41 = TYPEID_SIGNED_DWORD
 Constant (const byte) assertType::t2#41 = TYPEID_SIGNED_DWORD
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::s#0 = SCREEN
-Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const byte) idx#0
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [1] (byte*~) main::$2 ← (const byte*) SCREEN + (word) $3e8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$2 = SCREEN+$3e8
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) main::s#0
 Inlining constant with var siblings (const byte) assertType::t1#0
 Inlining constant with var siblings (const byte) assertType::t2#0
@@ -1263,7 +1246,6 @@ Constant inlined assertType::t1#30 = (const byte) TYPEID_DWORD
 Constant inlined assertType::t2#41 = (const byte) TYPEID_SIGNED_DWORD
 Constant inlined assertType::t1#32 = (const byte) TYPEID_DWORD
 Constant inlined assertType::t1#31 = (const byte) TYPEID_DWORD
-Constant inlined main::$2 = (const byte*) SCREEN+(word) $3e8
 Constant inlined assertType::t1#34 = (const byte) TYPEID_DWORD
 Constant inlined assertType::t1#33 = (const byte) TYPEID_DWORD
 Constant inlined assertType::t1#36 = (const byte) TYPEID_SIGNED_DWORD
@@ -1663,16 +1645,16 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const RED = 2
+  .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
-  .const RED = 2
-  .const GREEN = 5
-  .label SCREEN = $400
-  .label COLS = $d800
   .label idx = 6
   // @begin
 __bbegin:
@@ -2520,16 +2502,16 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const RED = 2
+  .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
-  .const RED = 2
-  .const GREEN = 5
-  .label SCREEN = $400
-  .label COLS = $d800
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -3625,16 +3607,16 @@ Score: 1159
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const RED = 2
+  .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
-  .const RED = 2
-  .const GREEN = 5
-  .label SCREEN = $400
-  .label COLS = $d800
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1

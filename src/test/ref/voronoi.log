@@ -25,10 +25,6 @@ Culled Empty Block (label) findcol::@22
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) COLORS ← ((byte*)) (number) $d800
-  (byte) FILL ← (number) $e6
-  (byte) numpoints ← (number) 6
   (byte[]) XPOS ← { (number) 5, (number) $f, (number) 6, (number) $22, (number) $15, (number) $1f }
   (byte[]) YPOS ← { (number) 5, (number) 8, (number) $e, (number) 2, (number) $11, (number) $16 }
   (byte[]) COLS ← { (number) 1, (number) 2, (number) 3, (number) 4, (number) 5, (number) 7 }
@@ -119,17 +115,17 @@ animate::@return: scope:[animate]  from animate::@10 animate::@11 animate::@4
 
 (void()) initscreen()
 initscreen: scope:[initscreen]  from main
-  (byte*) initscreen::screen#0 ← (byte*) SCREEN
+  (byte*) initscreen::screen#0 ← (const byte*) SCREEN
   to:initscreen::@1
 initscreen::@1: scope:[initscreen]  from initscreen initscreen::@2
   (byte*) initscreen::screen#2 ← phi( initscreen/(byte*) initscreen::screen#0 initscreen::@2/(byte*) initscreen::screen#1 )
-  (byte*~) initscreen::$0 ← (byte*) SCREEN + (number) $3e8
+  (byte*~) initscreen::$0 ← (const byte*) SCREEN + (number) $3e8
   (bool~) initscreen::$1 ← (byte*) initscreen::screen#2 < (byte*~) initscreen::$0
   if((bool~) initscreen::$1) goto initscreen::@2
   to:initscreen::@return
 initscreen::@2: scope:[initscreen]  from initscreen::@1
   (byte*) initscreen::screen#3 ← phi( initscreen::@1/(byte*) initscreen::screen#2 )
-  *((byte*) initscreen::screen#3) ← (byte) FILL
+  *((byte*) initscreen::screen#3) ← (const byte) FILL
   (byte*) initscreen::screen#1 ← ++ (byte*) initscreen::screen#3
   to:initscreen::@1
 initscreen::@return: scope:[initscreen]  from initscreen::@1
@@ -138,7 +134,7 @@ initscreen::@return: scope:[initscreen]  from initscreen::@1
 
 (void()) render()
 render: scope:[render]  from main::@1
-  (byte*) render::colline#0 ← (byte*) COLORS
+  (byte*) render::colline#0 ← (const byte*) COLORS
   (byte) render::y#0 ← (byte) 0
   to:render::@1
 render::@1: scope:[render]  from render render::@3
@@ -194,7 +190,7 @@ findcol::@1: scope:[findcol]  from findcol findcol::@10
   (byte) findcol::mincol#3 ← phi( findcol/(byte) findcol::mincol#0 findcol::@10/(byte) findcol::mincol#4 )
   (byte) findcol::x#5 ← phi( findcol/(byte) findcol::x#7 findcol::@10/(byte) findcol::x#8 )
   (byte) findcol::i#2 ← phi( findcol/(byte) findcol::i#0 findcol::@10/(byte) findcol::i#1 )
-  (bool~) findcol::$0 ← (byte) findcol::i#2 < (byte) numpoints
+  (bool~) findcol::$0 ← (byte) findcol::i#2 < (const byte) numpoints
   if((bool~) findcol::$0) goto findcol::@2
   to:findcol::@3
 findcol::@2: scope:[findcol]  from findcol::@1
@@ -341,10 +337,10 @@ SYMBOL TABLE SSA
 (label) @6
 (label) @begin
 (label) @end
-(byte*) COLORS
+(const byte*) COLORS = (byte*)(number) $d800
 (byte[]) COLS
-(byte) FILL
-(byte*) SCREEN
+(const byte) FILL = (number) $e6
+(const byte*) SCREEN = (byte*)(number) $400
 (byte[]) XPOS
 (byte[]) YPOS
 (void()) animate()
@@ -533,7 +529,7 @@ SYMBOL TABLE SSA
 (label) main::@4
 (label) main::@5
 (label) main::@return
-(byte) numpoints
+(const byte) numpoints = (number) 6
 (void()) render()
 (byte~) render::$0
 (bool~) render::$1
@@ -566,8 +562,6 @@ SYMBOL TABLE SSA
 (byte) render::y#4
 (byte) render::y#5
 
-Adding number conversion cast (unumber) $e6 in (byte) FILL ← (number) $e6
-Adding number conversion cast (unumber) 6 in (byte) numpoints ← (number) 6
 Adding number conversion cast (unumber) 1 in (number~) animate::$0 ← *((byte[]) XPOS + (number) 0) + (number) 1
 Adding number conversion cast (unumber) animate::$0 in (number~) animate::$0 ← *((byte[]) XPOS + (number) 0) + (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (unumber~) animate::$0 ← *((byte[]) XPOS + (number) 0) + (unumber)(number) 1
@@ -618,7 +612,7 @@ Adding number conversion cast (unumber) $28 in (number~) animate::$18 ← *((byt
 Adding number conversion cast (unumber) animate::$18 in (number~) animate::$18 ← *((byte[]) XPOS + (number) 3) - (unumber)(number) $28
 Adding number conversion cast (unumber) 3 in (unumber~) animate::$18 ← *((byte[]) XPOS + (number) 3) - (unumber)(number) $28
 Adding number conversion cast (unumber) 3 in *((byte[]) XPOS + (number) 3) ← (unumber~) animate::$18
-Adding number conversion cast (unumber) $3e8 in (byte*~) initscreen::$0 ← (byte*) SCREEN + (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (byte*~) initscreen::$0 ← (const byte*) SCREEN + (number) $3e8
 Adding number conversion cast (unumber) $28 in (byte*~) render::$2 ← (byte*) render::colline#3 + (number) $28
 Adding number conversion cast (unumber) $ff in (byte) findcol::mindiff#0 ← (number) $ff
 Adding number conversion cast (unumber) 0 in (byte) findcol::mincol#0 ← (number) 0
@@ -629,10 +623,6 @@ Added casts to value list in (byte[]) XPOS ← (byte[]){ (byte)(number) 5, (byte
 Added casts to value list in (byte[]) YPOS ← (byte[]){ (byte)(number) 5, (byte)(number) 8, (byte)(number) $e, (byte)(number) 2, (byte)(number) $11, (byte)(number) $16 }
 Added casts to value list in (byte[]) COLS ← (byte[]){ (byte)(number) 1, (byte)(number) 2, (byte)(number) 3, (byte)(number) 4, (byte)(number) 5, (byte)(number) 7 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) COLORS ← (byte*)(number) $d800
-Inlining cast (byte) FILL ← (unumber)(number) $e6
-Inlining cast (byte) numpoints ← (unumber)(number) 6
 Inlining cast *((byte[]) XPOS + (unumber)(number) 0) ← (unumber)(number) 0
 Inlining cast *((byte[]) YPOS + (unumber)(number) 0) ← (unumber)(number) 0
 Inlining cast *((byte[]) XPOS + (unumber)(number) 1) ← (unumber)(number) $28
@@ -645,8 +635,6 @@ Inlining cast (byte) findcol::return#2 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 55296
-Simplifying constant integer cast $e6
-Simplifying constant integer cast 6
 Simplifying constant integer cast 5
 Simplifying constant integer cast $f
 Simplifying constant integer cast 6
@@ -715,8 +703,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $e6
-Finalized unsigned number type (byte) 6
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
@@ -774,15 +760,15 @@ Inferred type updated to byte in (unumber~) animate::$9 ← *((byte[]) YPOS + (b
 Inferred type updated to byte in (unumber~) animate::$12 ← *((byte[]) YPOS + (byte) 3) - (byte) 1
 Inferred type updated to byte in (unumber~) animate::$15 ← *((byte[]) XPOS + (byte) 3) + (byte) 7
 Inferred type updated to byte in (unumber~) animate::$18 ← *((byte[]) XPOS + (byte) 3) - (byte) $28
-Inversing boolean not [15] (bool~) animate::$2 ← *((byte[]) XPOS + (byte) 0) != (byte) $28 from [14] (bool~) animate::$1 ← *((byte[]) XPOS + (byte) 0) == (byte) $28
-Inversing boolean not [20] (bool~) animate::$5 ← *((byte[]) YPOS + (byte) 0) != (byte) $19 from [19] (bool~) animate::$4 ← *((byte[]) YPOS + (byte) 0) == (byte) $19
-Inversing boolean not [26] (bool~) animate::$8 ← *((byte[]) XPOS + (byte) 1) != (byte) $ff from [25] (bool~) animate::$7 ← *((byte[]) XPOS + (byte) 1) == (byte) $ff
-Inversing boolean not [32] (bool~) animate::$11 ← *((byte[]) YPOS + (byte) 2) != (byte) $19 from [31] (bool~) animate::$10 ← *((byte[]) YPOS + (byte) 2) == (byte) $19
-Inversing boolean not [38] (bool~) animate::$14 ← *((byte[]) YPOS + (byte) 3) != (byte) $ff from [37] (bool~) animate::$13 ← *((byte[]) YPOS + (byte) 3) == (byte) $ff
-Inversing boolean not [45] (bool~) animate::$17 ← *((byte[]) XPOS + (byte) 3) < (byte) $28 from [44] (bool~) animate::$16 ← *((byte[]) XPOS + (byte) 3) >= (byte) $28
-Inversing boolean not [93] (bool~) findcol::$2 ← (byte) findcol::x#1 != (byte) findcol::xp#0 from [92] (bool~) findcol::$1 ← (byte) findcol::x#1 == (byte) findcol::xp#0
-Inversing boolean not [103] (bool~) findcol::$4 ← (byte) findcol::y#1 != (byte) findcol::yp#1 from [102] (bool~) findcol::$3 ← (byte) findcol::y#1 == (byte) findcol::yp#1
-Inversing boolean not [128] (bool~) findcol::$14 ← (byte) findcol::diff#7 >= (byte) findcol::mindiff#2 from [127] (bool~) findcol::$13 ← (byte) findcol::diff#7 < (byte) findcol::mindiff#2
+Inversing boolean not [11] (bool~) animate::$2 ← *((byte[]) XPOS + (byte) 0) != (byte) $28 from [10] (bool~) animate::$1 ← *((byte[]) XPOS + (byte) 0) == (byte) $28
+Inversing boolean not [16] (bool~) animate::$5 ← *((byte[]) YPOS + (byte) 0) != (byte) $19 from [15] (bool~) animate::$4 ← *((byte[]) YPOS + (byte) 0) == (byte) $19
+Inversing boolean not [22] (bool~) animate::$8 ← *((byte[]) XPOS + (byte) 1) != (byte) $ff from [21] (bool~) animate::$7 ← *((byte[]) XPOS + (byte) 1) == (byte) $ff
+Inversing boolean not [28] (bool~) animate::$11 ← *((byte[]) YPOS + (byte) 2) != (byte) $19 from [27] (bool~) animate::$10 ← *((byte[]) YPOS + (byte) 2) == (byte) $19
+Inversing boolean not [34] (bool~) animate::$14 ← *((byte[]) YPOS + (byte) 3) != (byte) $ff from [33] (bool~) animate::$13 ← *((byte[]) YPOS + (byte) 3) == (byte) $ff
+Inversing boolean not [41] (bool~) animate::$17 ← *((byte[]) XPOS + (byte) 3) < (byte) $28 from [40] (bool~) animate::$16 ← *((byte[]) XPOS + (byte) 3) >= (byte) $28
+Inversing boolean not [89] (bool~) findcol::$2 ← (byte) findcol::x#1 != (byte) findcol::xp#0 from [88] (bool~) findcol::$1 ← (byte) findcol::x#1 == (byte) findcol::xp#0
+Inversing boolean not [99] (bool~) findcol::$4 ← (byte) findcol::y#1 != (byte) findcol::yp#1 from [98] (bool~) findcol::$3 ← (byte) findcol::y#1 == (byte) findcol::yp#1
+Inversing boolean not [124] (bool~) findcol::$14 ← (byte) findcol::diff#7 >= (byte) findcol::mindiff#2 from [123] (bool~) findcol::$13 ← (byte) findcol::diff#7 < (byte) findcol::mindiff#2
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte*) initscreen::screen#2 = (byte*) initscreen::screen#3 
 Alias (byte) findcol::return#0 = (byte) findcol::return#4 
@@ -837,33 +823,34 @@ Identical Phi Values (byte) findcol::y#10 (byte) findcol::y#0
 Identical Phi Values (byte) findcol::x#1 (byte) findcol::x#7
 Identical Phi Values (byte) findcol::y#1 (byte) findcol::y#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) animate::$2 [16] if(*((byte[]) XPOS + (byte) 0)!=(byte) $28) goto animate::@1
-Simple Condition (bool~) animate::$5 [21] if(*((byte[]) YPOS + (byte) 0)!=(byte) $19) goto animate::@2
-Simple Condition (bool~) animate::$8 [27] if(*((byte[]) XPOS + (byte) 1)!=(byte) $ff) goto animate::@3
-Simple Condition (bool~) animate::$11 [33] if(*((byte[]) YPOS + (byte) 2)!=(byte) $19) goto animate::@4
-Simple Condition (bool~) animate::$14 [39] if(*((byte[]) YPOS + (byte) 3)!=(byte) $ff) goto animate::@return
-Simple Condition (bool~) animate::$17 [46] if(*((byte[]) XPOS + (byte) 3)<(byte) $28) goto animate::@return
-Simple Condition (bool~) initscreen::$1 [54] if((byte*) initscreen::screen#2<(byte*~) initscreen::$0) goto initscreen::@2
-Simple Condition (bool~) render::$1 [74] if((byte) render::x#1!=rangelast(0,$27)) goto render::@2
-Simple Condition (bool~) render::$3 [80] if((byte) render::y#1!=rangelast(0,$18)) goto render::@1
-Simple Condition (bool~) findcol::$0 [88] if((byte) findcol::i#10<(byte) numpoints) goto findcol::@2
-Simple Condition (bool~) findcol::$2 [94] if((byte) findcol::x#0!=(byte) findcol::xp#0) goto findcol::@4
-Simple Condition (bool~) findcol::$5 [100] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@6
-Simple Condition (bool~) findcol::$4 [104] if((byte) findcol::y#0!=(byte) findcol::yp#0) goto findcol::@4
-Simple Condition (bool~) findcol::$8 [117] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@8
-Simple Condition (bool~) findcol::$14 [129] if((byte) findcol::diff#7>=(byte) findcol::mindiff#10) goto findcol::@10
+Simple Condition (bool~) animate::$2 [12] if(*((byte[]) XPOS + (byte) 0)!=(byte) $28) goto animate::@1
+Simple Condition (bool~) animate::$5 [17] if(*((byte[]) YPOS + (byte) 0)!=(byte) $19) goto animate::@2
+Simple Condition (bool~) animate::$8 [23] if(*((byte[]) XPOS + (byte) 1)!=(byte) $ff) goto animate::@3
+Simple Condition (bool~) animate::$11 [29] if(*((byte[]) YPOS + (byte) 2)!=(byte) $19) goto animate::@4
+Simple Condition (bool~) animate::$14 [35] if(*((byte[]) YPOS + (byte) 3)!=(byte) $ff) goto animate::@return
+Simple Condition (bool~) animate::$17 [42] if(*((byte[]) XPOS + (byte) 3)<(byte) $28) goto animate::@return
+Simple Condition (bool~) initscreen::$1 [50] if((byte*) initscreen::screen#2<(byte*~) initscreen::$0) goto initscreen::@2
+Simple Condition (bool~) render::$1 [70] if((byte) render::x#1!=rangelast(0,$27)) goto render::@2
+Simple Condition (bool~) render::$3 [76] if((byte) render::y#1!=rangelast(0,$18)) goto render::@1
+Simple Condition (bool~) findcol::$0 [84] if((byte) findcol::i#10<(const byte) numpoints) goto findcol::@2
+Simple Condition (bool~) findcol::$2 [90] if((byte) findcol::x#0!=(byte) findcol::xp#0) goto findcol::@4
+Simple Condition (bool~) findcol::$5 [96] if((byte) findcol::x#0<(byte) findcol::xp#0) goto findcol::@6
+Simple Condition (bool~) findcol::$4 [100] if((byte) findcol::y#0!=(byte) findcol::yp#0) goto findcol::@4
+Simple Condition (bool~) findcol::$8 [113] if((byte) findcol::y#0<(byte) findcol::yp#0) goto findcol::@8
+Simple Condition (bool~) findcol::$14 [125] if((byte) findcol::diff#7>=(byte) findcol::mindiff#10) goto findcol::@10
 Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [48] (byte*~) initscreen::$0 ← (const byte*) SCREEN + (word) $3e8
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (byte[]) { (byte) 5, (byte) $f, (byte) 6, (byte) $22, (byte) $15, (byte) $1f }
 Identified constant from value list (byte[]) { (byte) 5, (byte) 8, (byte) $e, (byte) 2, (byte) $11, (byte) $16 }
 Identified constant from value list (byte[]) { (byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5, (byte) 7 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) COLORS = (byte*) 55296
-Constant (const byte) FILL = $e6
-Constant (const byte) numpoints = 6
 Constant (const byte[]) XPOS = { 5, $f, 6, $22, $15, $1f }
 Constant (const byte[]) YPOS = { 5, 8, $e, 2, $11, $16 }
 Constant (const byte[]) COLS = { 1, 2, 3, 4, 5, 7 }
+Constant (const byte*) initscreen::screen#0 = SCREEN
+Constant (const byte*) initscreen::$0 = SCREEN+$3e8
+Constant (const byte*) render::colline#0 = COLORS
 Constant (const byte) render::y#0 = 0
 Constant (const byte) render::x#0 = 0
 Constant (const byte) findcol::mindiff#0 = $ff
@@ -872,23 +859,20 @@ Constant (const byte) findcol::i#0 = 0
 Constant (const byte) findcol::diff#0 = 0
 Constant (const byte) findcol::return#2 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) initscreen::screen#0 = SCREEN
-Constant (const byte*) render::colline#0 = COLORS
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [10] if(true) goto main::@1
+if() condition always true - replacing block destination [6] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [72] render::x#1 ← ++ render::x#2 to ++
-Resolved ranged comparison value [74] if(render::x#1!=rangelast(0,$27)) goto render::@2 to (number) $28
-Resolved ranged next value [78] render::y#1 ← ++ render::y#4 to ++
-Resolved ranged comparison value [80] if(render::y#1!=rangelast(0,$18)) goto render::@1 to (number) $19
-Simplifying expression containing zero XPOS in [12] (byte~) animate::$0 ← *((const byte[]) XPOS + (byte) 0) + (byte) 1
-Simplifying expression containing zero XPOS in [13] *((const byte[]) XPOS + (byte) 0) ← (byte~) animate::$0
-Simplifying expression containing zero XPOS in [16] if(*((const byte[]) XPOS + (byte) 0)!=(byte) $28) goto animate::@1
-Simplifying expression containing zero YPOS in [17] (byte~) animate::$3 ← *((const byte[]) YPOS + (byte) 0) + (byte) 1
-Simplifying expression containing zero YPOS in [18] *((const byte[]) YPOS + (byte) 0) ← (byte~) animate::$3
-Simplifying expression containing zero YPOS in [21] if(*((const byte[]) YPOS + (byte) 0)!=(byte) $19) goto animate::@2
-Simplifying expression containing zero XPOS in [22] *((const byte[]) XPOS + (byte) 0) ← (byte) 0
-Simplifying expression containing zero YPOS in [28] *((const byte[]) YPOS + (byte) 0) ← (byte) 0
+Resolved ranged next value [68] render::x#1 ← ++ render::x#2 to ++
+Resolved ranged comparison value [70] if(render::x#1!=rangelast(0,$27)) goto render::@2 to (number) $28
+Resolved ranged next value [74] render::y#1 ← ++ render::y#4 to ++
+Resolved ranged comparison value [76] if(render::y#1!=rangelast(0,$18)) goto render::@1 to (number) $19
+Simplifying expression containing zero XPOS in [8] (byte~) animate::$0 ← *((const byte[]) XPOS + (byte) 0) + (byte) 1
+Simplifying expression containing zero XPOS in [9] *((const byte[]) XPOS + (byte) 0) ← (byte~) animate::$0
+Simplifying expression containing zero XPOS in [12] if(*((const byte[]) XPOS + (byte) 0)!=(byte) $28) goto animate::@1
+Simplifying expression containing zero YPOS in [13] (byte~) animate::$3 ← *((const byte[]) YPOS + (byte) 0) + (byte) 1
+Simplifying expression containing zero YPOS in [14] *((const byte[]) YPOS + (byte) 0) ← (byte~) animate::$3
+Simplifying expression containing zero YPOS in [17] if(*((const byte[]) YPOS + (byte) 0)!=(byte) $19) goto animate::@2
+Simplifying expression containing zero XPOS in [18] *((const byte[]) XPOS + (byte) 0) ← (byte) 0
+Simplifying expression containing zero YPOS in [24] *((const byte[]) YPOS + (byte) 0) ← (byte) 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) findcol::diff#0
 Successful SSA optimization PassNEliminateUnusedVars
@@ -903,14 +887,10 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $19
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [30] (byte*~) initscreen::$0 ← (const byte*) SCREEN + (word) $3e8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) initscreen::$0 = SCREEN+$3e8
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) initscreen::screen#0
+Inlining constant with var siblings (const byte*) render::colline#0
 Inlining constant with var siblings (const byte) render::y#0
 Inlining constant with var siblings (const byte) render::x#0
-Inlining constant with var siblings (const byte*) render::colline#0
 Inlining constant with var siblings (const byte) findcol::mindiff#0
 Inlining constant with var siblings (const byte) findcol::mincol#0
 Inlining constant with var siblings (const byte) findcol::i#0
@@ -2535,7 +2515,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte*) COLORS = (byte*) 55296
 (const byte[]) COLS = { (byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5, (byte) 7 }
-(const byte) FILL = (byte) $e6
+(const byte) FILL = (number) $e6
 (const byte*) SCREEN = (byte*) 1024
 (const byte[]) XPOS = { (byte) 5, (byte) $f, (byte) 6, (byte) $22, (byte) $15, (byte) $1f }
 (const byte[]) YPOS = { (byte) 5, (byte) 8, (byte) $e, (byte) 2, (byte) $11, (byte) $16 }
@@ -2615,7 +2595,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@2
-(const byte) numpoints = (byte) 6
+(const byte) numpoints = (number) 6
 (void()) render()
 (label) render::@1
 (label) render::@2

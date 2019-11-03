@@ -8,7 +8,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte[$400]) main::SCREEN ← ((byte[$400])) (number) $400
   (byte) main::b#0 ← (byte) 0
   (byte) main::i#0 ← (number) 2
   to:main::@1
@@ -20,12 +19,12 @@ main::@1: scope:[main]  from main main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (byte) main::b#1 ← *((byte[$400]) main::SCREEN + (byte) main::i#3)
+  (byte) main::b#1 ← *((const byte[$400]) main::SCREEN + (byte) main::i#3)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@3: scope:[main]  from main::@1
   (byte) main::b#2 ← phi( main::@1/(byte) main::b#3 )
-  *((byte[$400]) main::SCREEN + (number) $3e7) ← (byte) main::b#2
+  *((const byte[$400]) main::SCREEN + (number) $3e7) ← (byte) main::b#2
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -48,7 +47,7 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(byte[$400]) main::SCREEN
+(const byte[$400]) main::SCREEN = (byte[$400])(number) $400
 (byte) main::b
 (byte) main::b#0
 (byte) main::b#1
@@ -62,9 +61,8 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 2 in (byte) main::i#0 ← (number) 2
 Adding number conversion cast (unumber) $a in (bool~) main::$0 ← (byte) main::i#2 < (number) $a
-Adding number conversion cast (unumber) $3e7 in *((byte[$400]) main::SCREEN + (number) $3e7) ← (byte) main::b#2
+Adding number conversion cast (unumber) $3e7 in *((const byte[$400]) main::SCREEN + (number) $3e7) ← (byte) main::b#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte[$400]) main::SCREEN ← (byte[$400])(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -79,13 +77,12 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte) main::b#2 = (byte) main::b#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [5] if((byte) main::i#2<(byte) $a) goto main::@2
+Simple Condition (bool~) main::$0 [4] if((byte) main::i#2<(byte) $a) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[$400]) main::SCREEN = (byte*) 1024
 Constant (const byte) main::b#0 = 0
 Constant (const byte) main::i#0 = 2
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [10] *((const byte[$400]) main::SCREEN + (word) $3e7) ← (byte) main::b#2
+De-inlining pointer[w] to *(pointer+w)   [9] *((const byte[$400]) main::SCREEN + (word) $3e7) ← (byte) main::b#2
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Constant right-side identified [4] (byte*~) main::$1 ← (const byte[$400]) main::SCREEN + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation

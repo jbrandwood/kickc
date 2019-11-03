@@ -280,7 +280,7 @@ menu: {
 mode_8bppchunkybmm: {
     // 8BPP Chunky Bitmap (contains 8bpp pixels)
     .const PLANEB = $20000
-    .label __26 = 9
+    .label __9 = 9
     .label gfxb = $b
     .label x = 4
     .label y = $d
@@ -292,8 +292,9 @@ mode_8bppchunkybmm: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
     // Linear Graphics Plane B Counter
-    lda #0
+    lda #<PLANEB&$ffff
     sta DTV_PLANEB_START_LO
+    lda #>PLANEB&$ffff
     sta DTV_PLANEB_START_MI
     lda #<PLANEB>>$10
     sta DTV_PLANEB_START_HI
@@ -343,11 +344,11 @@ mode_8bppchunkybmm: {
     lda.z y
     clc
     adc.z x
-    sta.z __26
+    sta.z __9
     lda #0
     adc.z x+1
-    sta.z __26+1
-    lda.z __26
+    sta.z __9+1
+    lda.z __9
     ldy #0
     sta (gfxb),y
     inc.z gfxb
@@ -513,7 +514,7 @@ mode_8bpppixelcell: {
     // 8BPP Pixel Cell Charset (contains 256 64 byte chars)
     .label PLANEB = $4000
     .label CHARGEN = $d000
-    .label __15 = $e
+    .label __3 = $e
     .label gfxa = $b
     .label ay = $d
     .label bits = 6
@@ -575,10 +576,10 @@ mode_8bpppixelcell: {
     asl
     asl
     asl
-    sta.z __15
+    sta.z __3
     txa
     and #$f
-    ora.z __15
+    ora.z __3
     ldy #0
     sta (gfxa),y
     inc.z gfxa
@@ -811,7 +812,7 @@ mode_twoplanebitmap: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label __17 = $e
+    .label __3 = $e
     .label col = $b
     .label cy = 6
     .label gfxa = 9
@@ -884,10 +885,10 @@ mode_twoplanebitmap: {
     asl
     asl
     asl
-    sta.z __17
+    sta.z __3
     txa
     and #$f
-    ora.z __17
+    ora.z __3
     ldy #0
     sta (col),y
     inc.z col
@@ -976,7 +977,7 @@ mode_sixsfred2: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label __16 = 7
+    .label __3 = 7
     .label col = 9
     .label cy = 2
     .label gfxa = 4
@@ -1044,10 +1045,10 @@ mode_sixsfred2: {
     asl
     asl
     asl
-    sta.z __16
+    sta.z __3
     lda #3
     and.z cy
-    ora.z __16
+    ora.z __3
     ldy #0
     sta (col),y
     inc.z col
@@ -1134,7 +1135,7 @@ mode_hicolmcchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __27 = 7
+    .label __22 = 7
     .label col = $b
     .label ch = 4
     .label cy = 3
@@ -1199,10 +1200,10 @@ mode_hicolmcchar: {
     asl
     asl
     asl
-    sta.z __27
+    sta.z __22
     txa
     and #$f
-    ora.z __27
+    ora.z __22
     ldy #0
     sta (col),y
     inc.z col
@@ -1243,7 +1244,7 @@ mode_hicolecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __27 = 8
+    .label __22 = 8
     .label col = 4
     .label ch = $b
     .label cy = 6
@@ -1310,10 +1311,10 @@ mode_hicolecmchar: {
     asl
     asl
     asl
-    sta.z __27
+    sta.z __22
     txa
     and #$f
-    ora.z __27
+    ora.z __22
     ldy #0
     sta (col),y
     inc.z col
@@ -1350,7 +1351,7 @@ mode_hicolstdchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __26 = 8
+    .label __22 = 8
     .label col = $b
     .label ch = 9
     .label cy = 7
@@ -1410,10 +1411,10 @@ mode_hicolstdchar: {
     asl
     asl
     asl
-    sta.z __26
+    sta.z __22
     txa
     and #$f
-    ora.z __26
+    ora.z __22
     ldy #0
     sta (col),y
     inc.z col
@@ -1918,7 +1919,7 @@ mode_mcchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __29 = $d
+    .label __24 = $d
     .label col = $b
     .label ch = 4
     .label cy = 7
@@ -1992,10 +1993,10 @@ mode_mcchar: {
     asl
     asl
     asl
-    sta.z __29
+    sta.z __24
     txa
     and #$f
-    ora.z __29
+    ora.z __24
     ldy #0
     sta (ch),y
     inc.z ch
@@ -2030,7 +2031,7 @@ mode_ecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __29 = $d
+    .label __24 = $d
     .label col = $b
     .label ch = 4
     .label cy = 8
@@ -2105,10 +2106,10 @@ mode_ecmchar: {
     asl
     asl
     asl
-    sta.z __29
+    sta.z __24
     txa
     and #$f
-    ora.z __29
+    ora.z __24
     ldy #0
     sta (ch),y
     inc.z ch
@@ -2139,7 +2140,7 @@ mode_stdchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __28 = $e
+    .label __24 = $e
     .label col = $b
     .label ch = 4
     .label cy = 6
@@ -2208,10 +2209,10 @@ mode_stdchar: {
     asl
     asl
     asl
-    sta.z __28
+    sta.z __24
     txa
     and #$f
-    ora.z __28
+    ora.z __24
     ldy #0
     sta (ch),y
     inc.z ch
@@ -2336,6 +2337,8 @@ memset: {
 print_set_screen: {
     rts
 }
+  MENU_TEXT: .text "C64DTV Graphics Modes            CCLHBME@                                 OHIIMCC@                                 LUNCMMM@----------------------------------------@1. Standard Char             (V) 0000000@2. Extended Color Char       (V) 0000001@3. Multicolor Char           (V) 0000010@4. Standard Bitmap           (V) 0000100@5. Multicolor Bitmap         (V) 0000110@6. High Color Standard Char  (H) 0001000@7. High Extended Color Char  (H) 0001001@8. High Multicolor Char      (H) 0001010@9. High Multicolor Bitmap    (H) 0001110@a. Sixs Fred 2               (D) 0010111@b. Two Plane Bitmap          (D) 0011101@c. Sixs Fred (2 Plane MC BM) (D) 0011111@d. 8bpp Pixel Cell           (D) 0111011@e. Chunky 8bpp Bitmap        (D) 1111011@----------------------------------------@    (V) vicII (H) vicII+hicol (D) c64dtv@"
+  .byte 0
   // Default vallues for the palette
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
@@ -2348,5 +2351,3 @@ print_set_screen: {
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
-  MENU_TEXT: .text "C64DTV Graphics Modes            CCLHBME@                                 OHIIMCC@                                 LUNCMMM@----------------------------------------@1. Standard Char             (V) 0000000@2. Extended Color Char       (V) 0000001@3. Multicolor Char           (V) 0000010@4. Standard Bitmap           (V) 0000100@5. Multicolor Bitmap         (V) 0000110@6. High Color Standard Char  (H) 0001000@7. High Extended Color Char  (H) 0001001@8. High Multicolor Char      (H) 0001010@9. High Multicolor Bitmap    (H) 0001110@a. Sixs Fred 2               (D) 0010111@b. Two Plane Bitmap          (D) 0011101@c. Sixs Fred (2 Plane MC BM) (D) 0011111@d. 8bpp Pixel Cell           (D) 0111011@e. Chunky 8bpp Bitmap        (D) 1111011@----------------------------------------@    (V) vicII (H) vicII+hicol (D) c64dtv@"
-  .byte 0

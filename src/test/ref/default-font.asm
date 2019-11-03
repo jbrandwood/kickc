@@ -45,9 +45,9 @@ main: {
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
+    .label str = SCREEN
     .const c = ' '
     .const num = $3e8
-    .label str = SCREEN
     .label end = str+num
     .label dst = 4
     lda #<str

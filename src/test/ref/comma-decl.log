@@ -6,15 +6,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  (byte) main::b ← (byte) 'c'
-  (number~) main::$0 ← (byte) main::b + (number) 1
+  (number~) main::$0 ← (const byte) main::b + (number) 1
   (byte) main::c#0 ← (number~) main::$0
   (number~) main::$1 ← (byte) main::c#0 + (number) 1
   (byte) main::d#0 ← (number~) main::$1
-  *((byte*) main::SCREEN + (number) 0) ← (byte) main::b
-  *((byte*) main::SCREEN + (number) 1) ← (byte) main::c#0
-  *((byte*) main::SCREEN + (number) 2) ← (byte) main::d#0
+  *((const byte*) main::SCREEN + (number) 0) ← (const byte) main::b
+  *((const byte*) main::SCREEN + (number) 1) ← (byte) main::c#0
+  *((const byte*) main::SCREEN + (number) 2) ← (byte) main::d#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -35,23 +33,21 @@ SYMBOL TABLE SSA
 (number~) main::$0
 (number~) main::$1
 (label) main::@return
-(byte*) main::SCREEN
-(byte) main::b
+(const byte*) main::SCREEN = (byte*)(number) $400
+(const byte) main::b = (byte) 'c'
 (byte) main::c
 (byte) main::c#0
 (byte) main::d
 (byte) main::d#0
 
-Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::b + (number) 1
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::b + (unumber)(number) 1
+Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (const byte) main::b + (number) 1
+Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (const byte) main::b + (unumber)(number) 1
 Adding number conversion cast (unumber) 1 in (number~) main::$1 ← (byte) main::c#0 + (number) 1
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) main::c#0 + (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) main::b
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte) main::c#0
-Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN + (number) 2) ← (byte) main::d#0
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (const byte) main::b
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte) main::c#0
+Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 2) ← (byte) main::d#0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
@@ -65,20 +61,17 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::b + (byte) 1
+Inferred type updated to byte in (unumber~) main::$0 ← (const byte) main::b + (byte) 1
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) main::c#0 + (byte) 1
 Alias (byte) main::c#0 = (byte~) main::$0 
 Alias (byte) main::d#0 = (byte~) main::$1 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) main::SCREEN = (byte*) 1024
-Constant (const byte) main::b = 'c'
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::b
-Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [0] (byte) main::c#0 ← (const byte) main::b + (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::c#0 = main::b+1
 Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::b
+Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [0] (byte) main::d#0 ← (const byte) main::c#0 + (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::d#0 = main::c#0+1

@@ -10,14 +10,14 @@
   .label CIA2_TIMER_B_CONTROL = $dd0f
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
-  // Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
-  .const CIA_TIMER_CONTROL_CONTINUOUS = 0
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   // Clock cycles per frame (on a C64 PAL)
   .const CLOCKS_PER_FRAME = $4cc8
   // Frames per second (on a C64 PAL)
   .const FRAMES_PER_SEC = $3c
+  // Clock cycles per second (on a C64 PAL)
+  .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
   // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
   .const CLOCKS_PER_INIT = $12
@@ -27,8 +27,6 @@
   .const SQRT_COUNT = $80
   /* Sqrt of COUNT */
   .label sieve = $1000
-  // Clock cycles per second (on a C64 PAL)
-  .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
   .label rem16u = $f
   .label print_char_cursor = $11
   .label print_line_cursor = 6
@@ -37,7 +35,7 @@ main: {
     .label toD0181_gfx = $1800
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
     .label __10 = 9
-    .label __14 = $15
+    .label __13 = $15
     .label cyclecount = 9
     .label sec100s = $d
     .label i = $11
@@ -45,7 +43,7 @@ main: {
     .label j = 2
     .label s = 4
     .label i_1 = $d
-    .label __39 = $13
+    .label __35 = $13
     //Show lower case font
     lda #toD0181_return
     sta D018
@@ -126,9 +124,9 @@ main: {
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
     jsr div32u16u
-    lda.z __14
+    lda.z __13
     sta.z sec100s
-    lda.z __14+1
+    lda.z __13+1
     sta.z sec100s+1
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -176,12 +174,12 @@ main: {
     lda.z i_1
     clc
     adc #<sieve
-    sta.z __39
+    sta.z __35
     lda.z i_1+1
     adc #>sieve
-    sta.z __39+1
+    sta.z __35+1
     ldy #0
-    lda (__39),y
+    lda (__35),y
     cmp #0
     bne __b11
     lda.z print_char_cursor_1
@@ -699,7 +697,7 @@ clock: {
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
     // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #CIA_TIMER_CONTROL_CONTINUOUS
+    lda #0
     sta CIA2_TIMER_A_CONTROL
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL

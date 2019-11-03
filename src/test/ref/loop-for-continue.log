@@ -1,4 +1,4 @@
-Warning! Adding boolean cast to non-boolean condition *((byte[]) MESSAGE + (byte) main::i)
+Warning! Adding boolean cast to non-boolean condition *((const byte[]) MESSAGE + (byte) main::i)
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@7
@@ -8,8 +8,6 @@ Culled Empty Block (label) main::@10
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte[]) MESSAGE ← (const string) $0
   to:@1
 
 (void()) main()
@@ -20,20 +18,20 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@5
   (byte) main::idx#4 ← phi( main/(byte) main::idx#0 main::@5/(byte) main::idx#5 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@5/(byte) main::i#1 )
-  (bool~) main::$2 ← (number) 0 != *((byte[]) MESSAGE + (byte) main::i#2)
+  (bool~) main::$2 ← (number) 0 != *((const byte[]) MESSAGE + (byte) main::i#2)
   if((bool~) main::$2) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) main::idx#3 ← phi( main::@1/(byte) main::idx#4 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (bool~) main::$0 ← *((byte[]) MESSAGE + (byte) main::i#3) == (byte) ' '
+  (bool~) main::$0 ← *((const byte[]) MESSAGE + (byte) main::i#3) == (byte) ' '
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@4
   to:main::@5
 main::@4: scope:[main]  from main::@2
   (byte) main::idx#2 ← phi( main::@2/(byte) main::idx#3 )
   (byte) main::i#4 ← phi( main::@2/(byte) main::i#3 )
-  *((byte*) SCREEN + (byte) main::idx#2) ← *((byte[]) MESSAGE + (byte) main::i#4)
+  *((const byte*) SCREEN + (byte) main::idx#2) ← *((const byte[]) MESSAGE + (byte) main::i#4)
   (byte) main::idx#1 ← ++ (byte) main::idx#2
   to:main::@5
 main::@5: scope:[main]  from main::@2 main::@4
@@ -52,13 +50,12 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "hello brave new world!"
 (label) @1
 (label) @2
 (label) @begin
 (label) @end
-(byte[]) MESSAGE
-(byte*) SCREEN
+(const byte[]) MESSAGE = (string) "hello brave new world!"
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -85,9 +82,8 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (byte) main::idx#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (number) 0 != *((byte[]) MESSAGE + (byte) main::i#2)
+Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (number) 0 != *((const byte[]) MESSAGE + (byte) main::i#2)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::idx#0 ← (unumber)(number) 0
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
@@ -100,26 +96,23 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [9] (bool~) main::$1 ← *((byte[]) MESSAGE + (byte) main::i#3) != (byte) ' ' from [8] (bool~) main::$0 ← *((byte[]) MESSAGE + (byte) main::i#3) == (byte) ' '
+Inversing boolean not [7] (bool~) main::$1 ← *((const byte[]) MESSAGE + (byte) main::i#3) != (byte) ' ' from [6] (bool~) main::$0 ← *((const byte[]) MESSAGE + (byte) main::i#3) == (byte) ' '
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::i#2 = (byte) main::i#3 (byte) main::i#4 
 Alias (byte) main::idx#2 = (byte) main::idx#3 (byte) main::idx#4 
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::i#2 = (byte) main::i#5 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$2 [6] if((byte) 0!=*((byte[]) MESSAGE + (byte) main::i#2)) goto main::@2
-Simple Condition (bool~) main::$1 [10] if(*((byte[]) MESSAGE + (byte) main::i#2)!=(byte) ' ') goto main::@4
+Simple Condition (bool~) main::$2 [4] if((byte) 0!=*((const byte[]) MESSAGE + (byte) main::i#2)) goto main::@2
+Simple Condition (bool~) main::$1 [8] if(*((const byte[]) MESSAGE + (byte) main::i#2)!=(byte) ' ') goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [10] if(*((byte[]) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@5
+Negating conditional jump and destination [8] if(*((const byte[]) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@5
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte[]) MESSAGE = $0
 Constant (const byte) main::idx#0 = 0
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::idx#0
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined $0 = (const byte[]) MESSAGE
 Constant inlined main::i#0 = (byte) 0
 Constant inlined main::idx#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining

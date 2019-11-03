@@ -12,12 +12,13 @@ Converted procedure struct value parameter to member unwinding in call (void~) m
 Converted procedure struct value parameter to member unwinding in call (void~) main::$2 ← call print *((byte*) main::$3) *((byte*) main::$4) 
 Replacing struct member reference (struct Point) print::p.x with member unwinding reference (byte) print::p_x
 Replacing struct member reference (struct Point) print::p.y with member unwinding reference (byte) print::p_y
+Identified constant variable (byte) Point::x
+Identified constant variable (byte) Point::y
 Culled Empty Block (label) @1
 Adding versioned struct unwinding for (struct Point) main::point#0
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) idx#0 ← (number) 0
   to:@2
 
@@ -59,9 +60,9 @@ print: scope:[print]  from main main::@1
   (byte) print::p_y#2 ← phi( main/(byte) print::p_y#0 main::@1/(byte) print::p_y#1 )
   (byte) idx#11 ← phi( main/(byte) idx#14 main::@1/(byte) idx#1 )
   (byte) print::p_x#2 ← phi( main/(byte) print::p_x#0 main::@1/(byte) print::p_x#1 )
-  *((byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2
+  *((const byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2
   (byte) idx#4 ← ++ (byte) idx#11
-  *((byte*) SCREEN + (byte) idx#4) ← (byte) print::p_y#2
+  *((const byte*) SCREEN + (byte) idx#4) ← (byte) print::p_y#2
   (byte) idx#5 ← ++ (byte) idx#4
   to:print::@return
 print::@return: scope:[print]  from print
@@ -86,9 +87,7 @@ SYMBOL TABLE SSA
 (label) @end
 (const byte) OFFSET_STRUCT_POINT_X = (byte) 0
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
-(byte) Point::x
-(byte) Point::y
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (byte) idx
 (byte) idx#0
 (byte) idx#1
@@ -139,7 +138,6 @@ Adding number conversion cast (unumber) 0 in (byte) idx#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (byte) main::point_x#0 ← (number) 1
 Adding number conversion cast (unumber) 2 in (byte) main::point_y#0 ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) idx#0 ← (unumber)(number) 0
 Inlining cast (byte) main::point_x#0 ← (unumber)(number) 1
 Inlining cast (byte) main::point_y#0 ← (unumber)(number) 2
@@ -165,20 +163,19 @@ Identical Phi Values (byte) idx#1 (byte) idx#12
 Identical Phi Values (byte) idx#10 (byte) idx#12
 Identical Phi Values (byte) idx#13 (byte) idx#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Rewriting struct address-of to first member [6] (struct Point*) main::ptr#0 ← (struct Point*)&(byte) main::point_x#0
+Rewriting struct address-of to first member [5] (struct Point*) main::ptr#0 ← (struct Point*)&(byte) main::point_x#0
 Successful SSA optimization PassNStructAddressOfRewriting
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) idx#0 = 0
 Constant (const struct Point*) main::ptr#0 = (struct Point*)&main::point_x#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)main::ptr#0 in [18] (byte*) main::$3 ← (byte*)(const struct Point*) main::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X
-Constant value identified (byte*)main::ptr#0 in [19] (byte*) main::$4 ← (byte*)(const struct Point*) main::ptr#0 + (const byte) OFFSET_STRUCT_POINT_Y
+Constant value identified (byte*)main::ptr#0 in [17] (byte*) main::$3 ← (byte*)(const struct Point*) main::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X
+Constant value identified (byte*)main::ptr#0 in [18] (byte*) main::$4 ← (byte*)(const struct Point*) main::ptr#0 + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantValues
-Converting *(pointer+n) to pointer[n] [13] (byte) print::p_x#1 ← *((byte*) main::$3)  -- *((byte*)main::ptr#0 + OFFSET_STRUCT_POINT_X)
-Converting *(pointer+n) to pointer[n] [14] (byte) print::p_y#1 ← *((byte*) main::$4)  -- *((byte*)main::ptr#0 + OFFSET_STRUCT_POINT_Y)
+Converting *(pointer+n) to pointer[n] [12] (byte) print::p_x#1 ← *((byte*) main::$3)  -- *((byte*)main::ptr#0 + OFFSET_STRUCT_POINT_X)
+Converting *(pointer+n) to pointer[n] [13] (byte) print::p_y#1 ← *((byte*) main::$4)  -- *((byte*)main::ptr#0 + OFFSET_STRUCT_POINT_Y)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)main::ptr#0 in [13] (byte) print::p_x#1 ← *((byte*)(const struct Point*) main::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero (byte*)main::ptr#0 in [18] (byte*) main::$3 ← (byte*)(const struct Point*) main::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X
+Simplifying expression containing zero (byte*)main::ptr#0 in [12] (byte) print::p_x#1 ← *((byte*)(const struct Point*) main::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero (byte*)main::ptr#0 in [17] (byte*) main::$3 ← (byte*)(const struct Point*) main::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (struct Point) main::point#0 and assignment [2] (struct Point) main::point#0 ← struct-unwound {(byte) main::point_x#0, (byte) main::point_y#0}
 Eliminating unused variable (byte*) main::$3 and assignment [9] (byte*) main::$3 ← (byte*)(const struct Point*) main::ptr#0
@@ -257,8 +254,6 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) Point::x
-(byte) Point::y
 (byte) idx
 (byte) idx#11 3.0
 (byte) idx#12 0.8
@@ -309,8 +304,8 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
+  .const OFFSET_STRUCT_POINT_Y = 1
   .label idx = 7
   .label idx_1 = 3
   // @begin
@@ -442,8 +437,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
+  .const OFFSET_STRUCT_POINT_Y = 1
   .label idx = 2
   // @begin
 __bbegin:
@@ -560,8 +555,6 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
-(byte) Point::x
-(byte) Point::y
 (const byte*) SCREEN = (byte*) 1024
 (byte) idx
 (byte) idx#11 idx zp[1]:2 3.0
@@ -607,8 +600,8 @@ Score: 75
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
+  .const OFFSET_STRUCT_POINT_Y = 1
   .label idx = 2
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]

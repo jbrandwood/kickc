@@ -8,13 +8,10 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word*) main::w1 ← ((word*)) (number) $1000
-  (word*) main::w2 ← ((word*)) (number) $1140
-  (word~) main::$1 ← (word*) main::w2 - (word*) main::w1
+  (word~) main::$1 ← (const word*) main::w2 - (const word*) main::w1
   (word~) main::$0 ← (word~) main::$1 / (const byte) SIZEOF_WORD
   (word) main::wd#0 ← (word~) main::$0
-  (word*) main::SCREEN ← ((word*)) (number) $400
-  *((word*) main::SCREEN) ← (word) main::wd#0
+  *((const word*) main::SCREEN) ← (word) main::wd#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -36,26 +33,18 @@ SYMBOL TABLE SSA
 (word~) main::$0
 (word~) main::$1
 (label) main::@return
-(word*) main::SCREEN
-(word*) main::w1
-(word*) main::w2
+(const word*) main::SCREEN = (word*)(number) $400
+(const word*) main::w1 = (word*)(number) $1000
+(const word*) main::w2 = (word*)(number) $1140
 (word) main::wd
 (word) main::wd#0
 
-Inlining cast (word*) main::w1 ← (word*)(number) $1000
-Inlining cast (word*) main::w2 ← (word*)(number) $1140
-Inlining cast (word*) main::SCREEN ← (word*)(number) $400
-Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (word*) 1024
 Simplifying constant pointer cast (word*) 4096
 Simplifying constant pointer cast (word*) 4416
-Simplifying constant pointer cast (word*) 1024
 Successful SSA optimization PassNCastSimplification
 Alias (word) main::wd#0 = (word~) main::$0 
 Successful SSA optimization Pass2AliasElimination
-Constant (const word*) main::w1 = (word*) 4096
-Constant (const word*) main::w2 = (word*) 4416
-Constant (const word*) main::SCREEN = (word*) 1024
-Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [0] (word~) main::$1 ← (const word*) main::w2 - (const word*) main::w1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::$1 = main::w2-main::w1
@@ -133,9 +122,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
+    .label SCREEN = $400
     .label w1 = $1000
     .label w2 = $1140
-    .label SCREEN = $400
     .const wd = (w2-w1)/SIZEOF_WORD
     // [4] *((const word*) main::SCREEN) ← (const word) main::wd#0 -- _deref_pwuc1=vwuc2 
     lda #<wd
@@ -185,9 +174,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
+    .label SCREEN = $400
     .label w1 = $1000
     .label w2 = $1140
-    .label SCREEN = $400
     .const wd = (w2-w1)/SIZEOF_WORD
     // [4] *((const word*) main::SCREEN) ← (const word) main::wd#0 -- _deref_pwuc1=vwuc2 
     lda #<wd
@@ -255,9 +244,9 @@ Score: 18
   // @end
   // main
 main: {
+    .label SCREEN = $400
     .label w1 = $1000
     .label w2 = $1140
-    .label SCREEN = $400
     .const wd = (w2-w1)/SIZEOF_WORD
     // *SCREEN = wd
     // [4] *((const word*) main::SCREEN) ← (const word) main::wd#0 -- _deref_pwuc1=vwuc2 

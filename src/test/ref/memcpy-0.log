@@ -1,6 +1,6 @@
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call (byte~) main::$0 ← call toD018 (byte*) SCREEN_COPY (byte*) CHARSET 
+Inlined call (byte~) main::$0 ← call toD018 (const byte*) SCREEN_COPY (const byte*) CHARSET 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
@@ -12,16 +12,12 @@ Culled Empty Block (label) memcpy::@7
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
 Culled Empty Block (label) @7
+Culled Empty Block (label) @8
 Culled Empty Block (label) main::toD0181_@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) PROCPORT ← ((byte*)) (number) 1
-  (byte) PROCPORT_RAM_CHARROM ← (number) 1
-  (byte) PROCPORT_BASIC_KERNEL_IO ← (number) 7
-  (byte*) CHARGEN ← ((byte*)) (number) $d000
-  (byte*) D018 ← ((byte*)) (number) $d018
-  to:@8
+  to:@9
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 memcpy: scope:[memcpy]  from main::@1 main::@2
@@ -60,16 +56,11 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
   (void*) memcpy::return#1 ← (void*) memcpy::return#4
   return 
   to:@return
-@8: scope:[]  from @begin
-  (byte*) CHARSET ← ((byte*)) (number) $2000
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) SCREEN_COPY ← ((byte*)) (number) $2400
-  to:@9
 
 (void()) main()
 main: scope:[main]  from @9
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN_COPY
-  (byte*) main::toD0181_gfx#0 ← (byte*) CHARSET
+  (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN_COPY
+  (byte*) main::toD0181_gfx#0 ← (const byte*) CHARSET
   to:main::toD0181
 main::toD0181: scope:[main]  from main
   (byte*) main::toD0181_gfx#1 ← phi( main/(byte*) main::toD0181_gfx#0 )
@@ -92,30 +83,30 @@ main::toD0181_@return: scope:[main]  from main::toD0181
 main::@1: scope:[main]  from main::toD0181_@return
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
   (byte~) main::$0 ← (byte) main::toD0181_return#3
-  *((byte*) D018) ← (byte~) main::$0
-  (void*) memcpy::destination#0 ← (void*)(byte*) SCREEN_COPY
-  (void*) memcpy::source#0 ← (void*)(byte*) SCREEN
+  *((const byte*) D018) ← (byte~) main::$0
+  (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN_COPY
+  (void*) memcpy::source#0 ← (void*)(const byte*) SCREEN
   (word) memcpy::num#0 ← (number) $400
   call memcpy 
   (void*) memcpy::return#2 ← (void*) memcpy::return#1
   to:main::@2
 main::@2: scope:[main]  from main::@1
   asm { sei  }
-  *((byte*) PROCPORT) ← (byte) PROCPORT_RAM_CHARROM
-  (void*) memcpy::destination#1 ← (void*)(byte*) CHARSET
-  (void*) memcpy::source#1 ← (void*)(byte*) CHARGEN
+  *((const byte*) PROCPORT) ← (const byte) PROCPORT_RAM_CHARROM
+  (void*) memcpy::destination#1 ← (void*)(const byte*) CHARSET
+  (void*) memcpy::source#1 ← (void*)(const byte*) CHARGEN
   (word) memcpy::num#1 ← (number) $800
   call memcpy 
   (void*) memcpy::return#3 ← (void*) memcpy::return#1
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  *((byte*) PROCPORT) ← (byte) PROCPORT_BASIC_KERNEL_IO
+  *((const byte*) PROCPORT) ← (const byte) PROCPORT_BASIC_KERNEL_IO
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
-@9: scope:[]  from @8
+@9: scope:[]  from @begin
   call main 
   to:@10
 @10: scope:[]  from @9
@@ -124,18 +115,17 @@ main::@return: scope:[main]  from main::@3
 
 SYMBOL TABLE SSA
 (label) @10
-(label) @8
 (label) @9
 (label) @begin
 (label) @end
-(byte*) CHARGEN
-(byte*) CHARSET
-(byte*) D018
-(byte*) PROCPORT
-(byte) PROCPORT_BASIC_KERNEL_IO
-(byte) PROCPORT_RAM_CHARROM
-(byte*) SCREEN
-(byte*) SCREEN_COPY
+(const byte*) CHARGEN = (byte*)(number) $d000
+(const byte*) CHARSET = (byte*)(number) $2000
+(const byte*) D018 = (byte*)(number) $d018
+(const byte*) PROCPORT = (byte*)(number) 1
+(const byte) PROCPORT_BASIC_KERNEL_IO = (number) 7
+(const byte) PROCPORT_RAM_CHARROM = (number) 1
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte*) SCREEN_COPY = (byte*)(number) $2400
 (void()) main()
 (byte~) main::$0
 (label) main::@1
@@ -208,8 +198,6 @@ SYMBOL TABLE SSA
 (byte*) memcpy::src_end#1
 (byte*) memcpy::src_end#2
 
-Adding number conversion cast (unumber) 1 in (byte) PROCPORT_RAM_CHARROM ← (number) 1
-Adding number conversion cast (unumber) 7 in (byte) PROCPORT_BASIC_KERNEL_IO ← (number) 7
 Adding number conversion cast (unumber) $3fff in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (number) $3fff
 Adding number conversion cast (unumber) main::toD0181_$1 in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (unumber)(number) $3fff
 Adding number conversion cast (unumber) 4 in (number~) main::toD0181_$2 ← (unumber~) main::toD0181_$1 * (number) 4
@@ -223,25 +211,15 @@ Adding number conversion cast (unumber) main::toD0181_$8 in (number~) main::toD0
 Adding number conversion cast (unumber) $400 in (word) memcpy::num#0 ← (number) $400
 Adding number conversion cast (unumber) $800 in (word) memcpy::num#1 ← (number) $800
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) PROCPORT ← (byte*)(number) 1
-Inlining cast (byte) PROCPORT_RAM_CHARROM ← (unumber)(number) 1
-Inlining cast (byte) PROCPORT_BASIC_KERNEL_IO ← (unumber)(number) 7
-Inlining cast (byte*) CHARGEN ← (byte*)(number) $d000
-Inlining cast (byte*) D018 ← (byte*)(number) $d018
 Inlining cast (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2
 Inlining cast (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2
 Inlining cast (byte*~) memcpy::$0 ← (byte*)(void*) memcpy::source#2
-Inlining cast (byte*) CHARSET ← (byte*)(number) $2000
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) SCREEN_COPY ← (byte*)(number) $2400
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Inlining cast (word) memcpy::num#0 ← (unumber)(number) $400
 Inlining cast (word) memcpy::num#1 ← (unumber)(number) $800
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1
-Simplifying constant integer cast 1
-Simplifying constant integer cast 7
 Simplifying constant pointer cast (byte*) 53248
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 8192
@@ -254,8 +232,6 @@ Simplifying constant integer cast $f
 Simplifying constant integer cast $400
 Simplifying constant integer cast $800
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 7
 Finalized unsigned number type (word) $3fff
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 4
@@ -281,25 +257,16 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) memcpy::src_end#1 (byte*) memcpy::src_end#0
 Identical Phi Values (void*) memcpy::destination#3 (void*) memcpy::destination#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) memcpy::$2 [13] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
+Simple Condition (bool~) memcpy::$2 [8] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) PROCPORT = (byte*) 1
-Constant (const byte) PROCPORT_RAM_CHARROM = 1
-Constant (const byte) PROCPORT_BASIC_KERNEL_IO = 7
-Constant (const byte*) CHARGEN = (byte*) 53248
-Constant (const byte*) D018 = (byte*) 53272
-Constant (const byte*) CHARSET = (byte*) 8192
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) SCREEN_COPY = (byte*) 9216
-Constant (const word) memcpy::num#0 = $400
-Constant (const word) memcpy::num#1 = $800
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::toD0181_screen#0 = SCREEN_COPY
 Constant (const byte*) main::toD0181_gfx#0 = CHARSET
 Constant (const void*) memcpy::destination#0 = (void*)SCREEN_COPY
 Constant (const void*) memcpy::source#0 = (void*)SCREEN
+Constant (const word) memcpy::num#0 = $400
 Constant (const void*) memcpy::destination#1 = (void*)CHARSET
 Constant (const void*) memcpy::source#1 = (void*)CHARGEN
+Constant (const word) memcpy::num#1 = $800
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
@@ -333,12 +300,12 @@ Inlining Noop Cast [1] (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2
 Inlining Noop Cast [2] (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2 keeping memcpy::destination#2
 Inlining Noop Cast [3] (byte*~) memcpy::$0 ← (byte*)(void*) memcpy::source#2 keeping memcpy::source#2
 Successful SSA optimization Pass2NopCastInlining
-Inlining constant with var siblings (const word) memcpy::num#0
-Inlining constant with var siblings (const word) memcpy::num#1
 Inlining constant with var siblings (const void*) memcpy::destination#0
 Inlining constant with var siblings (const void*) memcpy::source#0
+Inlining constant with var siblings (const word) memcpy::num#0
 Inlining constant with var siblings (const void*) memcpy::destination#1
 Inlining constant with var siblings (const void*) memcpy::source#1
+Inlining constant with var siblings (const word) memcpy::num#1
 Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN_COPY
 Constant inlined main::toD0181_gfx#0 = (const byte*) CHARSET
 Constant inlined main::toD0181_$7 = >(word)(const byte*) CHARSET/(byte) 4&(byte) $f
@@ -357,7 +324,6 @@ Constant inlined memcpy::num#0 = (word) $400
 Constant inlined memcpy::source#1 = (void*)(const byte*) CHARGEN
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @8
 Adding NOP phi() at start of @9
 Adding NOP phi() at start of @10
 Adding NOP phi() at start of @end
@@ -366,14 +332,13 @@ Adding NOP phi() at start of main::toD0181
 Adding NOP phi() at start of main::toD0181_@return
 Adding NOP phi() at start of memcpy::@3
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to memcpy:10 memcpy:13 
+Calls in [] to main:2 
+Calls in [main] to memcpy:9 memcpy:12 
 
 Created 5 initial phi equivalence classes
-Coalesced [28] memcpy::src#5 ← memcpy::src#1
-Coalesced [29] memcpy::dst#5 ← memcpy::dst#1
+Coalesced [27] memcpy::src#5 ← memcpy::src#1
+Coalesced [28] memcpy::dst#5 ← memcpy::dst#1
 Coalesced down to 5 phi equivalence classes
-Culled Empty Block (label) @8
 Culled Empty Block (label) @10
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) memcpy::@3
@@ -916,8 +881,8 @@ FINAL SYMBOL TABLE
 (const byte*) CHARSET = (byte*) 8192
 (const byte*) D018 = (byte*) 53272
 (const byte*) PROCPORT = (byte*) 1
-(const byte) PROCPORT_BASIC_KERNEL_IO = (byte) 7
-(const byte) PROCPORT_RAM_CHARROM = (byte) 1
+(const byte) PROCPORT_BASIC_KERNEL_IO = (number) 7
+(const byte) PROCPORT_RAM_CHARROM = (number) 1
 (const byte*) SCREEN = (byte*) 1024
 (const byte*) SCREEN_COPY = (byte*) 9216
 (void()) main()

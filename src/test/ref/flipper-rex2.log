@@ -17,8 +17,6 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte[$10*$10]) buffer1 ← { fill( $10*$10, 0) }
   (byte[$10*$10]) buffer2 ← { fill( $10*$10, 0) }
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@4
 
 (void()) main()
@@ -32,12 +30,12 @@ main::@1: scope:[main]  from main::@11 main::@9
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@3 main::@6
   (byte) main::c#4 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#4 main::@6/(byte) main::c#1 )
-  (bool~) main::$1 ← *((byte*) RASTER) != (number) $fe
+  (bool~) main::$1 ← *((const byte*) RASTER) != (number) $fe
   if((bool~) main::$1) goto main::@3
   to:main::@5
 main::@5: scope:[main]  from main::@3 main::@5
   (byte) main::c#3 ← phi( main::@3/(byte) main::c#4 main::@5/(byte) main::c#3 )
-  (bool~) main::$2 ← *((byte*) RASTER) != (number) $ff
+  (bool~) main::$2 ← *((const byte*) RASTER) != (number) $ff
   if((bool~) main::$2) goto main::@5
   to:main::@6
 main::@6: scope:[main]  from main::@5
@@ -124,7 +122,7 @@ flip::@return: scope:[flip]  from flip::@5
 
 (void()) plot()
 plot: scope:[plot]  from main::@10
-  (byte*~) plot::$0 ← (byte*) SCREEN + (number) 5*(number) $28
+  (byte*~) plot::$0 ← (const byte*) SCREEN + (number) 5*(number) $28
   (byte*~) plot::$1 ← (byte*~) plot::$0 + (number) $c
   (byte*) plot::line#0 ← (byte*~) plot::$1
   (byte) plot::i#0 ← (number) 0
@@ -178,8 +176,8 @@ SYMBOL TABLE SSA
 (label) @5
 (label) @begin
 (label) @end
-(byte*) RASTER
-(byte*) SCREEN
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $400
 (byte[$10*$10]) buffer1
 (byte[$10*$10]) buffer2
 (void()) flip()
@@ -285,21 +283,19 @@ SYMBOL TABLE SSA
 (byte) prepare::i#1
 (byte) prepare::i#2
 
-Adding number conversion cast (unumber) $fe in (bool~) main::$1 ← *((byte*) RASTER) != (number) $fe
-Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) $fe in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $fe
+Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((const byte*) RASTER) != (number) $ff
 Adding number conversion cast (unumber) 0 in (byte) flip::srcIdx#0 ← (number) 0
 Adding number conversion cast (unumber) $f in (byte) flip::dstIdx#0 ← (number) $f
 Adding number conversion cast (unumber) $10 in (number~) flip::$0 ← (byte) flip::dstIdx#3 + (number) $10
 Adding number conversion cast (unumber) flip::$0 in (number~) flip::$0 ← (byte) flip::dstIdx#3 + (unumber)(number) $10
-Adding number conversion cast (unumber) 5*$28 in (byte*~) plot::$0 ← (byte*) SCREEN + (number) 5*(number) $28
+Adding number conversion cast (unumber) 5*$28 in (byte*~) plot::$0 ← (const byte*) SCREEN + (number) 5*(number) $28
 Adding number conversion cast (unumber) $c in (byte*~) plot::$1 ← (byte*~) plot::$0 + (number) $c
 Adding number conversion cast (unumber) 0 in (byte) plot::i#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) plot::x#0 ← (number) 0
 Adding number conversion cast (unumber) $10 in (bool~) plot::$2 ← (byte) plot::x#2 < (number) $10
 Adding number conversion cast (unumber) $28 in (byte*~) plot::$3 ← (byte*) plot::line#3 + (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) flip::srcIdx#0 ← (unumber)(number) 0
 Inlining cast (byte) flip::dstIdx#0 ← (unumber)(number) $f
 Inlining cast (byte) plot::i#0 ← (unumber)(number) 0
@@ -346,23 +342,22 @@ Identical Phi Values (byte) flip::r#2 (byte) flip::r#4
 Identical Phi Values (byte*) plot::line#2 (byte*) plot::line#5
 Identical Phi Values (byte) plot::y#2 (byte) plot::y#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [8] if(*((byte*) RASTER)!=(byte) $fe) goto main::@3
-Simple Condition (bool~) main::$2 [11] if(*((byte*) RASTER)!=(byte) $ff) goto main::@5
-Simple Condition (bool~) main::$3 [15] if((byte) main::c#1!=rangelast($19,1)) goto main::@3
-Simple Condition (bool~) prepare::$0 [25] if((byte) prepare::i#1!=rangelast(0,$ff)) goto prepare::@1
-Simple Condition (bool~) flip::$1 [39] if((byte) flip::c#1!=rangelast($10,1)) goto flip::@2
-Simple Condition (bool~) flip::$2 [44] if((byte) flip::r#1!=rangelast($10,1)) goto flip::@1
-Simple Condition (bool~) flip::$3 [50] if((byte) flip::i#1!=rangelast(0,$ff)) goto flip::@5
-Simple Condition (bool~) plot::$2 [61] if((byte) plot::x#2<(byte) $10) goto plot::@3
-Simple Condition (bool~) plot::$4 [71] if((byte) plot::y#1!=rangelast($10,1)) goto plot::@1
+Simple Condition (bool~) main::$1 [6] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@3
+Simple Condition (bool~) main::$2 [9] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@5
+Simple Condition (bool~) main::$3 [13] if((byte) main::c#1!=rangelast($19,1)) goto main::@3
+Simple Condition (bool~) prepare::$0 [23] if((byte) prepare::i#1!=rangelast(0,$ff)) goto prepare::@1
+Simple Condition (bool~) flip::$1 [37] if((byte) flip::c#1!=rangelast($10,1)) goto flip::@2
+Simple Condition (bool~) flip::$2 [42] if((byte) flip::r#1!=rangelast($10,1)) goto flip::@1
+Simple Condition (bool~) flip::$3 [48] if((byte) flip::i#1!=rangelast(0,$ff)) goto flip::@5
+Simple Condition (bool~) plot::$2 [59] if((byte) plot::x#2<(byte) $10) goto plot::@3
+Simple Condition (bool~) plot::$4 [69] if((byte) plot::y#1!=rangelast($10,1)) goto plot::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [0] (byte[$10*$10]) buffer1 ← { fill( $10*$10, 0) }
 Constant right-side identified [1] (byte[$10*$10]) buffer2 ← { fill( $10*$10, 0) }
+Constant right-side identified [50] (byte*~) plot::$0 ← (const byte*) SCREEN + (byte)(number) 5*(number) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte[$10*$10]) buffer1 = { fill( $10*$10, 0) }
 Constant (const byte[$10*$10]) buffer2 = { fill( $10*$10, 0) }
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::c#0 = $19
 Constant (const byte) prepare::i#0 = 0
 Constant (const byte) flip::srcIdx#0 = 0
@@ -370,24 +365,25 @@ Constant (const byte) flip::dstIdx#0 = $f
 Constant (const byte) flip::r#0 = $10
 Constant (const byte) flip::c#0 = $10
 Constant (const byte) flip::i#0 = 0
+Constant (const byte*) plot::$0 = SCREEN+(byte)5*$28
 Constant (const byte) plot::i#0 = 0
 Constant (const byte) plot::y#0 = $10
 Constant (const byte) plot::x#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [18] if(true) goto main::@1
+if() condition always true - replacing block destination [16] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [13] main::c#1 ← -- main::c#4 to --
-Resolved ranged comparison value [15] if(main::c#1!=rangelast($19,1)) goto main::@3 to (number) 0
-Resolved ranged next value [23] prepare::i#1 ← ++ prepare::i#2 to ++
-Resolved ranged comparison value [25] if(prepare::i#1!=rangelast(0,$ff)) goto prepare::@1 to (number) 0
-Resolved ranged next value [37] flip::c#1 ← -- flip::c#2 to --
-Resolved ranged comparison value [39] if(flip::c#1!=rangelast($10,1)) goto flip::@2 to (number) 0
-Resolved ranged next value [42] flip::r#1 ← -- flip::r#4 to --
-Resolved ranged comparison value [44] if(flip::r#1!=rangelast($10,1)) goto flip::@1 to (number) 0
-Resolved ranged next value [48] flip::i#1 ← ++ flip::i#2 to ++
-Resolved ranged comparison value [50] if(flip::i#1!=rangelast(0,$ff)) goto flip::@5 to (number) 0
-Resolved ranged next value [69] plot::y#1 ← -- plot::y#4 to --
-Resolved ranged comparison value [71] if(plot::y#1!=rangelast($10,1)) goto plot::@1 to (number) 0
+Resolved ranged next value [11] main::c#1 ← -- main::c#4 to --
+Resolved ranged comparison value [13] if(main::c#1!=rangelast($19,1)) goto main::@3 to (number) 0
+Resolved ranged next value [21] prepare::i#1 ← ++ prepare::i#2 to ++
+Resolved ranged comparison value [23] if(prepare::i#1!=rangelast(0,$ff)) goto prepare::@1 to (number) 0
+Resolved ranged next value [35] flip::c#1 ← -- flip::c#2 to --
+Resolved ranged comparison value [37] if(flip::c#1!=rangelast($10,1)) goto flip::@2 to (number) 0
+Resolved ranged next value [40] flip::r#1 ← -- flip::r#4 to --
+Resolved ranged comparison value [42] if(flip::r#1!=rangelast($10,1)) goto flip::@1 to (number) 0
+Resolved ranged next value [46] flip::i#1 ← ++ flip::i#2 to ++
+Resolved ranged comparison value [48] if(flip::i#1!=rangelast(0,$ff)) goto flip::@5 to (number) 0
+Resolved ranged next value [67] plot::y#1 ← -- plot::y#4 to --
+Resolved ranged comparison value [69] if(plot::y#1!=rangelast($10,1)) goto plot::@1 to (number) 0
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) 0 in if((byte) main::c#1!=(number) 0) goto main::@3
@@ -411,10 +407,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [28] (byte*~) plot::$0 ← (const byte*) SCREEN + (byte)(number) 5*(number) $28
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) plot::$0 = SCREEN+(byte)5*$28
-Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [28] (byte*) plot::line#0 ← (const byte*) plot::$0 + (byte) $c
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) plot::line#0 = plot::$0+$c

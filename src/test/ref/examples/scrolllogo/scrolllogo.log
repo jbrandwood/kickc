@@ -5,7 +5,7 @@ Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) LOGO
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call (byte~) main::$0 ← call toD018 (byte*) SCREEN (byte*) LOGO 
+Inlined call (byte~) main::$0 ← call toD018 (const byte*) SCREEN (const byte*) LOGO 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
@@ -28,6 +28,7 @@ Culled Empty Block (label) mul16u::@8
 Culled Empty Block (label) mul16u::@9
 Culled Empty Block (label) @16
 Culled Empty Block (label) mul16s::@5
+Culled Empty Block (label) @17
 Culled Empty Block (label) @18
 Culled Empty Block (label) sin16s_gen2::@4
 Culled Empty Block (label) sin16s_gen2::@3
@@ -80,22 +81,10 @@ Culled Empty Block (label) render_logo::@34
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) BGCOL2 ← ((byte*)) (number) $d022
-  (byte*) BGCOL3 ← ((byte*)) (number) $d023
-  (byte*) D016 ← ((byte*)) (number) $d016
-  (byte) VIC_MCM ← (number) $10
-  (byte*) D018 ← ((byte*)) (number) $d018
-  (byte*) COLS ← ((byte*)) (number) $d800
-  (byte) BLACK ← (number) 0
-  (byte) WHITE ← (number) 1
-  (byte) DARK_GREY ← (number) $b
   to:@6
 @6: scope:[]  from @begin
   (word) rem16u#0 ← (number) 0
-  to:@17
+  to:@28
 
 (word()) divr16u((word) divr16u::dividend , (word) divr16u::divisor , (word) divr16u::rem)
 divr16u: scope:[divr16u]  from div32u16u div32u16u::@2
@@ -328,12 +317,6 @@ mul16s::@return: scope:[mul16s]  from mul16s::@2
   (signed dword) mul16s::return#1 ← (signed dword) mul16s::return#3
   return 
   to:@return
-@17: scope:[]  from @6
-  (word) rem16u#33 ← phi( @6/(word) rem16u#0 )
-  (dword) PI2_u4f28 ← (number) $6487ed51
-  (dword) PI_u4f28 ← (number) $3243f6a9
-  (dword) PI_HALF_u4f28 ← (number) $1921fb54
-  to:@28
 
 (void()) sin16s_gen2((signed word*) sin16s_gen2::sintab , (word) sin16s_gen2::wavelength , (signed word) sin16s_gen2::min , (signed word) sin16s_gen2::max)
 sin16s_gen2: scope:[sin16s_gen2]  from main::@2
@@ -347,7 +330,7 @@ sin16s_gen2: scope:[sin16s_gen2]  from main::@2
   (signed word~) sin16s_gen2::$1 ← (signed word) sin16s_gen2::ampl#0 >> (number) 1
   (signed word~) sin16s_gen2::$2 ← (signed word) sin16s_gen2::min#1 + (signed word~) sin16s_gen2::$1
   (signed word) sin16s_gen2::offs#0 ← (signed word~) sin16s_gen2::$2
-  (dword) div32u16u::dividend#0 ← (dword) PI2_u4f28
+  (dword) div32u16u::dividend#0 ← (const dword) PI2_u4f28
   (word) div32u16u::divisor#0 ← (word) sin16s_gen2::wavelength#1
   call div32u16u 
   (dword) div32u16u::return#2 ← (dword) div32u16u::return#1
@@ -436,20 +419,20 @@ sin16s_gen2::@return: scope:[sin16s_gen2]  from sin16s_gen2::@1
 sin16s: scope:[sin16s]  from sin16s_gen2::@2
   (dword) sin16s::x#3 ← phi( sin16s_gen2::@2/(dword) sin16s::x#0 )
   (byte) sin16s::isUpper#0 ← (number) 0
-  (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (dword) PI_u4f28
+  (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (const dword) PI_u4f28
   (bool~) sin16s::$1 ← ! (bool~) sin16s::$0
   if((bool~) sin16s::$1) goto sin16s::@1
   to:sin16s::@4
 sin16s::@1: scope:[sin16s]  from sin16s sin16s::@4
   (byte) sin16s::isUpper#8 ← phi( sin16s/(byte) sin16s::isUpper#0 sin16s::@4/(byte) sin16s::isUpper#1 )
   (dword) sin16s::x#4 ← phi( sin16s/(dword) sin16s::x#3 sin16s::@4/(dword) sin16s::x#1 )
-  (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (dword) PI_HALF_u4f28
+  (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (const dword) PI_HALF_u4f28
   (bool~) sin16s::$3 ← ! (bool~) sin16s::$2
   if((bool~) sin16s::$3) goto sin16s::@2
   to:sin16s::@5
 sin16s::@4: scope:[sin16s]  from sin16s
   (dword) sin16s::x#5 ← phi( sin16s/(dword) sin16s::x#3 )
-  (dword~) sin16s::$17 ← (dword) sin16s::x#5 - (dword) PI_u4f28
+  (dword~) sin16s::$17 ← (dword) sin16s::x#5 - (const dword) PI_u4f28
   (dword) sin16s::x#1 ← (dword~) sin16s::$17
   (byte) sin16s::isUpper#1 ← (number) 1
   to:sin16s::@1
@@ -536,7 +519,7 @@ sin16s::@12: scope:[sin16s]  from sin16s::@11
 sin16s::@5: scope:[sin16s]  from sin16s::@1
   (byte) sin16s::isUpper#9 ← phi( sin16s::@1/(byte) sin16s::isUpper#8 )
   (dword) sin16s::x#7 ← phi( sin16s::@1/(dword) sin16s::x#4 )
-  (dword~) sin16s::$18 ← (dword) PI_u4f28 - (dword) sin16s::x#7
+  (dword~) sin16s::$18 ← (const dword) PI_u4f28 - (dword) sin16s::x#7
   (dword) sin16s::x#2 ← (dword~) sin16s::$18
   to:sin16s::@2
 sin16s::@3: scope:[sin16s]  from sin16s::@12 sin16s::@6
@@ -622,35 +605,32 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#4
   return 
   to:@return
-@28: scope:[]  from @17
-  (word) rem16u#31 ← phi( @17/(word) rem16u#33 )
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) LOGO ← ((byte*)) (number) $2000
-  kickasm(location (byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+@28: scope:[]  from @6
+  (word) rem16u#31 ← phi( @6/(word) rem16u#0 )
+  kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)
                 .byte logoPic.getMulticolorByte(x,cp+y*8)
  }}
-  (word) XSIN_SIZE ← (number) $200
   (signed word[XSIN_SIZE]) xsin ← { fill( XSIN_SIZE, 0) }
   to:@29
 
 (void()) main()
 main: scope:[main]  from @31
   (word) xsin_idx#26 ← phi( @31/(word) xsin_idx#16 )
-  (word) rem16u#38 ← phi( @31/(word) rem16u#25 )
+  (word) rem16u#37 ← phi( @31/(word) rem16u#25 )
   asm { sei  }
-  *((byte*) BORDERCOL) ← (byte) WHITE
-  *((byte*) BGCOL2) ← (byte) DARK_GREY
-  *((byte*) BGCOL) ← *((byte*) BGCOL2)
-  *((byte*) BGCOL3) ← (byte) BLACK
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN
-  (byte*) main::toD0181_gfx#0 ← (byte*) LOGO
+  *((const byte*) BORDERCOL) ← (const byte) WHITE
+  *((const byte*) BGCOL2) ← (const byte) DARK_GREY
+  *((const byte*) BGCOL) ← *((const byte*) BGCOL2)
+  *((const byte*) BGCOL3) ← (const byte) BLACK
+  (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
+  (byte*) main::toD0181_gfx#0 ← (const byte*) LOGO
   to:main::toD0181
 main::toD0181: scope:[main]  from main
   (word) xsin_idx#25 ← phi( main/(word) xsin_idx#26 )
-  (word) rem16u#37 ← phi( main/(word) rem16u#38 )
+  (word) rem16u#36 ← phi( main/(word) rem16u#37 )
   (byte*) main::toD0181_gfx#1 ← phi( main/(byte*) main::toD0181_gfx#0 )
   (byte*) main::toD0181_screen#1 ← phi( main/(byte*) main::toD0181_screen#0 )
   (word~) main::toD0181_$0 ← ((word)) (byte*) main::toD0181_screen#1
@@ -666,52 +646,51 @@ main::toD0181: scope:[main]  from main
   to:main::toD0181_@return
 main::toD0181_@return: scope:[main]  from main::toD0181
   (word) xsin_idx#24 ← phi( main::toD0181/(word) xsin_idx#25 )
-  (word) rem16u#36 ← phi( main::toD0181/(word) rem16u#37 )
+  (word) rem16u#35 ← phi( main::toD0181/(word) rem16u#36 )
   (byte) main::toD0181_return#2 ← phi( main::toD0181/(byte) main::toD0181_return#0 )
   (byte) main::toD0181_return#1 ← (byte) main::toD0181_return#2
   to:main::@3
 main::@3: scope:[main]  from main::toD0181_@return
   (word) xsin_idx#23 ← phi( main::toD0181_@return/(word) xsin_idx#24 )
-  (word) rem16u#35 ← phi( main::toD0181_@return/(word) rem16u#36 )
+  (word) rem16u#34 ← phi( main::toD0181_@return/(word) rem16u#35 )
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
   (byte~) main::$0 ← (byte) main::toD0181_return#3
-  *((byte*) D018) ← (byte~) main::$0
-  *((byte*) D016) ← (byte) VIC_MCM
-  (void*) memset::str#0 ← (void*)(byte*) SCREEN
-  (byte) memset::c#0 ← (byte) BLACK
+  *((const byte*) D018) ← (byte~) main::$0
+  *((const byte*) D016) ← (const byte) VIC_MCM
+  (void*) memset::str#0 ← (void*)(const byte*) SCREEN
+  (byte) memset::c#0 ← (const byte) BLACK
   (word) memset::num#0 ← (number) $3e8
   call memset 
   (void*) memset::return#2 ← (void*) memset::return#1
   to:main::@4
 main::@4: scope:[main]  from main::@3
   (word) xsin_idx#22 ← phi( main::@3/(word) xsin_idx#23 )
-  (word) rem16u#34 ← phi( main::@3/(word) rem16u#35 )
-  (number~) main::$2 ← (byte) WHITE | (number) 8
-  (void*) memset::str#1 ← (void*)(byte*) COLS
-  (byte) memset::c#1 ← (number~) main::$2
+  (word) rem16u#33 ← phi( main::@3/(word) rem16u#34 )
+  (void*) memset::str#1 ← (void*)(const byte*) COLS
+  (byte) memset::c#1 ← (const byte) WHITE|(number) 8
   (word) memset::num#1 ← (number) $3e8
   call memset 
   (void*) memset::return#3 ← (void*) memset::return#1
   to:main::@5
 main::@5: scope:[main]  from main::@4
   (word) xsin_idx#21 ← phi( main::@4/(word) xsin_idx#22 )
-  (word) rem16u#30 ← phi( main::@4/(word) rem16u#34 )
+  (word) rem16u#30 ← phi( main::@4/(word) rem16u#33 )
   (byte) main::ch#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@5
   (word) xsin_idx#20 ← phi( main::@1/(word) xsin_idx#20 main::@5/(word) xsin_idx#21 )
   (word) rem16u#27 ← phi( main::@1/(word) rem16u#27 main::@5/(word) rem16u#30 )
   (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@5/(byte) main::ch#0 )
-  *((byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2
+  *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2
   (byte) main::ch#1 ← (byte) main::ch#2 + rangenext(0,$ef)
-  (bool~) main::$6 ← (byte) main::ch#1 != rangelast(0,$ef)
-  if((bool~) main::$6) goto main::@1
+  (bool~) main::$5 ← (byte) main::ch#1 != rangelast(0,$ef)
+  if((bool~) main::$5) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (word) xsin_idx#17 ← phi( main::@1/(word) xsin_idx#20 )
   (word) rem16u#23 ← phi( main::@1/(word) rem16u#27 )
   (signed word*) sin16s_gen2::sintab#1 ← (signed word[XSIN_SIZE]) xsin
-  (word) sin16s_gen2::wavelength#0 ← (word) XSIN_SIZE
+  (word) sin16s_gen2::wavelength#0 ← (const word) XSIN_SIZE
   (signed word) sin16s_gen2::min#0 ← (number) -$140
   (signed word) sin16s_gen2::max#0 ← (number) $140
   call sin16s_gen2 
@@ -749,12 +728,12 @@ loop::@1: scope:[loop]  from loop loop::@11
   to:loop::@return
 loop::@4: scope:[loop]  from loop::@1 loop::@4
   (word) xsin_idx#14 ← phi( loop::@1/(word) xsin_idx#15 loop::@4/(word) xsin_idx#14 )
-  (bool~) loop::$0 ← *((byte*) RASTER) != (number) $ff
+  (bool~) loop::$0 ← *((const byte*) RASTER) != (number) $ff
   if((bool~) loop::$0) goto loop::@4
   to:loop::@6
 loop::@6: scope:[loop]  from loop::@4
   (word) xsin_idx#9 ← phi( loop::@4/(word) xsin_idx#14 )
-  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   (word~) loop::$7 ← (word) xsin_idx#9 * (const byte) SIZEOF_SIGNED_WORD
   (signed word*~) loop::$2 ← (signed word[XSIN_SIZE]) xsin + (word~) loop::$7
   (signed word) loop::xpos#0 ← *((signed word*~) loop::$2)
@@ -764,13 +743,13 @@ loop::@6: scope:[loop]  from loop::@4
 loop::@15: scope:[loop]  from loop::@6
   (word) xsin_idx#10 ← phi( loop::@6/(word) xsin_idx#9 )
   (word) xsin_idx#3 ← ++ (word) xsin_idx#10
-  (bool~) loop::$4 ← (word) xsin_idx#3 == (word) XSIN_SIZE
+  (bool~) loop::$4 ← (word) xsin_idx#3 == (const word) XSIN_SIZE
   (bool~) loop::$5 ← ! (bool~) loop::$4
   if((bool~) loop::$5) goto loop::@11
   to:loop::@10
 loop::@11: scope:[loop]  from loop::@10 loop::@15
   (word) xsin_idx#19 ← phi( loop::@10/(word) xsin_idx#4 loop::@15/(word) xsin_idx#3 )
-  *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:loop::@1
 loop::@10: scope:[loop]  from loop::@15
   (word) xsin_idx#4 ← (number) 0
@@ -788,8 +767,8 @@ render_logo: scope:[render_logo]  from loop::@6
   (byte) render_logo::screen_idx#0 ← (byte) 0
   (byte~) render_logo::$0 ← ((byte)) (signed word) render_logo::xpos#1
   (number~) render_logo::$1 ← (byte~) render_logo::$0 & (number) 7
-  (number~) render_logo::$2 ← (byte) VIC_MCM | (number~) render_logo::$1
-  *((byte*) D016) ← (number~) render_logo::$2
+  (number~) render_logo::$2 ← (const byte) VIC_MCM | (number~) render_logo::$1
+  *((const byte*) D016) ← (number~) render_logo::$2
   (number~) render_logo::$3 ← (signed word) render_logo::xpos#1 / (number) 8
   (signed byte~) render_logo::$4 ← ((signed byte)) (number~) render_logo::$3
   (signed byte) render_logo::x_char#0 ← (signed byte~) render_logo::$4
@@ -830,7 +809,7 @@ render_logo::@7: scope:[render_logo]  from render_logo::@5 render_logo::@7
   (byte) render_logo::screen_idx#8 ← phi( render_logo::@5/(byte) render_logo::screen_idx#18 render_logo::@7/(byte) render_logo::screen_idx#8 )
   (byte) render_logo::line#9 ← phi( render_logo::@5/(byte) render_logo::line#1 render_logo::@7/(byte) render_logo::line#2 )
   (number~) render_logo::$8 ← (number) $28 * (byte) render_logo::line#9
-  (byte*~) render_logo::$9 ← (byte*) SCREEN + (number~) render_logo::$8
+  (byte*~) render_logo::$9 ← (const byte*) SCREEN + (number~) render_logo::$8
   *((byte*~) render_logo::$9 + (byte) render_logo::screen_idx#8) ← (number) 0
   (byte) render_logo::line#2 ← (byte) render_logo::line#9 + rangenext(0,5)
   (bool~) render_logo::$10 ← (byte) render_logo::line#2 != rangelast(0,5)
@@ -857,7 +836,7 @@ render_logo::@15: scope:[render_logo]  from render_logo::@13 render_logo::@15
   (byte) render_logo::logo_idx#5 ← phi( render_logo::@13/(byte) render_logo::logo_idx#10 render_logo::@15/(byte) render_logo::logo_idx#5 )
   (byte) render_logo::line#10 ← phi( render_logo::@13/(byte) render_logo::line#3 render_logo::@15/(byte) render_logo::line#4 )
   (number~) render_logo::$12 ← (number) $28 * (byte) render_logo::line#10
-  (byte*~) render_logo::$13 ← (byte*) SCREEN + (number~) render_logo::$12
+  (byte*~) render_logo::$13 ← (const byte*) SCREEN + (number~) render_logo::$12
   (number~) render_logo::$14 ← (number) $28 * (byte) render_logo::line#10
   (number~) render_logo::$15 ← (byte) render_logo::logo_idx#5 + (number~) render_logo::$14
   *((byte*~) render_logo::$13 + (byte) render_logo::screen_idx#11) ← (number~) render_logo::$15
@@ -887,7 +866,7 @@ render_logo::@24: scope:[render_logo]  from render_logo::@22 render_logo::@24
   (byte) render_logo::logo_idx#8 ← phi( render_logo::@22/(byte) render_logo::logo_idx#11 render_logo::@24/(byte) render_logo::logo_idx#8 )
   (byte) render_logo::line#11 ← phi( render_logo::@22/(byte) render_logo::line#5 render_logo::@24/(byte) render_logo::line#6 )
   (number~) render_logo::$20 ← (number) $28 * (byte) render_logo::line#11
-  (byte*~) render_logo::$21 ← (byte*) SCREEN + (number~) render_logo::$20
+  (byte*~) render_logo::$21 ← (const byte*) SCREEN + (number~) render_logo::$20
   (number~) render_logo::$22 ← (number) $28 * (byte) render_logo::line#11
   (number~) render_logo::$23 ← (byte) render_logo::logo_idx#8 + (number~) render_logo::$22
   *((byte*~) render_logo::$21 + (byte) render_logo::screen_idx#13) ← (number~) render_logo::$23
@@ -914,7 +893,7 @@ render_logo::@32: scope:[render_logo]  from render_logo::@30 render_logo::@32
   (byte) render_logo::screen_idx#16 ← phi( render_logo::@30/(byte) render_logo::screen_idx#23 render_logo::@32/(byte) render_logo::screen_idx#16 )
   (byte) render_logo::line#12 ← phi( render_logo::@30/(byte) render_logo::line#7 render_logo::@32/(byte) render_logo::line#8 )
   (number~) render_logo::$26 ← (number) $28 * (byte) render_logo::line#12
-  (byte*~) render_logo::$27 ← (byte*) SCREEN + (number~) render_logo::$26
+  (byte*~) render_logo::$27 ← (const byte*) SCREEN + (number~) render_logo::$26
   *((byte*~) render_logo::$27 + (byte) render_logo::screen_idx#16) ← (number) 0
   (byte) render_logo::line#8 ← (byte) render_logo::line#12 + rangenext(0,5)
   (bool~) render_logo::$28 ← (byte) render_logo::line#8 != rangelast(0,5)
@@ -941,7 +920,6 @@ render_logo::@return: scope:[render_logo]  from render_logo::@12 render_logo::@2
 @end: scope:[]  from @32
 
 SYMBOL TABLE SSA
-(label) @17
 (label) @28
 (label) @29
 (label) @31
@@ -949,25 +927,25 @@ SYMBOL TABLE SSA
 (label) @6
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) BGCOL2
-(byte*) BGCOL3
-(byte) BLACK
-(byte*) BORDERCOL
-(byte*) COLS
-(byte*) D016
-(byte*) D018
-(byte) DARK_GREY
-(byte*) LOGO
-(dword) PI2_u4f28
-(dword) PI_HALF_u4f28
-(dword) PI_u4f28
-(byte*) RASTER
-(byte*) SCREEN
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte*) BGCOL2 = (byte*)(number) $d022
+(const byte*) BGCOL3 = (byte*)(number) $d023
+(const byte) BLACK = (number) 0
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) COLS = (byte*)(number) $d800
+(const byte*) D016 = (byte*)(number) $d016
+(const byte*) D018 = (byte*)(number) $d018
+(const byte) DARK_GREY = (number) $b
+(const byte*) LOGO = (byte*)(number) $2000
+(const dword) PI2_u4f28 = (number) $6487ed51
+(const dword) PI_HALF_u4f28 = (number) $1921fb54
+(const dword) PI_u4f28 = (number) $3243f6a9
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $400
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
-(byte) VIC_MCM
-(byte) WHITE
-(word) XSIN_SIZE
+(const byte) VIC_MCM = (number) $10
+(const byte) WHITE = (number) 1
+(const word) XSIN_SIZE = (number) $200
 (dword()) div32u16u((dword) div32u16u::dividend , (word) div32u16u::divisor)
 (word~) div32u16u::$0
 (word~) div32u16u::$1
@@ -1092,8 +1070,7 @@ SYMBOL TABLE SSA
 (signed word) loop::xpos#0
 (void()) main()
 (byte~) main::$0
-(number~) main::$2
-(bool~) main::$6
+(bool~) main::$5
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -1349,7 +1326,6 @@ SYMBOL TABLE SSA
 (word) rem16u#35
 (word) rem16u#36
 (word) rem16u#37
-(word) rem16u#38
 (word) rem16u#4
 (word) rem16u#5
 (word) rem16u#6
@@ -1668,10 +1644,6 @@ SYMBOL TABLE SSA
 
 Fixing inline constructor with div32u16u::$4 ← (word)div32u16u::quotient_hi#1 dw= (word)div32u16u::quotient_lo#0
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) $10 in (byte) VIC_MCM ← (number) $10
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
-Adding number conversion cast (unumber) $b in (byte) DARK_GREY ← (number) $b
 Adding number conversion cast (unumber) 0 in (word) rem16u#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (word) divr16u::quotient#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (word~) divr16u::$0 ← (word) divr16u::rem#5 << (number) 1
@@ -1692,9 +1664,6 @@ Adding number conversion cast (unumber) 1 in (word~) mul16u::$5 ← (word) mul16
 Adding number conversion cast (unumber) 1 in (dword~) mul16u::$6 ← (dword) mul16u::mb#2 << (number) 1
 Adding number conversion cast (snumber) 0 in (bool~) mul16s::$3 ← (signed word) mul16s::a#2 < (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) mul16s::$5 ← (signed word) mul16s::b#2 < (number) 0
-Adding number conversion cast (unumber) $6487ed51 in (dword) PI2_u4f28 ← (number) $6487ed51
-Adding number conversion cast (unumber) $3243f6a9 in (dword) PI_u4f28 ← (number) $3243f6a9
-Adding number conversion cast (unumber) $1921fb54 in (dword) PI_HALF_u4f28 ← (number) $1921fb54
 Adding number conversion cast (snumber) 1 in (signed word~) sin16s_gen2::$1 ← (signed word) sin16s_gen2::ampl#0 >> (number) 1
 Adding number conversion cast (unumber) 0 in (dword) sin16s_gen2::x#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (word) sin16s_gen2::i#0 ← (number) 0
@@ -1710,7 +1679,6 @@ Adding number conversion cast (unumber) 0 in (byte) mulu16_sel::select#4 ← (nu
 Adding number conversion cast (unumber) 4 in (word~) sin16s::$12 ← (word) sin16s::x5#0 >> (number) 4
 Adding number conversion cast (unumber) 0 in (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#2 > (number) 0
-Adding number conversion cast (unumber) $200 in (word) XSIN_SIZE ← (number) $200
 Adding number conversion cast (unumber) $3fff in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (number) $3fff
 Adding number conversion cast (unumber) main::toD0181_$1 in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (unumber)(number) $3fff
 Adding number conversion cast (unumber) 4 in (number~) main::toD0181_$2 ← (unumber~) main::toD0181_$1 * (number) 4
@@ -1722,17 +1690,17 @@ Adding number conversion cast (unumber) $f in (number~) main::toD0181_$7 ← (un
 Adding number conversion cast (unumber) main::toD0181_$7 in (number~) main::toD0181_$7 ← (unumber~) main::toD0181_$6 & (unumber)(number) $f
 Adding number conversion cast (unumber) main::toD0181_$8 in (number~) main::toD0181_$8 ← (unumber~) main::toD0181_$3 | (unumber~) main::toD0181_$7
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
-Adding number conversion cast (unumber) 8 in (number~) main::$2 ← (byte) WHITE | (number) 8
-Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (byte) WHITE | (unumber)(number) 8
+Adding number conversion cast (unumber) WHITE|8 in (byte) memset::c#1 ← (const byte) WHITE|(number) 8
+Adding number conversion cast (unumber) 8 in (byte) memset::c#1 ← ((unumber)) (const byte) WHITE|(number) 8
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#1 ← (number) $3e8
 Adding number conversion cast (snumber) -$140 in (signed word) sin16s_gen2::min#0 ← (number) -$140
 Adding number conversion cast (snumber) $140 in (signed word) sin16s_gen2::max#0 ← (number) $140
 Adding number conversion cast (unumber) 0 in (word) xsin_idx#2 ← (number) 0
-Adding number conversion cast (unumber) $ff in (bool~) loop::$0 ← *((byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) $ff in (bool~) loop::$0 ← *((const byte*) RASTER) != (number) $ff
 Adding number conversion cast (unumber) 0 in (word) xsin_idx#4 ← (number) 0
 Adding number conversion cast (unumber) 7 in (number~) render_logo::$1 ← (byte~) render_logo::$0 & (number) 7
 Adding number conversion cast (unumber) render_logo::$1 in (number~) render_logo::$1 ← (byte~) render_logo::$0 & (unumber)(number) 7
-Adding number conversion cast (unumber) render_logo::$2 in (number~) render_logo::$2 ← (byte) VIC_MCM | (unumber~) render_logo::$1
+Adding number conversion cast (unumber) render_logo::$2 in (number~) render_logo::$2 ← (const byte) VIC_MCM | (unumber~) render_logo::$1
 Adding number conversion cast (snumber) 8 in (number~) render_logo::$3 ← (signed word) render_logo::xpos#1 / (number) 8
 Adding number conversion cast (snumber) render_logo::$3 in (number~) render_logo::$3 ← (signed word) render_logo::xpos#1 / (snumber)(number) 8
 Adding number conversion cast (unumber) 0 in (byte) render_logo::line#0 ← (number) 0
@@ -1764,18 +1732,6 @@ Adding number conversion cast (unumber) $28 in (number~) render_logo::$26 ← (n
 Adding number conversion cast (unumber) render_logo::$26 in (number~) render_logo::$26 ← (unumber)(number) $28 * (byte) render_logo::line#12
 Adding number conversion cast (unumber) 0 in *((byte*~) render_logo::$27 + (byte) render_logo::screen_idx#16) ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) BGCOL2 ← (byte*)(number) $d022
-Inlining cast (byte*) BGCOL3 ← (byte*)(number) $d023
-Inlining cast (byte*) D016 ← (byte*)(number) $d016
-Inlining cast (byte) VIC_MCM ← (unumber)(number) $10
-Inlining cast (byte*) D018 ← (byte*)(number) $d018
-Inlining cast (byte*) COLS ← (byte*)(number) $d800
-Inlining cast (byte) BLACK ← (unumber)(number) 0
-Inlining cast (byte) WHITE ← (unumber)(number) 1
-Inlining cast (byte) DARK_GREY ← (unumber)(number) $b
 Inlining cast (word) rem16u#0 ← (unumber)(number) 0
 Inlining cast (word) divr16u::quotient#0 ← (unumber)(number) 0
 Inlining cast (word) divr16u::rem#3 ← (unumber)(number) 0
@@ -1785,9 +1741,6 @@ Inlining cast (word~) mul16s::$1 ← (word)(signed word) mul16s::b#1
 Inlining cast (word~) mul16s::$10 ← (word)(signed word) mul16s::b#3
 Inlining cast (signed dword~) mul16s::$7 ← (signed dword)(dword) mul16s::m#4
 Inlining cast (word~) mul16s::$14 ← (word)(signed word) mul16s::a#3
-Inlining cast (dword) PI2_u4f28 ← (unumber)(number) $6487ed51
-Inlining cast (dword) PI_u4f28 ← (unumber)(number) $3243f6a9
-Inlining cast (dword) PI_HALF_u4f28 ← (unumber)(number) $1921fb54
 Inlining cast (dword) sin16s_gen2::x#0 ← (unumber)(number) 0
 Inlining cast (word) sin16s_gen2::i#0 ← (unumber)(number) 0
 Inlining cast (signed word~) sin16s_gen2::$8 ← (signed word)(word~) sin16s_gen2::$7
@@ -1803,12 +1756,10 @@ Inlining cast (signed word~) sin16s::$14 ← (signed word)(word) sin16s::usinx#1
 Inlining cast (signed word~) sin16s::$19 ← (signed word)(word) sin16s::usinx#3
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#3
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) LOGO ← (byte*)(number) $2000
-Inlining cast (word) XSIN_SIZE ← (unumber)(number) $200
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
+Inlining cast (byte) memset::c#1 ← (unumber)(const byte) WHITE|(unumber)(number) 8
 Inlining cast (word) memset::num#1 ← (unumber)(number) $3e8
 Inlining cast (signed word) sin16s_gen2::min#0 ← (snumber)(number) -$140
 Inlining cast (signed word) sin16s_gen2::max#0 ← (snumber)(number) $140
@@ -1835,12 +1786,10 @@ Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53282
 Simplifying constant pointer cast (byte*) 53283
 Simplifying constant pointer cast (byte*) 53270
-Simplifying constant integer cast $10
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 55296
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast $b
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 8192
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -1860,9 +1809,6 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
-Simplifying constant integer cast $6487ed51
-Simplifying constant integer cast $3243f6a9
-Simplifying constant integer cast $1921fb54
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -1877,14 +1823,12 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 4
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 8192
-Simplifying constant integer cast $200
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
 Simplifying constant integer cast $3e8
+Simplifying constant integer cast (const byte) WHITE|(unumber)(number) 8
 Simplifying constant integer cast 8
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast -$140
@@ -1915,10 +1859,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $b
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
@@ -1936,9 +1876,6 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Finalized signed number type (signed byte) 0
 Finalized signed number type (signed byte) 0
-Finalized unsigned number type (dword) $6487ed51
-Finalized unsigned number type (dword) $3243f6a9
-Finalized unsigned number type (dword) $1921fb54
 Finalized signed number type (signed byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
@@ -1953,7 +1890,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (word) $200
 Finalized unsigned number type (word) $3fff
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 4
@@ -1998,9 +1934,8 @@ Inferred type updated to byte in (unumber~) main::toD0181_$3 ← > (word~) main:
 Inferred type updated to byte in (unumber~) main::toD0181_$6 ← (byte~) main::toD0181_$5 / (byte) 4
 Inferred type updated to byte in (unumber~) main::toD0181_$7 ← (byte~) main::toD0181_$6 & (byte) $f
 Inferred type updated to byte in (unumber~) main::toD0181_$8 ← (byte~) main::toD0181_$3 | (byte~) main::toD0181_$7
-Inferred type updated to byte in (unumber~) main::$2 ← (byte) WHITE | (byte) 8
 Inferred type updated to byte in (unumber~) render_logo::$1 ← (byte~) render_logo::$0 & (byte) 7
-Inferred type updated to byte in (unumber~) render_logo::$2 ← (byte) VIC_MCM | (byte~) render_logo::$1
+Inferred type updated to byte in (unumber~) render_logo::$2 ← (const byte) VIC_MCM | (byte~) render_logo::$1
 Inferred type updated to signed word in (snumber~) render_logo::$3 ← (signed word) render_logo::xpos#1 / (signed byte) 8
 Inferred type updated to byte in (unumber~) render_logo::$8 ← (byte) $28 * (byte) render_logo::line#9
 Inferred type updated to byte in (unumber~) render_logo::$12 ← (byte) $28 * (byte) render_logo::line#10
@@ -2010,16 +1945,16 @@ Inferred type updated to byte in (unumber~) render_logo::$20 ← (byte) $28 * (b
 Inferred type updated to byte in (unumber~) render_logo::$22 ← (byte) $28 * (byte) render_logo::line#11
 Inferred type updated to byte in (unumber~) render_logo::$23 ← (byte) render_logo::logo_idx#8 + (byte~) render_logo::$22
 Inferred type updated to byte in (unumber~) render_logo::$26 ← (byte) $28 * (byte) render_logo::line#12
-Inversing boolean not [22] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [21] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
-Inversing boolean not [30] (bool~) divr16u::$9 ← (word) divr16u::rem#6 < (word) divr16u::divisor#2 from [29] (bool~) divr16u::$8 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
-Inversing boolean not [87] (bool~) mul16u::$3 ← (byte~) mul16u::$1 == (byte) 0 from [86] (bool~) mul16u::$2 ← (byte~) mul16u::$1 != (byte) 0
-Inversing boolean not [113] (bool~) mul16s::$4 ← (signed word) mul16s::a#2 >= (signed byte) 0 from [112] (bool~) mul16s::$3 ← (signed word) mul16s::a#2 < (signed byte) 0
-Inversing boolean not [117] (bool~) mul16s::$6 ← (signed word) mul16s::b#2 >= (signed byte) 0 from [116] (bool~) mul16s::$5 ← (signed word) mul16s::b#2 < (signed byte) 0
-Inversing boolean not [186] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (dword) PI_u4f28 from [185] (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (dword) PI_u4f28
-Inversing boolean not [190] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (dword) PI_HALF_u4f28 from [189] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (dword) PI_HALF_u4f28
-Inversing boolean not [249] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 == (byte) 0 from [248] (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (byte) 0
-Inversing boolean not [278] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [277] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [379] (bool~) loop::$5 ← (word) xsin_idx#3 != (word) XSIN_SIZE from [378] (bool~) loop::$4 ← (word) xsin_idx#3 == (word) XSIN_SIZE
+Inversing boolean not [10] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [9] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
+Inversing boolean not [18] (bool~) divr16u::$9 ← (word) divr16u::rem#6 < (word) divr16u::divisor#2 from [17] (bool~) divr16u::$8 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
+Inversing boolean not [75] (bool~) mul16u::$3 ← (byte~) mul16u::$1 == (byte) 0 from [74] (bool~) mul16u::$2 ← (byte~) mul16u::$1 != (byte) 0
+Inversing boolean not [101] (bool~) mul16s::$4 ← (signed word) mul16s::a#2 >= (signed byte) 0 from [100] (bool~) mul16s::$3 ← (signed word) mul16s::a#2 < (signed byte) 0
+Inversing boolean not [105] (bool~) mul16s::$6 ← (signed word) mul16s::b#2 >= (signed byte) 0 from [104] (bool~) mul16s::$5 ← (signed word) mul16s::b#2 < (signed byte) 0
+Inversing boolean not [170] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (const dword) PI_u4f28 from [169] (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (const dword) PI_u4f28
+Inversing boolean not [174] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (const dword) PI_HALF_u4f28 from [173] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (const dword) PI_HALF_u4f28
+Inversing boolean not [233] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 == (byte) 0 from [232] (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (byte) 0
+Inversing boolean not [262] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [261] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
+Inversing boolean not [359] (bool~) loop::$5 ← (word) xsin_idx#3 != (const word) XSIN_SIZE from [358] (bool~) loop::$4 ← (word) xsin_idx#3 == (const word) XSIN_SIZE
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -2065,7 +2000,6 @@ Alias (signed dword) mul16s::return#0 = (signed dword~) mul16s::$7 (signed dword
 Alias (dword) mul16s::m#5 = (dword) mul16s::m#6 
 Alias (signed word) mul16s::a#3 = (signed word) mul16s::a#4 
 Alias (word~) mul16s::$17 = (word~) mul16s::$15 
-Alias (word) rem16u#0 = (word) rem16u#33 (word) rem16u#31 (word) rem16u#28 (word) rem16u#25 
 Alias (signed word) sin16s_gen2::ampl#0 = (signed word~) sin16s_gen2::$0 (signed word) sin16s_gen2::ampl#4 
 Alias (signed word) sin16s_gen2::offs#0 = (signed word~) sin16s_gen2::$2 (signed word) sin16s_gen2::offs#5 
 Alias (dword) div32u16u::return#2 = (dword) div32u16u::return#4 
@@ -2120,12 +2054,12 @@ Alias (byte) memset::c#2 = (byte) memset::c#3
 Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
 Alias (byte*) memset::end#1 = (byte*) memset::end#2 
 Alias (void*) memset::str#5 = (void*) memset::str#6 
+Alias (word) rem16u#0 = (word) rem16u#31 (word) rem16u#28 (word) rem16u#25 
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
 Alias (byte*) main::toD0181_gfx#0 = (byte*) main::toD0181_gfx#1 
-Alias (word) rem16u#30 = (word) rem16u#37 (word) rem16u#38 (word) rem16u#36 (word) rem16u#35 (word) rem16u#34 
+Alias (word) rem16u#30 = (word) rem16u#36 (word) rem16u#37 (word) rem16u#35 (word) rem16u#34 (word) rem16u#33 
 Alias (word) xsin_idx#21 = (word) xsin_idx#25 (word) xsin_idx#26 (word) xsin_idx#24 (word) xsin_idx#23 (word) xsin_idx#22 
 Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$0 
-Alias (byte) memset::c#1 = (byte~) main::$2 
 Alias (word) rem16u#23 = (word) rem16u#27 
 Alias (word) xsin_idx#13 = (word) xsin_idx#17 (word) xsin_idx#20 
 Alias (word) rem16u#17 = (word) rem16u#8 (word) rem16u#24 (word) rem16u#18 (word) rem16u#9 
@@ -2209,57 +2143,45 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Identical Phi Values (byte) render_logo::logo_start#1 (byte) render_logo::logo_start#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [433] (byte~) render_logo::$14 ← (byte) $28 * (byte) render_logo::line#10
-Identified duplicate assignment right side [450] (byte~) render_logo::$22 ← (byte) $28 * (byte) render_logo::line#11
+Identified duplicate assignment right side [413] (byte~) render_logo::$14 ← (byte) $28 * (byte) render_logo::line#10
+Identified duplicate assignment right side [430] (byte~) render_logo::$22 ← (byte) $28 * (byte) render_logo::line#11
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) divr16u::$4 [23] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
-Simple Condition (bool~) divr16u::$9 [31] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
-Simple Condition (bool~) divr16u::$11 [38] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
-Simple Condition (bool~) mul16u::$0 [83] if((word) mul16u::a#3!=(byte) 0) goto mul16u::@2
-Simple Condition (bool~) mul16u::$3 [88] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@4
-Simple Condition (bool~) mul16s::$4 [114] if((signed word) mul16s::a#0>=(signed byte) 0) goto mul16s::@1
-Simple Condition (bool~) mul16s::$6 [118] if((signed word) mul16s::b#0>=(signed byte) 0) goto mul16s::@2
-Simple Condition (bool~) sin16s_gen2::$4 [159] if((word) sin16s_gen2::i#2<(word) sin16s_gen2::wavelength#0) goto sin16s_gen2::@2
-Simple Condition (bool~) sin16s::$1 [187] if((dword) sin16s::x#0<(dword) PI_u4f28) goto sin16s::@1
-Simple Condition (bool~) sin16s::$3 [191] if((dword) sin16s::x#4<(dword) PI_HALF_u4f28) goto sin16s::@2
-Simple Condition (bool~) sin16s::$16 [250] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@3
-Simple Condition (bool~) memset::$1 [279] if((word) memset::num#2<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [289] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) main::$6 [345] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
-Simple Condition (bool~) loop::$0 [368] if(*((byte*) RASTER)!=(byte) $ff) goto loop::@4
-Simple Condition (bool~) loop::$5 [380] if((word) xsin_idx#3!=(word) XSIN_SIZE) goto loop::@11
-Simple Condition (bool~) render_logo::$5 [399] if((signed word) render_logo::xpos#0<(signed byte) 0) goto render_logo::@1
-Simple Condition (bool~) render_logo::$7 [411] if((byte) render_logo::screen_idx#18!=(byte) render_logo::logo_start#0) goto render_logo::@5
-Simple Condition (bool~) render_logo::$10 [422] unroll if((byte) render_logo::line#2!=rangelast(0,5)) goto render_logo::@7
-Simple Condition (bool~) render_logo::$11 [427] if((byte) render_logo::screen_idx#10!=(byte) $28) goto render_logo::@13
-Simple Condition (bool~) render_logo::$16 [438] unroll if((byte) render_logo::line#4!=rangelast(0,5)) goto render_logo::@15
-Simple Condition (bool~) render_logo::$19 [444] if((byte) render_logo::logo_idx#11!=(byte) $28) goto render_logo::@22
-Simple Condition (bool~) render_logo::$24 [455] unroll if((byte) render_logo::line#6!=rangelast(0,5)) goto render_logo::@24
-Simple Condition (bool~) render_logo::$25 [461] if((byte) render_logo::screen_idx#15!=(byte) $28) goto render_logo::@30
-Simple Condition (bool~) render_logo::$28 [470] unroll if((byte) render_logo::line#8!=rangelast(0,5)) goto render_logo::@32
+Simple Condition (bool~) divr16u::$4 [11] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
+Simple Condition (bool~) divr16u::$9 [19] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
+Simple Condition (bool~) divr16u::$11 [26] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
+Simple Condition (bool~) mul16u::$0 [71] if((word) mul16u::a#3!=(byte) 0) goto mul16u::@2
+Simple Condition (bool~) mul16u::$3 [76] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@4
+Simple Condition (bool~) mul16s::$4 [102] if((signed word) mul16s::a#0>=(signed byte) 0) goto mul16s::@1
+Simple Condition (bool~) mul16s::$6 [106] if((signed word) mul16s::b#0>=(signed byte) 0) goto mul16s::@2
+Simple Condition (bool~) sin16s_gen2::$4 [143] if((word) sin16s_gen2::i#2<(word) sin16s_gen2::wavelength#0) goto sin16s_gen2::@2
+Simple Condition (bool~) sin16s::$1 [171] if((dword) sin16s::x#0<(const dword) PI_u4f28) goto sin16s::@1
+Simple Condition (bool~) sin16s::$3 [175] if((dword) sin16s::x#4<(const dword) PI_HALF_u4f28) goto sin16s::@2
+Simple Condition (bool~) sin16s::$16 [234] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@3
+Simple Condition (bool~) memset::$1 [263] if((word) memset::num#2<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$4 [273] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) main::$5 [325] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
+Simple Condition (bool~) loop::$0 [348] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@4
+Simple Condition (bool~) loop::$5 [360] if((word) xsin_idx#3!=(const word) XSIN_SIZE) goto loop::@11
+Simple Condition (bool~) render_logo::$5 [379] if((signed word) render_logo::xpos#0<(signed byte) 0) goto render_logo::@1
+Simple Condition (bool~) render_logo::$7 [391] if((byte) render_logo::screen_idx#18!=(byte) render_logo::logo_start#0) goto render_logo::@5
+Simple Condition (bool~) render_logo::$10 [402] unroll if((byte) render_logo::line#2!=rangelast(0,5)) goto render_logo::@7
+Simple Condition (bool~) render_logo::$11 [407] if((byte) render_logo::screen_idx#10!=(byte) $28) goto render_logo::@13
+Simple Condition (bool~) render_logo::$16 [418] unroll if((byte) render_logo::line#4!=rangelast(0,5)) goto render_logo::@15
+Simple Condition (bool~) render_logo::$19 [424] if((byte) render_logo::logo_idx#11!=(byte) $28) goto render_logo::@22
+Simple Condition (bool~) render_logo::$24 [435] unroll if((byte) render_logo::line#6!=rangelast(0,5)) goto render_logo::@24
+Simple Condition (bool~) render_logo::$25 [441] if((byte) render_logo::screen_idx#15!=(byte) $28) goto render_logo::@30
+Simple Condition (bool~) render_logo::$28 [450] unroll if((byte) render_logo::line#8!=rangelast(0,5)) goto render_logo::@32
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [217] (word) mulu16_sel::v2#2 ← (unumber)(number) $10000/(number) 6
+Constant right-side identified [201] (word) mulu16_sel::v2#2 ← (unumber)(number) $10000/(number) 6
+Constant right-side identified [282] (signed word[XSIN_SIZE]) xsin ← { fill( XSIN_SIZE, 0) }
+Constant right-side identified [308] (void*) memset::str#0 ← (void*)(const byte*) SCREEN
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) BGCOL2 = (byte*) 53282
-Constant (const byte*) BGCOL3 = (byte*) 53283
-Constant (const byte*) D016 = (byte*) 53270
-Constant (const byte) VIC_MCM = $10
-Constant (const byte*) D018 = (byte*) 53272
-Constant (const byte*) COLS = (byte*) 55296
-Constant (const byte) BLACK = 0
-Constant (const byte) WHITE = 1
-Constant (const byte) DARK_GREY = $b
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
 Constant (const word) divr16u::rem#3 = 0
 Constant (const dword) mul16u::res#0 = 0
-Constant (const dword) PI2_u4f28 = $6487ed51
-Constant (const dword) PI_u4f28 = $3243f6a9
-Constant (const dword) PI_HALF_u4f28 = $1921fb54
+Constant (const dword) div32u16u::dividend#0 = PI2_u4f28
 Constant (const dword) sin16s_gen2::x#0 = 0
 Constant (const word) sin16s_gen2::i#0 = 0
 Constant (const byte) sin16s::isUpper#0 = 0
@@ -2270,12 +2192,17 @@ Constant (const word) mulu16_sel::v2#2 = (unumber)$10000/6
 Constant (const byte) mulu16_sel::select#2 = 1
 Constant (const byte) mulu16_sel::select#3 = 0
 Constant (const byte) mulu16_sel::select#4 = 0
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) LOGO = (byte*) 8192
-Constant (const word) XSIN_SIZE = $200
+Constant (const signed word[XSIN_SIZE]) xsin = { fill( XSIN_SIZE, 0) }
+Constant (const byte*) main::toD0181_screen#0 = SCREEN
+Constant (const byte*) main::toD0181_gfx#0 = LOGO
+Constant (const void*) memset::str#0 = (void*)SCREEN
+Constant (const byte) memset::c#0 = BLACK
 Constant (const word) memset::num#0 = $3e8
+Constant (const void*) memset::str#1 = (void*)COLS
+Constant (const byte) memset::c#1 = WHITE|8
 Constant (const word) memset::num#1 = $3e8
 Constant (const byte) main::ch#0 = 0
+Constant (const word) sin16s_gen2::wavelength#0 = XSIN_SIZE
 Constant (const signed word) sin16s_gen2::min#0 = -$140
 Constant (const signed word) sin16s_gen2::max#0 = $140
 Constant (const word) xsin_idx#16 = 0
@@ -2291,15 +2218,6 @@ Constant (const byte) render_logo::line#3 = 0
 Constant (const byte) render_logo::line#5 = 0
 Constant (const byte) render_logo::line#7 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const dword) div32u16u::dividend#0 = PI2_u4f28
-Constant (const signed word[XSIN_SIZE]) xsin = { fill( XSIN_SIZE, 0) }
-Constant (const byte*) main::toD0181_screen#0 = SCREEN
-Constant (const byte*) main::toD0181_gfx#0 = LOGO
-Constant (const void*) memset::str#0 = (void*)SCREEN
-Constant (const byte) memset::c#0 = BLACK
-Constant (const void*) memset::str#1 = (void*)COLS
-Constant (const word) sin16s_gen2::wavelength#0 = XSIN_SIZE
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) div32u16u::divisor#0 = sin16s_gen2::wavelength#0
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
@@ -2308,22 +2226,22 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::divisor#0 = div32u16u::divisor#0
 Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [365] if(true) goto loop::@4
+if() condition always true - replacing block destination [345] if(true) goto loop::@4
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [36] divr16u::i#1 ← ++ divr16u::i#2 to ++
-Resolved ranged comparison value [38] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
-Resolved ranged next value [343] main::ch#1 ← ++ main::ch#2 to ++
-Resolved ranged comparison value [345] if(main::ch#1!=rangelast(0,$ef)) goto main::@1 to (number) $f0
-Resolved ranged next value [420] render_logo::line#2 ← ++ render_logo::line#9 to ++
-Resolved ranged comparison value [422] unroll if(render_logo::line#2!=rangelast(0,5)) goto render_logo::@7 to (number) 6
-Resolved ranged next value [436] render_logo::line#4 ← ++ render_logo::line#10 to ++
-Resolved ranged comparison value [438] unroll if(render_logo::line#4!=rangelast(0,5)) goto render_logo::@15 to (number) 6
-Resolved ranged next value [453] render_logo::line#6 ← ++ render_logo::line#11 to ++
-Resolved ranged comparison value [455] unroll if(render_logo::line#6!=rangelast(0,5)) goto render_logo::@24 to (number) 6
-Resolved ranged next value [468] render_logo::line#8 ← ++ render_logo::line#12 to ++
-Resolved ranged comparison value [470] unroll if(render_logo::line#8!=rangelast(0,5)) goto render_logo::@32 to (number) 6
+Resolved ranged next value [24] divr16u::i#1 ← ++ divr16u::i#2 to ++
+Resolved ranged comparison value [26] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
+Resolved ranged next value [323] main::ch#1 ← ++ main::ch#2 to ++
+Resolved ranged comparison value [325] if(main::ch#1!=rangelast(0,$ef)) goto main::@1 to (number) $f0
+Resolved ranged next value [400] render_logo::line#2 ← ++ render_logo::line#9 to ++
+Resolved ranged comparison value [402] unroll if(render_logo::line#2!=rangelast(0,5)) goto render_logo::@7 to (number) 6
+Resolved ranged next value [416] render_logo::line#4 ← ++ render_logo::line#10 to ++
+Resolved ranged comparison value [418] unroll if(render_logo::line#4!=rangelast(0,5)) goto render_logo::@15 to (number) 6
+Resolved ranged next value [433] render_logo::line#6 ← ++ render_logo::line#11 to ++
+Resolved ranged comparison value [435] unroll if(render_logo::line#6!=rangelast(0,5)) goto render_logo::@24 to (number) 6
+Resolved ranged next value [448] render_logo::line#8 ← ++ render_logo::line#12 to ++
+Resolved ranged comparison value [450] unroll if(render_logo::line#8!=rangelast(0,5)) goto render_logo::@32 to (number) 6
 Eliminating unused variable (void*) memset::return#2 and assignment [158] (void*) memset::return#2 ← (void*) memset::str#3
-Eliminating unused variable (void*) memset::return#3 and assignment [161] (void*) memset::return#3 ← (void*) memset::str#3
+Eliminating unused variable (void*) memset::return#3 and assignment [160] (void*) memset::return#3 ← (void*) memset::str#3
 Eliminating unused constant (const byte) render_logo::logo_idx#0
 Eliminating unused constant (const byte) render_logo::screen_idx#0
 Eliminating unused constant (const byte) render_logo::line#0
@@ -2360,14 +2278,12 @@ Constant right-side identified [22] (word) divr16u::dividend#2 ← < (const dwor
 Constant right-side identified [58] (signed word) sin16s_gen2::ampl#0 ← (const signed word) sin16s_gen2::max#0 - (const signed word) sin16s_gen2::min#0
 Constant right-side identified [148] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
 Constant right-side identified [151] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
-Constant right-side identified [158] (byte) memset::c#1 ← (const byte) WHITE | (byte) 8
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) divr16u::dividend#1 = >div32u16u::dividend#0
 Constant (const word) divr16u::dividend#2 = <div32u16u::dividend#0
 Constant (const signed word) sin16s_gen2::ampl#0 = sin16s_gen2::max#0-sin16s_gen2::min#0
 Constant (const word) main::toD0181_$1 = main::toD0181_$0&$3fff
 Constant (const byte) main::toD0181_$5 = >main::toD0181_$4
-Constant (const byte) memset::c#1 = WHITE|8
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const signed word) mul16s::b#0 = sin16s_gen2::ampl#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -2938,12 +2854,12 @@ Inlining constant with var siblings (const word) mulu16_sel::v2#2
 Inlining constant with var siblings (const byte) mulu16_sel::select#2
 Inlining constant with var siblings (const byte) mulu16_sel::select#3
 Inlining constant with var siblings (const byte) mulu16_sel::select#4
-Inlining constant with var siblings (const word) memset::num#0
-Inlining constant with var siblings (const word) memset::num#1
 Inlining constant with var siblings (const void*) memset::str#0
 Inlining constant with var siblings (const byte) memset::c#0
+Inlining constant with var siblings (const word) memset::num#0
 Inlining constant with var siblings (const void*) memset::str#1
 Inlining constant with var siblings (const byte) memset::c#1
+Inlining constant with var siblings (const word) memset::num#1
 Inlining constant with var siblings (const byte) main::ch#0
 Inlining constant with var siblings (const byte) render_logo::screen_idx#1
 Inlining constant with var siblings (const byte) render_logo::screen_idx#2
@@ -3147,7 +3063,6 @@ Added new block during phi lifting divr16u::@9(between divr16u::@1 and divr16u::
 Added new block during phi lifting divr16u::@10(between divr16u::@2 and divr16u::@3)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @6
-Adding NOP phi() at start of @17
 Adding NOP phi() at start of @29
 Adding NOP phi() at start of @31
 Adding NOP phi() at start of @32
@@ -3171,73 +3086,72 @@ Adding NOP phi() at start of mul16u::@3
 Adding NOP phi() at start of div32u16u
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
-Calls in [] to main:6 
-Calls in [main] to memset:18 memset:20 sin16s_gen2:27 loop:29 
-Calls in [loop] to render_logo:41 
-Calls in [sin16s_gen2] to div32u16u:121 sin16s:128 mul16s:131 
-Calls in [mul16s] to mul16u:144 
-Calls in [sin16s] to mulu16_sel:188 mulu16_sel:195 mulu16_sel:200 mulu16_sel:208 mulu16_sel:215 
-Calls in [mulu16_sel] to mul16u:233 
-Calls in [div32u16u] to divr16u:240 divr16u:245 
+Calls in [] to main:5 
+Calls in [main] to memset:17 memset:19 sin16s_gen2:26 loop:28 
+Calls in [loop] to render_logo:40 
+Calls in [sin16s_gen2] to div32u16u:120 sin16s:127 mul16s:130 
+Calls in [mul16s] to mul16u:143 
+Calls in [sin16s] to mulu16_sel:187 mulu16_sel:194 mulu16_sel:199 mulu16_sel:207 mulu16_sel:214 
+Calls in [mulu16_sel] to mul16u:232 
+Calls in [div32u16u] to divr16u:239 divr16u:244 
 
 Created 38 initial phi equivalence classes
-Coalesced [32] main::ch#3 ← main::ch#1
-Coalesced [47] xsin_idx#27 ← xsin_idx#19
-Coalesced [48] xsin_idx#28 ← xsin_idx#3
-Coalesced [59] render_logo::screen_idx#26 ← render_logo::screen_idx#18
-Coalesced [77] render_logo::screen_idx#25 ← render_logo::screen_idx#4
-Coalesced [78] render_logo::logo_idx#13 ← render_logo::logo_idx#3
-Coalesced [87] render_logo::screen_idx#24 ← render_logo::screen_idx#3
-Coalesced [92] render_logo::screen_idx#28 ← render_logo::screen_idx#21
-Coalesced [103] render_logo::screen_idx#29 ← render_logo::screen_idx#6
-Coalesced [118] render_logo::logo_idx#15 ← render_logo::logo_idx#4
-Coalesced [119] render_logo::screen_idx#27 ← render_logo::screen_idx#5
-Coalesced [139] sin16s_gen2::i#6 ← sin16s_gen2::i#1
-Coalesced [140] sin16s_gen2::x#6 ← sin16s_gen2::x#1
-Coalesced [141] sin16s_gen2::sintab#8 ← sin16s_gen2::sintab#0
-Coalesced [143] mul16u::a#8 ← mul16u::a#1
-Coalesced [151] mul16s::m#7 ← mul16s::m#1
-Coalesced [155] mul16s::m#8 ← mul16s::m#0
-Coalesced [157] mul16u::a#10 ← mul16u::a#6
-Coalesced [158] mul16u::mb#7 ← mul16u::mb#0
-Coalesced [166] mul16u::res#9 ← mul16u::res#1
-Coalesced [170] mul16u::a#11 ← mul16u::a#0
-Coalesced [171] mul16u::res#7 ← mul16u::res#6
-Coalesced [172] mul16u::mb#8 ← mul16u::mb#1
-Coalesced (already) [173] mul16u::res#8 ← mul16u::res#2
-Coalesced [176] sin16s::x#9 ← sin16s::x#1
-Coalesced [180] sin16s::x#11 ← sin16s::x#2
-Coalesced [186] mulu16_sel::v1#8 ← mulu16_sel::v1#0
-Coalesced [187] mulu16_sel::v2#8 ← mulu16_sel::v2#0
-Coalesced [193] mulu16_sel::v1#9 ← mulu16_sel::v1#1
-Coalesced [194] mulu16_sel::v2#9 ← mulu16_sel::v2#1
-Coalesced [199] mulu16_sel::v1#10 ← mulu16_sel::v1#2
-Coalesced [206] mulu16_sel::v1#6 ← mulu16_sel::v1#3
-Coalesced [207] mulu16_sel::v2#6 ← mulu16_sel::v2#3
-Coalesced [213] mulu16_sel::v1#7 ← mulu16_sel::v1#4
-Coalesced [214] mulu16_sel::v2#7 ← mulu16_sel::v2#4
-Coalesced [222] sin16s::return#6 ← sin16s::sinx#1
-Coalesced [226] sin16s::x#10 ← sin16s::x#4
-Coalesced [227] sin16s::x#8 ← sin16s::x#0
-Coalesced [231] mul16u::mb#6 ← mul16u::b#1
-Coalesced [232] mul16u::a#9 ← mul16u::a#2
-Coalesced [244] divr16u::rem#12 ← divr16u::rem#4
-Coalesced [251] divr16u::rem#13 ← divr16u::rem#10
-Coalesced [252] divr16u::dividend#9 ← divr16u::dividend#5
-Coalesced [259] divr16u::rem#16 ← divr16u::rem#1
-Coalesced [266] divr16u::rem#18 ← divr16u::rem#2
-Coalesced [267] divr16u::return#8 ← divr16u::quotient#2
-Coalesced [273] divr16u::rem#14 ← divr16u::rem#11
-Coalesced [274] divr16u::dividend#10 ← divr16u::dividend#0
-Coalesced [275] divr16u::quotient#9 ← divr16u::return#0
-Coalesced [276] divr16u::i#7 ← divr16u::i#1
-Coalesced [277] divr16u::rem#17 ← divr16u::rem#6
-Coalesced [278] divr16u::return#7 ← divr16u::quotient#1
-Coalesced [279] divr16u::rem#15 ← divr16u::rem#0
-Coalesced [289] memset::dst#5 ← memset::dst#1
+Coalesced [31] main::ch#3 ← main::ch#1
+Coalesced [46] xsin_idx#27 ← xsin_idx#19
+Coalesced [47] xsin_idx#28 ← xsin_idx#3
+Coalesced [58] render_logo::screen_idx#26 ← render_logo::screen_idx#18
+Coalesced [76] render_logo::screen_idx#25 ← render_logo::screen_idx#4
+Coalesced [77] render_logo::logo_idx#13 ← render_logo::logo_idx#3
+Coalesced [86] render_logo::screen_idx#24 ← render_logo::screen_idx#3
+Coalesced [91] render_logo::screen_idx#28 ← render_logo::screen_idx#21
+Coalesced [102] render_logo::screen_idx#29 ← render_logo::screen_idx#6
+Coalesced [117] render_logo::logo_idx#15 ← render_logo::logo_idx#4
+Coalesced [118] render_logo::screen_idx#27 ← render_logo::screen_idx#5
+Coalesced [138] sin16s_gen2::i#6 ← sin16s_gen2::i#1
+Coalesced [139] sin16s_gen2::x#6 ← sin16s_gen2::x#1
+Coalesced [140] sin16s_gen2::sintab#8 ← sin16s_gen2::sintab#0
+Coalesced [142] mul16u::a#8 ← mul16u::a#1
+Coalesced [150] mul16s::m#7 ← mul16s::m#1
+Coalesced [154] mul16s::m#8 ← mul16s::m#0
+Coalesced [156] mul16u::a#10 ← mul16u::a#6
+Coalesced [157] mul16u::mb#7 ← mul16u::mb#0
+Coalesced [165] mul16u::res#9 ← mul16u::res#1
+Coalesced [169] mul16u::a#11 ← mul16u::a#0
+Coalesced [170] mul16u::res#7 ← mul16u::res#6
+Coalesced [171] mul16u::mb#8 ← mul16u::mb#1
+Coalesced (already) [172] mul16u::res#8 ← mul16u::res#2
+Coalesced [175] sin16s::x#9 ← sin16s::x#1
+Coalesced [179] sin16s::x#11 ← sin16s::x#2
+Coalesced [185] mulu16_sel::v1#8 ← mulu16_sel::v1#0
+Coalesced [186] mulu16_sel::v2#8 ← mulu16_sel::v2#0
+Coalesced [192] mulu16_sel::v1#9 ← mulu16_sel::v1#1
+Coalesced [193] mulu16_sel::v2#9 ← mulu16_sel::v2#1
+Coalesced [198] mulu16_sel::v1#10 ← mulu16_sel::v1#2
+Coalesced [205] mulu16_sel::v1#6 ← mulu16_sel::v1#3
+Coalesced [206] mulu16_sel::v2#6 ← mulu16_sel::v2#3
+Coalesced [212] mulu16_sel::v1#7 ← mulu16_sel::v1#4
+Coalesced [213] mulu16_sel::v2#7 ← mulu16_sel::v2#4
+Coalesced [221] sin16s::return#6 ← sin16s::sinx#1
+Coalesced [225] sin16s::x#10 ← sin16s::x#4
+Coalesced [226] sin16s::x#8 ← sin16s::x#0
+Coalesced [230] mul16u::mb#6 ← mul16u::b#1
+Coalesced [231] mul16u::a#9 ← mul16u::a#2
+Coalesced [243] divr16u::rem#12 ← divr16u::rem#4
+Coalesced [250] divr16u::rem#13 ← divr16u::rem#10
+Coalesced [251] divr16u::dividend#9 ← divr16u::dividend#5
+Coalesced [258] divr16u::rem#16 ← divr16u::rem#1
+Coalesced [265] divr16u::rem#18 ← divr16u::rem#2
+Coalesced [266] divr16u::return#8 ← divr16u::quotient#2
+Coalesced [272] divr16u::rem#14 ← divr16u::rem#11
+Coalesced [273] divr16u::dividend#10 ← divr16u::dividend#0
+Coalesced [274] divr16u::quotient#9 ← divr16u::return#0
+Coalesced [275] divr16u::i#7 ← divr16u::i#1
+Coalesced [276] divr16u::rem#17 ← divr16u::rem#6
+Coalesced [277] divr16u::return#7 ← divr16u::quotient#1
+Coalesced [278] divr16u::rem#15 ← divr16u::rem#0
+Coalesced [288] memset::dst#5 ← memset::dst#1
 Coalesced down to 26 phi equivalence classes
 Culled Empty Block (label) @6
-Culled Empty Block (label) @17
 Culled Empty Block (label) @29
 Culled Empty Block (label) @32
 Culled Empty Block (label) main::toD0181_@return
@@ -4285,7 +4199,6 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
@@ -4306,9 +4219,10 @@ Target platform is c64basic / MOS6502X
   .const PI_u4f28 = $3243f6a9
   // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
+  .const XSIN_SIZE = $200
+  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
   .label LOGO = $2000
-  .const XSIN_SIZE = $200
   .label rem16u = $b1
   .label xsin_idx = 3
   // @begin
@@ -6421,7 +6335,6 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
@@ -6442,9 +6355,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const PI_u4f28 = $3243f6a9
   // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
+  .const XSIN_SIZE = $200
+  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
   .label LOGO = $2000
-  .const XSIN_SIZE = $200
   .label rem16u = $c
   .label xsin_idx = $23
   // @begin
@@ -8124,22 +8038,22 @@ FINAL SYMBOL TABLE
 (const byte*) BGCOL = (byte*) 53281
 (const byte*) BGCOL2 = (byte*) 53282
 (const byte*) BGCOL3 = (byte*) 53283
-(const byte) BLACK = (byte) 0
+(const byte) BLACK = (number) 0
 (const byte*) BORDERCOL = (byte*) 53280
 (const byte*) COLS = (byte*) 55296
 (const byte*) D016 = (byte*) 53270
 (const byte*) D018 = (byte*) 53272
-(const byte) DARK_GREY = (byte) $b
+(const byte) DARK_GREY = (number) $b
 (const byte*) LOGO = (byte*) 8192
-(const dword) PI2_u4f28 = (dword) $6487ed51
-(const dword) PI_HALF_u4f28 = (dword) $1921fb54
-(const dword) PI_u4f28 = (dword) $3243f6a9
+(const dword) PI2_u4f28 = (number) $6487ed51
+(const dword) PI_HALF_u4f28 = (number) $1921fb54
+(const dword) PI_u4f28 = (number) $3243f6a9
 (const byte*) RASTER = (byte*) 53266
 (const byte*) SCREEN = (byte*) 1024
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
-(const byte) VIC_MCM = (byte) $10
-(const byte) WHITE = (byte) 1
-(const word) XSIN_SIZE = (word) $200
+(const byte) VIC_MCM = (number) $10
+(const byte) WHITE = (number) 1
+(const word) XSIN_SIZE = (number) $200
 (dword()) div32u16u((dword) div32u16u::dividend , (word) div32u16u::divisor)
 (label) div32u16u::@1
 (label) div32u16u::@2
@@ -8506,7 +8420,6 @@ Score: 46481
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
@@ -8527,9 +8440,10 @@ Score: 46481
   .const PI_u4f28 = $3243f6a9
   // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
+  .const XSIN_SIZE = $200
+  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
   .label LOGO = $2000
-  .const XSIN_SIZE = $200
   .label rem16u = $c
   .label xsin_idx = $23
   // @begin

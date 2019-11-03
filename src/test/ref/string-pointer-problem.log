@@ -1,4 +1,5 @@
 Identified constant variable (byte*) process_name
+Culled Empty Block (label) @1
 Culled Empty Block (label) set_process_name::@4
 Culled Empty Block (label) set_process_name::@3
 Culled Empty Block (label) set_process_name::@5
@@ -6,7 +7,7 @@ Culled Empty Block (label) set_process_name::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@1
+  to:@2
 
 (void()) main()
 main: scope:[main]  from @2
@@ -18,9 +19,6 @@ main::@1: scope:[main]  from main
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte*) process_name ← ((byte*)) (number) $400
-  to:@2
 
 (void()) set_process_name((byte*) set_process_name::name)
 set_process_name: scope:[set_process_name]  from main
@@ -36,13 +34,13 @@ set_process_name::@1: scope:[set_process_name]  from set_process_name set_proces
 set_process_name::@2: scope:[set_process_name]  from set_process_name::@1
   (signed word) set_process_name::j#3 ← phi( set_process_name::@1/(signed word) set_process_name::j#2 )
   (byte*) set_process_name::name#1 ← phi( set_process_name::@1/(byte*) set_process_name::name#2 )
-  *((byte*) process_name + (signed word) set_process_name::j#3) ← *((byte*) set_process_name::name#1 + (signed word) set_process_name::j#3)
+  *((const byte*) process_name + (signed word) set_process_name::j#3) ← *((byte*) set_process_name::name#1 + (signed word) set_process_name::j#3)
   (signed word) set_process_name::j#1 ← ++ (signed word) set_process_name::j#3
   to:set_process_name::@1
 set_process_name::@return: scope:[set_process_name]  from set_process_name::@1
   return 
   to:@return
-@2: scope:[]  from @1
+@2: scope:[]  from @begin
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -50,7 +48,6 @@ set_process_name::@return: scope:[set_process_name]  from set_process_name::@1
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(label) @1
 (label) @2
 (label) @3
 (label) @begin
@@ -59,7 +56,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@return
 (const string) main::name = (string) "keyboard"
-(byte*) process_name
+(const byte*) process_name = (byte*)(number) $400
 (void()) set_process_name((byte*) set_process_name::name)
 (bool~) set_process_name::$0
 (label) set_process_name::@1
@@ -79,7 +76,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (snumber) 0 in (signed word) set_process_name::j#0 ← (number) 0
 Adding number conversion cast (snumber) $11 in (bool~) set_process_name::$0 ← (signed word) set_process_name::j#2 < (number) $11
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) process_name ← (byte*)(number) $400
 Inlining cast (signed word) set_process_name::j#0 ← (snumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -95,21 +91,19 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) set_process_name::name#3 (byte*) set_process_name::name#0
 Identical Phi Values (byte*) set_process_name::name#1 (byte*) set_process_name::name#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) set_process_name::$0 [8] if((signed word) set_process_name::j#2<(signed byte) $11) goto set_process_name::@2
+Simple Condition (bool~) set_process_name::$0 [7] if((signed word) set_process_name::j#2<(signed byte) $11) goto set_process_name::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) set_process_name::name#0 = main::name
-Constant (const byte*) process_name = (byte*) 1024
 Constant (const signed word) set_process_name::j#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [10] *((const byte*) process_name + (signed word) set_process_name::j#2) ← *((const byte*) set_process_name::name#0 + (signed word) set_process_name::j#2)
-De-inlining pointer[w] to *(pointer+w)   [10] *((const byte*) process_name + (signed word) set_process_name::j#2) ← *((byte*~) set_process_name::$1)
+De-inlining pointer[w] to *(pointer+w)   [9] *((const byte*) process_name + (signed word) set_process_name::j#2) ← *((const byte*) set_process_name::name#0 + (signed word) set_process_name::j#2)
+De-inlining pointer[w] to *(pointer+w)   [9] *((const byte*) process_name + (signed word) set_process_name::j#2) ← *((byte*~) set_process_name::$1)
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Inlining constant with var siblings (const signed word) set_process_name::j#0
 Constant inlined set_process_name::name#0 = (const string) main::name
 Constant inlined set_process_name::j#0 = (signed byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
@@ -117,13 +111,12 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of set_process_name
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to set_process_name:7 
+Calls in [] to main:2 
+Calls in [main] to set_process_name:6 
 
 Created 1 initial phi equivalence classes
-Coalesced [18] set_process_name::j#4 ← set_process_name::j#1
+Coalesced [17] set_process_name::j#4 ← set_process_name::j#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @1
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@1
 Renumbering block @2 to @1

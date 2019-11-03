@@ -6,14 +6,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte[$10]) main::buf ← ((byte[$10])) (number) $1100
   (byte) main::i#0 ← (number) 5
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (number~) main::$0 ← (number) 2 + (byte) main::i#2
   (number~) main::$1 ← (number~) main::$0 + (number) 2
-  *((byte[$10]) main::buf + (byte) main::i#2) ← (number~) main::$1
+  *((const byte[$10]) main::buf + (byte) main::i#2) ← (number~) main::$1
   (number~) main::$2 ← (byte) main::i#2 + (number) 1
   (byte) main::i#1 ← (number~) main::$2
   (bool~) main::$3 ← (byte) main::i#1 < (number) $a
@@ -41,7 +40,7 @@ SYMBOL TABLE SSA
 (bool~) main::$3
 (label) main::@1
 (label) main::@return
-(byte[$10]) main::buf
+(const byte[$10]) main::buf = (byte[$10])(number) $1100
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -56,7 +55,6 @@ Adding number conversion cast (unumber) 1 in (number~) main::$2 ← (byte) main:
 Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (byte) main::i#2 + (unumber)(number) 1
 Adding number conversion cast (unumber) $a in (bool~) main::$3 ← (byte) main::i#1 < (number) $a
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte[$10]) main::buf ← (byte[$10])(number) $1100
 Inlining cast (byte) main::i#0 ← (unumber)(number) 5
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 4352
@@ -77,9 +75,8 @@ Inferred type updated to byte in (unumber~) main::$1 ← (byte~) main::$0 + (byt
 Inferred type updated to byte in (unumber~) main::$2 ← (byte) main::i#2 + (byte) 1
 Alias (byte) main::i#1 = (byte~) main::$2 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$3 [9] if((byte) main::i#1<(byte) $a) goto main::@1
+Simple Condition (bool~) main::$3 [8] if((byte) main::i#1<(byte) $a) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[$10]) main::buf = (byte*) 4352
 Constant (const byte) main::i#0 = 5
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0

@@ -5,7 +5,6 @@ Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@3
 
 (void()) main()
@@ -62,7 +61,7 @@ line::@return: scope:[line]  from line::@2
 (void()) plot((byte) plot::x)
 plot: scope:[plot]  from line line::@1
   (byte) plot::x#2 ← phi( line/(byte) plot::x#0 line::@1/(byte) plot::x#1 )
-  *((byte*) SCREEN + (byte) plot::x#2) ← (byte) '*'
+  *((const byte*) SCREEN + (byte) plot::x#2) ← (byte) '*'
   to:plot::@return
 plot::@return: scope:[plot]  from plot
   return 
@@ -79,7 +78,7 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) line((byte) line::l)
 (number~) line::$1
 (label) line::@1
@@ -119,8 +118,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) $14 in (number~) line::$1 ← (byte) line::l#3 + (number) $14
 Adding number conversion cast (unumber) line::$1 in (number~) line::$1 ← (byte) line::l#3 + (unumber)(number) $14
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $14
 Successful SSA optimization PassNCastSimplification
@@ -132,17 +129,16 @@ Alias (byte) main::j#2 = (byte) main::j#3
 Alias (byte) line::l#2 = (byte) line::l#3 
 Alias (byte) plot::x#1 = (byte~) line::$1 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [8] if((byte) main::i#1!=rangelast(0,8)) goto main::@1
-Simple Condition (bool~) main::$3 [16] if((byte) main::j#1!=rangelast($a,$12)) goto main::@3
+Simple Condition (bool~) main::$1 [7] if((byte) main::i#1!=rangelast(0,8)) goto main::@1
+Simple Condition (bool~) main::$3 [15] if((byte) main::j#1!=rangelast($a,$12)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::j#0 = $a
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [8] if(main::i#1!=rangelast(0,8)) goto main::@1 to (number) 9
-Resolved ranged next value [14] main::j#1 ← ++ main::j#2 to ++
-Resolved ranged comparison value [16] if(main::j#1!=rangelast($a,$12)) goto main::@3 to (number) $13
+Resolved ranged next value [5] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [7] if(main::i#1!=rangelast(0,8)) goto main::@1 to (number) 9
+Resolved ranged next value [13] main::j#1 ← ++ main::j#2 to ++
+Resolved ranged comparison value [15] if(main::j#1!=rangelast($a,$12)) goto main::@3 to (number) $13
 Adding number conversion cast (unumber) 9 in if((byte) main::i#1!=(number) 9) goto main::@1
 Adding number conversion cast (unumber) $13 in if((byte) main::j#1!=(number) $13) goto main::@3
 Successful SSA optimization PassNAddNumberTypeConversions

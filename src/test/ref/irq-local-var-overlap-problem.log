@@ -12,27 +12,17 @@ Culled Empty Block (label) sub_irq::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) VIC_CONTROL ← ((byte*)) (number) $d011
-  (byte*) IRQ_STATUS ← ((byte*)) (number) $d019
-  (byte*) IRQ_ENABLE ← ((byte*)) (number) $d01a
-  (byte) IRQ_RASTER ← (number) 1
-  (byte*) BGCOL ← ((byte*)) (number) $d020
-  (byte*) FGCOL ← ((byte*)) (number) $d021
-  (byte*) CIA1_INTERRUPT ← ((byte*)) (number) $dc0d
-  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
   to:@4
 
 (void()) main()
 main: scope:[main]  from @4
   asm { sei  }
-  *((byte*) CIA1_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
-  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
-  *((byte*) RASTER) ← (number) $fd
-  *((byte*) IRQ_ENABLE) ← (byte) IRQ_RASTER
+  *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
+  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
+  *((const byte*) RASTER) ← (number) $fd
+  *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
   (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const void()**) KERNEL_IRQ) ← (void()*~) main::$0
   asm { cli  }
   to:main::@1
 main::@1: scope:[main]  from main main::@8
@@ -56,7 +46,7 @@ main::@6: scope:[main]  from main::@13 main::@5
   (byte) main::i#2 ← phi( main::@13/(byte) main::i#4 main::@5/(byte) main::i#5 )
   (byte~) main::$1 ← (byte) main::i#2 + (byte) main::j#2
   (byte~) main::$2 ← (byte~) main::$1 + (byte) main::k#2
-  *((byte*) FGCOL) ← (byte~) main::$2
+  *((const byte*) FGCOL) ← (byte~) main::$2
   call sub_main 
   to:main::@13
 main::@13: scope:[main]  from main::@6
@@ -86,7 +76,7 @@ main::@return: scope:[main]  from main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   (byte) irq::i#0 ← (byte) 0
   to:irq::@1
 irq::@1: scope:[irq]  from irq irq::@5
@@ -104,7 +94,7 @@ irq::@3: scope:[irq]  from irq::@2 irq::@7
   (byte) irq::i#2 ← phi( irq::@2/(byte) irq::i#4 irq::@7/(byte) irq::i#5 )
   (byte~) irq::$2 ← (byte) irq::i#2 + (byte) irq::j#2
   (byte~) irq::$3 ← (byte~) irq::$2 + (byte) irq::k#2
-  *((byte*) FGCOL) ← (byte~) irq::$3
+  *((const byte*) FGCOL) ← (byte~) irq::$3
   call sub_irq 
   to:irq::@7
 irq::@7: scope:[irq]  from irq::@3
@@ -129,8 +119,8 @@ irq::@5: scope:[irq]  from irq::@4
   if((bool~) irq::$7) goto irq::@1
   to:irq::@6
 irq::@6: scope:[irq]  from irq::@5
-  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
-  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
+  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
+  *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@6
   return 
@@ -155,7 +145,7 @@ sub_main::@3: scope:[sub_main]  from sub_main::@2 sub_main::@3
   (byte) sub_main::i#2 ← phi( sub_main::@2/(byte) sub_main::i#4 sub_main::@3/(byte) sub_main::i#2 )
   (byte~) sub_main::$0 ← (byte) sub_main::i#2 + (byte) sub_main::j#2
   (byte~) sub_main::$1 ← (byte~) sub_main::$0 + (byte) sub_main::k#2
-  *((byte*) BGCOL) ← (byte~) sub_main::$1
+  *((const byte*) BGCOL) ← (byte~) sub_main::$1
   (byte) sub_main::k#1 ← (byte) sub_main::k#2 + rangenext(0,$a)
   (bool~) sub_main::$2 ← (byte) sub_main::k#1 != rangelast(0,$a)
   if((bool~) sub_main::$2) goto sub_main::@3
@@ -196,7 +186,7 @@ sub_irq::@3: scope:[sub_irq]  from sub_irq::@2 sub_irq::@3
   (byte) sub_irq::i#2 ← phi( sub_irq::@2/(byte) sub_irq::i#4 sub_irq::@3/(byte) sub_irq::i#2 )
   (byte~) sub_irq::$0 ← (byte) sub_irq::i#2 + (byte) sub_irq::j#2
   (byte~) sub_irq::$1 ← (byte~) sub_irq::$0 + (byte) sub_irq::k#2
-  *((byte*) BGCOL) ← (byte~) sub_irq::$1
+  *((const byte*) BGCOL) ← (byte~) sub_irq::$1
   (byte) sub_irq::k#1 ← (byte) sub_irq::k#2 + rangenext(0,$a)
   (bool~) sub_irq::$2 ← (byte) sub_irq::k#1 != rangelast(0,$a)
   if((bool~) sub_irq::$2) goto sub_irq::@3
@@ -229,16 +219,16 @@ SYMBOL TABLE SSA
 (label) @5
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) CIA1_INTERRUPT
-(byte) CIA_INTERRUPT_CLEAR
-(byte*) FGCOL
-(byte*) IRQ_ENABLE
-(byte) IRQ_RASTER
-(byte*) IRQ_STATUS
-(void()**) KERNEL_IRQ
-(byte*) RASTER
-(byte*) VIC_CONTROL
+(const byte*) BGCOL = (byte*)(number) $d020
+(const byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
+(const byte*) FGCOL = (byte*)(number) $d021
+(const byte*) IRQ_ENABLE = (byte*)(number) $d01a
+(const byte) IRQ_RASTER = (number) 1
+(const byte*) IRQ_STATUS = (byte*)(number) $d019
+(const void()**) KERNEL_IRQ = (void()**)(number) $314
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) VIC_CONTROL = (byte*)(number) $d011
 interrupt(KERNEL_MIN)(void()) irq()
 (byte~) irq::$2
 (byte~) irq::$3
@@ -372,38 +362,22 @@ interrupt(KERNEL_MIN)(void()) irq()
 (byte) sub_main::k#1
 (byte) sub_main::k#2
 
-Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER ← (number) 1
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-Adding number conversion cast (unumber) $7f in *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
-Adding number conversion cast (unumber) $fd in *((byte*) RASTER) ← (number) $fd
+Adding number conversion cast (unumber) $7f in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
+Adding number conversion cast (unumber) $fd in *((const byte*) RASTER) ← (number) $fd
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) VIC_CONTROL ← (byte*)(number) $d011
-Inlining cast (byte*) IRQ_STATUS ← (byte*)(number) $d019
-Inlining cast (byte*) IRQ_ENABLE ← (byte*)(number) $d01a
-Inlining cast (byte) IRQ_RASTER ← (unumber)(number) 1
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d020
-Inlining cast (byte*) FGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) CIA1_INTERRUPT ← (byte*)(number) $dc0d
-Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
-Inlining cast *((byte*) RASTER) ← (unumber)(number) $fd
+Inlining cast *((const byte*) RASTER) ← (unumber)(number) $fd
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53273
 Simplifying constant pointer cast (byte*) 53274
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 56333
 Simplifying constant integer cast $7f
-Simplifying constant integer cast $7f
 Simplifying constant integer cast $fd
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $fd
 Successful SSA optimization PassNFinalizeNumberTypeConversions
@@ -432,31 +406,21 @@ Identical Phi Values (byte) irq::i#4 (byte) irq::i#7
 Identical Phi Values (byte) sub_main::i#4 (byte) sub_main::i#6
 Identical Phi Values (byte) sub_irq::i#4 (byte) sub_irq::i#6
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$4 [32] if((byte) main::k#1!=rangelast(0,$a)) goto main::@6
-Simple Condition (bool~) main::$5 [36] if((byte) main::j#1!=rangelast(0,$a)) goto main::@5
-Simple Condition (bool~) main::$6 [40] if((byte) main::i#1!=rangelast(0,$a)) goto main::@4
-Simple Condition (bool~) irq::$5 [56] if((byte) irq::k#1!=rangelast(0,$a)) goto irq::@3
-Simple Condition (bool~) irq::$6 [60] if((byte) irq::j#1!=rangelast(0,$a)) goto irq::@2
-Simple Condition (bool~) irq::$7 [64] if((byte) irq::i#1!=rangelast(0,$a)) goto irq::@1
-Simple Condition (bool~) sub_main::$2 [79] if((byte) sub_main::k#1!=rangelast(0,$a)) goto sub_main::@3
-Simple Condition (bool~) sub_main::$3 [83] if((byte) sub_main::j#1!=rangelast(0,$a)) goto sub_main::@2
-Simple Condition (bool~) sub_main::$4 [87] if((byte) sub_main::i#1!=rangelast(0,$a)) goto sub_main::@1
-Simple Condition (bool~) sub_irq::$2 [100] if((byte) sub_irq::k#1!=rangelast(0,$a)) goto sub_irq::@3
-Simple Condition (bool~) sub_irq::$3 [104] if((byte) sub_irq::j#1!=rangelast(0,$a)) goto sub_irq::@2
-Simple Condition (bool~) sub_irq::$4 [108] if((byte) sub_irq::i#1!=rangelast(0,$a)) goto sub_irq::@1
+Simple Condition (bool~) main::$4 [22] if((byte) main::k#1!=rangelast(0,$a)) goto main::@6
+Simple Condition (bool~) main::$5 [26] if((byte) main::j#1!=rangelast(0,$a)) goto main::@5
+Simple Condition (bool~) main::$6 [30] if((byte) main::i#1!=rangelast(0,$a)) goto main::@4
+Simple Condition (bool~) irq::$5 [46] if((byte) irq::k#1!=rangelast(0,$a)) goto irq::@3
+Simple Condition (bool~) irq::$6 [50] if((byte) irq::j#1!=rangelast(0,$a)) goto irq::@2
+Simple Condition (bool~) irq::$7 [54] if((byte) irq::i#1!=rangelast(0,$a)) goto irq::@1
+Simple Condition (bool~) sub_main::$2 [69] if((byte) sub_main::k#1!=rangelast(0,$a)) goto sub_main::@3
+Simple Condition (bool~) sub_main::$3 [73] if((byte) sub_main::j#1!=rangelast(0,$a)) goto sub_main::@2
+Simple Condition (bool~) sub_main::$4 [77] if((byte) sub_main::i#1!=rangelast(0,$a)) goto sub_main::@1
+Simple Condition (bool~) sub_irq::$2 [90] if((byte) sub_irq::k#1!=rangelast(0,$a)) goto sub_irq::@3
+Simple Condition (bool~) sub_irq::$3 [94] if((byte) sub_irq::j#1!=rangelast(0,$a)) goto sub_irq::@2
+Simple Condition (bool~) sub_irq::$4 [98] if((byte) sub_irq::i#1!=rangelast(0,$a)) goto sub_irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [15] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
+Constant right-side identified [5] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()**) KERNEL_IRQ = (void()**) 788
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) VIC_CONTROL = (byte*) 53265
-Constant (const byte*) IRQ_STATUS = (byte*) 53273
-Constant (const byte*) IRQ_ENABLE = (byte*) 53274
-Constant (const byte) IRQ_RASTER = 1
-Constant (const byte*) BGCOL = (byte*) 53280
-Constant (const byte*) FGCOL = (byte*) 53281
-Constant (const byte*) CIA1_INTERRUPT = (byte*) 56333
-Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
 Constant (const void()*) main::$0 = &irq
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::j#0 = 0
@@ -471,32 +435,32 @@ Constant (const byte) sub_irq::i#0 = 0
 Constant (const byte) sub_irq::j#0 = 0
 Constant (const byte) sub_irq::k#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [18] if(true) goto main::@2
+if() condition always true - replacing block destination [8] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [30] main::k#1 ← ++ main::k#2 to ++
-Resolved ranged comparison value [32] if(main::k#1!=rangelast(0,$a)) goto main::@6 to (number) $b
-Resolved ranged next value [34] main::j#1 ← ++ main::j#5 to ++
-Resolved ranged comparison value [36] if(main::j#1!=rangelast(0,$a)) goto main::@5 to (number) $b
-Resolved ranged next value [38] main::i#1 ← ++ main::i#7 to ++
-Resolved ranged comparison value [40] if(main::i#1!=rangelast(0,$a)) goto main::@4 to (number) $b
-Resolved ranged next value [54] irq::k#1 ← ++ irq::k#2 to ++
-Resolved ranged comparison value [56] if(irq::k#1!=rangelast(0,$a)) goto irq::@3 to (number) $b
-Resolved ranged next value [58] irq::j#1 ← ++ irq::j#4 to ++
-Resolved ranged comparison value [60] if(irq::j#1!=rangelast(0,$a)) goto irq::@2 to (number) $b
-Resolved ranged next value [62] irq::i#1 ← ++ irq::i#7 to ++
-Resolved ranged comparison value [64] if(irq::i#1!=rangelast(0,$a)) goto irq::@1 to (number) $b
-Resolved ranged next value [77] sub_main::k#1 ← ++ sub_main::k#2 to ++
-Resolved ranged comparison value [79] if(sub_main::k#1!=rangelast(0,$a)) goto sub_main::@3 to (number) $b
-Resolved ranged next value [81] sub_main::j#1 ← ++ sub_main::j#4 to ++
-Resolved ranged comparison value [83] if(sub_main::j#1!=rangelast(0,$a)) goto sub_main::@2 to (number) $b
-Resolved ranged next value [85] sub_main::i#1 ← ++ sub_main::i#6 to ++
-Resolved ranged comparison value [87] if(sub_main::i#1!=rangelast(0,$a)) goto sub_main::@1 to (number) $b
-Resolved ranged next value [98] sub_irq::k#1 ← ++ sub_irq::k#2 to ++
-Resolved ranged comparison value [100] if(sub_irq::k#1!=rangelast(0,$a)) goto sub_irq::@3 to (number) $b
-Resolved ranged next value [102] sub_irq::j#1 ← ++ sub_irq::j#4 to ++
-Resolved ranged comparison value [104] if(sub_irq::j#1!=rangelast(0,$a)) goto sub_irq::@2 to (number) $b
-Resolved ranged next value [106] sub_irq::i#1 ← ++ sub_irq::i#6 to ++
-Resolved ranged comparison value [108] if(sub_irq::i#1!=rangelast(0,$a)) goto sub_irq::@1 to (number) $b
+Resolved ranged next value [20] main::k#1 ← ++ main::k#2 to ++
+Resolved ranged comparison value [22] if(main::k#1!=rangelast(0,$a)) goto main::@6 to (number) $b
+Resolved ranged next value [24] main::j#1 ← ++ main::j#5 to ++
+Resolved ranged comparison value [26] if(main::j#1!=rangelast(0,$a)) goto main::@5 to (number) $b
+Resolved ranged next value [28] main::i#1 ← ++ main::i#7 to ++
+Resolved ranged comparison value [30] if(main::i#1!=rangelast(0,$a)) goto main::@4 to (number) $b
+Resolved ranged next value [44] irq::k#1 ← ++ irq::k#2 to ++
+Resolved ranged comparison value [46] if(irq::k#1!=rangelast(0,$a)) goto irq::@3 to (number) $b
+Resolved ranged next value [48] irq::j#1 ← ++ irq::j#4 to ++
+Resolved ranged comparison value [50] if(irq::j#1!=rangelast(0,$a)) goto irq::@2 to (number) $b
+Resolved ranged next value [52] irq::i#1 ← ++ irq::i#7 to ++
+Resolved ranged comparison value [54] if(irq::i#1!=rangelast(0,$a)) goto irq::@1 to (number) $b
+Resolved ranged next value [67] sub_main::k#1 ← ++ sub_main::k#2 to ++
+Resolved ranged comparison value [69] if(sub_main::k#1!=rangelast(0,$a)) goto sub_main::@3 to (number) $b
+Resolved ranged next value [71] sub_main::j#1 ← ++ sub_main::j#4 to ++
+Resolved ranged comparison value [73] if(sub_main::j#1!=rangelast(0,$a)) goto sub_main::@2 to (number) $b
+Resolved ranged next value [75] sub_main::i#1 ← ++ sub_main::i#6 to ++
+Resolved ranged comparison value [77] if(sub_main::i#1!=rangelast(0,$a)) goto sub_main::@1 to (number) $b
+Resolved ranged next value [88] sub_irq::k#1 ← ++ sub_irq::k#2 to ++
+Resolved ranged comparison value [90] if(sub_irq::k#1!=rangelast(0,$a)) goto sub_irq::@3 to (number) $b
+Resolved ranged next value [92] sub_irq::j#1 ← ++ sub_irq::j#4 to ++
+Resolved ranged comparison value [94] if(sub_irq::j#1!=rangelast(0,$a)) goto sub_irq::@2 to (number) $b
+Resolved ranged next value [96] sub_irq::i#1 ← ++ sub_irq::i#6 to ++
+Resolved ranged comparison value [98] if(sub_irq::i#1!=rangelast(0,$a)) goto sub_irq::@1 to (number) $b
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $b in if((byte) main::k#1!=(number) $b) goto main::@6
@@ -1948,10 +1912,10 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte*) BGCOL = (byte*) 53280
 (const byte*) CIA1_INTERRUPT = (byte*) 56333
-(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
 (const byte*) FGCOL = (byte*) 53281
 (const byte*) IRQ_ENABLE = (byte*) 53274
-(const byte) IRQ_RASTER = (byte) 1
+(const byte) IRQ_RASTER = (number) 1
 (const byte*) IRQ_STATUS = (byte*) 53273
 (const void()**) KERNEL_IRQ = (void()**) 788
 (const byte*) RASTER = (byte*) 53266

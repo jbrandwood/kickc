@@ -7,24 +7,19 @@ Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) WHITE ← (number) 1
-  (byte) RED ← (number) 2
-  (byte) GREEN ← (number) 5
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte[]) main::colseq ← { (byte) WHITE, (byte) RED, (byte) GREEN }
-  (byte*) main::screen ← ((byte*)) (number) $400
-  (byte*) main::cols ← ((byte*)) (number) $d800
+  (byte[]) main::colseq ← { (const byte) WHITE, (const byte) RED, (const byte) GREEN }
   (byte) main::j#0 ← (number) 0
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::j#3 ← phi( main/(byte) main::j#0 main::@2/(byte) main::j#4 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  *((byte*) main::screen + (byte) main::i#2) ← (byte) '*'
-  *((byte*) main::cols + (byte) main::i#2) ← *((byte[]) main::colseq + (byte) main::j#3)
+  *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*'
+  *((const byte*) main::cols + (byte) main::i#2) ← *((byte[]) main::colseq + (byte) main::j#3)
   (byte) main::j#1 ← ++ (byte) main::j#3
   (bool~) main::$0 ← (byte) main::j#1 == (number) 3
   (bool~) main::$1 ← ! (bool~) main::$0
@@ -56,9 +51,9 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte) GREEN
-(byte) RED
-(byte) WHITE
+(const byte) GREEN = (number) 5
+(const byte) RED = (number) 2
+(const byte) WHITE = (number) 1
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -67,7 +62,7 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(byte*) main::cols
+(const byte*) main::cols = (byte*)(number) $d800
 (byte[]) main::colseq
 (byte) main::i
 (byte) main::i#0
@@ -81,69 +76,49 @@ SYMBOL TABLE SSA
 (byte) main::j#2
 (byte) main::j#3
 (byte) main::j#4
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
-Adding number conversion cast (unumber) 2 in (byte) RED ← (number) 2
-Adding number conversion cast (unumber) 5 in (byte) GREEN ← (number) 5
 Adding number conversion cast (unumber) 0 in (byte) main::j#0 ← (number) 0
 Adding number conversion cast (unumber) 3 in (bool~) main::$0 ← (byte) main::j#1 == (number) 3
 Adding number conversion cast (unumber) 0 in (byte) main::j#2 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) WHITE ← (unumber)(number) 1
-Inlining cast (byte) RED ← (unumber)(number) 2
-Inlining cast (byte) GREEN ← (unumber)(number) 5
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Inlining cast (byte*) main::cols ← (byte*)(number) $d800
 Inlining cast (byte) main::j#0 ← (unumber)(number) 0
 Inlining cast (byte) main::j#2 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 1
-Simplifying constant integer cast 2
-Simplifying constant integer cast 5
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant integer cast 0
 Simplifying constant integer cast 3
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 5
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [13] (bool~) main::$1 ← (byte) main::j#1 != (byte) 3 from [12] (bool~) main::$0 ← (byte) main::j#1 == (byte) 3
+Inversing boolean not [8] (bool~) main::$1 ← (byte) main::j#1 != (byte) 3 from [7] (bool~) main::$0 ← (byte) main::j#1 == (byte) 3
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::i#2 = (byte) main::i#4 
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [14] if((byte) main::j#1!=(byte) 3) goto main::@2
-Simple Condition (bool~) main::$2 [18] if((byte) main::i#1!=rangelast(0,$27)) goto main::@1
+Simple Condition (bool~) main::$1 [9] if((byte) main::j#1!=(byte) 3) goto main::@2
+Simple Condition (bool~) main::$2 [13] if((byte) main::i#1!=rangelast(0,$27)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) WHITE = 1
-Constant (const byte) RED = 2
-Constant (const byte) GREEN = 5
-Constant (const byte*) main::screen = (byte*) 1024
-Constant (const byte*) main::cols = (byte*) 55296
+Identified constant from value list (byte[]) { (const byte) WHITE, (const byte) RED, (const byte) GREEN }
+Successful SSA optimization Pass2ConstantInitializerValueLists
+Constant (const byte[]) main::colseq = { WHITE, RED, GREEN }
 Constant (const byte) main::j#0 = 0
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::j#2 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [16] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [18] if(main::i#1!=rangelast(0,$27)) goto main::@1 to (number) $28
+Resolved ranged next value [11] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [13] if(main::i#1!=rangelast(0,$27)) goto main::@1 to (number) $28
 Adding number conversion cast (unumber) $28 in if((byte) main::i#1!=(number) $28) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Identified constant from value list (byte[]) { (const byte) WHITE, (const byte) RED, (const byte) GREEN }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[]) main::colseq = { WHITE, RED, GREEN }
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::j#0
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::j#2
@@ -468,9 +443,9 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) GREEN = (byte) 5
-(const byte) RED = (byte) 2
-(const byte) WHITE = (byte) 1
+(const byte) GREEN = (number) 5
+(const byte) RED = (number) 2
+(const byte) WHITE = (number) 1
 (void()) main()
 (label) main::@1
 (label) main::@2

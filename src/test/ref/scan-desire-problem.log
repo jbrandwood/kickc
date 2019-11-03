@@ -1,6 +1,6 @@
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call (byte~) init::$3 ← call toD018 (byte*) screen (byte*) charset 
+Inlined call (byte~) init::$3 ← call toD018 (const byte*) screen (const byte*) charset 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
@@ -29,6 +29,7 @@ Culled Empty Block (label) @16
 Culled Empty Block (label) @17
 Culled Empty Block (label) @18
 Culled Empty Block (label) @19
+Culled Empty Block (label) @20
 Culled Empty Block (label) main::@11
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@12
@@ -44,25 +45,7 @@ Culled Empty Block (label) @23
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SPRITES_XMSB ← ((byte*)) (number) $d010
-  (byte*) SPRITES_ENABLE ← ((byte*)) (number) $d015
-  (byte*) SPRITES_EXPAND_Y ← ((byte*)) (number) $d017
-  (byte*) SPRITES_MC ← ((byte*)) (number) $d01c
-  (byte*) SPRITES_EXPAND_X ← ((byte*)) (number) $d01d
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) BGCOL1 ← ((byte*)) (number) $d021
-  (byte*) BGCOL2 ← ((byte*)) (number) $d022
-  (byte*) BGCOL3 ← ((byte*)) (number) $d023
-  (byte*) BGCOL4 ← ((byte*)) (number) $d024
-  (byte*) SPRITES_COLS ← ((byte*)) (number) $d027
-  (byte*) D018 ← ((byte*)) (number) $d018
-  (byte) BLACK ← (number) 0
-  (byte) WHITE ← (number) 1
-  (byte) RED ← (number) 2
-  (byte) GREEN ← (number) 5
-  (byte) BLUE ← (number) 6
-  (byte) YELLOW ← (number) 7
-  to:@20
+  to:@24
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from init::@2 init::@3
@@ -156,13 +139,6 @@ mul8u::@return: scope:[mul8u]  from mul8u::@3
   (word) mul8u::return#1 ← (word) mul8u::return#3
   return 
   to:@return
-@20: scope:[]  from @begin
-  (byte*) screen ← ((byte*)) (number) $400
-  (byte*) charset ← ((byte*)) (number) $2000
-  (byte*) tileset ← ((byte*)) (number) $2800
-  (byte*) colors ← ((byte*)) (number) $d800
-  (byte*) level_address ← ((byte*)) (number) $3000
-  to:@24
 
 (void()) main()
 main: scope:[main]  from @24
@@ -191,11 +167,11 @@ main::@5: scope:[main]  from main::@4
   (byte) main::x#3 ← phi( main::@4/(byte) main::x#5 )
   (byte~) main::$3 ← (byte) main::x#3 + (byte) main::y#3
   (byte) main::z#0 ← (byte~) main::$3
-  (byte) main::tile#0 ← *((byte*) level_address + (byte) main::z#0)
+  (byte) main::tile#0 ← *((const byte*) level_address + (byte) main::z#0)
   (byte) draw_block::tileno#0 ← (byte) main::tile#0
   (byte) draw_block::x#0 ← (byte) main::x#3
   (byte) draw_block::y#0 ← (byte) main::y#3
-  (byte) draw_block::color#0 ← (byte) YELLOW
+  (byte) draw_block::color#0 ← (const byte) YELLOW
   call draw_block 
   to:main::@16
 main::@16: scope:[main]  from main::@5
@@ -219,22 +195,22 @@ init: scope:[init]  from main
   call init_sprites 
   to:init::@2
 init::@2: scope:[init]  from init
-  (void*) memset::str#0 ← (void*)(byte*) screen
+  (void*) memset::str#0 ← (void*)(const byte*) screen
   (byte) memset::c#0 ← (number) 0
   (word) memset::num#0 ← (number) $3e8
   call memset 
   (void*) memset::return#2 ← (void*) memset::return#1
   to:init::@3
 init::@3: scope:[init]  from init::@2
-  (void*) memset::str#1 ← (void*)(byte*) colors
-  (byte) memset::c#1 ← (byte) BLACK
+  (void*) memset::str#1 ← (void*)(const byte*) colors
+  (byte) memset::c#1 ← (const byte) BLACK
   (word) memset::num#1 ← (number) $3e8
   call memset 
   (void*) memset::return#3 ← (void*) memset::return#1
   to:init::@4
 init::@4: scope:[init]  from init::@3
-  (byte*) init::toD0181_screen#0 ← (byte*) screen
-  (byte*) init::toD0181_gfx#0 ← (byte*) charset
+  (byte*) init::toD0181_screen#0 ← (const byte*) screen
+  (byte*) init::toD0181_gfx#0 ← (const byte*) charset
   to:init::toD0181
 init::toD0181: scope:[init]  from init::@4
   (byte*) init::toD0181_gfx#1 ← phi( init::@4/(byte*) init::toD0181_gfx#0 )
@@ -257,13 +233,13 @@ init::toD0181_@return: scope:[init]  from init::toD0181
 init::@1: scope:[init]  from init::toD0181_@return
   (byte) init::toD0181_return#3 ← phi( init::toD0181_@return/(byte) init::toD0181_return#1 )
   (byte~) init::$3 ← (byte) init::toD0181_return#3
-  *((byte*) D018) ← (byte~) init::$3
+  *((const byte*) D018) ← (byte~) init::$3
   asm { lda#$5b sta$d011  }
-  *((byte*) BORDERCOL) ← (byte) BLACK
-  *((byte*) BGCOL1) ← (byte) BLACK
-  *((byte*) BGCOL2) ← (byte) RED
-  *((byte*) BGCOL3) ← (byte) BLUE
-  *((byte*) BGCOL4) ← (byte) GREEN
+  *((const byte*) BORDERCOL) ← (const byte) BLACK
+  *((const byte*) BGCOL1) ← (const byte) BLACK
+  *((const byte*) BGCOL2) ← (const byte) RED
+  *((const byte*) BGCOL3) ← (const byte) BLUE
+  *((const byte*) BGCOL4) ← (const byte) GREEN
   to:init::@return
 init::@return: scope:[init]  from init::@1
   return 
@@ -271,12 +247,12 @@ init::@return: scope:[init]  from init::@1
 
 (void()) init_sprites()
 init_sprites: scope:[init_sprites]  from init
-  *((byte*) SPRITES_ENABLE) ← (number) 1
-  *((byte*) SPRITES_EXPAND_X) ← (number) 0
-  *((byte*) SPRITES_EXPAND_Y) ← (number) 0
-  *((byte*) SPRITES_XMSB) ← (number) 0
-  *((byte*) SPRITES_COLS) ← (byte) WHITE
-  *((byte*) SPRITES_MC) ← (number) 0
+  *((const byte*) SPRITES_ENABLE) ← (number) 1
+  *((const byte*) SPRITES_EXPAND_X) ← (number) 0
+  *((const byte*) SPRITES_EXPAND_Y) ← (number) 0
+  *((const byte*) SPRITES_XMSB) ← (number) 0
+  *((const byte*) SPRITES_COLS) ← (const byte) WHITE
+  *((const byte*) SPRITES_MC) ← (number) 0
   to:init_sprites::@return
 init_sprites::@return: scope:[init_sprites]  from init_sprites
   return 
@@ -306,26 +282,26 @@ draw_block::@1: scope:[draw_block]  from draw_block
   (word) draw_block::z#0 ← (word~) draw_block::$3
   (word~) draw_block::$4 ← (word) draw_block::z#0 + (word) draw_block::x1#1
   (word) draw_block::z#1 ← (word~) draw_block::$4
-  (byte) draw_block::drawtile#0 ← *((byte*) tileset + (byte) draw_block::tileno#3)
-  *((byte*) screen + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0
-  *((byte*) colors + (word) draw_block::z#1) ← (byte) YELLOW
+  (byte) draw_block::drawtile#0 ← *((const byte*) tileset + (byte) draw_block::tileno#3)
+  *((const byte*) screen + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0
+  *((const byte*) colors + (word) draw_block::z#1) ← (const byte) YELLOW
   (number~) draw_block::$5 ← (word) draw_block::z#1 + (number) 1
-  *((byte*) screen + (number~) draw_block::$5) ← (number) 1
+  *((const byte*) screen + (number~) draw_block::$5) ← (number) 1
   (number~) draw_block::$6 ← (word) draw_block::z#1 + (number) 1
-  *((byte*) colors + (number~) draw_block::$6) ← (byte) YELLOW
+  *((const byte*) colors + (number~) draw_block::$6) ← (const byte) YELLOW
   (number~) draw_block::$7 ← (word) draw_block::z#1 + (number) $28
-  *((byte*) screen + (number~) draw_block::$7) ← (number) 2
+  *((const byte*) screen + (number~) draw_block::$7) ← (number) 2
   (number~) draw_block::$8 ← (word) draw_block::z#1 + (number) $28
-  *((byte*) colors + (number~) draw_block::$8) ← (byte) YELLOW
+  *((const byte*) colors + (number~) draw_block::$8) ← (const byte) YELLOW
   (number~) draw_block::$9 ← (word) draw_block::z#1 + (number) $29
-  *((byte*) screen + (number~) draw_block::$9) ← (number) 3
+  *((const byte*) screen + (number~) draw_block::$9) ← (number) 3
   (number~) draw_block::$10 ← (word) draw_block::z#1 + (number) $29
-  *((byte*) colors + (number~) draw_block::$10) ← (byte) YELLOW
+  *((const byte*) colors + (number~) draw_block::$10) ← (const byte) YELLOW
   to:draw_block::@return
 draw_block::@return: scope:[draw_block]  from draw_block::@1
   return 
   to:@return
-@24: scope:[]  from @20
+@24: scope:[]  from @begin
   call main 
   to:@25
 @25: scope:[]  from @24
@@ -333,31 +309,30 @@ draw_block::@return: scope:[draw_block]  from draw_block::@1
 @end: scope:[]  from @25
 
 SYMBOL TABLE SSA
-(label) @20
 (label) @24
 (label) @25
 (label) @begin
 (label) @end
-(byte*) BGCOL1
-(byte*) BGCOL2
-(byte*) BGCOL3
-(byte*) BGCOL4
-(byte) BLACK
-(byte) BLUE
-(byte*) BORDERCOL
-(byte*) D018
-(byte) GREEN
-(byte) RED
-(byte*) SPRITES_COLS
-(byte*) SPRITES_ENABLE
-(byte*) SPRITES_EXPAND_X
-(byte*) SPRITES_EXPAND_Y
-(byte*) SPRITES_MC
-(byte*) SPRITES_XMSB
-(byte) WHITE
-(byte) YELLOW
-(byte*) charset
-(byte*) colors
+(const byte*) BGCOL1 = (byte*)(number) $d021
+(const byte*) BGCOL2 = (byte*)(number) $d022
+(const byte*) BGCOL3 = (byte*)(number) $d023
+(const byte*) BGCOL4 = (byte*)(number) $d024
+(const byte) BLACK = (number) 0
+(const byte) BLUE = (number) 6
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) D018 = (byte*)(number) $d018
+(const byte) GREEN = (number) 5
+(const byte) RED = (number) 2
+(const byte*) SPRITES_COLS = (byte*)(number) $d027
+(const byte*) SPRITES_ENABLE = (byte*)(number) $d015
+(const byte*) SPRITES_EXPAND_X = (byte*)(number) $d01d
+(const byte*) SPRITES_EXPAND_Y = (byte*)(number) $d017
+(const byte*) SPRITES_MC = (byte*)(number) $d01c
+(const byte*) SPRITES_XMSB = (byte*)(number) $d010
+(const byte) WHITE = (number) 1
+(const byte) YELLOW = (number) 7
+(const byte*) charset = (byte*)(number) $2000
+(const byte*) colors = (byte*)(number) $d800
 (void()) draw_block((byte) draw_block::tileno , (byte) draw_block::x , (byte) draw_block::y , (byte) draw_block::color)
 (byte~) draw_block::$0
 (byte~) draw_block::$1
@@ -425,7 +400,7 @@ SYMBOL TABLE SSA
 (byte*) init::toD0181_screen#1
 (void()) init_sprites()
 (label) init_sprites::@return
-(byte*) level_address
+(const byte*) level_address = (byte*)(number) $3000
 (void()) main()
 (bool~) main::$1
 (bool~) main::$2
@@ -550,15 +525,9 @@ SYMBOL TABLE SSA
 (word) mul8u::return#2
 (word) mul8u::return#3
 (word) mul8u::return#4
-(byte*) screen
-(byte*) tileset
+(const byte*) screen = (byte*)(number) $400
+(const byte*) tileset = (byte*)(number) $2800
 
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
-Adding number conversion cast (unumber) 2 in (byte) RED ← (number) 2
-Adding number conversion cast (unumber) 5 in (byte) GREEN ← (number) 5
-Adding number conversion cast (unumber) 6 in (byte) BLUE ← (number) 6
-Adding number conversion cast (unumber) 7 in (byte) YELLOW ← (number) 7
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#2 > (number) 0
 Adding number conversion cast (unumber) 0 in (word) mul8u::res#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) mul8u::$0 ← (byte) mul8u::a#2 != (number) 0
@@ -584,57 +553,34 @@ Adding number conversion cast (unumber) init::toD0181_$6 in (number~) init::toD0
 Adding number conversion cast (unumber) $f in (number~) init::toD0181_$7 ← (unumber~) init::toD0181_$6 & (number) $f
 Adding number conversion cast (unumber) init::toD0181_$7 in (number~) init::toD0181_$7 ← (unumber~) init::toD0181_$6 & (unumber)(number) $f
 Adding number conversion cast (unumber) init::toD0181_$8 in (number~) init::toD0181_$8 ← (unumber~) init::toD0181_$3 | (unumber~) init::toD0181_$7
-Adding number conversion cast (unumber) 1 in *((byte*) SPRITES_ENABLE) ← (number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_EXPAND_X) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_EXPAND_Y) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_XMSB) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_MC) ← (number) 0
+Adding number conversion cast (unumber) 1 in *((const byte*) SPRITES_ENABLE) ← (number) 1
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_EXPAND_X) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_EXPAND_Y) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_XMSB) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_MC) ← (number) 0
 Adding number conversion cast (unumber) 2 in (byte~) draw_block::$0 ← (byte) draw_block::tileno#2 << (number) 2
 Adding number conversion cast (unumber) 1 in (byte~) draw_block::$1 ← (byte) draw_block::x#1 << (number) 1
 Adding number conversion cast (unumber) 1 in (byte~) draw_block::$2 ← (byte) draw_block::y#2 << (number) 1
 Adding number conversion cast (unumber) $28 in (byte) mul8u::b#0 ← (number) $28
 Adding number conversion cast (unumber) 1 in (number~) draw_block::$5 ← (word) draw_block::z#1 + (number) 1
 Adding number conversion cast (unumber) draw_block::$5 in (number~) draw_block::$5 ← (word) draw_block::z#1 + (unumber)(number) 1
-Adding number conversion cast (unumber) 1 in *((byte*) screen + (unumber~) draw_block::$5) ← (number) 1
+Adding number conversion cast (unumber) 1 in *((const byte*) screen + (unumber~) draw_block::$5) ← (number) 1
 Adding number conversion cast (unumber) 1 in (number~) draw_block::$6 ← (word) draw_block::z#1 + (number) 1
 Adding number conversion cast (unumber) draw_block::$6 in (number~) draw_block::$6 ← (word) draw_block::z#1 + (unumber)(number) 1
 Adding number conversion cast (unumber) $28 in (number~) draw_block::$7 ← (word) draw_block::z#1 + (number) $28
 Adding number conversion cast (unumber) draw_block::$7 in (number~) draw_block::$7 ← (word) draw_block::z#1 + (unumber)(number) $28
-Adding number conversion cast (unumber) 2 in *((byte*) screen + (unumber~) draw_block::$7) ← (number) 2
+Adding number conversion cast (unumber) 2 in *((const byte*) screen + (unumber~) draw_block::$7) ← (number) 2
 Adding number conversion cast (unumber) $28 in (number~) draw_block::$8 ← (word) draw_block::z#1 + (number) $28
 Adding number conversion cast (unumber) draw_block::$8 in (number~) draw_block::$8 ← (word) draw_block::z#1 + (unumber)(number) $28
 Adding number conversion cast (unumber) $29 in (number~) draw_block::$9 ← (word) draw_block::z#1 + (number) $29
 Adding number conversion cast (unumber) draw_block::$9 in (number~) draw_block::$9 ← (word) draw_block::z#1 + (unumber)(number) $29
-Adding number conversion cast (unumber) 3 in *((byte*) screen + (unumber~) draw_block::$9) ← (number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) screen + (unumber~) draw_block::$9) ← (number) 3
 Adding number conversion cast (unumber) $29 in (number~) draw_block::$10 ← (word) draw_block::z#1 + (number) $29
 Adding number conversion cast (unumber) draw_block::$10 in (number~) draw_block::$10 ← (word) draw_block::z#1 + (unumber)(number) $29
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SPRITES_XMSB ← (byte*)(number) $d010
-Inlining cast (byte*) SPRITES_ENABLE ← (byte*)(number) $d015
-Inlining cast (byte*) SPRITES_EXPAND_Y ← (byte*)(number) $d017
-Inlining cast (byte*) SPRITES_MC ← (byte*)(number) $d01c
-Inlining cast (byte*) SPRITES_EXPAND_X ← (byte*)(number) $d01d
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) BGCOL1 ← (byte*)(number) $d021
-Inlining cast (byte*) BGCOL2 ← (byte*)(number) $d022
-Inlining cast (byte*) BGCOL3 ← (byte*)(number) $d023
-Inlining cast (byte*) BGCOL4 ← (byte*)(number) $d024
-Inlining cast (byte*) SPRITES_COLS ← (byte*)(number) $d027
-Inlining cast (byte*) D018 ← (byte*)(number) $d018
-Inlining cast (byte) BLACK ← (unumber)(number) 0
-Inlining cast (byte) WHITE ← (unumber)(number) 1
-Inlining cast (byte) RED ← (unumber)(number) 2
-Inlining cast (byte) GREEN ← (unumber)(number) 5
-Inlining cast (byte) BLUE ← (unumber)(number) 6
-Inlining cast (byte) YELLOW ← (unumber)(number) 7
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#3
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
 Inlining cast (word) mul8u::res#0 ← (unumber)(number) 0
-Inlining cast (byte*) screen ← (byte*)(number) $400
-Inlining cast (byte*) charset ← (byte*)(number) $2000
-Inlining cast (byte*) tileset ← (byte*)(number) $2800
-Inlining cast (byte*) colors ← (byte*)(number) $d800
-Inlining cast (byte*) level_address ← (byte*)(number) $3000
 Inlining cast (byte) main::x#0 ← (unumber)(number) 0
 Inlining cast (byte) main::y#0 ← (unumber)(number) 0
 Inlining cast (byte) memset::c#0 ← (unumber)(number) 0
@@ -642,15 +588,15 @@ Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (word) memset::num#1 ← (unumber)(number) $3e8
 Inlining cast (word~) init::toD0181_$0 ← (word)(byte*) init::toD0181_screen#1
 Inlining cast (word~) init::toD0181_$4 ← (word)(byte*) init::toD0181_gfx#1
-Inlining cast *((byte*) SPRITES_ENABLE) ← (unumber)(number) 1
-Inlining cast *((byte*) SPRITES_EXPAND_X) ← (unumber)(number) 0
-Inlining cast *((byte*) SPRITES_EXPAND_Y) ← (unumber)(number) 0
-Inlining cast *((byte*) SPRITES_XMSB) ← (unumber)(number) 0
-Inlining cast *((byte*) SPRITES_MC) ← (unumber)(number) 0
+Inlining cast *((const byte*) SPRITES_ENABLE) ← (unumber)(number) 1
+Inlining cast *((const byte*) SPRITES_EXPAND_X) ← (unumber)(number) 0
+Inlining cast *((const byte*) SPRITES_EXPAND_Y) ← (unumber)(number) 0
+Inlining cast *((const byte*) SPRITES_XMSB) ← (unumber)(number) 0
+Inlining cast *((const byte*) SPRITES_MC) ← (unumber)(number) 0
 Inlining cast (byte) mul8u::b#0 ← (unumber)(number) $28
-Inlining cast *((byte*) screen + (unumber~) draw_block::$5) ← (unumber)(number) 1
-Inlining cast *((byte*) screen + (unumber~) draw_block::$7) ← (unumber)(number) 2
-Inlining cast *((byte*) screen + (unumber~) draw_block::$9) ← (unumber)(number) 3
+Inlining cast *((const byte*) screen + (unumber~) draw_block::$5) ← (unumber)(number) 1
+Inlining cast *((const byte*) screen + (unumber~) draw_block::$7) ← (unumber)(number) 2
+Inlining cast *((const byte*) screen + (unumber~) draw_block::$9) ← (unumber)(number) 3
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53264
 Simplifying constant pointer cast (byte*) 53269
@@ -664,24 +610,18 @@ Simplifying constant pointer cast (byte*) 53283
 Simplifying constant pointer cast (byte*) 53284
 Simplifying constant pointer cast (byte*) 53287
 Simplifying constant pointer cast (byte*) 53272
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 2
-Simplifying constant integer cast 5
-Simplifying constant integer cast 6
-Simplifying constant integer cast 7
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 8192
 Simplifying constant pointer cast (byte*) 10240
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 12288
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast $10
 Simplifying constant integer cast 0
@@ -712,12 +652,6 @@ Simplifying constant integer cast $29
 Simplifying constant integer cast 3
 Simplifying constant integer cast $29
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) 6
-Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
@@ -768,8 +702,8 @@ Inferred type updated to word in (unumber~) draw_block::$7 ← (word) draw_block
 Inferred type updated to word in (unumber~) draw_block::$8 ← (word) draw_block::z#1 + (byte) $28
 Inferred type updated to word in (unumber~) draw_block::$9 ← (word) draw_block::z#1 + (byte) $29
 Inferred type updated to word in (unumber~) draw_block::$10 ← (word) draw_block::z#1 + (byte) $29
-Inversing boolean not [20] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [19] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [47] (bool~) mul8u::$3 ← (byte~) mul8u::$1 == (byte) 0 from [46] (bool~) mul8u::$2 ← (byte~) mul8u::$1 != (byte) 0
+Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
+Inversing boolean not [29] (bool~) mul8u::$3 ← (byte~) mul8u::$1 == (byte) 0 from [28] (bool~) mul8u::$2 ← (byte~) mul8u::$1 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#2 (void*) memset::return#4 (void*) memset::return#1 
 Alias (void*) memset::str#3 = (void*) memset::str#4 
@@ -816,64 +750,40 @@ Identical Phi Values (byte) draw_block::y#2 (byte) draw_block::y#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) memset::$1 [21] if((word) memset::num#2<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [31] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) mul8u::$0 [43] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2
-Simple Condition (bool~) mul8u::$3 [48] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@4
-Simple Condition (bool~) main::$1 [71] if((byte) main::x#2<(byte) $10) goto main::@2
-Simple Condition (bool~) main::$2 [76] if((byte) main::y#2<(byte) 9) goto main::@5
+Simple Condition (bool~) memset::$1 [3] if((word) memset::num#2<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) mul8u::$0 [25] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2
+Simple Condition (bool~) mul8u::$3 [30] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@4
+Simple Condition (bool~) main::$1 [48] if((byte) main::x#2<(byte) $10) goto main::@2
+Simple Condition (bool~) main::$2 [53] if((byte) main::y#2<(byte) 9) goto main::@5
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SPRITES_XMSB = (byte*) 53264
-Constant (const byte*) SPRITES_ENABLE = (byte*) 53269
-Constant (const byte*) SPRITES_EXPAND_Y = (byte*) 53271
-Constant (const byte*) SPRITES_MC = (byte*) 53276
-Constant (const byte*) SPRITES_EXPAND_X = (byte*) 53277
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) BGCOL1 = (byte*) 53281
-Constant (const byte*) BGCOL2 = (byte*) 53282
-Constant (const byte*) BGCOL3 = (byte*) 53283
-Constant (const byte*) BGCOL4 = (byte*) 53284
-Constant (const byte*) SPRITES_COLS = (byte*) 53287
-Constant (const byte*) D018 = (byte*) 53272
-Constant (const byte) BLACK = 0
-Constant (const byte) WHITE = 1
-Constant (const byte) RED = 2
-Constant (const byte) GREEN = 5
-Constant (const byte) BLUE = 6
-Constant (const byte) YELLOW = 7
 Constant (const word) mul8u::res#0 = 0
-Constant (const byte*) screen = (byte*) 1024
-Constant (const byte*) charset = (byte*) 8192
-Constant (const byte*) tileset = (byte*) 10240
-Constant (const byte*) colors = (byte*) 55296
-Constant (const byte*) level_address = (byte*) 12288
 Constant (const byte) main::x#0 = 0
 Constant (const byte) main::y#0 = 0
-Constant (const byte) memset::c#0 = 0
-Constant (const word) memset::num#0 = $3e8
-Constant (const word) memset::num#1 = $3e8
-Constant (const byte) mul8u::b#0 = $28
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) draw_block::color#0 = YELLOW
 Constant (const void*) memset::str#0 = (void*)screen
+Constant (const byte) memset::c#0 = 0
+Constant (const word) memset::num#0 = $3e8
 Constant (const void*) memset::str#1 = (void*)colors
 Constant (const byte) memset::c#1 = BLACK
+Constant (const word) memset::num#1 = $3e8
 Constant (const byte*) init::toD0181_screen#0 = screen
 Constant (const byte*) init::toD0181_gfx#0 = charset
+Constant (const byte) mul8u::b#0 = $28
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) init::toD0181_$0 = (word)init::toD0181_screen#0
 Constant (const word) init::toD0181_$4 = (word)init::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [90] if(true) goto main::@13
+if() condition always true - replacing block destination [67] if(true) goto main::@13
 Successful SSA optimization Pass2ConstantIfs
-De-inlining pointer[w] to *(pointer+w)   [152] *((const byte*) screen + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0
-De-inlining pointer[w] to *(pointer+w)   [153] *((const byte*) colors + (word) draw_block::z#1) ← (const byte) YELLOW
-De-inlining pointer[w] to *(pointer+w)   [155] *((const byte*) screen + (word~) draw_block::$5) ← (byte) 1
-De-inlining pointer[w] to *(pointer+w)   [157] *((const byte*) colors + (word~) draw_block::$6) ← (const byte) YELLOW
-De-inlining pointer[w] to *(pointer+w)   [159] *((const byte*) screen + (word~) draw_block::$7) ← (byte) 2
-De-inlining pointer[w] to *(pointer+w)   [161] *((const byte*) colors + (word~) draw_block::$8) ← (const byte) YELLOW
-De-inlining pointer[w] to *(pointer+w)   [163] *((const byte*) screen + (word~) draw_block::$9) ← (byte) 3
-De-inlining pointer[w] to *(pointer+w)   [165] *((const byte*) colors + (word~) draw_block::$10) ← (const byte) YELLOW
+De-inlining pointer[w] to *(pointer+w)   [129] *((const byte*) screen + (word) draw_block::z#1) ← (byte) draw_block::drawtile#0
+De-inlining pointer[w] to *(pointer+w)   [130] *((const byte*) colors + (word) draw_block::z#1) ← (const byte) YELLOW
+De-inlining pointer[w] to *(pointer+w)   [132] *((const byte*) screen + (word~) draw_block::$5) ← (byte) 1
+De-inlining pointer[w] to *(pointer+w)   [134] *((const byte*) colors + (word~) draw_block::$6) ← (const byte) YELLOW
+De-inlining pointer[w] to *(pointer+w)   [136] *((const byte*) screen + (word~) draw_block::$7) ← (byte) 2
+De-inlining pointer[w] to *(pointer+w)   [138] *((const byte*) colors + (word~) draw_block::$8) ← (const byte) YELLOW
+De-inlining pointer[w] to *(pointer+w)   [140] *((const byte*) screen + (word~) draw_block::$9) ← (byte) 3
+De-inlining pointer[w] to *(pointer+w)   [142] *((const byte*) colors + (word~) draw_block::$10) ← (const byte) YELLOW
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Eliminating unused variable (void*) memset::return#2 and assignment [35] (void*) memset::return#2 ← (void*) memset::str#3
 Eliminating unused variable (void*) memset::return#3 and assignment [37] (void*) memset::return#3 ← (void*) memset::str#3
@@ -906,12 +816,12 @@ Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [2] (byte*~) memset::$2 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Inlining Noop Cast [4] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Successful SSA optimization Pass2NopCastInlining
+Inlining constant with var siblings (const void*) memset::str#0
 Inlining constant with var siblings (const byte) memset::c#0
 Inlining constant with var siblings (const word) memset::num#0
-Inlining constant with var siblings (const word) memset::num#1
-Inlining constant with var siblings (const void*) memset::str#0
 Inlining constant with var siblings (const void*) memset::str#1
 Inlining constant with var siblings (const byte) memset::c#1
+Inlining constant with var siblings (const word) memset::num#1
 Inlining constant with var siblings (const word) mul8u::res#0
 Inlining constant with var siblings (const byte) main::x#0
 Inlining constant with var siblings (const byte) main::y#0
@@ -950,7 +860,6 @@ if() condition always false - eliminating [1] if((word) $3e8<=(byte) 0) goto mem
 Successful SSA optimization Pass2ConstantIfs
 Added new block during phi lifting mul8u::@10(between mul8u::@2 and mul8u::@4)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @20
 Adding NOP phi() at start of @24
 Adding NOP phi() at start of @25
 Adding NOP phi() at start of @end
@@ -967,23 +876,22 @@ Adding NOP phi() at start of init::toD0181
 Adding NOP phi() at start of init::toD0181_@return
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to init:7 draw_block:22 
-Calls in [draw_block] to mul8u:29 
-Calls in [init] to init_sprites:68 memset:70 memset:72 
+Calls in [] to main:2 
+Calls in [main] to init:6 draw_block:21 
+Calls in [draw_block] to mul8u:28 
+Calls in [init] to init_sprites:67 memset:69 memset:71 
 
 Created 9 initial phi equivalence classes
-Coalesced [16] main::x#8 ← main::x#1
-Coalesced [24] main::y#5 ← main::y#1
-Coalesced [51] mul8u::a#7 ← mul8u::a#1
-Coalesced [59] mul8u::res#9 ← mul8u::res#1
-Coalesced [63] mul8u::a#8 ← mul8u::a#0
-Coalesced [64] mul8u::res#7 ← mul8u::res#6
-Coalesced [65] mul8u::mb#6 ← mul8u::mb#1
-Coalesced (already) [66] mul8u::res#8 ← mul8u::res#2
-Coalesced [93] memset::dst#5 ← memset::dst#1
+Coalesced [15] main::x#8 ← main::x#1
+Coalesced [23] main::y#5 ← main::y#1
+Coalesced [50] mul8u::a#7 ← mul8u::a#1
+Coalesced [58] mul8u::res#9 ← mul8u::res#1
+Coalesced [62] mul8u::a#8 ← mul8u::a#0
+Coalesced [63] mul8u::res#7 ← mul8u::res#6
+Coalesced [64] mul8u::mb#6 ← mul8u::mb#1
+Coalesced (already) [65] mul8u::res#8 ← mul8u::res#2
+Coalesced [92] memset::dst#5 ← memset::dst#1
 Coalesced down to 8 phi equivalence classes
-Culled Empty Block (label) @20
 Culled Empty Block (label) @25
 Culled Empty Block (label) main::@15
 Culled Empty Block (label) main::@2
@@ -2644,20 +2552,20 @@ FINAL SYMBOL TABLE
 (const byte*) BGCOL2 = (byte*) 53282
 (const byte*) BGCOL3 = (byte*) 53283
 (const byte*) BGCOL4 = (byte*) 53284
-(const byte) BLACK = (byte) 0
-(const byte) BLUE = (byte) 6
+(const byte) BLACK = (number) 0
+(const byte) BLUE = (number) 6
 (const byte*) BORDERCOL = (byte*) 53280
 (const byte*) D018 = (byte*) 53272
-(const byte) GREEN = (byte) 5
-(const byte) RED = (byte) 2
+(const byte) GREEN = (number) 5
+(const byte) RED = (number) 2
 (const byte*) SPRITES_COLS = (byte*) 53287
 (const byte*) SPRITES_ENABLE = (byte*) 53269
 (const byte*) SPRITES_EXPAND_X = (byte*) 53277
 (const byte*) SPRITES_EXPAND_Y = (byte*) 53271
 (const byte*) SPRITES_MC = (byte*) 53276
 (const byte*) SPRITES_XMSB = (byte*) 53264
-(const byte) WHITE = (byte) 1
-(const byte) YELLOW = (byte) 7
+(const byte) WHITE = (number) 1
+(const byte) YELLOW = (number) 7
 (const byte*) charset = (byte*) 8192
 (const byte*) colors = (byte*) 55296
 (void()) draw_block((byte) draw_block::tileno , (byte) draw_block::x , (byte) draw_block::y , (byte) draw_block::color)

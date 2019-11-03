@@ -6,18 +6,17 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::a#0 ← (byte) 0
   (byte) main::a#1 ← (byte) 'c'
-  *((byte*) main::screen + (number) 0) ← (byte) main::a#1
-  *((byte*) main::screen + (number) $28) ← (byte) main::a#1
-  *((byte*) main::screen + (number) 1) ← (byte) 'm'
-  (byte) main::a#2 ← *((byte*) main::screen + (number) 1)
-  *((byte*) main::screen + (number) $29) ← (byte) main::a#2
+  *((const byte*) main::screen + (number) 0) ← (byte) main::a#1
+  *((const byte*) main::screen + (number) $28) ← (byte) main::a#1
+  *((const byte*) main::screen + (number) 1) ← (byte) 'm'
+  (byte) main::a#2 ← *((const byte*) main::screen + (number) 1)
+  *((const byte*) main::screen + (number) $29) ← (byte) main::a#2
   (byte) main::a#3 ← (byte) 'l'
   (number~) main::$0 ← (number) 1 + (byte) main::a#3
-  *((byte*) main::screen + (number) 2) ← (number~) main::$0
-  *((byte*) main::screen + (number) $2a) ← (byte) main::a#3
+  *((const byte*) main::screen + (number) 2) ← (number~) main::$0
+  *((const byte*) main::screen + (number) $2a) ← (byte) main::a#3
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -42,19 +41,17 @@ SYMBOL TABLE SSA
 (byte) main::a#1
 (byte) main::a#2
 (byte) main::a#3
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) main::a#1
-Adding number conversion cast (unumber) $28 in *((byte*) main::screen + (number) $28) ← (byte) main::a#1
-Adding number conversion cast (unumber) 1 in *((byte*) main::screen + (number) 1) ← (byte) 'm'
-Adding number conversion cast (unumber) $29 in *((byte*) main::screen + (number) $29) ← (byte) main::a#2
+Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte) main::a#1
+Adding number conversion cast (unumber) $28 in *((const byte*) main::screen + (number) $28) ← (byte) main::a#1
+Adding number conversion cast (unumber) 1 in *((const byte*) main::screen + (number) 1) ← (byte) 'm'
+Adding number conversion cast (unumber) $29 in *((const byte*) main::screen + (number) $29) ← (byte) main::a#2
 Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (number) 1 + (byte) main::a#3
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) 1 + (byte) main::a#3
-Adding number conversion cast (unumber) 2 in *((byte*) main::screen + (number) 2) ← (unumber~) main::$0
-Adding number conversion cast (unumber) $2a in *((byte*) main::screen + (number) $2a) ← (byte) main::a#3
+Adding number conversion cast (unumber) 2 in *((const byte*) main::screen + (number) 2) ← (unumber~) main::$0
+Adding number conversion cast (unumber) $2a in *((const byte*) main::screen + (number) $2a) ← (byte) main::a#3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
@@ -73,12 +70,11 @@ Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) $2a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) 1 + (byte) main::a#3
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::a#0 = 0
 Constant (const byte) main::a#1 = 'c'
 Constant (const byte) main::a#3 = 'l'
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen in [3] *((const byte*) main::screen + (byte) 0) ← (const byte) main::a#1
+Simplifying expression containing zero main::screen in [2] *((const byte*) main::screen + (byte) 0) ← (const byte) main::a#1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::a#0
 Successful SSA optimization PassNEliminateUnusedVars

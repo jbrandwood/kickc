@@ -299,10 +299,6 @@ main::@return: scope:[main]  from main::@35
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte) RED ← (byte) 2
-  (byte) GREEN ← (byte) 5
-  (byte*) SCREEN ← ((byte*)) (word) $400
-  (byte*) COLS ← ((byte*)) (word) $d800
   (byte) idx#39 ← (byte) 0
   to:@2
 
@@ -317,17 +313,17 @@ assertType: scope:[assertType]  from main main::@1 main::@10 main::@11 main::@12
 assertType::@1: scope:[assertType]  from assertType
   (byte) assertType::t1#37 ← phi( assertType/(byte) assertType::t1#35 )
   (byte) idx#79 ← phi( assertType/(byte) idx#84 )
-  *((byte*) COLS + (byte) idx#79) ← (byte) GREEN
+  *((const byte*) COLS + (byte) idx#79) ← (const byte) GREEN
   to:assertType::@2
 assertType::@3: scope:[assertType]  from assertType
   (byte) assertType::t1#38 ← phi( assertType/(byte) assertType::t1#35 )
   (byte) idx#80 ← phi( assertType/(byte) idx#84 )
-  *((byte*) COLS + (byte) idx#80) ← (byte) RED
+  *((const byte*) COLS + (byte) idx#80) ← (const byte) RED
   to:assertType::@2
 assertType::@2: scope:[assertType]  from assertType::@1 assertType::@3
   (byte) idx#81 ← phi( assertType::@1/(byte) idx#79 assertType::@3/(byte) idx#80 )
   (byte) assertType::t1#36 ← phi( assertType::@1/(byte) assertType::t1#37 assertType::@3/(byte) assertType::t1#38 )
-  *((byte*) SCREEN + (byte) idx#81) ← (byte) assertType::t1#36
+  *((const byte*) SCREEN + (byte) idx#81) ← (byte) assertType::t1#36
   (byte) idx#40 ← ++ (byte) idx#81
   to:assertType::@return
 assertType::@return: scope:[assertType]  from assertType::@2
@@ -351,10 +347,10 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) COLS
-(byte) GREEN
-(byte) RED
-(byte*) SCREEN
+(const byte*) COLS = (byte*)(word) $d800
+(const byte) GREEN = (byte) 5
+(const byte) RED = (byte) 2
+(const byte*) SCREEN = (byte*)(word) $400
 (const byte) TYPEID_BYTE = (number) 1
 (const byte) TYPEID_DWORD = (number) 5
 (const byte) TYPEID_SIGNED_BYTE = (number) 2
@@ -640,9 +636,6 @@ Adding number conversion cast (unumber) -$82 in (byte~) main::$64 ← typeid  (d
 Adding number conversion cast (unumber) -$101d0 in (byte~) main::$66 ← typeid  (dword) $c+(number) -$101d0
 Adding number conversion cast (snumber) -$7d2b7500 in (byte~) main::$68 ← typeid  (signed byte) $c+(number) -$7d2b7500
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(word) $400
-Inlining cast (byte*) COLS ← (byte*)(word) $d800
-Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $c
 Simplifying constant integer cast $82
 Simplifying constant integer cast $80e8
@@ -867,11 +860,8 @@ Identical Phi Values (byte) idx#36 (byte) idx#40
 Identical Phi Values (byte) idx#37 (byte) idx#40
 Identical Phi Values (byte) idx#42 (byte) idx#37
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) assertType::$0 [223] if((byte) assertType::t1#35==(byte) assertType::t2#35) goto assertType::@1
+Simple Condition (bool~) assertType::$0 [219] if((byte) assertType::t1#35==(byte) assertType::t2#35) goto assertType::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [218] (byte*) SCREEN ← (byte*)(word) $400
-Constant right-side identified [219] (byte*) COLS ← (byte*)(word) $d800
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) idx#0 = 0
 Constant (const byte) assertType::t1#0 = TYPEID_SIGNED_BYTE
 Constant (const byte) assertType::t2#0 = TYPEID_SIGNED_BYTE
@@ -945,10 +935,6 @@ Constant (const byte) assertType::t1#33 = TYPEID_DWORD
 Constant (const byte) assertType::t2#33 = TYPEID_DWORD
 Constant (const byte) assertType::t1#34 = TYPEID_SIGNED_DWORD
 Constant (const byte) assertType::t2#34 = TYPEID_DWORD
-Constant (const byte) RED = 2
-Constant (const byte) GREEN = 5
-Constant (const byte*) SCREEN = (byte*)$400
-Constant (const byte*) COLS = (byte*)$d800
 Constant (const byte) idx#39 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const byte) idx#39

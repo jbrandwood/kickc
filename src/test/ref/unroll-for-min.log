@@ -7,12 +7,11 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) main::SCREEN + (byte) main::i#2) ← (byte) 'a'
+  *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte) 'a'
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,2)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,2)
   unroll if((bool~) main::$0) goto main::@1
@@ -36,23 +35,20 @@ SYMBOL TABLE SSA
 (bool~) main::$0
 (label) main::@1
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
 
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$0 [6] unroll if((byte) main::i#1!=rangelast(0,2)) goto main::@1
+Simple Condition (bool~) main::$0 [5] unroll if((byte) main::i#1!=rangelast(0,2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [4] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [6] unroll if(main::i#1!=rangelast(0,2)) goto main::@1 to (number) 3
+Resolved ranged next value [3] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [5] unroll if(main::i#1!=rangelast(0,2)) goto main::@1 to (number) 3
 Adding number conversion cast (unumber) 3 in unroll if((byte) main::i#1!=(number) 3) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 3

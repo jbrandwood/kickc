@@ -19,9 +19,6 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) COLS ← ((byte*)) (number) $d800
-  (byte) BLACK ← (number) 0
   to:@8
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
@@ -68,20 +65,19 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
   (byte[]) MEDUSA_COLORS ← kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)
  }}
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@9
 
 (void()) main()
 main: scope:[main]  from @9
-  *((byte*) BGCOL) ← (byte) BLACK
-  (void*) memcpy::destination#0 ← (void*)(byte*) SCREEN
+  *((const byte*) BGCOL) ← (const byte) BLACK
+  (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN
   (void*) memcpy::source#0 ← (void*)(byte[$3e8]) MEDUSA_SCREEN
   (word) memcpy::num#0 ← (number) $3e8
   call memcpy 
   (void*) memcpy::return#2 ← (void*) memcpy::return#1
   to:main::@7
 main::@7: scope:[main]  from main
-  (void*) memcpy::destination#1 ← (void*)(byte*) COLS
+  (void*) memcpy::destination#1 ← (void*)(const byte*) COLS
   (void*) memcpy::source#1 ← (void*)(byte[]) MEDUSA_COLORS
   (word) memcpy::num#1 ← (number) $3e8
   call memcpy 
@@ -93,7 +89,7 @@ main::@1: scope:[main]  from main::@2 main::@8
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte*~) main::$2 ← (byte*) SCREEN + (number) $3e7
+  (byte*~) main::$2 ← (const byte*) SCREEN + (number) $3e7
   *((byte*~) main::$2) ← *((byte*~) main::$2) ^ (number) $e
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -112,12 +108,12 @@ SYMBOL TABLE SSA
 (label) @9
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte) BLACK
-(byte*) COLS
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte) BLACK = (number) 0
+(const byte*) COLS = (byte*)(number) $d800
 (byte[]) MEDUSA_COLORS
 (byte[$3e8]) MEDUSA_SCREEN
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (byte*~) main::$2
 (label) main::@1
@@ -169,32 +165,25 @@ SYMBOL TABLE SSA
 (byte*) memcpy::src_end#1
 (byte*) memcpy::src_end#2
 
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
 Adding number conversion cast (unumber) $3e8 in (word) memcpy::num#0 ← (number) $3e8
 Adding number conversion cast (unumber) $3e8 in (word) memcpy::num#1 ← (number) $3e8
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$2 ← (byte*) SCREEN + (number) $3e7
+Adding number conversion cast (unumber) $3e7 in (byte*~) main::$2 ← (const byte*) SCREEN + (number) $3e7
 Adding number conversion cast (unumber) $e in *((byte*~) main::$2) ← *((byte*~) main::$2) ^ (number) $e
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) COLS ← (byte*)(number) $d800
-Inlining cast (byte) BLACK ← (unumber)(number) 0
 Inlining cast (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2
 Inlining cast (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2
 Inlining cast (byte*~) memcpy::$0 ← (byte*)(void*) memcpy::source#2
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (word) memcpy::num#0 ← (unumber)(number) $3e8
 Inlining cast (word) memcpy::num#1 ← (unumber)(number) $3e8
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 55296
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $3e7
 Simplifying constant integer cast $e
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (word) $3e7
@@ -209,46 +198,42 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) memcpy::src_end#1 (byte*) memcpy::src_end#0
 Identical Phi Values (void*) memcpy::destination#3 (void*) memcpy::destination#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) memcpy::$2 [11] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
+Simple Condition (bool~) memcpy::$2 [8] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) COLS = (byte*) 55296
-Constant (const byte) BLACK = 0
+Constant right-side identified [21] (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN
+Constant right-side identified [32] (byte*~) main::$2 ← (const byte*) SCREEN + (word) $3e7
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte[$3e8]) MEDUSA_SCREEN = kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
     .fill fileScreen.getSize(), fileScreen.get(i)
  }}
 Constant (const byte[]) MEDUSA_COLORS = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)
  }}
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const word) memcpy::num#0 = $3e8
-Constant (const word) memcpy::num#1 = $3e8
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memcpy::destination#0 = (void*)SCREEN
-Constant (const void*) memcpy::source#0 = (void*)MEDUSA_SCREEN
+Constant (const word) memcpy::num#0 = $3e8
 Constant (const void*) memcpy::destination#1 = (void*)COLS
+Constant (const word) memcpy::num#1 = $3e8
+Constant (const byte*) main::$2 = SCREEN+$3e7
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const void*) memcpy::source#0 = (void*)MEDUSA_SCREEN
 Constant (const void*) memcpy::source#1 = (void*)MEDUSA_COLORS
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [35] if(true) goto main::@2
+if() condition always true - replacing block destination [31] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused variable (void*) memcpy::return#2 and assignment [13] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
 Eliminating unused variable (void*) memcpy::return#3 and assignment [15] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [14] (byte*~) main::$2 ← (const byte*) SCREEN + (word) $3e7
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$2 = SCREEN+$3e7
-Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [1] (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2 keeping memcpy::source#2
 Inlining Noop Cast [2] (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2 keeping memcpy::destination#2
 Inlining Noop Cast [3] (byte*~) memcpy::$0 ← (byte*)(void*) memcpy::source#2 keeping memcpy::source#2
 Successful SSA optimization Pass2NopCastInlining
-Inlining constant with var siblings (const word) memcpy::num#0
-Inlining constant with var siblings (const word) memcpy::num#1
 Inlining constant with var siblings (const void*) memcpy::destination#0
-Inlining constant with var siblings (const void*) memcpy::source#0
+Inlining constant with var siblings (const word) memcpy::num#0
 Inlining constant with var siblings (const void*) memcpy::destination#1
+Inlining constant with var siblings (const word) memcpy::num#1
+Inlining constant with var siblings (const void*) memcpy::source#0
 Inlining constant with var siblings (const void*) memcpy::source#1
 Constant inlined memcpy::num#1 = (word) $3e8
 Constant inlined memcpy::num#0 = (word) $3e8
@@ -736,7 +721,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte*) BGCOL = (byte*) 53281
-(const byte) BLACK = (byte) 0
+(const byte) BLACK = (number) 0
 (const byte*) COLS = (byte*) 55296
 (const byte[]) MEDUSA_COLORS = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)

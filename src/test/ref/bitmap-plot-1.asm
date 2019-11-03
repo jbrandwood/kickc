@@ -3,7 +3,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(__b1)
 .pc = $80d "Program"
-  .const SIZEOF_SIGNED_WORD = 2
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -41,6 +40,7 @@
   .const PI_u4f28 = $3243f6a9
   // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
+  .const SIZEOF_SIGNED_WORD = 2
   .label BITMAP = $2000
   .label SCREEN = $400
   .label rem16u = $c
@@ -53,10 +53,10 @@ __b1:
   rts
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __9 = 8
-    .label __14 = 8
-    .label __25 = $24
-    .label __26 = $24
+    .label __6 = 8
+    .label __11 = 8
+    .label __22 = $24
+    .label __23 = $24
     .label cos_x = $24
     .label xpos = 8
     .label x = $1c
@@ -65,8 +65,8 @@ main: {
     .label y = $13
     .label idx_x = 2
     .label idx_y = $e
-    .label __27 = $24
-    .label __28 = $24
+    .label __24 = $24
+    .label __25 = $24
     jsr sin16s_gen2
     jsr bitmap_init
     jsr bitmap_clear
@@ -85,17 +85,17 @@ main: {
   __b2:
     lda.z idx_x
     asl
-    sta.z __25
+    sta.z __22
     lda.z idx_x+1
     rol
-    sta.z __25+1
+    sta.z __22+1
     clc
-    lda.z __27
+    lda.z __24
     adc #<SINUS
-    sta.z __27
-    lda.z __27+1
+    sta.z __24
+    lda.z __24+1
     adc #>SINUS
-    sta.z __27+1
+    sta.z __24+1
     ldy #0
     lda (cos_x),y
     pha
@@ -109,42 +109,42 @@ main: {
     lda #>$a0
     sta.z mul16s.a+1
     jsr mul16s
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
     clc
     lda #<$a0
-    adc.z __9+2
+    adc.z __6+2
     sta.z x
     lda #>$a0
-    adc.z __9+3
+    adc.z __6+3
     sta.z x+1
     lda.z idx_y
     asl
-    sta.z __26
+    sta.z __23
     lda.z idx_y+1
     rol
-    sta.z __26+1
+    sta.z __23+1
     clc
-    lda.z __28
+    lda.z __25
     adc #<SINUS
-    sta.z __28
-    lda.z __28+1
+    sta.z __25
+    lda.z __25+1
     adc #>SINUS
-    sta.z __28+1
+    sta.z __25+1
     ldy #0
     lda (sin_y),y
     pha
@@ -158,28 +158,28 @@ main: {
     lda #>$64
     sta.z mul16s.a+1
     jsr mul16s
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
     clc
     lda #<$64
-    adc.z __14+2
+    adc.z __11+2
     sta.z y
     lda #>$64
-    adc.z __14+3
+    adc.z __11+3
     sta.z y+1
     lda.z y
     tax

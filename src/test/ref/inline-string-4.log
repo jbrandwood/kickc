@@ -1,12 +1,12 @@
+Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@1
+  to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte[]) main::msg ← (const string) main::$2
-  (dword~) main::$0 ← ((dword)) (byte[]) main::msg
+  (dword~) main::$0 ← ((dword)) (const byte[]) main::msg
   (dword) main::dw#0 ← (dword~) main::$0
   (dword) output::dw#0 ← (dword) main::dw#0
   call output 
@@ -16,19 +16,16 @@ main::@1: scope:[main]  from main
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
-  (dword*) screen ← ((dword*)) (number) $400
-  to:@2
 
 (void()) output((dword) output::dw)
 output: scope:[output]  from main
   (dword) output::dw#1 ← phi( main/(dword) output::dw#0 )
-  *((dword*) screen) ← (dword) output::dw#1
+  *((const dword*) screen) ← (dword) output::dw#1
   to:output::@return
 output::@return: scope:[output]  from output
   return 
   to:@return
-@2: scope:[]  from @1
+@2: scope:[]  from @begin
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -36,28 +33,25 @@ output::@return: scope:[output]  from output
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(label) @1
 (label) @2
 (label) @3
 (label) @begin
 (label) @end
 (void()) main()
 (dword~) main::$0
-(const string) main::$2 = (string) "camelot"
 (label) main::@1
 (label) main::@return
 (dword) main::dw
 (dword) main::dw#0
-(byte[]) main::msg
+(const byte[]) main::msg = (string) "camelot"
 (void()) output((dword) output::dw)
 (label) output::@return
 (dword) output::dw
 (dword) output::dw#0
 (dword) output::dw#1
-(dword*) screen
+(const dword*) screen = (dword*)(number) $400
 
-Inlining cast (dword~) main::$0 ← (dword)(byte[]) main::msg
-Inlining cast (dword*) screen ← (dword*)(number) $400
+Inlining cast (dword~) main::$0 ← (dword)(const byte[]) main::msg
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (dword*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -65,30 +59,26 @@ Alias (dword) main::dw#0 = (dword~) main::$0
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (dword) output::dw#1 (dword) output::dw#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte[]) main::msg = main::$2
-Constant (const dword*) screen = (dword*) 1024
-Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [0] (dword) main::dw#0 ← (dword)(const byte[]) main::msg
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const dword) main::dw#0 = (dword)main::msg
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const dword) output::dw#0 = main::dw#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$2 = (const byte[]) main::msg
 Constant inlined output::dw#0 = (const dword) main::dw#0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to output:7 
+Calls in [] to main:2 
+Calls in [main] to output:6 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @1
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@1
 Renumbering block @2 to @1

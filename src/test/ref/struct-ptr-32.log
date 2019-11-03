@@ -15,6 +15,8 @@ Rewriting struct pointer member access *((struct Person[2]) persons + (number~) 
 Rewriting struct pointer member access *((struct Person[2]) persons + (number~) main::$5).age
 Rewriting struct pointer member access *((struct Person*) main::person).name
 Rewriting struct pointer member access *((struct Person*) main::person).name
+Identified constant variable (byte) Person::id
+Identified constant variable (word) Person::age
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -43,13 +45,12 @@ main: scope:[main]  from @1
   (number~) main::$5 ← (number) 1 * (const byte) SIZEOF_STRUCT_PERSON
   (word*) main::$13 ← (word*)(struct Person[2]) persons + (const byte) OFFSET_STRUCT_PERSON_AGE
   *((word*) main::$13 + (number~) main::$5) ← (number) $7b
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (struct Person*) main::person#0 ← (struct Person[2]) persons
   (byte[$d]) main::$14 ← (byte[$d])(struct Person*) main::person#0 + (const byte) OFFSET_STRUCT_PERSON_NAME
-  *((byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$14 + (number) 8)
+  *((const byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$14 + (number) 8)
   (struct Person*) main::person#1 ← (struct Person*) main::person#0 + (const byte) SIZEOF_STRUCT_PERSON
   (byte[$d]) main::$15 ← (byte[$d])(struct Person*) main::person#1 + (const byte) OFFSET_STRUCT_PERSON_NAME
-  *((byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$15 + (number) 8)
+  *((const byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$15 + (number) 8)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -69,9 +70,6 @@ SYMBOL TABLE SSA
 (const byte) OFFSET_STRUCT_PERSON_AGE = (byte) $e
 (const byte) OFFSET_STRUCT_PERSON_ID = (byte) 0
 (const byte) OFFSET_STRUCT_PERSON_NAME = (byte) 1
-(word) Person::age
-(byte) Person::id
-(byte[$d]) Person::name
 (const byte) SIZEOF_STRUCT_PERSON = (byte) $10
 (void()) main()
 (number~) main::$0
@@ -91,7 +89,7 @@ SYMBOL TABLE SSA
 (byte[$d]) main::$8
 (byte[$d]) main::$9
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (struct Person*) main::person
 (struct Person*) main::person#0
 (struct Person*) main::person#1
@@ -115,17 +113,17 @@ Adding number conversion cast (unumber) $141 in *((word*) main::$12 + (unumber~)
 Adding number conversion cast (unumber) 1 in (number~) main::$5 ← (number) 1 * (const byte) SIZEOF_STRUCT_PERSON
 Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (unumber)(number) 1 * (const byte) SIZEOF_STRUCT_PERSON
 Adding number conversion cast (unumber) $7b in *((word*) main::$13 + (unumber~) main::$5) ← (number) $7b
-Adding number conversion cast (unumber) 8 in *((byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$14 + (number) 8)
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$14 + (unumber)(number) 8)
-Adding number conversion cast (unumber) 8 in *((byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$15 + (number) 8)
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$15 + (unumber)(number) 8)
+Adding number conversion cast (unumber) 8 in *((const byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$14 + (number) 8)
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte[$d]) main::$14 + (unumber)(number) 8)
+Adding number conversion cast (unumber) 8 in *((const byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$15 + (number) 8)
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte[$d]) main::$15 + (unumber)(number) 8)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((byte*) main::$6 + (unumber~) main::$0) ← (unumber)(number) 7
 Inlining cast *((byte*) main::$7 + (unumber~) main::$1) ← (unumber)(number) 9
 Inlining cast *((word*) main::$12 + (unumber~) main::$4) ← (unumber)(number) $141
 Inlining cast *((word*) main::$13 + (unumber~) main::$5) ← (unumber)(number) $7b
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 7
 Simplifying constant integer cast 1
@@ -138,7 +136,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $141
 Simplifying constant integer cast 1
 Simplifying constant integer cast $7b
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 8
 Simplifying constant integer cast 0
 Simplifying constant integer cast 8
@@ -182,7 +179,6 @@ Constant (const byte) main::$2 = 0*SIZEOF_STRUCT_PERSON
 Constant (const byte) main::$3 = 1*SIZEOF_STRUCT_PERSON
 Constant (const byte) main::$4 = 0*SIZEOF_STRUCT_PERSON
 Constant (const byte) main::$5 = 1*SIZEOF_STRUCT_PERSON
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const struct Person*) main::person#0 = persons
 Successful SSA optimization Pass2ConstantIdentification
@@ -192,7 +188,7 @@ Constant value identified (byte[$d])persons in [8] (byte[$d]) main::$8 ← (byte
 Constant value identified (byte[$d])persons in [12] (byte[$d]) main::$10 ← (byte[$d])(const struct Person[2]) persons + (const byte) main::$3
 Constant value identified (word*)persons in [16] (word*) main::$12 ← (word*)(const struct Person[2]) persons + (const byte) OFFSET_STRUCT_PERSON_AGE
 Constant value identified (word*)persons in [19] (word*) main::$13 ← (word*)(const struct Person[2]) persons + (const byte) OFFSET_STRUCT_PERSON_AGE
-Constant value identified (byte[$d])main::person#0 in [23] (byte[$d]) main::$14 ← (byte[$d])(const struct Person*) main::person#0 + (const byte) OFFSET_STRUCT_PERSON_NAME
+Constant value identified (byte[$d])main::person#0 in [22] (byte[$d]) main::$14 ← (byte[$d])(const struct Person*) main::person#0 + (const byte) OFFSET_STRUCT_PERSON_NAME
 Successful SSA optimization Pass2ConstantValues
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_STRUCT_PERSON in 
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_STRUCT_PERSON in 
@@ -203,7 +199,7 @@ Simplifying expression containing zero main::$6 in [3] *((byte*) main::$6 + (con
 Simplifying expression containing zero (byte*)persons in [5] (byte*) main::$7 ← (byte*)(const struct Person[2]) persons + (const byte) OFFSET_STRUCT_PERSON_ID
 Simplifying expression containing zero (byte[$d])persons in [8] (byte[$d]) main::$8 ← (byte[$d])(const struct Person[2]) persons + (const byte) main::$2
 Simplifying expression containing zero main::$12 in [17] *((word*) main::$12 + (const byte) main::$4) ← (word) $141
-Simplifying expression containing zero main::SCREEN in [24] *((const byte*) main::SCREEN + (byte) 0) ← *((byte[$d]) main::$14 + (byte) 8)
+Simplifying expression containing zero main::SCREEN in [23] *((const byte*) main::SCREEN + (byte) 0) ← *((byte[$d]) main::$14 + (byte) 8)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$0
 Eliminating unused constant (const byte) main::$2
@@ -301,9 +297,6 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(word) Person::age
-(byte) Person::id
-(byte[$d]) Person::name
 (void()) main()
 (struct Person*) main::person
 
@@ -487,9 +480,6 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte) OFFSET_STRUCT_PERSON_AGE = (byte) $e
 (const byte) OFFSET_STRUCT_PERSON_NAME = (byte) 1
-(word) Person::age
-(byte) Person::id
-(byte[$d]) Person::name
 (const byte) SIZEOF_STRUCT_PERSON = (byte) $10
 (void()) main()
 (label) main::@return

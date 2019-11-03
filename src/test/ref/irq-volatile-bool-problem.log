@@ -8,27 +8,18 @@ Culled Empty Block (label) main::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) VIC_CONTROL ← ((byte*)) (number) $d011
-  (byte*) IRQ_STATUS ← ((byte*)) (number) $d019
-  (byte*) IRQ_ENABLE ← ((byte*)) (number) $d01a
-  (byte) IRQ_RASTER ← (number) 1
-  (byte*) BGCOL ← ((byte*)) (number) $d020
-  (byte*) CIA1_INTERRUPT ← ((byte*)) (number) $dc0d
-  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
   to:@1
 
 (void()) main()
 main: scope:[main]  from @2
   (bool) framedone#12 ← phi( @2/(bool) framedone#11 )
   asm { sei  }
-  *((byte*) CIA1_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
-  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
-  *((byte*) RASTER) ← (number) $fd
-  *((byte*) IRQ_ENABLE) ← (byte) IRQ_RASTER
+  *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
+  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
+  *((const byte*) RASTER) ← (number) $fd
+  *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
   (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const void()**) KERNEL_IRQ) ← (void()*~) main::$0
   asm { cli  }
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@7
@@ -37,7 +28,7 @@ main::@1: scope:[main]  from main main::@2 main::@7
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (bool) framedone#13 ← phi( main::@1/(bool) framedone#9 )
-  (bool~) main::$1 ← *((byte*) RASTER) < (number) $14
+  (bool~) main::$1 ← *((const byte*) RASTER) < (number) $14
   (bool~) main::$2 ← ! (bool~) main::$1
   if((bool~) main::$2) goto main::@1
   to:main::@7
@@ -56,15 +47,15 @@ main::@return: scope:[main]  from main::@1
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   (bool) framedone#14 ← phi( @2/(bool) framedone#11 )
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
-  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
-  (bool~) irq::$1 ← *((byte*) RASTER) > (number) $32
+  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
+  (bool~) irq::$1 ← *((const byte*) RASTER) > (number) $32
   (bool~) irq::$2 ← ! (bool~) irq::$1
   if((bool~) irq::$2) goto irq::@1
   to:irq::@2
 irq::@1: scope:[irq]  from irq irq::@2
   (bool) framedone#10 ← phi( irq/(bool) framedone#14 irq::@2/(bool) framedone#3 )
-  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
+  *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
   to:irq::@return
 irq::@2: scope:[irq]  from irq
   (bool) framedone#3 ← false
@@ -90,15 +81,15 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) CIA1_INTERRUPT
-(byte) CIA_INTERRUPT_CLEAR
-(byte*) IRQ_ENABLE
-(byte) IRQ_RASTER
-(byte*) IRQ_STATUS
-(void()**) KERNEL_IRQ
-(byte*) RASTER
-(byte*) VIC_CONTROL
+(const byte*) BGCOL = (byte*)(number) $d020
+(const byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
+(const byte*) IRQ_ENABLE = (byte*)(number) $d01a
+(const byte) IRQ_RASTER = (number) 1
+(const byte*) IRQ_STATUS = (byte*)(number) $d019
+(const void()**) KERNEL_IRQ = (void()**)(number) $314
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) VIC_CONTROL = (byte*)(number) $d011
 (bool) framedone
 (bool) framedone#0
 (bool) framedone#1
@@ -130,47 +121,32 @@ interrupt(KERNEL_MIN)(void()) irq()
 (label) main::@7
 (label) main::@return
 
-Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER ← (number) 1
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-Adding number conversion cast (unumber) $7f in *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
-Adding number conversion cast (unumber) $fd in *((byte*) RASTER) ← (number) $fd
-Adding number conversion cast (unumber) $14 in (bool~) main::$1 ← *((byte*) RASTER) < (number) $14
-Adding number conversion cast (unumber) $32 in (bool~) irq::$1 ← *((byte*) RASTER) > (number) $32
+Adding number conversion cast (unumber) $7f in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
+Adding number conversion cast (unumber) $fd in *((const byte*) RASTER) ← (number) $fd
+Adding number conversion cast (unumber) $14 in (bool~) main::$1 ← *((const byte*) RASTER) < (number) $14
+Adding number conversion cast (unumber) $32 in (bool~) irq::$1 ← *((const byte*) RASTER) > (number) $32
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) VIC_CONTROL ← (byte*)(number) $d011
-Inlining cast (byte*) IRQ_STATUS ← (byte*)(number) $d019
-Inlining cast (byte*) IRQ_ENABLE ← (byte*)(number) $d01a
-Inlining cast (byte) IRQ_RASTER ← (unumber)(number) 1
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d020
-Inlining cast (byte*) CIA1_INTERRUPT ← (byte*)(number) $dc0d
-Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
-Inlining cast *((byte*) RASTER) ← (unumber)(number) $fd
+Inlining cast *((const byte*) RASTER) ← (unumber)(number) $fd
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53273
 Simplifying constant pointer cast (byte*) 53274
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 56333
-Simplifying constant integer cast $7f
 Simplifying constant integer cast $7f
 Simplifying constant integer cast $fd
 Simplifying constant integer cast $14
 Simplifying constant integer cast $32
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $fd
 Finalized unsigned number type (byte) $14
 Finalized unsigned number type (byte) $32
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [22] (bool~) main::$2 ← *((byte*) RASTER) >= (byte) $14 from [21] (bool~) main::$1 ← *((byte*) RASTER) < (byte) $14
-Inversing boolean not [33] (bool~) irq::$2 ← *((byte*) RASTER) <= (byte) $32 from [32] (bool~) irq::$1 ← *((byte*) RASTER) > (byte) $32
+Inversing boolean not [13] (bool~) main::$2 ← *((const byte*) RASTER) >= (byte) $14 from [12] (bool~) main::$1 ← *((const byte*) RASTER) < (byte) $14
+Inversing boolean not [24] (bool~) irq::$2 ← *((const byte*) RASTER) <= (byte) $32 from [23] (bool~) irq::$1 ← *((const byte*) RASTER) > (byte) $32
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (bool) framedone#1 = (bool) framedone#13 (bool) framedone#9 (bool) framedone#6 
 Alias (bool) framedone#10 = (bool) framedone#7 (bool) framedone#4 
@@ -181,25 +157,16 @@ Identical Phi Values (bool) framedone#12 (bool) framedone#11
 Identical Phi Values (bool) framedone#14 (bool) framedone#11
 Identical Phi Values (bool) framedone#5 (bool) framedone#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [23] if(*((byte*) RASTER)>=(byte) $14) goto main::@1
-Simple Condition (bool~) irq::$2 [34] if(*((byte*) RASTER)<=(byte) $32) goto irq::@1
+Simple Condition (bool~) main::$2 [14] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1
+Simple Condition (bool~) irq::$2 [25] if(*((const byte*) RASTER)<=(byte) $32) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [15] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
+Constant right-side identified [6] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()**) KERNEL_IRQ = (void()**) 788
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) VIC_CONTROL = (byte*) 53265
-Constant (const byte*) IRQ_STATUS = (byte*) 53273
-Constant (const byte*) IRQ_ENABLE = (byte*) 53274
-Constant (const byte) IRQ_RASTER = 1
-Constant (const byte*) BGCOL = (byte*) 53280
-Constant (const byte*) CIA1_INTERRUPT = (byte*) 56333
-Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
 Constant (const void()*) main::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [19] if(true) goto main::@2
+if() condition always true - replacing block destination [10] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Rewriting conditional comparison [34] if(*((const byte*) RASTER)<=(byte) $32) goto irq::@1
+Rewriting conditional comparison [25] if(*((const byte*) RASTER)<=(byte) $32) goto irq::@1
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $32+1 in if(*((const byte*) RASTER)<(byte) $32+(number) 1) goto irq::@1
@@ -621,9 +588,9 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte*) BGCOL = (byte*) 53280
 (const byte*) CIA1_INTERRUPT = (byte*) 56333
-(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
 (const byte*) IRQ_ENABLE = (byte*) 53274
-(const byte) IRQ_RASTER = (byte) 1
+(const byte) IRQ_RASTER = (number) 1
 (const byte*) IRQ_STATUS = (byte*) 53273
 (const void()**) KERNEL_IRQ = (void()**) 788
 (const byte*) RASTER = (byte*) 53266

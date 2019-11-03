@@ -13,8 +13,6 @@ Culled Empty Block (label) mode_ctrl::@10
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@3
 
 (void()) main()
@@ -32,13 +30,12 @@ main::@return: scope:[main]  from main::@2
 
 (void()) print_cls()
 print_cls: scope:[print_cls]  from main
-  (byte*) print_cls::sc#0 ← (byte*) SCREEN
+  (byte*) print_cls::sc#0 ← (const byte*) SCREEN
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls print_cls::@2
   (byte*) print_cls::sc#2 ← phi( print_cls/(byte*) print_cls::sc#0 print_cls::@2/(byte*) print_cls::sc#1 )
-  (byte*~) print_cls::$0 ← (byte*) SCREEN + (number) $3e8
-  (bool~) print_cls::$1 ← (byte*) print_cls::sc#2 != (byte*~) print_cls::$0
-  if((bool~) print_cls::$1) goto print_cls::@2
+  (bool~) print_cls::$0 ← (byte*) print_cls::sc#2 != (const byte*) SCREEN+(number) $3e8
+  if((bool~) print_cls::$0) goto print_cls::@2
   to:print_cls::@return
 print_cls::@2: scope:[print_cls]  from print_cls::@1
   (byte*) print_cls::sc#3 ← phi( print_cls::@1/(byte*) print_cls::sc#2 )
@@ -56,15 +53,15 @@ mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@4 mode_ctrl::@8
   if(true) goto mode_ctrl::@2
   to:mode_ctrl::@return
 mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
-  (byte) mode_ctrl::before#0 ← *((byte*) BORDERCOL)
+  (byte) mode_ctrl::before#0 ← *((const byte*) BORDERCOL)
   (bool~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (number) $ff
   if((bool~) mode_ctrl::$0) goto mode_ctrl::@4
   to:mode_ctrl::@8
 mode_ctrl::@4: scope:[mode_ctrl]  from mode_ctrl::@2
-  *((byte*) BORDERCOL) ← (number) 2
+  *((const byte*) BORDERCOL) ← (number) 2
   to:mode_ctrl::@1
 mode_ctrl::@8: scope:[mode_ctrl]  from mode_ctrl::@2
-  *((byte*) BORDERCOL) ← (number) 3
+  *((const byte*) BORDERCOL) ← (number) 3
   to:mode_ctrl::@1
 mode_ctrl::@return: scope:[mode_ctrl]  from mode_ctrl::@1
   return 
@@ -81,8 +78,8 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
-(byte*) SCREEN
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -97,8 +94,7 @@ SYMBOL TABLE SSA
 (byte) mode_ctrl::before
 (byte) mode_ctrl::before#0
 (void()) print_cls()
-(byte*~) print_cls::$0
-(bool~) print_cls::$1
+(bool~) print_cls::$0
 (label) print_cls::@1
 (label) print_cls::@2
 (label) print_cls::@return
@@ -108,15 +104,13 @@ SYMBOL TABLE SSA
 (byte*) print_cls::sc#2
 (byte*) print_cls::sc#3
 
-Adding number conversion cast (unumber) $3e8 in (byte*~) print_cls::$0 ← (byte*) SCREEN + (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (bool~) print_cls::$0 ← (byte*) print_cls::sc#2 != (const byte*) SCREEN+(number) $3e8
 Adding number conversion cast (unumber) $ff in (bool~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (number) $ff
-Adding number conversion cast (unumber) 2 in *((byte*) BORDERCOL) ← (number) 2
-Adding number conversion cast (unumber) 3 in *((byte*) BORDERCOL) ← (number) 3
+Adding number conversion cast (unumber) 2 in *((const byte*) BORDERCOL) ← (number) 2
+Adding number conversion cast (unumber) 3 in *((const byte*) BORDERCOL) ← (number) 3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast *((byte*) BORDERCOL) ← (unumber)(number) 2
-Inlining cast *((byte*) BORDERCOL) ← (unumber)(number) 3
+Inlining cast *((const byte*) BORDERCOL) ← (unumber)(number) 2
+Inlining cast *((const byte*) BORDERCOL) ← (unumber)(number) 3
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 1024
@@ -132,25 +126,17 @@ Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte*) print_cls::sc#2 = (byte*) print_cls::sc#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) print_cls::$1 [9] if((byte*) print_cls::sc#2!=(byte*~) print_cls::$0) goto print_cls::@2
-Simple Condition (bool~) mode_ctrl::$0 [17] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@4
+Simple Condition (bool~) print_cls::$0 [6] if((byte*) print_cls::sc#2!=(const byte*) SCREEN+(word) $3e8) goto print_cls::@2
+Simple Condition (bool~) mode_ctrl::$0 [14] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) SCREEN = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print_cls::sc#0 = SCREEN
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [14] if(true) goto mode_ctrl::@2
+if() condition always true - replacing block destination [11] if(true) goto mode_ctrl::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block mode_ctrl::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [4] (byte*~) print_cls::$0 ← (const byte*) SCREEN + (word) $3e8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) print_cls::$0 = SCREEN+$3e8
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) print_cls::sc#0
 Constant inlined print_cls::sc#0 = (const byte*) SCREEN
-Constant inlined print_cls::$0 = (const byte*) SCREEN+(word) $3e8
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3

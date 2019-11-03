@@ -11,9 +11,9 @@
   .label SPRITES_COLS = $d027
   .const WHITE = 1
   .label SCREEN = $400
+  .label SPRITES_PTR = SCREEN+$3f8
   .label SPRITE = $2000
   .const g = -5
-  .label SPRITES_PTR = SCREEN+$3f8
   .label yvel_init = 2
   .label yvel = 2
   .label yvel_1 = 4

@@ -10,7 +10,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -20,7 +19,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) main::SCREEN + (byte) main::i#3) ← (byte) 'a'
+  *((const byte*) main::SCREEN + (byte) main::i#3) ← (byte) 'a'
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -43,7 +42,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -53,7 +52,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) 2 in (bool~) main::$0 ← (byte) main::i#2 < (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -65,9 +63,8 @@ Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [4] unroll if((byte) main::i#2<(byte) 2) goto main::@2
+Simple Condition (bool~) main::$0 [3] unroll if((byte) main::i#2<(byte) 2) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 

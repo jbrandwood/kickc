@@ -7,10 +7,9 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (byte[]) main::msg ← { (byte) 1, (number) 2, (number) 3 }
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  *((byte*) main::SCREEN + (number) 0) ← *((byte[]) main::msg + (number) 0)
-  *((byte*) main::SCREEN + (number) 1) ← *((byte[]) main::msg + (number) 1)
-  *((byte*) main::SCREEN + (number) 2) ← *((byte[]) main::msg + (number) 2)
+  *((const byte*) main::SCREEN + (number) 0) ← *((byte[]) main::msg + (number) 0)
+  *((const byte*) main::SCREEN + (number) 1) ← *((byte[]) main::msg + (number) 1)
+  *((const byte*) main::SCREEN + (number) 2) ← *((byte[]) main::msg + (number) 2)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,23 +28,21 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte[]) main::msg
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← *((byte[]) main::msg + (number) 0)
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← *((byte[]) main::msg + (unumber)(number) 0)
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← *((byte[]) main::msg + (number) 1)
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← *((byte[]) main::msg + (unumber)(number) 1)
-Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN + (number) 2) ← *((byte[]) main::msg + (number) 2)
-Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN + (number) 2) ← *((byte[]) main::msg + (unumber)(number) 2)
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte[]) main::msg + (number) 0)
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte[]) main::msg + (unumber)(number) 0)
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte[]) main::msg + (number) 1)
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte[]) main::msg + (unumber)(number) 1)
+Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 2) ← *((byte[]) main::msg + (number) 2)
+Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 2) ← *((byte[]) main::msg + (unumber)(number) 2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (byte[]) main::msg ← (byte[]){ (byte) 1, (byte)(number) 2, (byte)(number) 3 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -63,10 +60,9 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identified constant from value list (byte[]) { (byte) 1, (byte) 2, (byte) 3 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte[]) main::msg = { 1, 2, 3 }
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::msg in [2] *((const byte*) main::SCREEN + (byte) 0) ← *((const byte[]) main::msg + (byte) 0)
-Simplifying expression containing zero main::SCREEN in [2] *((const byte*) main::SCREEN + (byte) 0) ← *((const byte[]) main::msg)
+Simplifying expression containing zero main::msg in [1] *((const byte*) main::SCREEN + (byte) 0) ← *((const byte[]) main::msg + (byte) 0)
+Simplifying expression containing zero main::SCREEN in [1] *((const byte*) main::SCREEN + (byte) 0) ← *((const byte[]) main::msg)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Consolidated array index constant in *(main::msg+1)
 Consolidated array index constant in *(main::SCREEN+1)

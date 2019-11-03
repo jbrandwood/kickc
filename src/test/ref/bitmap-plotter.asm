@@ -1,6 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label BITMAP = $2000
   .label D011 = $d011
   .const BMM = $20
   .const DEN = $10
@@ -10,7 +11,6 @@
   .label BGCOL = $d020
   .label FGCOL = $d021
   .label SCREEN = $400
-  .label BITMAP = $2000
   .const plots_cnt = 8
 main: {
     lda #0
@@ -83,7 +83,7 @@ plot: {
     rts
 }
 init_plot_tables: {
-    .label __10 = 7
+    .label __9 = 7
     .label yoffs = 5
     ldy #$80
     ldx #0
@@ -111,14 +111,14 @@ init_plot_tables: {
     tax
   __b3:
     lda #7
-    sax.z __10
+    sax.z __9
     lda.z yoffs
-    ora.z __10
+    ora.z __9
     sta plot_ylo,x
     lda.z yoffs+1
     sta plot_yhi,x
     lda #7
-    cmp.z __10
+    cmp.z __9
     bne __b4
     clc
     lda.z yoffs

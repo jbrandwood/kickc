@@ -1,14 +1,11 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) table ← (const string) $0
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  (byte*~) main::$0 ← (byte*) main::SCREEN + (number) $28
-  *((byte*~) main::$0) ← *((byte[]) table + (number) 0)
+  *((const byte*) main::SCREEN+(number) $28) ← *((const byte[]) table + (number) 0)
   asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -22,42 +19,27 @@ main::@return: scope:[main]  from main
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "cml!"z
 (label) @1
 (label) @2
 (label) @begin
 (label) @end
 (void()) main()
-(byte*~) main::$0
 (label) main::@return
-(byte*) main::SCREEN
-(byte[]) table
+(const byte*) main::SCREEN = (byte*)(number) $400
+(const byte[]) table = (string) "cml!"z
 
-Adding number conversion cast (unumber) $28 in (byte*~) main::$0 ← (byte*) main::SCREEN + (number) $28
-Adding number conversion cast (unumber) 0 in *((byte*~) main::$0) ← *((byte[]) table + (number) 0)
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN+(number) $28) ← *((const byte[]) table + (number) 0)
+Adding number conversion cast (unumber) $28 in *((const byte*) main::SCREEN+(number) $28) ← *((const byte[]) table + (unumber)(number) 0)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast $28
 Simplifying constant integer cast 0
+Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte[]) table = $0
-Constant (const byte*) main::SCREEN = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [3] *((byte*~) main::$0) ← *((const byte[]) table + (byte) 0)  -- *(main::SCREEN + $28)
-Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero table in [3] *((const byte*) main::SCREEN + (byte) $28) ← *((const byte[]) table + (byte) 0)
+Simplifying expression containing zero table in [0] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte[]) table + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte*~) main::$0 and assignment [0] (byte*~) main::$0 ← (const byte*) main::SCREEN + (byte) $28
-Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined $0 = (const byte[]) table
-Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(main::SCREEN+$28)
-Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2

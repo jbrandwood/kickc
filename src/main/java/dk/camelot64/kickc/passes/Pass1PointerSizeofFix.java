@@ -168,9 +168,9 @@ public class Pass1PointerSizeofFix extends Pass1Base {
     * @return The type of the pointer - if the value was a pointer. null if the value is not a pointer.
     */
    private SymbolTypePointer getPointerType(RValue pointer) {
-      if(pointer instanceof VariableRef) {
-         VariableRef varRef = (VariableRef) pointer;
-         Variable variable = getScope().getVariable(varRef);
+      if(pointer instanceof SymbolVariableRef) {
+         SymbolVariableRef varRef = (SymbolVariableRef) pointer;
+         Variable variable = getScope().getVar(varRef);
          SymbolType type = variable.getType();
          if(type instanceof SymbolTypePointer) {
             return (SymbolTypePointer) type;

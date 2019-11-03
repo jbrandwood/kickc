@@ -3,14 +3,11 @@ Culled Empty Block (label) first::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) msg1 ← (const string) $0
-  (byte[]) msg2 ← (const string) $1
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  (byte*) first::msg#0 ← (byte[]) msg1
+  (byte*) first::msg#0 ← (const byte[]) msg1
   call first 
   (byte*) first::return#0 ← (byte*) first::return#3
   to:main::@1
@@ -18,8 +15,8 @@ main::@1: scope:[main]  from main
   (byte*) first::return#4 ← phi( main/(byte*) first::return#0 )
   (byte*~) main::$0 ← (byte*) first::return#4
   (byte*~) main::$1 ← (byte*~) main::$0 + (number) 0
-  *((byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
-  (byte*) first::msg#1 ← (byte[]) msg2
+  *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
+  (byte*) first::msg#1 ← (const byte[]) msg2
   call first 
   (byte*) first::return#1 ← (byte*) first::return#3
   to:main::@2
@@ -27,7 +24,7 @@ main::@2: scope:[main]  from main::@1
   (byte*) first::return#5 ← phi( main::@1/(byte*) first::return#1 )
   (byte*~) main::$2 ← (byte*) first::return#5
   (byte*~) main::$3 ← (byte*~) main::$2 + (number) 0
-  *((byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$3)
+  *((const byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$3)
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -53,8 +50,6 @@ first::@return: scope:[first]  from first
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "hello world!"
-(const string) $1 = (string) "goodbye sky?"
 (label) @2
 (label) @3
 (label) @begin
@@ -83,17 +78,16 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
-(byte[]) msg1
-(byte[]) msg2
+(const byte*) main::SCREEN = (byte*)(number) $400
+(const byte[]) msg1 = (string) "hello world!"
+(const byte[]) msg2 = (string) "goodbye sky?"
 
 Adding number conversion cast (unumber) 0 in (byte*~) main::$1 ← (byte*~) main::$0 + (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
 Adding number conversion cast (unumber) 0 in (byte*~) main::$3 ← (byte*~) main::$2 + (number) 0
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$3)
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$3)
 Adding number conversion cast (unumber) 0 in (byte*~) first::$0 ← (byte*) first::msg#2 + (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte*~) first::$1 ← (byte*)(byte*~) first::$0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -114,30 +108,24 @@ Alias (byte*) first::return#0 = (byte*) first::return#4
 Alias (byte*) first::return#1 = (byte*) first::return#5 
 Alias (byte*) first::return#2 = (byte*~) first::$1 (byte*~) first::$0 (byte*) first::return#6 (byte*) first::return#3 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte[]) msg1 = $0
-Constant (const byte[]) msg2 = $1
-Constant (const byte*) main::SCREEN = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) first::msg#0 = msg1
 Constant (const byte*) first::msg#1 = msg2
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [9] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*~) main::$1)  -- *(main::$0 + 0)
-Converting *(pointer+n) to pointer[n] [16] *((const byte*) main::SCREEN + (byte) 1) ← *((byte*~) main::$3)  -- *(main::$2 + 0)
+Converting *(pointer+n) to pointer[n] [6] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*~) main::$1)  -- *(main::$0 + 0)
+Converting *(pointer+n) to pointer[n] [13] *((const byte*) main::SCREEN + (byte) 1) ← *((byte*~) main::$3)  -- *(main::$2 + 0)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero main::$0 in [8] (byte*~) main::$1 ← (byte*~) main::$0 + (byte) 0
-Simplifying expression containing zero main::$0 in [9] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*~) main::$0 + (byte) 0)
-Simplifying expression containing zero main::SCREEN in [9] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*~) main::$0)
-Simplifying expression containing zero main::$2 in [15] (byte*~) main::$3 ← (byte*~) main::$2 + (byte) 0
-Simplifying expression containing zero main::$2 in [16] *((const byte*) main::SCREEN + (byte) 1) ← *((byte*~) main::$2 + (byte) 0)
-Simplifying expression containing zero first::msg#2 in [19] (byte*) first::return#2 ← (byte*) first::msg#2 + (byte) 0
+Simplifying expression containing zero main::$0 in [5] (byte*~) main::$1 ← (byte*~) main::$0 + (byte) 0
+Simplifying expression containing zero main::$0 in [6] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*~) main::$0 + (byte) 0)
+Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*~) main::$0)
+Simplifying expression containing zero main::$2 in [12] (byte*~) main::$3 ← (byte*~) main::$2 + (byte) 0
+Simplifying expression containing zero main::$2 in [13] *((const byte*) main::SCREEN + (byte) 1) ← *((byte*~) main::$2 + (byte) 0)
+Simplifying expression containing zero first::msg#2 in [16] (byte*) first::return#2 ← (byte*) first::msg#2 + (byte) 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*~) main::$1 and assignment [3] (byte*~) main::$1 ← (byte*~) main::$0
 Eliminating unused variable (byte*~) main::$3 and assignment [8] (byte*~) main::$3 ← (byte*~) main::$2
 Successful SSA optimization PassNEliminateUnusedVars
 Alias (byte*) first::return#2 = (byte*) first::msg#2 
 Successful SSA optimization Pass2AliasElimination
-Constant inlined $0 = (const byte[]) msg1
-Constant inlined $1 = (const byte[]) msg2
 Constant inlined first::msg#0 = (const byte[]) msg1
 Constant inlined first::msg#1 = (const byte[]) msg2
 Successful SSA optimization Pass2ConstantInlining

@@ -1,4 +1,4 @@
-Fixing pointer array-indexing *((word*) main::screen + (byte) main::b)
+Fixing pointer array-indexing *((const word*) main::screen + (byte) main::b)
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
@@ -7,14 +7,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word*) main::screen ← ((word*)) (number) $400
   (byte) main::b#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@1/(byte) main::b#1 )
   (number~) main::$0 ← (number) -$30 + (byte) main::b#2
   (byte~) main::$2 ← (byte) main::b#2 * (const byte) SIZEOF_WORD
-  *((word*) main::screen + (byte~) main::$2) ← (number~) main::$0
+  *((const word*) main::screen + (byte~) main::$2) ← (number~) main::$0
   (byte) main::b#1 ← (byte) main::b#2 + rangenext(0,$14)
   (bool~) main::$1 ← (byte) main::b#1 != rangelast(0,$14)
   if((bool~) main::$1) goto main::@1
@@ -45,26 +44,23 @@ SYMBOL TABLE SSA
 (byte) main::b#0
 (byte) main::b#1
 (byte) main::b#2
-(word*) main::screen
+(const word*) main::screen = (word*)(number) $400
 
 Adding number conversion cast (unumber) -$30 in (number~) main::$0 ← (number) -$30 + (byte) main::b#2
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) -$30 + (byte) main::b#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word*) main::screen ← (word*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast -$30
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) -$30
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) -$30 + (byte) main::b#2
-Simple Condition (bool~) main::$1 [8] if((byte) main::b#1!=rangelast(0,$14)) goto main::@1
+Simple Condition (bool~) main::$1 [7] if((byte) main::b#1!=rangelast(0,$14)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const word*) main::screen = (word*) 1024
 Constant (const byte) main::b#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [6] main::b#1 ← ++ main::b#2 to ++
-Resolved ranged comparison value [8] if(main::b#1!=rangelast(0,$14)) goto main::@1 to (number) $15
+Resolved ranged next value [5] main::b#1 ← ++ main::b#2 to ++
+Resolved ranged comparison value [7] if(main::b#1!=rangelast(0,$14)) goto main::@1 to (number) $15
 Adding number conversion cast (unumber) $15 in if((byte) main::b#1!=(number) $15) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $15

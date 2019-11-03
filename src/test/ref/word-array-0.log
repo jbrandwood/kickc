@@ -1,5 +1,5 @@
-Fixing pointer array-indexing *((word[3]) main::words + (number) 1)
-Fixing pointer array-indexing *((word[3]) main::words + (number) 2)
+Fixing pointer array-indexing *((const word[3]) main::words + (number) 1)
+Fixing pointer array-indexing *((const word[3]) main::words + (number) 2)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -7,20 +7,18 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400+(number) 6*(number) $28
-  (word[3]) main::words ← ((word[3])) (number) $400
   (number~) main::$4 ← (number) 1 * (const byte) SIZEOF_WORD
-  (word) main::w1#0 ← *((word[3]) main::words + (number~) main::$4)
+  (word) main::w1#0 ← *((const word[3]) main::words + (number~) main::$4)
   (byte~) main::$0 ← < (word) main::w1#0
-  *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
+  *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
   (byte~) main::$1 ← > (word) main::w1#0
-  *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
+  *((const byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
   (number~) main::$5 ← (number) 2 * (const byte) SIZEOF_WORD
-  (word) main::w2#0 ← *((word[3]) main::words + (number~) main::$5)
+  (word) main::w2#0 ← *((const word[3]) main::words + (number~) main::$5)
   (byte~) main::$2 ← < (word) main::w2#0
-  *((byte*) main::SCREEN + (number) 2) ← (byte~) main::$2
+  *((const byte*) main::SCREEN + (number) 2) ← (byte~) main::$2
   (byte~) main::$3 ← > (word) main::w2#0
-  *((byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
+  *((const byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -46,25 +44,22 @@ SYMBOL TABLE SSA
 (number~) main::$4
 (number~) main::$5
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400+(number) 6*(number) $28
 (word) main::w1
 (word) main::w1#0
 (word) main::w2
 (word) main::w2#0
-(word[3]) main::words
+(const word[3]) main::words = (word[3])(number) $400
 
 Adding number conversion cast (unumber) 1 in (number~) main::$4 ← (number) 1 * (const byte) SIZEOF_WORD
 Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (unumber)(number) 1 * (const byte) SIZEOF_WORD
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
 Adding number conversion cast (unumber) 2 in (number~) main::$5 ← (number) 2 * (const byte) SIZEOF_WORD
 Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (unumber)(number) 2 * (const byte) SIZEOF_WORD
-Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN + (number) 2) ← (byte~) main::$2
-Adding number conversion cast (unumber) 3 in *((byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
+Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 2) ← (byte~) main::$2
+Adding number conversion cast (unumber) 3 in *((const byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400+(number) 6*(number) $28
-Inlining cast (word[3]) main::words ← (word[3])(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
@@ -82,16 +77,13 @@ Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$4 ← (byte) 1 * (const byte) SIZEOF_WORD
 Inferred type updated to byte in (unumber~) main::$5 ← (byte) 2 * (const byte) SIZEOF_WORD
-Constant right-side identified [0] (byte*) main::SCREEN ← (byte*)(number) $400+(number) 6*(number) $28
-Constant right-side identified [2] (byte~) main::$4 ← (byte) 1 * (const byte) SIZEOF_WORD
-Constant right-side identified [8] (byte~) main::$5 ← (byte) 2 * (const byte) SIZEOF_WORD
+Constant right-side identified [0] (byte~) main::$4 ← (byte) 1 * (const byte) SIZEOF_WORD
+Constant right-side identified [6] (byte~) main::$5 ← (byte) 2 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::SCREEN = (byte*)$400+6*$28
-Constant (const word[3]) main::words = (word*) 1024
 Constant (const byte) main::$4 = 1*SIZEOF_WORD
 Constant (const byte) main::$5 = 2*SIZEOF_WORD
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [5] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$0
+Simplifying expression containing zero main::SCREEN in [3] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant inlined main::$5 = (byte) 2*(const byte) SIZEOF_WORD
 Constant inlined main::$4 = (byte) 1*(const byte) SIZEOF_WORD

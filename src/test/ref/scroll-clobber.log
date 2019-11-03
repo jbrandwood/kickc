@@ -4,13 +4,11 @@ Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte[]) TEXT ← (const string) $0
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::nxt#0 ← (byte[]) TEXT
+  (byte*) main::nxt#0 ← (const byte[]) TEXT
   (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -26,13 +24,13 @@ main::@2: scope:[main]  from main::@1 main::@3
   (byte) main::c#2 ← phi( main::@1/(byte) main::c#0 main::@3/(byte) main::c#1 )
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 main::@3/(byte) main::i#4 )
   (byte) main::i#1 ← ++ (byte) main::i#2
-  *((byte*) SCREEN + (byte) main::i#1) ← (byte) main::c#2
+  *((const byte*) SCREEN + (byte) main::i#1) ← (byte) main::c#2
   (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   if(true) goto main::@1
   to:main::@return
 main::@3: scope:[main]  from main::@1
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#3 )
-  (byte*) main::nxt#2 ← (byte[]) TEXT
+  (byte*) main::nxt#2 ← (const byte[]) TEXT
   (byte) main::c#1 ← *((byte*) main::nxt#2)
   to:main::@2
 main::@return: scope:[main]  from main::@2
@@ -46,13 +44,12 @@ main::@return: scope:[main]  from main::@2
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "01234567"
 (label) @1
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte[]) TEXT
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte[]) TEXT = (string) "01234567"
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -80,7 +77,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (byte) main::c#0 == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -90,31 +86,27 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [7] (bool~) main::$1 ← (byte) main::c#0 != (byte) 0 from [6] (bool~) main::$0 ← (byte) main::c#0 == (byte) 0
+Inversing boolean not [5] (bool~) main::$1 ← (byte) main::c#0 != (byte) 0 from [4] (bool~) main::$0 ← (byte) main::c#0 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::i#3 = (byte) main::i#4 
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [8] if((byte) main::c#0!=(byte) 0) goto main::@2
+Simple Condition (bool~) main::$1 [6] if((byte) main::c#0!=(byte) 0) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte[]) TEXT = $0
-Constant (const byte) main::i#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::nxt#0 = TEXT
+Constant (const byte) main::i#0 = 0
 Constant (const byte*) main::nxt#2 = TEXT
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [13] if(true) goto main::@1
+if() condition always true - replacing block destination [11] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte*) main::nxt#0
+Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte*) main::nxt#2
 Constant inlined main::i#0 = (byte) 0
 Constant inlined main::nxt#0 = (const byte[]) TEXT
-Constant inlined $0 = (const byte[]) TEXT
 Constant inlined main::nxt#2 = (const byte[]) TEXT
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@5(between main::@1 and main::@2)

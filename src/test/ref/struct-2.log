@@ -17,6 +17,8 @@ Replacing struct member reference (struct Point) point1.x with member unwinding 
 Replacing struct member reference (struct Point) point1.y with member unwinding reference (byte) point1_y
 Replacing struct member reference (struct Point) point2.x with member unwinding reference (byte) point2_x
 Replacing struct member reference (struct Point) point2.y with member unwinding reference (byte) point2_y
+Identified constant variable (byte) Point::x
+Identified constant variable (byte) Point::y
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -33,11 +35,10 @@ main: scope:[main]  from @1
   (byte) point2_x#1 ← (byte) point1_x#1
   (byte) point2_y#1 ← (byte) point1_y#1
   (byte) point2_x#2 ← (number) 4
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  *((byte*) main::SCREEN + (number) 0) ← (byte) point1_x#1
-  *((byte*) main::SCREEN + (number) 1) ← (byte) point1_y#1
-  *((byte*) main::SCREEN + (number) 2) ← (byte) point2_x#2
-  *((byte*) main::SCREEN + (number) 3) ← (byte) point2_y#1
+  *((const byte*) main::SCREEN + (number) 0) ← (byte) point1_x#1
+  *((const byte*) main::SCREEN + (number) 1) ← (byte) point1_y#1
+  *((const byte*) main::SCREEN + (number) 2) ← (byte) point2_x#2
+  *((const byte*) main::SCREEN + (number) 3) ← (byte) point2_y#1
   to:main::@return
 main::@return: scope:[main]  from main
   (byte) point2_y#4 ← phi( main/(byte) point2_y#1 )
@@ -74,11 +75,9 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte) Point::x
-(byte) Point::y
 (void()) main()
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) point1_x
 (byte) point1_x#0
 (byte) point1_x#1
@@ -116,20 +115,19 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 2 in (byte) point1_x#1 ← (number) 2
 Adding number conversion cast (unumber) 3 in (byte) point1_y#1 ← (number) 3
 Adding number conversion cast (unumber) 4 in (byte) point2_x#2 ← (number) 4
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) point1_x#1
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte) point1_y#1
-Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN + (number) 2) ← (byte) point2_x#2
-Adding number conversion cast (unumber) 3 in *((byte*) main::SCREEN + (number) 3) ← (byte) point2_y#1
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte) point1_x#1
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte) point1_y#1
+Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 2) ← (byte) point2_x#2
+Adding number conversion cast (unumber) 3 in *((const byte*) main::SCREEN + (number) 3) ← (byte) point2_y#1
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) point1_x#1 ← (unumber)(number) 2
 Inlining cast (byte) point1_y#1 ← (unumber)(number) 3
 Inlining cast (byte) point2_x#2 ← (unumber)(number) 4
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
@@ -167,9 +165,8 @@ Constant (const byte) point2_y#0 = 0
 Constant (const byte) point1_x#1 = 2
 Constant (const byte) point1_y#1 = 3
 Constant (const byte) point2_x#2 = 4
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [10] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) point1_x#1
+Simplifying expression containing zero main::SCREEN in [9] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) point1_x#1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) point1_x#0
 Eliminating unused constant (const byte) point1_y#0
@@ -218,8 +215,6 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) Point::x
-(byte) Point::y
 (void()) main()
 (byte) point1_x
 (byte) point1_y
@@ -364,8 +359,6 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte) Point::x
-(byte) Point::y
 (void()) main()
 (label) main::@return
 (const byte*) main::SCREEN = (byte*) 1024

@@ -51,6 +51,7 @@ Culled Empty Block (label) @25
 Culled Empty Block (label) @26
 Culled Empty Block (label) @27
 Culled Empty Block (label) @28
+Culled Empty Block (label) @29
 Culled Empty Block (label) @30
 Culled Empty Block (label) @31
 Culled Empty Block (label) @32
@@ -86,6 +87,7 @@ Culled Empty Block (label) mulf8s::mulf8s_prepare1_@return
 Culled Empty Block (label) mulf8s::@1
 Culled Empty Block (label) @48
 Culled Empty Block (label) @49
+Culled Empty Block (label) @50
 Culled Empty Block (label) @51
 Culled Empty Block (label) muls8u::@7
 Culled Empty Block (label) muls8u::@6
@@ -173,7 +175,7 @@ memset::@return: scope:[memset]  from memset::@1
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@29
+  to:@41
 
 (void()) print_str((byte*) print_str::str)
 print_str: scope:[print_str]  from mul8s_compare::@3 mul8s_error mul8s_error::@2 mul8s_error::@4 mul8s_error::@6 mul8s_error::@8 mul8u_compare::@11 mul8u_error mul8u_error::@2 mul8u_error::@4 mul8u_error::@6 mul8u_error::@8 mulf_tables_cmp::@13 mulf_tables_cmp::@3 mulf_tables_cmp::@7
@@ -345,19 +347,13 @@ print_word::@return: scope:[print_word]  from print_word::@2
   (byte*) print_char_cursor#15 ← (byte*) print_char_cursor#82
   return 
   to:@return
-@29: scope:[]  from @12
-  (byte*) print_screen#8 ← phi( @12/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#182 ← phi( @12/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#91 ← phi( @12/(byte*) print_line_cursor#0 )
-  (byte[]) print_hextab ← (const string) $0
-  to:@41
 
 (void()) print_byte((byte) print_byte::b)
 print_byte: scope:[print_byte]  from mul8u_error::@1 mul8u_error::@3 print_sbyte::@2 print_word print_word::@1
   (byte*) print_char_cursor#143 ← phi( mul8u_error::@1/(byte*) print_char_cursor#39 mul8u_error::@3/(byte*) print_char_cursor#41 print_sbyte::@2/(byte*) print_char_cursor#141 print_word/(byte*) print_char_cursor#142 print_word::@1/(byte*) print_char_cursor#13 )
   (byte) print_byte::b#5 ← phi( mul8u_error::@1/(byte) print_byte::b#3 mul8u_error::@3/(byte) print_byte::b#4 print_sbyte::@2/(byte) print_byte::b#0 print_word/(byte) print_byte::b#1 print_word::@1/(byte) print_byte::b#2 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#5 >> (number) 4
-  (byte) print_char::ch#4 ← *((byte[]) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#4 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -365,7 +361,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#83 ← phi( print_byte/(byte*) print_char_cursor#20 )
   (byte*) print_char_cursor#16 ← (byte*) print_char_cursor#83
   (number~) print_byte::$2 ← (byte) print_byte::b#6 & (number) $f
-  (byte) print_char::ch#5 ← *((byte[]) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#5 ← *((const byte[]) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -520,15 +516,15 @@ mul8s::@return: scope:[mul8s]  from mul8s::@2
   (signed word) mul8s::return#1 ← (signed word) mul8s::return#3
   return 
   to:@return
-@41: scope:[]  from @29
-  (byte*) print_screen#7 ← phi( @29/(byte*) print_screen#8 )
-  (byte*) print_char_cursor#176 ← phi( @29/(byte*) print_char_cursor#182 )
-  (byte*) print_line_cursor#78 ← phi( @29/(byte*) print_line_cursor#91 )
+@41: scope:[]  from @12
+  (byte*) print_screen#6 ← phi( @12/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#166 ← phi( @12/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#67 ← phi( @12/(byte*) print_line_cursor#0 )
   (byte[$200]) mulf_sqr1_lo ← { fill( $200, 0) }
   (byte[$200]) mulf_sqr1_hi ← { fill( $200, 0) }
   (byte[$200]) mulf_sqr2_lo ← { fill( $200, 0) }
   (byte[$200]) mulf_sqr2_hi ← { fill( $200, 0) }
-  to:@50
+  to:@53
 
 (void()) mulf_init()
 mulf_init: scope:[mulf_init]  from main::@1
@@ -644,8 +640,7 @@ mulf_init::@return: scope:[mulf_init]  from mulf_init::@11
 (void()) mulf8u_prepare((byte) mulf8u_prepare::a)
 mulf8u_prepare: scope:[mulf8u_prepare]  from mulf8s::mulf8s_prepare1 mulf8u
   (byte) mulf8u_prepare::a#2 ← phi( mulf8s::mulf8s_prepare1/(byte) mulf8u_prepare::a#1 mulf8u/(byte) mulf8u_prepare::a#0 )
-  (byte*) mulf8u_prepare::memA ← ((byte*)) (number) $fd
-  *((byte*) mulf8u_prepare::memA) ← (byte) mulf8u_prepare::a#2
+  *((const byte*) mulf8u_prepare::memA) ← (byte) mulf8u_prepare::a#2
   asm { ldamemA stamulf8u_prepared.sm1+1 stamulf8u_prepared.sm3+1 eor#$ff stamulf8u_prepared.sm2+1 stamulf8u_prepared.sm4+1  }
   to:mulf8u_prepare::@return
 mulf8u_prepare::@return: scope:[mulf8u_prepare]  from mulf8u_prepare
@@ -655,11 +650,9 @@ mulf8u_prepare::@return: scope:[mulf8u_prepare]  from mulf8u_prepare
 (word()) mulf8u_prepared((byte) mulf8u_prepared::b)
 mulf8u_prepared: scope:[mulf8u_prepared]  from mulf8s_prepared mulf8u::@2
   (byte) mulf8u_prepared::b#2 ← phi( mulf8s_prepared/(byte) mulf8u_prepared::b#1 mulf8u::@2/(byte) mulf8u_prepared::b#0 )
-  (byte*) mulf8u_prepared::resL ← ((byte*)) (number) $fe
-  (byte*) mulf8u_prepared::memB ← ((byte*)) (number) $ff
-  *((byte*) mulf8u_prepared::memB) ← (byte) mulf8u_prepared::b#2
+  *((const byte*) mulf8u_prepared::memB) ← (byte) mulf8u_prepared::b#2
   asm { ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x staresL sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  }
-  (word) mulf8u_prepared::return#0 ← ((word)) { *((byte*) mulf8u_prepared::memB), *((byte*) mulf8u_prepared::resL) }
+  (word) mulf8u_prepared::return#0 ← ((word)) { *((const byte*) mulf8u_prepared::memB), *((const byte*) mulf8u_prepared::resL) }
   to:mulf8u_prepared::@return
 mulf8u_prepared::@return: scope:[mulf8u_prepared]  from mulf8u_prepared
   (word) mulf8u_prepared::return#4 ← phi( mulf8u_prepared/(word) mulf8u_prepared::return#0 )
@@ -694,7 +687,6 @@ mulf8u::@return: scope:[mulf8u]  from mulf8u::@3
 (signed word()) mulf8s_prepared((signed byte) mulf8s_prepared::b)
 mulf8s_prepared: scope:[mulf8s_prepared]  from mulf8s::@2
   (signed byte) mulf8s_prepared::b#1 ← phi( mulf8s::@2/(signed byte) mulf8s_prepared::b#0 )
-  (signed byte*) mulf8s_prepared::memA ← ((signed byte*)) (number) $fd
   (byte~) mulf8s_prepared::$0 ← ((byte)) (signed byte) mulf8s_prepared::b#1
   (byte) mulf8u_prepared::b#1 ← (byte~) mulf8s_prepared::$0
   call mulf8u_prepared 
@@ -705,7 +697,7 @@ mulf8s_prepared::@6: scope:[mulf8s_prepared]  from mulf8s_prepared
   (word) mulf8u_prepared::return#6 ← phi( mulf8s_prepared/(word) mulf8u_prepared::return#3 )
   (word~) mulf8s_prepared::$1 ← (word) mulf8u_prepared::return#6
   (word) mulf8s_prepared::m#0 ← (word~) mulf8s_prepared::$1
-  (bool~) mulf8s_prepared::$2 ← *((signed byte*) mulf8s_prepared::memA) < (number) 0
+  (bool~) mulf8s_prepared::$2 ← *((const signed byte*) mulf8s_prepared::memA) < (number) 0
   (bool~) mulf8s_prepared::$3 ← ! (bool~) mulf8s_prepared::$2
   if((bool~) mulf8s_prepared::$3) goto mulf8s_prepared::@1
   to:mulf8s_prepared::@3
@@ -733,7 +725,7 @@ mulf8s_prepared::@2: scope:[mulf8s_prepared]  from mulf8s_prepared::@1 mulf8s_pr
 mulf8s_prepared::@4: scope:[mulf8s_prepared]  from mulf8s_prepared::@1
   (word) mulf8s_prepared::m#5 ← phi( mulf8s_prepared::@1/(word) mulf8s_prepared::m#6 )
   (byte~) mulf8s_prepared::$12 ← > (word) mulf8s_prepared::m#5
-  (byte~) mulf8s_prepared::$13 ← ((byte)) *((signed byte*) mulf8s_prepared::memA)
+  (byte~) mulf8s_prepared::$13 ← ((byte)) *((const signed byte*) mulf8s_prepared::memA)
   (byte~) mulf8s_prepared::$14 ← (byte~) mulf8s_prepared::$12 - (byte~) mulf8s_prepared::$13
   (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$14
   (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$16
@@ -776,19 +768,13 @@ mulf8s::@return: scope:[mulf8s]  from mulf8s::@4
   (signed word) mulf8s::return#1 ← (signed word) mulf8s::return#3
   return 
   to:@return
-@50: scope:[]  from @41
-  (byte*) print_screen#6 ← phi( @41/(byte*) print_screen#7 )
-  (byte*) print_char_cursor#166 ← phi( @41/(byte*) print_char_cursor#176 )
-  (byte*) print_line_cursor#67 ← phi( @41/(byte*) print_line_cursor#78 )
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  to:@53
 
 (void()) main()
 main: scope:[main]  from @59
   (byte*) print_char_cursor#144 ← phi( @59/(byte*) print_char_cursor#154 )
   (byte*) print_line_cursor#46 ← phi( @59/(byte*) print_line_cursor#56 )
   (byte*) print_screen#3 ← phi( @59/(byte*) print_screen#4 )
-  *((byte*) BGCOL) ← (number) 5
+  *((const byte*) BGCOL) ← (number) 5
   call print_cls 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -949,10 +935,10 @@ muls8s::@return: scope:[muls8s]  from muls8s::@3
   (signed word) muls8s::return#1 ← (signed word) muls8s::return#3
   return 
   to:@return
-@53: scope:[]  from @50
-  (byte*) print_screen#5 ← phi( @50/(byte*) print_screen#6 )
-  (byte*) print_char_cursor#165 ← phi( @50/(byte*) print_char_cursor#166 )
-  (byte*) print_line_cursor#66 ← phi( @50/(byte*) print_line_cursor#67 )
+@53: scope:[]  from @41
+  (byte*) print_screen#5 ← phi( @41/(byte*) print_screen#6 )
+  (byte*) print_char_cursor#165 ← phi( @41/(byte*) print_char_cursor#166 )
+  (byte*) print_line_cursor#66 ← phi( @41/(byte*) print_line_cursor#67 )
   (byte[$200]) mula_sqr1_lo ← { fill( $200, 0) }
   (byte[$200]) mula_sqr1_hi ← { fill( $200, 0) }
   (byte[$200]) mula_sqr2_lo ← { fill( $200, 0) }
@@ -962,11 +948,10 @@ muls8s::@return: scope:[muls8s]  from muls8s::@3
 (void()) mulf_init_asm()
 mulf_init_asm: scope:[mulf_init_asm]  from main::@2
   asm { ldx#$00 txa .byte$c9 lb1: tya adc#$00 ml1: stamula_sqr1_hi,x tay cmp#$40 txa ror ml9: adc#$00 staml9+1 inx ml0: stamula_sqr1_lo,x bnelb1 incml0+2 incml1+2 clc iny bnelb1 ldx#$00 ldy#$ff !: ldamula_sqr1_hi+1,x stamula_sqr2_hi+$100,x ldamula_sqr1_hi,x stamula_sqr2_hi,y ldamula_sqr1_lo+1,x stamula_sqr2_lo+$100,x ldamula_sqr1_lo,x stamula_sqr2_lo,y dey inx bne!-  }
-  (byte*) mulf_init_asm::mem ← ((byte*)) (number) $ff
-  *((byte*) mulf_init_asm::mem) ← *((byte[$200]) mula_sqr1_lo)
-  *((byte*) mulf_init_asm::mem) ← *((byte[$200]) mula_sqr1_hi)
-  *((byte*) mulf_init_asm::mem) ← *((byte[$200]) mula_sqr2_lo)
-  *((byte*) mulf_init_asm::mem) ← *((byte[$200]) mula_sqr2_hi)
+  *((const byte*) mulf_init_asm::mem) ← *((byte[$200]) mula_sqr1_lo)
+  *((const byte*) mulf_init_asm::mem) ← *((byte[$200]) mula_sqr1_hi)
+  *((const byte*) mulf_init_asm::mem) ← *((byte[$200]) mula_sqr2_lo)
+  *((const byte*) mulf_init_asm::mem) ← *((byte[$200]) mula_sqr2_hi)
   to:mulf_init_asm::@return
 mulf_init_asm::@return: scope:[mulf_init_asm]  from mulf_init_asm
   return 
@@ -974,13 +959,13 @@ mulf_init_asm::@return: scope:[mulf_init_asm]  from mulf_init_asm
 
 (void()) mulf_tables_cmp()
 mulf_tables_cmp: scope:[mulf_tables_cmp]  from main::@3
-  (byte*) print_line_cursor#79 ← phi( main::@3/(byte*) print_line_cursor#47 )
+  (byte*) print_line_cursor#78 ← phi( main::@3/(byte*) print_line_cursor#47 )
   (byte*) print_char_cursor#167 ← phi( main::@3/(byte*) print_char_cursor#145 )
   (byte*) mulf_tables_cmp::asm_sqr#0 ← (byte[$200]) mula_sqr1_lo
   (byte*) mulf_tables_cmp::kc_sqr#0 ← (byte[$200]) mulf_sqr1_lo
   to:mulf_tables_cmp::@1
 mulf_tables_cmp::@1: scope:[mulf_tables_cmp]  from mulf_tables_cmp mulf_tables_cmp::@4
-  (byte*) print_line_cursor#68 ← phi( mulf_tables_cmp/(byte*) print_line_cursor#79 mulf_tables_cmp::@4/(byte*) print_line_cursor#80 )
+  (byte*) print_line_cursor#68 ← phi( mulf_tables_cmp/(byte*) print_line_cursor#78 mulf_tables_cmp::@4/(byte*) print_line_cursor#79 )
   (byte*) print_char_cursor#159 ← phi( mulf_tables_cmp/(byte*) print_char_cursor#167 mulf_tables_cmp::@4/(byte*) print_char_cursor#168 )
   (byte*) mulf_tables_cmp::asm_sqr#5 ← phi( mulf_tables_cmp/(byte*) mulf_tables_cmp::asm_sqr#0 mulf_tables_cmp::@4/(byte*) mulf_tables_cmp::asm_sqr#1 )
   (byte*) mulf_tables_cmp::kc_sqr#2 ← phi( mulf_tables_cmp/(byte*) mulf_tables_cmp::kc_sqr#0 mulf_tables_cmp::@4/(byte*) mulf_tables_cmp::kc_sqr#1 )
@@ -989,7 +974,7 @@ mulf_tables_cmp::@1: scope:[mulf_tables_cmp]  from mulf_tables_cmp mulf_tables_c
   if((bool~) mulf_tables_cmp::$3) goto mulf_tables_cmp::@2
   to:mulf_tables_cmp::@3
 mulf_tables_cmp::@2: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@1
-  (byte*) print_line_cursor#92 ← phi( mulf_tables_cmp::@1/(byte*) print_line_cursor#68 )
+  (byte*) print_line_cursor#90 ← phi( mulf_tables_cmp::@1/(byte*) print_line_cursor#68 )
   (byte*) print_char_cursor#160 ← phi( mulf_tables_cmp::@1/(byte*) print_char_cursor#159 )
   (byte*) mulf_tables_cmp::asm_sqr#2 ← phi( mulf_tables_cmp::@1/(byte*) mulf_tables_cmp::asm_sqr#5 )
   (byte*) mulf_tables_cmp::kc_sqr#3 ← phi( mulf_tables_cmp::@1/(byte*) mulf_tables_cmp::kc_sqr#2 )
@@ -1016,7 +1001,7 @@ mulf_tables_cmp::@11: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@10
   (byte*) print_char_cursor#29 ← (byte*) print_char_cursor#95
   to:mulf_tables_cmp::@return
 mulf_tables_cmp::@4: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@2
-  (byte*) print_line_cursor#80 ← phi( mulf_tables_cmp::@2/(byte*) print_line_cursor#92 )
+  (byte*) print_line_cursor#79 ← phi( mulf_tables_cmp::@2/(byte*) print_line_cursor#90 )
   (byte*) print_char_cursor#168 ← phi( mulf_tables_cmp::@2/(byte*) print_char_cursor#160 )
   (byte*) mulf_tables_cmp::kc_sqr#4 ← phi( mulf_tables_cmp::@2/(byte*) mulf_tables_cmp::kc_sqr#3 )
   (byte*) mulf_tables_cmp::asm_sqr#3 ← phi( mulf_tables_cmp::@2/(byte*) mulf_tables_cmp::asm_sqr#2 )
@@ -1024,16 +1009,16 @@ mulf_tables_cmp::@4: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@2
   (byte*) mulf_tables_cmp::kc_sqr#1 ← ++ (byte*) mulf_tables_cmp::kc_sqr#4
   to:mulf_tables_cmp::@1
 mulf_tables_cmp::@7: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@2
-  (byte*) print_line_cursor#93 ← phi( mulf_tables_cmp::@2/(byte*) print_line_cursor#92 )
+  (byte*) print_line_cursor#91 ← phi( mulf_tables_cmp::@2/(byte*) print_line_cursor#90 )
   (byte*) mulf_tables_cmp::kc_sqr#8 ← phi( mulf_tables_cmp::@2/(byte*) mulf_tables_cmp::kc_sqr#3 )
   (byte*) mulf_tables_cmp::asm_sqr#6 ← phi( mulf_tables_cmp::@2/(byte*) mulf_tables_cmp::asm_sqr#2 )
   (byte*) print_char_cursor#147 ← phi( mulf_tables_cmp::@2/(byte*) print_char_cursor#160 )
-  *((byte*) BGCOL) ← (number) 2
+  *((const byte*) BGCOL) ← (number) 2
   (byte*) print_str::str#2 ← (const string) mulf_tables_cmp::str1
   call print_str 
   to:mulf_tables_cmp::@12
 mulf_tables_cmp::@12: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@7
-  (byte*) print_line_cursor#81 ← phi( mulf_tables_cmp::@7/(byte*) print_line_cursor#93 )
+  (byte*) print_line_cursor#80 ← phi( mulf_tables_cmp::@7/(byte*) print_line_cursor#91 )
   (byte*) mulf_tables_cmp::kc_sqr#7 ← phi( mulf_tables_cmp::@7/(byte*) mulf_tables_cmp::kc_sqr#8 )
   (byte*) mulf_tables_cmp::asm_sqr#4 ← phi( mulf_tables_cmp::@7/(byte*) mulf_tables_cmp::asm_sqr#6 )
   (byte*) print_char_cursor#96 ← phi( mulf_tables_cmp::@7/(byte*) print_char_cursor#2 )
@@ -1043,7 +1028,7 @@ mulf_tables_cmp::@12: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@7
   call print_word 
   to:mulf_tables_cmp::@13
 mulf_tables_cmp::@13: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@12
-  (byte*) print_line_cursor#69 ← phi( mulf_tables_cmp::@12/(byte*) print_line_cursor#81 )
+  (byte*) print_line_cursor#69 ← phi( mulf_tables_cmp::@12/(byte*) print_line_cursor#80 )
   (byte*) mulf_tables_cmp::kc_sqr#6 ← phi( mulf_tables_cmp::@12/(byte*) mulf_tables_cmp::kc_sqr#7 )
   (byte*) print_char_cursor#97 ← phi( mulf_tables_cmp::@12/(byte*) print_char_cursor#15 )
   (byte*) print_char_cursor#31 ← (byte*) print_char_cursor#97
@@ -1074,19 +1059,19 @@ mulf_tables_cmp::@return: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@11 mul
 
 (void()) mul8u_compare()
 mul8u_compare: scope:[mul8u_compare]  from main::@4
-  (byte*) print_line_cursor#112 ← phi( main::@4/(byte*) print_line_cursor#6 )
-  (byte*) print_char_cursor#192 ← phi( main::@4/(byte*) print_char_cursor#24 )
+  (byte*) print_line_cursor#110 ← phi( main::@4/(byte*) print_line_cursor#6 )
+  (byte*) print_char_cursor#190 ← phi( main::@4/(byte*) print_char_cursor#24 )
   (byte) mul8u_compare::a#0 ← (byte) 0
   to:mul8u_compare::@1
 mul8u_compare::@1: scope:[mul8u_compare]  from mul8u_compare mul8u_compare::@10
-  (byte*) print_line_cursor#109 ← phi( mul8u_compare/(byte*) print_line_cursor#112 mul8u_compare::@10/(byte*) print_line_cursor#72 )
-  (byte*) print_char_cursor#191 ← phi( mul8u_compare/(byte*) print_char_cursor#192 mul8u_compare::@10/(byte*) print_char_cursor#162 )
+  (byte*) print_line_cursor#107 ← phi( mul8u_compare/(byte*) print_line_cursor#110 mul8u_compare::@10/(byte*) print_line_cursor#72 )
+  (byte*) print_char_cursor#189 ← phi( mul8u_compare/(byte*) print_char_cursor#190 mul8u_compare::@10/(byte*) print_char_cursor#162 )
   (byte) mul8u_compare::a#7 ← phi( mul8u_compare/(byte) mul8u_compare::a#0 mul8u_compare::@10/(byte) mul8u_compare::a#1 )
   (byte) mul8u_compare::b#0 ← (byte) 0
   to:mul8u_compare::@2
 mul8u_compare::@2: scope:[mul8u_compare]  from mul8u_compare::@1 mul8u_compare::@5
-  (byte*) print_line_cursor#105 ← phi( mul8u_compare::@1/(byte*) print_line_cursor#109 mul8u_compare::@5/(byte*) print_line_cursor#84 )
-  (byte*) print_char_cursor#189 ← phi( mul8u_compare::@1/(byte*) print_char_cursor#191 mul8u_compare::@5/(byte*) print_char_cursor#171 )
+  (byte*) print_line_cursor#103 ← phi( mul8u_compare::@1/(byte*) print_line_cursor#107 mul8u_compare::@5/(byte*) print_line_cursor#83 )
+  (byte*) print_char_cursor#187 ← phi( mul8u_compare::@1/(byte*) print_char_cursor#189 mul8u_compare::@5/(byte*) print_char_cursor#171 )
   (byte) mul8u_compare::b#2 ← phi( mul8u_compare::@1/(byte) mul8u_compare::b#0 mul8u_compare::@5/(byte) mul8u_compare::b#1 )
   (byte) mul8u_compare::a#2 ← phi( mul8u_compare::@1/(byte) mul8u_compare::a#7 mul8u_compare::@5/(byte) mul8u_compare::a#8 )
   (byte) muls8u::a#0 ← (byte) mul8u_compare::a#2
@@ -1095,8 +1080,8 @@ mul8u_compare::@2: scope:[mul8u_compare]  from mul8u_compare::@1 mul8u_compare::
   (word) muls8u::return#2 ← (word) muls8u::return#1
   to:mul8u_compare::@12
 mul8u_compare::@12: scope:[mul8u_compare]  from mul8u_compare::@2
-  (byte*) print_line_cursor#99 ← phi( mul8u_compare::@2/(byte*) print_line_cursor#105 )
-  (byte*) print_char_cursor#187 ← phi( mul8u_compare::@2/(byte*) print_char_cursor#189 )
+  (byte*) print_line_cursor#97 ← phi( mul8u_compare::@2/(byte*) print_line_cursor#103 )
+  (byte*) print_char_cursor#185 ← phi( mul8u_compare::@2/(byte*) print_char_cursor#187 )
   (byte) mul8u_compare::b#3 ← phi( mul8u_compare::@2/(byte) mul8u_compare::b#2 )
   (byte) mul8u_compare::a#3 ← phi( mul8u_compare::@2/(byte) mul8u_compare::a#2 )
   (word) muls8u::return#4 ← phi( mul8u_compare::@2/(word) muls8u::return#2 )
@@ -1108,8 +1093,8 @@ mul8u_compare::@12: scope:[mul8u_compare]  from mul8u_compare::@2
   (word) mulf8u::return#2 ← (word) mulf8u::return#1
   to:mul8u_compare::@13
 mul8u_compare::@13: scope:[mul8u_compare]  from mul8u_compare::@12
-  (byte*) print_line_cursor#94 ← phi( mul8u_compare::@12/(byte*) print_line_cursor#99 )
-  (byte*) print_char_cursor#183 ← phi( mul8u_compare::@12/(byte*) print_char_cursor#187 )
+  (byte*) print_line_cursor#92 ← phi( mul8u_compare::@12/(byte*) print_line_cursor#97 )
+  (byte*) print_char_cursor#181 ← phi( mul8u_compare::@12/(byte*) print_char_cursor#185 )
   (word) mul8u_compare::ms#4 ← phi( mul8u_compare::@12/(word) mul8u_compare::ms#0 )
   (byte) mul8u_compare::b#4 ← phi( mul8u_compare::@12/(byte) mul8u_compare::b#3 )
   (byte) mul8u_compare::a#4 ← phi( mul8u_compare::@12/(byte) mul8u_compare::a#3 )
@@ -1122,8 +1107,8 @@ mul8u_compare::@13: scope:[mul8u_compare]  from mul8u_compare::@12
   (word) mul8u::return#3 ← (word) mul8u::return#1
   to:mul8u_compare::@14
 mul8u_compare::@14: scope:[mul8u_compare]  from mul8u_compare::@13
-  (byte*) print_line_cursor#82 ← phi( mul8u_compare::@13/(byte*) print_line_cursor#94 )
-  (byte*) print_char_cursor#177 ← phi( mul8u_compare::@13/(byte*) print_char_cursor#183 )
+  (byte*) print_line_cursor#81 ← phi( mul8u_compare::@13/(byte*) print_line_cursor#92 )
+  (byte*) print_char_cursor#176 ← phi( mul8u_compare::@13/(byte*) print_char_cursor#181 )
   (byte) mul8u_compare::a#12 ← phi( mul8u_compare::@13/(byte) mul8u_compare::a#4 )
   (byte) mul8u_compare::b#10 ← phi( mul8u_compare::@13/(byte) mul8u_compare::b#4 )
   (word) mul8u_compare::mf#1 ← phi( mul8u_compare::@13/(word) mul8u_compare::mf#0 )
@@ -1137,8 +1122,8 @@ mul8u_compare::@14: scope:[mul8u_compare]  from mul8u_compare::@13
   if((bool~) mul8u_compare::$6) goto mul8u_compare::@3
   to:mul8u_compare::@6
 mul8u_compare::@3: scope:[mul8u_compare]  from mul8u_compare::@14 mul8u_compare::@6
-  (byte*) print_line_cursor#70 ← phi( mul8u_compare::@14/(byte*) print_line_cursor#82 mul8u_compare::@6/(byte*) print_line_cursor#83 )
-  (byte*) print_char_cursor#169 ← phi( mul8u_compare::@14/(byte*) print_char_cursor#177 mul8u_compare::@6/(byte*) print_char_cursor#178 )
+  (byte*) print_line_cursor#70 ← phi( mul8u_compare::@14/(byte*) print_line_cursor#81 mul8u_compare::@6/(byte*) print_line_cursor#82 )
+  (byte*) print_char_cursor#169 ← phi( mul8u_compare::@14/(byte*) print_char_cursor#176 mul8u_compare::@6/(byte*) print_char_cursor#177 )
   (word) mul8u_compare::mf#4 ← phi( mul8u_compare::@14/(word) mul8u_compare::mf#1 mul8u_compare::@6/(word) mul8u_compare::mf#6 )
   (byte) mul8u_compare::a#10 ← phi( mul8u_compare::@14/(byte) mul8u_compare::a#12 mul8u_compare::@6/(byte) mul8u_compare::a#13 )
   (byte) mul8u_compare::b#8 ← phi( mul8u_compare::@14/(byte) mul8u_compare::b#10 mul8u_compare::@6/(byte) mul8u_compare::b#11 )
@@ -1150,8 +1135,8 @@ mul8u_compare::@3: scope:[mul8u_compare]  from mul8u_compare::@14 mul8u_compare:
   if((bool~) mul8u_compare::$8) goto mul8u_compare::@4
   to:mul8u_compare::@7
 mul8u_compare::@6: scope:[mul8u_compare]  from mul8u_compare::@14
-  (byte*) print_line_cursor#83 ← phi( mul8u_compare::@14/(byte*) print_line_cursor#82 )
-  (byte*) print_char_cursor#178 ← phi( mul8u_compare::@14/(byte*) print_char_cursor#177 )
+  (byte*) print_line_cursor#82 ← phi( mul8u_compare::@14/(byte*) print_line_cursor#81 )
+  (byte*) print_char_cursor#177 ← phi( mul8u_compare::@14/(byte*) print_char_cursor#176 )
   (word) mul8u_compare::mf#6 ← phi( mul8u_compare::@14/(word) mul8u_compare::mf#1 )
   (byte) mul8u_compare::a#13 ← phi( mul8u_compare::@14/(byte) mul8u_compare::a#12 )
   (byte) mul8u_compare::b#11 ← phi( mul8u_compare::@14/(byte) mul8u_compare::b#10 )
@@ -1183,7 +1168,7 @@ mul8u_compare::@7: scope:[mul8u_compare]  from mul8u_compare::@3
   (byte) mul8u_compare::ok#2 ← (number) 0
   to:mul8u_compare::@4
 mul8u_compare::@5: scope:[mul8u_compare]  from mul8u_compare::@4
-  (byte*) print_line_cursor#84 ← phi( mul8u_compare::@4/(byte*) print_line_cursor#60 )
+  (byte*) print_line_cursor#83 ← phi( mul8u_compare::@4/(byte*) print_line_cursor#60 )
   (byte*) print_char_cursor#171 ← phi( mul8u_compare::@4/(byte*) print_char_cursor#161 )
   (byte) mul8u_compare::a#8 ← phi( mul8u_compare::@4/(byte) mul8u_compare::a#9 )
   (byte) mul8u_compare::b#5 ← phi( mul8u_compare::@4/(byte) mul8u_compare::b#7 )
@@ -1199,7 +1184,7 @@ mul8u_compare::@8: scope:[mul8u_compare]  from mul8u_compare::@4
   (word) mul8u_compare::ms#3 ← phi( mul8u_compare::@4/(word) mul8u_compare::ms#6 )
   (byte) mul8u_compare::b#6 ← phi( mul8u_compare::@4/(byte) mul8u_compare::b#7 )
   (byte) mul8u_compare::a#5 ← phi( mul8u_compare::@4/(byte) mul8u_compare::a#9 )
-  *((byte*) BGCOL) ← (number) 2
+  *((const byte*) BGCOL) ← (number) 2
   (byte) mul8u_error::a#0 ← (byte) mul8u_compare::a#5
   (byte) mul8u_error::b#0 ← (byte) mul8u_compare::b#6
   (word) mul8u_error::ms#0 ← (word) mul8u_compare::ms#3
@@ -1221,7 +1206,7 @@ mul8u_compare::@return: scope:[mul8u_compare]  from mul8u_compare::@15 mul8u_com
   return 
   to:@return
 mul8u_compare::@10: scope:[mul8u_compare]  from mul8u_compare::@5
-  (byte*) print_line_cursor#72 ← phi( mul8u_compare::@5/(byte*) print_line_cursor#84 )
+  (byte*) print_line_cursor#72 ← phi( mul8u_compare::@5/(byte*) print_line_cursor#83 )
   (byte*) print_char_cursor#162 ← phi( mul8u_compare::@5/(byte*) print_char_cursor#171 )
   (byte) mul8u_compare::a#6 ← phi( mul8u_compare::@5/(byte) mul8u_compare::a#8 )
   (byte) mul8u_compare::a#1 ← (byte) mul8u_compare::a#6 + rangenext(0,$ff)
@@ -1249,7 +1234,7 @@ mul8u_compare::@17: scope:[mul8u_compare]  from mul8u_compare::@16
 
 (void()) mul8u_error((byte) mul8u_error::a , (byte) mul8u_error::b , (word) mul8u_error::ms , (word) mul8u_error::mn , (word) mul8u_error::mf)
 mul8u_error: scope:[mul8u_error]  from mul8u_compare::@8
-  (byte*) print_line_cursor#117 ← phi( mul8u_compare::@8/(byte*) print_line_cursor#50 )
+  (byte*) print_line_cursor#115 ← phi( mul8u_compare::@8/(byte*) print_line_cursor#50 )
   (word) mul8u_error::mf#10 ← phi( mul8u_compare::@8/(word) mul8u_error::mf#0 )
   (word) mul8u_error::mn#8 ← phi( mul8u_compare::@8/(word) mul8u_error::mn#0 )
   (word) mul8u_error::ms#6 ← phi( mul8u_compare::@8/(word) mul8u_error::ms#0 )
@@ -1260,7 +1245,7 @@ mul8u_error: scope:[mul8u_error]  from mul8u_compare::@8
   call print_str 
   to:mul8u_error::@1
 mul8u_error::@1: scope:[mul8u_error]  from mul8u_error
-  (byte*) print_line_cursor#115 ← phi( mul8u_error/(byte*) print_line_cursor#117 )
+  (byte*) print_line_cursor#113 ← phi( mul8u_error/(byte*) print_line_cursor#115 )
   (word) mul8u_error::mf#9 ← phi( mul8u_error/(word) mul8u_error::mf#10 )
   (word) mul8u_error::mn#7 ← phi( mul8u_error/(word) mul8u_error::mn#8 )
   (word) mul8u_error::ms#5 ← phi( mul8u_error/(word) mul8u_error::ms#6 )
@@ -1272,7 +1257,7 @@ mul8u_error::@1: scope:[mul8u_error]  from mul8u_error
   call print_byte 
   to:mul8u_error::@2
 mul8u_error::@2: scope:[mul8u_error]  from mul8u_error::@1
-  (byte*) print_line_cursor#113 ← phi( mul8u_error::@1/(byte*) print_line_cursor#115 )
+  (byte*) print_line_cursor#111 ← phi( mul8u_error::@1/(byte*) print_line_cursor#113 )
   (word) mul8u_error::mf#8 ← phi( mul8u_error::@1/(word) mul8u_error::mf#9 )
   (word) mul8u_error::mn#6 ← phi( mul8u_error::@1/(word) mul8u_error::mn#7 )
   (word) mul8u_error::ms#4 ← phi( mul8u_error::@1/(word) mul8u_error::ms#5 )
@@ -1283,7 +1268,7 @@ mul8u_error::@2: scope:[mul8u_error]  from mul8u_error::@1
   call print_str 
   to:mul8u_error::@3
 mul8u_error::@3: scope:[mul8u_error]  from mul8u_error::@2
-  (byte*) print_line_cursor#110 ← phi( mul8u_error::@2/(byte*) print_line_cursor#113 )
+  (byte*) print_line_cursor#108 ← phi( mul8u_error::@2/(byte*) print_line_cursor#111 )
   (word) mul8u_error::mf#7 ← phi( mul8u_error::@2/(word) mul8u_error::mf#8 )
   (word) mul8u_error::mn#5 ← phi( mul8u_error::@2/(word) mul8u_error::mn#6 )
   (word) mul8u_error::ms#3 ← phi( mul8u_error::@2/(word) mul8u_error::ms#4 )
@@ -1294,7 +1279,7 @@ mul8u_error::@3: scope:[mul8u_error]  from mul8u_error::@2
   call print_byte 
   to:mul8u_error::@4
 mul8u_error::@4: scope:[mul8u_error]  from mul8u_error::@3
-  (byte*) print_line_cursor#106 ← phi( mul8u_error::@3/(byte*) print_line_cursor#110 )
+  (byte*) print_line_cursor#104 ← phi( mul8u_error::@3/(byte*) print_line_cursor#108 )
   (word) mul8u_error::mf#6 ← phi( mul8u_error::@3/(word) mul8u_error::mf#7 )
   (word) mul8u_error::mn#4 ← phi( mul8u_error::@3/(word) mul8u_error::mn#5 )
   (word) mul8u_error::ms#2 ← phi( mul8u_error::@3/(word) mul8u_error::ms#3 )
@@ -1304,7 +1289,7 @@ mul8u_error::@4: scope:[mul8u_error]  from mul8u_error::@3
   call print_str 
   to:mul8u_error::@5
 mul8u_error::@5: scope:[mul8u_error]  from mul8u_error::@4
-  (byte*) print_line_cursor#100 ← phi( mul8u_error::@4/(byte*) print_line_cursor#106 )
+  (byte*) print_line_cursor#98 ← phi( mul8u_error::@4/(byte*) print_line_cursor#104 )
   (word) mul8u_error::mf#5 ← phi( mul8u_error::@4/(word) mul8u_error::mf#6 )
   (word) mul8u_error::mn#3 ← phi( mul8u_error::@4/(word) mul8u_error::mn#4 )
   (word) mul8u_error::ms#1 ← phi( mul8u_error::@4/(word) mul8u_error::ms#2 )
@@ -1314,7 +1299,7 @@ mul8u_error::@5: scope:[mul8u_error]  from mul8u_error::@4
   call print_word 
   to:mul8u_error::@6
 mul8u_error::@6: scope:[mul8u_error]  from mul8u_error::@5
-  (byte*) print_line_cursor#95 ← phi( mul8u_error::@5/(byte*) print_line_cursor#100 )
+  (byte*) print_line_cursor#93 ← phi( mul8u_error::@5/(byte*) print_line_cursor#98 )
   (word) mul8u_error::mf#4 ← phi( mul8u_error::@5/(word) mul8u_error::mf#5 )
   (word) mul8u_error::mn#2 ← phi( mul8u_error::@5/(word) mul8u_error::mn#3 )
   (byte*) print_char_cursor#110 ← phi( mul8u_error::@5/(byte*) print_char_cursor#15 )
@@ -1323,7 +1308,7 @@ mul8u_error::@6: scope:[mul8u_error]  from mul8u_error::@5
   call print_str 
   to:mul8u_error::@7
 mul8u_error::@7: scope:[mul8u_error]  from mul8u_error::@6
-  (byte*) print_line_cursor#85 ← phi( mul8u_error::@6/(byte*) print_line_cursor#95 )
+  (byte*) print_line_cursor#84 ← phi( mul8u_error::@6/(byte*) print_line_cursor#93 )
   (word) mul8u_error::mf#3 ← phi( mul8u_error::@6/(word) mul8u_error::mf#4 )
   (word) mul8u_error::mn#1 ← phi( mul8u_error::@6/(word) mul8u_error::mn#2 )
   (byte*) print_char_cursor#111 ← phi( mul8u_error::@6/(byte*) print_char_cursor#2 )
@@ -1332,7 +1317,7 @@ mul8u_error::@7: scope:[mul8u_error]  from mul8u_error::@6
   call print_word 
   to:mul8u_error::@8
 mul8u_error::@8: scope:[mul8u_error]  from mul8u_error::@7
-  (byte*) print_line_cursor#73 ← phi( mul8u_error::@7/(byte*) print_line_cursor#85 )
+  (byte*) print_line_cursor#73 ← phi( mul8u_error::@7/(byte*) print_line_cursor#84 )
   (word) mul8u_error::mf#2 ← phi( mul8u_error::@7/(word) mul8u_error::mf#3 )
   (byte*) print_char_cursor#112 ← phi( mul8u_error::@7/(byte*) print_char_cursor#15 )
   (byte*) print_char_cursor#46 ← (byte*) print_char_cursor#112
@@ -1369,20 +1354,20 @@ mul8u_error::@return: scope:[mul8u_error]  from mul8u_error::@11
 
 (void()) mul8s_compare()
 mul8s_compare: scope:[mul8s_compare]  from main::@5
-  (byte*) print_line_cursor#86 ← phi( main::@5/(byte*) print_line_cursor#7 )
+  (byte*) print_line_cursor#85 ← phi( main::@5/(byte*) print_line_cursor#7 )
   (byte*) print_char_cursor#172 ← phi( main::@5/(byte*) print_char_cursor#25 )
   (signed byte) mul8s_compare::a#0 ← (number) -$80
   to:mul8s_compare::@1
 mul8s_compare::@1: scope:[mul8s_compare]  from mul8s_compare mul8s_compare::@6
-  (byte*) print_line_cursor#74 ← phi( mul8s_compare/(byte*) print_line_cursor#86 mul8s_compare::@6/(byte*) print_line_cursor#87 )
+  (byte*) print_line_cursor#74 ← phi( mul8s_compare/(byte*) print_line_cursor#85 mul8s_compare::@6/(byte*) print_line_cursor#86 )
   (byte*) print_char_cursor#163 ← phi( mul8s_compare/(byte*) print_char_cursor#172 mul8s_compare::@6/(byte*) print_char_cursor#173 )
   (signed byte) mul8s_compare::a#2 ← phi( mul8s_compare/(signed byte) mul8s_compare::a#0 mul8s_compare::@6/(signed byte) mul8s_compare::a#1 )
   (bool~) mul8s_compare::$2 ← (signed byte) mul8s_compare::a#2 != (number) -$80
   if((bool~) mul8s_compare::$2) goto mul8s_compare::@2
   to:mul8s_compare::@3
 mul8s_compare::@2: scope:[mul8s_compare]  from mul8s_compare::@1
-  (byte*) print_line_cursor#101 ← phi( mul8s_compare::@1/(byte*) print_line_cursor#74 )
-  (byte*) print_char_cursor#184 ← phi( mul8s_compare::@1/(byte*) print_char_cursor#163 )
+  (byte*) print_line_cursor#99 ← phi( mul8s_compare::@1/(byte*) print_line_cursor#74 )
+  (byte*) print_char_cursor#182 ← phi( mul8s_compare::@1/(byte*) print_char_cursor#163 )
   (signed byte) mul8s_compare::a#10 ← phi( mul8s_compare::@1/(signed byte) mul8s_compare::a#2 )
   (signed byte) mul8s_compare::b#0 ← (number) -$80
   to:mul8s_compare::@4
@@ -1405,16 +1390,16 @@ mul8s_compare::@21: scope:[mul8s_compare]  from mul8s_compare::@20
   (byte*) print_char_cursor#52 ← (byte*) print_char_cursor#118
   to:mul8s_compare::@return
 mul8s_compare::@4: scope:[mul8s_compare]  from mul8s_compare::@2 mul8s_compare::@9
-  (byte*) print_line_cursor#97 ← phi( mul8s_compare::@2/(byte*) print_line_cursor#101 mul8s_compare::@9/(byte*) print_line_cursor#102 )
-  (byte*) print_char_cursor#179 ← phi( mul8s_compare::@2/(byte*) print_char_cursor#184 mul8s_compare::@9/(byte*) print_char_cursor#185 )
+  (byte*) print_line_cursor#95 ← phi( mul8s_compare::@2/(byte*) print_line_cursor#99 mul8s_compare::@9/(byte*) print_line_cursor#100 )
+  (byte*) print_char_cursor#178 ← phi( mul8s_compare::@2/(byte*) print_char_cursor#182 mul8s_compare::@9/(byte*) print_char_cursor#183 )
   (signed byte) mul8s_compare::a#8 ← phi( mul8s_compare::@2/(signed byte) mul8s_compare::a#10 mul8s_compare::@9/(signed byte) mul8s_compare::a#11 )
   (signed byte) mul8s_compare::b#2 ← phi( mul8s_compare::@2/(signed byte) mul8s_compare::b#0 mul8s_compare::@9/(signed byte) mul8s_compare::b#1 )
   (bool~) mul8s_compare::$3 ← (signed byte) mul8s_compare::b#2 != (number) -$80
   if((bool~) mul8s_compare::$3) goto mul8s_compare::@5
   to:mul8s_compare::@6
 mul8s_compare::@5: scope:[mul8s_compare]  from mul8s_compare::@4
-  (byte*) print_line_cursor#107 ← phi( mul8s_compare::@4/(byte*) print_line_cursor#97 )
-  (byte*) print_char_cursor#190 ← phi( mul8s_compare::@4/(byte*) print_char_cursor#179 )
+  (byte*) print_line_cursor#105 ← phi( mul8s_compare::@4/(byte*) print_line_cursor#95 )
+  (byte*) print_char_cursor#188 ← phi( mul8s_compare::@4/(byte*) print_char_cursor#178 )
   (signed byte) mul8s_compare::b#3 ← phi( mul8s_compare::@4/(signed byte) mul8s_compare::b#2 )
   (signed byte) mul8s_compare::a#3 ← phi( mul8s_compare::@4/(signed byte) mul8s_compare::a#8 )
   (signed byte) muls8s::a#0 ← (signed byte) mul8s_compare::a#3
@@ -1423,8 +1408,8 @@ mul8s_compare::@5: scope:[mul8s_compare]  from mul8s_compare::@4
   (signed word) muls8s::return#2 ← (signed word) muls8s::return#1
   to:mul8s_compare::@22
 mul8s_compare::@22: scope:[mul8s_compare]  from mul8s_compare::@5
-  (byte*) print_line_cursor#103 ← phi( mul8s_compare::@5/(byte*) print_line_cursor#107 )
-  (byte*) print_char_cursor#188 ← phi( mul8s_compare::@5/(byte*) print_char_cursor#190 )
+  (byte*) print_line_cursor#101 ← phi( mul8s_compare::@5/(byte*) print_line_cursor#105 )
+  (byte*) print_char_cursor#186 ← phi( mul8s_compare::@5/(byte*) print_char_cursor#188 )
   (signed byte) mul8s_compare::b#4 ← phi( mul8s_compare::@5/(signed byte) mul8s_compare::b#3 )
   (signed byte) mul8s_compare::a#4 ← phi( mul8s_compare::@5/(signed byte) mul8s_compare::a#3 )
   (signed word) muls8s::return#4 ← phi( mul8s_compare::@5/(signed word) muls8s::return#2 )
@@ -1436,8 +1421,8 @@ mul8s_compare::@22: scope:[mul8s_compare]  from mul8s_compare::@5
   (signed word) mulf8s::return#2 ← (signed word) mulf8s::return#1
   to:mul8s_compare::@23
 mul8s_compare::@23: scope:[mul8s_compare]  from mul8s_compare::@22
-  (byte*) print_line_cursor#96 ← phi( mul8s_compare::@22/(byte*) print_line_cursor#103 )
-  (byte*) print_char_cursor#186 ← phi( mul8s_compare::@22/(byte*) print_char_cursor#188 )
+  (byte*) print_line_cursor#94 ← phi( mul8s_compare::@22/(byte*) print_line_cursor#101 )
+  (byte*) print_char_cursor#184 ← phi( mul8s_compare::@22/(byte*) print_char_cursor#186 )
   (signed word) mul8s_compare::ms#4 ← phi( mul8s_compare::@22/(signed word) mul8s_compare::ms#0 )
   (signed byte) mul8s_compare::b#5 ← phi( mul8s_compare::@22/(signed byte) mul8s_compare::b#4 )
   (signed byte) mul8s_compare::a#5 ← phi( mul8s_compare::@22/(signed byte) mul8s_compare::a#4 )
@@ -1450,8 +1435,8 @@ mul8s_compare::@23: scope:[mul8s_compare]  from mul8s_compare::@22
   (signed word) mul8s::return#2 ← (signed word) mul8s::return#1
   to:mul8s_compare::@24
 mul8s_compare::@24: scope:[mul8s_compare]  from mul8s_compare::@23
-  (byte*) print_line_cursor#89 ← phi( mul8s_compare::@23/(byte*) print_line_cursor#96 )
-  (byte*) print_char_cursor#181 ← phi( mul8s_compare::@23/(byte*) print_char_cursor#186 )
+  (byte*) print_line_cursor#88 ← phi( mul8s_compare::@23/(byte*) print_line_cursor#94 )
+  (byte*) print_char_cursor#180 ← phi( mul8s_compare::@23/(byte*) print_char_cursor#184 )
   (signed byte) mul8s_compare::a#15 ← phi( mul8s_compare::@23/(signed byte) mul8s_compare::a#5 )
   (signed byte) mul8s_compare::b#12 ← phi( mul8s_compare::@23/(signed byte) mul8s_compare::b#5 )
   (signed word) mul8s_compare::mf#1 ← phi( mul8s_compare::@23/(signed word) mul8s_compare::mf#0 )
@@ -1465,14 +1450,14 @@ mul8s_compare::@24: scope:[mul8s_compare]  from mul8s_compare::@23
   if((bool~) mul8s_compare::$8) goto mul8s_compare::@7
   to:mul8s_compare::@12
 mul8s_compare::@6: scope:[mul8s_compare]  from mul8s_compare::@4
-  (byte*) print_line_cursor#87 ← phi( mul8s_compare::@4/(byte*) print_line_cursor#97 )
-  (byte*) print_char_cursor#173 ← phi( mul8s_compare::@4/(byte*) print_char_cursor#179 )
+  (byte*) print_line_cursor#86 ← phi( mul8s_compare::@4/(byte*) print_line_cursor#95 )
+  (byte*) print_char_cursor#173 ← phi( mul8s_compare::@4/(byte*) print_char_cursor#178 )
   (signed byte) mul8s_compare::a#6 ← phi( mul8s_compare::@4/(signed byte) mul8s_compare::a#8 )
   (signed byte) mul8s_compare::a#1 ← ++ (signed byte) mul8s_compare::a#6
   to:mul8s_compare::@1
 mul8s_compare::@7: scope:[mul8s_compare]  from mul8s_compare::@12 mul8s_compare::@24
-  (byte*) print_line_cursor#76 ← phi( mul8s_compare::@12/(byte*) print_line_cursor#88 mul8s_compare::@24/(byte*) print_line_cursor#89 )
-  (byte*) print_char_cursor#175 ← phi( mul8s_compare::@12/(byte*) print_char_cursor#180 mul8s_compare::@24/(byte*) print_char_cursor#181 )
+  (byte*) print_line_cursor#76 ← phi( mul8s_compare::@12/(byte*) print_line_cursor#87 mul8s_compare::@24/(byte*) print_line_cursor#88 )
+  (byte*) print_char_cursor#175 ← phi( mul8s_compare::@12/(byte*) print_char_cursor#179 mul8s_compare::@24/(byte*) print_char_cursor#180 )
   (signed word) mul8s_compare::mf#5 ← phi( mul8s_compare::@12/(signed word) mul8s_compare::mf#6 mul8s_compare::@24/(signed word) mul8s_compare::mf#1 )
   (signed byte) mul8s_compare::a#13 ← phi( mul8s_compare::@12/(signed byte) mul8s_compare::a#14 mul8s_compare::@24/(signed byte) mul8s_compare::a#15 )
   (signed byte) mul8s_compare::b#10 ← phi( mul8s_compare::@12/(signed byte) mul8s_compare::b#11 mul8s_compare::@24/(signed byte) mul8s_compare::b#12 )
@@ -1484,8 +1469,8 @@ mul8s_compare::@7: scope:[mul8s_compare]  from mul8s_compare::@12 mul8s_compare:
   if((bool~) mul8s_compare::$10) goto mul8s_compare::@8
   to:mul8s_compare::@13
 mul8s_compare::@12: scope:[mul8s_compare]  from mul8s_compare::@24
-  (byte*) print_line_cursor#88 ← phi( mul8s_compare::@24/(byte*) print_line_cursor#89 )
-  (byte*) print_char_cursor#180 ← phi( mul8s_compare::@24/(byte*) print_char_cursor#181 )
+  (byte*) print_line_cursor#87 ← phi( mul8s_compare::@24/(byte*) print_line_cursor#88 )
+  (byte*) print_char_cursor#179 ← phi( mul8s_compare::@24/(byte*) print_char_cursor#180 )
   (signed word) mul8s_compare::mf#6 ← phi( mul8s_compare::@24/(signed word) mul8s_compare::mf#1 )
   (signed byte) mul8s_compare::a#14 ← phi( mul8s_compare::@24/(signed byte) mul8s_compare::a#15 )
   (signed byte) mul8s_compare::b#11 ← phi( mul8s_compare::@24/(signed byte) mul8s_compare::b#12 )
@@ -1517,8 +1502,8 @@ mul8s_compare::@13: scope:[mul8s_compare]  from mul8s_compare::@7
   (byte) mul8s_compare::ok#2 ← (number) 0
   to:mul8s_compare::@8
 mul8s_compare::@9: scope:[mul8s_compare]  from mul8s_compare::@8
-  (byte*) print_line_cursor#102 ← phi( mul8s_compare::@8/(byte*) print_line_cursor#64 )
-  (byte*) print_char_cursor#185 ← phi( mul8s_compare::@8/(byte*) print_char_cursor#164 )
+  (byte*) print_line_cursor#100 ← phi( mul8s_compare::@8/(byte*) print_line_cursor#64 )
+  (byte*) print_char_cursor#183 ← phi( mul8s_compare::@8/(byte*) print_char_cursor#164 )
   (signed byte) mul8s_compare::a#11 ← phi( mul8s_compare::@8/(signed byte) mul8s_compare::a#9 )
   (signed byte) mul8s_compare::b#6 ← phi( mul8s_compare::@8/(signed byte) mul8s_compare::b#8 )
   (signed byte) mul8s_compare::b#1 ← ++ (signed byte) mul8s_compare::b#6
@@ -1531,7 +1516,7 @@ mul8s_compare::@14: scope:[mul8s_compare]  from mul8s_compare::@8
   (signed word) mul8s_compare::ms#3 ← phi( mul8s_compare::@8/(signed word) mul8s_compare::ms#6 )
   (signed byte) mul8s_compare::b#7 ← phi( mul8s_compare::@8/(signed byte) mul8s_compare::b#8 )
   (signed byte) mul8s_compare::a#7 ← phi( mul8s_compare::@8/(signed byte) mul8s_compare::a#9 )
-  *((byte*) BGCOL) ← (number) 2
+  *((const byte*) BGCOL) ← (number) 2
   (signed byte) mul8s_error::a#0 ← (signed byte) mul8s_compare::a#7
   (signed byte) mul8s_error::b#0 ← (signed byte) mul8s_compare::b#7
   (signed word) mul8s_error::ms#0 ← (signed word) mul8s_compare::ms#3
@@ -1555,7 +1540,7 @@ mul8s_compare::@return: scope:[mul8s_compare]  from mul8s_compare::@21 mul8s_com
 
 (void()) mul8s_error((signed byte) mul8s_error::a , (signed byte) mul8s_error::b , (signed word) mul8s_error::ms , (signed word) mul8s_error::mn , (signed word) mul8s_error::mf)
 mul8s_error: scope:[mul8s_error]  from mul8s_compare::@14
-  (byte*) print_line_cursor#118 ← phi( mul8s_compare::@14/(byte*) print_line_cursor#54 )
+  (byte*) print_line_cursor#116 ← phi( mul8s_compare::@14/(byte*) print_line_cursor#54 )
   (signed word) mul8s_error::mf#10 ← phi( mul8s_compare::@14/(signed word) mul8s_error::mf#0 )
   (signed word) mul8s_error::mn#8 ← phi( mul8s_compare::@14/(signed word) mul8s_error::mn#0 )
   (signed word) mul8s_error::ms#6 ← phi( mul8s_compare::@14/(signed word) mul8s_error::ms#0 )
@@ -1566,7 +1551,7 @@ mul8s_error: scope:[mul8s_error]  from mul8s_compare::@14
   call print_str 
   to:mul8s_error::@1
 mul8s_error::@1: scope:[mul8s_error]  from mul8s_error
-  (byte*) print_line_cursor#116 ← phi( mul8s_error/(byte*) print_line_cursor#118 )
+  (byte*) print_line_cursor#114 ← phi( mul8s_error/(byte*) print_line_cursor#116 )
   (signed word) mul8s_error::mf#9 ← phi( mul8s_error/(signed word) mul8s_error::mf#10 )
   (signed word) mul8s_error::mn#7 ← phi( mul8s_error/(signed word) mul8s_error::mn#8 )
   (signed word) mul8s_error::ms#5 ← phi( mul8s_error/(signed word) mul8s_error::ms#6 )
@@ -1578,7 +1563,7 @@ mul8s_error::@1: scope:[mul8s_error]  from mul8s_error
   call print_sbyte 
   to:mul8s_error::@2
 mul8s_error::@2: scope:[mul8s_error]  from mul8s_error::@1
-  (byte*) print_line_cursor#114 ← phi( mul8s_error::@1/(byte*) print_line_cursor#116 )
+  (byte*) print_line_cursor#112 ← phi( mul8s_error::@1/(byte*) print_line_cursor#114 )
   (signed word) mul8s_error::mf#8 ← phi( mul8s_error::@1/(signed word) mul8s_error::mf#9 )
   (signed word) mul8s_error::mn#6 ← phi( mul8s_error::@1/(signed word) mul8s_error::mn#7 )
   (signed word) mul8s_error::ms#4 ← phi( mul8s_error::@1/(signed word) mul8s_error::ms#5 )
@@ -1589,7 +1574,7 @@ mul8s_error::@2: scope:[mul8s_error]  from mul8s_error::@1
   call print_str 
   to:mul8s_error::@3
 mul8s_error::@3: scope:[mul8s_error]  from mul8s_error::@2
-  (byte*) print_line_cursor#111 ← phi( mul8s_error::@2/(byte*) print_line_cursor#114 )
+  (byte*) print_line_cursor#109 ← phi( mul8s_error::@2/(byte*) print_line_cursor#112 )
   (signed word) mul8s_error::mf#7 ← phi( mul8s_error::@2/(signed word) mul8s_error::mf#8 )
   (signed word) mul8s_error::mn#5 ← phi( mul8s_error::@2/(signed word) mul8s_error::mn#6 )
   (signed word) mul8s_error::ms#3 ← phi( mul8s_error::@2/(signed word) mul8s_error::ms#4 )
@@ -1600,7 +1585,7 @@ mul8s_error::@3: scope:[mul8s_error]  from mul8s_error::@2
   call print_sbyte 
   to:mul8s_error::@4
 mul8s_error::@4: scope:[mul8s_error]  from mul8s_error::@3
-  (byte*) print_line_cursor#108 ← phi( mul8s_error::@3/(byte*) print_line_cursor#111 )
+  (byte*) print_line_cursor#106 ← phi( mul8s_error::@3/(byte*) print_line_cursor#109 )
   (signed word) mul8s_error::mf#6 ← phi( mul8s_error::@3/(signed word) mul8s_error::mf#7 )
   (signed word) mul8s_error::mn#4 ← phi( mul8s_error::@3/(signed word) mul8s_error::mn#5 )
   (signed word) mul8s_error::ms#2 ← phi( mul8s_error::@3/(signed word) mul8s_error::ms#3 )
@@ -1610,7 +1595,7 @@ mul8s_error::@4: scope:[mul8s_error]  from mul8s_error::@3
   call print_str 
   to:mul8s_error::@5
 mul8s_error::@5: scope:[mul8s_error]  from mul8s_error::@4
-  (byte*) print_line_cursor#104 ← phi( mul8s_error::@4/(byte*) print_line_cursor#108 )
+  (byte*) print_line_cursor#102 ← phi( mul8s_error::@4/(byte*) print_line_cursor#106 )
   (signed word) mul8s_error::mf#5 ← phi( mul8s_error::@4/(signed word) mul8s_error::mf#6 )
   (signed word) mul8s_error::mn#3 ← phi( mul8s_error::@4/(signed word) mul8s_error::mn#4 )
   (signed word) mul8s_error::ms#1 ← phi( mul8s_error::@4/(signed word) mul8s_error::ms#2 )
@@ -1620,7 +1605,7 @@ mul8s_error::@5: scope:[mul8s_error]  from mul8s_error::@4
   call print_sword 
   to:mul8s_error::@6
 mul8s_error::@6: scope:[mul8s_error]  from mul8s_error::@5
-  (byte*) print_line_cursor#98 ← phi( mul8s_error::@5/(byte*) print_line_cursor#104 )
+  (byte*) print_line_cursor#96 ← phi( mul8s_error::@5/(byte*) print_line_cursor#102 )
   (signed word) mul8s_error::mf#4 ← phi( mul8s_error::@5/(signed word) mul8s_error::mf#5 )
   (signed word) mul8s_error::mn#2 ← phi( mul8s_error::@5/(signed word) mul8s_error::mn#3 )
   (byte*) print_char_cursor#126 ← phi( mul8s_error::@5/(byte*) print_char_cursor#8 )
@@ -1629,7 +1614,7 @@ mul8s_error::@6: scope:[mul8s_error]  from mul8s_error::@5
   call print_str 
   to:mul8s_error::@7
 mul8s_error::@7: scope:[mul8s_error]  from mul8s_error::@6
-  (byte*) print_line_cursor#90 ← phi( mul8s_error::@6/(byte*) print_line_cursor#98 )
+  (byte*) print_line_cursor#89 ← phi( mul8s_error::@6/(byte*) print_line_cursor#96 )
   (signed word) mul8s_error::mf#3 ← phi( mul8s_error::@6/(signed word) mul8s_error::mf#4 )
   (signed word) mul8s_error::mn#1 ← phi( mul8s_error::@6/(signed word) mul8s_error::mn#2 )
   (byte*) print_char_cursor#127 ← phi( mul8s_error::@6/(byte*) print_char_cursor#2 )
@@ -1638,7 +1623,7 @@ mul8s_error::@7: scope:[mul8s_error]  from mul8s_error::@6
   call print_sword 
   to:mul8s_error::@8
 mul8s_error::@8: scope:[mul8s_error]  from mul8s_error::@7
-  (byte*) print_line_cursor#77 ← phi( mul8s_error::@7/(byte*) print_line_cursor#90 )
+  (byte*) print_line_cursor#77 ← phi( mul8s_error::@7/(byte*) print_line_cursor#89 )
   (signed word) mul8s_error::mf#2 ← phi( mul8s_error::@7/(signed word) mul8s_error::mf#3 )
   (byte*) print_char_cursor#128 ← phi( mul8s_error::@7/(byte*) print_char_cursor#8 )
   (byte*) print_char_cursor#62 ← (byte*) print_char_cursor#128
@@ -1687,17 +1672,14 @@ mul8s_error::@return: scope:[mul8s_error]  from mul8s_error::@11
 @end: scope:[]  from @60
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "0123456789abcdef"z
 (label) @12
-(label) @29
 (label) @41
-(label) @50
 (label) @53
 (label) @59
 (label) @60
 (label) @begin
 (label) @end
-(byte*) BGCOL
+(const byte*) BGCOL = (byte*)(number) $d021
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
@@ -2215,7 +2197,7 @@ SYMBOL TABLE SSA
 (word) mulf8s_prepared::m#4
 (word) mulf8s_prepared::m#5
 (word) mulf8s_prepared::m#6
-(signed byte*) mulf8s_prepared::memA
+(const signed byte*) mulf8s_prepared::memA = (signed byte*)(number) $fd
 (signed word) mulf8s_prepared::return
 (signed word) mulf8s_prepared::return#0
 (signed word) mulf8s_prepared::return#1
@@ -2246,15 +2228,15 @@ SYMBOL TABLE SSA
 (byte) mulf8u_prepare::a#0
 (byte) mulf8u_prepare::a#1
 (byte) mulf8u_prepare::a#2
-(byte*) mulf8u_prepare::memA
+(const byte*) mulf8u_prepare::memA = (byte*)(number) $fd
 (word()) mulf8u_prepared((byte) mulf8u_prepared::b)
 (label) mulf8u_prepared::@return
 (byte) mulf8u_prepared::b
 (byte) mulf8u_prepared::b#0
 (byte) mulf8u_prepared::b#1
 (byte) mulf8u_prepared::b#2
-(byte*) mulf8u_prepared::memB
-(byte*) mulf8u_prepared::resL
+(const byte*) mulf8u_prepared::memB = (byte*)(number) $ff
+(const byte*) mulf8u_prepared::resL = (byte*)(number) $fe
 (word) mulf8u_prepared::return
 (word) mulf8u_prepared::return#0
 (word) mulf8u_prepared::return#1
@@ -2360,7 +2342,7 @@ SYMBOL TABLE SSA
 (byte) mulf_init::x_255#5
 (void()) mulf_init_asm()
 (label) mulf_init_asm::@return
-(byte*) mulf_init_asm::mem
+(const byte*) mulf_init_asm::mem = (byte*)(number) $ff
 (byte[$200]) mulf_sqr1_hi
 (byte[$200]) mulf_sqr1_lo
 (byte[$200]) mulf_sqr2_hi
@@ -2638,8 +2620,6 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#189
 (byte*) print_char_cursor#19
 (byte*) print_char_cursor#190
-(byte*) print_char_cursor#191
-(byte*) print_char_cursor#192
 (byte*) print_char_cursor#2
 (byte*) print_char_cursor#20
 (byte*) print_char_cursor#21
@@ -2731,7 +2711,7 @@ SYMBOL TABLE SSA
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
-(byte[]) print_hextab
+(const byte[]) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -2754,8 +2734,6 @@ SYMBOL TABLE SSA
 (byte*) print_line_cursor#114
 (byte*) print_line_cursor#115
 (byte*) print_line_cursor#116
-(byte*) print_line_cursor#117
-(byte*) print_line_cursor#118
 (byte*) print_line_cursor#12
 (byte*) print_line_cursor#13
 (byte*) print_line_cursor#14
@@ -2887,8 +2865,6 @@ SYMBOL TABLE SSA
 (byte*) print_screen#4
 (byte*) print_screen#5
 (byte*) print_screen#6
-(byte*) print_screen#7
-(byte*) print_screen#8
 (void()) print_str((byte*) print_str::str)
 (bool~) print_str::$0
 (label) print_str::@1
@@ -2989,9 +2965,9 @@ Adding number conversion cast (unumber) $100 in (byte*~) mulf_init::$3 ← (byte
 Adding number conversion cast (unumber) $1ff in (byte*~) mulf_init::$4 ← (byte[$200]) mulf_sqr2_hi + (number) $1ff
 Adding number conversion cast (unumber) $100 in (byte*~) mulf_init::$5 ← (byte[$200]) mulf_sqr1_hi + (number) $100
 Adding number conversion cast (unumber) 1 in (byte) mulf_init::dir#1 ← (number) 1
-Adding number conversion cast (snumber) 0 in (bool~) mulf8s_prepared::$2 ← *((signed byte*) mulf8s_prepared::memA) < (number) 0
+Adding number conversion cast (snumber) 0 in (bool~) mulf8s_prepared::$2 ← *((const signed byte*) mulf8s_prepared::memA) < (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) mulf8s_prepared::$4 ← (signed byte) mulf8s_prepared::b#2 < (number) 0
-Adding number conversion cast (unumber) 5 in *((byte*) BGCOL) ← (number) 5
+Adding number conversion cast (unumber) 5 in *((const byte*) BGCOL) ← (number) 5
 Adding number conversion cast (unumber) 0 in (word) muls8u::m#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) muls8u::$0 ← (byte) muls8u::a#1 != (number) 0
 Adding number conversion cast (unumber) 0 in (byte) muls8u::i#0 ← (number) 0
@@ -3001,12 +2977,12 @@ Adding number conversion cast (snumber) 0 in (signed byte) muls8s::i#0 ← (numb
 Adding number conversion cast (snumber) 0 in (bool~) muls8s::$1 ← (signed byte) muls8s::a#2 > (number) 0
 Adding number conversion cast (snumber) 0 in (signed byte) muls8s::j#0 ← (number) 0
 Adding number conversion cast (unumber) $200*4 in (byte*~) mulf_tables_cmp::$2 ← (byte[$200]) mulf_sqr1_lo + (number) $200*(number) 4
-Adding number conversion cast (unumber) 2 in *((byte*) BGCOL) ← (number) 2
+Adding number conversion cast (unumber) 2 in *((const byte*) BGCOL) ← (number) 2
 Adding number conversion cast (unumber) 1 in (byte) mul8u_compare::ok#0 ← (number) 1
 Adding number conversion cast (unumber) 0 in (byte) mul8u_compare::ok#1 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) mul8u_compare::$9 ← (byte) mul8u_compare::ok#3 == (number) 0
 Adding number conversion cast (unumber) 0 in (byte) mul8u_compare::ok#2 ← (number) 0
-Adding number conversion cast (unumber) 2 in *((byte*) BGCOL) ← (number) 2
+Adding number conversion cast (unumber) 2 in *((const byte*) BGCOL) ← (number) 2
 Adding number conversion cast (snumber) -$80 in (signed byte) mul8s_compare::a#0 ← (number) -$80
 Adding number conversion cast (snumber) -$80 in (bool~) mul8s_compare::$2 ← (signed byte) mul8s_compare::a#2 != (number) -$80
 Adding number conversion cast (snumber) -$80 in (signed byte) mul8s_compare::b#0 ← (number) -$80
@@ -3015,7 +2991,7 @@ Adding number conversion cast (unumber) 1 in (byte) mul8s_compare::ok#0 ← (num
 Adding number conversion cast (unumber) 0 in (byte) mul8s_compare::ok#1 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) mul8s_compare::$11 ← (byte) mul8s_compare::ok#3 == (number) 0
 Adding number conversion cast (unumber) 0 in (byte) mul8s_compare::ok#2 ← (number) 0
-Adding number conversion cast (unumber) 2 in *((byte*) BGCOL) ← (number) 2
+Adding number conversion cast (unumber) 2 in *((const byte*) BGCOL) ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
@@ -3035,37 +3011,37 @@ Inlining cast (byte) mulf_init::c#0 ← (unumber)(number) 0
 Inlining cast (byte~) mulf_init::$1 ← (byte)(number) -1
 Inlining cast (byte) mulf_init::dir#0 ← (unumber)(number) $ff
 Inlining cast (byte) mulf_init::dir#1 ← (unumber)(number) 1
-Inlining cast (byte*) mulf8u_prepare::memA ← (byte*)(number) $fd
-Inlining cast (byte*) mulf8u_prepared::resL ← (byte*)(number) $fe
-Inlining cast (byte*) mulf8u_prepared::memB ← (byte*)(number) $ff
-Inlining cast (signed byte*) mulf8s_prepared::memA ← (signed byte*)(number) $fd
 Inlining cast (byte~) mulf8s_prepared::$0 ← (byte)(signed byte) mulf8s_prepared::b#1
 Inlining cast (byte~) mulf8s_prepared::$9 ← (byte)(signed byte) mulf8s_prepared::b#3
 Inlining cast (signed word~) mulf8s_prepared::$6 ← (signed word)(word) mulf8s_prepared::m#4
-Inlining cast (byte~) mulf8s_prepared::$13 ← (byte)*((signed byte*) mulf8s_prepared::memA)
+Inlining cast (byte~) mulf8s_prepared::$13 ← (byte)*((const signed byte*) mulf8s_prepared::memA)
 Inlining cast (byte~) mulf8s::mulf8s_prepare1_$0 ← (byte)(signed byte) mulf8s::mulf8s_prepare1_a#1
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast *((byte*) BGCOL) ← (unumber)(number) 5
+Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 5
 Inlining cast (word) muls8u::m#0 ← (unumber)(number) 0
 Inlining cast (byte) muls8u::i#0 ← (unumber)(number) 0
 Inlining cast (signed word) muls8s::m#0 ← (snumber)(number) 0
 Inlining cast (signed byte) muls8s::i#0 ← (snumber)(number) 0
 Inlining cast (signed byte) muls8s::j#0 ← (snumber)(number) 0
-Inlining cast (byte*) mulf_init_asm::mem ← (byte*)(number) $ff
-Inlining cast *((byte*) BGCOL) ← (unumber)(number) 2
+Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 2
 Inlining cast (word~) mulf_tables_cmp::$7 ← (word)(byte*) mulf_tables_cmp::asm_sqr#4
 Inlining cast (word~) mulf_tables_cmp::$10 ← (word)(byte*) mulf_tables_cmp::kc_sqr#5
 Inlining cast (byte) mul8u_compare::ok#0 ← (unumber)(number) 1
 Inlining cast (byte) mul8u_compare::ok#1 ← (unumber)(number) 0
 Inlining cast (byte) mul8u_compare::ok#2 ← (unumber)(number) 0
-Inlining cast *((byte*) BGCOL) ← (unumber)(number) 2
+Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 2
 Inlining cast (signed byte) mul8s_compare::a#0 ← (snumber)(number) -$80
 Inlining cast (signed byte) mul8s_compare::b#0 ← (snumber)(number) -$80
 Inlining cast (byte) mul8s_compare::ok#0 ← (unumber)(number) 1
 Inlining cast (byte) mul8s_compare::ok#1 ← (unumber)(number) 0
 Inlining cast (byte) mul8s_compare::ok#2 ← (unumber)(number) 0
-Inlining cast *((byte*) BGCOL) ← (unumber)(number) 2
+Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 253
+Simplifying constant pointer cast (byte*) 254
+Simplifying constant pointer cast (byte*) 255
+Simplifying constant pointer cast (signed byte*) 253
+Simplifying constant pointer cast (byte*) 255
+Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -3100,15 +3076,10 @@ Simplifying constant integer cast $100
 Simplifying constant integer cast $1ff
 Simplifying constant integer cast $100
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (byte*) 253
-Simplifying constant pointer cast (byte*) 254
-Simplifying constant pointer cast (byte*) 255
-Simplifying constant integer cast *((byte*) mulf8u_prepared::memB)
-Simplifying constant integer cast *((byte*) mulf8u_prepared::resL)
-Simplifying constant pointer cast (signed byte*) 253
+Simplifying constant integer cast *((const byte*) mulf8u_prepared::memB)
+Simplifying constant integer cast *((const byte*) mulf8u_prepared::resL)
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast 5
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -3118,7 +3089,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 255
 Simplifying constant integer cast 2
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
@@ -3198,22 +3168,22 @@ Inferred type updated to byte in (unumber~) print_byte::$2 ← (byte) print_byte
 Inferred type updated to byte in (unumber~) mul8u::$1 ← (byte) mul8u::a#4 & (byte) 1
 Inferred type updated to byte in (unumber~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1
 Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
-Inversing boolean not [152] (bool~) mul8u::$3 ← (byte~) mul8u::$1 == (byte) 0 from [151] (bool~) mul8u::$2 ← (byte~) mul8u::$1 != (byte) 0
-Inversing boolean not [178] (bool~) mul8s::$4 ← (signed byte) mul8s::a#2 >= (signed byte) 0 from [177] (bool~) mul8s::$3 ← (signed byte) mul8s::a#2 < (signed byte) 0
-Inversing boolean not [182] (bool~) mul8s::$6 ← (signed byte) mul8s::b#2 >= (signed byte) 0 from [181] (bool~) mul8s::$5 ← (signed byte) mul8s::b#2 < (signed byte) 0
-Inversing boolean not [222] (bool~) mulf_init::$11 ← (byte~) mulf_init::$9 != (byte) 0 from [221] (bool~) mulf_init::$10 ← (byte~) mulf_init::$9 == (byte) 0
-Inversing boolean not [252] (bool~) mulf_init::$19 ← (byte) mulf_init::x_255#1 != (byte) 0 from [251] (bool~) mulf_init::$18 ← (byte) mulf_init::x_255#1 == (byte) 0
-Inversing boolean not [303] (bool~) mulf8s_prepared::$3 ← *((signed byte*) mulf8s_prepared::memA) >= (signed byte) 0 from [302] (bool~) mulf8s_prepared::$2 ← *((signed byte*) mulf8s_prepared::memA) < (signed byte) 0
-Inversing boolean not [307] (bool~) mulf8s_prepared::$5 ← (signed byte) mulf8s_prepared::b#2 >= (signed byte) 0 from [306] (bool~) mulf8s_prepared::$4 ← (signed byte) mulf8s_prepared::b#2 < (signed byte) 0
-Inversing boolean not [375] (bool~) muls8u::$1 ← (byte) muls8u::a#1 == (byte) 0 from [374] (bool~) muls8u::$0 ← (byte) muls8u::a#1 != (byte) 0
-Inversing boolean not [399] (bool~) muls8s::$2 ← (signed byte) muls8s::a#2 <= (signed byte) 0 from [398] (bool~) muls8s::$1 ← (signed byte) muls8s::a#2 > (signed byte) 0
-Inversing boolean not [443] (bool~) mulf_tables_cmp::$5 ← *((byte*) mulf_tables_cmp::kc_sqr#3) == *((byte*) mulf_tables_cmp::asm_sqr#2) from [442] (bool~) mulf_tables_cmp::$4 ← *((byte*) mulf_tables_cmp::kc_sqr#3) != *((byte*) mulf_tables_cmp::asm_sqr#2)
-Inversing boolean not [509] (bool~) mul8u_compare::$6 ← (word) mul8u_compare::ms#1 == (word) mul8u_compare::mf#1 from [508] (bool~) mul8u_compare::$5 ← (word) mul8u_compare::ms#1 != (word) mul8u_compare::mf#1
-Inversing boolean not [513] (bool~) mul8u_compare::$8 ← (word) mul8u_compare::ms#2 == (word) mul8u_compare::mn#1 from [512] (bool~) mul8u_compare::$7 ← (word) mul8u_compare::ms#2 != (word) mul8u_compare::mn#1
-Inversing boolean not [519] (bool~) mul8u_compare::$10 ← (byte) mul8u_compare::ok#3 != (byte) 0 from [518] (bool~) mul8u_compare::$9 ← (byte) mul8u_compare::ok#3 == (byte) 0
-Inversing boolean not [647] (bool~) mul8s_compare::$8 ← (signed word) mul8s_compare::ms#1 == (signed word) mul8s_compare::mf#1 from [646] (bool~) mul8s_compare::$7 ← (signed word) mul8s_compare::ms#1 != (signed word) mul8s_compare::mf#1
-Inversing boolean not [653] (bool~) mul8s_compare::$10 ← (signed word) mul8s_compare::ms#2 == (signed word) mul8s_compare::mn#1 from [652] (bool~) mul8s_compare::$9 ← (signed word) mul8s_compare::ms#2 != (signed word) mul8s_compare::mn#1
-Inversing boolean not [659] (bool~) mul8s_compare::$12 ← (byte) mul8s_compare::ok#3 != (byte) 0 from [658] (bool~) mul8s_compare::$11 ← (byte) mul8s_compare::ok#3 == (byte) 0
+Inversing boolean not [150] (bool~) mul8u::$3 ← (byte~) mul8u::$1 == (byte) 0 from [149] (bool~) mul8u::$2 ← (byte~) mul8u::$1 != (byte) 0
+Inversing boolean not [176] (bool~) mul8s::$4 ← (signed byte) mul8s::a#2 >= (signed byte) 0 from [175] (bool~) mul8s::$3 ← (signed byte) mul8s::a#2 < (signed byte) 0
+Inversing boolean not [180] (bool~) mul8s::$6 ← (signed byte) mul8s::b#2 >= (signed byte) 0 from [179] (bool~) mul8s::$5 ← (signed byte) mul8s::b#2 < (signed byte) 0
+Inversing boolean not [220] (bool~) mulf_init::$11 ← (byte~) mulf_init::$9 != (byte) 0 from [219] (bool~) mulf_init::$10 ← (byte~) mulf_init::$9 == (byte) 0
+Inversing boolean not [250] (bool~) mulf_init::$19 ← (byte) mulf_init::x_255#1 != (byte) 0 from [249] (bool~) mulf_init::$18 ← (byte) mulf_init::x_255#1 == (byte) 0
+Inversing boolean not [297] (bool~) mulf8s_prepared::$3 ← *((const signed byte*) mulf8s_prepared::memA) >= (signed byte) 0 from [296] (bool~) mulf8s_prepared::$2 ← *((const signed byte*) mulf8s_prepared::memA) < (signed byte) 0
+Inversing boolean not [301] (bool~) mulf8s_prepared::$5 ← (signed byte) mulf8s_prepared::b#2 >= (signed byte) 0 from [300] (bool~) mulf8s_prepared::$4 ← (signed byte) mulf8s_prepared::b#2 < (signed byte) 0
+Inversing boolean not [367] (bool~) muls8u::$1 ← (byte) muls8u::a#1 == (byte) 0 from [366] (bool~) muls8u::$0 ← (byte) muls8u::a#1 != (byte) 0
+Inversing boolean not [391] (bool~) muls8s::$2 ← (signed byte) muls8s::a#2 <= (signed byte) 0 from [390] (bool~) muls8s::$1 ← (signed byte) muls8s::a#2 > (signed byte) 0
+Inversing boolean not [434] (bool~) mulf_tables_cmp::$5 ← *((byte*) mulf_tables_cmp::kc_sqr#3) == *((byte*) mulf_tables_cmp::asm_sqr#2) from [433] (bool~) mulf_tables_cmp::$4 ← *((byte*) mulf_tables_cmp::kc_sqr#3) != *((byte*) mulf_tables_cmp::asm_sqr#2)
+Inversing boolean not [500] (bool~) mul8u_compare::$6 ← (word) mul8u_compare::ms#1 == (word) mul8u_compare::mf#1 from [499] (bool~) mul8u_compare::$5 ← (word) mul8u_compare::ms#1 != (word) mul8u_compare::mf#1
+Inversing boolean not [504] (bool~) mul8u_compare::$8 ← (word) mul8u_compare::ms#2 == (word) mul8u_compare::mn#1 from [503] (bool~) mul8u_compare::$7 ← (word) mul8u_compare::ms#2 != (word) mul8u_compare::mn#1
+Inversing boolean not [510] (bool~) mul8u_compare::$10 ← (byte) mul8u_compare::ok#3 != (byte) 0 from [509] (bool~) mul8u_compare::$9 ← (byte) mul8u_compare::ok#3 == (byte) 0
+Inversing boolean not [638] (bool~) mul8s_compare::$8 ← (signed word) mul8s_compare::ms#1 == (signed word) mul8s_compare::mf#1 from [637] (bool~) mul8s_compare::$7 ← (signed word) mul8s_compare::ms#1 != (signed word) mul8s_compare::mf#1
+Inversing boolean not [644] (bool~) mul8s_compare::$10 ← (signed word) mul8s_compare::ms#2 == (signed word) mul8s_compare::mn#1 from [643] (bool~) mul8s_compare::$9 ← (signed word) mul8s_compare::ms#2 != (signed word) mul8s_compare::mn#1
+Inversing boolean not [650] (bool~) mul8s_compare::$12 ← (byte) mul8s_compare::ok#3 != (byte) 0 from [649] (bool~) mul8s_compare::$11 ← (byte) mul8s_compare::ok#3 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#1 (void*) memset::return#3 (void*) memset::return#1 
 Alias (void*) memset::str#2 = (void*) memset::str#3 
@@ -3224,7 +3194,7 @@ Alias (byte) memset::c#1 = (byte) memset::c#2
 Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
 Alias (byte*) memset::end#1 = (byte*) memset::end#2 
 Alias (void*) memset::str#4 = (void*) memset::str#5 
-Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#91 (byte*) print_char_cursor#182 (byte*) print_screen#8 (byte*) print_line_cursor#78 (byte*) print_char_cursor#176 (byte*) print_screen#7 (byte*) print_line_cursor#67 (byte*) print_char_cursor#166 (byte*) print_screen#6 (byte*) print_line_cursor#66 (byte*) print_char_cursor#165 (byte*) print_screen#5 (byte*) print_line_cursor#56 (byte*) print_char_cursor#154 (byte*) print_screen#4 
+Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#67 (byte*) print_char_cursor#166 (byte*) print_screen#6 (byte*) print_line_cursor#66 (byte*) print_char_cursor#165 (byte*) print_screen#5 (byte*) print_line_cursor#56 (byte*) print_char_cursor#154 (byte*) print_screen#4 
 Alias (byte*) print_str::str#16 = (byte*) print_str::str#17 
 Alias (byte*) print_char_cursor#134 = (byte*) print_char_cursor#68 (byte*) print_char_cursor#69 (byte*) print_char_cursor#2 
 Alias (byte*) print_line_cursor#1 = (byte*~) print_ln::$0 (byte*) print_line_cursor#24 (byte*) print_char_cursor#3 (byte*) print_line_cursor#25 (byte*) print_char_cursor#71 (byte*) print_line_cursor#2 (byte*) print_char_cursor#4 
@@ -3337,7 +3307,7 @@ Alias (signed word) muls8s::m#2 = (signed word~) muls8s::$6
 Alias (byte*) mulf_tables_cmp::kc_sqr#2 = (byte*) mulf_tables_cmp::kc_sqr#3 (byte*) mulf_tables_cmp::kc_sqr#4 (byte*) mulf_tables_cmp::kc_sqr#8 (byte*) mulf_tables_cmp::kc_sqr#7 (byte*) mulf_tables_cmp::kc_sqr#6 (byte*) mulf_tables_cmp::kc_sqr#5 
 Alias (byte*) mulf_tables_cmp::asm_sqr#2 = (byte*) mulf_tables_cmp::asm_sqr#5 (byte*) mulf_tables_cmp::asm_sqr#3 (byte*) mulf_tables_cmp::asm_sqr#6 (byte*) mulf_tables_cmp::asm_sqr#4 
 Alias (byte*) print_char_cursor#146 = (byte*) print_char_cursor#160 (byte*) print_char_cursor#159 (byte*) print_char_cursor#168 (byte*) print_char_cursor#147 
-Alias (byte*) print_line_cursor#48 = (byte*) print_line_cursor#92 (byte*) print_line_cursor#68 (byte*) print_line_cursor#58 (byte*) print_line_cursor#80 (byte*) print_line_cursor#93 (byte*) print_line_cursor#81 (byte*) print_line_cursor#69 (byte*) print_line_cursor#59 (byte*) print_line_cursor#49 
+Alias (byte*) print_line_cursor#48 = (byte*) print_line_cursor#90 (byte*) print_line_cursor#68 (byte*) print_line_cursor#58 (byte*) print_line_cursor#79 (byte*) print_line_cursor#91 (byte*) print_line_cursor#80 (byte*) print_line_cursor#69 (byte*) print_line_cursor#59 (byte*) print_line_cursor#49 
 Alias (byte*) print_char_cursor#28 = (byte*) print_char_cursor#94 
 Alias (byte*) print_line_cursor#10 = (byte*) print_line_cursor#32 
 Alias (byte*) print_char_cursor#29 = (byte*) print_char_cursor#95 
@@ -3352,8 +3322,8 @@ Alias (byte*) print_line_cursor#11 = (byte*) print_line_cursor#33
 Alias (word) muls8u::return#2 = (word) muls8u::return#4 
 Alias (byte) mul8u_compare::a#12 = (byte) mul8u_compare::a#3 (byte) mul8u_compare::a#2 (byte) mul8u_compare::a#4 (byte) mul8u_compare::a#13 
 Alias (byte) mul8u_compare::b#10 = (byte) mul8u_compare::b#3 (byte) mul8u_compare::b#2 (byte) mul8u_compare::b#4 (byte) mul8u_compare::b#11 
-Alias (byte*) print_char_cursor#177 = (byte*) print_char_cursor#187 (byte*) print_char_cursor#189 (byte*) print_char_cursor#183 (byte*) print_char_cursor#178 
-Alias (byte*) print_line_cursor#105 = (byte*) print_line_cursor#99 (byte*) print_line_cursor#94 (byte*) print_line_cursor#82 (byte*) print_line_cursor#83 
+Alias (byte*) print_char_cursor#176 = (byte*) print_char_cursor#185 (byte*) print_char_cursor#187 (byte*) print_char_cursor#181 (byte*) print_char_cursor#177 
+Alias (byte*) print_line_cursor#103 = (byte*) print_line_cursor#97 (byte*) print_line_cursor#92 (byte*) print_line_cursor#81 (byte*) print_line_cursor#82 
 Alias (word) mul8u_compare::ms#0 = (word~) mul8u_compare::$2 (word) mul8u_compare::ms#4 (word) mul8u_compare::ms#1 (word) mul8u_compare::ms#5 
 Alias (word) mulf8u::return#2 = (word) mulf8u::return#4 
 Alias (word) mul8u_compare::mf#0 = (word~) mul8u_compare::$3 (word) mul8u_compare::mf#1 (word) mul8u_compare::mf#6 
@@ -3369,7 +3339,7 @@ Alias (byte*) print_line_cursor#70 = (byte*) print_line_cursor#71
 Alias (byte) mul8u_compare::b#5 = (byte) mul8u_compare::b#7 (byte) mul8u_compare::b#6 
 Alias (byte) mul8u_compare::a#5 = (byte) mul8u_compare::a#8 (byte) mul8u_compare::a#9 (byte) mul8u_compare::a#6 
 Alias (byte*) print_char_cursor#148 = (byte*) print_char_cursor#171 (byte*) print_char_cursor#161 (byte*) print_char_cursor#162 (byte*) print_char_cursor#149 
-Alias (byte*) print_line_cursor#50 = (byte*) print_line_cursor#84 (byte*) print_line_cursor#60 (byte*) print_line_cursor#72 (byte*) print_line_cursor#61 (byte*) print_line_cursor#51 
+Alias (byte*) print_line_cursor#50 = (byte*) print_line_cursor#83 (byte*) print_line_cursor#60 (byte*) print_line_cursor#72 (byte*) print_line_cursor#61 (byte*) print_line_cursor#51 
 Alias (word) mul8u_compare::ms#3 = (word) mul8u_compare::ms#6 
 Alias (word) mul8u_compare::mn#2 = (word) mul8u_compare::mn#4 
 Alias (word) mul8u_compare::mf#2 = (word) mul8u_compare::mf#3 
@@ -3385,7 +3355,7 @@ Alias (byte) mul8u_error::b#1 = (byte) mul8u_error::b#3 (byte) mul8u_error::b#4 
 Alias (word) mul8u_error::ms#1 = (word) mul8u_error::ms#5 (word) mul8u_error::ms#6 (word) mul8u_error::ms#4 (word) mul8u_error::ms#3 (word) mul8u_error::ms#2 
 Alias (word) mul8u_error::mn#1 = (word) mul8u_error::mn#7 (word) mul8u_error::mn#8 (word) mul8u_error::mn#6 (word) mul8u_error::mn#5 (word) mul8u_error::mn#4 (word) mul8u_error::mn#3 (word) mul8u_error::mn#2 
 Alias (word) mul8u_error::mf#1 = (word) mul8u_error::mf#9 (word) mul8u_error::mf#10 (word) mul8u_error::mf#8 (word) mul8u_error::mf#7 (word) mul8u_error::mf#6 (word) mul8u_error::mf#5 (word) mul8u_error::mf#4 (word) mul8u_error::mf#3 (word) mul8u_error::mf#2 
-Alias (byte*) print_line_cursor#100 = (byte*) print_line_cursor#115 (byte*) print_line_cursor#117 (byte*) print_line_cursor#113 (byte*) print_line_cursor#110 (byte*) print_line_cursor#106 (byte*) print_line_cursor#95 (byte*) print_line_cursor#85 (byte*) print_line_cursor#73 (byte*) print_line_cursor#62 (byte*) print_line_cursor#52 
+Alias (byte*) print_line_cursor#104 = (byte*) print_line_cursor#113 (byte*) print_line_cursor#115 (byte*) print_line_cursor#111 (byte*) print_line_cursor#108 (byte*) print_line_cursor#98 (byte*) print_line_cursor#93 (byte*) print_line_cursor#84 (byte*) print_line_cursor#73 (byte*) print_line_cursor#62 (byte*) print_line_cursor#52 
 Alias (byte*) print_char_cursor#105 = (byte*) print_char_cursor#39 
 Alias (byte*) print_char_cursor#106 = (byte*) print_char_cursor#40 
 Alias (byte*) print_char_cursor#107 = (byte*) print_char_cursor#41 
@@ -3399,15 +3369,15 @@ Alias (byte*) print_char_cursor#114 = (byte*) print_char_cursor#48
 Alias (byte*) print_line_cursor#15 = (byte*) print_line_cursor#37 (byte*) print_line_cursor#38 (byte*) print_line_cursor#16 
 Alias (byte*) print_char_cursor#115 = (byte*) print_char_cursor#49 (byte*) print_char_cursor#116 (byte*) print_char_cursor#50 
 Alias (signed byte) mul8s_compare::a#10 = (signed byte) mul8s_compare::a#2 
-Alias (byte*) print_char_cursor#151 = (byte*) print_char_cursor#184 (byte*) print_char_cursor#163 
-Alias (byte*) print_line_cursor#101 = (byte*) print_line_cursor#74 (byte*) print_line_cursor#63 (byte*) print_line_cursor#53 
+Alias (byte*) print_char_cursor#151 = (byte*) print_char_cursor#182 (byte*) print_char_cursor#163 
+Alias (byte*) print_line_cursor#53 = (byte*) print_line_cursor#99 (byte*) print_line_cursor#74 (byte*) print_line_cursor#63 
 Alias (byte*) print_char_cursor#117 = (byte*) print_char_cursor#51 
 Alias (byte*) print_line_cursor#17 = (byte*) print_line_cursor#39 
 Alias (byte*) print_char_cursor#118 = (byte*) print_char_cursor#52 
 Alias (signed byte) mul8s_compare::a#14 = (signed byte) mul8s_compare::a#3 (signed byte) mul8s_compare::a#8 (signed byte) mul8s_compare::a#4 (signed byte) mul8s_compare::a#5 (signed byte) mul8s_compare::a#15 (signed byte) mul8s_compare::a#6 
 Alias (signed byte) mul8s_compare::b#11 = (signed byte) mul8s_compare::b#3 (signed byte) mul8s_compare::b#2 (signed byte) mul8s_compare::b#4 (signed byte) mul8s_compare::b#5 (signed byte) mul8s_compare::b#12 
-Alias (byte*) print_char_cursor#173 = (byte*) print_char_cursor#190 (byte*) print_char_cursor#179 (byte*) print_char_cursor#188 (byte*) print_char_cursor#186 (byte*) print_char_cursor#181 (byte*) print_char_cursor#180 
-Alias (byte*) print_line_cursor#103 = (byte*) print_line_cursor#107 (byte*) print_line_cursor#97 (byte*) print_line_cursor#96 (byte*) print_line_cursor#89 (byte*) print_line_cursor#87 (byte*) print_line_cursor#88 
+Alias (byte*) print_char_cursor#173 = (byte*) print_char_cursor#188 (byte*) print_char_cursor#178 (byte*) print_char_cursor#186 (byte*) print_char_cursor#184 (byte*) print_char_cursor#180 (byte*) print_char_cursor#179 
+Alias (byte*) print_line_cursor#101 = (byte*) print_line_cursor#105 (byte*) print_line_cursor#95 (byte*) print_line_cursor#94 (byte*) print_line_cursor#88 (byte*) print_line_cursor#86 (byte*) print_line_cursor#87 
 Alias (signed word) muls8s::return#2 = (signed word) muls8s::return#4 
 Alias (signed word) mul8s_compare::ms#0 = (signed word~) mul8s_compare::$4 (signed word) mul8s_compare::ms#4 (signed word) mul8s_compare::ms#1 (signed word) mul8s_compare::ms#5 
 Alias (signed word) mulf8s::return#2 = (signed word) mulf8s::return#4 
@@ -3423,8 +3393,8 @@ Alias (byte*) print_char_cursor#174 = (byte*) print_char_cursor#175
 Alias (byte*) print_line_cursor#75 = (byte*) print_line_cursor#76 
 Alias (signed byte) mul8s_compare::b#6 = (signed byte) mul8s_compare::b#8 (signed byte) mul8s_compare::b#7 
 Alias (signed byte) mul8s_compare::a#11 = (signed byte) mul8s_compare::a#9 (signed byte) mul8s_compare::a#7 
-Alias (byte*) print_char_cursor#152 = (byte*) print_char_cursor#185 (byte*) print_char_cursor#164 
-Alias (byte*) print_line_cursor#102 = (byte*) print_line_cursor#64 (byte*) print_line_cursor#54 
+Alias (byte*) print_char_cursor#152 = (byte*) print_char_cursor#183 (byte*) print_char_cursor#164 
+Alias (byte*) print_line_cursor#100 = (byte*) print_line_cursor#64 (byte*) print_line_cursor#54 
 Alias (signed word) mul8s_compare::ms#3 = (signed word) mul8s_compare::ms#6 
 Alias (signed word) mul8s_compare::mn#2 = (signed word) mul8s_compare::mn#4 
 Alias (signed word) mul8s_compare::mf#2 = (signed word) mul8s_compare::mf#3 
@@ -3437,7 +3407,7 @@ Alias (signed byte) mul8s_error::b#1 = (signed byte) mul8s_error::b#3 (signed by
 Alias (signed word) mul8s_error::ms#1 = (signed word) mul8s_error::ms#5 (signed word) mul8s_error::ms#6 (signed word) mul8s_error::ms#4 (signed word) mul8s_error::ms#3 (signed word) mul8s_error::ms#2 
 Alias (signed word) mul8s_error::mn#1 = (signed word) mul8s_error::mn#7 (signed word) mul8s_error::mn#8 (signed word) mul8s_error::mn#6 (signed word) mul8s_error::mn#5 (signed word) mul8s_error::mn#4 (signed word) mul8s_error::mn#3 (signed word) mul8s_error::mn#2 
 Alias (signed word) mul8s_error::mf#1 = (signed word) mul8s_error::mf#9 (signed word) mul8s_error::mf#10 (signed word) mul8s_error::mf#8 (signed word) mul8s_error::mf#7 (signed word) mul8s_error::mf#6 (signed word) mul8s_error::mf#5 (signed word) mul8s_error::mf#4 (signed word) mul8s_error::mf#3 (signed word) mul8s_error::mf#2 
-Alias (byte*) print_line_cursor#104 = (byte*) print_line_cursor#116 (byte*) print_line_cursor#118 (byte*) print_line_cursor#114 (byte*) print_line_cursor#111 (byte*) print_line_cursor#108 (byte*) print_line_cursor#98 (byte*) print_line_cursor#90 (byte*) print_line_cursor#77 (byte*) print_line_cursor#65 (byte*) print_line_cursor#55 
+Alias (byte*) print_line_cursor#102 = (byte*) print_line_cursor#114 (byte*) print_line_cursor#116 (byte*) print_line_cursor#112 (byte*) print_line_cursor#109 (byte*) print_line_cursor#106 (byte*) print_line_cursor#96 (byte*) print_line_cursor#89 (byte*) print_line_cursor#77 (byte*) print_line_cursor#65 (byte*) print_line_cursor#55 
 Alias (byte*) print_char_cursor#121 = (byte*) print_char_cursor#55 
 Alias (byte*) print_char_cursor#122 = (byte*) print_char_cursor#56 
 Alias (byte*) print_char_cursor#123 = (byte*) print_char_cursor#57 
@@ -3469,15 +3439,15 @@ Alias (word) mul8u_compare::mn#0 = (word) mul8u_compare::mn#1 (word) mul8u_compa
 Alias (byte) mul8u_compare::b#10 = (byte) mul8u_compare::b#8 (byte) mul8u_compare::b#5 
 Alias (byte) mul8u_compare::a#10 = (byte) mul8u_compare::a#12 (byte) mul8u_compare::a#5 
 Alias (word) mul8u_compare::mf#0 = (word) mul8u_compare::mf#4 (word) mul8u_compare::mf#2 
-Alias (byte*) print_char_cursor#148 = (byte*) print_char_cursor#169 (byte*) print_char_cursor#177 
-Alias (byte*) print_line_cursor#105 = (byte*) print_line_cursor#70 (byte*) print_line_cursor#50 
+Alias (byte*) print_char_cursor#148 = (byte*) print_char_cursor#169 (byte*) print_char_cursor#176 
+Alias (byte*) print_line_cursor#103 = (byte*) print_line_cursor#70 (byte*) print_line_cursor#50 
 Alias (signed word) mul8s_compare::ms#0 = (signed word) mul8s_compare::ms#2 (signed word) mul8s_compare::ms#3 
 Alias (signed word) mul8s_compare::mn#0 = (signed word) mul8s_compare::mn#1 (signed word) mul8s_compare::mn#2 
 Alias (signed byte) mul8s_compare::b#10 = (signed byte) mul8s_compare::b#11 (signed byte) mul8s_compare::b#6 
 Alias (signed byte) mul8s_compare::a#11 = (signed byte) mul8s_compare::a#12 (signed byte) mul8s_compare::a#14 
 Alias (signed word) mul8s_compare::mf#0 = (signed word) mul8s_compare::mf#4 (signed word) mul8s_compare::mf#2 
 Alias (byte*) print_char_cursor#152 = (byte*) print_char_cursor#174 (byte*) print_char_cursor#173 
-Alias (byte*) print_line_cursor#102 = (byte*) print_line_cursor#75 (byte*) print_line_cursor#103 
+Alias (byte*) print_line_cursor#100 = (byte*) print_line_cursor#75 (byte*) print_line_cursor#101 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (word) memset::num#1 (word) memset::num#0
 Identical Phi Values (void*) memset::str#2 (void*) memset::str#0
@@ -3526,9 +3496,9 @@ Identical Phi Values (signed byte) muls8s::b#1 (signed byte) muls8s::b#5
 Identical Phi Values (signed byte) muls8s::a#4 (signed byte) muls8s::a#1
 Identical Phi Values (signed byte) muls8s::b#2 (signed byte) muls8s::b#5
 Identical Phi Values (byte*) print_char_cursor#167 (byte*) print_char_cursor#145
-Identical Phi Values (byte*) print_line_cursor#79 (byte*) print_line_cursor#27
+Identical Phi Values (byte*) print_line_cursor#78 (byte*) print_line_cursor#27
 Identical Phi Values (byte*) print_char_cursor#146 (byte*) print_char_cursor#167
-Identical Phi Values (byte*) print_line_cursor#48 (byte*) print_line_cursor#79
+Identical Phi Values (byte*) print_line_cursor#48 (byte*) print_line_cursor#78
 Identical Phi Values (byte*) print_char_cursor#28 (byte*) print_char_cursor#134
 Identical Phi Values (byte*) print_line_cursor#10 (byte*) print_line_cursor#1
 Identical Phi Values (byte*) print_char_cursor#29 (byte*) print_line_cursor#1
@@ -3536,11 +3506,11 @@ Identical Phi Values (byte*) print_char_cursor#30 (byte*) print_char_cursor#134
 Identical Phi Values (byte*) print_char_cursor#31 (byte*) print_char_cursor#14
 Identical Phi Values (byte*) print_char_cursor#32 (byte*) print_char_cursor#134
 Identical Phi Values (byte*) print_char_cursor#33 (byte*) print_char_cursor#14
-Identical Phi Values (byte*) print_char_cursor#192 (byte*) print_char_cursor#24
-Identical Phi Values (byte*) print_line_cursor#112 (byte*) print_line_cursor#28
+Identical Phi Values (byte*) print_char_cursor#190 (byte*) print_char_cursor#24
+Identical Phi Values (byte*) print_line_cursor#110 (byte*) print_line_cursor#28
 Identical Phi Values (byte) mul8u_compare::a#10 (byte) mul8u_compare::a#7
-Identical Phi Values (byte*) print_char_cursor#148 (byte*) print_char_cursor#191
-Identical Phi Values (byte*) print_line_cursor#105 (byte*) print_line_cursor#109
+Identical Phi Values (byte*) print_char_cursor#148 (byte*) print_char_cursor#189
+Identical Phi Values (byte*) print_line_cursor#103 (byte*) print_line_cursor#107
 Identical Phi Values (byte*) print_char_cursor#101 (byte*) print_char_cursor#115
 Identical Phi Values (byte*) print_line_cursor#12 (byte*) print_line_cursor#15
 Identical Phi Values (byte*) print_char_cursor#103 (byte*) print_char_cursor#134
@@ -3552,7 +3522,7 @@ Identical Phi Values (byte) mul8u_error::b#1 (byte) mul8u_error::b#0
 Identical Phi Values (word) mul8u_error::ms#1 (word) mul8u_error::ms#0
 Identical Phi Values (word) mul8u_error::mn#1 (word) mul8u_error::mn#0
 Identical Phi Values (word) mul8u_error::mf#1 (word) mul8u_error::mf#0
-Identical Phi Values (byte*) print_line_cursor#100 (byte*) print_line_cursor#105
+Identical Phi Values (byte*) print_line_cursor#104 (byte*) print_line_cursor#103
 Identical Phi Values (byte*) print_char_cursor#105 (byte*) print_char_cursor#134
 Identical Phi Values (byte*) print_char_cursor#106 (byte*) print_char_cursor#17
 Identical Phi Values (byte*) print_char_cursor#107 (byte*) print_char_cursor#134
@@ -3566,13 +3536,13 @@ Identical Phi Values (byte*) print_char_cursor#114 (byte*) print_char_cursor#14
 Identical Phi Values (byte*) print_line_cursor#15 (byte*) print_line_cursor#1
 Identical Phi Values (byte*) print_char_cursor#115 (byte*) print_line_cursor#1
 Identical Phi Values (byte*) print_char_cursor#172 (byte*) print_char_cursor#25
-Identical Phi Values (byte*) print_line_cursor#86 (byte*) print_line_cursor#29
+Identical Phi Values (byte*) print_line_cursor#85 (byte*) print_line_cursor#29
 Identical Phi Values (byte*) print_char_cursor#117 (byte*) print_char_cursor#134
 Identical Phi Values (byte*) print_line_cursor#17 (byte*) print_line_cursor#1
 Identical Phi Values (byte*) print_char_cursor#118 (byte*) print_line_cursor#1
 Identical Phi Values (signed byte) mul8s_compare::a#11 (signed byte) mul8s_compare::a#10
 Identical Phi Values (byte*) print_char_cursor#152 (byte*) print_char_cursor#151
-Identical Phi Values (byte*) print_line_cursor#102 (byte*) print_line_cursor#101
+Identical Phi Values (byte*) print_line_cursor#100 (byte*) print_line_cursor#53
 Identical Phi Values (byte*) print_char_cursor#119 (byte*) print_char_cursor#131
 Identical Phi Values (byte*) print_line_cursor#18 (byte*) print_line_cursor#20
 Identical Phi Values (byte*) print_char_cursor#153 (byte*) print_char_cursor#152
@@ -3581,7 +3551,7 @@ Identical Phi Values (signed byte) mul8s_error::b#1 (signed byte) mul8s_error::b
 Identical Phi Values (signed word) mul8s_error::ms#1 (signed word) mul8s_error::ms#0
 Identical Phi Values (signed word) mul8s_error::mn#1 (signed word) mul8s_error::mn#0
 Identical Phi Values (signed word) mul8s_error::mf#1 (signed word) mul8s_error::mf#0
-Identical Phi Values (byte*) print_line_cursor#104 (byte*) print_line_cursor#102
+Identical Phi Values (byte*) print_line_cursor#102 (byte*) print_line_cursor#100
 Identical Phi Values (byte*) print_char_cursor#121 (byte*) print_char_cursor#134
 Identical Phi Values (byte*) print_char_cursor#122 (byte*) print_char_cursor#11
 Identical Phi Values (byte*) print_char_cursor#123 (byte*) print_char_cursor#134
@@ -3602,12 +3572,12 @@ Identical Phi Values (byte*) print_char_cursor#136 (byte*) print_char_cursor#134
 Identical Phi Values (byte*) print_char_cursor#138 (byte*) print_char_cursor#19
 Identical Phi Values (byte*) print_char_cursor#139 (byte*) print_char_cursor#134
 Identical Phi Values (byte*) print_char_cursor#141 (byte*) print_char_cursor#19
-Identical Phi Values (byte*) print_char_cursor#191 (byte*) print_char_cursor#100
-Identical Phi Values (byte*) print_line_cursor#109 (byte*) print_line_cursor#11
+Identical Phi Values (byte*) print_char_cursor#189 (byte*) print_char_cursor#100
+Identical Phi Values (byte*) print_line_cursor#107 (byte*) print_line_cursor#11
 Identical Phi Values (byte*) print_char_cursor#102 (byte*) print_line_cursor#1
 Identical Phi Values (byte*) print_line_cursor#13 (byte*) print_line_cursor#1
 Identical Phi Values (byte*) print_char_cursor#151 (byte*) print_char_cursor#102
-Identical Phi Values (byte*) print_line_cursor#101 (byte*) print_line_cursor#13
+Identical Phi Values (byte*) print_line_cursor#53 (byte*) print_line_cursor#13
 Identical Phi Values (byte*) print_char_cursor#120 (byte*) print_line_cursor#1
 Identical Phi Values (byte*) print_line_cursor#19 (byte*) print_line_cursor#1
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -3617,50 +3587,49 @@ Simple Condition (bool~) print_str::$0 [26] if((byte) 0!=*((byte*) print_str::st
 Simple Condition (bool~) print_ln::$1 [39] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#135) goto print_ln::@1
 Simple Condition (bool~) print_sword::$0 [48] if((signed word) print_sword::w#4<(signed byte) 0) goto print_sword::@1
 Simple Condition (bool~) print_sbyte::$0 [72] if((signed byte) print_sbyte::b#3<(signed byte) 0) goto print_sbyte::@1
-Simple Condition (bool~) mul8u::$0 [148] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2
-Simple Condition (bool~) mul8u::$3 [153] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@4
-Simple Condition (bool~) mul8s::$4 [179] if((signed byte) mul8s::a#0>=(signed byte) 0) goto mul8s::@1
-Simple Condition (bool~) mul8s::$6 [183] if((signed byte) mul8s::b#0>=(signed byte) 0) goto mul8s::@2
-Simple Condition (bool~) mulf_init::$8 [217] if((byte*) mulf_init::sqr1_lo#2!=(byte*~) mulf_init::$7) goto mulf_init::@2
-Simple Condition (bool~) mulf_init::$11 [223] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@4
-Simple Condition (bool~) mulf_init::$16 [244] if((byte*) mulf_init::sqr2_lo#2!=(byte*~) mulf_init::$15) goto mulf_init::@10
-Simple Condition (bool~) mulf_init::$19 [253] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@12
-Simple Condition (bool~) mulf8s_prepared::$3 [304] if(*((signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1
-Simple Condition (bool~) mulf8s_prepared::$5 [308] if((signed byte) mulf8s_prepared::b#0>=(signed byte) 0) goto mulf8s_prepared::@2
-Simple Condition (bool~) muls8u::$1 [376] if((byte) muls8u::a#0==(byte) 0) goto muls8u::@1
-Simple Condition (bool~) muls8u::$2 [383] if((byte) muls8u::i#2!=(byte) muls8u::a#0) goto muls8u::@5
-Simple Condition (bool~) muls8s::$0 [394] if((signed byte) muls8s::a#0<(signed byte) 0) goto muls8s::@1
-Simple Condition (bool~) muls8s::$2 [400] if((signed byte) muls8s::a#0<=(signed byte) 0) goto muls8s::@3
-Simple Condition (bool~) muls8s::$3 [405] if((signed byte) muls8s::j#2!=(signed byte) muls8s::a#0) goto muls8s::@9
-Simple Condition (bool~) muls8s::$5 [414] if((signed byte) muls8s::i#2!=(signed byte) muls8s::a#0) goto muls8s::@15
-Simple Condition (bool~) mulf_tables_cmp::$3 [440] if((byte*) mulf_tables_cmp::kc_sqr#2<(byte*~) mulf_tables_cmp::$2) goto mulf_tables_cmp::@2
-Simple Condition (bool~) mulf_tables_cmp::$5 [444] if(*((byte*) mulf_tables_cmp::kc_sqr#2)==*((byte*) mulf_tables_cmp::asm_sqr#2)) goto mulf_tables_cmp::@4
-Simple Condition (bool~) mul8u_compare::$6 [510] if((word) mul8u_compare::ms#0==(word) mul8u_compare::mf#0) goto mul8u_compare::@3
-Simple Condition (bool~) mul8u_compare::$8 [514] if((word) mul8u_compare::ms#0==(word) mul8u_compare::mn#0) goto mul8u_compare::@4
-Simple Condition (bool~) mul8u_compare::$10 [520] if((byte) mul8u_compare::ok#3!=(byte) 0) goto mul8u_compare::@5
-Simple Condition (bool~) mul8u_compare::$12 [526] if((byte) mul8u_compare::b#1!=rangelast(0,$ff)) goto mul8u_compare::@2
-Simple Condition (bool~) mul8u_compare::$13 [545] if((byte) mul8u_compare::a#1!=rangelast(0,$ff)) goto mul8u_compare::@1
-Simple Condition (bool~) mul8s_compare::$2 [608] if((signed byte) mul8s_compare::a#10!=(signed byte) -$80) goto mul8s_compare::@2
-Simple Condition (bool~) mul8s_compare::$3 [622] if((signed byte) mul8s_compare::b#10!=(signed byte) -$80) goto mul8s_compare::@5
-Simple Condition (bool~) mul8s_compare::$8 [648] if((signed word) mul8s_compare::ms#0==(signed word) mul8s_compare::mf#0) goto mul8s_compare::@7
-Simple Condition (bool~) mul8s_compare::$10 [654] if((signed word) mul8s_compare::ms#0==(signed word) mul8s_compare::mn#0) goto mul8s_compare::@8
-Simple Condition (bool~) mul8s_compare::$12 [660] if((byte) mul8s_compare::ok#3!=(byte) 0) goto mul8s_compare::@9
+Simple Condition (bool~) mul8u::$0 [146] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2
+Simple Condition (bool~) mul8u::$3 [151] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@4
+Simple Condition (bool~) mul8s::$4 [177] if((signed byte) mul8s::a#0>=(signed byte) 0) goto mul8s::@1
+Simple Condition (bool~) mul8s::$6 [181] if((signed byte) mul8s::b#0>=(signed byte) 0) goto mul8s::@2
+Simple Condition (bool~) mulf_init::$8 [215] if((byte*) mulf_init::sqr1_lo#2!=(byte*~) mulf_init::$7) goto mulf_init::@2
+Simple Condition (bool~) mulf_init::$11 [221] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@4
+Simple Condition (bool~) mulf_init::$16 [242] if((byte*) mulf_init::sqr2_lo#2!=(byte*~) mulf_init::$15) goto mulf_init::@10
+Simple Condition (bool~) mulf_init::$19 [251] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@12
+Simple Condition (bool~) mulf8s_prepared::$3 [298] if(*((const signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1
+Simple Condition (bool~) mulf8s_prepared::$5 [302] if((signed byte) mulf8s_prepared::b#0>=(signed byte) 0) goto mulf8s_prepared::@2
+Simple Condition (bool~) muls8u::$1 [368] if((byte) muls8u::a#0==(byte) 0) goto muls8u::@1
+Simple Condition (bool~) muls8u::$2 [375] if((byte) muls8u::i#2!=(byte) muls8u::a#0) goto muls8u::@5
+Simple Condition (bool~) muls8s::$0 [386] if((signed byte) muls8s::a#0<(signed byte) 0) goto muls8s::@1
+Simple Condition (bool~) muls8s::$2 [392] if((signed byte) muls8s::a#0<=(signed byte) 0) goto muls8s::@3
+Simple Condition (bool~) muls8s::$3 [397] if((signed byte) muls8s::j#2!=(signed byte) muls8s::a#0) goto muls8s::@9
+Simple Condition (bool~) muls8s::$5 [406] if((signed byte) muls8s::i#2!=(signed byte) muls8s::a#0) goto muls8s::@15
+Simple Condition (bool~) mulf_tables_cmp::$3 [431] if((byte*) mulf_tables_cmp::kc_sqr#2<(byte*~) mulf_tables_cmp::$2) goto mulf_tables_cmp::@2
+Simple Condition (bool~) mulf_tables_cmp::$5 [435] if(*((byte*) mulf_tables_cmp::kc_sqr#2)==*((byte*) mulf_tables_cmp::asm_sqr#2)) goto mulf_tables_cmp::@4
+Simple Condition (bool~) mul8u_compare::$6 [501] if((word) mul8u_compare::ms#0==(word) mul8u_compare::mf#0) goto mul8u_compare::@3
+Simple Condition (bool~) mul8u_compare::$8 [505] if((word) mul8u_compare::ms#0==(word) mul8u_compare::mn#0) goto mul8u_compare::@4
+Simple Condition (bool~) mul8u_compare::$10 [511] if((byte) mul8u_compare::ok#3!=(byte) 0) goto mul8u_compare::@5
+Simple Condition (bool~) mul8u_compare::$12 [517] if((byte) mul8u_compare::b#1!=rangelast(0,$ff)) goto mul8u_compare::@2
+Simple Condition (bool~) mul8u_compare::$13 [536] if((byte) mul8u_compare::a#1!=rangelast(0,$ff)) goto mul8u_compare::@1
+Simple Condition (bool~) mul8s_compare::$2 [599] if((signed byte) mul8s_compare::a#10!=(signed byte) -$80) goto mul8s_compare::@2
+Simple Condition (bool~) mul8s_compare::$3 [613] if((signed byte) mul8s_compare::b#10!=(signed byte) -$80) goto mul8s_compare::@5
+Simple Condition (bool~) mul8s_compare::$8 [639] if((signed word) mul8s_compare::ms#0==(signed word) mul8s_compare::mf#0) goto mul8s_compare::@7
+Simple Condition (bool~) mul8s_compare::$10 [645] if((signed word) mul8s_compare::ms#0==(signed word) mul8s_compare::mn#0) goto mul8s_compare::@8
+Simple Condition (bool~) mul8s_compare::$12 [651] if((byte) mul8s_compare::ok#3!=(byte) 0) goto mul8s_compare::@9
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [203] (byte[$200]) mulf_sqr1_lo ← { fill( $200, 0) }
-Constant right-side identified [204] (byte[$200]) mulf_sqr1_hi ← { fill( $200, 0) }
-Constant right-side identified [205] (byte[$200]) mulf_sqr2_lo ← { fill( $200, 0) }
-Constant right-side identified [206] (byte[$200]) mulf_sqr2_hi ← { fill( $200, 0) }
-Constant right-side identified [423] (byte[$200]) mula_sqr1_lo ← { fill( $200, 0) }
-Constant right-side identified [424] (byte[$200]) mula_sqr1_hi ← { fill( $200, 0) }
-Constant right-side identified [425] (byte[$200]) mula_sqr2_lo ← { fill( $200, 0) }
-Constant right-side identified [426] (byte[$200]) mula_sqr2_hi ← { fill( $200, 0) }
+Constant right-side identified [201] (byte[$200]) mulf_sqr1_lo ← { fill( $200, 0) }
+Constant right-side identified [202] (byte[$200]) mulf_sqr1_hi ← { fill( $200, 0) }
+Constant right-side identified [203] (byte[$200]) mulf_sqr2_lo ← { fill( $200, 0) }
+Constant right-side identified [204] (byte[$200]) mulf_sqr2_hi ← { fill( $200, 0) }
+Constant right-side identified [415] (byte[$200]) mula_sqr1_lo ← { fill( $200, 0) }
+Constant right-side identified [416] (byte[$200]) mula_sqr1_hi ← { fill( $200, 0) }
+Constant right-side identified [417] (byte[$200]) mula_sqr2_lo ← { fill( $200, 0) }
+Constant right-side identified [418] (byte[$200]) mula_sqr2_hi ← { fill( $200, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte) print_char::ch#0 = '-'
 Constant (const byte) print_char::ch#1 = ' '
 Constant (const byte) print_char::ch#2 = '-'
 Constant (const byte) print_char::ch#3 = ' '
-Constant (const byte[]) print_hextab = $0
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
 Constant (const word) mul8u::res#0 = 0
@@ -3674,11 +3643,6 @@ Constant (const byte) mulf_init::c#0 = 0
 Constant (const byte) mulf_init::x_255#0 = -1
 Constant (const byte) mulf_init::dir#0 = $ff
 Constant (const byte) mulf_init::dir#1 = 1
-Constant (const byte*) mulf8u_prepare::memA = (byte*) 253
-Constant (const byte*) mulf8u_prepared::resL = (byte*) 254
-Constant (const byte*) mulf8u_prepared::memB = (byte*) 255
-Constant (const signed byte*) mulf8s_prepared::memA = (signed byte*) 253
-Constant (const byte*) BGCOL = (byte*) 53281
 Constant (const word) muls8u::m#0 = 0
 Constant (const byte) muls8u::i#0 = 0
 Constant (const signed word) muls8s::m#0 = 0
@@ -3688,7 +3652,6 @@ Constant (const byte[$200]) mula_sqr1_lo = { fill( $200, 0) }
 Constant (const byte[$200]) mula_sqr1_hi = { fill( $200, 0) }
 Constant (const byte[$200]) mula_sqr2_lo = { fill( $200, 0) }
 Constant (const byte[$200]) mula_sqr2_hi = { fill( $200, 0) }
-Constant (const byte*) mulf_init_asm::mem = (byte*) 255
 Constant (const byte*) print_str::str#1 = mulf_tables_cmp::str
 Constant (const byte*) print_str::str#2 = mulf_tables_cmp::str1
 Constant (const byte*) print_str::str#3 = mulf_tables_cmp::str2
@@ -3728,10 +3691,10 @@ Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [3] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
 Successful SSA optimization Pass2ConstantStringConsolidation
-Resolved ranged next value [524] mul8u_compare::b#1 ← ++ mul8u_compare::b#10 to ++
-Resolved ranged comparison value [526] if(mul8u_compare::b#1!=rangelast(0,$ff)) goto mul8u_compare::@2 to (number) 0
-Resolved ranged next value [543] mul8u_compare::a#1 ← ++ mul8u_compare::a#7 to ++
-Resolved ranged comparison value [545] if(mul8u_compare::a#1!=rangelast(0,$ff)) goto mul8u_compare::@1 to (number) 0
+Resolved ranged next value [515] mul8u_compare::b#1 ← ++ mul8u_compare::b#10 to ++
+Resolved ranged comparison value [517] if(mul8u_compare::b#1!=rangelast(0,$ff)) goto mul8u_compare::@2 to (number) 0
+Resolved ranged next value [534] mul8u_compare::a#1 ← ++ mul8u_compare::a#7 to ++
+Resolved ranged comparison value [536] if(mul8u_compare::a#1!=rangelast(0,$ff)) goto mul8u_compare::@1 to (number) 0
 Eliminating unused constant (const void*) memset::return#2
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) 0 in if((byte) mul8u_compare::b#1!=(number) 0) goto mul8u_compare::@2
@@ -3829,7 +3792,6 @@ Constant inlined mulf_init::sqr2_hi#0 = (const byte[$200]) mulf_sqr2_hi
 Constant inlined mul8u_compare::ok#2 = (byte) 0
 Constant inlined mul8u_compare::ok#1 = (byte) 0
 Constant inlined mul8u_compare::ok#0 = (byte) 1
-Constant inlined $0 = (const byte[]) print_hextab
 Constant inlined mul8s_compare::b#0 = (signed byte) -$80
 Constant inlined mulf_init::dir#1 = (byte) 1
 Constant inlined mulf_init::dir#0 = (byte) $ff
@@ -3908,9 +3870,7 @@ Added new block during phi lifting mul8u_compare::@20(between mul8u_compare::@3 
 Added new block during phi lifting mul8s_compare::@26(between mul8s_compare::@7 and mul8s_compare::@8)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @12
-Adding NOP phi() at start of @29
 Adding NOP phi() at start of @41
-Adding NOP phi() at start of @50
 Adding NOP phi() at start of @53
 Adding NOP phi() at start of @59
 Adding NOP phi() at start of @60
@@ -3956,154 +3916,152 @@ Adding NOP phi() at start of memset
 Adding NOP phi() at start of memset::@2
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
-Calls in [] to main:7 
-Calls in [main] to print_cls:11 mulf_init:13 mulf_init_asm:15 mulf_tables_cmp:17 mul8u_compare:19 mul8s_compare:21 
-Calls in [mul8s_compare] to print_str:28 print_ln:31 muls8s:41 mulf8s:46 mul8s:51 mul8s_error:66 
-Calls in [mul8s_error] to print_str:72 print_sbyte:75 print_str:77 print_sbyte:80 print_str:82 print_sword:85 print_str:87 print_sword:90 print_str:92 print_sword:95 print_ln:98 
-Calls in [print_sword] to print_char:112 print_word:118 print_char:122 
-Calls in [print_word] to print_byte:133 print_byte:137 
-Calls in [print_byte] to print_char:145 print_char:150 
-Calls in [print_sbyte] to print_char:167 print_byte:173 print_char:177 
-Calls in [mul8s] to mul8u:184 
-Calls in [mulf8s] to mulf8u_prepare:223 mulf8s_prepared:226 
-Calls in [mulf8s_prepared] to mulf8u_prepared:231 
-Calls in [mul8u_compare] to muls8u:283 mulf8u:288 mul8u:295 mul8u_error:311 print_str:319 print_ln:322 
-Calls in [mul8u_error] to print_str:328 print_byte:332 print_str:334 print_byte:338 print_str:340 print_word:344 print_str:346 print_word:350 print_str:352 print_word:356 print_ln:359 
-Calls in [mulf8u] to mulf8u_prepare:364 mulf8u_prepared:367 
-Calls in [mulf_tables_cmp] to print_str:386 print_ln:388 print_str:395 print_word:399 print_str:401 print_word:405 
-Calls in [print_cls] to memset:462 
+Calls in [] to main:5 
+Calls in [main] to print_cls:9 mulf_init:11 mulf_init_asm:13 mulf_tables_cmp:15 mul8u_compare:17 mul8s_compare:19 
+Calls in [mul8s_compare] to print_str:26 print_ln:29 muls8s:39 mulf8s:44 mul8s:49 mul8s_error:64 
+Calls in [mul8s_error] to print_str:70 print_sbyte:73 print_str:75 print_sbyte:78 print_str:80 print_sword:83 print_str:85 print_sword:88 print_str:90 print_sword:93 print_ln:96 
+Calls in [print_sword] to print_char:110 print_word:116 print_char:120 
+Calls in [print_word] to print_byte:131 print_byte:135 
+Calls in [print_byte] to print_char:143 print_char:148 
+Calls in [print_sbyte] to print_char:165 print_byte:171 print_char:175 
+Calls in [mul8s] to mul8u:182 
+Calls in [mulf8s] to mulf8u_prepare:221 mulf8s_prepared:224 
+Calls in [mulf8s_prepared] to mulf8u_prepared:229 
+Calls in [mul8u_compare] to muls8u:281 mulf8u:286 mul8u:293 mul8u_error:309 print_str:317 print_ln:320 
+Calls in [mul8u_error] to print_str:326 print_byte:330 print_str:332 print_byte:336 print_str:338 print_word:342 print_str:344 print_word:348 print_str:350 print_word:354 print_ln:357 
+Calls in [mulf8u] to mulf8u_prepare:362 mulf8u_prepared:365 
+Calls in [mulf_tables_cmp] to print_str:384 print_ln:386 print_str:393 print_word:397 print_str:399 print_word:403 
+Calls in [print_cls] to memset:460 
 
 Created 62 initial phi equivalence classes
-Not coalescing [27] print_char_cursor#193 ← print_line_cursor#1
-Coalesced [29] print_line_cursor#119 ← print_line_cursor#1
-Coalesced [30] print_char_cursor#208 ← print_char_cursor#134
-Coalesced [38] mul8s_compare::a#16 ← mul8s_compare::a#1
-Coalesced [69] mul8s_compare::b#13 ← mul8s_compare::b#1
-Coalesced [70] mul8s_compare::ok#5 ← mul8s_compare::ok#4
-Not coalescing [71] print_char_cursor#194 ← print_line_cursor#1
-Coalesced [74] print_sbyte::b#9 ← print_sbyte::b#1
-Coalesced [76] print_char_cursor#195 ← print_char_cursor#19
-Coalesced [79] print_sbyte::b#10 ← print_sbyte::b#2
-Coalesced (already) [81] print_char_cursor#196 ← print_char_cursor#19
-Coalesced [84] print_sword::w#10 ← print_sword::w#1
-Coalesced (already) [86] print_char_cursor#197 ← print_char_cursor#19
-Coalesced [89] print_sword::w#11 ← print_sword::w#2
-Coalesced (already) [91] print_char_cursor#198 ← print_char_cursor#19
-Coalesced [94] print_sword::w#12 ← print_sword::w#3
-Coalesced (already) [96] print_line_cursor#120 ← print_line_cursor#1
-Coalesced [97] print_char_cursor#209 ← print_char_cursor#19
-Coalesced [102] print_line_cursor#123 ← print_line_cursor#45
-Coalesced (already) [108] print_line_cursor#124 ← print_line_cursor#1
-Coalesced [111] print_char_cursor#229 ← print_char_cursor#134
-Coalesced [113] print_sword::w#14 ← print_sword::w#4
-Coalesced [116] print_word::w#13 ← print_word::w#0
-Coalesced [117] print_char_cursor#218 ← print_char_cursor#19
-Coalesced (already) [121] print_char_cursor#228 ← print_char_cursor#134
-Coalesced [124] print_sword::w#13 ← print_sword::w#0
-Coalesced [131] print_byte::b#10 ← print_byte::b#1
-Coalesced [132] print_char_cursor#222 ← print_char_cursor#142
-Coalesced [135] print_byte::b#11 ← print_byte::b#2
-Coalesced (already) [136] print_char_cursor#223 ← print_char_cursor#19
-Coalesced [143] print_char::ch#7 ← print_char::ch#4
-Coalesced (already) [144] print_char_cursor#224 ← print_char_cursor#143
-Coalesced [148] print_char::ch#8 ← print_char::ch#5
-Coalesced (already) [149] print_char_cursor#225 ← print_char_cursor#19
-Coalesced [154] print_str::str#19 ← print_str::str#18
-Coalesced (already) [155] print_char_cursor#206 ← print_char_cursor#155
-Coalesced [162] print_str::str#20 ← print_str::str#0
-Coalesced [163] print_char_cursor#207 ← print_char_cursor#1
-Coalesced (already) [166] print_char_cursor#227 ← print_char_cursor#134
-Coalesced [168] print_sbyte::b#12 ← print_sbyte::b#3
-Coalesced [171] print_byte::b#9 ← print_byte::b#0
-Coalesced (already) [172] print_char_cursor#221 ← print_char_cursor#19
-Coalesced (already) [176] print_char_cursor#226 ← print_char_cursor#134
-Coalesced [179] print_sbyte::b#11 ← print_sbyte::b#0
-Coalesced [182] mul8u::mb#6 ← mul8u::b#0
-Coalesced [183] mul8u::a#8 ← mul8u::a#1
-Coalesced [191] mul8s::m#7 ← mul8s::m#1
-Coalesced [197] mul8s::m#10 ← mul8s::m#2
-Coalesced [200] mul8s::m#9 ← mul8s::m#5
-Coalesced [201] mul8s::m#8 ← mul8s::m#0
-Coalesced [203] mul8u::a#10 ← mul8u::a#6
-Coalesced [204] mul8u::mb#8 ← mul8u::mb#0
-Coalesced [212] mul8u::res#9 ← mul8u::res#1
-Coalesced [216] mul8u::a#11 ← mul8u::a#0
-Coalesced [217] mul8u::res#7 ← mul8u::res#6
-Coalesced [218] mul8u::mb#9 ← mul8u::mb#1
-Coalesced (already) [219] mul8u::res#8 ← mul8u::res#2
-Coalesced [222] mulf8u_prepare::a#3 ← mulf8u_prepare::a#1
-Coalesced [230] mulf8u_prepared::b#3 ← mulf8u_prepared::b#1
-Coalesced [238] mulf8s_prepared::m#7 ← mulf8s_prepared::m#1
-Coalesced [244] mulf8s_prepared::m#10 ← mulf8s_prepared::m#2
-Coalesced [247] mulf8s_prepared::m#9 ← mulf8s_prepared::m#5
-Coalesced [248] mulf8s_prepared::m#8 ← mulf8s_prepared::m#0
-Coalesced [263] muls8s::return#6 ← muls8s::m#3
-Coalesced [268] muls8s::j#4 ← muls8s::j#1
-Coalesced [269] muls8s::m#11 ← muls8s::m#1
-Coalesced [273] muls8s::return#5 ← muls8s::m#5
-Coalesced [276] muls8s::i#4 ← muls8s::i#1
-Coalesced [277] muls8s::m#12 ← muls8s::m#2
-Coalesced [293] mul8u::mb#7 ← mul8u::b#1
-Coalesced [294] mul8u::a#9 ← mul8u::a#2
-Coalesced [318] print_char_cursor#199 ← print_char_cursor#100
-Coalesced [320] print_line_cursor#121 ← print_line_cursor#11
-Coalesced (already) [321] print_char_cursor#210 ← print_char_cursor#134
-Coalesced [324] mul8u_compare::a#14 ← mul8u_compare::a#1
-Coalesced [325] mul8u_compare::b#12 ← mul8u_compare::b#1
-Coalesced [326] mul8u_compare::ok#5 ← mul8u_compare::ok#4
-Coalesced (already) [327] print_char_cursor#200 ← print_char_cursor#100
-Coalesced [330] print_byte::b#7 ← print_byte::b#3
-Coalesced (already) [331] print_char_cursor#219 ← print_char_cursor#134
-Coalesced (already) [333] print_char_cursor#201 ← print_char_cursor#19
-Coalesced [336] print_byte::b#8 ← print_byte::b#4
-Coalesced (already) [337] print_char_cursor#220 ← print_char_cursor#134
-Coalesced (already) [339] print_char_cursor#202 ← print_char_cursor#19
-Coalesced [342] print_word::w#8 ← print_word::w#3
-Coalesced (already) [343] print_char_cursor#213 ← print_char_cursor#134
-Coalesced (already) [345] print_char_cursor#203 ← print_char_cursor#19
-Coalesced [348] print_word::w#9 ← print_word::w#4
-Coalesced (already) [349] print_char_cursor#214 ← print_char_cursor#134
-Coalesced (already) [351] print_char_cursor#204 ← print_char_cursor#19
-Coalesced [354] print_word::w#10 ← print_word::w#5
-Coalesced (already) [355] print_char_cursor#215 ← print_char_cursor#134
-Coalesced (already) [357] print_line_cursor#122 ← print_line_cursor#11
-Coalesced (already) [358] print_char_cursor#211 ← print_char_cursor#19
-Coalesced [363] mulf8u_prepare::a#4 ← mulf8u_prepare::a#0
-Coalesced [366] mulf8u_prepared::b#4 ← mulf8u_prepared::b#0
-Coalesced [375] muls8u::return#5 ← muls8u::m#3
-Coalesced [380] muls8u::i#4 ← muls8u::i#1
-Coalesced [381] muls8u::m#6 ← muls8u::m#1
-Coalesced (already) [387] print_char_cursor#212 ← print_char_cursor#134
-Not coalescing [389] print_char_cursor#230 ← print_line_cursor#1
-Coalesced (already) [390] print_line_cursor#125 ← print_line_cursor#1
-Coalesced [397] print_word::w#11 ← print_word::w#1
-Coalesced (already) [398] print_char_cursor#216 ← print_char_cursor#134
-Coalesced (already) [400] print_char_cursor#205 ← print_char_cursor#19
-Coalesced [403] print_word::w#12 ← print_word::w#2
-Coalesced (already) [404] print_char_cursor#217 ← print_char_cursor#134
-Coalesced (already) [406] print_char_cursor#231 ← print_char_cursor#19
-Coalesced [409] mulf_tables_cmp::kc_sqr#9 ← mulf_tables_cmp::kc_sqr#1
-Coalesced [410] mulf_tables_cmp::asm_sqr#7 ← mulf_tables_cmp::asm_sqr#1
-Coalesced [434] mulf_init::sqr2_lo#6 ← mulf_init::sqr2_lo#1
-Coalesced [435] mulf_init::x_255#6 ← mulf_init::x_255#1
-Coalesced [436] mulf_init::sqr2_hi#6 ← mulf_init::sqr2_hi#1
-Coalesced [437] mulf_init::dir#5 ← mulf_init::dir#4
-Coalesced (already) [438] mulf_init::dir#6 ← mulf_init::dir#2
-Coalesced [444] mulf_init::sqr#9 ← mulf_init::sqr#2
-Coalesced [445] mulf_init::x_2#8 ← mulf_init::x_2#1
-Coalesced [454] mulf_init::sqr1_lo#6 ← mulf_init::sqr1_lo#1
-Coalesced [455] mulf_init::c#6 ← mulf_init::c#1
-Coalesced [456] mulf_init::sqr#7 ← mulf_init::sqr#1
-Coalesced [457] mulf_init::sqr1_hi#6 ← mulf_init::sqr1_hi#1
-Coalesced [458] mulf_init::x_2#6 ← mulf_init::x_2#2
-Coalesced [459] mulf_init::sqr#8 ← mulf_init::sqr#4
-Coalesced (already) [460] mulf_init::x_2#7 ← mulf_init::x_2#3
-Coalesced [473] memset::dst#4 ← memset::dst#1
+Not coalescing [25] print_char_cursor#191 ← print_line_cursor#1
+Coalesced [27] print_line_cursor#117 ← print_line_cursor#1
+Coalesced [28] print_char_cursor#206 ← print_char_cursor#134
+Coalesced [36] mul8s_compare::a#16 ← mul8s_compare::a#1
+Coalesced [67] mul8s_compare::b#13 ← mul8s_compare::b#1
+Coalesced [68] mul8s_compare::ok#5 ← mul8s_compare::ok#4
+Not coalescing [69] print_char_cursor#192 ← print_line_cursor#1
+Coalesced [72] print_sbyte::b#9 ← print_sbyte::b#1
+Coalesced [74] print_char_cursor#193 ← print_char_cursor#19
+Coalesced [77] print_sbyte::b#10 ← print_sbyte::b#2
+Coalesced (already) [79] print_char_cursor#194 ← print_char_cursor#19
+Coalesced [82] print_sword::w#10 ← print_sword::w#1
+Coalesced (already) [84] print_char_cursor#195 ← print_char_cursor#19
+Coalesced [87] print_sword::w#11 ← print_sword::w#2
+Coalesced (already) [89] print_char_cursor#196 ← print_char_cursor#19
+Coalesced [92] print_sword::w#12 ← print_sword::w#3
+Coalesced (already) [94] print_line_cursor#118 ← print_line_cursor#1
+Coalesced [95] print_char_cursor#207 ← print_char_cursor#19
+Coalesced [100] print_line_cursor#121 ← print_line_cursor#45
+Coalesced (already) [106] print_line_cursor#122 ← print_line_cursor#1
+Coalesced [109] print_char_cursor#227 ← print_char_cursor#134
+Coalesced [111] print_sword::w#14 ← print_sword::w#4
+Coalesced [114] print_word::w#13 ← print_word::w#0
+Coalesced [115] print_char_cursor#216 ← print_char_cursor#19
+Coalesced (already) [119] print_char_cursor#226 ← print_char_cursor#134
+Coalesced [122] print_sword::w#13 ← print_sword::w#0
+Coalesced [129] print_byte::b#10 ← print_byte::b#1
+Coalesced [130] print_char_cursor#220 ← print_char_cursor#142
+Coalesced [133] print_byte::b#11 ← print_byte::b#2
+Coalesced (already) [134] print_char_cursor#221 ← print_char_cursor#19
+Coalesced [141] print_char::ch#7 ← print_char::ch#4
+Coalesced (already) [142] print_char_cursor#222 ← print_char_cursor#143
+Coalesced [146] print_char::ch#8 ← print_char::ch#5
+Coalesced (already) [147] print_char_cursor#223 ← print_char_cursor#19
+Coalesced [152] print_str::str#19 ← print_str::str#18
+Coalesced (already) [153] print_char_cursor#204 ← print_char_cursor#155
+Coalesced [160] print_str::str#20 ← print_str::str#0
+Coalesced [161] print_char_cursor#205 ← print_char_cursor#1
+Coalesced (already) [164] print_char_cursor#225 ← print_char_cursor#134
+Coalesced [166] print_sbyte::b#12 ← print_sbyte::b#3
+Coalesced [169] print_byte::b#9 ← print_byte::b#0
+Coalesced (already) [170] print_char_cursor#219 ← print_char_cursor#19
+Coalesced (already) [174] print_char_cursor#224 ← print_char_cursor#134
+Coalesced [177] print_sbyte::b#11 ← print_sbyte::b#0
+Coalesced [180] mul8u::mb#6 ← mul8u::b#0
+Coalesced [181] mul8u::a#8 ← mul8u::a#1
+Coalesced [189] mul8s::m#7 ← mul8s::m#1
+Coalesced [195] mul8s::m#10 ← mul8s::m#2
+Coalesced [198] mul8s::m#9 ← mul8s::m#5
+Coalesced [199] mul8s::m#8 ← mul8s::m#0
+Coalesced [201] mul8u::a#10 ← mul8u::a#6
+Coalesced [202] mul8u::mb#8 ← mul8u::mb#0
+Coalesced [210] mul8u::res#9 ← mul8u::res#1
+Coalesced [214] mul8u::a#11 ← mul8u::a#0
+Coalesced [215] mul8u::res#7 ← mul8u::res#6
+Coalesced [216] mul8u::mb#9 ← mul8u::mb#1
+Coalesced (already) [217] mul8u::res#8 ← mul8u::res#2
+Coalesced [220] mulf8u_prepare::a#3 ← mulf8u_prepare::a#1
+Coalesced [228] mulf8u_prepared::b#3 ← mulf8u_prepared::b#1
+Coalesced [236] mulf8s_prepared::m#7 ← mulf8s_prepared::m#1
+Coalesced [242] mulf8s_prepared::m#10 ← mulf8s_prepared::m#2
+Coalesced [245] mulf8s_prepared::m#9 ← mulf8s_prepared::m#5
+Coalesced [246] mulf8s_prepared::m#8 ← mulf8s_prepared::m#0
+Coalesced [261] muls8s::return#6 ← muls8s::m#3
+Coalesced [266] muls8s::j#4 ← muls8s::j#1
+Coalesced [267] muls8s::m#11 ← muls8s::m#1
+Coalesced [271] muls8s::return#5 ← muls8s::m#5
+Coalesced [274] muls8s::i#4 ← muls8s::i#1
+Coalesced [275] muls8s::m#12 ← muls8s::m#2
+Coalesced [291] mul8u::mb#7 ← mul8u::b#1
+Coalesced [292] mul8u::a#9 ← mul8u::a#2
+Coalesced [316] print_char_cursor#197 ← print_char_cursor#100
+Coalesced [318] print_line_cursor#119 ← print_line_cursor#11
+Coalesced (already) [319] print_char_cursor#208 ← print_char_cursor#134
+Coalesced [322] mul8u_compare::a#14 ← mul8u_compare::a#1
+Coalesced [323] mul8u_compare::b#12 ← mul8u_compare::b#1
+Coalesced [324] mul8u_compare::ok#5 ← mul8u_compare::ok#4
+Coalesced (already) [325] print_char_cursor#198 ← print_char_cursor#100
+Coalesced [328] print_byte::b#7 ← print_byte::b#3
+Coalesced (already) [329] print_char_cursor#217 ← print_char_cursor#134
+Coalesced (already) [331] print_char_cursor#199 ← print_char_cursor#19
+Coalesced [334] print_byte::b#8 ← print_byte::b#4
+Coalesced (already) [335] print_char_cursor#218 ← print_char_cursor#134
+Coalesced (already) [337] print_char_cursor#200 ← print_char_cursor#19
+Coalesced [340] print_word::w#8 ← print_word::w#3
+Coalesced (already) [341] print_char_cursor#211 ← print_char_cursor#134
+Coalesced (already) [343] print_char_cursor#201 ← print_char_cursor#19
+Coalesced [346] print_word::w#9 ← print_word::w#4
+Coalesced (already) [347] print_char_cursor#212 ← print_char_cursor#134
+Coalesced (already) [349] print_char_cursor#202 ← print_char_cursor#19
+Coalesced [352] print_word::w#10 ← print_word::w#5
+Coalesced (already) [353] print_char_cursor#213 ← print_char_cursor#134
+Coalesced (already) [355] print_line_cursor#120 ← print_line_cursor#11
+Coalesced (already) [356] print_char_cursor#209 ← print_char_cursor#19
+Coalesced [361] mulf8u_prepare::a#4 ← mulf8u_prepare::a#0
+Coalesced [364] mulf8u_prepared::b#4 ← mulf8u_prepared::b#0
+Coalesced [373] muls8u::return#5 ← muls8u::m#3
+Coalesced [378] muls8u::i#4 ← muls8u::i#1
+Coalesced [379] muls8u::m#6 ← muls8u::m#1
+Coalesced (already) [385] print_char_cursor#210 ← print_char_cursor#134
+Not coalescing [387] print_char_cursor#228 ← print_line_cursor#1
+Coalesced (already) [388] print_line_cursor#123 ← print_line_cursor#1
+Coalesced [395] print_word::w#11 ← print_word::w#1
+Coalesced (already) [396] print_char_cursor#214 ← print_char_cursor#134
+Coalesced (already) [398] print_char_cursor#203 ← print_char_cursor#19
+Coalesced [401] print_word::w#12 ← print_word::w#2
+Coalesced (already) [402] print_char_cursor#215 ← print_char_cursor#134
+Coalesced (already) [404] print_char_cursor#229 ← print_char_cursor#19
+Coalesced [407] mulf_tables_cmp::kc_sqr#9 ← mulf_tables_cmp::kc_sqr#1
+Coalesced [408] mulf_tables_cmp::asm_sqr#7 ← mulf_tables_cmp::asm_sqr#1
+Coalesced [432] mulf_init::sqr2_lo#6 ← mulf_init::sqr2_lo#1
+Coalesced [433] mulf_init::x_255#6 ← mulf_init::x_255#1
+Coalesced [434] mulf_init::sqr2_hi#6 ← mulf_init::sqr2_hi#1
+Coalesced [435] mulf_init::dir#5 ← mulf_init::dir#4
+Coalesced (already) [436] mulf_init::dir#6 ← mulf_init::dir#2
+Coalesced [442] mulf_init::sqr#9 ← mulf_init::sqr#2
+Coalesced [443] mulf_init::x_2#8 ← mulf_init::x_2#1
+Coalesced [452] mulf_init::sqr1_lo#6 ← mulf_init::sqr1_lo#1
+Coalesced [453] mulf_init::c#6 ← mulf_init::c#1
+Coalesced [454] mulf_init::sqr#7 ← mulf_init::sqr#1
+Coalesced [455] mulf_init::sqr1_hi#6 ← mulf_init::sqr1_hi#1
+Coalesced [456] mulf_init::x_2#6 ← mulf_init::x_2#2
+Coalesced [457] mulf_init::sqr#8 ← mulf_init::sqr#4
+Coalesced (already) [458] mulf_init::x_2#7 ← mulf_init::x_2#3
+Coalesced [471] memset::dst#4 ← memset::dst#1
 Coalesced down to 38 phi equivalence classes
 Culled Empty Block (label) @12
-Culled Empty Block (label) @29
 Culled Empty Block (label) @41
-Culled Empty Block (label) @50
 Culled Empty Block (label) @53
 Culled Empty Block (label) @60
 Culled Empty Block (label) main::@6
@@ -4293,7 +4251,7 @@ mul8s_compare::@1: scope:[mul8s_compare]  from mul8s_compare mul8s_compare::@5
   [19] if((signed byte) mul8s_compare::a#10!=(signed byte) -$80) goto mul8s_compare::@3
   to:mul8s_compare::@2
 mul8s_compare::@2: scope:[mul8s_compare]  from mul8s_compare::@1
-  [20] (byte*~) print_char_cursor#193 ← (byte*) print_line_cursor#1
+  [20] (byte*~) print_char_cursor#191 ← (byte*) print_line_cursor#1
   [21] call print_str 
   to:mul8s_compare::@11
 mul8s_compare::@11: scope:[mul8s_compare]  from mul8s_compare::@2
@@ -4362,7 +4320,7 @@ mul8s_compare::@8: scope:[mul8s_compare]  from mul8s_compare::@7
 
 (void()) mul8s_error((signed byte) mul8s_error::a , (signed byte) mul8s_error::b , (signed word) mul8s_error::ms , (signed word) mul8s_error::mn , (signed word) mul8s_error::mf)
 mul8s_error: scope:[mul8s_error]  from mul8s_compare::@10
-  [57] (byte*~) print_char_cursor#194 ← (byte*) print_line_cursor#1
+  [57] (byte*~) print_char_cursor#192 ← (byte*) print_line_cursor#1
   [58] call print_str 
   to:mul8s_error::@1
 mul8s_error::@1: scope:[mul8s_error]  from mul8s_error
@@ -4493,7 +4451,7 @@ print_byte::@return: scope:[print_byte]  from print_byte::@1
 
 (void()) print_str((byte*) print_str::str)
 print_str: scope:[print_str]  from mul8s_compare::@2 mul8s_error mul8s_error::@2 mul8s_error::@4 mul8s_error::@6 mul8s_error::@8 mul8u_compare::@9 mul8u_error mul8u_error::@2 mul8u_error::@4 mul8u_error::@6 mul8u_error::@8 mulf_tables_cmp::@3 mulf_tables_cmp::@5 mulf_tables_cmp::@9
-  [114] (byte*) print_char_cursor#155 ← phi( mul8s_compare::@2/(byte*~) print_char_cursor#193 mul8s_error/(byte*~) print_char_cursor#194 mul8s_error::@2/(byte*) print_char_cursor#19 mul8s_error::@4/(byte*) print_char_cursor#19 mul8s_error::@6/(byte*) print_char_cursor#19 mul8s_error::@8/(byte*) print_char_cursor#19 mul8u_compare::@9/(byte*) print_char_cursor#100 mul8u_error/(byte*) print_char_cursor#100 mul8u_error::@2/(byte*) print_char_cursor#19 mul8u_error::@4/(byte*) print_char_cursor#19 mul8u_error::@6/(byte*) print_char_cursor#19 mul8u_error::@8/(byte*) print_char_cursor#19 mulf_tables_cmp::@9/(byte*) print_char_cursor#19 mulf_tables_cmp::@3/(byte*) 1024 mulf_tables_cmp::@5/(byte*) 1024 )
+  [114] (byte*) print_char_cursor#155 ← phi( mul8s_compare::@2/(byte*~) print_char_cursor#191 mul8s_error/(byte*~) print_char_cursor#192 mul8s_error::@2/(byte*) print_char_cursor#19 mul8s_error::@4/(byte*) print_char_cursor#19 mul8s_error::@6/(byte*) print_char_cursor#19 mul8s_error::@8/(byte*) print_char_cursor#19 mul8u_compare::@9/(byte*) print_char_cursor#100 mul8u_error/(byte*) print_char_cursor#100 mul8u_error::@2/(byte*) print_char_cursor#19 mul8u_error::@4/(byte*) print_char_cursor#19 mul8u_error::@6/(byte*) print_char_cursor#19 mul8u_error::@8/(byte*) print_char_cursor#19 mulf_tables_cmp::@9/(byte*) print_char_cursor#19 mulf_tables_cmp::@3/(byte*) 1024 mulf_tables_cmp::@5/(byte*) 1024 )
   [114] (byte*) print_str::str#18 ← phi( mul8s_compare::@2/(const string) mul8s_compare::str mul8s_error/(const string) mul8s_error::str mul8s_error::@2/(const string) str1 mul8s_error::@4/(const string) str2 mul8s_error::@6/(const string) str3 mul8s_error::@8/(const string) str4 mul8u_compare::@9/(const string) mul8u_compare::str mul8u_error/(const string) mul8u_error::str mul8u_error::@2/(const string) str1 mul8u_error::@4/(const string) str2 mul8u_error::@6/(const string) str3 mul8u_error::@8/(const string) str4 mulf_tables_cmp::@9/(const string) mulf_tables_cmp::str2 mulf_tables_cmp::@3/(const string) mulf_tables_cmp::str mulf_tables_cmp::@5/(const string) mulf_tables_cmp::str1 )
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
@@ -4876,11 +4834,11 @@ mulf_tables_cmp::@6: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@3
   [285] call print_ln 
   to:mulf_tables_cmp::@7
 mulf_tables_cmp::@7: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@6
-  [286] (byte*~) print_char_cursor#230 ← (byte*) print_line_cursor#1
+  [286] (byte*~) print_char_cursor#228 ← (byte*) print_line_cursor#1
   to:mulf_tables_cmp::@return
 mulf_tables_cmp::@return: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@10 mulf_tables_cmp::@7
   [287] (byte*) print_line_cursor#11 ← phi( mulf_tables_cmp::@7/(byte*) print_line_cursor#1 mulf_tables_cmp::@10/(byte*) 1024 )
-  [287] (byte*) print_char_cursor#100 ← phi( mulf_tables_cmp::@7/(byte*~) print_char_cursor#230 mulf_tables_cmp::@10/(byte*) print_char_cursor#19 )
+  [287] (byte*) print_char_cursor#100 ← phi( mulf_tables_cmp::@7/(byte*~) print_char_cursor#228 mulf_tables_cmp::@10/(byte*) print_char_cursor#19 )
   [288] return 
   to:@return
 mulf_tables_cmp::@2: scope:[mulf_tables_cmp]  from mulf_tables_cmp::@1
@@ -5253,9 +5211,9 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor#143 3.9999999999999996
 (byte*) print_char_cursor#155 28.0
 (byte*) print_char_cursor#19 0.7083333333333331
-(byte*~) print_char_cursor#193 4.0
-(byte*~) print_char_cursor#194 4.0
-(byte*~) print_char_cursor#230 4.0
+(byte*~) print_char_cursor#191 4.0
+(byte*~) print_char_cursor#192 4.0
+(byte*~) print_char_cursor#228 4.0
 (byte*) print_char_cursor#86 8.0
 (void()) print_cls()
 (byte*) print_line_cursor
@@ -5306,7 +5264,7 @@ Initial phi equivalence classes
 [ print_char::ch#6 print_char::ch#4 print_char::ch#5 ]
 [ print_word::w#6 print_word::w#3 print_word::w#4 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 ]
 [ print_byte::b#5 print_byte::b#3 print_byte::b#4 print_byte::b#0 print_byte::b#1 print_byte::b#2 ]
-[ print_char_cursor#155 print_char_cursor#193 print_char_cursor#194 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#230 ]
+[ print_char_cursor#155 print_char_cursor#191 print_char_cursor#192 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#228 ]
 [ print_str::str#16 print_str::str#18 print_str::str#0 ]
 [ print_sbyte::b#5 print_sbyte::b#0 print_sbyte::b#3 print_sbyte::b#1 print_sbyte::b#2 ]
 [ mul8s::m#4 mul8s::m#5 mul8s::m#1 mul8s::m#0 mul8s::m#2 ]
@@ -5399,7 +5357,7 @@ Complete equivalence classes
 [ print_char::ch#6 print_char::ch#4 print_char::ch#5 ]
 [ print_word::w#6 print_word::w#3 print_word::w#4 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 ]
 [ print_byte::b#5 print_byte::b#3 print_byte::b#4 print_byte::b#0 print_byte::b#1 print_byte::b#2 ]
-[ print_char_cursor#155 print_char_cursor#193 print_char_cursor#194 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#230 ]
+[ print_char_cursor#155 print_char_cursor#191 print_char_cursor#192 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#228 ]
 [ print_str::str#16 print_str::str#18 print_str::str#0 ]
 [ print_sbyte::b#5 print_sbyte::b#0 print_sbyte::b#3 print_sbyte::b#1 print_sbyte::b#2 ]
 [ mul8s::m#4 mul8s::m#5 mul8s::m#1 mul8s::m#0 mul8s::m#2 ]
@@ -5491,7 +5449,7 @@ Allocated zp[2]:7 [ print_sword::w#6 print_sword::w#0 print_sword::w#4 print_swo
 Allocated zp[1]:9 [ print_char::ch#6 print_char::ch#4 print_char::ch#5 ]
 Allocated zp[2]:10 [ print_word::w#6 print_word::w#3 print_word::w#4 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 ]
 Allocated zp[1]:12 [ print_byte::b#5 print_byte::b#3 print_byte::b#4 print_byte::b#0 print_byte::b#1 print_byte::b#2 ]
-Allocated zp[2]:13 [ print_char_cursor#155 print_char_cursor#193 print_char_cursor#194 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#230 ]
+Allocated zp[2]:13 [ print_char_cursor#155 print_char_cursor#191 print_char_cursor#192 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#228 ]
 Allocated zp[2]:15 [ print_str::str#16 print_str::str#18 print_str::str#0 ]
 Allocated zp[1]:17 [ print_sbyte::b#5 print_sbyte::b#0 print_sbyte::b#3 print_sbyte::b#1 print_sbyte::b#2 ]
 Allocated zp[2]:18 [ mul8s::m#4 mul8s::m#5 mul8s::m#1 mul8s::m#0 mul8s::m#2 ]
@@ -5684,7 +5642,7 @@ mul8s_compare: {
     jmp __b2
     // mul8s_compare::@2
   __b2:
-    // [20] (byte*~) print_char_cursor#193 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [20] (byte*~) print_char_cursor#191 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -5692,7 +5650,7 @@ mul8s_compare: {
     // [21] call print_str 
     // [114] phi from mul8s_compare::@2 to print_str [phi:mul8s_compare::@2->print_str]
   print_str_from___b2:
-    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#193 [phi:mul8s_compare::@2->print_str#0] -- register_copy 
+    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#191 [phi:mul8s_compare::@2->print_str#0] -- register_copy 
     // [114] phi (byte*) print_str::str#18 = (const string) mul8s_compare::str [phi:mul8s_compare::@2->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
@@ -5903,7 +5861,7 @@ mul8s_error: {
     .label ms = $4f
     .label mn = $51
     .label mf = $53
-    // [57] (byte*~) print_char_cursor#194 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [57] (byte*~) print_char_cursor#192 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -5911,7 +5869,7 @@ mul8s_error: {
     // [58] call print_str 
     // [114] phi from mul8s_error to print_str [phi:mul8s_error->print_str]
   print_str_from_mul8s_error:
-    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#194 [phi:mul8s_error->print_str#0] -- register_copy 
+    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#192 [phi:mul8s_error->print_str#0] -- register_copy 
     // [114] phi (byte*) print_str::str#18 = (const string) mul8s_error::str [phi:mul8s_error->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
@@ -7442,7 +7400,7 @@ mulf_tables_cmp: {
     jmp __b7
     // mulf_tables_cmp::@7
   __b7:
-    // [286] (byte*~) print_char_cursor#230 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [286] (byte*~) print_char_cursor#228 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -7450,7 +7408,7 @@ mulf_tables_cmp: {
     // [287] phi from mulf_tables_cmp::@7 to mulf_tables_cmp::@return [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return]
   __breturn_from___b7:
     // [287] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#1 [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return#0] -- register_copy 
-    // [287] phi (byte*) print_char_cursor#100 = (byte*~) print_char_cursor#230 [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return#1] -- register_copy 
+    // [287] phi (byte*) print_char_cursor#100 = (byte*~) print_char_cursor#228 [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return#1] -- register_copy 
     jmp __breturn
     // mulf_tables_cmp::@return
   __breturn:
@@ -7938,7 +7896,7 @@ memset: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) BGCOL) ← (byte) 5 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [20] (byte*~) print_char_cursor#193 ← (byte*) print_line_cursor#1 [ print_char_cursor#193 print_line_cursor#1 ] ( main:2::mul8s_compare:15 [ print_char_cursor#193 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [20] (byte*~) print_char_cursor#191 ← (byte*) print_line_cursor#1 [ print_char_cursor#191 print_line_cursor#1 ] ( main:2::mul8s_compare:15 [ print_char_cursor#191 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [31] (signed word) muls8s::return#2 ← (signed word) muls8s::return#0 [ mul8s_compare::a#10 print_line_cursor#1 mul8s_compare::b#10 muls8s::return#2 ] ( main:2::mul8s_compare:15 [ mul8s_compare::a#10 print_line_cursor#1 mul8s_compare::b#10 muls8s::return#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ mul8s_compare::a#10 mul8s_compare::a#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ mul8s_compare::b#10 mul8s_compare::b#1 ]
@@ -7955,7 +7913,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:77 [ mul8s_
 Removing always clobbered register reg byte a as potential for zp[1]:78 [ mul8s_error::b#0 ]
 Statement [53] (signed word) mul8s_error::mn#0 ← (signed word) mul8s_compare::mn#0 [ print_line_cursor#1 mul8s_compare::mf#0 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 ] ( main:2::mul8s_compare:15 [ print_line_cursor#1 mul8s_compare::mf#0 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 ] ) always clobbers reg byte a 
 Statement [54] (signed word) mul8s_error::mf#0 ← (signed word) mul8s_compare::mf#0 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 ] ( main:2::mul8s_compare:15 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 ] ) always clobbers reg byte a 
-Statement [57] (byte*~) print_char_cursor#194 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 print_char_cursor#194 ] ( main:2::mul8s_compare:15::mul8s_error:55 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 print_char_cursor#194 ] ) always clobbers reg byte a 
+Statement [57] (byte*~) print_char_cursor#192 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 print_char_cursor#192 ] ( main:2::mul8s_compare:15::mul8s_error:55 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 print_char_cursor#192 ] ) always clobbers reg byte a 
 Statement [67] (signed word) print_sword::w#1 ← (signed word) mul8s_error::ms#0 [ print_line_cursor#1 mul8s_error::mn#0 mul8s_error::mf#0 print_sword::w#1 print_char_cursor#134 ] ( main:2::mul8s_compare:15::mul8s_error:55 [ print_line_cursor#1 mul8s_error::mn#0 mul8s_error::mf#0 print_sword::w#1 print_char_cursor#134 ] ) always clobbers reg byte a 
 Statement [71] (signed word) print_sword::w#2 ← (signed word) mul8s_error::mn#0 [ print_line_cursor#1 mul8s_error::mf#0 print_sword::w#2 print_char_cursor#134 ] ( main:2::mul8s_compare:15::mul8s_error:55 [ print_line_cursor#1 mul8s_error::mf#0 print_sword::w#2 print_char_cursor#134 ] ) always clobbers reg byte a 
 Statement [75] (signed word) print_sword::w#3 ← (signed word) mul8s_error::mf#0 [ print_line_cursor#1 print_sword::w#3 print_char_cursor#134 ] ( main:2::mul8s_compare:15::mul8s_error:55 [ print_line_cursor#1 print_sword::w#3 print_char_cursor#134 ] ) always clobbers reg byte a 
@@ -8041,7 +7999,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:105 [ muls8
 Removing always clobbered register reg byte a as potential for zp[1]:106 [ muls8u::b#0 ]
 Removing always clobbered register reg byte a as potential for zp[1]:38 [ muls8u::i#2 muls8u::i#1 ]
 Statement [281] if((byte*) mulf_tables_cmp::kc_sqr#2<(const byte[$200]) mulf_sqr1_lo+(word)(number) $200*(number) 4) goto mulf_tables_cmp::@2 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ( main:2::mulf_tables_cmp:11 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ) always clobbers reg byte a 
-Statement [286] (byte*~) print_char_cursor#230 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_char_cursor#230 ] ( main:2::mulf_tables_cmp:11 [ print_line_cursor#1 print_char_cursor#230 ] ) always clobbers reg byte a 
+Statement [286] (byte*~) print_char_cursor#228 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_char_cursor#228 ] ( main:2::mulf_tables_cmp:11 [ print_line_cursor#1 print_char_cursor#228 ] ) always clobbers reg byte a 
 Statement [289] if(*((byte*) mulf_tables_cmp::kc_sqr#2)==*((byte*) mulf_tables_cmp::asm_sqr#2)) goto mulf_tables_cmp::@4 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ( main:2::mulf_tables_cmp:11 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ) always clobbers reg byte a reg byte y 
 Statement [290] *((const byte*) BGCOL) ← (byte) 2 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ( main:2::mulf_tables_cmp:11 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ) always clobbers reg byte a 
 Statement [292] (word) print_word::w#1 ← (word)(byte*) mulf_tables_cmp::asm_sqr#2 [ print_char_cursor#134 print_word::w#1 mulf_tables_cmp::kc_sqr#2 ] ( main:2::mulf_tables_cmp:11 [ print_char_cursor#134 print_word::w#1 mulf_tables_cmp::kc_sqr#2 ] ) always clobbers reg byte a 
@@ -8075,7 +8033,7 @@ Statement [333] (word) mulf_init::sqr#1 ← (word) mulf_init::sqr#3 + (byte) mul
 Statement [340] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:5::memset:336 [ memset::dst#2 ] ) always clobbers reg byte a 
 Statement [342] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:5::memset:336 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [4] *((const byte*) BGCOL) ← (byte) 5 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [20] (byte*~) print_char_cursor#193 ← (byte*) print_line_cursor#1 [ print_char_cursor#193 print_line_cursor#1 ] ( main:2::mul8s_compare:15 [ print_char_cursor#193 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [20] (byte*~) print_char_cursor#191 ← (byte*) print_line_cursor#1 [ print_char_cursor#191 print_line_cursor#1 ] ( main:2::mul8s_compare:15 [ print_char_cursor#191 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [31] (signed word) muls8s::return#2 ← (signed word) muls8s::return#0 [ mul8s_compare::a#10 print_line_cursor#1 mul8s_compare::b#10 muls8s::return#2 ] ( main:2::mul8s_compare:15 [ mul8s_compare::a#10 print_line_cursor#1 mul8s_compare::b#10 muls8s::return#2 ] ) always clobbers reg byte a 
 Statement [32] (signed word) mul8s_compare::ms#0 ← (signed word) muls8s::return#2 [ mul8s_compare::a#10 print_line_cursor#1 mul8s_compare::b#10 mul8s_compare::ms#0 ] ( main:2::mul8s_compare:15 [ mul8s_compare::a#10 print_line_cursor#1 mul8s_compare::b#10 mul8s_compare::ms#0 ] ) always clobbers reg byte a 
 Statement [36] (signed word) mulf8s::return#2 ← (signed word) mulf8s::return#0 [ mul8s_compare::a#10 print_line_cursor#1 mul8s_compare::b#10 mul8s_compare::ms#0 mulf8s::return#2 ] ( main:2::mul8s_compare:15 [ mul8s_compare::a#10 print_line_cursor#1 mul8s_compare::b#10 mul8s_compare::ms#0 mulf8s::return#2 ] ) always clobbers reg byte a 
@@ -8087,7 +8045,7 @@ Statement [49] *((const byte*) BGCOL) ← (byte) 2 [ mul8s_compare::a#10 print_l
 Statement [52] (signed word) mul8s_error::ms#0 ← (signed word) mul8s_compare::ms#0 [ print_line_cursor#1 mul8s_compare::mf#0 mul8s_compare::mn#0 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 ] ( main:2::mul8s_compare:15 [ print_line_cursor#1 mul8s_compare::mf#0 mul8s_compare::mn#0 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 ] ) always clobbers reg byte a 
 Statement [53] (signed word) mul8s_error::mn#0 ← (signed word) mul8s_compare::mn#0 [ print_line_cursor#1 mul8s_compare::mf#0 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 ] ( main:2::mul8s_compare:15 [ print_line_cursor#1 mul8s_compare::mf#0 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 ] ) always clobbers reg byte a 
 Statement [54] (signed word) mul8s_error::mf#0 ← (signed word) mul8s_compare::mf#0 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 ] ( main:2::mul8s_compare:15 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 ] ) always clobbers reg byte a 
-Statement [57] (byte*~) print_char_cursor#194 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 print_char_cursor#194 ] ( main:2::mul8s_compare:15::mul8s_error:55 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 print_char_cursor#194 ] ) always clobbers reg byte a 
+Statement [57] (byte*~) print_char_cursor#192 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 print_char_cursor#192 ] ( main:2::mul8s_compare:15::mul8s_error:55 [ print_line_cursor#1 mul8s_error::a#0 mul8s_error::b#0 mul8s_error::ms#0 mul8s_error::mn#0 mul8s_error::mf#0 print_char_cursor#192 ] ) always clobbers reg byte a 
 Statement [67] (signed word) print_sword::w#1 ← (signed word) mul8s_error::ms#0 [ print_line_cursor#1 mul8s_error::mn#0 mul8s_error::mf#0 print_sword::w#1 print_char_cursor#134 ] ( main:2::mul8s_compare:15::mul8s_error:55 [ print_line_cursor#1 mul8s_error::mn#0 mul8s_error::mf#0 print_sword::w#1 print_char_cursor#134 ] ) always clobbers reg byte a 
 Statement [71] (signed word) print_sword::w#2 ← (signed word) mul8s_error::mn#0 [ print_line_cursor#1 mul8s_error::mf#0 print_sword::w#2 print_char_cursor#134 ] ( main:2::mul8s_compare:15::mul8s_error:55 [ print_line_cursor#1 mul8s_error::mf#0 print_sword::w#2 print_char_cursor#134 ] ) always clobbers reg byte a 
 Statement [75] (signed word) print_sword::w#3 ← (signed word) mul8s_error::mf#0 [ print_line_cursor#1 print_sword::w#3 print_char_cursor#134 ] ( main:2::mul8s_compare:15::mul8s_error:55 [ print_line_cursor#1 print_sword::w#3 print_char_cursor#134 ] ) always clobbers reg byte a 
@@ -8144,7 +8102,7 @@ Statement [269] (word) mulf8u_prepared::return#2 ← (word) mulf8u_prepared::ret
 Statement [270] (word) mulf8u::return#0 ← (word) mulf8u_prepared::return#2 [ mulf8u::return#0 ] ( main:2::mul8u_compare:13::mulf8u:211 [ print_line_cursor#11 print_char_cursor#100 mul8u_compare::a#7 mul8u_compare::b#10 mul8u_compare::ms#0 mulf8u::return#0 ] ) always clobbers reg byte a 
 Statement [277] (word) muls8u::m#1 ← (word) muls8u::m#3 + (byte) muls8u::b#0 [ muls8u::a#0 muls8u::b#0 muls8u::i#2 muls8u::m#1 ] ( main:2::mul8u_compare:13::muls8u:206 [ print_line_cursor#11 print_char_cursor#100 mul8u_compare::a#7 mul8u_compare::b#10 muls8u::a#0 muls8u::b#0 muls8u::i#2 muls8u::m#1 ] ) always clobbers reg byte a 
 Statement [281] if((byte*) mulf_tables_cmp::kc_sqr#2<(const byte[$200]) mulf_sqr1_lo+(word)(number) $200*(number) 4) goto mulf_tables_cmp::@2 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ( main:2::mulf_tables_cmp:11 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ) always clobbers reg byte a 
-Statement [286] (byte*~) print_char_cursor#230 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_char_cursor#230 ] ( main:2::mulf_tables_cmp:11 [ print_line_cursor#1 print_char_cursor#230 ] ) always clobbers reg byte a 
+Statement [286] (byte*~) print_char_cursor#228 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 print_char_cursor#228 ] ( main:2::mulf_tables_cmp:11 [ print_line_cursor#1 print_char_cursor#228 ] ) always clobbers reg byte a 
 Statement [289] if(*((byte*) mulf_tables_cmp::kc_sqr#2)==*((byte*) mulf_tables_cmp::asm_sqr#2)) goto mulf_tables_cmp::@4 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ( main:2::mulf_tables_cmp:11 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ) always clobbers reg byte a reg byte y 
 Statement [290] *((const byte*) BGCOL) ← (byte) 2 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ( main:2::mulf_tables_cmp:11 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::asm_sqr#2 ] ) always clobbers reg byte a 
 Statement [292] (word) print_word::w#1 ← (word)(byte*) mulf_tables_cmp::asm_sqr#2 [ print_char_cursor#134 print_word::w#1 mulf_tables_cmp::kc_sqr#2 ] ( main:2::mulf_tables_cmp:11 [ print_char_cursor#134 print_word::w#1 mulf_tables_cmp::kc_sqr#2 ] ) always clobbers reg byte a 
@@ -8177,7 +8135,7 @@ Potential registers zp[2]:7 [ print_sword::w#6 print_sword::w#0 print_sword::w#4
 Potential registers zp[1]:9 [ print_char::ch#6 print_char::ch#4 print_char::ch#5 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:10 [ print_word::w#6 print_word::w#3 print_word::w#4 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 ] : zp[2]:10 , 
 Potential registers zp[1]:12 [ print_byte::b#5 print_byte::b#3 print_byte::b#4 print_byte::b#0 print_byte::b#1 print_byte::b#2 ] : zp[1]:12 , reg byte x , 
-Potential registers zp[2]:13 [ print_char_cursor#155 print_char_cursor#193 print_char_cursor#194 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#230 ] : zp[2]:13 , 
+Potential registers zp[2]:13 [ print_char_cursor#155 print_char_cursor#191 print_char_cursor#192 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#228 ] : zp[2]:13 , 
 Potential registers zp[2]:15 [ print_str::str#16 print_str::str#18 print_str::str#0 ] : zp[2]:15 , 
 Potential registers zp[1]:17 [ print_sbyte::b#5 print_sbyte::b#0 print_sbyte::b#3 print_sbyte::b#1 print_sbyte::b#2 ] : zp[1]:17 , reg byte a , reg byte x , 
 Potential registers zp[2]:18 [ mul8s::m#4 mul8s::m#5 mul8s::m#1 mul8s::m#0 mul8s::m#2 ] : zp[2]:18 , 
@@ -8271,7 +8229,7 @@ Uplift Scope [mul8u_compare] 235.67: zp[1]:37 [ mul8u_compare::ok#3 mul8u_compar
 Uplift Scope [mulf8u] 202: zp[2]:113 [ mulf8u::return#2 ] 51.5: zp[1]:111 [ mulf8u::a#0 ] 34.33: zp[1]:112 [ mulf8u::b#0 ] 34.33: zp[2]:131 [ mulf8u::return#0 ] 
 Uplift Scope [mulf8s] 202: zp[2]:69 [ mulf8s::return#2 ] 34.33: zp[2]:95 [ mulf8s::return#0 ] 33.67: zp[1]:67 [ mulf8s::a#0 ] 25.75: zp[1]:68 [ mulf8s::b#0 ] 
 Uplift Scope [mulf_init] 47.67: zp[2]:57 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] 26.89: zp[2]:51 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] 25.14: zp[2]:45 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] 23.1: zp[1]:50 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] 22: zp[1]:133 [ mulf_init::$9 ] 22: zp[1]:134 [ mulf_init::$12 ] 22: zp[1]:135 [ mulf_init::$13 ] 15.4: zp[1]:53 [ mulf_init::x_255#2 mulf_init::x_255#1 ] 15.12: zp[1]:56 [ mulf_init::dir#2 mulf_init::dir#4 ] 13.54: zp[1]:47 [ mulf_init::c#2 mulf_init::c#1 ] 11.92: zp[2]:54 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] 10.08: zp[2]:48 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
-Uplift Scope [] 77.65: zp[2]:13 [ print_char_cursor#155 print_char_cursor#193 print_char_cursor#194 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#230 ] 34.74: zp[2]:5 [ print_line_cursor#23 print_line_cursor#45 print_line_cursor#1 print_line_cursor#11 ] 
+Uplift Scope [] 77.65: zp[2]:13 [ print_char_cursor#155 print_char_cursor#191 print_char_cursor#192 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#228 ] 34.74: zp[2]:5 [ print_line_cursor#23 print_line_cursor#45 print_line_cursor#1 print_line_cursor#11 ] 
 Uplift Scope [mul8s] 13.83: zp[2]:18 [ mul8s::m#4 mul8s::m#5 mul8s::m#1 mul8s::m#0 mul8s::m#2 ] 9.36: zp[1]:74 [ mul8s::b#0 ] 7.36: zp[1]:73 [ mul8s::a#0 ] 4: zp[1]:89 [ mul8s::$9 ] 4: zp[1]:90 [ mul8s::$16 ] 4: zp[1]:91 [ mul8s::$13 ] 4: zp[1]:92 [ mul8s::$17 ] 
 Uplift Scope [mulf_tables_cmp] 26.4: zp[2]:41 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::kc_sqr#1 ] 17.6: zp[2]:43 [ mulf_tables_cmp::asm_sqr#2 mulf_tables_cmp::asm_sqr#1 ] 
 Uplift Scope [memset] 36.67: zp[2]:59 [ memset::dst#2 memset::dst#1 ] 
@@ -8302,7 +8260,7 @@ Uplifting [mulf8u] best 289525 combination zp[2]:113 [ mulf8u::return#2 ] reg by
 Uplifting [mulf8s] best 288919 combination zp[2]:69 [ mulf8s::return#2 ] zp[2]:95 [ mulf8s::return#0 ] reg byte a [ mulf8s::a#0 ] reg byte x [ mulf8s::b#0 ] 
 Uplifting [mulf_init] best 288669 combination zp[2]:57 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] zp[2]:51 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] zp[2]:45 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] reg byte x [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] reg byte a [ mulf_init::$9 ] reg byte a [ mulf_init::$12 ] reg byte a [ mulf_init::$13 ] zp[1]:53 [ mulf_init::x_255#2 mulf_init::x_255#1 ] zp[1]:56 [ mulf_init::dir#2 mulf_init::dir#4 ] zp[1]:47 [ mulf_init::c#2 mulf_init::c#1 ] zp[2]:54 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] zp[2]:48 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
 Limited combination testing to 100 combinations of 1024 possible.
-Uplifting [] best 288669 combination zp[2]:13 [ print_char_cursor#155 print_char_cursor#193 print_char_cursor#194 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#230 ] zp[2]:5 [ print_line_cursor#23 print_line_cursor#45 print_line_cursor#1 print_line_cursor#11 ] 
+Uplifting [] best 288669 combination zp[2]:13 [ print_char_cursor#155 print_char_cursor#191 print_char_cursor#192 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#228 ] zp[2]:5 [ print_line_cursor#23 print_line_cursor#45 print_line_cursor#1 print_line_cursor#11 ] 
 Uplifting [mul8s] best 288356 combination zp[2]:18 [ mul8s::m#4 mul8s::m#5 mul8s::m#1 mul8s::m#0 mul8s::m#2 ] reg byte y [ mul8s::b#0 ] zp[1]:73 [ mul8s::a#0 ] reg byte a [ mul8s::$9 ] reg byte a [ mul8s::$16 ] zp[1]:91 [ mul8s::$13 ] zp[1]:92 [ mul8s::$17 ] 
 Limited combination testing to 100 combinations of 2304 possible.
 Uplifting [mulf_tables_cmp] best 288356 combination zp[2]:41 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::kc_sqr#1 ] zp[2]:43 [ mulf_tables_cmp::asm_sqr#2 mulf_tables_cmp::asm_sqr#1 ] 
@@ -8392,7 +8350,7 @@ Coalescing zero page register [ zp[1]:35 [ mul8u_compare::a#7 mul8u_compare::a#1
 Coalescing zero page register [ zp[1]:36 [ mul8u_compare::b#10 mul8u_compare::b#1 mul8u_error::b#0 ] ] with [ zp[1]:3 [ mul8s_compare::b#10 mul8s_compare::b#1 mul8s_error::b#0 ] ]
 Coalescing zero page register [ zp[2]:41 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::kc_sqr#1 ] ] with [ zp[2]:5 [ print_line_cursor#23 print_line_cursor#45 print_line_cursor#1 print_line_cursor#11 ] ]
 Coalescing zero page register [ zp[2]:45 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] ] with [ zp[2]:7 [ print_sword::w#6 print_sword::w#0 print_sword::w#4 print_sword::w#1 print_sword::w#2 print_sword::w#3 print_word::w#6 print_word::w#3 print_word::w#4 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 mul8s_error::ms#0 mulf_tables_cmp::asm_sqr#2 mulf_tables_cmp::asm_sqr#1 mul8s_compare::ms#0 mul8u_compare::ms#0 mul8u_error::ms#0 muls8s::return#0 muls8s::m#5 muls8s::m#3 muls8s::m#1 muls8s::m#2 muls8s::return#2 muls8u::return#0 muls8u::m#3 muls8u::m#1 muls8u::return#2 ] ]
-Coalescing zero page register [ zp[2]:48 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] ] with [ zp[2]:13 [ print_char_cursor#155 print_char_cursor#193 print_char_cursor#194 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#230 ] ]
+Coalescing zero page register [ zp[2]:48 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] ] with [ zp[2]:13 [ print_char_cursor#155 print_char_cursor#191 print_char_cursor#192 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#228 ] ]
 Coalescing zero page register [ zp[2]:51 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] ] with [ zp[2]:18 [ mul8s::m#4 mul8s::m#5 mul8s::m#1 mul8s::m#0 mul8s::m#2 mul8s_compare::mn#0 mul8u::return#2 mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#3 mul8s_error::mn#0 mul8u_compare::mn#0 mul8u_error::mn#0 ] ]
 Coalescing zero page register [ zp[2]:54 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] ] with [ zp[2]:27 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 mulf8s::return#0 mulf8u_prepared::return#3 mulf8s::return#2 mul8s_compare::mf#0 mulf8u_prepared::return#0 mulf8u_prepared::return#2 mul8s_error::mf#0 mulf8u::return#2 mul8u_compare::mf#0 mulf8u::return#0 mul8u_error::mf#0 ] ]
 Coalescing zero page register [ zp[2]:59 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:57 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] ]
@@ -8402,7 +8360,7 @@ Coalescing zero page register [ zp[2]:59 [ memset::dst#2 memset::dst#1 mulf_init
 Coalescing zero page register [ zp[1]:94 [ mulf8s_prepared::b#0 mulf_init::c#2 mulf_init::c#1 ] ] with [ zp[1]:36 [ mul8u_compare::b#10 mul8u_compare::b#1 mul8u_error::b#0 mul8s_compare::b#10 mul8s_compare::b#1 mul8s_error::b#0 ] ]
 Allocated (was zp[2]:41) zp[2]:2 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::kc_sqr#1 print_line_cursor#23 print_line_cursor#45 print_line_cursor#1 print_line_cursor#11 ]
 Allocated (was zp[2]:45) zp[2]:4 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 print_sword::w#6 print_sword::w#0 print_sword::w#4 print_sword::w#1 print_sword::w#2 print_sword::w#3 print_word::w#6 print_word::w#3 print_word::w#4 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 mul8s_error::ms#0 mulf_tables_cmp::asm_sqr#2 mulf_tables_cmp::asm_sqr#1 mul8s_compare::ms#0 mul8u_compare::ms#0 mul8u_error::ms#0 muls8s::return#0 muls8s::m#5 muls8s::m#3 muls8s::m#1 muls8s::m#2 muls8s::return#2 muls8u::return#0 muls8u::m#3 muls8u::m#1 muls8u::return#2 ]
-Allocated (was zp[2]:48) zp[2]:6 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 print_char_cursor#155 print_char_cursor#193 print_char_cursor#194 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#230 ]
+Allocated (was zp[2]:48) zp[2]:6 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 print_char_cursor#155 print_char_cursor#191 print_char_cursor#192 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#228 ]
 Allocated (was zp[2]:51) zp[2]:8 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 mul8s::m#4 mul8s::m#5 mul8s::m#1 mul8s::m#0 mul8s::m#2 mul8s_compare::mn#0 mul8u::return#2 mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#3 mul8s_error::mn#0 mul8u_compare::mn#0 mul8u_error::mn#0 ]
 Allocated (was zp[2]:54) zp[2]:10 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 mulf8s::return#0 mulf8u_prepared::return#3 mulf8s::return#2 mul8s_compare::mf#0 mulf8u_prepared::return#0 mulf8u_prepared::return#2 mul8s_error::mf#0 mulf8u::return#2 mul8u_compare::mf#0 mulf8u::return#0 mul8u_error::mf#0 ]
 Allocated (was zp[1]:56) zp[1]:12 [ mulf_init::dir#2 mulf_init::dir#4 mul8u_compare::a#7 mul8u_compare::a#1 muls8u::a#0 mul8s_compare::a#10 mul8s_compare::a#1 muls8s::a#0 mul8s::a#0 ]
@@ -8515,7 +8473,7 @@ mul8s_compare: {
     jmp __b2
     // mul8s_compare::@2
   __b2:
-    // [20] (byte*~) print_char_cursor#193 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [20] (byte*~) print_char_cursor#191 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -8523,7 +8481,7 @@ mul8s_compare: {
     // [21] call print_str 
     // [114] phi from mul8s_compare::@2 to print_str [phi:mul8s_compare::@2->print_str]
   print_str_from___b2:
-    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#193 [phi:mul8s_compare::@2->print_str#0] -- register_copy 
+    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#191 [phi:mul8s_compare::@2->print_str#0] -- register_copy 
     // [114] phi (byte*) print_str::str#18 = (const string) mul8s_compare::str [phi:mul8s_compare::@2->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
@@ -8686,7 +8644,7 @@ mul8s_error: {
     .label ms = 4
     .label mn = 8
     .label mf = $a
-    // [57] (byte*~) print_char_cursor#194 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [57] (byte*~) print_char_cursor#192 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -8694,7 +8652,7 @@ mul8s_error: {
     // [58] call print_str 
     // [114] phi from mul8s_error to print_str [phi:mul8s_error->print_str]
   print_str_from_mul8s_error:
-    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#194 [phi:mul8s_error->print_str#0] -- register_copy 
+    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#192 [phi:mul8s_error->print_str#0] -- register_copy 
     // [114] phi (byte*) print_str::str#18 = (const string) mul8s_error::str [phi:mul8s_error->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
@@ -10042,7 +10000,7 @@ mulf_tables_cmp: {
     jmp __b7
     // mulf_tables_cmp::@7
   __b7:
-    // [286] (byte*~) print_char_cursor#230 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [286] (byte*~) print_char_cursor#228 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -10050,7 +10008,7 @@ mulf_tables_cmp: {
     // [287] phi from mulf_tables_cmp::@7 to mulf_tables_cmp::@return [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return]
   __breturn_from___b7:
     // [287] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#1 [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return#0] -- register_copy 
-    // [287] phi (byte*) print_char_cursor#100 = (byte*~) print_char_cursor#230 [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return#1] -- register_copy 
+    // [287] phi (byte*) print_char_cursor#100 = (byte*~) print_char_cursor#228 [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return#1] -- register_copy 
     jmp __breturn
     // mulf_tables_cmp::@return
   __breturn:
@@ -11369,9 +11327,9 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#143 print_char_cursor zp[2]:6 3.9999999999999996
 (byte*) print_char_cursor#155 print_char_cursor zp[2]:6 28.0
 (byte*) print_char_cursor#19 print_char_cursor zp[2]:6 0.7083333333333331
-(byte*~) print_char_cursor#193 print_char_cursor zp[2]:6 4.0
-(byte*~) print_char_cursor#194 print_char_cursor zp[2]:6 4.0
-(byte*~) print_char_cursor#230 print_char_cursor zp[2]:6 4.0
+(byte*~) print_char_cursor#191 print_char_cursor zp[2]:6 4.0
+(byte*~) print_char_cursor#192 print_char_cursor zp[2]:6 4.0
+(byte*~) print_char_cursor#228 print_char_cursor zp[2]:6 4.0
 (byte*) print_char_cursor#86 print_char_cursor zp[2]:6 8.0
 (void()) print_cls()
 (label) print_cls::@return
@@ -11449,7 +11407,7 @@ reg byte x [ mul8u_compare::ok#3 mul8u_compare::ok#4 ]
 reg byte y [ muls8u::i#2 muls8u::i#1 ]
 zp[2]:2 [ mulf_tables_cmp::kc_sqr#2 mulf_tables_cmp::kc_sqr#1 print_line_cursor#23 print_line_cursor#45 print_line_cursor#1 print_line_cursor#11 ]
 zp[2]:4 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 print_sword::w#6 print_sword::w#0 print_sword::w#4 print_sword::w#1 print_sword::w#2 print_sword::w#3 print_word::w#6 print_word::w#3 print_word::w#4 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 mul8s_error::ms#0 mulf_tables_cmp::asm_sqr#2 mulf_tables_cmp::asm_sqr#1 mul8s_compare::ms#0 mul8u_compare::ms#0 mul8u_error::ms#0 muls8s::return#0 muls8s::m#5 muls8s::m#3 muls8s::m#1 muls8s::m#2 muls8s::return#2 muls8u::return#0 muls8u::m#3 muls8u::m#1 muls8u::return#2 ]
-zp[2]:6 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 print_char_cursor#155 print_char_cursor#193 print_char_cursor#194 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#230 ]
+zp[2]:6 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 print_char_cursor#155 print_char_cursor#191 print_char_cursor#192 print_char_cursor#142 print_char_cursor#86 print_char_cursor#143 print_char_cursor#135 print_char_cursor#134 print_char_cursor#19 print_char_cursor#100 print_char_cursor#1 print_char_cursor#228 ]
 reg byte x [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
 zp[2]:8 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 mul8s::m#4 mul8s::m#5 mul8s::m#1 mul8s::m#0 mul8s::m#2 mul8s_compare::mn#0 mul8u::return#2 mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#3 mul8s_error::mn#0 mul8u_compare::mn#0 mul8u_error::mn#0 ]
 reg byte x [ mulf_init::x_255#2 mulf_init::x_255#1 ]
@@ -11565,7 +11523,7 @@ mul8s_compare: {
     cmp.z a
     bne b1
     // mul8s_compare::@2
-    // [20] (byte*~) print_char_cursor#193 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [20] (byte*~) print_char_cursor#191 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -11573,7 +11531,7 @@ mul8s_compare: {
     // print_str("signed multiply results match!")
     // [21] call print_str 
     // [114] phi from mul8s_compare::@2 to print_str [phi:mul8s_compare::@2->print_str]
-    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#193 [phi:mul8s_compare::@2->print_str#0] -- register_copy 
+    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#191 [phi:mul8s_compare::@2->print_str#0] -- register_copy 
     // [114] phi (byte*) print_str::str#18 = (const string) mul8s_compare::str [phi:mul8s_compare::@2->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
@@ -11721,7 +11679,7 @@ mul8s_error: {
     .label ms = 4
     .label mn = 8
     .label mf = $a
-    // [57] (byte*~) print_char_cursor#194 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [57] (byte*~) print_char_cursor#192 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -11729,7 +11687,7 @@ mul8s_error: {
     // print_str("signed multiply mismatch ")
     // [58] call print_str 
     // [114] phi from mul8s_error to print_str [phi:mul8s_error->print_str]
-    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#194 [phi:mul8s_error->print_str#0] -- register_copy 
+    // [114] phi (byte*) print_char_cursor#155 = (byte*~) print_char_cursor#192 [phi:mul8s_error->print_str#0] -- register_copy 
     // [114] phi (byte*) print_str::str#18 = (const string) mul8s_error::str [phi:mul8s_error->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
@@ -12930,14 +12888,14 @@ mulf_tables_cmp: {
     sta.z print_line_cursor+1
     jsr print_ln
     // mulf_tables_cmp::@7
-    // [286] (byte*~) print_char_cursor#230 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [286] (byte*~) print_char_cursor#228 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     // [287] phi from mulf_tables_cmp::@7 to mulf_tables_cmp::@return [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return]
     // [287] phi (byte*) print_line_cursor#11 = (byte*) print_line_cursor#1 [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return#0] -- register_copy 
-    // [287] phi (byte*) print_char_cursor#100 = (byte*~) print_char_cursor#230 [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return#1] -- register_copy 
+    // [287] phi (byte*) print_char_cursor#100 = (byte*~) print_char_cursor#228 [phi:mulf_tables_cmp::@7->mulf_tables_cmp::@return#1] -- register_copy 
     // mulf_tables_cmp::@return
     // }
     // [288] return 

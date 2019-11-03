@@ -25,54 +25,42 @@ Culled Empty Block (label) fill::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) D011 ← ((byte*)) (number) $d011
-  (byte) VIC_BMM ← (number) $20
-  (byte) VIC_DEN ← (number) $10
-  (byte) VIC_RSEL ← (number) 8
-  (byte*) VIC_MEMORY ← ((byte*)) (number) $d018
-  (byte) BLUE ← (number) 6
   to:@4
 @4: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) BITMAP ← ((byte*)) (number) $2000
   (byte[]) bitmask ← { (number) $80, (number) $40, (number) $20, (number) $10, (number) 8, (number) 4, (number) 2, (number) 1 }
   to:@8
 
 (void()) main()
 main: scope:[main]  from @8
-  (byte*) fill::start#0 ← (byte*) BITMAP
+  (byte*) fill::start#0 ← (const byte*) BITMAP
   (signed word) fill::size#0 ← (number) $28*(number) $19*(number) 8
   (byte) fill::val#0 ← (number) 0
   call fill 
   to:main::@9
 main::@9: scope:[main]  from main
-  (byte*) fill::start#1 ← (byte*) SCREEN
+  (byte*) fill::start#1 ← (const byte*) SCREEN
   (signed word) fill::size#1 ← (number) $28*(number) $19
   (byte) fill::val#1 ← (number) $16
   call fill 
   to:main::@10
 main::@10: scope:[main]  from main::@9
-  *((byte*) BORDERCOL) ← (byte) BLUE
-  (byte~) main::$2 ← (byte) VIC_BMM | (byte) VIC_DEN
-  (byte~) main::$3 ← (byte~) main::$2 | (byte) VIC_RSEL
-  (number~) main::$4 ← (byte~) main::$3 | (number) 3
-  *((byte*) D011) ← (number~) main::$4
-  (word~) main::$5 ← ((word)) (byte*) SCREEN
+  *((const byte*) BORDERCOL) ← (const byte) BLUE
+  *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+  (word~) main::$2 ← ((word)) (const byte*) SCREEN
+  (number~) main::$3 ← (word~) main::$2 & (number) $3fff
+  (number~) main::$4 ← (number~) main::$3 / (number) $40
+  (word~) main::$5 ← ((word)) (const byte*) BITMAP
   (number~) main::$6 ← (word~) main::$5 & (number) $3fff
-  (number~) main::$7 ← (number~) main::$6 / (number) $40
-  (word~) main::$8 ← ((word)) (byte*) BITMAP
-  (number~) main::$9 ← (word~) main::$8 & (number) $3fff
-  (number~) main::$10 ← (number~) main::$9 / (number) $400
-  (number~) main::$11 ← (number~) main::$7 | (number~) main::$10
-  (byte~) main::$12 ← ((byte)) (number~) main::$11
-  *((byte*) VIC_MEMORY) ← (byte~) main::$12
+  (number~) main::$7 ← (number~) main::$6 / (number) $400
+  (number~) main::$8 ← (number~) main::$4 | (number~) main::$7
+  (byte~) main::$9 ← ((byte)) (number~) main::$8
+  *((const byte*) VIC_MEMORY) ← (byte~) main::$9
   (signed word) main::i#0 ← (number) 1
   to:main::@1
 main::@1: scope:[main]  from main::@10 main::@11
   (signed word) main::i#2 ← phi( main::@10/(signed word) main::i#0 main::@11/(signed word) main::i#1 )
-  (bool~) main::$13 ← (signed word) main::i#2 < (number) $b4
-  if((bool~) main::$13) goto main::@2
+  (bool~) main::$10 ← (signed word) main::i#2 < (number) $b4
+  if((bool~) main::$10) goto main::@2
   to:main::@7
 main::@2: scope:[main]  from main::@1
   (signed word) main::i#3 ← phi( main::@1/(signed word) main::i#2 )
@@ -271,7 +259,7 @@ plot: scope:[plot]  from circle::@11 circle::@12 circle::@13 circle::@14 circle:
 plot::@1: scope:[plot]  from plot
   (signed word) plot::y#9 ← phi( plot/(signed word) plot::y#8 )
   (signed word) plot::x#9 ← phi( plot/(signed word) plot::x#8 )
-  (byte*) plot::location#0 ← (byte*) BITMAP
+  (byte*) plot::location#0 ← (const byte*) BITMAP
   (number~) plot::$8 ← (signed word) plot::x#9 & (number) $fff8
   (byte*) plot::location#1 ← (byte*) plot::location#0 + (number~) plot::$8
   (byte~) plot::$9 ← < (signed word) plot::y#9
@@ -327,15 +315,15 @@ SYMBOL TABLE SSA
 (label) @9
 (label) @begin
 (label) @end
-(byte*) BITMAP
-(byte) BLUE
-(byte*) BORDERCOL
-(byte*) D011
-(byte*) SCREEN
-(byte) VIC_BMM
-(byte) VIC_DEN
-(byte*) VIC_MEMORY
-(byte) VIC_RSEL
+(const byte*) BITMAP = (byte*)(number) $2000
+(const byte) BLUE = (number) 6
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) D011 = (byte*)(number) $d011
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte) VIC_BMM = (number) $20
+(const byte) VIC_DEN = (number) $10
+(const byte*) VIC_MEMORY = (byte*)(number) $d018
+(const byte) VIC_RSEL = (number) 8
 (byte[]) bitmask
 (void()) circle((signed word) circle::xc , (signed word) circle::yc , (signed word) circle::r)
 (signed word~) circle::$0
@@ -494,18 +482,15 @@ SYMBOL TABLE SSA
 (byte) fill::val#3
 (byte) fill::val#4
 (void()) main()
-(number~) main::$10
-(number~) main::$11
-(byte~) main::$12
-(bool~) main::$13
-(byte~) main::$2
-(byte~) main::$3
+(bool~) main::$10
+(word~) main::$2
+(number~) main::$3
 (number~) main::$4
 (word~) main::$5
 (number~) main::$6
 (number~) main::$7
-(word~) main::$8
-(number~) main::$9
+(number~) main::$8
+(byte~) main::$9
 (label) main::@1
 (label) main::@10
 (label) main::@11
@@ -565,27 +550,23 @@ SYMBOL TABLE SSA
 (signed word) plot::y#8
 (signed word) plot::y#9
 
-Adding number conversion cast (unumber) $20 in (byte) VIC_BMM ← (number) $20
-Adding number conversion cast (unumber) $10 in (byte) VIC_DEN ← (number) $10
-Adding number conversion cast (unumber) 8 in (byte) VIC_RSEL ← (number) 8
-Adding number conversion cast (unumber) 6 in (byte) BLUE ← (number) 6
 Adding number conversion cast (snumber) $28*$19*8 in (signed word) fill::size#0 ← (number) $28*(number) $19*(number) 8
 Adding number conversion cast (unumber) 0 in (byte) fill::val#0 ← (number) 0
 Adding number conversion cast (snumber) $28*$19 in (signed word) fill::size#1 ← (number) $28*(number) $19
 Adding number conversion cast (unumber) $16 in (byte) fill::val#1 ← (number) $16
-Adding number conversion cast (unumber) 3 in (number~) main::$4 ← (byte~) main::$3 | (number) 3
-Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (byte~) main::$3 | (unumber)(number) 3
+Adding number conversion cast (unumber) VIC_BMM|VIC_DEN|VIC_RSEL|3 in *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) D011) ← ((unumber)) (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) $3fff in (number~) main::$3 ← (word~) main::$2 & (number) $3fff
+Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (word~) main::$2 & (unumber)(number) $3fff
+Adding number conversion cast (unumber) $40 in (number~) main::$4 ← (unumber~) main::$3 / (number) $40
+Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (unumber~) main::$3 / (unumber)(number) $40
 Adding number conversion cast (unumber) $3fff in (number~) main::$6 ← (word~) main::$5 & (number) $3fff
 Adding number conversion cast (unumber) main::$6 in (number~) main::$6 ← (word~) main::$5 & (unumber)(number) $3fff
-Adding number conversion cast (unumber) $40 in (number~) main::$7 ← (unumber~) main::$6 / (number) $40
-Adding number conversion cast (unumber) main::$7 in (number~) main::$7 ← (unumber~) main::$6 / (unumber)(number) $40
-Adding number conversion cast (unumber) $3fff in (number~) main::$9 ← (word~) main::$8 & (number) $3fff
-Adding number conversion cast (unumber) main::$9 in (number~) main::$9 ← (word~) main::$8 & (unumber)(number) $3fff
-Adding number conversion cast (unumber) $400 in (number~) main::$10 ← (unumber~) main::$9 / (number) $400
-Adding number conversion cast (unumber) main::$10 in (number~) main::$10 ← (unumber~) main::$9 / (unumber)(number) $400
-Adding number conversion cast (unumber) main::$11 in (number~) main::$11 ← (unumber~) main::$7 | (unumber~) main::$10
+Adding number conversion cast (unumber) $400 in (number~) main::$7 ← (unumber~) main::$6 / (number) $400
+Adding number conversion cast (unumber) main::$7 in (number~) main::$7 ← (unumber~) main::$6 / (unumber)(number) $400
+Adding number conversion cast (unumber) main::$8 in (number~) main::$8 ← (unumber~) main::$4 | (unumber~) main::$7
 Adding number conversion cast (snumber) 1 in (signed word) main::i#0 ← (number) 1
-Adding number conversion cast (snumber) $b4 in (bool~) main::$13 ← (signed word) main::i#2 < (number) $b4
+Adding number conversion cast (snumber) $b4 in (bool~) main::$10 ← (signed word) main::i#2 < (number) $b4
 Adding number conversion cast (snumber) $a0 in (signed word) circle::xc#0 ← (number) $a0
 Adding number conversion cast (snumber) $64 in (signed word) circle::yc#0 ← (number) $64
 Adding number conversion cast (snumber) 5 in (signed word) main::i#1 ← (signed word) main::i#4 + (number) 5
@@ -618,22 +599,14 @@ Adding number conversion cast (snumber) plot::$13 in (number~) plot::$13 ← (si
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (byte[]) bitmask ← (byte[]){ (byte)(number) $80, (byte)(number) $40, (byte)(number) $20, (byte)(number) $10, (byte)(number) 8, (byte)(number) 4, (byte)(number) 2, (byte)(number) 1 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) D011 ← (byte*)(number) $d011
-Inlining cast (byte) VIC_BMM ← (unumber)(number) $20
-Inlining cast (byte) VIC_DEN ← (unumber)(number) $10
-Inlining cast (byte) VIC_RSEL ← (unumber)(number) 8
-Inlining cast (byte*) VIC_MEMORY ← (byte*)(number) $d018
-Inlining cast (byte) BLUE ← (unumber)(number) 6
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) BITMAP ← (byte*)(number) $2000
 Inlining cast (signed word) fill::size#0 ← (snumber)(number) $28*(number) $19*(number) 8
 Inlining cast (byte) fill::val#0 ← (unumber)(number) 0
 Inlining cast (signed word) fill::size#1 ← (snumber)(number) $28*(number) $19
 Inlining cast (byte) fill::val#1 ← (unumber)(number) $16
-Inlining cast (word~) main::$5 ← (word)(byte*) SCREEN
-Inlining cast (word~) main::$8 ← (word)(byte*) BITMAP
-Inlining cast (byte~) main::$12 ← (byte)(unumber~) main::$11
+Inlining cast *((const byte*) D011) ← (unumber)(const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
+Inlining cast (word~) main::$2 ← (word)(const byte*) SCREEN
+Inlining cast (word~) main::$5 ← (word)(const byte*) BITMAP
+Inlining cast (byte~) main::$9 ← (byte)(unumber~) main::$8
 Inlining cast (signed word) main::i#0 ← (snumber)(number) 1
 Inlining cast (signed word) circle::xc#0 ← (snumber)(number) $a0
 Inlining cast (signed word) circle::yc#0 ← (snumber)(number) $64
@@ -641,11 +614,7 @@ Inlining cast (signed word) circle::x1#0 ← (snumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53265
-Simplifying constant integer cast $20
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
 Simplifying constant pointer cast (byte*) 53272
-Simplifying constant integer cast 6
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 8192
 Simplifying constant integer cast $80
@@ -658,6 +627,7 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast $16
+Simplifying constant integer cast (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Simplifying constant integer cast 3
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast $40
@@ -687,10 +657,6 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast $140
 Simplifying constant integer cast 7
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 6
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $16
 Finalized unsigned number type (byte) 3
@@ -722,12 +688,11 @@ Finalized signed number type (signed byte) 3
 Finalized signed number type (signed word) $140
 Finalized signed number type (signed byte) 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$4 ← (byte~) main::$3 | (byte) 3
+Inferred type updated to word in (unumber~) main::$3 ← (word~) main::$2 & (word) $3fff
+Inferred type updated to word in (unumber~) main::$4 ← (word~) main::$3 / (byte) $40
 Inferred type updated to word in (unumber~) main::$6 ← (word~) main::$5 & (word) $3fff
-Inferred type updated to word in (unumber~) main::$7 ← (word~) main::$6 / (byte) $40
-Inferred type updated to word in (unumber~) main::$9 ← (word~) main::$8 & (word) $3fff
-Inferred type updated to word in (unumber~) main::$10 ← (word~) main::$9 / (word) $400
-Inferred type updated to word in (unumber~) main::$11 ← (word~) main::$7 | (word~) main::$10
+Inferred type updated to word in (unumber~) main::$7 ← (word~) main::$6 / (word) $400
+Inferred type updated to word in (unumber~) main::$8 ← (word~) main::$4 | (word~) main::$7
 Inferred type updated to signed word in (snumber~) circle::$1 ← (signed byte) 3 - (signed word~) circle::$0
 Inferred type updated to signed word in (snumber~) circle::$11 ← (signed word~) circle::$10 + (signed byte) 6
 Inferred type updated to signed word in (snumber~) circle::$4 ← (signed word) circle::y#3 - (signed byte) 1
@@ -788,64 +753,54 @@ Identical Phi Values (signed word) circle::yc#1 (signed word) circle::yc#13
 Identical Phi Values (byte*) fill::end#1 (byte*) fill::end#0
 Identical Phi Values (byte) fill::val#2 (byte) fill::val#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$13 [35] if((signed word) main::i#2<(signed word) $b4) goto main::@2
-Simple Condition (bool~) circle::$2 [53] if((signed word) circle::x1#10<=(signed word) circle::y#13) goto circle::@2
-Simple Condition (bool~) circle::$3 [56] if((signed word) circle::p#3<(signed byte) 0) goto circle::@4
-Simple Condition (bool~) fill::$1 [151] if((byte*) fill::addr#2!=(byte*) fill::end#0) goto fill::@2
+Simple Condition (bool~) main::$10 [23] if((signed word) main::i#2<(signed word) $b4) goto main::@2
+Simple Condition (bool~) circle::$2 [41] if((signed word) circle::x1#10<=(signed word) circle::y#13) goto circle::@2
+Simple Condition (bool~) circle::$3 [44] if((signed word) circle::p#3<(signed byte) 0) goto circle::@4
+Simple Condition (bool~) fill::$1 [139] if((byte*) fill::addr#2!=(byte*) fill::end#0) goto fill::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [129] (bool~) plot::$7 ← ! (bool~) plot::$6
-Rewriting || if()-condition to two if()s [128] (bool~) plot::$6 ← (bool~) plot::$4 || (bool~) plot::$5
-Rewriting || if()-condition to two if()s [126] (bool~) plot::$4 ← (bool~) plot::$2 || (bool~) plot::$3
-Rewriting || if()-condition to two if()s [124] (bool~) plot::$2 ← (bool~) plot::$0 || (bool~) plot::$1
+Rewriting ! if()-condition to reversed if() [117] (bool~) plot::$7 ← ! (bool~) plot::$6
+Rewriting || if()-condition to two if()s [116] (bool~) plot::$6 ← (bool~) plot::$4 || (bool~) plot::$5
+Rewriting || if()-condition to two if()s [114] (bool~) plot::$4 ← (bool~) plot::$2 || (bool~) plot::$3
+Rewriting || if()-condition to two if()s [112] (bool~) plot::$2 ← (bool~) plot::$0 || (bool~) plot::$1
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant right-side identified [11] (signed word) fill::size#0 ← (snumber)(number) $28*(number) $19*(number) 8
-Constant right-side identified [15] (signed word) fill::size#1 ← (snumber)(number) $28*(number) $19
+Constant right-side identified [2] (signed word) fill::size#0 ← (snumber)(number) $28*(number) $19*(number) 8
+Constant right-side identified [6] (signed word) fill::size#1 ← (snumber)(number) $28*(number) $19
+Constant right-side identified [11] (word~) main::$2 ← (word)(const byte*) SCREEN
+Constant right-side identified [14] (word~) main::$5 ← (word)(const byte*) BITMAP
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (byte[]) { (byte) $80, (byte) $40, (byte) $20, (byte) $10, (byte) 8, (byte) 4, (byte) 2, (byte) 1 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) D011 = (byte*) 53265
-Constant (const byte) VIC_BMM = $20
-Constant (const byte) VIC_DEN = $10
-Constant (const byte) VIC_RSEL = 8
-Constant (const byte*) VIC_MEMORY = (byte*) 53272
-Constant (const byte) BLUE = 6
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) BITMAP = (byte*) 8192
 Constant (const byte[]) bitmask = { $80, $40, $20, $10, 8, 4, 2, 1 }
+Constant (const byte*) fill::start#0 = BITMAP
 Constant (const signed word) fill::size#0 = (snumber)$28*$19*8
 Constant (const byte) fill::val#0 = 0
+Constant (const byte*) fill::start#1 = SCREEN
 Constant (const signed word) fill::size#1 = (snumber)$28*$19
 Constant (const byte) fill::val#1 = $16
+Constant (const word) main::$2 = (word)SCREEN
+Constant (const word) main::$5 = (word)BITMAP
 Constant (const signed word) main::i#0 = 1
 Constant (const signed word) circle::xc#0 = $a0
 Constant (const signed word) circle::yc#0 = $64
 Constant (const signed word) circle::x1#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) fill::start#0 = BITMAP
-Constant (const byte*) fill::start#1 = SCREEN
-Constant (const word) main::$5 = (word)SCREEN
-Constant (const word) main::$8 = (word)BITMAP
 Constant (const byte*) plot::location#0 = BITMAP
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [43] if(true) goto main::@7
+if() condition always true - replacing block destination [31] if(true) goto main::@7
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Simple Condition (bool~) plot::$0 [64] if((signed word) plot::x#8<(signed byte) 0) goto plot::@return
-Simple Condition (bool~) plot::$5 [85] if((signed word) plot::y#8>(signed word) $c7) goto plot::@return
-Simple Condition (bool~) plot::$3 [86] if((signed word) plot::y#8<(signed byte) 0) goto plot::@return
-Simple Condition (bool~) plot::$1 [87] if((signed word) plot::x#8>(signed word) $13f) goto plot::@return
+Simple Condition (bool~) plot::$0 [61] if((signed word) plot::x#8<(signed byte) 0) goto plot::@return
+Simple Condition (bool~) plot::$5 [82] if((signed word) plot::y#8>(signed word) $c7) goto plot::@return
+Simple Condition (bool~) plot::$3 [83] if((signed word) plot::y#8<(signed byte) 0) goto plot::@return
+Simple Condition (bool~) plot::$1 [84] if((signed word) plot::x#8>(signed word) $13f) goto plot::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [3] (byte~) main::$2 ← (const byte) VIC_BMM | (const byte) VIC_DEN
-Constant right-side identified [7] (word~) main::$6 ← (const word) main::$5 & (word) $3fff
-Constant right-side identified [9] (word~) main::$9 ← (const word) main::$8 & (word) $3fff
+Constant right-side identified [4] (word~) main::$3 ← (const word) main::$2 & (word) $3fff
+Constant right-side identified [6] (word~) main::$6 ← (const word) main::$5 & (word) $3fff
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = VIC_BMM|VIC_DEN
+Constant (const word) main::$3 = main::$2&$3fff
 Constant (const word) main::$6 = main::$5&$3fff
-Constant (const word) main::$9 = main::$8&$3fff
 Successful SSA optimization Pass2ConstantIdentification
-Rewriting conditional comparison [85] if((signed word) plot::y#8>(signed word) $c7) goto plot::@return
+Rewriting conditional comparison [82] if((signed word) plot::y#8>(signed word) $c7) goto plot::@return
 Adding number conversion cast (snumber) $c7+1 in if((signed word) plot::y#8>=(signed word) $c7+(number) 1) goto plot::@return
 Adding number conversion cast (snumber) 1 in if((signed word) plot::y#8>=(snumber)(signed word) $c7+(number) 1) goto plot::@return
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -854,21 +809,17 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized signed number type (signed byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [3] (byte~) main::$3 ← (const byte) main::$2 | (const byte) VIC_RSEL
-Constant right-side identified [6] (word~) main::$7 ← (const word) main::$6 / (byte) $40
-Constant right-side identified [7] (word~) main::$10 ← (const word) main::$9 / (word) $400
+Constant right-side identified [4] (word~) main::$4 ← (const word) main::$3 / (byte) $40
+Constant right-side identified [5] (word~) main::$7 ← (const word) main::$6 / (word) $400
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$3 = main::$2|VIC_RSEL
-Constant (const word) main::$7 = main::$6/$40
-Constant (const word) main::$10 = main::$9/$400
+Constant (const word) main::$4 = main::$3/$40
+Constant (const word) main::$7 = main::$6/$400
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [3] (byte~) main::$4 ← (const byte) main::$3 | (byte) 3
-Constant right-side identified [5] (word~) main::$11 ← (const word) main::$7 | (const word) main::$10
+Constant right-side identified [4] (word~) main::$8 ← (const word) main::$4 | (const word) main::$7
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$4 = main::$3|3
-Constant (const word) main::$11 = main::$7|main::$10
+Constant (const word) main::$8 = main::$4|main::$7
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) main::$12 = (byte)main::$11
+Constant (const byte) main::$9 = (byte)main::$8
 Successful SSA optimization Pass2ConstantIdentification
 Rewriting multiplication to use shift and addition[58] (signed word~) plot::$12 ← (signed word~) plot::$11 * (signed word) $140
 Inlining constant with var siblings (const signed word) main::i#0
@@ -881,23 +832,20 @@ Inlining constant with var siblings (const byte) fill::val#1
 Constant inlined fill::val#0 = (byte) 0
 Constant inlined plot::location#0 = (const byte*) BITMAP
 Constant inlined fill::val#1 = (byte) $16
-Constant inlined main::$12 = (byte)(word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400
 Constant inlined fill::size#1 = (signed word)(number) $28*(number) $19
 Constant inlined fill::size#0 = (signed word)(number) $28*(number) $19*(number) 8
-Constant inlined main::$10 = (word)(const byte*) BITMAP&(word) $3fff/(word) $400
-Constant inlined main::$11 = (word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400
 Constant inlined fill::start#1 = (const byte*) SCREEN
 Constant inlined fill::start#0 = (const byte*) BITMAP
-Constant inlined main::$2 = (const byte) VIC_BMM|(const byte) VIC_DEN
+Constant inlined main::$2 = (word)(const byte*) SCREEN
 Constant inlined circle::x1#0 = (signed byte) 0
-Constant inlined main::$5 = (word)(const byte*) SCREEN
+Constant inlined main::$5 = (word)(const byte*) BITMAP
 Constant inlined main::i#0 = (signed byte) 1
-Constant inlined main::$6 = (word)(const byte*) SCREEN&(word) $3fff
-Constant inlined main::$3 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL
-Constant inlined main::$4 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3
-Constant inlined main::$9 = (word)(const byte*) BITMAP&(word) $3fff
-Constant inlined main::$7 = (word)(const byte*) SCREEN&(word) $3fff/(byte) $40
-Constant inlined main::$8 = (word)(const byte*) BITMAP
+Constant inlined main::$6 = (word)(const byte*) BITMAP&(word) $3fff
+Constant inlined main::$3 = (word)(const byte*) SCREEN&(word) $3fff
+Constant inlined main::$4 = (word)(const byte*) SCREEN&(word) $3fff/(byte) $40
+Constant inlined main::$9 = (byte)(word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400
+Constant inlined main::$7 = (word)(const byte*) BITMAP&(word) $3fff/(word) $400
+Constant inlined main::$8 = (word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400
 Successful SSA optimization Pass2ConstantInlining
 Alias (signed word~) plot::$12 = (signed word) plot::$17 
 Successful SSA optimization Pass2AliasElimination
@@ -2954,14 +2902,14 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte*) BITMAP = (byte*) 8192
-(const byte) BLUE = (byte) 6
+(const byte) BLUE = (number) 6
 (const byte*) BORDERCOL = (byte*) 53280
 (const byte*) D011 = (byte*) 53265
 (const byte*) SCREEN = (byte*) 1024
-(const byte) VIC_BMM = (byte) $20
-(const byte) VIC_DEN = (byte) $10
+(const byte) VIC_BMM = (number) $20
+(const byte) VIC_DEN = (number) $10
 (const byte*) VIC_MEMORY = (byte*) 53272
-(const byte) VIC_RSEL = (byte) 8
+(const byte) VIC_RSEL = (number) 8
 (const byte[]) bitmask = { (byte) $80, (byte) $40, (byte) $20, (byte) $10, (byte) 8, (byte) 4, (byte) 2, (byte) 1 }
 (void()) circle((signed word) circle::xc , (signed word) circle::yc , (signed word) circle::r)
 (signed word~) circle::$0 zp[2]:4 4.0

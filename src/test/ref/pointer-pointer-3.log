@@ -7,8 +7,6 @@ Culled Empty Block (label) @1
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*) screen#0 ← ((byte*)) (number) $400
-  (byte*) screen1 ← ((byte*)) (number) $400
-  (byte*) screen2 ← ((byte*)) (number) $400+(number) $28
   to:@2
 
 (void()) main()
@@ -16,7 +14,7 @@ main: scope:[main]  from @2
   (byte*) screen#1 ← phi( @2/(byte*) screen#4 )
   (byte**~) main::$0 ← & (byte*) screen#1
   (byte**) setscreen::screen#0 ← (byte**~) main::$0
-  (byte*) setscreen::val#0 ← (byte*) screen1
+  (byte*) setscreen::val#0 ← (const byte*) screen1
   call setscreen 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -24,7 +22,7 @@ main::@1: scope:[main]  from main
   *((byte*) screen#2 + (number) 0) ← (byte) 'a'
   (byte**~) main::$2 ← & (byte*) screen#2
   (byte**) setscreen::screen#1 ← (byte**~) main::$2
-  (byte*) setscreen::val#1 ← (byte*) screen2
+  (byte*) setscreen::val#1 ← (const byte*) screen2
   call setscreen 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -69,8 +67,8 @@ SYMBOL TABLE SSA
 (byte*) screen#2
 (byte*) screen#3
 (byte*) screen#4
-(byte*) screen1
-(byte*) screen2
+(const byte*) screen1 = (byte*)(number) $400
+(const byte*) screen2 = (byte*)(number) $400+(number) $28
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
 (label) setscreen::@return
 (byte**) setscreen::screen
@@ -86,8 +84,6 @@ Adding number conversion cast (unumber) 0 in *((byte*) screen#2 + (number) 0) �
 Adding number conversion cast (unumber) 0 in *((byte*) screen#3 + (number) 0) ← (byte) 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) screen#0 ← (byte*)(number) $400
-Inlining cast (byte*) screen1 ← (byte*)(number) $400
-Inlining cast (byte*) screen2 ← (byte*)(number) $400+(number) $28
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 1024
@@ -104,24 +100,20 @@ Alias (byte*) screen#0 = (byte*) screen#4
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) screen#1 (byte*) screen#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [2] (byte*) screen2 ← (byte*)(number) $400+(number) $28
-Constant right-side identified [4] (byte**) setscreen::screen#0 ← & (byte*) screen#0
-Constant right-side identified [10] (byte**) setscreen::screen#1 ← & (byte*) screen#0
+Constant right-side identified [2] (byte**) setscreen::screen#0 ← & (byte*) screen#0
+Constant right-side identified [8] (byte**) setscreen::screen#1 ← & (byte*) screen#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) screen1 = (byte*) 1024
-Constant (const byte*) screen2 = (byte*)$400+$28
 Constant (const byte**) setscreen::screen#0 = &screen#0
-Constant (const byte**) setscreen::screen#1 = &screen#0
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) setscreen::val#0 = screen1
+Constant (const byte**) setscreen::screen#1 = &screen#0
 Constant (const byte*) setscreen::val#1 = screen2
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero screen#0 in [9] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
-Simplifying expression containing zero screen#0 in [15] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero screen#0 in [7] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero screen#0 in [13] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte**) setscreen::screen#0
-Inlining constant with var siblings (const byte**) setscreen::screen#1
 Inlining constant with var siblings (const byte*) setscreen::val#0
+Inlining constant with var siblings (const byte**) setscreen::screen#1
 Inlining constant with var siblings (const byte*) setscreen::val#1
 Constant inlined setscreen::screen#0 = &(byte*) screen#0
 Constant inlined setscreen::val#1 = (const byte*) screen2

@@ -8,7 +8,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) main::screen ← ((byte*)) (number) $400
   (byte*) main::z#0 ← ((byte*)) (number) $450
   *((byte*) main::z#0 + (number) 2) ← (number) $f0
   *((byte*) main::z#0 + (number) 3) ← (number) $f
@@ -23,7 +22,7 @@ main::@1: scope:[main]  from main
   (byte) fct::return#4 ← phi( main/(byte) fct::return#0 )
   (byte~) main::$0 ← (byte) fct::return#4
   (byte) main::a1#0 ← (byte~) main::$0
-  *((byte*) main::screen + (number) 0) ← (byte) main::a1#0
+  *((const byte*) main::screen + (number) 0) ← (byte) main::a1#0
   (byte*) main::z#1 ← ++ (byte*) main::z#2
   (byte) main::x#1 ← (number) $55
   (byte) fct::x#1 ← (byte) main::x#1
@@ -35,7 +34,7 @@ main::@2: scope:[main]  from main::@1
   (byte) fct::return#5 ← phi( main::@1/(byte) fct::return#1 )
   (byte~) main::$1 ← (byte) fct::return#5
   (byte) main::a2#0 ← (byte~) main::$1
-  *((byte*) main::screen + (number) 1) ← (byte) main::a2#0
+  *((const byte*) main::screen + (number) 1) ← (byte) main::a2#0
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -97,7 +96,7 @@ SYMBOL TABLE SSA
 (byte) main::a1#0
 (byte) main::a2
 (byte) main::a2#0
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 (byte) main::x
 (byte) main::x#0
 (byte) main::x#1
@@ -111,12 +110,11 @@ Adding number conversion cast (unumber) 2 in *((byte*) main::z#0 + (number) 2) �
 Adding number conversion cast (unumber) $f in *((byte*) main::z#0 + (number) 3) ← (number) $f
 Adding number conversion cast (unumber) 3 in *((byte*) main::z#0 + (number) 3) ← ((unumber)) (number) $f
 Adding number conversion cast (unumber) $aa in (byte) main::x#0 ← (number) $aa
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) main::a1#0
+Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte) main::a1#0
 Adding number conversion cast (unumber) $55 in (byte) main::x#1 ← (number) $55
-Adding number conversion cast (unumber) 1 in *((byte*) main::screen + (number) 1) ← (byte) main::a2#0
+Adding number conversion cast (unumber) 1 in *((const byte*) main::screen + (number) 1) ← (byte) main::a2#0
 Adding number conversion cast (unumber) 2 in (byte~) fct::$0 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (number) 2)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Inlining cast (byte*) main::z#0 ← (byte*)(number) $450
 Inlining cast *((byte*) main::z#0 + (unumber)(number) 2) ← (unumber)(number) $f0
 Inlining cast *((byte*) main::z#0 + (unumber)(number) 3) ← (unumber)(number) $f
@@ -152,7 +150,6 @@ Alias (byte) fct::return#1 = (byte) fct::return#5
 Alias (byte) main::a2#0 = (byte~) main::$1 
 Alias (byte) fct::return#2 = (byte) fct::a#0 (byte~) fct::$0 (byte) fct::return#6 (byte) fct::return#3 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte*) main::z#0 = (byte*) 1104
 Constant (const byte) main::x#0 = $aa
 Constant (const byte) main::x#1 = $55
@@ -161,7 +158,7 @@ Constant (const byte) fct::x#0 = main::x#0
 Constant (const byte*) fct::z#0 = main::z#0
 Constant (const byte) fct::x#1 = main::x#1
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen in [12] *((const byte*) main::screen + (byte) 0) ← (byte) main::a1#0
+Simplifying expression containing zero main::screen in [11] *((const byte*) main::screen + (byte) 0) ← (byte) main::a1#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [6] (byte*) main::z#1 ← ++ (const byte*) main::z#0
 Successful SSA optimization Pass2ConstantRValueConsolidation

@@ -5,8 +5,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
-  *((byte*) main::screen + (number) $28*(number) $a) ← (byte) 'a'
+  *((const byte*) main::screen + (number) $28*(number) $a) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -25,17 +24,13 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (label) main::@return
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
-Adding number conversion cast (unumber) $28*$a in *((byte*) main::screen + (number) $28*(number) $a) ← (byte) 'a'
+Adding number conversion cast (unumber) $28*$a in *((const byte*) main::screen + (number) $28*(number) $a) ← (byte) 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Constant (const byte*) main::screen = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [1] *((const byte*) main::screen + (word)(number) $28*(number) $a) ← (byte) 'a'
+De-inlining pointer[w] to *(pointer+w)   [0] *((const byte*) main::screen + (word)(number) $28*(number) $a) ← (byte) 'a'
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Constant right-side identified [0] (byte*~) main::$0 ← (const byte*) main::screen + (word)(number) $28*(number) $a
 Successful SSA optimization Pass2ConstantRValueConsolidation

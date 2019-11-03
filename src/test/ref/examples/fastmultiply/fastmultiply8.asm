@@ -8,11 +8,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_screen = $400
   // Pointers to a, b and c=a*b
   .label ap = $fd
   .label bp = $fe
   .label cp = $ff
+  .label print_screen = $400
 main: {
     .label at = $a
     .label at_1 = $c

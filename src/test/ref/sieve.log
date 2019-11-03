@@ -14,7 +14,7 @@ Warning! Adding boolean cast to non-boolean sub-expression *((byte*) sieve + (wo
 Identified constant variable (byte*) HEAP_TOP
 Identified constant variable (byte*) sieve
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call (byte~) main::$0 ← call toD018 (byte*) SCREEN (byte*)(number) $1800 
+Inlined call (byte~) main::$0 ← call toD018 (const byte*) SCREEN (byte*)(number) $1800 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) memset::@7
@@ -23,9 +23,11 @@ Culled Empty Block (label) memset::@8
 Culled Empty Block (label) memset::@9
 Culled Empty Block (label) memset::@3
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
 Culled Empty Block (label) @7
+Culled Empty Block (label) @8
 Culled Empty Block (label) clock::@1
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
@@ -98,6 +100,7 @@ Culled Empty Block (label) @46
 Culled Empty Block (label) @47
 Culled Empty Block (label) @48
 Culled Empty Block (label) @49
+Culled Empty Block (label) @50
 Culled Empty Block (label) main::toD0181_@1
 Culled Empty Block (label) main::@11
 Culled Empty Block (label) main::@12
@@ -116,7 +119,7 @@ Culled Empty Block (label) main::@28
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@4
+  to:@12
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from main::@35 print_cls
@@ -161,28 +164,10 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#4
   return 
   to:@return
-@4: scope:[]  from @begin
-  (byte*) D018 ← ((byte*)) (number) $d018
-  (dword*) CIA2_TIMER_AB ← ((dword*)) (number) $dd04
-  (byte*) CIA2_TIMER_A_CONTROL ← ((byte*)) (number) $dd0e
-  (byte*) CIA2_TIMER_B_CONTROL ← ((byte*)) (number) $dd0f
-  (byte) CIA_TIMER_CONTROL_STOP ← (number) 0
-  (byte) CIA_TIMER_CONTROL_START ← (number) 1
-  (byte) CIA_TIMER_CONTROL_CONTINUOUS ← (number) 0
-  (byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES ← (number) 0
-  (byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A ← (number) $40
-  to:@8
-@8: scope:[]  from @4
-  (word) CLOCKS_PER_FRAME ← (number) $4cc8
-  (byte) FRAMES_PER_SEC ← (number) $3c
-  (word~) $0 ← (word) CLOCKS_PER_FRAME * (byte) FRAMES_PER_SEC
-  (dword) CLOCKS_PER_SEC ← (word~) $0
-  (dword) CLOCKS_PER_INIT ← (number) $12
-  to:@12
 
 (dword()) clock()
 clock: scope:[clock]  from main::@3
-  (number~) clock::$0 ← (number) $ffffffff - *((dword*) CIA2_TIMER_AB)
+  (number~) clock::$0 ← (number) $ffffffff - *((const dword*) CIA2_TIMER_AB)
   (dword) clock::return#0 ← (number~) clock::$0
   to:clock::@return
 clock::@return: scope:[clock]  from clock
@@ -193,24 +178,16 @@ clock::@return: scope:[clock]  from clock
 
 (void()) clock_start()
 clock_start: scope:[clock_start]  from main::@36
-  (byte~) clock_start::$0 ← (byte) CIA_TIMER_CONTROL_STOP | (byte) CIA_TIMER_CONTROL_CONTINUOUS
-  (byte~) clock_start::$1 ← (byte~) clock_start::$0 | (byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
-  *((byte*) CIA2_TIMER_A_CONTROL) ← (byte~) clock_start::$1
-  (byte~) clock_start::$2 ← (byte) CIA_TIMER_CONTROL_STOP | (byte) CIA_TIMER_CONTROL_CONTINUOUS
-  (byte~) clock_start::$3 ← (byte~) clock_start::$2 | (byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-  *((byte*) CIA2_TIMER_B_CONTROL) ← (byte~) clock_start::$3
-  *((dword*) CIA2_TIMER_AB) ← (number) $ffffffff
-  (byte~) clock_start::$4 ← (byte) CIA_TIMER_CONTROL_START | (byte) CIA_TIMER_CONTROL_CONTINUOUS
-  (byte~) clock_start::$5 ← (byte~) clock_start::$4 | (byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-  *((byte*) CIA2_TIMER_B_CONTROL) ← (byte~) clock_start::$5
-  (byte~) clock_start::$6 ← (byte) CIA_TIMER_CONTROL_START | (byte) CIA_TIMER_CONTROL_CONTINUOUS
-  (byte~) clock_start::$7 ← (byte~) clock_start::$6 | (byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
-  *((byte*) CIA2_TIMER_A_CONTROL) ← (byte~) clock_start::$7
+  *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
+  *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+  *((const dword*) CIA2_TIMER_AB) ← (number) $ffffffff
+  *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+  *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
   to:clock_start::@return
 clock_start::@return: scope:[clock_start]  from clock_start
   return 
   to:@return
-@12: scope:[]  from @8
+@12: scope:[]  from @begin
   (word) rem16u#0 ← (number) 0
   to:@22
 
@@ -338,8 +315,7 @@ div32u16u::@return: scope:[div32u16u]  from div32u16u::@3
   return 
   to:@return
 @22: scope:[]  from @12
-  (word) rem16u#44 ← phi( @12/(word) rem16u#0 )
-  (byte[]) DIGITS ← (const string) $1
+  (word) rem16u#37 ← phi( @12/(word) rem16u#0 )
   (word[]) RADIX_BINARY_VALUES ← { (number) $8000, (number) $4000, (number) $2000, (number) $1000, (number) $800, (number) $400, (number) $200, (number) $100, (number) $80, (number) $40, (number) $20, (number) $10, (number) 8, (number) 4, (number) 2 }
   (word[]) RADIX_OCTAL_VALUES ← { (number) $8000, (number) $1000, (number) $200, (number) $40, (number) 8 }
   (word[]) RADIX_DECIMAL_VALUES ← { (number) $2710, (number) $3e8, (number) $64, (number) $a }
@@ -451,7 +427,7 @@ utoa::@20: scope:[utoa]  from utoa::@18
   (byte*) utoa::buffer#7 ← phi( utoa::@18/(byte*) utoa::buffer#11 )
   (word) utoa::value#3 ← phi( utoa::@18/(word) utoa::value#5 )
   (byte~) utoa::$4 ← ((byte)) (word) utoa::value#3
-  *((byte*) utoa::buffer#7) ← *((byte[]) DIGITS + (byte~) utoa::$4)
+  *((byte*) utoa::buffer#7) ← *((const byte[]) DIGITS + (byte~) utoa::$4)
   (byte*) utoa::buffer#3 ← ++ (byte*) utoa::buffer#7
   *((byte*) utoa::buffer#3) ← (number) 0
   to:utoa::@return
@@ -516,7 +492,7 @@ utoa_append::@3: scope:[utoa_append]  from utoa_append::@1
   (word) utoa_append::value#4 ← phi( utoa_append::@1/(word) utoa_append::value#2 )
   (byte*) utoa_append::buffer#1 ← phi( utoa_append::@1/(byte*) utoa_append::buffer#2 )
   (byte) utoa_append::digit#3 ← phi( utoa_append::@1/(byte) utoa_append::digit#4 )
-  *((byte*) utoa_append::buffer#1) ← *((byte[]) DIGITS + (byte) utoa_append::digit#3)
+  *((byte*) utoa_append::buffer#1) ← *((const byte[]) DIGITS + (byte) utoa_append::digit#3)
   (word) utoa_append::return#1 ← (word) utoa_append::value#4
   to:utoa_append::@return
 utoa_append::@return: scope:[utoa_append]  from utoa_append::@3
@@ -525,7 +501,7 @@ utoa_append::@return: scope:[utoa_append]  from utoa_append::@3
   return 
   to:@return
 @24: scope:[]  from @22
-  (word) rem16u#37 ← phi( @22/(word) rem16u#44 )
+  (word) rem16u#31 ← phi( @22/(word) rem16u#37 )
   (dword[]) RADIX_BINARY_VALUES_LONG ← { (number) $80000000, (number) $40000000, (number) $20000000, (number) $10000000, (number) $8000000, (number) $4000000, (number) $2000000, (number) $1000000, (number) $800000, (number) $400000, (number) $200000, (number) $100000, (number) $80000, (number) $40000, (number) $20000, (number) $10000, (number) $8000, (number) $4000, (number) $2000, (number) $1000, (number) $800, (number) $400, (number) $200, (number) $100, (number) $80, (number) $40, (number) $20, (number) $10, (number) 8, (number) 4, (number) 2 }
   (dword[]) RADIX_OCTAL_VALUES_LONG ← { (number) $40000000, (number) $8000000, (number) $1000000, (number) $200000, (number) $40000, (number) $8000, (number) $1000, (number) $200, (number) $40, (number) 8 }
   (dword[]) RADIX_DECIMAL_VALUES_LONG ← { (number) $3b9aca00, (number) $5f5e100, (number) $989680, (number) $f4240, (number) $186a0, (number) $2710, (number) $3e8, (number) $64, (number) $a }
@@ -637,7 +613,7 @@ ultoa::@20: scope:[ultoa]  from ultoa::@18
   (byte*) ultoa::buffer#7 ← phi( ultoa::@18/(byte*) ultoa::buffer#11 )
   (dword) ultoa::value#3 ← phi( ultoa::@18/(dword) ultoa::value#5 )
   (byte~) ultoa::$4 ← ((byte)) (dword) ultoa::value#3
-  *((byte*) ultoa::buffer#7) ← *((byte[]) DIGITS + (byte~) ultoa::$4)
+  *((byte*) ultoa::buffer#7) ← *((const byte[]) DIGITS + (byte~) ultoa::$4)
   (byte*) ultoa::buffer#3 ← ++ (byte*) ultoa::buffer#7
   *((byte*) ultoa::buffer#3) ← (number) 0
   to:ultoa::@return
@@ -702,7 +678,7 @@ ultoa_append::@3: scope:[ultoa_append]  from ultoa_append::@1
   (dword) ultoa_append::value#4 ← phi( ultoa_append::@1/(dword) ultoa_append::value#2 )
   (byte*) ultoa_append::buffer#1 ← phi( ultoa_append::@1/(byte*) ultoa_append::buffer#2 )
   (byte) ultoa_append::digit#3 ← phi( ultoa_append::@1/(byte) ultoa_append::digit#4 )
-  *((byte*) ultoa_append::buffer#1) ← *((byte[]) DIGITS + (byte) ultoa_append::digit#3)
+  *((byte*) ultoa_append::buffer#1) ← *((const byte[]) DIGITS + (byte) ultoa_append::digit#3)
   (dword) ultoa_append::return#1 ← (dword) ultoa_append::value#4
   to:ultoa_append::@return
 ultoa_append::@return: scope:[ultoa_append]  from ultoa_append::@3
@@ -711,7 +687,7 @@ ultoa_append::@return: scope:[ultoa_append]  from ultoa_append::@3
   return 
   to:@return
 @26: scope:[]  from @24
-  (word) rem16u#31 ← phi( @24/(word) rem16u#37 )
+  (word) rem16u#27 ← phi( @24/(word) rem16u#31 )
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
@@ -766,10 +742,10 @@ print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
 @36: scope:[]  from @26
-  (byte*) print_screen#10 ← phi( @26/(byte*) print_screen#0 )
-  (word) rem16u#27 ← phi( @26/(word) rem16u#31 )
-  (byte*) print_char_cursor#79 ← phi( @26/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#38 ← phi( @26/(byte*) print_line_cursor#0 )
+  (byte*) print_screen#9 ← phi( @26/(byte*) print_screen#0 )
+  (word) rem16u#24 ← phi( @26/(word) rem16u#27 )
+  (byte*) print_char_cursor#75 ← phi( @26/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#34 ← phi( @26/(byte*) print_line_cursor#0 )
   (byte[6]) decimal_digits ← { fill( 6, 0) }
   to:@40
 
@@ -797,12 +773,12 @@ print_word_decimal::@return: scope:[print_word_decimal]  from print_word_decimal
   return 
   to:@return
 @40: scope:[]  from @36
-  (byte*) print_screen#9 ← phi( @36/(byte*) print_screen#10 )
-  (word) rem16u#24 ← phi( @36/(word) rem16u#27 )
-  (byte*) print_char_cursor#75 ← phi( @36/(byte*) print_char_cursor#79 )
-  (byte*) print_line_cursor#34 ← phi( @36/(byte*) print_line_cursor#38 )
+  (byte*) print_screen#8 ← phi( @36/(byte*) print_screen#9 )
+  (word) rem16u#23 ← phi( @36/(word) rem16u#24 )
+  (byte*) print_char_cursor#74 ← phi( @36/(byte*) print_char_cursor#75 )
+  (byte*) print_line_cursor#33 ← phi( @36/(byte*) print_line_cursor#34 )
   (byte[$b]) decimal_digits_long ← { fill( $b, 0) }
-  to:@50
+  to:@51
 
 (void()) print_dword_decimal((dword) print_dword_decimal::w)
 print_dword_decimal: scope:[print_dword_decimal]  from main::@42
@@ -862,30 +838,20 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   (byte*) print_char_cursor#12 ← (byte*) print_char_cursor#39
   return 
   to:@return
-@50: scope:[]  from @40
-  (byte*) print_screen#8 ← phi( @40/(byte*) print_screen#9 )
-  (word) rem16u#23 ← phi( @40/(word) rem16u#24 )
-  (byte*) print_char_cursor#74 ← phi( @40/(byte*) print_char_cursor#75 )
-  (byte*) print_line_cursor#33 ← phi( @40/(byte*) print_line_cursor#34 )
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (word) COUNT ← (number) $4000
-  (byte) SQRT_COUNT ← (number) $80
-  (byte*) sieve ← ((byte*)) (number) $1000
-  to:@51
 
 (void()) main()
 main: scope:[main]  from @51
-  (word) rem16u#58 ← phi( @51/(word) rem16u#19 )
-  (byte*) print_char_cursor#80 ← phi( @51/(byte*) print_char_cursor#65 )
-  (byte*) print_line_cursor#39 ← phi( @51/(byte*) print_line_cursor#27 )
+  (word) rem16u#57 ← phi( @51/(word) rem16u#19 )
+  (byte*) print_char_cursor#79 ← phi( @51/(byte*) print_char_cursor#65 )
+  (byte*) print_line_cursor#38 ← phi( @51/(byte*) print_line_cursor#27 )
   (byte*) print_screen#6 ← phi( @51/(byte*) print_screen#7 )
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN
+  (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
   (byte*) main::toD0181_gfx#0 ← (byte*)(number) $1800
   to:main::toD0181
 main::toD0181: scope:[main]  from main
-  (word) rem16u#57 ← phi( main/(word) rem16u#58 )
-  (byte*) print_char_cursor#76 ← phi( main/(byte*) print_char_cursor#80 )
-  (byte*) print_line_cursor#35 ← phi( main/(byte*) print_line_cursor#39 )
+  (word) rem16u#56 ← phi( main/(word) rem16u#57 )
+  (byte*) print_char_cursor#76 ← phi( main/(byte*) print_char_cursor#79 )
+  (byte*) print_line_cursor#35 ← phi( main/(byte*) print_line_cursor#38 )
   (byte*) print_screen#5 ← phi( main/(byte*) print_screen#6 )
   (byte*) main::toD0181_gfx#1 ← phi( main/(byte*) main::toD0181_gfx#0 )
   (byte*) main::toD0181_screen#1 ← phi( main/(byte*) main::toD0181_screen#0 )
@@ -901,7 +867,7 @@ main::toD0181: scope:[main]  from main
   (byte) main::toD0181_return#0 ← (number~) main::toD0181_$8
   to:main::toD0181_@return
 main::toD0181_@return: scope:[main]  from main::toD0181
-  (word) rem16u#56 ← phi( main::toD0181/(word) rem16u#57 )
+  (word) rem16u#55 ← phi( main::toD0181/(word) rem16u#56 )
   (byte*) print_char_cursor#69 ← phi( main::toD0181/(byte*) print_char_cursor#76 )
   (byte*) print_line_cursor#28 ← phi( main::toD0181/(byte*) print_line_cursor#35 )
   (byte*) print_screen#4 ← phi( main::toD0181/(byte*) print_screen#5 )
@@ -909,17 +875,17 @@ main::toD0181_@return: scope:[main]  from main::toD0181
   (byte) main::toD0181_return#1 ← (byte) main::toD0181_return#2
   to:main::@29
 main::@29: scope:[main]  from main::toD0181_@return
-  (word) rem16u#55 ← phi( main::toD0181_@return/(word) rem16u#56 )
+  (word) rem16u#54 ← phi( main::toD0181_@return/(word) rem16u#55 )
   (byte*) print_char_cursor#60 ← phi( main::toD0181_@return/(byte*) print_char_cursor#69 )
   (byte*) print_line_cursor#22 ← phi( main::toD0181_@return/(byte*) print_line_cursor#28 )
   (byte*) print_screen#3 ← phi( main::toD0181_@return/(byte*) print_screen#4 )
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
   (byte~) main::$0 ← (byte) main::toD0181_return#3
-  *((byte*) D018) ← (byte~) main::$0
+  *((const byte*) D018) ← (byte~) main::$0
   call print_cls 
   to:main::@30
 main::@30: scope:[main]  from main::@29
-  (word) rem16u#54 ← phi( main::@29/(word) rem16u#55 )
+  (word) rem16u#53 ← phi( main::@29/(word) rem16u#54 )
   (byte*) print_char_cursor#40 ← phi( main::@29/(byte*) print_char_cursor#12 )
   (byte*) print_line_cursor#15 ← phi( main::@29/(byte*) print_line_cursor#4 )
   (byte*) print_line_cursor#5 ← (byte*) print_line_cursor#15
@@ -928,14 +894,14 @@ main::@30: scope:[main]  from main::@29
   call print_str 
   to:main::@31
 main::@31: scope:[main]  from main::@30
-  (word) rem16u#53 ← phi( main::@30/(word) rem16u#54 )
+  (word) rem16u#52 ← phi( main::@30/(word) rem16u#53 )
   (byte*) print_line_cursor#23 ← phi( main::@30/(byte*) print_line_cursor#5 )
   (byte*) print_char_cursor#41 ← phi( main::@30/(byte*) print_char_cursor#2 )
   (byte*) print_char_cursor#14 ← (byte*) print_char_cursor#41
   call print_ln 
   to:main::@32
 main::@32: scope:[main]  from main::@31
-  (word) rem16u#51 ← phi( main::@31/(word) rem16u#53 )
+  (word) rem16u#50 ← phi( main::@31/(word) rem16u#52 )
   (byte*) print_char_cursor#42 ← phi( main::@31/(byte*) print_char_cursor#4 )
   (byte*) print_line_cursor#16 ← phi( main::@31/(byte*) print_line_cursor#2 )
   (byte*) print_line_cursor#6 ← (byte*) print_line_cursor#16
@@ -944,104 +910,103 @@ main::@32: scope:[main]  from main::@31
   call print_str 
   to:main::@33
 main::@33: scope:[main]  from main::@32
-  (word) rem16u#48 ← phi( main::@32/(word) rem16u#51 )
+  (word) rem16u#47 ← phi( main::@32/(word) rem16u#50 )
   (byte*) print_line_cursor#29 ← phi( main::@32/(byte*) print_line_cursor#6 )
   (byte*) print_char_cursor#43 ← phi( main::@32/(byte*) print_char_cursor#2 )
   (byte*) print_char_cursor#16 ← (byte*) print_char_cursor#43
-  (word) print_word_decimal::w#0 ← (word) COUNT
+  (word) print_word_decimal::w#0 ← (const word) COUNT
   call print_word_decimal 
   to:main::@34
 main::@34: scope:[main]  from main::@33
-  (word) rem16u#45 ← phi( main::@33/(word) rem16u#48 )
+  (word) rem16u#44 ← phi( main::@33/(word) rem16u#47 )
   (byte*) print_line_cursor#24 ← phi( main::@33/(byte*) print_line_cursor#29 )
   (byte*) print_char_cursor#44 ← phi( main::@33/(byte*) print_char_cursor#6 )
   (byte*) print_char_cursor#17 ← (byte*) print_char_cursor#44
   call print_ln 
   to:main::@35
 main::@35: scope:[main]  from main::@34
-  (word) rem16u#38 ← phi( main::@34/(word) rem16u#45 )
+  (word) rem16u#38 ← phi( main::@34/(word) rem16u#44 )
   (byte*) print_char_cursor#45 ← phi( main::@34/(byte*) print_char_cursor#4 )
   (byte*) print_line_cursor#17 ← phi( main::@34/(byte*) print_line_cursor#2 )
   (byte*) print_line_cursor#7 ← (byte*) print_line_cursor#17
   (byte*) print_char_cursor#18 ← (byte*) print_char_cursor#45
-  (void*) memset::str#1 ← (void*)(byte*) sieve
+  (void*) memset::str#1 ← (void*)(const byte*) sieve
   (byte) memset::c#1 ← (number) 0
-  (word) memset::num#1 ← (word) COUNT
+  (word) memset::num#1 ← (const word) COUNT
   call memset 
   (void*) memset::return#3 ← (void*) memset::return#1
   to:main::@36
 main::@36: scope:[main]  from main::@35
-  (byte*) print_line_cursor#53 ← phi( main::@35/(byte*) print_line_cursor#7 )
-  (byte*) print_char_cursor#84 ← phi( main::@35/(byte*) print_char_cursor#18 )
+  (byte*) print_line_cursor#52 ← phi( main::@35/(byte*) print_line_cursor#7 )
+  (byte*) print_char_cursor#83 ← phi( main::@35/(byte*) print_char_cursor#18 )
   (word) rem16u#32 ← phi( main::@35/(word) rem16u#38 )
   call clock_start 
   to:main::@37
 main::@37: scope:[main]  from main::@36
-  (byte*) print_line_cursor#51 ← phi( main::@36/(byte*) print_line_cursor#53 )
-  (byte*) print_char_cursor#82 ← phi( main::@36/(byte*) print_char_cursor#84 )
+  (byte*) print_line_cursor#50 ← phi( main::@36/(byte*) print_line_cursor#52 )
+  (byte*) print_char_cursor#81 ← phi( main::@36/(byte*) print_char_cursor#83 )
   (word) rem16u#28 ← phi( main::@36/(word) rem16u#32 )
   (word) main::i#0 ← (number) 2
-  (byte*~) main::$9 ← & *((byte*) sieve + (word) main::i#0)
+  (byte*~) main::$9 ← & *((const byte*) sieve + (word) main::i#0)
   (byte*) main::sieve_i#0 ← (byte*~) main::$9
   to:main::@1
 main::@1: scope:[main]  from main::@37 main::@4
-  (byte*) print_line_cursor#49 ← phi( main::@37/(byte*) print_line_cursor#51 main::@4/(byte*) print_line_cursor#52 )
-  (byte*) print_char_cursor#81 ← phi( main::@37/(byte*) print_char_cursor#82 main::@4/(byte*) print_char_cursor#83 )
+  (byte*) print_line_cursor#48 ← phi( main::@37/(byte*) print_line_cursor#50 main::@4/(byte*) print_line_cursor#51 )
+  (byte*) print_char_cursor#80 ← phi( main::@37/(byte*) print_char_cursor#81 main::@4/(byte*) print_char_cursor#82 )
   (word) rem16u#25 ← phi( main::@37/(word) rem16u#28 main::@4/(word) rem16u#29 )
   (byte*) main::sieve_i#4 ← phi( main::@37/(byte*) main::sieve_i#0 main::@4/(byte*) main::sieve_i#1 )
   (word) main::i#4 ← phi( main::@37/(word) main::i#0 main::@4/(word) main::i#2 )
-  (bool~) main::$22 ← (word) main::i#4 < (byte) SQRT_COUNT
-  if((bool~) main::$22) goto main::@2
+  (bool~) main::$21 ← (word) main::i#4 < (const byte) SQRT_COUNT
+  if((bool~) main::$21) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
-  (byte*) print_line_cursor#54 ← phi( main::@1/(byte*) print_line_cursor#49 )
-  (byte*) print_char_cursor#85 ← phi( main::@1/(byte*) print_char_cursor#81 )
+  (byte*) print_line_cursor#53 ← phi( main::@1/(byte*) print_line_cursor#48 )
+  (byte*) print_char_cursor#84 ← phi( main::@1/(byte*) print_char_cursor#80 )
   (word) rem16u#33 ← phi( main::@1/(word) rem16u#25 )
   (word) main::i#12 ← phi( main::@1/(word) main::i#4 )
   (byte*) main::sieve_i#2 ← phi( main::@1/(byte*) main::sieve_i#4 )
-  (bool~) main::$37 ← (number) 0 != *((byte*) main::sieve_i#2)
-  (bool~) main::$23 ← ! (bool~) main::$37
-  (bool~) main::$24 ← ! (bool~) main::$23
-  if((bool~) main::$24) goto main::@4
+  (bool~) main::$33 ← (number) 0 != *((byte*) main::sieve_i#2)
+  (bool~) main::$22 ← ! (bool~) main::$33
+  (bool~) main::$23 ← ! (bool~) main::$22
+  if((bool~) main::$23) goto main::@4
   to:main::@13
 main::@3: scope:[main]  from main::@1
-  (byte*) print_line_cursor#47 ← phi( main::@1/(byte*) print_line_cursor#49 )
-  (byte*) print_char_cursor#77 ← phi( main::@1/(byte*) print_char_cursor#81 )
+  (byte*) print_line_cursor#46 ← phi( main::@1/(byte*) print_line_cursor#48 )
+  (byte*) print_char_cursor#77 ← phi( main::@1/(byte*) print_char_cursor#80 )
   (word) rem16u#20 ← phi( main::@1/(word) rem16u#25 )
   call clock 
   (dword) clock::return#2 ← (dword) clock::return#1
   to:main::@38
 main::@38: scope:[main]  from main::@3
-  (byte*) print_line_cursor#44 ← phi( main::@3/(byte*) print_line_cursor#47 )
+  (byte*) print_line_cursor#43 ← phi( main::@3/(byte*) print_line_cursor#46 )
   (byte*) print_char_cursor#70 ← phi( main::@3/(byte*) print_char_cursor#77 )
   (word) rem16u#17 ← phi( main::@3/(word) rem16u#20 )
   (dword) clock::return#4 ← phi( main::@3/(dword) clock::return#2 )
   (dword~) main::$10 ← (dword) clock::return#4
-  (dword~) main::$11 ← (dword~) main::$10 - (dword) CLOCKS_PER_INIT
+  (dword~) main::$11 ← (dword~) main::$10 - (const dword) CLOCKS_PER_INIT
   (dword) main::cyclecount#0 ← (dword~) main::$11
-  (number~) main::$12 ← (dword) CLOCKS_PER_SEC / (number) $64
-  (word~) main::$13 ← ((word)) (number~) main::$12
+  (word~) main::$12 ← ((word)) (const dword) CLOCKS_PER_SEC/(number) $64
   (dword) div32u16u::dividend#0 ← (dword) main::cyclecount#0
-  (word) div32u16u::divisor#0 ← (word~) main::$13
+  (word) div32u16u::divisor#0 ← (word~) main::$12
   call div32u16u 
   (dword) div32u16u::return#2 ← (dword) div32u16u::return#1
   to:main::@39
 main::@39: scope:[main]  from main::@38
-  (byte*) print_line_cursor#42 ← phi( main::@38/(byte*) print_line_cursor#44 )
+  (byte*) print_line_cursor#41 ← phi( main::@38/(byte*) print_line_cursor#43 )
   (dword) main::cyclecount#4 ← phi( main::@38/(dword) main::cyclecount#0 )
   (byte*) print_char_cursor#61 ← phi( main::@38/(byte*) print_char_cursor#70 )
   (word) rem16u#13 ← phi( main::@38/(word) rem16u#5 )
   (dword) div32u16u::return#4 ← phi( main::@38/(dword) div32u16u::return#2 )
-  (dword~) main::$14 ← (dword) div32u16u::return#4
+  (dword~) main::$13 ← (dword) div32u16u::return#4
   (word) rem16u#6 ← (word) rem16u#13
-  (word~) main::$15 ← ((word)) (dword~) main::$14
-  (word) main::sec100s#0 ← (word~) main::$15
+  (word~) main::$14 ← ((word)) (dword~) main::$13
+  (word) main::sec100s#0 ← (word~) main::$14
   (byte*) print_str::str#5 ← (const string) main::str2
   call print_str 
   to:main::@40
 main::@40: scope:[main]  from main::@39
-  (word) rem16u#52 ← phi( main::@39/(word) rem16u#6 )
-  (byte*) print_line_cursor#40 ← phi( main::@39/(byte*) print_line_cursor#42 )
+  (word) rem16u#51 ← phi( main::@39/(word) rem16u#6 )
+  (byte*) print_line_cursor#39 ← phi( main::@39/(byte*) print_line_cursor#41 )
   (dword) main::cyclecount#3 ← phi( main::@39/(dword) main::cyclecount#4 )
   (word) main::sec100s#1 ← phi( main::@39/(word) main::sec100s#0 )
   (byte*) print_char_cursor#46 ← phi( main::@39/(byte*) print_char_cursor#2 )
@@ -1050,8 +1015,8 @@ main::@40: scope:[main]  from main::@39
   call print_word_decimal 
   to:main::@41
 main::@41: scope:[main]  from main::@40
-  (word) rem16u#49 ← phi( main::@40/(word) rem16u#52 )
-  (byte*) print_line_cursor#36 ← phi( main::@40/(byte*) print_line_cursor#40 )
+  (word) rem16u#48 ← phi( main::@40/(word) rem16u#51 )
+  (byte*) print_line_cursor#36 ← phi( main::@40/(byte*) print_line_cursor#39 )
   (dword) main::cyclecount#2 ← phi( main::@40/(dword) main::cyclecount#3 )
   (byte*) print_char_cursor#47 ← phi( main::@40/(byte*) print_char_cursor#6 )
   (byte*) print_char_cursor#20 ← (byte*) print_char_cursor#47
@@ -1059,7 +1024,7 @@ main::@41: scope:[main]  from main::@40
   call print_str 
   to:main::@42
 main::@42: scope:[main]  from main::@41
-  (word) rem16u#46 ← phi( main::@41/(word) rem16u#49 )
+  (word) rem16u#45 ← phi( main::@41/(word) rem16u#48 )
   (byte*) print_line_cursor#30 ← phi( main::@41/(byte*) print_line_cursor#36 )
   (dword) main::cyclecount#1 ← phi( main::@41/(dword) main::cyclecount#2 )
   (byte*) print_char_cursor#48 ← phi( main::@41/(byte*) print_char_cursor#2 )
@@ -1068,7 +1033,7 @@ main::@42: scope:[main]  from main::@41
   call print_dword_decimal 
   to:main::@43
 main::@43: scope:[main]  from main::@42
-  (word) rem16u#39 ← phi( main::@42/(word) rem16u#46 )
+  (word) rem16u#39 ← phi( main::@42/(word) rem16u#45 )
   (byte*) print_line_cursor#25 ← phi( main::@42/(byte*) print_line_cursor#30 )
   (byte*) print_char_cursor#49 ← phi( main::@42/(byte*) print_char_cursor#8 )
   (byte*) print_char_cursor#22 ← (byte*) print_char_cursor#49
@@ -1083,8 +1048,8 @@ main::@44: scope:[main]  from main::@43
   (word) main::i#1 ← (number) 2
   to:main::@15
 main::@4: scope:[main]  from main::@2 main::@5
-  (byte*) print_line_cursor#52 ← phi( main::@2/(byte*) print_line_cursor#54 main::@5/(byte*) print_line_cursor#55 )
-  (byte*) print_char_cursor#83 ← phi( main::@2/(byte*) print_char_cursor#85 main::@5/(byte*) print_char_cursor#86 )
+  (byte*) print_line_cursor#51 ← phi( main::@2/(byte*) print_line_cursor#53 main::@5/(byte*) print_line_cursor#54 )
+  (byte*) print_char_cursor#82 ← phi( main::@2/(byte*) print_char_cursor#84 main::@5/(byte*) print_char_cursor#85 )
   (word) rem16u#29 ← phi( main::@2/(word) rem16u#33 main::@5/(word) rem16u#34 )
   (byte*) main::sieve_i#3 ← phi( main::@2/(byte*) main::sieve_i#2 main::@5/(byte*) main::sieve_i#5 )
   (word) main::i#5 ← phi( main::@2/(word) main::i#12 main::@5/(word) main::i#13 )
@@ -1092,30 +1057,30 @@ main::@4: scope:[main]  from main::@2 main::@5
   (byte*) main::sieve_i#1 ← ++ (byte*) main::sieve_i#3
   to:main::@1
 main::@13: scope:[main]  from main::@2
-  (byte*) print_line_cursor#56 ← phi( main::@2/(byte*) print_line_cursor#54 )
-  (byte*) print_char_cursor#87 ← phi( main::@2/(byte*) print_char_cursor#85 )
+  (byte*) print_line_cursor#55 ← phi( main::@2/(byte*) print_line_cursor#53 )
+  (byte*) print_char_cursor#86 ← phi( main::@2/(byte*) print_char_cursor#84 )
   (word) rem16u#40 ← phi( main::@2/(word) rem16u#33 )
   (byte*) main::sieve_i#6 ← phi( main::@2/(byte*) main::sieve_i#2 )
   (word) main::i#6 ← phi( main::@2/(word) main::i#12 )
-  (number~) main::$25 ← (word) main::i#6 * (number) 2
-  (word) main::j#0 ← (number~) main::$25
-  (byte*~) main::$26 ← & *((byte*) sieve + (word) main::j#0)
-  (byte*) main::s#0 ← (byte*~) main::$26
+  (number~) main::$24 ← (word) main::i#6 * (number) 2
+  (word) main::j#0 ← (number~) main::$24
+  (byte*~) main::$25 ← & *((const byte*) sieve + (word) main::j#0)
+  (byte*) main::s#0 ← (byte*~) main::$25
   to:main::@5
 main::@5: scope:[main]  from main::@13 main::@6
-  (byte*) print_line_cursor#55 ← phi( main::@13/(byte*) print_line_cursor#56 main::@6/(byte*) print_line_cursor#57 )
-  (byte*) print_char_cursor#86 ← phi( main::@13/(byte*) print_char_cursor#87 main::@6/(byte*) print_char_cursor#88 )
+  (byte*) print_line_cursor#54 ← phi( main::@13/(byte*) print_line_cursor#55 main::@6/(byte*) print_line_cursor#56 )
+  (byte*) print_char_cursor#85 ← phi( main::@13/(byte*) print_char_cursor#86 main::@6/(byte*) print_char_cursor#87 )
   (word) rem16u#34 ← phi( main::@13/(word) rem16u#40 main::@6/(word) rem16u#41 )
   (byte*) main::s#3 ← phi( main::@13/(byte*) main::s#0 main::@6/(byte*) main::s#1 )
   (byte*) main::sieve_i#5 ← phi( main::@13/(byte*) main::sieve_i#6 main::@6/(byte*) main::sieve_i#7 )
   (word) main::i#13 ← phi( main::@13/(word) main::i#6 main::@6/(word) main::i#7 )
   (word) main::j#2 ← phi( main::@13/(word) main::j#0 main::@6/(word) main::j#1 )
-  (bool~) main::$27 ← (word) main::j#2 < (word) COUNT
-  if((bool~) main::$27) goto main::@6
+  (bool~) main::$26 ← (word) main::j#2 < (const word) COUNT
+  if((bool~) main::$26) goto main::@6
   to:main::@4
 main::@6: scope:[main]  from main::@5
-  (byte*) print_line_cursor#57 ← phi( main::@5/(byte*) print_line_cursor#55 )
-  (byte*) print_char_cursor#88 ← phi( main::@5/(byte*) print_char_cursor#86 )
+  (byte*) print_line_cursor#56 ← phi( main::@5/(byte*) print_line_cursor#54 )
+  (byte*) print_char_cursor#87 ← phi( main::@5/(byte*) print_char_cursor#85 )
   (word) rem16u#41 ← phi( main::@5/(word) rem16u#34 )
   (byte*) main::sieve_i#7 ← phi( main::@5/(byte*) main::sieve_i#5 )
   (word) main::j#3 ← phi( main::@5/(word) main::j#2 )
@@ -1127,25 +1092,25 @@ main::@6: scope:[main]  from main::@5
   to:main::@5
 main::@15: scope:[main]  from main::@18 main::@44
   (word) rem16u#30 ← phi( main::@18/(word) rem16u#35 main::@44/(word) rem16u#36 )
-  (byte*) print_line_cursor#41 ← phi( main::@18/(byte*) print_line_cursor#43 main::@44/(byte*) print_line_cursor#8 )
+  (byte*) print_line_cursor#40 ← phi( main::@18/(byte*) print_line_cursor#42 main::@44/(byte*) print_line_cursor#8 )
   (byte*) print_char_cursor#71 ← phi( main::@18/(byte*) print_char_cursor#78 main::@44/(byte*) print_char_cursor#23 )
   (word) main::i#8 ← phi( main::@18/(word) main::i#3 main::@44/(word) main::i#1 )
-  (bool~) main::$28 ← (word) main::i#8 < (number) $514
-  if((bool~) main::$28) goto main::@16
+  (bool~) main::$27 ← (word) main::i#8 < (number) $514
+  if((bool~) main::$27) goto main::@16
   to:main::@17
 main::@16: scope:[main]  from main::@15
   (word) rem16u#42 ← phi( main::@15/(word) rem16u#30 )
-  (byte*) print_line_cursor#45 ← phi( main::@15/(byte*) print_line_cursor#41 )
+  (byte*) print_line_cursor#44 ← phi( main::@15/(byte*) print_line_cursor#40 )
   (byte*) print_char_cursor#72 ← phi( main::@15/(byte*) print_char_cursor#71 )
   (word) main::i#9 ← phi( main::@15/(word) main::i#8 )
-  (bool~) main::$38 ← (number) 0 != *((byte*) sieve + (word) main::i#9)
-  (bool~) main::$29 ← ! (bool~) main::$38
-  (bool~) main::$30 ← ! (bool~) main::$29
-  if((bool~) main::$30) goto main::@18
+  (bool~) main::$34 ← (number) 0 != *((const byte*) sieve + (word) main::i#9)
+  (bool~) main::$28 ← ! (bool~) main::$34
+  (bool~) main::$29 ← ! (bool~) main::$28
+  if((bool~) main::$29) goto main::@18
   to:main::@21
 main::@17: scope:[main]  from main::@15
   (word) rem16u#26 ← phi( main::@15/(word) rem16u#30 )
-  (byte*) print_line_cursor#37 ← phi( main::@15/(byte*) print_line_cursor#41 )
+  (byte*) print_line_cursor#37 ← phi( main::@15/(byte*) print_line_cursor#40 )
   (byte*) print_char_cursor#62 ← phi( main::@15/(byte*) print_char_cursor#71 )
   (byte*) print_str::str#7 ← (const string) main::str4
   call print_str 
@@ -1158,22 +1123,22 @@ main::@45: scope:[main]  from main::@17
   to:main::@23
 main::@18: scope:[main]  from main::@16 main::@47
   (word) rem16u#35 ← phi( main::@16/(word) rem16u#42 main::@47/(word) rem16u#43 )
-  (byte*) print_line_cursor#43 ← phi( main::@16/(byte*) print_line_cursor#45 main::@47/(byte*) print_line_cursor#46 )
+  (byte*) print_line_cursor#42 ← phi( main::@16/(byte*) print_line_cursor#44 main::@47/(byte*) print_line_cursor#45 )
   (byte*) print_char_cursor#78 ← phi( main::@16/(byte*) print_char_cursor#72 main::@47/(byte*) print_char_cursor#26 )
   (word) main::i#10 ← phi( main::@16/(word) main::i#9 main::@47/(word) main::i#14 )
   (word) main::i#3 ← ++ (word) main::i#10
   to:main::@15
 main::@21: scope:[main]  from main::@16
-  (word) rem16u#50 ← phi( main::@16/(word) rem16u#42 )
-  (byte*) print_line_cursor#50 ← phi( main::@16/(byte*) print_line_cursor#45 )
+  (word) rem16u#49 ← phi( main::@16/(word) rem16u#42 )
+  (byte*) print_line_cursor#49 ← phi( main::@16/(byte*) print_line_cursor#44 )
   (byte*) print_char_cursor#63 ← phi( main::@16/(byte*) print_char_cursor#72 )
   (word) main::i#11 ← phi( main::@16/(word) main::i#9 )
   (word) print_word_decimal::w#2 ← (word) main::i#11
   call print_word_decimal 
   to:main::@46
 main::@46: scope:[main]  from main::@21
-  (word) rem16u#47 ← phi( main::@21/(word) rem16u#50 )
-  (byte*) print_line_cursor#48 ← phi( main::@21/(byte*) print_line_cursor#50 )
+  (word) rem16u#46 ← phi( main::@21/(word) rem16u#49 )
+  (byte*) print_line_cursor#47 ← phi( main::@21/(byte*) print_line_cursor#49 )
   (word) main::i#15 ← phi( main::@21/(word) main::i#11 )
   (byte*) print_char_cursor#52 ← phi( main::@21/(byte*) print_char_cursor#6 )
   (byte*) print_char_cursor#25 ← (byte*) print_char_cursor#52
@@ -1181,8 +1146,8 @@ main::@46: scope:[main]  from main::@21
   call print_char 
   to:main::@47
 main::@47: scope:[main]  from main::@46
-  (word) rem16u#43 ← phi( main::@46/(word) rem16u#47 )
-  (byte*) print_line_cursor#46 ← phi( main::@46/(byte*) print_line_cursor#48 )
+  (word) rem16u#43 ← phi( main::@46/(word) rem16u#46 )
+  (byte*) print_line_cursor#45 ← phi( main::@46/(byte*) print_line_cursor#47 )
   (word) main::i#14 ← phi( main::@46/(word) main::i#15 )
   (byte*) print_char_cursor#53 ← phi( main::@46/(byte*) print_char_cursor#10 )
   (byte*) print_char_cursor#26 ← (byte*) print_char_cursor#53
@@ -1197,8 +1162,7 @@ main::@24: scope:[main]  from main::@23
   (word) rem16u#21 ← phi( main::@23/(word) rem16u#18 )
   (byte*) print_char_cursor#73 ← phi( main::@23/(byte*) print_char_cursor#64 )
   (byte*) print_line_cursor#31 ← phi( main::@23/(byte*) print_line_cursor#26 )
-  (byte*~) main::$36 ← (byte*) SCREEN + (number) $3e7
-  *((byte*~) main::$36) ← ++ *((byte*~) main::$36)
+  *((const byte*) SCREEN+(number) $3e7) ← ++ *((const byte*) SCREEN+(number) $3e7)
   to:main::@23
 main::@return: scope:[main]  from main::@23
   (word) rem16u#14 ← phi( main::@23/(word) rem16u#18 )
@@ -1209,11 +1173,11 @@ main::@return: scope:[main]  from main::@23
   (word) rem16u#7 ← (word) rem16u#14
   return 
   to:@return
-@51: scope:[]  from @50
-  (byte*) print_screen#7 ← phi( @50/(byte*) print_screen#8 )
-  (word) rem16u#19 ← phi( @50/(word) rem16u#23 )
-  (byte*) print_char_cursor#65 ← phi( @50/(byte*) print_char_cursor#74 )
-  (byte*) print_line_cursor#27 ← phi( @50/(byte*) print_line_cursor#33 )
+@51: scope:[]  from @40
+  (byte*) print_screen#7 ← phi( @40/(byte*) print_screen#8 )
+  (word) rem16u#19 ← phi( @40/(word) rem16u#23 )
+  (byte*) print_char_cursor#65 ← phi( @40/(byte*) print_char_cursor#74 )
+  (byte*) print_line_cursor#27 ← phi( @40/(byte*) print_line_cursor#33 )
   call main 
   to:@52
 @52: scope:[]  from @51
@@ -1227,38 +1191,33 @@ main::@return: scope:[main]  from main::@23
 @end: scope:[]  from @52
 
 SYMBOL TABLE SSA
-(word~) $0
-(const string) $1 = (string) "0123456789abcdef"z
 (label) @12
 (label) @22
 (label) @24
 (label) @26
 (label) @36
-(label) @4
 (label) @40
-(label) @50
 (label) @51
 (label) @52
-(label) @8
 (label) @begin
 (label) @end
 (const byte) BINARY = (number) 2
-(dword*) CIA2_TIMER_AB
-(byte*) CIA2_TIMER_A_CONTROL
-(byte*) CIA2_TIMER_B_CONTROL
-(byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
-(byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-(byte) CIA_TIMER_CONTROL_CONTINUOUS
-(byte) CIA_TIMER_CONTROL_START
-(byte) CIA_TIMER_CONTROL_STOP
-(word) CLOCKS_PER_FRAME
-(dword) CLOCKS_PER_INIT
-(dword) CLOCKS_PER_SEC
-(word) COUNT
-(byte*) D018
+(const dword*) CIA2_TIMER_AB = (dword*)(number) $dd04
+(const byte*) CIA2_TIMER_A_CONTROL = (byte*)(number) $dd0e
+(const byte*) CIA2_TIMER_B_CONTROL = (byte*)(number) $dd0f
+(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES = (number) 0
+(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = (number) $40
+(const byte) CIA_TIMER_CONTROL_CONTINUOUS = (number) 0
+(const byte) CIA_TIMER_CONTROL_START = (number) 1
+(const byte) CIA_TIMER_CONTROL_STOP = (number) 0
+(const word) CLOCKS_PER_FRAME = (number) $4cc8
+(const dword) CLOCKS_PER_INIT = (number) $12
+(const dword) CLOCKS_PER_SEC = (const word) CLOCKS_PER_FRAME*(const byte) FRAMES_PER_SEC
+(const word) COUNT = (number) $4000
+(const byte*) D018 = (byte*)(number) $d018
 (const byte) DECIMAL = (number) $a
-(byte[]) DIGITS
-(byte) FRAMES_PER_SEC
+(const byte[]) DIGITS = (string) "0123456789abcdef"z
+(const byte) FRAMES_PER_SEC = (number) $3c
 (const byte) HEXADECIMAL = (number) $10
 (const byte) OCTAL = (number) 8
 (const byte) RADIX::BINARY = (number) 2
@@ -1273,10 +1232,10 @@ SYMBOL TABLE SSA
 (dword[]) RADIX_HEXADECIMAL_VALUES_LONG
 (word[]) RADIX_OCTAL_VALUES
 (dword[]) RADIX_OCTAL_VALUES_LONG
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (const byte) SIZEOF_DWORD = (byte) 4
 (const byte) SIZEOF_WORD = (byte) 2
-(byte) SQRT_COUNT
+(const byte) SQRT_COUNT = (number) $80
 (dword()) clock()
 (number~) clock::$0
 (label) clock::@return
@@ -1287,14 +1246,6 @@ SYMBOL TABLE SSA
 (dword) clock::return#3
 (dword) clock::return#4
 (void()) clock_start()
-(byte~) clock_start::$0
-(byte~) clock_start::$1
-(byte~) clock_start::$2
-(byte~) clock_start::$3
-(byte~) clock_start::$4
-(byte~) clock_start::$5
-(byte~) clock_start::$6
-(byte~) clock_start::$7
 (label) clock_start::@return
 (byte[6]) decimal_digits
 (byte[$b]) decimal_digits_long
@@ -1409,22 +1360,20 @@ SYMBOL TABLE SSA
 (byte~) main::$0
 (dword~) main::$10
 (dword~) main::$11
-(number~) main::$12
-(word~) main::$13
-(dword~) main::$14
-(word~) main::$15
+(word~) main::$12
+(dword~) main::$13
+(word~) main::$14
+(bool~) main::$21
 (bool~) main::$22
 (bool~) main::$23
-(bool~) main::$24
-(number~) main::$25
-(byte*~) main::$26
+(number~) main::$24
+(byte*~) main::$25
+(bool~) main::$26
 (bool~) main::$27
 (bool~) main::$28
 (bool~) main::$29
-(bool~) main::$30
-(byte*~) main::$36
-(bool~) main::$37
-(bool~) main::$38
+(bool~) main::$33
+(bool~) main::$34
 (byte*~) main::$9
 (label) main::@1
 (label) main::@13
@@ -1671,7 +1620,6 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#85
 (byte*) print_char_cursor#86
 (byte*) print_char_cursor#87
-(byte*) print_char_cursor#88
 (byte*) print_char_cursor#9
 (void()) print_cls()
 (label) print_cls::@1
@@ -1737,7 +1685,6 @@ SYMBOL TABLE SSA
 (byte*) print_line_cursor#54
 (byte*) print_line_cursor#55
 (byte*) print_line_cursor#56
-(byte*) print_line_cursor#57
 (byte*) print_line_cursor#6
 (byte*) print_line_cursor#7
 (byte*) print_line_cursor#8
@@ -1751,7 +1698,6 @@ SYMBOL TABLE SSA
 (byte*) print_screen
 (byte*) print_screen#0
 (byte*) print_screen#1
-(byte*) print_screen#10
 (byte*) print_screen#2
 (byte*) print_screen#3
 (byte*) print_screen#4
@@ -1841,12 +1787,11 @@ SYMBOL TABLE SSA
 (word) rem16u#55
 (word) rem16u#56
 (word) rem16u#57
-(word) rem16u#58
 (word) rem16u#6
 (word) rem16u#7
 (word) rem16u#8
 (word) rem16u#9
-(byte*) sieve
+(const byte*) sieve = (byte*)(number) $1000
 (void()) ultoa((dword) ultoa::value , (byte*) ultoa::buffer , (byte) ultoa::radix)
 (bool~) ultoa::$0
 (bool~) ultoa::$1
@@ -2155,17 +2100,9 @@ SYMBOL TABLE SSA
 Fixing inline constructor with div32u16u::$4 ← (word)div32u16u::quotient_hi#1 dw= (word)div32u16u::quotient_lo#0
 Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#2 > (number) 0
-Adding number conversion cast (unumber) 0 in (byte) CIA_TIMER_CONTROL_STOP ← (number) 0
-Adding number conversion cast (unumber) 1 in (byte) CIA_TIMER_CONTROL_START ← (number) 1
-Adding number conversion cast (unumber) 0 in (byte) CIA_TIMER_CONTROL_CONTINUOUS ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES ← (number) 0
-Adding number conversion cast (unumber) $40 in (byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A ← (number) $40
-Adding number conversion cast (unumber) $4cc8 in (word) CLOCKS_PER_FRAME ← (number) $4cc8
-Adding number conversion cast (unumber) $3c in (byte) FRAMES_PER_SEC ← (number) $3c
-Adding number conversion cast (unumber) $12 in (dword) CLOCKS_PER_INIT ← (number) $12
-Adding number conversion cast (unumber) $ffffffff in (number~) clock::$0 ← (number) $ffffffff - *((dword*) CIA2_TIMER_AB)
-Adding number conversion cast (unumber) clock::$0 in (number~) clock::$0 ← (unumber)(number) $ffffffff - *((dword*) CIA2_TIMER_AB)
-Adding number conversion cast (unumber) $ffffffff in *((dword*) CIA2_TIMER_AB) ← (number) $ffffffff
+Adding number conversion cast (unumber) $ffffffff in (number~) clock::$0 ← (number) $ffffffff - *((const dword*) CIA2_TIMER_AB)
+Adding number conversion cast (unumber) clock::$0 in (number~) clock::$0 ← (unumber)(number) $ffffffff - *((const dword*) CIA2_TIMER_AB)
+Adding number conversion cast (unumber) $ffffffff in *((const dword*) CIA2_TIMER_AB) ← (number) $ffffffff
 Adding number conversion cast (unumber) 0 in (word) rem16u#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (word) divr16u::quotient#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (word~) divr16u::$0 ← (word) divr16u::rem#5 << (number) 1
@@ -2204,8 +2141,6 @@ Adding number conversion cast (unumber) 0 in (byte) ultoa_append::digit#0 ← (n
 Adding number conversion cast (unumber) 0 in (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#8)
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#11 + (number) $28
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
-Adding number conversion cast (unumber) $4000 in (word) COUNT ← (number) $4000
-Adding number conversion cast (unumber) $80 in (byte) SQRT_COUNT ← (number) $80
 Adding number conversion cast (unumber) $3fff in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (number) $3fff
 Adding number conversion cast (unumber) main::toD0181_$1 in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (unumber)(number) $3fff
 Adding number conversion cast (unumber) 4 in (number~) main::toD0181_$2 ← (unumber~) main::toD0181_$1 * (number) 4
@@ -2218,16 +2153,15 @@ Adding number conversion cast (unumber) main::toD0181_$7 in (number~) main::toD0
 Adding number conversion cast (unumber) main::toD0181_$8 in (number~) main::toD0181_$8 ← (unumber~) main::toD0181_$3 | (unumber~) main::toD0181_$7
 Adding number conversion cast (unumber) 0 in (byte) memset::c#1 ← (number) 0
 Adding number conversion cast (unumber) 2 in (word) main::i#0 ← (number) 2
-Adding number conversion cast (unumber) 0 in (bool~) main::$37 ← (number) 0 != *((byte*) main::sieve_i#2)
-Adding number conversion cast (unumber) $64 in (number~) main::$12 ← (dword) CLOCKS_PER_SEC / (number) $64
-Adding number conversion cast (unumber) main::$12 in (number~) main::$12 ← (dword) CLOCKS_PER_SEC / (unumber)(number) $64
+Adding number conversion cast (unumber) 0 in (bool~) main::$33 ← (number) 0 != *((byte*) main::sieve_i#2)
+Adding number conversion cast (unumber) $64 in (word~) main::$12 ← ((word)) (const dword) CLOCKS_PER_SEC/(number) $64
 Adding number conversion cast (unumber) 2 in (word) main::i#1 ← (number) 2
-Adding number conversion cast (unumber) 2 in (number~) main::$25 ← (word) main::i#6 * (number) 2
-Adding number conversion cast (unumber) main::$25 in (number~) main::$25 ← (word) main::i#6 * (unumber)(number) 2
+Adding number conversion cast (unumber) 2 in (number~) main::$24 ← (word) main::i#6 * (number) 2
+Adding number conversion cast (unumber) main::$24 in (number~) main::$24 ← (word) main::i#6 * (unumber)(number) 2
 Adding number conversion cast (unumber) 1 in *((byte*) main::s#2) ← (number) 1
-Adding number conversion cast (unumber) $514 in (bool~) main::$28 ← (word) main::i#8 < (number) $514
-Adding number conversion cast (unumber) 0 in (bool~) main::$38 ← (number) 0 != *((byte*) sieve + (word) main::i#9)
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$36 ← (byte*) SCREEN + (number) $3e7
+Adding number conversion cast (unumber) $514 in (bool~) main::$27 ← (word) main::i#8 < (number) $514
+Adding number conversion cast (unumber) 0 in (bool~) main::$34 ← (number) 0 != *((const byte*) sieve + (word) main::i#9)
+Adding number conversion cast (unumber) $3e7 in *((const byte*) SCREEN+(number) $3e7) ← ++ *((const byte*) SCREEN+(number) $3e7)
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (word[]) RADIX_BINARY_VALUES ← (word[]){ (word)(number) $8000, (word)(number) $4000, (word)(number) $2000, (word)(number) $1000, (word)(number) $800, (word)(number) $400, (word)(number) $200, (word)(number) $100, (word)(number) $80, (word)(number) $40, (word)(number) $20, (word)(number) $10, (word)(number) 8, (word)(number) 4, (word)(number) 2 }
 Added casts to value list in (word[]) RADIX_OCTAL_VALUES ← (word[]){ (word)(number) $8000, (word)(number) $1000, (word)(number) $200, (word)(number) $40, (word)(number) 8 }
@@ -2240,19 +2174,7 @@ Added casts to value list in (dword[]) RADIX_HEXADECIMAL_VALUES_LONG ← (dword[
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#3
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
-Inlining cast (byte*) D018 ← (byte*)(number) $d018
-Inlining cast (dword*) CIA2_TIMER_AB ← (dword*)(number) $dd04
-Inlining cast (byte*) CIA2_TIMER_A_CONTROL ← (byte*)(number) $dd0e
-Inlining cast (byte*) CIA2_TIMER_B_CONTROL ← (byte*)(number) $dd0f
-Inlining cast (byte) CIA_TIMER_CONTROL_STOP ← (unumber)(number) 0
-Inlining cast (byte) CIA_TIMER_CONTROL_START ← (unumber)(number) 1
-Inlining cast (byte) CIA_TIMER_CONTROL_CONTINUOUS ← (unumber)(number) 0
-Inlining cast (byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES ← (unumber)(number) 0
-Inlining cast (byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A ← (unumber)(number) $40
-Inlining cast (word) CLOCKS_PER_FRAME ← (unumber)(number) $4cc8
-Inlining cast (byte) FRAMES_PER_SEC ← (unumber)(number) $3c
-Inlining cast (dword) CLOCKS_PER_INIT ← (unumber)(number) $12
-Inlining cast *((dword*) CIA2_TIMER_AB) ← (unumber)(number) $ffffffff
+Inlining cast *((const dword*) CIA2_TIMER_AB) ← (unumber)(number) $ffffffff
 Inlining cast (word) rem16u#0 ← (unumber)(number) 0
 Inlining cast (word) divr16u::quotient#0 ← (unumber)(number) 0
 Inlining cast (word) divr16u::rem#3 ← (unumber)(number) 0
@@ -2280,32 +2202,22 @@ Inlining cast (byte) ultoa::started#1 ← (unumber)(number) 1
 Inlining cast (byte) ultoa_append::digit#0 ← (unumber)(number) 0
 Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (word) COUNT ← (unumber)(number) $4000
-Inlining cast (byte) SQRT_COUNT ← (unumber)(number) $80
-Inlining cast (byte*) sieve ← (byte*)(number) $1000
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Inlining cast (byte) memset::c#1 ← (unumber)(number) 0
 Inlining cast (word) main::i#0 ← (unumber)(number) 2
-Inlining cast (word~) main::$13 ← (word)(unumber~) main::$12
-Inlining cast (word~) main::$15 ← (word)(dword~) main::$14
+Inlining cast (word~) main::$12 ← (word)(const dword) CLOCKS_PER_SEC/(unumber)(number) $64
+Inlining cast (word~) main::$14 ← (word)(dword~) main::$13
 Inlining cast (word) main::i#1 ← (unumber)(number) 2
 Inlining cast *((byte*) main::s#2) ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (dword*) 56580
 Simplifying constant pointer cast (byte*) 56590
 Simplifying constant pointer cast (byte*) 56591
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 4096
 Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast $40
-Simplifying constant integer cast $4cc8
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $12
 Simplifying constant integer cast $ffffffff
 Simplifying constant integer cast $ffffffff
 Simplifying constant integer cast 0
@@ -2429,10 +2341,6 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Simplifying constant integer cast $3e8
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast $4000
-Simplifying constant integer cast $80
-Simplifying constant pointer cast (byte*) 4096
 Simplifying constant pointer cast (byte*) 6144
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
@@ -2450,14 +2358,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $3e7
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (word) $4cc8
-Finalized unsigned number type (byte) $3c
-Finalized unsigned number type (byte) $12
 Finalized unsigned number type (dword) $ffffffff
 Finalized unsigned number type (dword) $ffffffff
 Finalized unsigned number type (byte) 0
@@ -2494,8 +2394,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (word) $3e8
-Finalized unsigned number type (word) $4000
-Finalized unsigned number type (byte) $80
 Finalized unsigned number type (word) $3fff
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 4
@@ -2511,7 +2409,7 @@ Finalized unsigned number type (word) $514
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $3e7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to dword in (unumber~) clock::$0 ← (dword) $ffffffff - *((dword*) CIA2_TIMER_AB)
+Inferred type updated to dword in (unumber~) clock::$0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB)
 Inferred type updated to byte in (unumber~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80
 Inferred type updated to word in (unumber~) divr16u::$5 ← (word) divr16u::rem#7 | (byte) 1
 Inferred type updated to byte in (unumber~) utoa::$5 ← (byte) utoa::max_digits#5 - (byte) 1
@@ -2522,15 +2420,14 @@ Inferred type updated to byte in (unumber~) main::toD0181_$3 ← > (word~) main:
 Inferred type updated to byte in (unumber~) main::toD0181_$6 ← (byte~) main::toD0181_$5 / (byte) 4
 Inferred type updated to byte in (unumber~) main::toD0181_$7 ← (byte~) main::toD0181_$6 & (byte) $f
 Inferred type updated to byte in (unumber~) main::toD0181_$8 ← (byte~) main::toD0181_$3 | (byte~) main::toD0181_$7
-Inferred type updated to dword in (unumber~) main::$12 ← (dword) CLOCKS_PER_SEC / (byte) $64
-Inferred type updated to word in (unumber~) main::$25 ← (word) main::i#6 * (byte) 2
+Inferred type updated to word in (unumber~) main::$24 ← (word) main::i#6 * (byte) 2
 Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [63] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [62] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
-Inversing boolean not [71] (bool~) divr16u::$9 ← (word) divr16u::rem#6 < (word) divr16u::divisor#2 from [70] (bool~) divr16u::$8 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
-Inversing boolean not [432] (bool~) main::$23 ← (byte) 0 == *((byte*) main::sieve_i#2) from [431] (bool~) main::$37 ← (byte) 0 != *((byte*) main::sieve_i#2)
-Inversing boolean not [433] (bool~) main::$24 ← (byte) 0 != *((byte*) main::sieve_i#2) from [432] (bool~) main::$23 ← (byte) 0 == *((byte*) main::sieve_i#2)
-Inversing boolean not [494] (bool~) main::$29 ← (byte) 0 == *((byte*) sieve + (word) main::i#9) from [493] (bool~) main::$38 ← (byte) 0 != *((byte*) sieve + (word) main::i#9)
-Inversing boolean not [495] (bool~) main::$30 ← (byte) 0 != *((byte*) sieve + (word) main::i#9) from [494] (bool~) main::$29 ← (byte) 0 == *((byte*) sieve + (word) main::i#9)
+Inversing boolean not [41] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [40] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
+Inversing boolean not [49] (bool~) divr16u::$9 ← (word) divr16u::rem#6 < (word) divr16u::divisor#2 from [48] (bool~) divr16u::$8 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
+Inversing boolean not [404] (bool~) main::$22 ← (byte) 0 == *((byte*) main::sieve_i#2) from [403] (bool~) main::$33 ← (byte) 0 != *((byte*) main::sieve_i#2)
+Inversing boolean not [405] (bool~) main::$23 ← (byte) 0 != *((byte*) main::sieve_i#2) from [404] (bool~) main::$22 ← (byte) 0 == *((byte*) main::sieve_i#2)
+Inversing boolean not [465] (bool~) main::$28 ← (byte) 0 == *((const byte*) sieve + (word) main::i#9) from [464] (bool~) main::$34 ← (byte) 0 != *((const byte*) sieve + (word) main::i#9)
+Inversing boolean not [466] (bool~) main::$29 ← (byte) 0 != *((const byte*) sieve + (word) main::i#9) from [465] (bool~) main::$28 ← (byte) 0 == *((const byte*) sieve + (word) main::i#9)
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#2 (void*) memset::return#4 (void*) memset::return#1 
 Alias (void*) memset::str#3 = (void*) memset::str#4 
@@ -2541,7 +2438,6 @@ Alias (byte) memset::c#2 = (byte) memset::c#3
 Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
 Alias (byte*) memset::end#1 = (byte*) memset::end#2 
 Alias (void*) memset::str#5 = (void*) memset::str#6 
-Alias (dword) CLOCKS_PER_SEC = (word~) $0 
 Alias (dword) clock::return#0 = (dword~) clock::$0 (dword) clock::return#3 (dword) clock::return#1 
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -2569,7 +2465,7 @@ Alias (word) divr16u::return#3 = (word) divr16u::return#6
 Alias (word) rem16u#11 = (word) rem16u#4 (word) rem16u#12 (word) rem16u#5 
 Alias (word) div32u16u::quotient_lo#0 = (word~) div32u16u::$3 
 Alias (dword) div32u16u::return#0 = (dword) div32u16u::quotient#0 (dword~) div32u16u::$4 (dword) div32u16u::return#3 (dword) div32u16u::return#1 
-Alias (word) rem16u#0 = (word) rem16u#44 (word) rem16u#37 (word) rem16u#31 (word) rem16u#27 (word) rem16u#24 (word) rem16u#23 (word) rem16u#19 
+Alias (word) rem16u#0 = (word) rem16u#37 (word) rem16u#31 (word) rem16u#27 (word) rem16u#24 (word) rem16u#23 (word) rem16u#19 
 Alias (word) utoa::value#10 = (word) utoa::value#8 (word) utoa::value#12 (word) utoa::value#13 (word) utoa::value#9 (word) utoa::value#14 (word) utoa::value#15 (word) utoa::value#11 
 Alias (byte*) utoa::buffer#10 = (byte*) utoa::buffer#17 (byte*) utoa::buffer#21 (byte*) utoa::buffer#16 (byte*) utoa::buffer#18 (byte*) utoa::buffer#13 (byte*) utoa::buffer#19 (byte*) utoa::buffer#20 (byte*) utoa::buffer#6 
 Alias (byte) utoa::radix#1 = (byte) utoa::radix#2 (byte) utoa::radix#3 (byte) utoa::radix#4 
@@ -2602,7 +2498,7 @@ Alias (byte) ultoa_append::digit#2 = (byte) ultoa_append::digit#4 (byte) ultoa_a
 Alias (dword) ultoa_append::value#2 = (dword) ultoa_append::value#3 (dword) ultoa_append::value#4 (dword) ultoa_append::return#1 (dword) ultoa_append::return#4 (dword) ultoa_append::return#2 
 Alias (dword) ultoa_append::sub#1 = (dword) ultoa_append::sub#2 
 Alias (byte*) ultoa_append::buffer#1 = (byte*) ultoa_append::buffer#4 (byte*) ultoa_append::buffer#2 
-Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#38 (byte*) print_char_cursor#79 (byte*) print_screen#10 (byte*) print_line_cursor#34 (byte*) print_char_cursor#75 (byte*) print_screen#9 (byte*) print_line_cursor#33 (byte*) print_char_cursor#74 (byte*) print_screen#8 (byte*) print_line_cursor#27 (byte*) print_char_cursor#65 (byte*) print_screen#7 
+Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#34 (byte*) print_char_cursor#75 (byte*) print_screen#9 (byte*) print_line_cursor#33 (byte*) print_char_cursor#74 (byte*) print_screen#8 (byte*) print_line_cursor#27 (byte*) print_char_cursor#65 (byte*) print_screen#7 
 Alias (byte*) print_str::str#8 = (byte*) print_str::str#9 
 Alias (byte*) print_char_cursor#2 = (byte*) print_char_cursor#29 (byte*) print_char_cursor#56 (byte*) print_char_cursor#30 
 Alias (byte*) print_line_cursor#1 = (byte*~) print_ln::$0 (byte*) print_line_cursor#12 (byte*) print_char_cursor#3 (byte*) print_line_cursor#13 (byte*) print_char_cursor#32 (byte*) print_line_cursor#2 (byte*) print_char_cursor#4 
@@ -2615,9 +2511,9 @@ Alias (byte*) print_line_cursor#14 = (byte*) print_screen#2 (byte*) print_screen
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
 Alias (byte*) main::toD0181_gfx#0 = (byte*) main::toD0181_gfx#1 
 Alias (byte*) print_screen#3 = (byte*) print_screen#5 (byte*) print_screen#6 (byte*) print_screen#4 
-Alias (byte*) print_line_cursor#22 = (byte*) print_line_cursor#35 (byte*) print_line_cursor#39 (byte*) print_line_cursor#28 
-Alias (byte*) print_char_cursor#60 = (byte*) print_char_cursor#76 (byte*) print_char_cursor#80 (byte*) print_char_cursor#69 
-Alias (word) rem16u#28 = (word) rem16u#57 (word) rem16u#58 (word) rem16u#56 (word) rem16u#55 (word) rem16u#54 (word) rem16u#53 (word) rem16u#51 (word) rem16u#48 (word) rem16u#45 (word) rem16u#38 (word) rem16u#32 
+Alias (byte*) print_line_cursor#22 = (byte*) print_line_cursor#35 (byte*) print_line_cursor#38 (byte*) print_line_cursor#28 
+Alias (byte*) print_char_cursor#60 = (byte*) print_char_cursor#76 (byte*) print_char_cursor#79 (byte*) print_char_cursor#69 
+Alias (word) rem16u#28 = (word) rem16u#56 (word) rem16u#57 (word) rem16u#55 (word) rem16u#54 (word) rem16u#53 (word) rem16u#52 (word) rem16u#50 (word) rem16u#47 (word) rem16u#44 (word) rem16u#38 (word) rem16u#32 
 Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$0 
 Alias (byte*) print_line_cursor#15 = (byte*) print_line_cursor#5 (byte*) print_line_cursor#23 
 Alias (byte*) print_char_cursor#13 = (byte*) print_char_cursor#40 
@@ -2626,39 +2522,39 @@ Alias (byte*) print_line_cursor#16 = (byte*) print_line_cursor#6 (byte*) print_l
 Alias (byte*) print_char_cursor#15 = (byte*) print_char_cursor#42 
 Alias (byte*) print_char_cursor#16 = (byte*) print_char_cursor#43 
 Alias (byte*) print_char_cursor#17 = (byte*) print_char_cursor#44 
-Alias (byte*) print_line_cursor#17 = (byte*) print_line_cursor#7 (byte*) print_line_cursor#53 (byte*) print_line_cursor#51 
-Alias (byte*) print_char_cursor#18 = (byte*) print_char_cursor#45 (byte*) print_char_cursor#84 (byte*) print_char_cursor#82 
+Alias (byte*) print_line_cursor#17 = (byte*) print_line_cursor#7 (byte*) print_line_cursor#52 (byte*) print_line_cursor#50 
+Alias (byte*) print_char_cursor#18 = (byte*) print_char_cursor#45 (byte*) print_char_cursor#83 (byte*) print_char_cursor#81 
 Alias (byte*) main::sieve_i#0 = (byte*~) main::$9 
 Alias (byte*) main::sieve_i#2 = (byte*) main::sieve_i#4 (byte*) main::sieve_i#6 
 Alias (word) main::i#12 = (word) main::i#4 (word) main::i#6 
 Alias (word) rem16u#17 = (word) rem16u#33 (word) rem16u#25 (word) rem16u#20 (word) rem16u#40 
-Alias (byte*) print_char_cursor#61 = (byte*) print_char_cursor#85 (byte*) print_char_cursor#81 (byte*) print_char_cursor#77 (byte*) print_char_cursor#70 (byte*) print_char_cursor#87 
-Alias (byte*) print_line_cursor#25 = (byte*) print_line_cursor#54 (byte*) print_line_cursor#49 (byte*) print_line_cursor#47 (byte*) print_line_cursor#44 (byte*) print_line_cursor#42 (byte*) print_line_cursor#40 (byte*) print_line_cursor#36 (byte*) print_line_cursor#30 (byte*) print_line_cursor#56 
+Alias (byte*) print_char_cursor#61 = (byte*) print_char_cursor#84 (byte*) print_char_cursor#80 (byte*) print_char_cursor#77 (byte*) print_char_cursor#70 (byte*) print_char_cursor#86 
+Alias (byte*) print_line_cursor#25 = (byte*) print_line_cursor#53 (byte*) print_line_cursor#48 (byte*) print_line_cursor#46 (byte*) print_line_cursor#43 (byte*) print_line_cursor#41 (byte*) print_line_cursor#39 (byte*) print_line_cursor#36 (byte*) print_line_cursor#30 (byte*) print_line_cursor#55 
 Alias (dword) clock::return#2 = (dword) clock::return#4 
 Alias (dword) main::cyclecount#0 = (dword~) main::$11 (dword) main::cyclecount#4 (dword) main::cyclecount#3 (dword) main::cyclecount#2 (dword) main::cyclecount#1 
-Alias (word) div32u16u::divisor#0 = (word~) main::$13 
+Alias (word) div32u16u::divisor#0 = (word~) main::$12 
 Alias (dword) div32u16u::return#2 = (dword) div32u16u::return#4 
-Alias (word) rem16u#13 = (word) rem16u#6 (word) rem16u#52 (word) rem16u#49 (word) rem16u#46 (word) rem16u#39 (word) rem16u#36 
-Alias (word) main::sec100s#0 = (word~) main::$15 (word) main::sec100s#1 
+Alias (word) rem16u#13 = (word) rem16u#6 (word) rem16u#51 (word) rem16u#48 (word) rem16u#45 (word) rem16u#39 (word) rem16u#36 
+Alias (word) main::sec100s#0 = (word~) main::$14 (word) main::sec100s#1 
 Alias (byte*) print_char_cursor#19 = (byte*) print_char_cursor#46 
 Alias (byte*) print_char_cursor#20 = (byte*) print_char_cursor#47 
 Alias (byte*) print_char_cursor#21 = (byte*) print_char_cursor#48 
 Alias (byte*) print_char_cursor#22 = (byte*) print_char_cursor#49 
 Alias (byte*) print_line_cursor#18 = (byte*) print_line_cursor#8 
 Alias (byte*) print_char_cursor#23 = (byte*) print_char_cursor#50 
-Alias (word) main::j#0 = (word~) main::$25 
-Alias (byte*) main::s#0 = (byte*~) main::$26 
+Alias (word) main::j#0 = (word~) main::$24 
+Alias (byte*) main::s#0 = (byte*~) main::$25 
 Alias (byte*) main::s#2 = (byte*) main::s#3 
 Alias (word) main::i#13 = (word) main::i#7 
 Alias (word) main::j#2 = (word) main::j#3 
 Alias (byte*) main::sieve_i#5 = (byte*) main::sieve_i#7 
 Alias (word) rem16u#34 = (word) rem16u#41 
-Alias (byte*) print_char_cursor#86 = (byte*) print_char_cursor#88 
-Alias (byte*) print_line_cursor#55 = (byte*) print_line_cursor#57 
+Alias (byte*) print_char_cursor#85 = (byte*) print_char_cursor#87 
+Alias (byte*) print_line_cursor#54 = (byte*) print_line_cursor#56 
 Alias (word) main::i#11 = (word) main::i#9 (word) main::i#8 (word) main::i#15 (word) main::i#14 
 Alias (byte*) print_char_cursor#62 = (byte*) print_char_cursor#72 (byte*) print_char_cursor#71 (byte*) print_char_cursor#63 
-Alias (byte*) print_line_cursor#32 = (byte*) print_line_cursor#45 (byte*) print_line_cursor#41 (byte*) print_line_cursor#37 (byte*) print_line_cursor#50 (byte*) print_line_cursor#48 (byte*) print_line_cursor#46 
-Alias (word) rem16u#22 = (word) rem16u#42 (word) rem16u#30 (word) rem16u#26 (word) rem16u#50 (word) rem16u#47 (word) rem16u#43 
+Alias (byte*) print_line_cursor#32 = (byte*) print_line_cursor#44 (byte*) print_line_cursor#40 (byte*) print_line_cursor#37 (byte*) print_line_cursor#49 (byte*) print_line_cursor#47 (byte*) print_line_cursor#45 
+Alias (word) rem16u#22 = (word) rem16u#42 (word) rem16u#30 (word) rem16u#26 (word) rem16u#49 (word) rem16u#46 (word) rem16u#43 
 Alias (byte*) print_char_cursor#24 = (byte*) print_char_cursor#51 
 Alias (byte*) print_char_cursor#25 = (byte*) print_char_cursor#52 
 Alias (byte*) print_char_cursor#26 = (byte*) print_char_cursor#53 
@@ -2685,7 +2581,7 @@ Alias (byte) ultoa::digit#2 = (byte) ultoa::digit#4
 Alias (byte) ultoa::max_digits#10 = (byte) ultoa::max_digits#6 
 Alias (dword*) ultoa::digit_values#10 = (dword*) ultoa::digit_values#7 
 Alias (word) main::i#10 = (word) main::i#11 
-Alias (byte*) print_line_cursor#32 = (byte*) print_line_cursor#43 
+Alias (byte*) print_line_cursor#32 = (byte*) print_line_cursor#42 
 Alias (word) rem16u#22 = (word) rem16u#35 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
@@ -2748,8 +2644,8 @@ Identical Phi Values (byte*) print_char_cursor#23 (byte*) print_line_cursor#1
 Identical Phi Values (word) main::i#13 (word) main::i#12
 Identical Phi Values (byte*) main::sieve_i#5 (byte*) main::sieve_i#2
 Identical Phi Values (word) rem16u#34 (word) rem16u#17
-Identical Phi Values (byte*) print_char_cursor#86 (byte*) print_char_cursor#61
-Identical Phi Values (byte*) print_line_cursor#55 (byte*) print_line_cursor#25
+Identical Phi Values (byte*) print_char_cursor#85 (byte*) print_char_cursor#61
+Identical Phi Values (byte*) print_line_cursor#54 (byte*) print_line_cursor#25
 Identical Phi Values (byte*) print_line_cursor#32 (byte*) print_line_cursor#18
 Identical Phi Values (word) rem16u#22 (word) rem16u#13
 Identical Phi Values (byte*) print_char_cursor#24 (byte*) print_char_cursor#2
@@ -2767,53 +2663,52 @@ Identical Phi Values (byte*) print_char_cursor#57 (byte*) print_char_cursor#2
 Identical Phi Values (word) main::i#5 (word) main::i#12
 Identical Phi Values (byte*) main::sieve_i#3 (byte*) main::sieve_i#2
 Identical Phi Values (word) rem16u#29 (word) rem16u#17
-Identical Phi Values (byte*) print_char_cursor#83 (byte*) print_char_cursor#61
-Identical Phi Values (byte*) print_line_cursor#52 (byte*) print_line_cursor#25
+Identical Phi Values (byte*) print_char_cursor#82 (byte*) print_char_cursor#61
+Identical Phi Values (byte*) print_line_cursor#51 (byte*) print_line_cursor#25
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (word) rem16u#17 (word) rem16u#0
 Identical Phi Values (byte*) print_char_cursor#61 (byte*) print_line_cursor#1
 Identical Phi Values (byte*) print_line_cursor#25 (byte*) print_line_cursor#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [42] (byte~) clock_start::$2 ← (byte) CIA_TIMER_CONTROL_STOP | (byte) CIA_TIMER_CONTROL_CONTINUOUS
-Identified duplicate assignment right side [49] (byte~) clock_start::$6 ← (byte) CIA_TIMER_CONTROL_START | (byte) CIA_TIMER_CONTROL_CONTINUOUS
-Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) memset::$1 [3] if((word) memset::num#2<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) divr16u::$4 [64] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
-Simple Condition (bool~) divr16u::$9 [72] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
-Simple Condition (bool~) divr16u::$11 [79] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
-Simple Condition (bool~) utoa::$0 [129] if((byte) utoa::radix#0==(const byte) DECIMAL) goto utoa::@1
-Simple Condition (bool~) utoa::$1 [135] if((byte) utoa::radix#0==(const byte) HEXADECIMAL) goto utoa::@2
-Simple Condition (bool~) utoa::$2 [141] if((byte) utoa::radix#0==(const byte) OCTAL) goto utoa::@3
-Simple Condition (bool~) utoa::$3 [147] if((byte) utoa::radix#0==(const byte) BINARY) goto utoa::@4
-Simple Condition (bool~) utoa::$6 [166] if((byte) utoa::digit#2<(byte~) utoa::$5) goto utoa::@19
-Simple Condition (bool~) utoa_append::$0 [196] if((word) utoa_append::value#2>=(word) utoa_append::sub#0) goto utoa_append::@2
-Simple Condition (bool~) ultoa::$0 [215] if((byte) ultoa::radix#0==(const byte) DECIMAL) goto ultoa::@1
-Simple Condition (bool~) ultoa::$1 [221] if((byte) ultoa::radix#0==(const byte) HEXADECIMAL) goto ultoa::@2
-Simple Condition (bool~) ultoa::$2 [227] if((byte) ultoa::radix#0==(const byte) OCTAL) goto ultoa::@3
-Simple Condition (bool~) ultoa::$3 [233] if((byte) ultoa::radix#0==(const byte) BINARY) goto ultoa::@4
-Simple Condition (bool~) ultoa::$6 [252] if((byte) ultoa::digit#2<(byte~) ultoa::$5) goto ultoa::@19
-Simple Condition (bool~) ultoa_append::$0 [282] if((dword) ultoa_append::value#2>=(dword) ultoa_append::sub#0) goto ultoa_append::@2
-Simple Condition (bool~) print_str::$0 [299] if((byte) 0!=*((byte*) print_str::str#8)) goto print_str::@2
-Simple Condition (bool~) print_ln::$1 [312] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1
-Simple Condition (bool~) main::$22 [429] if((word) main::i#12<(byte) SQRT_COUNT) goto main::@2
-Simple Condition (bool~) main::$24 [434] if((byte) 0!=*((byte*) main::sieve_i#2)) goto main::@4
-Simple Condition (bool~) main::$27 [484] if((word) main::j#2<(word) COUNT) goto main::@6
-Simple Condition (bool~) main::$28 [491] if((word) main::i#10<(word) $514) goto main::@16
-Simple Condition (bool~) main::$30 [496] if((byte) 0!=*((byte*) sieve + (word) main::i#10)) goto main::@18
+Simple Condition (bool~) divr16u::$4 [42] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
+Simple Condition (bool~) divr16u::$9 [50] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
+Simple Condition (bool~) divr16u::$11 [57] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
+Simple Condition (bool~) utoa::$0 [106] if((byte) utoa::radix#0==(const byte) DECIMAL) goto utoa::@1
+Simple Condition (bool~) utoa::$1 [112] if((byte) utoa::radix#0==(const byte) HEXADECIMAL) goto utoa::@2
+Simple Condition (bool~) utoa::$2 [118] if((byte) utoa::radix#0==(const byte) OCTAL) goto utoa::@3
+Simple Condition (bool~) utoa::$3 [124] if((byte) utoa::radix#0==(const byte) BINARY) goto utoa::@4
+Simple Condition (bool~) utoa::$6 [143] if((byte) utoa::digit#2<(byte~) utoa::$5) goto utoa::@19
+Simple Condition (bool~) utoa_append::$0 [173] if((word) utoa_append::value#2>=(word) utoa_append::sub#0) goto utoa_append::@2
+Simple Condition (bool~) ultoa::$0 [192] if((byte) ultoa::radix#0==(const byte) DECIMAL) goto ultoa::@1
+Simple Condition (bool~) ultoa::$1 [198] if((byte) ultoa::radix#0==(const byte) HEXADECIMAL) goto ultoa::@2
+Simple Condition (bool~) ultoa::$2 [204] if((byte) ultoa::radix#0==(const byte) OCTAL) goto ultoa::@3
+Simple Condition (bool~) ultoa::$3 [210] if((byte) ultoa::radix#0==(const byte) BINARY) goto ultoa::@4
+Simple Condition (bool~) ultoa::$6 [229] if((byte) ultoa::digit#2<(byte~) ultoa::$5) goto ultoa::@19
+Simple Condition (bool~) ultoa_append::$0 [259] if((dword) ultoa_append::value#2>=(dword) ultoa_append::sub#0) goto ultoa_append::@2
+Simple Condition (bool~) print_str::$0 [276] if((byte) 0!=*((byte*) print_str::str#8)) goto print_str::@2
+Simple Condition (bool~) print_ln::$1 [289] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1
+Simple Condition (bool~) main::$21 [401] if((word) main::i#12<(const byte) SQRT_COUNT) goto main::@2
+Simple Condition (bool~) main::$23 [406] if((byte) 0!=*((byte*) main::sieve_i#2)) goto main::@4
+Simple Condition (bool~) main::$26 [455] if((word) main::j#2<(const word) COUNT) goto main::@6
+Simple Condition (bool~) main::$27 [462] if((word) main::i#10<(word) $514) goto main::@16
+Simple Condition (bool~) main::$29 [467] if((byte) 0!=*((const byte*) sieve + (word) main::i#10)) goto main::@18
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [172] (bool~) utoa::$9 ← ! (bool~) utoa::$8
-Rewriting || if()-condition to two if()s [171] (bool~) utoa::$8 ← (byte) utoa::started#2 || (bool~) utoa::$7
-Rewriting ! if()-condition to reversed if() [258] (bool~) ultoa::$9 ← ! (bool~) ultoa::$8
-Rewriting || if()-condition to two if()s [257] (bool~) ultoa::$8 ← (byte) ultoa::started#2 || (bool~) ultoa::$7
+Rewriting ! if()-condition to reversed if() [149] (bool~) utoa::$9 ← ! (bool~) utoa::$8
+Rewriting || if()-condition to two if()s [148] (bool~) utoa::$8 ← (byte) utoa::started#2 || (bool~) utoa::$7
+Rewriting ! if()-condition to reversed if() [235] (bool~) ultoa::$9 ← ! (bool~) ultoa::$8
+Rewriting || if()-condition to two if()s [234] (bool~) ultoa::$8 ← (byte) ultoa::started#2 || (bool~) ultoa::$7
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 Warning! Adding boolean cast to non-boolean condition (byte) utoa::started#2
 Warning! Adding boolean cast to non-boolean condition (byte) ultoa::started#2
-Rewriting array member address-of to pointer addition [425] (byte*) main::sieve_i#0 ← (byte*) sieve + (word) main::i#0
-Rewriting array member address-of to pointer addition [480] (byte*) main::s#0 ← (byte*) sieve + (word) main::j#0
+Rewriting array member address-of to pointer addition [397] (byte*) main::sieve_i#0 ← (const byte*) sieve + (word) main::i#0
+Rewriting array member address-of to pointer addition [451] (byte*) main::s#0 ← (const byte*) sieve + (word) main::j#0
 Successful SSA optimization PassNArrayElementAddressOfRewriting
-Constant right-side identified [320] (byte[6]) decimal_digits ← { fill( 6, 0) }
-Constant right-side identified [335] (byte[$b]) decimal_digits_long ← { fill( $b, 0) }
+Constant right-side identified [297] (byte[6]) decimal_digits ← { fill( 6, 0) }
+Constant right-side identified [312] (byte[$b]) decimal_digits_long ← { fill( $b, 0) }
+Constant right-side identified [388] (void*) memset::str#1 ← (void*)(const byte*) sieve
+Constant right-side identified [414] (word) div32u16u::divisor#0 ← (word)(const dword) CLOCKS_PER_SEC/(byte) $64
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (word[]) { (word) $8000, (word) $4000, (word) $2000, (word) $1000, (word) $800, (word) $400, (word) $200, (word) $100, (word) $80, (word) $40, (word) $20, (word) $10, (word) 8, (word) 4, (word) 2 }
 Identified constant from value list (word[]) { (word) $8000, (word) $1000, (word) $200, (word) $40, (word) 8 }
@@ -2824,23 +2719,10 @@ Identified constant from value list (dword[]) { (dword) $40000000, (dword) $8000
 Identified constant from value list (dword[]) { (dword) $3b9aca00, (dword) $5f5e100, (dword) $989680, (dword) $f4240, (dword) $186a0, (dword) $2710, (dword) $3e8, (dword) $64, (dword) $a }
 Identified constant from value list (dword[]) { (dword) $10000000, (dword) $1000000, (dword) $100000, (dword) $10000, (dword) $1000, (dword) $100, (dword) $10 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) D018 = (byte*) 53272
-Constant (const dword*) CIA2_TIMER_AB = (dword*) 56580
-Constant (const byte*) CIA2_TIMER_A_CONTROL = (byte*) 56590
-Constant (const byte*) CIA2_TIMER_B_CONTROL = (byte*) 56591
-Constant (const byte) CIA_TIMER_CONTROL_STOP = 0
-Constant (const byte) CIA_TIMER_CONTROL_START = 1
-Constant (const byte) CIA_TIMER_CONTROL_CONTINUOUS = 0
-Constant (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES = 0
-Constant (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
-Constant (const word) CLOCKS_PER_FRAME = $4cc8
-Constant (const byte) FRAMES_PER_SEC = $3c
-Constant (const dword) CLOCKS_PER_INIT = $12
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
 Constant (const word) divr16u::rem#3 = 0
-Constant (const byte[]) DIGITS = $1
 Constant (const word[]) RADIX_BINARY_VALUES = { $8000, $4000, $2000, $1000, $800, $400, $200, $100, $80, $40, $20, $10, 8, 4, 2 }
 Constant (const word[]) RADIX_OCTAL_VALUES = { $8000, $1000, $200, $40, 8 }
 Constant (const word[]) RADIX_DECIMAL_VALUES = { $2710, $3e8, $64, $a }
@@ -2876,21 +2758,24 @@ Constant (const byte[$b]) decimal_digits_long = { fill( $b, 0) }
 Constant (const byte) ultoa::radix#0 = DECIMAL
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const word) COUNT = $4000
-Constant (const byte) SQRT_COUNT = $80
-Constant (const byte*) sieve = (byte*) 4096
+Constant (const byte*) main::toD0181_screen#0 = SCREEN
 Constant (const byte*) main::toD0181_gfx#0 = (byte*) 6144
 Constant (const byte*) print_str::str#3 = main::str
 Constant (const byte*) print_str::str#4 = main::str1
+Constant (const word) print_word_decimal::w#0 = COUNT
+Constant (const void*) memset::str#1 = (void*)sieve
 Constant (const byte) memset::c#1 = 0
+Constant (const word) memset::num#1 = COUNT
 Constant (const word) main::i#0 = 2
+Constant (const word) div32u16u::divisor#0 = (word)CLOCKS_PER_SEC/$64
 Constant (const byte*) print_str::str#5 = main::str2
 Constant (const byte*) print_str::str#6 = main::str3
 Constant (const word) main::i#1 = 2
 Constant (const byte*) print_str::str#7 = main::str4
 Constant (const byte) print_char::ch#0 = ' '
 Successful SSA optimization Pass2ConstantIdentification
+Constant (const word) divr16u::divisor#0 = div32u16u::divisor#0
+Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
 Constant (const word*) utoa::digit_values#1 = RADIX_DECIMAL_VALUES
 Constant (const word*) utoa::digit_values#2 = RADIX_HEXADECIMAL_VALUES
 Constant (const word*) utoa::digit_values#3 = RADIX_OCTAL_VALUES
@@ -2904,35 +2789,37 @@ Constant (const byte*) print_str::str#1 = decimal_digits
 Constant (const byte*) ultoa::buffer#5 = decimal_digits_long
 Constant (const byte*) print_str::str#2 = decimal_digits_long
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
-Constant (const byte*) main::toD0181_screen#0 = SCREEN
-Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
-Constant (const word) print_word_decimal::w#0 = COUNT
-Constant (const void*) memset::str#1 = (void*)sieve
-Constant (const word) memset::num#1 = COUNT
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
+Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [129] if((const byte) utoa::radix#0==(const byte) DECIMAL) goto utoa::@1
-if() condition always false - eliminating [135] if((const byte) utoa::radix#0==(const byte) HEXADECIMAL) goto utoa::@2
-if() condition always false - eliminating [141] if((const byte) utoa::radix#0==(const byte) OCTAL) goto utoa::@3
-if() condition always false - eliminating [147] if((const byte) utoa::radix#0==(const byte) BINARY) goto utoa::@4
-if() condition always true - replacing block destination [215] if((const byte) ultoa::radix#0==(const byte) DECIMAL) goto ultoa::@1
-if() condition always false - eliminating [221] if((const byte) ultoa::radix#0==(const byte) HEXADECIMAL) goto ultoa::@2
-if() condition always false - eliminating [227] if((const byte) ultoa::radix#0==(const byte) OCTAL) goto ultoa::@3
-if() condition always false - eliminating [233] if((const byte) ultoa::radix#0==(const byte) BINARY) goto ultoa::@4
-if() condition always true - replacing block destination [514] if(true) goto main::@24
+if() condition always true - replacing block destination [106] if((const byte) utoa::radix#0==(const byte) DECIMAL) goto utoa::@1
+if() condition always false - eliminating [112] if((const byte) utoa::radix#0==(const byte) HEXADECIMAL) goto utoa::@2
+if() condition always false - eliminating [118] if((const byte) utoa::radix#0==(const byte) OCTAL) goto utoa::@3
+if() condition always false - eliminating [124] if((const byte) utoa::radix#0==(const byte) BINARY) goto utoa::@4
+if() condition always true - replacing block destination [192] if((const byte) ultoa::radix#0==(const byte) DECIMAL) goto ultoa::@1
+if() condition always false - eliminating [198] if((const byte) ultoa::radix#0==(const byte) HEXADECIMAL) goto ultoa::@2
+if() condition always false - eliminating [204] if((const byte) ultoa::radix#0==(const byte) OCTAL) goto ultoa::@3
+if() condition always false - eliminating [210] if((const byte) ultoa::radix#0==(const byte) BINARY) goto ultoa::@4
+if() condition always true - replacing block destination [485] if(true) goto main::@24
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [77] divr16u::i#1 ← ++ divr16u::i#2 to ++
-Resolved ranged comparison value [79] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
-De-inlining pointer[w] to *(pointer+w)   [496] if((byte) 0!=*((const byte*) sieve + (word) main::i#10)) goto main::@18
+Resolved ranged next value [55] divr16u::i#1 ← ++ divr16u::i#2 to ++
+Resolved ranged comparison value [57] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
+De-inlining pointer[w] to *(pointer+w)   [467] if((byte) 0!=*((const byte*) sieve + (word) main::i#10)) goto main::@18
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Simplifying expression containing zero CIA_TIMER_CONTROL_CONTINUOUS in [39] (byte~) clock_start::$0 ← (const byte) CIA_TIMER_CONTROL_STOP | (const byte) CIA_TIMER_CONTROL_CONTINUOUS
-Simplifying expression containing zero clock_start::$0 in [40] (byte~) clock_start::$1 ← (byte~) clock_start::$0 | (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
-Simplifying expression containing zero CIA_TIMER_CONTROL_START in [46] (byte~) clock_start::$4 ← (const byte) CIA_TIMER_CONTROL_START | (const byte) CIA_TIMER_CONTROL_CONTINUOUS
-Simplifying expression containing zero clock_start::$6 in [50] (byte~) clock_start::$7 ← (byte~) clock_start::$6 | (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Simplifying constant evaluating to zero (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES in [25] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Simplifying constant evaluating to zero (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS in [26] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Successful SSA optimization PassNSimplifyConstantZero
+Simplifying expression containing zero CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A in [26] *((const byte*) CIA2_TIMER_B_CONTROL) ← (byte) 0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Simplifying expression containing zero CIA_TIMER_CONTROL_START in [28] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Simplifying expression containing zero CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS in [29] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (void*) memset::return#2 and assignment [155] (void*) memset::return#2 ← (void*) memset::str#3
-Eliminating unused variable (void*) memset::return#3 and assignment [172] (void*) memset::return#3 ← (void*) memset::str#3
+Simplifying expression containing zero CIA_TIMER_CONTROL_START in [29] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable (void*) memset::return#2 and assignment [144] (void*) memset::return#2 ← (void*) memset::str#3
+Eliminating unused variable (void*) memset::return#3 and assignment [161] (void*) memset::return#3 ← (void*) memset::str#3
+Eliminating unused constant (const byte) CIA_TIMER_CONTROL_STOP
+Eliminating unused constant (const byte) CIA_TIMER_CONTROL_CONTINUOUS
+Eliminating unused constant (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
 Eliminating unused constant (const byte) BINARY
 Eliminating unused constant (const byte) OCTAL
 Eliminating unused constant (const byte) HEXADECIMAL
@@ -2942,8 +2829,6 @@ Eliminating unused constant (const byte) utoa::radix#0
 Eliminating unused constant (const byte) ultoa::max_digits#0
 Eliminating unused constant (const dword*) ultoa::digit_values#0
 Eliminating unused constant (const byte) ultoa::radix#0
-Eliminating unused constant (const byte) CIA_TIMER_CONTROL_STOP
-Eliminating unused constant (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
 Eliminating unused constant (const word) rem16u#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const byte) DECIMAL
@@ -2994,39 +2879,28 @@ Finalized unsigned number type (byte) $10
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte~) clock_start::$1 = (byte~) clock_start::$0 (byte~) clock_start::$2 
-Alias (byte~) clock_start::$6 = (byte~) clock_start::$4 (byte~) clock_start::$7 
-Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) utoa::max_digits#7 (const byte) utoa::max_digits#1
 Identical Phi Values (word*) utoa::digit_values#8 (const word*) utoa::digit_values#1
 Identical Phi Values (byte) ultoa::max_digits#7 (const byte) ultoa::max_digits#1
 Identical Phi Values (dword*) ultoa::digit_values#8 (const dword*) ultoa::digit_values#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) utoa::$12 [67] if((byte) 0!=(byte) utoa::started#2) goto utoa::@24
-Simple Condition (bool~) ultoa::$12 [96] if((byte) 0!=(byte) ultoa::started#2) goto ultoa::@24
-Simple Condition (bool~) utoa::$7 [202] if((word) utoa::value#2>=(word) utoa::digit_value#0) goto utoa::@24
-Simple Condition (bool~) ultoa::$7 [203] if((dword) ultoa::value#2>=(dword) ultoa::digit_value#0) goto ultoa::@24
+Simple Condition (bool~) utoa::$12 [56] if((byte) 0!=(byte) utoa::started#2) goto utoa::@24
+Simple Condition (bool~) ultoa::$12 [85] if((byte) 0!=(byte) ultoa::started#2) goto ultoa::@24
+Simple Condition (bool~) utoa::$7 [188] if((word) utoa::value#2>=(word) utoa::digit_value#0) goto utoa::@24
+Simple Condition (bool~) ultoa::$7 [189] if((dword) ultoa::value#2>=(dword) ultoa::digit_value#0) goto ultoa::@24
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [10] (dword) CLOCKS_PER_SEC ← (const word) CLOCKS_PER_FRAME * (const byte) FRAMES_PER_SEC
-Constant right-side identified [61] (byte~) utoa::$5 ← (const byte) utoa::max_digits#1 - (byte) 1
-Constant right-side identified [90] (byte~) ultoa::$5 ← (const byte) ultoa::max_digits#1 - (byte) 1
-Constant right-side identified [142] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
-Constant right-side identified [145] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
-Constant right-side identified [158] (byte*) main::sieve_i#0 ← (const byte*) sieve + (const word) main::i#0
-Constant right-side identified [199] (byte*~) main::$36 ← (const byte*) SCREEN + (word) $3e7
+Constant right-side identified [50] (byte~) utoa::$5 ← (const byte) utoa::max_digits#1 - (byte) 1
+Constant right-side identified [79] (byte~) ultoa::$5 ← (const byte) ultoa::max_digits#1 - (byte) 1
+Constant right-side identified [131] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
+Constant right-side identified [134] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
+Constant right-side identified [147] (byte*) main::sieve_i#0 ← (const byte*) sieve + (const word) main::i#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const dword) CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
-Constant (const byte) clock_start::$1 = CIA_TIMER_CONTROL_CONTINUOUS
-Constant (const byte) clock_start::$6 = CIA_TIMER_CONTROL_START
 Constant (const byte) utoa::$5 = utoa::max_digits#1-1
 Constant (const byte) ultoa::$5 = ultoa::max_digits#1-1
 Constant (const word) main::toD0181_$1 = main::toD0181_$0&$3fff
 Constant (const byte) main::toD0181_$5 = >main::toD0181_$4
 Constant (const byte*) main::sieve_i#0 = sieve+main::i#0
-Constant (const byte*) main::$36 = SCREEN+$3e7
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A in [17] (byte~) clock_start::$3 ← (const byte) clock_start::$1 | (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) utoa::max_digits#2
 Eliminating unused constant (const byte) utoa::max_digits#3
 Eliminating unused constant (const byte) utoa::max_digits#4
@@ -3047,21 +2921,11 @@ Eliminating unused constant (const dword[]) RADIX_BINARY_VALUES_LONG
 Eliminating unused constant (const dword[]) RADIX_OCTAL_VALUES_LONG
 Eliminating unused constant (const dword[]) RADIX_HEXADECIMAL_VALUES_LONG
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [16] (byte~) clock_start::$5 ← (const byte) clock_start::$6 | (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-Constant right-side identified [127] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
-Constant right-side identified [129] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
-Constant right-side identified [148] (dword~) main::$12 ← (const dword) CLOCKS_PER_SEC / (byte) $64
+Constant right-side identified [123] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
+Constant right-side identified [125] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) clock_start::$3 = CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-Constant (const byte) clock_start::$5 = clock_start::$6|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
 Constant (const word) main::toD0181_$2 = main::toD0181_$1*4
 Constant (const byte) main::toD0181_$6 = main::toD0181_$5/4
-Constant (const dword) main::$12 = CLOCKS_PER_SEC/$64
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const word) div32u16u::divisor#0 = (word)main::$12
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const word) divr16u::divisor#0 = div32u16u::divisor#0
-Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [123] (byte~) main::toD0181_$3 ← > (const word) main::toD0181_$2
 Constant right-side identified [124] (byte~) main::toD0181_$7 ← (const byte) main::toD0181_$6 & (byte) $f
@@ -3082,10 +2946,10 @@ Rewriting multiplication to use shift [153] (word) main::j#0 ← (word) main::i#
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) memset::c#0
 Inlining constant with var siblings (const word) memset::num#0
-Inlining constant with var siblings (const byte) memset::c#1
-Inlining constant with var siblings (const void*) memset::str#0
 Inlining constant with var siblings (const void*) memset::str#1
+Inlining constant with var siblings (const byte) memset::c#1
 Inlining constant with var siblings (const word) memset::num#1
+Inlining constant with var siblings (const void*) memset::str#0
 Inlining constant with var siblings (const word) divr16u::quotient#0
 Inlining constant with var siblings (const byte) divr16u::i#0
 Inlining constant with var siblings (const word) divr16u::rem#3
@@ -3113,21 +2977,33 @@ Inlining constant with var siblings (const word) main::i#0
 Inlining constant with var siblings (const word) main::i#1
 Inlining constant with var siblings (const byte*) main::sieve_i#0
 Inlining constant with var siblings (const byte*) print_line_cursor#0
+Constant inlined utoa_append::digit#0 = (byte) 0
 Constant inlined utoa::digit_values#1 = (const word[]) RADIX_DECIMAL_VALUES
+Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN
 Constant inlined divr16u::rem#3 = (byte) 0
-Constant inlined main::$12 = (const dword) CLOCKS_PER_SEC/(byte) $64
+Constant inlined divr16u::i#0 = (byte) 0
 Constant inlined memset::num#1 = (const word) COUNT
 Constant inlined memset::num#0 = (word) $3e8
-Constant inlined clock_start::$5 = (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-Constant inlined clock_start::$6 = (const byte) CIA_TIMER_CONTROL_START
-Constant inlined $1 = (const byte[]) DIGITS
-Constant inlined clock_start::$3 = (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Constant inlined divr16u::quotient#0 = (byte) 0
+Constant inlined ultoa::buffer#5 = (const byte[$b]) decimal_digits_long
+Constant inlined ultoa::$5 = (const byte) ultoa::max_digits#1-(byte) 1
+Constant inlined ultoa::started#0 = (byte) 0
+Constant inlined utoa::digit#0 = (byte) 0
+Constant inlined main::i#0 = (byte) 2
 Constant inlined utoa::$5 = (const byte) utoa::max_digits#1-(byte) 1
+Constant inlined main::i#1 = (byte) 2
+Constant inlined divr16u::divisor#1 = (const word) div32u16u::divisor#0
+Constant inlined divr16u::divisor#0 = (const word) div32u16u::divisor#0
+Constant inlined print_word_decimal::w#0 = (const word) COUNT
+Constant inlined memset::str#1 = (void*)(const byte*) sieve
+Constant inlined memset::str#0 = (void*)(byte*) 1024
 Constant inlined main::toD0181_$7 = >(word)(const byte*) main::toD0181_gfx#0/(byte) 4&(byte) $f
 Constant inlined print_line_cursor#0 = (byte*) 1024
 Constant inlined main::toD0181_$2 = (word)(const byte*) SCREEN&(word) $3fff*(byte) 4
 Constant inlined main::toD0181_$1 = (word)(const byte*) SCREEN&(word) $3fff
+Constant inlined utoa::started#1 = (byte) 1
 Constant inlined main::toD0181_$0 = (word)(const byte*) SCREEN
+Constant inlined utoa::started#0 = (byte) 0
 Constant inlined ultoa::started#1 = (byte) 1
 Constant inlined main::toD0181_$6 = >(word)(const byte*) main::toD0181_gfx#0/(byte) 4
 Constant inlined main::toD0181_$5 = >(word)(const byte*) main::toD0181_gfx#0
@@ -3138,34 +3014,15 @@ Constant inlined ultoa::digit#0 = (byte) 0
 Constant inlined print_str::str#4 = (const string) main::str1
 Constant inlined print_str::str#3 = (const string) main::str
 Constant inlined print_str::str#2 = (const byte[$b]) decimal_digits_long
+Constant inlined ultoa_append::digit#0 = (byte) 0
+Constant inlined ultoa::digit_values#1 = (const dword[]) RADIX_DECIMAL_VALUES_LONG
 Constant inlined print_str::str#1 = (const byte[6]) decimal_digits
 Constant inlined memset::c#0 = (byte) ' '
 Constant inlined memset::c#1 = (byte) 0
 Constant inlined print_str::str#7 = (const string) main::str4
 Constant inlined print_str::str#6 = (const string) main::str3
-Constant inlined print_str::str#5 = (const string) main::str2
-Constant inlined utoa_append::digit#0 = (byte) 0
-Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN
-Constant inlined divr16u::i#0 = (byte) 0
-Constant inlined main::$36 = (const byte*) SCREEN+(word) $3e7
-Constant inlined divr16u::quotient#0 = (byte) 0
-Constant inlined ultoa::buffer#5 = (const byte[$b]) decimal_digits_long
-Constant inlined ultoa::$5 = (const byte) ultoa::max_digits#1-(byte) 1
-Constant inlined ultoa::started#0 = (byte) 0
-Constant inlined utoa::digit#0 = (byte) 0
-Constant inlined main::i#0 = (byte) 2
-Constant inlined main::i#1 = (byte) 2
-Constant inlined divr16u::divisor#1 = (const word) div32u16u::divisor#0
-Constant inlined divr16u::divisor#0 = (const word) div32u16u::divisor#0
-Constant inlined print_word_decimal::w#0 = (const word) COUNT
-Constant inlined memset::str#1 = (void*)(const byte*) sieve
-Constant inlined memset::str#0 = (void*)(byte*) 1024
-Constant inlined utoa::started#1 = (byte) 1
-Constant inlined utoa::started#0 = (byte) 0
-Constant inlined clock_start::$1 = (const byte) CIA_TIMER_CONTROL_CONTINUOUS
-Constant inlined ultoa_append::digit#0 = (byte) 0
-Constant inlined ultoa::digit_values#1 = (const dword[]) RADIX_DECIMAL_VALUES_LONG
 Constant inlined main::sieve_i#0 = (const byte*) sieve+(byte) 2
+Constant inlined print_str::str#5 = (const string) main::str2
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) divr16u::divisor#6 (const word) div32u16u::divisor#0
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -3180,15 +3037,12 @@ Added new block during phi lifting ultoa::@28(between ultoa::@27 and ultoa::@21)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting main::@48(between main::@16 and main::@18)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
-Adding NOP phi() at start of @8
 Adding NOP phi() at start of @12
 Adding NOP phi() at start of @22
 Adding NOP phi() at start of @24
 Adding NOP phi() at start of @26
 Adding NOP phi() at start of @36
 Adding NOP phi() at start of @40
-Adding NOP phi() at start of @50
 Adding NOP phi() at start of @51
 Adding NOP phi() at start of @52
 Adding NOP phi() at start of @end
@@ -3215,98 +3069,95 @@ Adding NOP phi() at start of memset::@1
 Adding NOP phi() at start of print_cls
 Adding NOP phi() at start of print_cls::@1
 CALL GRAPH
-Calls in [] to main:11 
-Calls in [main] to print_cls:18 print_str:20 print_ln:22 print_str:24 print_word_decimal:26 print_ln:28 memset:30 clock_start:32 clock:37 div32u16u:42 print_str:47 print_word_decimal:51 print_str:53 print_dword_decimal:55 print_ln:57 print_str:62 print_word_decimal:71 print_char:73 
-Calls in [print_word_decimal] to utoa:101 print_str:103 
-Calls in [utoa] to utoa_append:143 
-Calls in [print_dword_decimal] to ultoa:167 print_str:169 
-Calls in [ultoa] to ultoa_append:198 
-Calls in [div32u16u] to divr16u:215 divr16u:222 
-Calls in [print_cls] to memset:277 
+Calls in [] to main:8 
+Calls in [main] to print_cls:15 print_str:17 print_ln:19 print_str:21 print_word_decimal:23 print_ln:25 memset:27 clock_start:29 clock:34 div32u16u:39 print_str:44 print_word_decimal:48 print_str:50 print_dword_decimal:52 print_ln:54 print_str:59 print_word_decimal:68 print_char:70 
+Calls in [print_word_decimal] to utoa:98 print_str:100 
+Calls in [utoa] to utoa_append:140 
+Calls in [print_dword_decimal] to ultoa:164 print_str:166 
+Calls in [ultoa] to ultoa_append:195 
+Calls in [div32u16u] to divr16u:212 divr16u:219 
+Calls in [print_cls] to memset:274 
 
 Created 46 initial phi equivalence classes
-Not coalescing [23] print_char_cursor#90 ← print_line_cursor#1
-Coalesced [25] print_char_cursor#98 ← print_char_cursor#2
-Coalesced [27] print_line_cursor#58 ← print_line_cursor#1
-Not coalescing [46] print_char_cursor#91 ← print_line_cursor#1
-Coalesced [49] print_word_decimal::w#5 ← print_word_decimal::w#1
-Coalesced (already) [50] print_char_cursor#99 ← print_char_cursor#2
-Coalesced [52] print_char_cursor#92 ← print_char_cursor#2
-Coalesced (already) [56] print_line_cursor#59 ← print_line_cursor#1
-Coalesced [58] print_char_cursor#101 ← print_line_cursor#1
-Not coalescing [61] print_char_cursor#89 ← print_char_cursor#62
-Coalesced [69] print_word_decimal::w#4 ← print_word_decimal::w#2
-Not coalescing [70] print_char_cursor#97 ← print_char_cursor#62
-Coalesced [74] print_char_cursor#103 ← print_char_cursor#10
-Coalesced [77] main::i#17 ← main::i#3
-Coalesced [78] print_char_cursor#100 ← print_char_cursor#78
-Coalesced (already) [79] print_char_cursor#102 ← print_char_cursor#62
-Coalesced [83] main::j#4 ← main::j#0
-Coalesced [84] main::s#4 ← main::s#0
-Coalesced [89] main::i#16 ← main::i#2
-Coalesced [90] main::sieve_i#8 ← main::sieve_i#1
-Coalesced [94] main::j#5 ← main::j#1
-Coalesced [95] main::s#5 ← main::s#1
-Coalesced (already) [102] print_char_cursor#94 ← print_char_cursor#58
-Coalesced [107] print_str::str#11 ← print_str::str#10
-Coalesced (already) [108] print_char_cursor#95 ← print_char_cursor#66
-Coalesced [115] print_str::str#12 ← print_str::str#0
-Coalesced [116] print_char_cursor#96 ← print_char_cursor#1
-Coalesced [119] utoa::value#17 ← utoa::value#1
-Coalesced [131] utoa::value#18 ← utoa::value#2
-Coalesced [132] utoa::started#6 ← utoa::started#2
-Coalesced [133] utoa::buffer#23 ← utoa::buffer#11
-Coalesced [136] utoa::digit#7 ← utoa::digit#1
-Coalesced (already) [137] utoa::value#16 ← utoa::value#6
-Coalesced (already) [138] utoa::started#5 ← utoa::started#4
-Coalesced (already) [139] utoa::buffer#22 ← utoa::buffer#14
-Coalesced [147] utoa::value#19 ← utoa::value#0
-Coalesced [148] utoa::buffer#24 ← utoa::buffer#4
-Coalesced [149] utoa_append::value#6 ← utoa_append::value#0
-Coalesced [156] utoa_append::value#7 ← utoa_append::value#1
-Coalesced [157] utoa_append::digit#5 ← utoa_append::digit#1
-Coalesced [159] print_line_cursor#60 ← print_line_cursor#21
-Coalesced (already) [165] print_line_cursor#61 ← print_line_cursor#1
-Coalesced (already) [168] print_char_cursor#93 ← print_char_cursor#2
-Coalesced [174] ultoa::value#17 ← ultoa::value#1
-Coalesced [186] ultoa::value#18 ← ultoa::value#2
-Coalesced [187] ultoa::started#6 ← ultoa::started#2
-Coalesced [188] ultoa::buffer#23 ← ultoa::buffer#11
-Coalesced [191] ultoa::digit#7 ← ultoa::digit#1
-Coalesced (already) [192] ultoa::value#16 ← ultoa::value#6
-Coalesced (already) [193] ultoa::started#5 ← ultoa::started#4
-Coalesced (already) [194] ultoa::buffer#22 ← ultoa::buffer#14
-Coalesced [202] ultoa::value#19 ← ultoa::value#0
-Coalesced [203] ultoa::buffer#24 ← ultoa::buffer#4
-Coalesced [204] ultoa_append::value#6 ← ultoa_append::value#0
-Coalesced [211] ultoa_append::value#7 ← ultoa_append::value#1
-Coalesced [212] ultoa_append::digit#5 ← ultoa_append::digit#1
-Coalesced [214] divr16u::dividend#9 ← divr16u::dividend#1
-Coalesced [220] divr16u::rem#12 ← divr16u::rem#4
-Coalesced [221] divr16u::dividend#10 ← divr16u::dividend#2
-Coalesced [228] divr16u::rem#13 ← divr16u::rem#10
-Coalesced [229] divr16u::dividend#11 ← divr16u::dividend#5
-Coalesced [236] divr16u::rem#16 ← divr16u::rem#1
-Coalesced [243] divr16u::rem#18 ← divr16u::rem#2
-Coalesced [244] divr16u::return#8 ← divr16u::quotient#2
-Coalesced [250] divr16u::rem#14 ← divr16u::rem#11
-Coalesced [251] divr16u::dividend#12 ← divr16u::dividend#0
-Coalesced [252] divr16u::quotient#9 ← divr16u::return#0
-Coalesced [253] divr16u::i#7 ← divr16u::i#1
-Coalesced [254] divr16u::rem#17 ← divr16u::rem#6
-Coalesced [255] divr16u::return#7 ← divr16u::quotient#1
-Coalesced [256] divr16u::rem#15 ← divr16u::rem#0
-Coalesced [275] memset::dst#5 ← memset::dst#1
+Not coalescing [20] print_char_cursor#89 ← print_line_cursor#1
+Coalesced [22] print_char_cursor#97 ← print_char_cursor#2
+Coalesced [24] print_line_cursor#57 ← print_line_cursor#1
+Not coalescing [43] print_char_cursor#90 ← print_line_cursor#1
+Coalesced [46] print_word_decimal::w#5 ← print_word_decimal::w#1
+Coalesced (already) [47] print_char_cursor#98 ← print_char_cursor#2
+Coalesced [49] print_char_cursor#91 ← print_char_cursor#2
+Coalesced (already) [53] print_line_cursor#58 ← print_line_cursor#1
+Coalesced [55] print_char_cursor#100 ← print_line_cursor#1
+Not coalescing [58] print_char_cursor#88 ← print_char_cursor#62
+Coalesced [66] print_word_decimal::w#4 ← print_word_decimal::w#2
+Not coalescing [67] print_char_cursor#96 ← print_char_cursor#62
+Coalesced [71] print_char_cursor#102 ← print_char_cursor#10
+Coalesced [74] main::i#17 ← main::i#3
+Coalesced [75] print_char_cursor#99 ← print_char_cursor#78
+Coalesced (already) [76] print_char_cursor#101 ← print_char_cursor#62
+Coalesced [80] main::j#4 ← main::j#0
+Coalesced [81] main::s#4 ← main::s#0
+Coalesced [86] main::i#16 ← main::i#2
+Coalesced [87] main::sieve_i#8 ← main::sieve_i#1
+Coalesced [91] main::j#5 ← main::j#1
+Coalesced [92] main::s#5 ← main::s#1
+Coalesced (already) [99] print_char_cursor#93 ← print_char_cursor#58
+Coalesced [104] print_str::str#11 ← print_str::str#10
+Coalesced (already) [105] print_char_cursor#94 ← print_char_cursor#66
+Coalesced [112] print_str::str#12 ← print_str::str#0
+Coalesced [113] print_char_cursor#95 ← print_char_cursor#1
+Coalesced [116] utoa::value#17 ← utoa::value#1
+Coalesced [128] utoa::value#18 ← utoa::value#2
+Coalesced [129] utoa::started#6 ← utoa::started#2
+Coalesced [130] utoa::buffer#23 ← utoa::buffer#11
+Coalesced [133] utoa::digit#7 ← utoa::digit#1
+Coalesced (already) [134] utoa::value#16 ← utoa::value#6
+Coalesced (already) [135] utoa::started#5 ← utoa::started#4
+Coalesced (already) [136] utoa::buffer#22 ← utoa::buffer#14
+Coalesced [144] utoa::value#19 ← utoa::value#0
+Coalesced [145] utoa::buffer#24 ← utoa::buffer#4
+Coalesced [146] utoa_append::value#6 ← utoa_append::value#0
+Coalesced [153] utoa_append::value#7 ← utoa_append::value#1
+Coalesced [154] utoa_append::digit#5 ← utoa_append::digit#1
+Coalesced [156] print_line_cursor#59 ← print_line_cursor#21
+Coalesced (already) [162] print_line_cursor#60 ← print_line_cursor#1
+Coalesced (already) [165] print_char_cursor#92 ← print_char_cursor#2
+Coalesced [171] ultoa::value#17 ← ultoa::value#1
+Coalesced [183] ultoa::value#18 ← ultoa::value#2
+Coalesced [184] ultoa::started#6 ← ultoa::started#2
+Coalesced [185] ultoa::buffer#23 ← ultoa::buffer#11
+Coalesced [188] ultoa::digit#7 ← ultoa::digit#1
+Coalesced (already) [189] ultoa::value#16 ← ultoa::value#6
+Coalesced (already) [190] ultoa::started#5 ← ultoa::started#4
+Coalesced (already) [191] ultoa::buffer#22 ← ultoa::buffer#14
+Coalesced [199] ultoa::value#19 ← ultoa::value#0
+Coalesced [200] ultoa::buffer#24 ← ultoa::buffer#4
+Coalesced [201] ultoa_append::value#6 ← ultoa_append::value#0
+Coalesced [208] ultoa_append::value#7 ← ultoa_append::value#1
+Coalesced [209] ultoa_append::digit#5 ← ultoa_append::digit#1
+Coalesced [211] divr16u::dividend#9 ← divr16u::dividend#1
+Coalesced [217] divr16u::rem#12 ← divr16u::rem#4
+Coalesced [218] divr16u::dividend#10 ← divr16u::dividend#2
+Coalesced [225] divr16u::rem#13 ← divr16u::rem#10
+Coalesced [226] divr16u::dividend#11 ← divr16u::dividend#5
+Coalesced [233] divr16u::rem#16 ← divr16u::rem#1
+Coalesced [240] divr16u::rem#18 ← divr16u::rem#2
+Coalesced [241] divr16u::return#8 ← divr16u::quotient#2
+Coalesced [247] divr16u::rem#14 ← divr16u::rem#11
+Coalesced [248] divr16u::dividend#12 ← divr16u::dividend#0
+Coalesced [249] divr16u::quotient#9 ← divr16u::return#0
+Coalesced [250] divr16u::i#7 ← divr16u::i#1
+Coalesced [251] divr16u::rem#17 ← divr16u::rem#6
+Coalesced [252] divr16u::return#7 ← divr16u::quotient#1
+Coalesced [253] divr16u::rem#15 ← divr16u::rem#0
+Coalesced [272] memset::dst#5 ← memset::dst#1
 Coalesced down to 29 phi equivalence classes
-Culled Empty Block (label) @4
-Culled Empty Block (label) @8
 Culled Empty Block (label) @12
 Culled Empty Block (label) @22
 Culled Empty Block (label) @24
 Culled Empty Block (label) @26
 Culled Empty Block (label) @36
 Culled Empty Block (label) @40
-Culled Empty Block (label) @50
 Culled Empty Block (label) @52
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@37
@@ -3426,7 +3277,7 @@ main::@16: scope:[main]  from main::@15
   [11] call print_ln 
   to:main::@17
 main::@17: scope:[main]  from main::@16
-  [12] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1
+  [12] (byte*~) print_char_cursor#89 ← (byte*) print_line_cursor#1
   [13] call print_str 
   to:main::@18
 main::@18: scope:[main]  from main::@17
@@ -3463,9 +3314,9 @@ main::@22: scope:[main]  from main::@3
   [31] (dword) div32u16u::return#2 ← (dword) div32u16u::return#0
   to:main::@23
 main::@23: scope:[main]  from main::@22
-  [32] (dword~) main::$14 ← (dword) div32u16u::return#2
-  [33] (word) main::sec100s#0 ← (word)(dword~) main::$14
-  [34] (byte*~) print_char_cursor#91 ← (byte*) print_line_cursor#1
+  [32] (dword~) main::$13 ← (dword) div32u16u::return#2
+  [33] (word) main::sec100s#0 ← (word)(dword~) main::$13
+  [34] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1
   [35] call print_str 
   to:main::@24
 main::@24: scope:[main]  from main::@23
@@ -3490,19 +3341,19 @@ main::@8: scope:[main]  from main::@11 main::@27
   [45] if((word) main::i#10<(word) $514) goto main::@9
   to:main::@10
 main::@10: scope:[main]  from main::@8
-  [46] (byte*~) print_char_cursor#89 ← (byte*) print_char_cursor#62
+  [46] (byte*~) print_char_cursor#88 ← (byte*) print_char_cursor#62
   [47] call print_str 
   to:main::@13
 main::@13: scope:[main]  from main::@10 main::@13
   [48] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7)
   to:main::@13
 main::@9: scope:[main]  from main::@8
-  [49] (byte*~) main::$39 ← (const byte*) sieve + (word) main::i#10
-  [50] if((byte) 0!=*((byte*~) main::$39)) goto main::@11
+  [49] (byte*~) main::$35 ← (const byte*) sieve + (word) main::i#10
+  [50] if((byte) 0!=*((byte*~) main::$35)) goto main::@11
   to:main::@12
 main::@12: scope:[main]  from main::@9
   [51] (word) print_word_decimal::w#2 ← (word) main::i#10
-  [52] (byte*~) print_char_cursor#97 ← (byte*) print_char_cursor#62
+  [52] (byte*~) print_char_cursor#96 ← (byte*) print_char_cursor#62
   [53] call print_word_decimal 
   to:main::@28
 main::@28: scope:[main]  from main::@12
@@ -3546,7 +3397,7 @@ print_char::@return: scope:[print_char]  from print_char
 
 (void()) print_word_decimal((word) print_word_decimal::w)
 print_word_decimal: scope:[print_word_decimal]  from main::@12 main::@18 main::@24
-  [71] (byte*) print_char_cursor#58 ← phi( main::@12/(byte*~) print_char_cursor#97 main::@18/(byte*) print_char_cursor#2 main::@24/(byte*) print_char_cursor#2 )
+  [71] (byte*) print_char_cursor#58 ← phi( main::@12/(byte*~) print_char_cursor#96 main::@18/(byte*) print_char_cursor#2 main::@24/(byte*) print_char_cursor#2 )
   [71] (word) print_word_decimal::w#3 ← phi( main::@12/(word) print_word_decimal::w#2 main::@18/(const word) COUNT main::@24/(word) print_word_decimal::w#1 )
   [72] (word) utoa::value#1 ← (word) print_word_decimal::w#3
   [73] call utoa 
@@ -3561,7 +3412,7 @@ print_word_decimal::@return: scope:[print_word_decimal]  from print_word_decimal
 
 (void()) print_str((byte*) print_str::str)
 print_str: scope:[print_str]  from main::@10 main::@15 main::@17 main::@23 main::@25 print_dword_decimal::@1 print_word_decimal::@1
-  [77] (byte*) print_char_cursor#66 ← phi( main::@10/(byte*~) print_char_cursor#89 main::@15/(byte*) 1024 main::@17/(byte*~) print_char_cursor#90 main::@23/(byte*~) print_char_cursor#91 main::@25/(byte*) print_char_cursor#2 print_dword_decimal::@1/(byte*) print_char_cursor#2 print_word_decimal::@1/(byte*) print_char_cursor#58 )
+  [77] (byte*) print_char_cursor#66 ← phi( main::@10/(byte*~) print_char_cursor#88 main::@15/(byte*) 1024 main::@17/(byte*~) print_char_cursor#89 main::@23/(byte*~) print_char_cursor#90 main::@25/(byte*) print_char_cursor#2 print_dword_decimal::@1/(byte*) print_char_cursor#2 print_word_decimal::@1/(byte*) print_char_cursor#58 )
   [77] (byte*) print_str::str#10 ← phi( main::@10/(const string) main::str4 main::@15/(const string) main::str main::@17/(const string) main::str1 main::@23/(const string) main::str2 main::@25/(const string) main::str3 print_dword_decimal::@1/(const byte[$b]) decimal_digits_long print_word_decimal::@1/(const byte[6]) decimal_digits )
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
@@ -3808,7 +3659,7 @@ clock::@return: scope:[clock]  from clock
 
 (void()) clock_start()
 clock_start: scope:[clock_start]  from main::@21
-  [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS
+  [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0
   [182] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
   [183] *((const dword*) CIA2_TIMER_AB) ← (dword) $ffffffff
   [184] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
@@ -3901,8 +3752,8 @@ VARIABLE REGISTER WEIGHTS
 (word) divr16u::return#3 4.0
 (void()) main()
 (dword~) main::$10 4.0
-(dword~) main::$14 2.0
-(byte*~) main::$39 22.0
+(dword~) main::$13 2.0
+(byte*~) main::$35 22.0
 (dword) main::cyclecount
 (dword) main::cyclecount#0 0.5
 (word) main::i
@@ -3950,10 +3801,10 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor#62 7.4
 (byte*) print_char_cursor#66 14.0
 (byte*) print_char_cursor#78 16.5
+(byte*~) print_char_cursor#88 4.0
 (byte*~) print_char_cursor#89 4.0
 (byte*~) print_char_cursor#90 4.0
-(byte*~) print_char_cursor#91 4.0
-(byte*~) print_char_cursor#97 22.0
+(byte*~) print_char_cursor#96 22.0
 (void()) print_cls()
 (void()) print_dword_decimal((dword) print_dword_decimal::w)
 (dword) print_dword_decimal::w
@@ -4060,7 +3911,7 @@ Initial phi equivalence classes
 [ main::j#2 main::j#0 main::j#1 ]
 [ main::s#2 main::s#0 main::s#1 ]
 [ print_word_decimal::w#3 print_word_decimal::w#2 print_word_decimal::w#1 ]
-[ print_char_cursor#66 print_char_cursor#89 print_char_cursor#90 print_char_cursor#91 print_char_cursor#58 print_char_cursor#97 print_char_cursor#2 print_char_cursor#1 ]
+[ print_char_cursor#66 print_char_cursor#88 print_char_cursor#89 print_char_cursor#90 print_char_cursor#58 print_char_cursor#96 print_char_cursor#2 print_char_cursor#1 ]
 [ print_str::str#8 print_str::str#10 print_str::str#0 ]
 [ utoa::digit#2 utoa::digit#1 ]
 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ]
@@ -4088,10 +3939,10 @@ Added variable main::$10 to zero page equivalence class [ main::$10 ]
 Added variable main::cyclecount#0 to zero page equivalence class [ main::cyclecount#0 ]
 Added variable div32u16u::dividend#0 to zero page equivalence class [ div32u16u::dividend#0 ]
 Added variable div32u16u::return#2 to zero page equivalence class [ div32u16u::return#2 ]
-Added variable main::$14 to zero page equivalence class [ main::$14 ]
+Added variable main::$13 to zero page equivalence class [ main::$13 ]
 Added variable main::sec100s#0 to zero page equivalence class [ main::sec100s#0 ]
 Added variable print_dword_decimal::w#0 to zero page equivalence class [ print_dword_decimal::w#0 ]
-Added variable main::$39 to zero page equivalence class [ main::$39 ]
+Added variable main::$35 to zero page equivalence class [ main::$35 ]
 Added variable utoa::$4 to zero page equivalence class [ utoa::$4 ]
 Added variable utoa::buffer#3 to zero page equivalence class [ utoa::buffer#3 ]
 Added variable utoa::$11 to zero page equivalence class [ utoa::$11 ]
@@ -4123,7 +3974,7 @@ Complete equivalence classes
 [ main::j#2 main::j#0 main::j#1 ]
 [ main::s#2 main::s#0 main::s#1 ]
 [ print_word_decimal::w#3 print_word_decimal::w#2 print_word_decimal::w#1 ]
-[ print_char_cursor#66 print_char_cursor#89 print_char_cursor#90 print_char_cursor#91 print_char_cursor#58 print_char_cursor#97 print_char_cursor#2 print_char_cursor#1 ]
+[ print_char_cursor#66 print_char_cursor#88 print_char_cursor#89 print_char_cursor#90 print_char_cursor#58 print_char_cursor#96 print_char_cursor#2 print_char_cursor#1 ]
 [ print_str::str#8 print_str::str#10 print_str::str#0 ]
 [ utoa::digit#2 utoa::digit#1 ]
 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ]
@@ -4151,10 +4002,10 @@ Complete equivalence classes
 [ main::cyclecount#0 ]
 [ div32u16u::dividend#0 ]
 [ div32u16u::return#2 ]
-[ main::$14 ]
+[ main::$13 ]
 [ main::sec100s#0 ]
 [ print_dword_decimal::w#0 ]
-[ main::$39 ]
+[ main::$35 ]
 [ utoa::$4 ]
 [ utoa::buffer#3 ]
 [ utoa::$11 ]
@@ -4185,7 +4036,7 @@ Allocated zp[2]:6 [ main::i#10 main::i#3 ]
 Allocated zp[2]:8 [ main::j#2 main::j#0 main::j#1 ]
 Allocated zp[2]:10 [ main::s#2 main::s#0 main::s#1 ]
 Allocated zp[2]:12 [ print_word_decimal::w#3 print_word_decimal::w#2 print_word_decimal::w#1 ]
-Allocated zp[2]:14 [ print_char_cursor#66 print_char_cursor#89 print_char_cursor#90 print_char_cursor#91 print_char_cursor#58 print_char_cursor#97 print_char_cursor#2 print_char_cursor#1 ]
+Allocated zp[2]:14 [ print_char_cursor#66 print_char_cursor#88 print_char_cursor#89 print_char_cursor#90 print_char_cursor#58 print_char_cursor#96 print_char_cursor#2 print_char_cursor#1 ]
 Allocated zp[2]:16 [ print_str::str#8 print_str::str#10 print_str::str#0 ]
 Allocated zp[1]:18 [ utoa::digit#2 utoa::digit#1 ]
 Allocated zp[2]:19 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ]
@@ -4213,10 +4064,10 @@ Allocated zp[4]:60 [ main::$10 ]
 Allocated zp[4]:64 [ main::cyclecount#0 ]
 Allocated zp[4]:68 [ div32u16u::dividend#0 ]
 Allocated zp[4]:72 [ div32u16u::return#2 ]
-Allocated zp[4]:76 [ main::$14 ]
+Allocated zp[4]:76 [ main::$13 ]
 Allocated zp[2]:80 [ main::sec100s#0 ]
 Allocated zp[4]:82 [ print_dword_decimal::w#0 ]
-Allocated zp[2]:86 [ main::$39 ]
+Allocated zp[2]:86 [ main::$35 ]
 Allocated zp[1]:88 [ utoa::$4 ]
 Allocated zp[2]:89 [ utoa::buffer#3 ]
 Allocated zp[1]:91 [ utoa::$11 ]
@@ -4259,14 +4110,14 @@ Target platform is c64basic / MOS6502X
   .label CIA2_TIMER_B_CONTROL = $dd0f
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
-  // Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
-  .const CIA_TIMER_CONTROL_CONTINUOUS = 0
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   // Clock cycles per frame (on a C64 PAL)
   .const CLOCKS_PER_FRAME = $4cc8
   // Frames per second (on a C64 PAL)
   .const FRAMES_PER_SEC = $3c
+  // Clock cycles per second (on a C64 PAL)
+  .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
   // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
   .const CLOCKS_PER_INIT = $12
@@ -4276,8 +4127,6 @@ Target platform is c64basic / MOS6502X
   .const SQRT_COUNT = $80
   /* Sqrt of COUNT */
   .label sieve = $1000
-  // Clock cycles per second (on a C64 PAL)
-  .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
   .label rem16u = $84
   .label print_char_cursor = $e
   .label print_line_cursor = $1b
@@ -4303,7 +4152,7 @@ main: {
     .label toD0181_gfx = $1800
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
     .label __10 = $3c
-    .label __14 = $4c
+    .label __13 = $4c
     .label cyclecount = $40
     .label sec100s = $50
     .label i = 2
@@ -4311,7 +4160,7 @@ main: {
     .label j = 8
     .label s = $a
     .label i_1 = 6
-    .label __39 = $56
+    .label __35 = $56
     // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
@@ -4364,7 +4213,7 @@ main: {
     jmp __b17
     // main::@17
   __b17:
-    // [12] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [12] (byte*~) print_char_cursor#89 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -4372,7 +4221,7 @@ main: {
     // [13] call print_str 
     // [77] phi from main::@17 to print_str [phi:main::@17->print_str]
   print_str_from___b17:
-    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#90 [phi:main::@17->print_str#0] -- register_copy 
+    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#89 [phi:main::@17->print_str#0] -- register_copy 
     // [77] phi (byte*) print_str::str#10 = (const string) main::str1 [phi:main::@17->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
@@ -4522,21 +4371,21 @@ main: {
     jmp __b23
     // main::@23
   __b23:
-    // [32] (dword~) main::$14 ← (dword) div32u16u::return#2 -- vduz1=vduz2 
+    // [32] (dword~) main::$13 ← (dword) div32u16u::return#2 -- vduz1=vduz2 
     lda.z div32u16u.return_1
-    sta.z __14
+    sta.z __13
     lda.z div32u16u.return_1+1
-    sta.z __14+1
+    sta.z __13+1
     lda.z div32u16u.return_1+2
-    sta.z __14+2
+    sta.z __13+2
     lda.z div32u16u.return_1+3
-    sta.z __14+3
-    // [33] (word) main::sec100s#0 ← (word)(dword~) main::$14 -- vwuz1=_word_vduz2 
-    lda.z __14
+    sta.z __13+3
+    // [33] (word) main::sec100s#0 ← (word)(dword~) main::$13 -- vwuz1=_word_vduz2 
+    lda.z __13
     sta.z sec100s
-    lda.z __14+1
+    lda.z __13+1
     sta.z sec100s+1
-    // [34] (byte*~) print_char_cursor#91 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [34] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -4544,7 +4393,7 @@ main: {
     // [35] call print_str 
     // [77] phi from main::@23 to print_str [phi:main::@23->print_str]
   print_str_from___b23:
-    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#91 [phi:main::@23->print_str#0] -- register_copy 
+    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#90 [phi:main::@23->print_str#0] -- register_copy 
     // [77] phi (byte*) print_str::str#10 = (const string) main::str2 [phi:main::@23->print_str#1] -- pbuz1=pbuc1 
     lda #<str2
     sta.z print_str.str
@@ -4627,7 +4476,7 @@ main: {
     jmp __b10
     // main::@10
   __b10:
-    // [46] (byte*~) print_char_cursor#89 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
+    // [46] (byte*~) print_char_cursor#88 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
     lda.z print_char_cursor_1
     sta.z print_char_cursor
     lda.z print_char_cursor_1+1
@@ -4635,7 +4484,7 @@ main: {
     // [47] call print_str 
     // [77] phi from main::@10 to print_str [phi:main::@10->print_str]
   print_str_from___b10:
-    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#89 [phi:main::@10->print_str#0] -- register_copy 
+    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#88 [phi:main::@10->print_str#0] -- register_copy 
     // [77] phi (byte*) print_str::str#10 = (const string) main::str4 [phi:main::@10->print_str#1] -- pbuz1=pbuc1 
     lda #<str4
     sta.z print_str.str
@@ -4650,17 +4499,17 @@ main: {
     jmp __b13
     // main::@9
   __b9:
-    // [49] (byte*~) main::$39 ← (const byte*) sieve + (word) main::i#10 -- pbuz1=pbuc1_plus_vwuz2 
+    // [49] (byte*~) main::$35 ← (const byte*) sieve + (word) main::i#10 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z i_1
     clc
     adc #<sieve
-    sta.z __39
+    sta.z __35
     lda.z i_1+1
     adc #>sieve
-    sta.z __39+1
-    // [50] if((byte) 0!=*((byte*~) main::$39)) goto main::@11 -- vbuc1_neq__deref_pbuz1_then_la1 
+    sta.z __35+1
+    // [50] if((byte) 0!=*((byte*~) main::$35)) goto main::@11 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
-    lda (__39),y
+    lda (__35),y
     cmp #0
     bne __b11_from___b9
     jmp __b12
@@ -4671,7 +4520,7 @@ main: {
     sta.z print_word_decimal.w
     lda.z i_1+1
     sta.z print_word_decimal.w+1
-    // [52] (byte*~) print_char_cursor#97 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
+    // [52] (byte*~) print_char_cursor#96 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
     lda.z print_char_cursor_1
     sta.z print_char_cursor
     lda.z print_char_cursor_1+1
@@ -4679,7 +4528,7 @@ main: {
     // [53] call print_word_decimal 
     // [71] phi from main::@12 to print_word_decimal [phi:main::@12->print_word_decimal]
   print_word_decimal_from___b12:
-    // [71] phi (byte*) print_char_cursor#58 = (byte*~) print_char_cursor#97 [phi:main::@12->print_word_decimal#0] -- register_copy 
+    // [71] phi (byte*) print_char_cursor#58 = (byte*~) print_char_cursor#96 [phi:main::@12->print_word_decimal#0] -- register_copy 
     // [71] phi (word) print_word_decimal::w#3 = (word) print_word_decimal::w#2 [phi:main::@12->print_word_decimal#1] -- register_copy 
     jsr print_word_decimal
     // [54] phi from main::@12 to main::@28 [phi:main::@12->main::@28]
@@ -5700,9 +5549,9 @@ clock: {
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
-    // [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS -- _deref_pbuc1=vbuc2 
+    // [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #CIA_TIMER_CONTROL_CONTINUOUS
+    lda #0
     sta CIA2_TIMER_A_CONTROL
     // [182] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
@@ -5831,24 +5680,24 @@ print_cls: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [12] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1 [ print_char_cursor#90 print_line_cursor#1 ] ( main:2 [ print_char_cursor#90 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [12] (byte*~) print_char_cursor#89 ← (byte*) print_line_cursor#1 [ print_char_cursor#89 print_line_cursor#1 ] ( main:2 [ print_char_cursor#89 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [23] if((word) main::i#12<(const byte) SQRT_COUNT) goto main::@2 [ print_line_cursor#1 main::i#12 main::sieve_i#2 ] ( main:2 [ print_line_cursor#1 main::i#12 main::sieve_i#2 ] ) always clobbers reg byte a 
 Statement [26] (dword) clock::return#2 ← (dword) clock::return#0 [ print_line_cursor#1 clock::return#2 ] ( main:2 [ print_line_cursor#1 clock::return#2 ] ) always clobbers reg byte a 
 Statement [27] (dword~) main::$10 ← (dword) clock::return#2 [ print_line_cursor#1 main::$10 ] ( main:2 [ print_line_cursor#1 main::$10 ] ) always clobbers reg byte a 
 Statement [28] (dword) main::cyclecount#0 ← (dword~) main::$10 - (const dword) CLOCKS_PER_INIT [ print_line_cursor#1 main::cyclecount#0 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 ] ) always clobbers reg byte a 
 Statement [29] (dword) div32u16u::dividend#0 ← (dword) main::cyclecount#0 [ print_line_cursor#1 main::cyclecount#0 div32u16u::dividend#0 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 div32u16u::dividend#0 ] ) always clobbers reg byte a 
 Statement [31] (dword) div32u16u::return#2 ← (dword) div32u16u::return#0 [ print_line_cursor#1 main::cyclecount#0 div32u16u::return#2 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 div32u16u::return#2 ] ) always clobbers reg byte a 
-Statement [32] (dword~) main::$14 ← (dword) div32u16u::return#2 [ print_line_cursor#1 main::cyclecount#0 main::$14 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::$14 ] ) always clobbers reg byte a 
-Statement [33] (word) main::sec100s#0 ← (word)(dword~) main::$14 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 ] ) always clobbers reg byte a 
-Statement [34] (byte*~) print_char_cursor#91 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 print_char_cursor#91 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 print_char_cursor#91 ] ) always clobbers reg byte a 
+Statement [32] (dword~) main::$13 ← (dword) div32u16u::return#2 [ print_line_cursor#1 main::cyclecount#0 main::$13 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::$13 ] ) always clobbers reg byte a 
+Statement [33] (word) main::sec100s#0 ← (word)(dword~) main::$13 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 ] ) always clobbers reg byte a 
+Statement [34] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 print_char_cursor#90 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 print_char_cursor#90 ] ) always clobbers reg byte a 
 Statement [36] (word) print_word_decimal::w#1 ← (word) main::sec100s#0 [ print_line_cursor#1 main::cyclecount#0 print_word_decimal::w#1 print_char_cursor#2 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 print_word_decimal::w#1 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [40] (dword) print_dword_decimal::w#0 ← (dword) main::cyclecount#0 [ print_line_cursor#1 print_dword_decimal::w#0 print_char_cursor#2 ] ( main:2 [ print_line_cursor#1 print_dword_decimal::w#0 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [45] if((word) main::i#10<(word) $514) goto main::@9 [ main::i#10 print_char_cursor#62 ] ( main:2 [ main::i#10 print_char_cursor#62 ] ) always clobbers reg byte a 
-Statement [46] (byte*~) print_char_cursor#89 ← (byte*) print_char_cursor#62 [ print_char_cursor#89 ] ( main:2 [ print_char_cursor#89 ] ) always clobbers reg byte a 
-Statement [49] (byte*~) main::$39 ← (const byte*) sieve + (word) main::i#10 [ main::i#10 print_char_cursor#62 main::$39 ] ( main:2 [ main::i#10 print_char_cursor#62 main::$39 ] ) always clobbers reg byte a 
-Statement [50] if((byte) 0!=*((byte*~) main::$39)) goto main::@11 [ main::i#10 print_char_cursor#62 ] ( main:2 [ main::i#10 print_char_cursor#62 ] ) always clobbers reg byte a reg byte y 
+Statement [46] (byte*~) print_char_cursor#88 ← (byte*) print_char_cursor#62 [ print_char_cursor#88 ] ( main:2 [ print_char_cursor#88 ] ) always clobbers reg byte a 
+Statement [49] (byte*~) main::$35 ← (const byte*) sieve + (word) main::i#10 [ main::i#10 print_char_cursor#62 main::$35 ] ( main:2 [ main::i#10 print_char_cursor#62 main::$35 ] ) always clobbers reg byte a 
+Statement [50] if((byte) 0!=*((byte*~) main::$35)) goto main::@11 [ main::i#10 print_char_cursor#62 ] ( main:2 [ main::i#10 print_char_cursor#62 ] ) always clobbers reg byte a reg byte y 
 Statement [51] (word) print_word_decimal::w#2 ← (word) main::i#10 [ main::i#10 print_char_cursor#62 print_word_decimal::w#2 ] ( main:2 [ main::i#10 print_char_cursor#62 print_word_decimal::w#2 ] ) always clobbers reg byte a 
-Statement [52] (byte*~) print_char_cursor#97 ← (byte*) print_char_cursor#62 [ main::i#10 print_word_decimal::w#2 print_char_cursor#97 ] ( main:2 [ main::i#10 print_word_decimal::w#2 print_char_cursor#97 ] ) always clobbers reg byte a 
+Statement [52] (byte*~) print_char_cursor#96 ← (byte*) print_char_cursor#62 [ main::i#10 print_word_decimal::w#2 print_char_cursor#96 ] ( main:2 [ main::i#10 print_word_decimal::w#2 print_char_cursor#96 ] ) always clobbers reg byte a 
 Statement [58] if((byte) 0!=*((byte*) main::sieve_i#2)) goto main::@4 [ print_line_cursor#1 main::i#12 main::sieve_i#2 ] ( main:2 [ print_line_cursor#1 main::i#12 main::sieve_i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [59] (word) main::j#0 ← (word) main::i#12 << (byte) 1 [ print_line_cursor#1 main::i#12 main::sieve_i#2 main::j#0 ] ( main:2 [ print_line_cursor#1 main::i#12 main::sieve_i#2 main::j#0 ] ) always clobbers reg byte a 
 Statement [60] (byte*) main::s#0 ← (const byte*) sieve + (word) main::j#0 [ print_line_cursor#1 main::i#12 main::sieve_i#2 main::j#0 main::s#0 ] ( main:2 [ print_line_cursor#1 main::i#12 main::sieve_i#2 main::j#0 main::s#0 ] ) always clobbers reg byte a 
@@ -5917,7 +5766,7 @@ Statement [171] if((word) divr16u::rem#6<(const word) div32u16u::divisor#0) goto
 Statement [173] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (const word) div32u16u::divisor#0 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::div32u16u:30::divr16u:151 [ print_line_cursor#1 main::cyclecount#0 div32u16u::dividend#0 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::div32u16u:30::divr16u:156 [ print_line_cursor#1 main::cyclecount#0 div32u16u::quotient_hi#0 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
 Statement [177] (word) rem16u#1 ← (word) divr16u::rem#11 [ divr16u::return#0 rem16u#1 ] ( main:2::div32u16u:30::divr16u:151 [ print_line_cursor#1 main::cyclecount#0 div32u16u::dividend#0 divr16u::return#0 rem16u#1 ] main:2::div32u16u:30::divr16u:156 [ print_line_cursor#1 main::cyclecount#0 div32u16u::quotient_hi#0 divr16u::return#0 rem16u#1 ] ) always clobbers reg byte a 
 Statement [179] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB) [ clock::return#0 ] ( main:2::clock:25 [ print_line_cursor#1 clock::return#0 ] ) always clobbers reg byte a 
-Statement [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS [ ] ( main:2::clock_start:21 [ print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 [ ] ( main:2::clock_start:21 [ print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [182] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:21 [ print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [183] *((const dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( main:2::clock_start:21 [ print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [184] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:21 [ print_line_cursor#1 ] ) always clobbers reg byte a 
@@ -5930,24 +5779,24 @@ Statement [192] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3
 Statement [194] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:2::memset:19 [ print_line_cursor#1 memset::c#4 memset::end#0 memset::dst#2 ] main:2::print_cls:7::memset:197 [ memset::c#4 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:53 [ memset::c#4 ]
 Statement [6] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [12] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1 [ print_char_cursor#90 print_line_cursor#1 ] ( main:2 [ print_char_cursor#90 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [12] (byte*~) print_char_cursor#89 ← (byte*) print_line_cursor#1 [ print_char_cursor#89 print_line_cursor#1 ] ( main:2 [ print_char_cursor#89 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [23] if((word) main::i#12<(const byte) SQRT_COUNT) goto main::@2 [ print_line_cursor#1 main::i#12 main::sieve_i#2 ] ( main:2 [ print_line_cursor#1 main::i#12 main::sieve_i#2 ] ) always clobbers reg byte a 
 Statement [26] (dword) clock::return#2 ← (dword) clock::return#0 [ print_line_cursor#1 clock::return#2 ] ( main:2 [ print_line_cursor#1 clock::return#2 ] ) always clobbers reg byte a 
 Statement [27] (dword~) main::$10 ← (dword) clock::return#2 [ print_line_cursor#1 main::$10 ] ( main:2 [ print_line_cursor#1 main::$10 ] ) always clobbers reg byte a 
 Statement [28] (dword) main::cyclecount#0 ← (dword~) main::$10 - (const dword) CLOCKS_PER_INIT [ print_line_cursor#1 main::cyclecount#0 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 ] ) always clobbers reg byte a 
 Statement [29] (dword) div32u16u::dividend#0 ← (dword) main::cyclecount#0 [ print_line_cursor#1 main::cyclecount#0 div32u16u::dividend#0 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 div32u16u::dividend#0 ] ) always clobbers reg byte a 
 Statement [31] (dword) div32u16u::return#2 ← (dword) div32u16u::return#0 [ print_line_cursor#1 main::cyclecount#0 div32u16u::return#2 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 div32u16u::return#2 ] ) always clobbers reg byte a 
-Statement [32] (dword~) main::$14 ← (dword) div32u16u::return#2 [ print_line_cursor#1 main::cyclecount#0 main::$14 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::$14 ] ) always clobbers reg byte a 
-Statement [33] (word) main::sec100s#0 ← (word)(dword~) main::$14 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 ] ) always clobbers reg byte a 
-Statement [34] (byte*~) print_char_cursor#91 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 print_char_cursor#91 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 print_char_cursor#91 ] ) always clobbers reg byte a 
+Statement [32] (dword~) main::$13 ← (dword) div32u16u::return#2 [ print_line_cursor#1 main::cyclecount#0 main::$13 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::$13 ] ) always clobbers reg byte a 
+Statement [33] (word) main::sec100s#0 ← (word)(dword~) main::$13 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 ] ) always clobbers reg byte a 
+Statement [34] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 print_char_cursor#90 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 main::sec100s#0 print_char_cursor#90 ] ) always clobbers reg byte a 
 Statement [36] (word) print_word_decimal::w#1 ← (word) main::sec100s#0 [ print_line_cursor#1 main::cyclecount#0 print_word_decimal::w#1 print_char_cursor#2 ] ( main:2 [ print_line_cursor#1 main::cyclecount#0 print_word_decimal::w#1 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [40] (dword) print_dword_decimal::w#0 ← (dword) main::cyclecount#0 [ print_line_cursor#1 print_dword_decimal::w#0 print_char_cursor#2 ] ( main:2 [ print_line_cursor#1 print_dword_decimal::w#0 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [45] if((word) main::i#10<(word) $514) goto main::@9 [ main::i#10 print_char_cursor#62 ] ( main:2 [ main::i#10 print_char_cursor#62 ] ) always clobbers reg byte a 
-Statement [46] (byte*~) print_char_cursor#89 ← (byte*) print_char_cursor#62 [ print_char_cursor#89 ] ( main:2 [ print_char_cursor#89 ] ) always clobbers reg byte a 
-Statement [49] (byte*~) main::$39 ← (const byte*) sieve + (word) main::i#10 [ main::i#10 print_char_cursor#62 main::$39 ] ( main:2 [ main::i#10 print_char_cursor#62 main::$39 ] ) always clobbers reg byte a 
-Statement [50] if((byte) 0!=*((byte*~) main::$39)) goto main::@11 [ main::i#10 print_char_cursor#62 ] ( main:2 [ main::i#10 print_char_cursor#62 ] ) always clobbers reg byte a reg byte y 
+Statement [46] (byte*~) print_char_cursor#88 ← (byte*) print_char_cursor#62 [ print_char_cursor#88 ] ( main:2 [ print_char_cursor#88 ] ) always clobbers reg byte a 
+Statement [49] (byte*~) main::$35 ← (const byte*) sieve + (word) main::i#10 [ main::i#10 print_char_cursor#62 main::$35 ] ( main:2 [ main::i#10 print_char_cursor#62 main::$35 ] ) always clobbers reg byte a 
+Statement [50] if((byte) 0!=*((byte*~) main::$35)) goto main::@11 [ main::i#10 print_char_cursor#62 ] ( main:2 [ main::i#10 print_char_cursor#62 ] ) always clobbers reg byte a reg byte y 
 Statement [51] (word) print_word_decimal::w#2 ← (word) main::i#10 [ main::i#10 print_char_cursor#62 print_word_decimal::w#2 ] ( main:2 [ main::i#10 print_char_cursor#62 print_word_decimal::w#2 ] ) always clobbers reg byte a 
-Statement [52] (byte*~) print_char_cursor#97 ← (byte*) print_char_cursor#62 [ main::i#10 print_word_decimal::w#2 print_char_cursor#97 ] ( main:2 [ main::i#10 print_word_decimal::w#2 print_char_cursor#97 ] ) always clobbers reg byte a 
+Statement [52] (byte*~) print_char_cursor#96 ← (byte*) print_char_cursor#62 [ main::i#10 print_word_decimal::w#2 print_char_cursor#96 ] ( main:2 [ main::i#10 print_word_decimal::w#2 print_char_cursor#96 ] ) always clobbers reg byte a 
 Statement [58] if((byte) 0!=*((byte*) main::sieve_i#2)) goto main::@4 [ print_line_cursor#1 main::i#12 main::sieve_i#2 ] ( main:2 [ print_line_cursor#1 main::i#12 main::sieve_i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [59] (word) main::j#0 ← (word) main::i#12 << (byte) 1 [ print_line_cursor#1 main::i#12 main::sieve_i#2 main::j#0 ] ( main:2 [ print_line_cursor#1 main::i#12 main::sieve_i#2 main::j#0 ] ) always clobbers reg byte a 
 Statement [60] (byte*) main::s#0 ← (const byte*) sieve + (word) main::j#0 [ print_line_cursor#1 main::i#12 main::sieve_i#2 main::j#0 main::s#0 ] ( main:2 [ print_line_cursor#1 main::i#12 main::sieve_i#2 main::j#0 main::s#0 ] ) always clobbers reg byte a 
@@ -6007,7 +5856,7 @@ Statement [171] if((word) divr16u::rem#6<(const word) div32u16u::divisor#0) goto
 Statement [173] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (const word) div32u16u::divisor#0 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::div32u16u:30::divr16u:151 [ print_line_cursor#1 main::cyclecount#0 div32u16u::dividend#0 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] main:2::div32u16u:30::divr16u:156 [ print_line_cursor#1 main::cyclecount#0 div32u16u::quotient_hi#0 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
 Statement [177] (word) rem16u#1 ← (word) divr16u::rem#11 [ divr16u::return#0 rem16u#1 ] ( main:2::div32u16u:30::divr16u:151 [ print_line_cursor#1 main::cyclecount#0 div32u16u::dividend#0 divr16u::return#0 rem16u#1 ] main:2::div32u16u:30::divr16u:156 [ print_line_cursor#1 main::cyclecount#0 div32u16u::quotient_hi#0 divr16u::return#0 rem16u#1 ] ) always clobbers reg byte a 
 Statement [179] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB) [ clock::return#0 ] ( main:2::clock:25 [ print_line_cursor#1 clock::return#0 ] ) always clobbers reg byte a 
-Statement [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS [ ] ( main:2::clock_start:21 [ print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 [ ] ( main:2::clock_start:21 [ print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [182] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:21 [ print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [183] *((const dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( main:2::clock_start:21 [ print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [184] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:21 [ print_line_cursor#1 ] ) always clobbers reg byte a 
@@ -6023,7 +5872,7 @@ Potential registers zp[2]:6 [ main::i#10 main::i#3 ] : zp[2]:6 ,
 Potential registers zp[2]:8 [ main::j#2 main::j#0 main::j#1 ] : zp[2]:8 , 
 Potential registers zp[2]:10 [ main::s#2 main::s#0 main::s#1 ] : zp[2]:10 , 
 Potential registers zp[2]:12 [ print_word_decimal::w#3 print_word_decimal::w#2 print_word_decimal::w#1 ] : zp[2]:12 , 
-Potential registers zp[2]:14 [ print_char_cursor#66 print_char_cursor#89 print_char_cursor#90 print_char_cursor#91 print_char_cursor#58 print_char_cursor#97 print_char_cursor#2 print_char_cursor#1 ] : zp[2]:14 , 
+Potential registers zp[2]:14 [ print_char_cursor#66 print_char_cursor#88 print_char_cursor#89 print_char_cursor#90 print_char_cursor#58 print_char_cursor#96 print_char_cursor#2 print_char_cursor#1 ] : zp[2]:14 , 
 Potential registers zp[2]:16 [ print_str::str#8 print_str::str#10 print_str::str#0 ] : zp[2]:16 , 
 Potential registers zp[1]:18 [ utoa::digit#2 utoa::digit#1 ] : zp[1]:18 , reg byte x , 
 Potential registers zp[2]:19 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ] : zp[2]:19 , 
@@ -6051,10 +5900,10 @@ Potential registers zp[4]:60 [ main::$10 ] : zp[4]:60 ,
 Potential registers zp[4]:64 [ main::cyclecount#0 ] : zp[4]:64 , 
 Potential registers zp[4]:68 [ div32u16u::dividend#0 ] : zp[4]:68 , 
 Potential registers zp[4]:72 [ div32u16u::return#2 ] : zp[4]:72 , 
-Potential registers zp[4]:76 [ main::$14 ] : zp[4]:76 , 
+Potential registers zp[4]:76 [ main::$13 ] : zp[4]:76 , 
 Potential registers zp[2]:80 [ main::sec100s#0 ] : zp[2]:80 , 
 Potential registers zp[4]:82 [ print_dword_decimal::w#0 ] : zp[4]:82 , 
-Potential registers zp[2]:86 [ main::$39 ] : zp[2]:86 , 
+Potential registers zp[2]:86 [ main::$35 ] : zp[2]:86 , 
 Potential registers zp[1]:88 [ utoa::$4 ] : zp[1]:88 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:89 [ utoa::buffer#3 ] : zp[2]:89 , 
 Potential registers zp[1]:91 [ utoa::$11 ] : zp[1]:91 , reg byte a , reg byte x , reg byte y , 
@@ -6083,11 +5932,11 @@ Potential registers zp[2]:138 [ memset::end#0 ] : zp[2]:138 ,
 REGISTER UPLIFT SCOPES
 Uplift Scope [utoa_append] 2,554: zp[2]:24 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] 2,003: zp[1]:26 [ utoa_append::digit#2 utoa_append::digit#1 ] 350.5: zp[2]:96 [ utoa_append::sub#0 ] 202: zp[2]:98 [ utoa_append::return#0 ] 12.88: zp[2]:94 [ utoa_append::buffer#0 ] 
 Uplift Scope [utoa] 382.64: zp[2]:22 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ] 312.5: zp[2]:19 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ] 230.86: zp[1]:18 [ utoa::digit#2 utoa::digit#1 ] 202: zp[1]:91 [ utoa::$11 ] 151.5: zp[1]:21 [ utoa::started#2 utoa::started#4 ] 60.6: zp[2]:92 [ utoa::digit_value#0 ] 4: zp[1]:88 [ utoa::$4 ] 4: zp[2]:89 [ utoa::buffer#3 ] 
-Uplift Scope [main] 297: zp[2]:8 [ main::j#2 main::j#0 main::j#1 ] 227.67: zp[2]:10 [ main::s#2 main::s#0 main::s#1 ] 35.6: zp[2]:2 [ main::i#12 main::i#2 ] 27.5: zp[2]:6 [ main::i#10 main::i#3 ] 25: zp[2]:4 [ main::sieve_i#2 main::sieve_i#1 ] 22: zp[2]:86 [ main::$39 ] 4: zp[4]:60 [ main::$10 ] 2: zp[4]:76 [ main::$14 ] 1.33: zp[2]:80 [ main::sec100s#0 ] 0.5: zp[4]:64 [ main::cyclecount#0 ] 
+Uplift Scope [main] 297: zp[2]:8 [ main::j#2 main::j#0 main::j#1 ] 227.67: zp[2]:10 [ main::s#2 main::s#0 main::s#1 ] 35.6: zp[2]:2 [ main::i#12 main::i#2 ] 27.5: zp[2]:6 [ main::i#10 main::i#3 ] 25: zp[2]:4 [ main::sieve_i#2 main::sieve_i#1 ] 22: zp[2]:86 [ main::$35 ] 4: zp[4]:60 [ main::$10 ] 2: zp[4]:76 [ main::$13 ] 1.33: zp[2]:80 [ main::sec100s#0 ] 0.5: zp[4]:64 [ main::cyclecount#0 ] 
 Uplift Scope [ultoa_append] 259: zp[4]:37 [ ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 ] 203: zp[1]:41 [ ultoa_append::digit#2 ultoa_append::digit#1 ] 35.5: zp[4]:110 [ ultoa_append::sub#0 ] 22: zp[4]:114 [ ultoa_append::return#0 ] 1.62: zp[2]:108 [ ultoa_append::buffer#0 ] 
 Uplift Scope [print_str] 305.5: zp[2]:16 [ print_str::str#8 print_str::str#10 print_str::str#0 ] 
 Uplift Scope [divr16u] 106.92: zp[2]:42 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] 35.54: zp[2]:46 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] 22: zp[1]:130 [ divr16u::$1 ] 22: zp[1]:131 [ divr16u::$2 ] 19.75: zp[2]:44 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 ] 18.19: zp[1]:48 [ divr16u::i#2 divr16u::i#1 ] 4: zp[2]:118 [ divr16u::return#2 ] 4: zp[2]:122 [ divr16u::return#3 ] 
-Uplift Scope [] 163.5: zp[2]:14 [ print_char_cursor#66 print_char_cursor#89 print_char_cursor#90 print_char_cursor#91 print_char_cursor#58 print_char_cursor#97 print_char_cursor#2 print_char_cursor#1 ] 59.17: zp[2]:27 [ print_line_cursor#11 print_line_cursor#21 print_char_cursor#62 print_char_cursor#78 print_line_cursor#1 print_char_cursor#10 ] 0.67: zp[2]:132 [ rem16u#1 ] 
+Uplift Scope [] 163.5: zp[2]:14 [ print_char_cursor#66 print_char_cursor#88 print_char_cursor#89 print_char_cursor#90 print_char_cursor#58 print_char_cursor#96 print_char_cursor#2 print_char_cursor#1 ] 59.17: zp[2]:27 [ print_line_cursor#11 print_line_cursor#21 print_char_cursor#62 print_char_cursor#78 print_line_cursor#1 print_char_cursor#10 ] 0.67: zp[2]:132 [ rem16u#1 ] 
 Uplift Scope [ultoa] 41.93: zp[2]:35 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ] 36.07: zp[4]:30 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ] 25.14: zp[1]:29 [ ultoa::digit#2 ultoa::digit#1 ] 22: zp[1]:103 [ ultoa::$11 ] 16.5: zp[1]:34 [ ultoa::started#2 ultoa::started#4 ] 6.6: zp[4]:104 [ ultoa::digit_value#0 ] 4: zp[1]:100 [ ultoa::$4 ] 4: zp[2]:101 [ ultoa::buffer#3 ] 
 Uplift Scope [memset] 41.33: zp[2]:54 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 2.17: zp[2]:138 [ memset::end#0 ] 2: zp[2]:49 [ memset::num#2 ] 1.38: zp[1]:53 [ memset::c#4 ] 0: zp[2]:51 [ memset::str#3 ] 
 Uplift Scope [print_word_decimal] 30: zp[2]:12 [ print_word_decimal::w#3 print_word_decimal::w#2 print_word_decimal::w#1 ] 
@@ -6102,11 +5951,11 @@ Uplift Scope [print_cls]
 
 Uplifting [utoa_append] best 103419 combination zp[2]:24 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] reg byte x [ utoa_append::digit#2 utoa_append::digit#1 ] zp[2]:96 [ utoa_append::sub#0 ] zp[2]:98 [ utoa_append::return#0 ] zp[2]:94 [ utoa_append::buffer#0 ] 
 Uplifting [utoa] best 102115 combination zp[2]:22 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ] zp[2]:19 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ] zp[1]:18 [ utoa::digit#2 utoa::digit#1 ] reg byte a [ utoa::$11 ] reg byte x [ utoa::started#2 utoa::started#4 ] zp[2]:92 [ utoa::digit_value#0 ] reg byte a [ utoa::$4 ] zp[2]:89 [ utoa::buffer#3 ] 
-Uplifting [main] best 102115 combination zp[2]:8 [ main::j#2 main::j#0 main::j#1 ] zp[2]:10 [ main::s#2 main::s#0 main::s#1 ] zp[2]:2 [ main::i#12 main::i#2 ] zp[2]:6 [ main::i#10 main::i#3 ] zp[2]:4 [ main::sieve_i#2 main::sieve_i#1 ] zp[2]:86 [ main::$39 ] zp[4]:60 [ main::$10 ] zp[4]:76 [ main::$14 ] zp[2]:80 [ main::sec100s#0 ] zp[4]:64 [ main::cyclecount#0 ] 
+Uplifting [main] best 102115 combination zp[2]:8 [ main::j#2 main::j#0 main::j#1 ] zp[2]:10 [ main::s#2 main::s#0 main::s#1 ] zp[2]:2 [ main::i#12 main::i#2 ] zp[2]:6 [ main::i#10 main::i#3 ] zp[2]:4 [ main::sieve_i#2 main::sieve_i#1 ] zp[2]:86 [ main::$35 ] zp[4]:60 [ main::$10 ] zp[4]:76 [ main::$13 ] zp[2]:80 [ main::sec100s#0 ] zp[4]:64 [ main::cyclecount#0 ] 
 Uplifting [ultoa_append] best 101512 combination zp[4]:37 [ ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 ] reg byte x [ ultoa_append::digit#2 ultoa_append::digit#1 ] zp[4]:110 [ ultoa_append::sub#0 ] zp[4]:114 [ ultoa_append::return#0 ] zp[2]:108 [ ultoa_append::buffer#0 ] 
 Uplifting [print_str] best 101512 combination zp[2]:16 [ print_str::str#8 print_str::str#10 print_str::str#0 ] 
 Uplifting [divr16u] best 101302 combination zp[2]:42 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp[2]:46 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] zp[2]:44 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp[2]:118 [ divr16u::return#2 ] zp[2]:122 [ divr16u::return#3 ] 
-Uplifting [] best 101302 combination zp[2]:14 [ print_char_cursor#66 print_char_cursor#89 print_char_cursor#90 print_char_cursor#91 print_char_cursor#58 print_char_cursor#97 print_char_cursor#2 print_char_cursor#1 ] zp[2]:27 [ print_line_cursor#11 print_line_cursor#21 print_char_cursor#62 print_char_cursor#78 print_line_cursor#1 print_char_cursor#10 ] zp[2]:132 [ rem16u#1 ] 
+Uplifting [] best 101302 combination zp[2]:14 [ print_char_cursor#66 print_char_cursor#88 print_char_cursor#89 print_char_cursor#90 print_char_cursor#58 print_char_cursor#96 print_char_cursor#2 print_char_cursor#1 ] zp[2]:27 [ print_line_cursor#11 print_line_cursor#21 print_char_cursor#62 print_char_cursor#78 print_line_cursor#1 print_char_cursor#10 ] zp[2]:132 [ rem16u#1 ] 
 Uplifting [ultoa] best 101168 combination zp[2]:35 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ] zp[4]:30 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ] zp[1]:29 [ ultoa::digit#2 ultoa::digit#1 ] reg byte a [ ultoa::$11 ] reg byte x [ ultoa::started#2 ultoa::started#4 ] zp[4]:104 [ ultoa::digit_value#0 ] reg byte a [ ultoa::$4 ] zp[2]:101 [ ultoa::buffer#3 ] 
 Uplifting [memset] best 101152 combination zp[2]:54 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:138 [ memset::end#0 ] zp[2]:49 [ memset::num#2 ] reg byte x [ memset::c#4 ] zp[2]:51 [ memset::str#3 ] 
 Uplifting [print_word_decimal] best 101152 combination zp[2]:12 [ print_word_decimal::w#3 print_word_decimal::w#2 print_word_decimal::w#1 ] 
@@ -6140,15 +5989,15 @@ Coalescing zero page register [ zp[2]:51 [ memset::str#3 ] ] with [ zp[2]:54 [ m
 Coalescing zero page register [ zp[4]:56 [ clock::return#2 ] ] with [ zp[4]:60 [ main::$10 ] ] - score: 1
 Coalescing zero page register [ zp[4]:56 [ clock::return#2 main::$10 ] ] with [ zp[4]:134 [ clock::return#0 ] ] - score: 1
 Coalescing zero page register [ zp[4]:64 [ main::cyclecount#0 ] ] with [ zp[4]:68 [ div32u16u::dividend#0 ] ] - score: 1
-Coalescing zero page register [ zp[4]:72 [ div32u16u::return#2 ] ] with [ zp[4]:76 [ main::$14 ] ] - score: 1
-Coalescing zero page register [ zp[4]:72 [ div32u16u::return#2 main::$14 ] ] with [ zp[4]:126 [ div32u16u::return#0 ] ] - score: 1
+Coalescing zero page register [ zp[4]:72 [ div32u16u::return#2 ] ] with [ zp[4]:76 [ main::$13 ] ] - score: 1
+Coalescing zero page register [ zp[4]:72 [ div32u16u::return#2 main::$13 ] ] with [ zp[4]:126 [ div32u16u::return#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:92 [ utoa::digit_value#0 ] ] with [ zp[2]:96 [ utoa_append::sub#0 ] ] - score: 1
 Coalescing zero page register [ zp[4]:104 [ ultoa::digit_value#0 ] ] with [ zp[4]:110 [ ultoa_append::sub#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ main::i#10 main::i#3 print_word_decimal::w#3 print_word_decimal::w#2 print_word_decimal::w#1 ] ] with [ zp[2]:80 [ main::sec100s#0 ] ] - score: 1
 Coalescing zero page register [ zp[4]:30 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 print_dword_decimal::w#0 ultoa_append::return#0 ] ] with [ zp[4]:64 [ main::cyclecount#0 div32u16u::dividend#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:46 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 ] ] with [ zp[2]:124 [ div32u16u::quotient_lo#0 ] ] - score: 1
 Coalescing zero page register [ zp[4]:30 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 print_dword_decimal::w#0 ultoa_append::return#0 main::cyclecount#0 div32u16u::dividend#0 ] ] with [ zp[4]:56 [ clock::return#2 main::$10 clock::return#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:14 [ print_char_cursor#66 print_char_cursor#89 print_char_cursor#90 print_char_cursor#91 print_char_cursor#58 print_char_cursor#97 print_char_cursor#2 print_char_cursor#1 ] ] with [ zp[2]:2 [ main::i#12 main::i#2 ] ]
+Coalescing zero page register [ zp[2]:14 [ print_char_cursor#66 print_char_cursor#88 print_char_cursor#89 print_char_cursor#90 print_char_cursor#58 print_char_cursor#96 print_char_cursor#2 print_char_cursor#1 ] ] with [ zp[2]:2 [ main::i#12 main::i#2 ] ]
 Coalescing zero page register [ zp[2]:16 [ print_str::str#8 print_str::str#10 print_str::str#0 ] ] with [ zp[2]:4 [ main::sieve_i#2 main::sieve_i#1 ] ]
 Coalescing zero page register [ zp[2]:19 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 ] ] with [ zp[2]:8 [ main::j#2 main::j#0 main::j#1 ] ]
 Coalescing zero page register [ zp[2]:22 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 utoa_append::buffer#0 ] ] with [ zp[2]:10 [ main::s#2 main::s#0 main::s#1 ] ]
@@ -6156,11 +6005,11 @@ Coalescing zero page register [ zp[1]:29 [ ultoa::digit#2 ultoa::digit#1 ] ] wit
 Coalescing zero page register [ zp[2]:35 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ultoa::buffer#3 ultoa_append::buffer#0 ] ] with [ zp[2]:6 [ main::i#10 main::i#3 print_word_decimal::w#3 print_word_decimal::w#2 print_word_decimal::w#1 main::sec100s#0 ] ]
 Coalescing zero page register [ zp[2]:49 [ memset::num#2 memset::end#0 ] ] with [ zp[2]:42 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 rem16u#1 ] ]
 Coalescing zero page register [ zp[2]:51 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ] with [ zp[2]:44 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 ] ]
-Coalescing zero page register [ zp[2]:86 [ main::$39 ] ] with [ zp[2]:46 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 div32u16u::quotient_lo#0 ] ]
-Coalescing zero page register [ zp[4]:104 [ ultoa::digit_value#0 ultoa_append::sub#0 ] ] with [ zp[4]:72 [ div32u16u::return#2 main::$14 div32u16u::return#0 ] ]
+Coalescing zero page register [ zp[2]:86 [ main::$35 ] ] with [ zp[2]:46 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 div32u16u::quotient_lo#0 ] ]
+Coalescing zero page register [ zp[4]:104 [ ultoa::digit_value#0 ultoa_append::sub#0 ] ] with [ zp[4]:72 [ div32u16u::return#2 main::$13 div32u16u::return#0 ] ]
 Coalescing zero page register [ zp[2]:120 [ div32u16u::quotient_hi#0 ] ] with [ zp[2]:92 [ utoa::digit_value#0 utoa_append::sub#0 ] ]
 Coalescing zero page register [ zp[2]:49 [ memset::num#2 memset::end#0 divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 rem16u#1 ] ] with [ zp[2]:16 [ print_str::str#8 print_str::str#10 print_str::str#0 main::sieve_i#2 main::sieve_i#1 ] ]
-Coalescing zero page register [ zp[2]:51 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 ] ] with [ zp[2]:14 [ print_char_cursor#66 print_char_cursor#89 print_char_cursor#90 print_char_cursor#91 print_char_cursor#58 print_char_cursor#97 print_char_cursor#2 print_char_cursor#1 main::i#12 main::i#2 ] ]
+Coalescing zero page register [ zp[2]:51 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 ] ] with [ zp[2]:14 [ print_char_cursor#66 print_char_cursor#88 print_char_cursor#89 print_char_cursor#90 print_char_cursor#58 print_char_cursor#96 print_char_cursor#2 print_char_cursor#1 main::i#12 main::i#2 ] ]
 Allocated (was zp[2]:19) zp[2]:2 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 utoa_append::return#0 main::j#2 main::j#0 main::j#1 ]
 Allocated (was zp[2]:22) zp[2]:4 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 utoa::buffer#3 utoa_append::buffer#0 main::s#2 main::s#0 main::s#1 ]
 Allocated (was zp[2]:27) zp[2]:6 [ print_line_cursor#11 print_line_cursor#21 print_char_cursor#62 print_char_cursor#78 print_line_cursor#1 print_char_cursor#10 ]
@@ -6168,9 +6017,9 @@ Allocated (was zp[1]:29) zp[1]:8 [ ultoa::digit#2 ultoa::digit#1 utoa::digit#2 u
 Allocated (was zp[4]:30) zp[4]:9 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 print_dword_decimal::w#0 ultoa_append::return#0 main::cyclecount#0 div32u16u::dividend#0 clock::return#2 main::$10 clock::return#0 ]
 Allocated (was zp[2]:35) zp[2]:13 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ultoa::buffer#3 ultoa_append::buffer#0 main::i#10 main::i#3 print_word_decimal::w#3 print_word_decimal::w#2 print_word_decimal::w#1 main::sec100s#0 ]
 Allocated (was zp[2]:49) zp[2]:15 [ memset::num#2 memset::end#0 divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 rem16u#1 print_str::str#8 print_str::str#10 print_str::str#0 main::sieve_i#2 main::sieve_i#1 ]
-Allocated (was zp[2]:51) zp[2]:17 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 print_char_cursor#66 print_char_cursor#89 print_char_cursor#90 print_char_cursor#91 print_char_cursor#58 print_char_cursor#97 print_char_cursor#2 print_char_cursor#1 main::i#12 main::i#2 ]
-Allocated (was zp[2]:86) zp[2]:19 [ main::$39 divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 div32u16u::quotient_lo#0 ]
-Allocated (was zp[4]:104) zp[4]:21 [ ultoa::digit_value#0 ultoa_append::sub#0 div32u16u::return#2 main::$14 div32u16u::return#0 ]
+Allocated (was zp[2]:51) zp[2]:17 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 print_char_cursor#66 print_char_cursor#88 print_char_cursor#89 print_char_cursor#90 print_char_cursor#58 print_char_cursor#96 print_char_cursor#2 print_char_cursor#1 main::i#12 main::i#2 ]
+Allocated (was zp[2]:86) zp[2]:19 [ main::$35 divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 div32u16u::quotient_lo#0 ]
+Allocated (was zp[4]:104) zp[4]:21 [ ultoa::digit_value#0 ultoa_append::sub#0 div32u16u::return#2 main::$13 div32u16u::return#0 ]
 Allocated (was zp[2]:120) zp[2]:25 [ div32u16u::quotient_hi#0 utoa::digit_value#0 utoa_append::sub#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -6189,14 +6038,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CIA2_TIMER_B_CONTROL = $dd0f
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
-  // Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
-  .const CIA_TIMER_CONTROL_CONTINUOUS = 0
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   // Clock cycles per frame (on a C64 PAL)
   .const CLOCKS_PER_FRAME = $4cc8
   // Frames per second (on a C64 PAL)
   .const FRAMES_PER_SEC = $3c
+  // Clock cycles per second (on a C64 PAL)
+  .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
   // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
   .const CLOCKS_PER_INIT = $12
@@ -6206,8 +6055,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const SQRT_COUNT = $80
   /* Sqrt of COUNT */
   .label sieve = $1000
-  // Clock cycles per second (on a C64 PAL)
-  .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
   .label rem16u = $f
   .label print_char_cursor = $11
   .label print_line_cursor = 6
@@ -6233,7 +6080,7 @@ main: {
     .label toD0181_gfx = $1800
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
     .label __10 = 9
-    .label __14 = $15
+    .label __13 = $15
     .label cyclecount = 9
     .label sec100s = $d
     .label i = $11
@@ -6241,7 +6088,7 @@ main: {
     .label j = 2
     .label s = 4
     .label i_1 = $d
-    .label __39 = $13
+    .label __35 = $13
     // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
@@ -6294,7 +6141,7 @@ main: {
     jmp __b17
     // main::@17
   __b17:
-    // [12] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [12] (byte*~) print_char_cursor#89 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -6302,7 +6149,7 @@ main: {
     // [13] call print_str 
     // [77] phi from main::@17 to print_str [phi:main::@17->print_str]
   print_str_from___b17:
-    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#90 [phi:main::@17->print_str#0] -- register_copy 
+    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#89 [phi:main::@17->print_str#0] -- register_copy 
     // [77] phi (byte*) print_str::str#10 = (const string) main::str1 [phi:main::@17->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
@@ -6419,13 +6266,13 @@ main: {
     jmp __b23
     // main::@23
   __b23:
-    // [32] (dword~) main::$14 ← (dword) div32u16u::return#2
-    // [33] (word) main::sec100s#0 ← (word)(dword~) main::$14 -- vwuz1=_word_vduz2 
-    lda.z __14
+    // [32] (dword~) main::$13 ← (dword) div32u16u::return#2
+    // [33] (word) main::sec100s#0 ← (word)(dword~) main::$13 -- vwuz1=_word_vduz2 
+    lda.z __13
     sta.z sec100s
-    lda.z __14+1
+    lda.z __13+1
     sta.z sec100s+1
-    // [34] (byte*~) print_char_cursor#91 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [34] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -6433,7 +6280,7 @@ main: {
     // [35] call print_str 
     // [77] phi from main::@23 to print_str [phi:main::@23->print_str]
   print_str_from___b23:
-    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#91 [phi:main::@23->print_str#0] -- register_copy 
+    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#90 [phi:main::@23->print_str#0] -- register_copy 
     // [77] phi (byte*) print_str::str#10 = (const string) main::str2 [phi:main::@23->print_str#1] -- pbuz1=pbuc1 
     lda #<str2
     sta.z print_str.str
@@ -6504,7 +6351,7 @@ main: {
     jmp __b10
     // main::@10
   __b10:
-    // [46] (byte*~) print_char_cursor#89 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
+    // [46] (byte*~) print_char_cursor#88 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
     lda.z print_char_cursor_1
     sta.z print_char_cursor
     lda.z print_char_cursor_1+1
@@ -6512,7 +6359,7 @@ main: {
     // [47] call print_str 
     // [77] phi from main::@10 to print_str [phi:main::@10->print_str]
   print_str_from___b10:
-    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#89 [phi:main::@10->print_str#0] -- register_copy 
+    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#88 [phi:main::@10->print_str#0] -- register_copy 
     // [77] phi (byte*) print_str::str#10 = (const string) main::str4 [phi:main::@10->print_str#1] -- pbuz1=pbuc1 
     lda #<str4
     sta.z print_str.str
@@ -6527,24 +6374,24 @@ main: {
     jmp __b13
     // main::@9
   __b9:
-    // [49] (byte*~) main::$39 ← (const byte*) sieve + (word) main::i#10 -- pbuz1=pbuc1_plus_vwuz2 
+    // [49] (byte*~) main::$35 ← (const byte*) sieve + (word) main::i#10 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z i_1
     clc
     adc #<sieve
-    sta.z __39
+    sta.z __35
     lda.z i_1+1
     adc #>sieve
-    sta.z __39+1
-    // [50] if((byte) 0!=*((byte*~) main::$39)) goto main::@11 -- vbuc1_neq__deref_pbuz1_then_la1 
+    sta.z __35+1
+    // [50] if((byte) 0!=*((byte*~) main::$35)) goto main::@11 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
-    lda (__39),y
+    lda (__35),y
     cmp #0
     bne __b11_from___b9
     jmp __b12
     // main::@12
   __b12:
     // [51] (word) print_word_decimal::w#2 ← (word) main::i#10
-    // [52] (byte*~) print_char_cursor#97 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
+    // [52] (byte*~) print_char_cursor#96 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
     lda.z print_char_cursor_1
     sta.z print_char_cursor
     lda.z print_char_cursor_1+1
@@ -6552,7 +6399,7 @@ main: {
     // [53] call print_word_decimal 
     // [71] phi from main::@12 to print_word_decimal [phi:main::@12->print_word_decimal]
   print_word_decimal_from___b12:
-    // [71] phi (byte*) print_char_cursor#58 = (byte*~) print_char_cursor#97 [phi:main::@12->print_word_decimal#0] -- register_copy 
+    // [71] phi (byte*) print_char_cursor#58 = (byte*~) print_char_cursor#96 [phi:main::@12->print_word_decimal#0] -- register_copy 
     // [71] phi (word) print_word_decimal::w#3 = (word) print_word_decimal::w#2 [phi:main::@12->print_word_decimal#1] -- register_copy 
     jsr print_word_decimal
     // [54] phi from main::@12 to main::@28 [phi:main::@12->main::@28]
@@ -7446,9 +7293,9 @@ clock: {
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
-    // [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS -- _deref_pbuc1=vbuc2 
+    // [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #CIA_TIMER_CONTROL_CONTINUOUS
+    lda #0
     sta CIA2_TIMER_A_CONTROL
     // [182] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
@@ -7795,8 +7642,8 @@ Removing instruction lda.z digit_value+1
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [103] bcc __b2 to bcs
-Fixing long branch [109] bcc __b2 to bcs
+Fixing long branch [101] bcc __b2 to bcs
+Fixing long branch [107] bcc __b2 to bcs
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -7805,16 +7652,15 @@ FINAL SYMBOL TABLE
 (const dword*) CIA2_TIMER_AB = (dword*) 56580
 (const byte*) CIA2_TIMER_A_CONTROL = (byte*) 56590
 (const byte*) CIA2_TIMER_B_CONTROL = (byte*) 56591
-(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = (byte) $40
-(const byte) CIA_TIMER_CONTROL_CONTINUOUS = (byte) 0
-(const byte) CIA_TIMER_CONTROL_START = (byte) 1
-(const word) CLOCKS_PER_FRAME = (word) $4cc8
-(const dword) CLOCKS_PER_INIT = (byte) $12
+(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = (number) $40
+(const byte) CIA_TIMER_CONTROL_START = (number) 1
+(const word) CLOCKS_PER_FRAME = (number) $4cc8
+(const dword) CLOCKS_PER_INIT = (number) $12
 (const dword) CLOCKS_PER_SEC = (const word) CLOCKS_PER_FRAME*(const byte) FRAMES_PER_SEC
-(const word) COUNT = (word) $4000
+(const word) COUNT = (number) $4000
 (const byte*) D018 = (byte*) 53272
 (const byte[]) DIGITS = (string) "0123456789abcdef"z
-(const byte) FRAMES_PER_SEC = (byte) $3c
+(const byte) FRAMES_PER_SEC = (number) $3c
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
@@ -7822,7 +7668,7 @@ FINAL SYMBOL TABLE
 (const word[]) RADIX_DECIMAL_VALUES = { (word) $2710, (word) $3e8, (word) $64, (word) $a }
 (const dword[]) RADIX_DECIMAL_VALUES_LONG = { (dword) $3b9aca00, (dword) $5f5e100, (dword) $989680, (dword) $f4240, (dword) $186a0, (dword) $2710, (dword) $3e8, (dword) $64, (dword) $a }
 (const byte*) SCREEN = (byte*) 1024
-(const byte) SQRT_COUNT = (byte) $80
+(const byte) SQRT_COUNT = (number) $80
 (dword()) clock()
 (label) clock::@return
 (dword) clock::return
@@ -7887,8 +7733,8 @@ FINAL SYMBOL TABLE
 (word) divr16u::return#3 return zp[2]:19 4.0
 (void()) main()
 (dword~) main::$10 zp[4]:9 4.0
-(dword~) main::$14 zp[4]:21 2.0
-(byte*~) main::$39 zp[2]:19 22.0
+(dword~) main::$13 zp[4]:21 2.0
+(byte*~) main::$35 zp[2]:19 22.0
 (label) main::@1
 (label) main::@10
 (label) main::@11
@@ -7978,10 +7824,10 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#62 print_char_cursor_1 zp[2]:6 7.4
 (byte*) print_char_cursor#66 print_char_cursor zp[2]:17 14.0
 (byte*) print_char_cursor#78 print_char_cursor_1 zp[2]:6 16.5
+(byte*~) print_char_cursor#88 print_char_cursor zp[2]:17 4.0
 (byte*~) print_char_cursor#89 print_char_cursor zp[2]:17 4.0
 (byte*~) print_char_cursor#90 print_char_cursor zp[2]:17 4.0
-(byte*~) print_char_cursor#91 print_char_cursor zp[2]:17 4.0
-(byte*~) print_char_cursor#97 print_char_cursor zp[2]:17 22.0
+(byte*~) print_char_cursor#96 print_char_cursor zp[2]:17 22.0
 (void()) print_cls()
 (label) print_cls::@return
 (void()) print_dword_decimal((dword) print_dword_decimal::w)
@@ -8130,14 +7976,14 @@ zp[2]:13 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ultoa::buffer#3 ult
 reg byte x [ ultoa_append::digit#2 ultoa_append::digit#1 ]
 reg byte x [ divr16u::i#2 divr16u::i#1 ]
 zp[2]:15 [ memset::num#2 memset::end#0 divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 rem16u#1 print_str::str#8 print_str::str#10 print_str::str#0 main::sieve_i#2 main::sieve_i#1 ]
-zp[2]:17 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 print_char_cursor#66 print_char_cursor#89 print_char_cursor#90 print_char_cursor#91 print_char_cursor#58 print_char_cursor#97 print_char_cursor#2 print_char_cursor#1 main::i#12 main::i#2 ]
+zp[2]:17 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#1 divr16u::dividend#2 divr16u::dividend#0 print_char_cursor#66 print_char_cursor#88 print_char_cursor#89 print_char_cursor#90 print_char_cursor#58 print_char_cursor#96 print_char_cursor#2 print_char_cursor#1 main::i#12 main::i#2 ]
 reg byte x [ memset::c#4 ]
-zp[2]:19 [ main::$39 divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 div32u16u::quotient_lo#0 ]
+zp[2]:19 [ main::$35 divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 div32u16u::quotient_lo#0 ]
 reg byte a [ utoa::$4 ]
 reg byte a [ utoa::$11 ]
 reg byte a [ ultoa::$4 ]
 reg byte a [ ultoa::$11 ]
-zp[4]:21 [ ultoa::digit_value#0 ultoa_append::sub#0 div32u16u::return#2 main::$14 div32u16u::return#0 ]
+zp[4]:21 [ ultoa::digit_value#0 ultoa_append::sub#0 div32u16u::return#2 main::$13 div32u16u::return#0 ]
 zp[2]:25 [ div32u16u::quotient_hi#0 utoa::digit_value#0 utoa_append::sub#0 ]
 reg byte a [ divr16u::$1 ]
 reg byte a [ divr16u::$2 ]
@@ -8161,14 +8007,14 @@ Score: 83095
   .label CIA2_TIMER_B_CONTROL = $dd0f
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
-  // Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
-  .const CIA_TIMER_CONTROL_CONTINUOUS = 0
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   // Clock cycles per frame (on a C64 PAL)
   .const CLOCKS_PER_FRAME = $4cc8
   // Frames per second (on a C64 PAL)
   .const FRAMES_PER_SEC = $3c
+  // Clock cycles per second (on a C64 PAL)
+  .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
   // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
   .const CLOCKS_PER_INIT = $12
@@ -8178,8 +8024,6 @@ Score: 83095
   .const SQRT_COUNT = $80
   /* Sqrt of COUNT */
   .label sieve = $1000
-  // Clock cycles per second (on a C64 PAL)
-  .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
   .label rem16u = $f
   .label print_char_cursor = $11
   .label print_line_cursor = 6
@@ -8196,7 +8040,7 @@ main: {
     .label toD0181_gfx = $1800
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
     .label __10 = 9
-    .label __14 = $15
+    .label __13 = $15
     .label cyclecount = 9
     .label sec100s = $d
     .label i = $11
@@ -8204,7 +8048,7 @@ main: {
     .label j = 2
     .label s = 4
     .label i_1 = $d
-    .label __39 = $13
+    .label __35 = $13
     // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
     // main::toD0181
     // main::@14
@@ -8245,7 +8089,7 @@ main: {
     sta.z print_line_cursor+1
     jsr print_ln
     // main::@17
-    // [12] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [12] (byte*~) print_char_cursor#89 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -8253,7 +8097,7 @@ main: {
     // print_str("between 2 and ")
     // [13] call print_str 
     // [77] phi from main::@17 to print_str [phi:main::@17->print_str]
-    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#90 [phi:main::@17->print_str#0] -- register_copy 
+    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#89 [phi:main::@17->print_str#0] -- register_copy 
     // [77] phi (byte*) print_str::str#10 = (const string) main::str1 [phi:main::@17->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
@@ -8358,14 +8202,14 @@ main: {
     jsr div32u16u
     // [31] (dword) div32u16u::return#2 ← (dword) div32u16u::return#0
     // main::@23
-    // [32] (dword~) main::$14 ← (dword) div32u16u::return#2
+    // [32] (dword~) main::$13 ← (dword) div32u16u::return#2
     // sec100s = (unsigned int)div32u16u(cyclecount, (unsigned int)(CLOCKS_PER_SEC/100))
-    // [33] (word) main::sec100s#0 ← (word)(dword~) main::$14 -- vwuz1=_word_vduz2 
-    lda.z __14
+    // [33] (word) main::sec100s#0 ← (word)(dword~) main::$13 -- vwuz1=_word_vduz2 
+    lda.z __13
     sta.z sec100s
-    lda.z __14+1
+    lda.z __13+1
     sta.z sec100s+1
-    // [34] (byte*~) print_char_cursor#91 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [34] (byte*~) print_char_cursor#90 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -8373,7 +8217,7 @@ main: {
     // print_str("100ths seconds used: ")
     // [35] call print_str 
     // [77] phi from main::@23 to print_str [phi:main::@23->print_str]
-    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#91 [phi:main::@23->print_str#0] -- register_copy 
+    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#90 [phi:main::@23->print_str#0] -- register_copy 
     // [77] phi (byte*) print_str::str#10 = (const string) main::str2 [phi:main::@23->print_str#1] -- pbuz1=pbuc1 
     lda #<str2
     sta.z print_str.str
@@ -8432,7 +8276,7 @@ main: {
     bcc __b9
   !:
     // main::@10
-    // [46] (byte*~) print_char_cursor#89 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
+    // [46] (byte*~) print_char_cursor#88 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
     lda.z print_char_cursor_1
     sta.z print_char_cursor
     lda.z print_char_cursor_1+1
@@ -8440,7 +8284,7 @@ main: {
     // print_str("...")
     // [47] call print_str 
     // [77] phi from main::@10 to print_str [phi:main::@10->print_str]
-    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#89 [phi:main::@10->print_str#0] -- register_copy 
+    // [77] phi (byte*) print_char_cursor#66 = (byte*~) print_char_cursor#88 [phi:main::@10->print_str#0] -- register_copy 
     // [77] phi (byte*) print_str::str#10 = (const string) main::str4 [phi:main::@10->print_str#1] -- pbuz1=pbuc1 
     lda #<str4
     sta.z print_str.str
@@ -8456,23 +8300,23 @@ main: {
     // main::@9
   __b9:
     // if (!sieve[i])
-    // [49] (byte*~) main::$39 ← (const byte*) sieve + (word) main::i#10 -- pbuz1=pbuc1_plus_vwuz2 
+    // [49] (byte*~) main::$35 ← (const byte*) sieve + (word) main::i#10 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z i_1
     clc
     adc #<sieve
-    sta.z __39
+    sta.z __35
     lda.z i_1+1
     adc #>sieve
-    sta.z __39+1
-    // [50] if((byte) 0!=*((byte*~) main::$39)) goto main::@11 -- vbuc1_neq__deref_pbuz1_then_la1 
+    sta.z __35+1
+    // [50] if((byte) 0!=*((byte*~) main::$35)) goto main::@11 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
-    lda (__39),y
+    lda (__35),y
     cmp #0
     bne __b11
     // main::@12
     // print_word_decimal(i)
     // [51] (word) print_word_decimal::w#2 ← (word) main::i#10
-    // [52] (byte*~) print_char_cursor#97 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
+    // [52] (byte*~) print_char_cursor#96 ← (byte*) print_char_cursor#62 -- pbuz1=pbuz2 
     lda.z print_char_cursor_1
     sta.z print_char_cursor
     lda.z print_char_cursor_1+1
@@ -8480,7 +8324,7 @@ main: {
     // print_word_decimal(i)
     // [53] call print_word_decimal 
     // [71] phi from main::@12 to print_word_decimal [phi:main::@12->print_word_decimal]
-    // [71] phi (byte*) print_char_cursor#58 = (byte*~) print_char_cursor#97 [phi:main::@12->print_word_decimal#0] -- register_copy 
+    // [71] phi (byte*) print_char_cursor#58 = (byte*~) print_char_cursor#96 [phi:main::@12->print_word_decimal#0] -- register_copy 
     // [71] phi (word) print_word_decimal::w#3 = (word) print_word_decimal::w#2 [phi:main::@12->print_word_decimal#1] -- register_copy 
     jsr print_word_decimal
     // [54] phi from main::@12 to main::@28 [phi:main::@12->main::@28]
@@ -9345,9 +9189,9 @@ clock: {
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
     // *CIA2_TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    // [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_CONTINUOUS -- _deref_pbuc1=vbuc2 
+    // [181] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #CIA_TIMER_CONTROL_CONTINUOUS
+    lda #0
     sta CIA2_TIMER_A_CONTROL
     // *CIA2_TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     // [182] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 

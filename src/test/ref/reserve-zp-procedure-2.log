@@ -10,7 +10,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @3
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -23,8 +22,7 @@ main::@3: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
   (byte) sub1::return#3 ← phi( main::@1/(byte) sub1::return#0 )
   (byte~) main::$0 ← (byte) sub1::return#3
-  *((byte*) main::SCREEN + (byte) main::i#3) ← (byte~) main::$0
-  (byte*~) main::$1 ← (byte*) main::SCREEN + (number) $28
+  *((const byte*) main::SCREEN + (byte) main::i#3) ← (byte~) main::$0
   (byte) sub2::i#0 ← (byte) main::i#3
   call sub2 
   (byte) sub2::return#0 ← (byte) sub2::return#2
@@ -32,11 +30,11 @@ main::@3: scope:[main]  from main::@1
 main::@4: scope:[main]  from main::@3
   (byte) main::i#4 ← phi( main::@3/(byte) main::i#3 )
   (byte) sub2::return#3 ← phi( main::@3/(byte) sub2::return#0 )
-  (byte~) main::$2 ← (byte) sub2::return#3
-  *((byte*~) main::$1 + (byte) main::i#4) ← (byte~) main::$2
+  (byte~) main::$1 ← (byte) sub2::return#3
+  *((const byte*) main::SCREEN+(number) $28 + (byte) main::i#4) ← (byte~) main::$1
   (byte) main::i#1 ← (byte) main::i#4 + rangenext(0,2)
-  (bool~) main::$3 ← (byte) main::i#1 != rangelast(0,2)
-  if((bool~) main::$3) goto main::@1
+  (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,2)
+  if((bool~) main::$2) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@4
   return 
@@ -80,14 +78,13 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (byte~) main::$0
-(byte*~) main::$1
-(byte~) main::$2
-(bool~) main::$3
+(byte~) main::$1
+(bool~) main::$2
 (label) main::@1
 (label) main::@3
 (label) main::@4
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -120,10 +117,8 @@ SYMBOL TABLE SSA
 (byte) sub2::return#3
 (byte) sub2::return#4
 
-Adding number conversion cast (unumber) $28 in (byte*~) main::$1 ← (byte*) main::SCREEN + (number) $28
+Adding number conversion cast (unumber) $28 in *((const byte*) main::SCREEN+(number) $28 + (byte) main::i#4) ← (byte~) main::$1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
@@ -138,24 +133,16 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) sub1::i#1 (byte) sub1::i#0
 Identical Phi Values (byte) sub2::i#1 (byte) sub2::i#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [18] if((byte) main::i#1!=rangelast(0,2)) goto main::@1
+Simple Condition (bool~) main::$2 [16] if((byte) main::i#1!=rangelast(0,2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [16] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [18] if(main::i#1!=rangelast(0,2)) goto main::@1 to (number) 3
+Resolved ranged next value [14] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [16] if(main::i#1!=rangelast(0,2)) goto main::@1 to (number) 3
 Adding number conversion cast (unumber) 3 in if((byte) main::i#1!=(number) 3) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [7] (byte*~) main::$1 ← (const byte*) main::SCREEN + (byte) $28
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$1 = main::SCREEN+$28
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$1 = (const byte*) main::SCREEN+(byte) $28
-Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@5(between main::@4 and main::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
@@ -207,8 +194,8 @@ main::@2: scope:[main]  from main::@1
   [13] (byte) sub2::return#0 ← (byte) sub2::return#1
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [14] (byte~) main::$2 ← (byte) sub2::return#0
-  [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2
+  [14] (byte~) main::$1 ← (byte) sub2::return#0
+  [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$1
   [16] (byte) main::i#1 ← ++ (byte) main::i#2
   [17] if((byte) main::i#1!=(byte) 3) goto main::@1
   to:main::@return
@@ -237,7 +224,7 @@ sub1::@return: scope:[sub1]  from sub1
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte~) main::$0 22.0
-(byte~) main::$2 22.0
+(byte~) main::$1 22.0
 (byte) main::i
 (byte) main::i#0 4.0
 (byte) main::i#1 16.5
@@ -263,7 +250,7 @@ Added variable sub1::return#0 to zero page equivalence class [ sub1::return#0 ]
 Added variable main::$0 to zero page equivalence class [ main::$0 ]
 Added variable sub2::i#0 to zero page equivalence class [ sub2::i#0 ]
 Added variable sub2::return#0 to zero page equivalence class [ sub2::return#0 ]
-Added variable main::$2 to zero page equivalence class [ main::$2 ]
+Added variable main::$1 to zero page equivalence class [ main::$1 ]
 Added variable sub2::$0 to zero page equivalence class [ sub2::$0 ]
 Added variable sub2::return#1 to zero page equivalence class [ sub2::return#1 ]
 Added variable sub1::return#1 to zero page equivalence class [ sub1::return#1 ]
@@ -274,7 +261,7 @@ Complete equivalence classes
 [ main::$0 ]
 [ sub2::i#0 ]
 [ sub2::return#0 ]
-[ main::$2 ]
+[ main::$1 ]
 [ sub2::$0 ]
 [ sub2::return#1 ]
 [ sub1::return#1 ]
@@ -284,7 +271,7 @@ Allocated zp[1]:10 [ sub1::return#0 ]
 Allocated zp[1]:11 [ main::$0 ]
 Allocated zp[1]:12 [ sub2::i#0 ]
 Allocated zp[1]:13 [ sub2::return#0 ]
-Allocated zp[1]:14 [ main::$2 ]
+Allocated zp[1]:14 [ main::$1 ]
 Allocated zp[1]:15 [ sub2::$0 ]
 Allocated zp[1]:16 [ sub2::return#1 ]
 Allocated zp[1]:17 [ sub1::return#1 ]
@@ -316,7 +303,7 @@ __bend:
 main: {
     .label SCREEN = $400
     .label __0 = $b
-    .label __2 = $e
+    .label __1 = $e
     .label i = 8
     // [4] (byte) main::i#0 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
@@ -357,11 +344,11 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [14] (byte~) main::$2 ← (byte) sub2::return#0 -- vbuz1=vbuz2 
+    // [14] (byte~) main::$1 ← (byte) sub2::return#0 -- vbuz1=vbuz2 
     lda.z sub2.return
-    sta.z __2
-    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z __2
+    sta.z __1
+    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
+    lda.z __1
     ldy.z i
     sta SCREEN+$28,y
     // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
@@ -419,7 +406,7 @@ sub1: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte) main::i#0 ← (byte) 0 [ main::i#0 ] ( main:2 [ main::i#0 ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte y 
-Statement [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte y 
+Statement [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte y 
 Statement [17] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a 
 Statement [19] (byte~) sub2::$0 ← (byte) sub2::i#0 + (byte) sub2::i#0 [ sub2::i#0 sub2::$0 ] ( main:2::sub2:12 [ main::i#2 sub2::i#0 sub2::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:12 [ sub2::i#0 ]
@@ -427,7 +414,7 @@ Statement [20] (byte) sub2::return#1 ← (byte~) sub2::$0 + (byte) sub2::i#0 [ s
 Statement [22] (byte) sub1::return#1 ← (byte) sub1::i#0 + (byte) sub1::i#0 [ sub1::return#1 ] ( main:2::sub1:7 [ main::i#2 sub1::return#1 ] ) always clobbers reg byte a 
 Statement [4] (byte) main::i#0 ← (byte) 0 [ main::i#0 ] ( main:2 [ main::i#0 ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte y 
-Statement [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte y 
+Statement [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$1 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte y 
 Statement [17] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a 
 Statement [19] (byte~) sub2::$0 ← (byte) sub2::i#0 + (byte) sub2::i#0 [ sub2::i#0 sub2::$0 ] ( main:2::sub2:12 [ main::i#2 sub2::i#0 sub2::$0 ] ) always clobbers reg byte a 
 Statement [20] (byte) sub2::return#1 ← (byte~) sub2::$0 + (byte) sub2::i#0 [ sub2::return#1 ] ( main:2::sub2:12 [ main::i#2 sub2::return#1 ] ) always clobbers reg byte a 
@@ -438,18 +425,18 @@ Potential registers zp[1]:10 [ sub1::return#0 ] : zp[1]:10 , reg byte a , reg by
 Potential registers zp[1]:11 [ main::$0 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:12 [ sub2::i#0 ] : zp[1]:12 , reg byte x , reg byte y , 
 Potential registers zp[1]:13 [ sub2::return#0 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:14 [ main::$2 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:14 [ main::$1 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:15 [ sub2::$0 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:16 [ sub2::return#1 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:17 [ sub1::return#1 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 26.68: zp[1]:8 [ main::i#2 main::i#0 main::i#1 ] 22: zp[1]:11 [ main::$0 ] 22: zp[1]:14 [ main::$2 ] 
+Uplift Scope [main] 26.68: zp[1]:8 [ main::i#2 main::i#0 main::i#1 ] 22: zp[1]:11 [ main::$0 ] 22: zp[1]:14 [ main::$1 ] 
 Uplift Scope [sub1] 22: zp[1]:10 [ sub1::return#0 ] 15: zp[1]:9 [ sub1::i#0 ] 4.33: zp[1]:17 [ sub1::return#1 ] 
 Uplift Scope [sub2] 22: zp[1]:13 [ sub2::return#0 ] 8.5: zp[1]:12 [ sub2::i#0 ] 4.33: zp[1]:16 [ sub2::return#1 ] 4: zp[1]:15 [ sub2::$0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 893 combination zp[1]:8 [ main::i#2 main::i#0 main::i#1 ] reg byte a [ main::$0 ] reg byte a [ main::$2 ] 
+Uplifting [main] best 893 combination zp[1]:8 [ main::i#2 main::i#0 main::i#1 ] reg byte a [ main::$0 ] reg byte a [ main::$1 ] 
 Uplifting [sub1] best 767 combination reg byte a [ sub1::return#0 ] reg byte a [ sub1::i#0 ] reg byte a [ sub1::return#1 ] 
 Uplifting [sub2] best 640 combination reg byte a [ sub2::return#0 ] reg byte x [ sub2::i#0 ] reg byte a [ sub2::return#1 ] reg byte a [ sub2::$0 ] 
 Limited combination testing to 100 combinations of 192 possible.
@@ -513,8 +500,8 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [14] (byte~) main::$2 ← (byte) sub2::return#0
-    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [14] (byte~) main::$1 ← (byte) sub2::return#0
+    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z i
     sta SCREEN+$28,y
     // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
@@ -595,7 +582,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
-(byte~) main::$2 reg byte a 22.0
+(byte~) main::$1 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -627,7 +614,7 @@ reg byte a [ sub1::return#0 ]
 reg byte a [ main::$0 ]
 reg byte x [ sub2::i#0 ]
 reg byte a [ sub2::return#0 ]
-reg byte a [ main::$2 ]
+reg byte a [ main::$1 ]
 reg byte a [ sub2::$0 ]
 reg byte a [ sub2::return#1 ]
 reg byte a [ sub1::return#1 ]
@@ -680,9 +667,9 @@ main: {
     jsr sub2
     // [13] (byte) sub2::return#0 ← (byte) sub2::return#1
     // main::@3
-    // [14] (byte~) main::$2 ← (byte) sub2::return#0
+    // [14] (byte~) main::$1 ← (byte) sub2::return#0
     // (SCREEN+40)[i] = sub2(i)
-    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z i
     sta SCREEN+$28,y
     // for( volatile byte i : 0..2)

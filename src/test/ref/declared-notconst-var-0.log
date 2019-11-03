@@ -6,7 +6,6 @@ Culled Empty Block (label) main::@6
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) size#0 ← (number) $28
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -23,7 +22,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1
   (byte) size#3 ← phi( main::@1/(byte) size#1 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) SCREEN + (byte) main::i#3) ← (byte) '*'
+  *((const byte*) SCREEN + (byte) main::i#3) ← (byte) '*'
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -42,7 +41,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -64,11 +63,10 @@ Adding number conversion cast (unumber) $28 in (byte) size#0 ← (number) $28
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) size#0 ← (unumber)(number) $28
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $28
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $28
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $28
@@ -81,9 +79,8 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) size#2 (byte) size#0
 Identical Phi Values (byte) size#1 (byte) size#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [6] if((byte) main::i#2<(byte) size#0) goto main::@2
+Simple Condition (bool~) main::$0 [5] if((byte) main::i#2<(byte) size#0) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0

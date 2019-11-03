@@ -9,17 +9,15 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::b#0 ← (number) 0
-  (byte) main::v64 ← (number) 0
-  if((byte) main::v64==(number) 0) goto main::@3
+  if((const byte) main::v64==(number) 0) goto main::@3
   to:main::@4
 main::@3: scope:[main]  from main
   (byte) main::b#1 ← (number) 1
   to:main::@4
 main::@4: scope:[main]  from main main::@3
   (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@3/(byte) main::b#1 )
-  *((byte*) main::SCREEN + (number) 0) ← (byte) main::b#2
+  *((const byte*) main::SCREEN + (number) 0) ← (byte) main::b#2
   to:main::@return
 main::@return: scope:[main]  from main::@4
   return 
@@ -40,26 +38,22 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@4
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::b
 (byte) main::b#0
 (byte) main::b#1
 (byte) main::b#2
-(byte) main::v64
+(const byte) main::v64 = (number) 0
 
 Adding number conversion cast (unumber) 0 in (byte) main::b#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) main::v64 ← (number) 0
-Adding number conversion cast (unumber) 0 in if((byte) main::v64==(number) 0) goto main::@3
+Adding number conversion cast (unumber) 0 in if((const byte) main::v64==(number) 0) goto main::@3
 Adding number conversion cast (unumber) 1 in (byte) main::b#1 ← (number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) main::b#2
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte) main::b#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::b#0 ← (unumber)(number) 0
-Inlining cast (byte) main::v64 ← (unumber)(number) 0
 Inlining cast (byte) main::b#1 ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -67,24 +61,21 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Negating conditional jump and destination [3] if((byte) main::v64!=(byte) 0) goto main::@4
+Negating conditional jump and destination [1] if((const byte) main::v64!=(byte) 0) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::b#0 = 0
-Constant (const byte) main::v64 = 0
 Constant (const byte) main::b#1 = 1
 Successful SSA optimization Pass2ConstantIdentification
 Removing PHI-reference to removed block (main) in block main::@4
-if() condition always false - eliminating [3] if((const byte) main::v64!=(byte) 0) goto main::@4
+if() condition always false - eliminating [1] if((const byte) main::v64!=(byte) 0) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (byte) 0) ← (byte) main::b#2
+Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← (byte) main::b#2
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) main::b#0
 Eliminating unused constant (const byte) main::v64
+Eliminating unused constant (const byte) main::b#0
 Successful SSA optimization PassNEliminateUnusedVars
 Identical Phi Values (byte) main::b#2 (const byte) main::b#1
 Successful SSA optimization Pass2IdenticalPhiElimination

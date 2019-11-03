@@ -7,10 +7,9 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (signed byte[]) main::msg ← { (number) -1, (number) 0, (number) 1 }
-  (signed byte*) main::SCREEN ← ((signed byte*)) (number) $400
-  *((signed byte*) main::SCREEN + (number) 0) ← *((signed byte[]) main::msg + (number) 0)
-  *((signed byte*) main::SCREEN + (number) 1) ← *((signed byte[]) main::msg + (number) 1)
-  *((signed byte*) main::SCREEN + (number) 2) ← *((signed byte[]) main::msg + (number) 2)
+  *((const signed byte*) main::SCREEN + (number) 0) ← *((signed byte[]) main::msg + (number) 0)
+  *((const signed byte*) main::SCREEN + (number) 1) ← *((signed byte[]) main::msg + (number) 1)
+  *((const signed byte*) main::SCREEN + (number) 2) ← *((signed byte[]) main::msg + (number) 2)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,24 +28,22 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (label) main::@return
-(signed byte*) main::SCREEN
+(const signed byte*) main::SCREEN = (signed byte*)(number) $400
 (signed byte[]) main::msg
 
-Adding number conversion cast (unumber) 0 in *((signed byte*) main::SCREEN + (number) 0) ← *((signed byte[]) main::msg + (number) 0)
-Adding number conversion cast (unumber) 0 in *((signed byte*) main::SCREEN + (number) 0) ← *((signed byte[]) main::msg + (unumber)(number) 0)
-Adding number conversion cast (unumber) 1 in *((signed byte*) main::SCREEN + (number) 1) ← *((signed byte[]) main::msg + (number) 1)
-Adding number conversion cast (unumber) 1 in *((signed byte*) main::SCREEN + (number) 1) ← *((signed byte[]) main::msg + (unumber)(number) 1)
-Adding number conversion cast (unumber) 2 in *((signed byte*) main::SCREEN + (number) 2) ← *((signed byte[]) main::msg + (number) 2)
-Adding number conversion cast (unumber) 2 in *((signed byte*) main::SCREEN + (number) 2) ← *((signed byte[]) main::msg + (unumber)(number) 2)
+Adding number conversion cast (unumber) 0 in *((const signed byte*) main::SCREEN + (number) 0) ← *((signed byte[]) main::msg + (number) 0)
+Adding number conversion cast (unumber) 0 in *((const signed byte*) main::SCREEN + (number) 0) ← *((signed byte[]) main::msg + (unumber)(number) 0)
+Adding number conversion cast (unumber) 1 in *((const signed byte*) main::SCREEN + (number) 1) ← *((signed byte[]) main::msg + (number) 1)
+Adding number conversion cast (unumber) 1 in *((const signed byte*) main::SCREEN + (number) 1) ← *((signed byte[]) main::msg + (unumber)(number) 1)
+Adding number conversion cast (unumber) 2 in *((const signed byte*) main::SCREEN + (number) 2) ← *((signed byte[]) main::msg + (number) 2)
+Adding number conversion cast (unumber) 2 in *((const signed byte*) main::SCREEN + (number) 2) ← *((signed byte[]) main::msg + (unumber)(number) 2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (signed byte[]) main::msg ← (signed byte[]){ (signed byte)(number) -1, (signed byte)(number) 0, (signed byte)(number) 1 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (signed byte*) main::SCREEN ← (signed byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (signed byte*) 1024
 Simplifying constant integer cast -1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (signed byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -64,10 +61,9 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identified constant from value list (signed byte[]) { (signed byte) -1, (signed byte) 0, (signed byte) 1 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const signed byte[]) main::msg = { -1, 0, 1 }
-Constant (const signed byte*) main::SCREEN = (signed byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::msg in [2] *((const signed byte*) main::SCREEN + (byte) 0) ← *((const signed byte[]) main::msg + (byte) 0)
-Simplifying expression containing zero main::SCREEN in [2] *((const signed byte*) main::SCREEN + (byte) 0) ← *((const signed byte[]) main::msg)
+Simplifying expression containing zero main::msg in [1] *((const signed byte*) main::SCREEN + (byte) 0) ← *((const signed byte[]) main::msg + (byte) 0)
+Simplifying expression containing zero main::SCREEN in [1] *((const signed byte*) main::SCREEN + (byte) 0) ← *((const signed byte[]) main::msg)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Consolidated array index constant in *(main::msg+1)
 Consolidated array index constant in *(main::SCREEN+1)

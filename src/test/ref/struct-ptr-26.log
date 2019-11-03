@@ -12,6 +12,9 @@ Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_at::str)
 Warning! Adding boolean cast to non-boolean sub-expression (byte) print_str_lines::ch
 Identified constant variable (byte*) HEAP_TOP
+Identified constant variable (byte*) fileentry::bufEdit
+Identified constant variable (byte) fileentry::bFlag
+Identified constant variable (byte) fileentry::bError
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
@@ -39,6 +42,7 @@ Culled Empty Block (label) @25
 Culled Empty Block (label) @26
 Culled Empty Block (label) @27
 Culled Empty Block (label) @28
+Culled Empty Block (label) @29
 Culled Empty Block (label) @30
 Culled Empty Block (label) @31
 Culled Empty Block (label) @32
@@ -54,7 +58,7 @@ CONTROL FLOW GRAPH SSA
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@29
+  to:@37
 
 (void()) print_word((word) print_word::w)
 print_word: scope:[print_word]  from main
@@ -81,17 +85,13 @@ print_word::@return: scope:[print_word]  from print_word::@2
   (byte*) print_char_cursor#3 ← (byte*) print_char_cursor#14
   return 
   to:@return
-@29: scope:[]  from @12
-  (byte*) print_char_cursor#27 ← phi( @12/(byte*) print_char_cursor#0 )
-  (byte[]) print_hextab ← (const string) $0
-  to:@37
 
 (void()) print_byte((byte) print_byte::b)
 print_byte: scope:[print_byte]  from print_word print_word::@1
   (byte*) print_char_cursor#24 ← phi( print_word/(byte*) print_char_cursor#23 print_word::@1/(byte*) print_char_cursor#1 )
   (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
-  (byte) print_char::ch#0 ← *((byte[]) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -99,7 +99,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#15 ← phi( print_byte/(byte*) print_char_cursor#8 )
   (byte*) print_char_cursor#4 ← (byte*) print_char_cursor#15
   (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
-  (byte) print_char::ch#1 ← *((byte[]) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -150,8 +150,8 @@ main::@return: scope:[main]  from main::@1
   (byte*) print_char_cursor#10 ← (byte*) print_char_cursor#21
   return 
   to:@return
-@37: scope:[]  from @29
-  (byte*) print_char_cursor#26 ← phi( @29/(byte*) print_char_cursor#27 )
+@37: scope:[]  from @12
+  (byte*) print_char_cursor#26 ← phi( @12/(byte*) print_char_cursor#0 )
   call main 
   to:@38
 @38: scope:[]  from @37
@@ -161,9 +161,7 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @38
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "0123456789abcdef"z
 (label) @12
-(label) @29
 (label) @37
 (label) @38
 (label) @begin
@@ -173,9 +171,6 @@ SYMBOL TABLE SSA
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(byte) fileentry::bError
-(byte) fileentry::bFlag
-(byte*) fileentry::bufEdit
 (void()) main()
 (byte*~) main::$0
 (word*~) main::$1
@@ -229,7 +224,6 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#24
 (byte*) print_char_cursor#25
 (byte*) print_char_cursor#26
-(byte*) print_char_cursor#27
 (byte*) print_char_cursor#3
 (byte*) print_char_cursor#4
 (byte*) print_char_cursor#5
@@ -237,7 +231,7 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#7
 (byte*) print_char_cursor#8
 (byte*) print_char_cursor#9
-(byte[]) print_hextab
+(const byte[]) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_screen
@@ -275,7 +269,7 @@ Finalized unsigned number type (byte) $f
 Finalized unsigned number type (byte) $1e
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) print_byte::$2 ← (byte) print_byte::b#3 & (byte) $f
-Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#27 (byte*) print_char_cursor#26 
+Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#26 
 Alias (byte) print_byte::b#0 = (byte~) print_word::$0 
 Alias (word) print_word::w#1 = (word) print_word::w#2 
 Alias (byte*) print_char_cursor#1 = (byte*) print_char_cursor#12 
@@ -300,23 +294,22 @@ Identical Phi Values (byte*) print_char_cursor#10 (byte*) print_char_cursor#13
 Identical Phi Values (byte*) print_char_cursor#11 (byte*) print_char_cursor#10
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte*) print_char_cursor#0 = (byte*) 1024
-Constant (const byte[]) print_hextab = $0
 Constant (const struct fileentry*) main::file#0 = (struct fileentry*) 0
 Constant (const word) main::uSize#0 = 0
 Constant (const struct fileentry*) main::file#1 = (struct fileentry*) 16384
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte**)main::file#1 in [43] (byte**) main::$3 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Constant value identified (byte**)main::file#1 in [45] (byte**) main::$4 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Constant value identified (byte**)main::file#1 in [41] (byte**) main::$3 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Constant value identified (byte**)main::file#1 in [43] (byte**) main::$4 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
 Successful SSA optimization Pass2ConstantValues
-Converting *(pointer+n) to pointer[n] [44] *((byte**) main::$3) ← (byte*) 4  -- *((byte**)main::file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
-Converting *(pointer+n) to pointer[n] [46] (byte*~) main::$0 ← *((byte**) main::$4) + (byte) $1e  -- *((byte**)main::file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
-Converting *(pointer+n) to pointer[n] [49] (word) main::uSize#1 ← *((word*) main::ptrw#0)  -- *((word*)*((byte**)main::file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT) + $1e)
+Converting *(pointer+n) to pointer[n] [42] *((byte**) main::$3) ← (byte*) 4  -- *((byte**)main::file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Converting *(pointer+n) to pointer[n] [44] (byte*~) main::$0 ← *((byte**) main::$4) + (byte) $1e  -- *((byte**)main::file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Converting *(pointer+n) to pointer[n] [47] (word) main::uSize#1 ← *((word*) main::ptrw#0)  -- *((word*)*((byte**)main::file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT) + $1e)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte**)main::file#1 in [43] (byte**) main::$3 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Simplifying expression containing zero (byte**)main::file#1 in [44] *((byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) ← (byte*) 4
-Simplifying expression containing zero (byte**)main::file#1 in [45] (byte**) main::$4 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Simplifying expression containing zero (byte**)main::file#1 in [46] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) $1e
-Simplifying expression containing zero (byte**)main::file#1 in [49] (word) main::uSize#1 ← *((word*)*((byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) $1e)
+Simplifying expression containing zero (byte**)main::file#1 in [41] (byte**) main::$3 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Simplifying expression containing zero (byte**)main::file#1 in [42] *((byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) ← (byte*) 4
+Simplifying expression containing zero (byte**)main::file#1 in [43] (byte**) main::$4 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Simplifying expression containing zero (byte**)main::file#1 in [44] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) $1e
+Simplifying expression containing zero (byte**)main::file#1 in [47] (word) main::uSize#1 ← *((word*)*((byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) $1e)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte**) main::$3 and assignment [17] (byte**) main::$3 ← (byte**)(const struct fileentry*) main::file#1
 Eliminating unused variable (byte**) main::$4 and assignment [19] (byte**) main::$4 ← (byte**)(const struct fileentry*) main::file#1
@@ -328,12 +321,10 @@ Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused variable (byte*~) main::$0 and assignment [18] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) main::file#1) + (byte) $1e
 Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte*) print_char_cursor#0
-Constant inlined $0 = (const byte[]) print_hextab
 Constant inlined print_char_cursor#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @12
-Adding NOP phi() at start of @29
 Adding NOP phi() at start of @37
 Adding NOP phi() at start of @38
 Adding NOP phi() at start of @end
@@ -341,22 +332,21 @@ Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of print_word::@2
 Adding NOP phi() at start of print_byte::@2
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to print_word:10 
-Calls in [print_word] to print_byte:15 print_byte:19 
-Calls in [print_byte] to print_char:27 print_char:32 
+Calls in [] to main:3 
+Calls in [main] to print_word:9 
+Calls in [print_word] to print_byte:14 print_byte:18 
+Calls in [print_byte] to print_char:26 print_char:31 
 
 Created 4 initial phi equivalence classes
-Coalesced [14] print_byte::b#4 ← print_byte::b#0
-Coalesced [17] print_byte::b#5 ← print_byte::b#1
-Coalesced [18] print_char_cursor#28 ← print_char_cursor#19
-Coalesced [25] print_char::ch#3 ← print_char::ch#0
-Coalesced [26] print_char_cursor#29 ← print_char_cursor#24
-Coalesced [30] print_char::ch#4 ← print_char::ch#1
-Coalesced (already) [31] print_char_cursor#30 ← print_char_cursor#19
+Coalesced [13] print_byte::b#4 ← print_byte::b#0
+Coalesced [16] print_byte::b#5 ← print_byte::b#1
+Coalesced [17] print_char_cursor#27 ← print_char_cursor#19
+Coalesced [24] print_char::ch#3 ← print_char::ch#0
+Coalesced [25] print_char_cursor#28 ← print_char_cursor#24
+Coalesced [29] print_char::ch#4 ← print_char::ch#1
+Coalesced (already) [30] print_char_cursor#29 ← print_char_cursor#19
 Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) @12
-Culled Empty Block (label) @29
 Culled Empty Block (label) @38
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) print_word::@2
@@ -431,9 +421,6 @@ print_char::@return: scope:[print_char]  from print_char
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) fileentry::bError
-(byte) fileentry::bFlag
-(byte*) fileentry::bufEdit
 (void()) main()
 (struct fileentry*) main::file
 (word*) main::ptrw
@@ -882,9 +869,6 @@ FINAL SYMBOL TABLE
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(byte) fileentry::bError
-(byte) fileentry::bFlag
-(byte*) fileentry::bufEdit
 (void()) main()
 (label) main::@return
 (struct fileentry*) main::file

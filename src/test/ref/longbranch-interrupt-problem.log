@@ -9,8 +9,6 @@ Culled Empty Block (label) irq::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
-  (byte*) BGCOL ← ((byte*)) (number) $d020
   (byte) col#0 ← (number) 0
   to:@2
 
@@ -18,7 +16,7 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @2
   (byte) col#14 ← phi( @2/(byte) col#13 )
   (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const void()**) KERNEL_IRQ) ← (void()*~) main::$0
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@7
   (byte) col#12 ← phi( main/(byte) col#14 main::@2/(byte) col#6 main::@7/(byte) col#1 )
@@ -43,7 +41,7 @@ interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   (byte) col#8 ← phi( @2/(byte) col#13 )
   asm { lda$dc0d  }
-  *((byte*) BGCOL) ← (byte) col#8
+  *((const byte*) BGCOL) ← (byte) col#8
   (bool~) irq::$0 ← (byte) col#8 != (number) 0
   (bool~) irq::$1 ← ! (bool~) irq::$0
   if((bool~) irq::$1) goto irq::@return
@@ -72,8 +70,8 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(void()**) KERNEL_IRQ
+(const byte*) BGCOL = (byte*)(number) $d020
+(const void()**) KERNEL_IRQ = (void()**)(number) $314
 (byte) col
 (byte) col#0
 (byte) col#1
@@ -109,8 +107,6 @@ Adding number conversion cast (unumber) $a in (bool~) main::$1 ← (byte) col#6 
 Adding number conversion cast (unumber) 0 in (byte) col#1 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) irq::$0 ← (byte) col#8 != (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d020
 Inlining cast (byte) col#0 ← (unumber)(number) 0
 Inlining cast (byte) col#1 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
@@ -126,8 +122,8 @@ Finalized unsigned number type (byte) $a
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [10] (bool~) main::$2 ← (byte) col#6 <= (byte) $a from [9] (bool~) main::$1 ← (byte) col#6 > (byte) $a
-Inversing boolean not [20] (bool~) irq::$1 ← (byte) col#8 == (byte) 0 from [19] (bool~) irq::$0 ← (byte) col#8 != (byte) 0
+Inversing boolean not [8] (bool~) main::$2 ← (byte) col#6 <= (byte) $a from [7] (bool~) main::$1 ← (byte) col#6 > (byte) $a
+Inversing boolean not [18] (bool~) irq::$1 ← (byte) col#8 == (byte) 0 from [17] (bool~) irq::$0 ← (byte) col#8 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) col#12 = (byte) col#6 (byte) col#7 (byte) col#2 
 Alias (byte) col#8 = (byte) col#9 
@@ -139,18 +135,16 @@ Identical Phi Values (byte) col#14 (byte) col#0
 Identical Phi Values (byte) col#8 (byte) col#0
 Identical Phi Values (byte) col#11 (byte) col#12
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [11] if((byte) col#12<=(byte) $a) goto main::@1
-Simple Condition (bool~) irq::$1 [21] if((byte) col#0==(byte) 0) goto irq::@return
+Simple Condition (bool~) main::$2 [9] if((byte) col#12<=(byte) $a) goto main::@1
+Simple Condition (bool~) irq::$1 [19] if((byte) col#0==(byte) 0) goto irq::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [4] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
+Constant right-side identified [2] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()**) KERNEL_IRQ = (void()**) 788
-Constant (const byte*) BGCOL = (byte*) 53280
 Constant (const void()*) main::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [7] if(true) goto main::@2
+if() condition always true - replacing block destination [5] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Rewriting conditional comparison [11] if((byte) col#12<=(byte) $a) goto main::@1
+Rewriting conditional comparison [9] if((byte) col#12<=(byte) $a) goto main::@1
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $a+1 in if((byte) col#12<(byte) $a+(number) 1) goto main::@1

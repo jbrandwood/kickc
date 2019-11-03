@@ -13,42 +13,26 @@ Culled Empty Block (label) @6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) PROCPORT_DDR ← ((byte*)) (number) 0
-  (byte) PROCPORT_DDR_MEMORY_MASK ← (number) 7
-  (byte*) PROCPORT ← ((byte*)) (number) 1
-  (byte) PROCPORT_RAM_IO ← (number) 5
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) VIC_CONTROL ← ((byte*)) (number) $d011
-  (byte*) IRQ_STATUS ← ((byte*)) (number) $d019
-  (byte*) IRQ_ENABLE ← ((byte*)) (number) $d01a
-  (byte) IRQ_RASTER ← (number) 1
-  (byte*) CIA1_INTERRUPT ← ((byte*)) (number) $dc0d
-  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-  (void()**) HARDWARE_IRQ ← ((void()**)) (number) $fffe
-  (byte) BLACK ← (number) 0
-  (byte) WHITE ← (number) 1
   to:@7
 
 (void()) main()
 main: scope:[main]  from @7
   asm { sei  }
-  *((byte*) PROCPORT_DDR) ← (byte) PROCPORT_DDR_MEMORY_MASK
-  *((byte*) PROCPORT) ← (byte) PROCPORT_RAM_IO
-  *((byte*) CIA1_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
-  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) | (number) $80
-  *((byte*) RASTER) ← (number) 0
-  *((byte*) IRQ_ENABLE) ← (byte) IRQ_RASTER
+  *((const byte*) PROCPORT_DDR) ← (const byte) PROCPORT_DDR_MEMORY_MASK
+  *((const byte*) PROCPORT) ← (const byte) PROCPORT_RAM_IO
+  *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
+  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (number) $80
+  *((const byte*) RASTER) ← (number) 0
+  *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
   (void()*~) main::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
-  *((void()**) HARDWARE_IRQ) ← (void()*~) main::$0
+  *((const void()**) HARDWARE_IRQ) ← (void()*~) main::$0
   asm { cli  }
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -66,9 +50,9 @@ irq::@return: scope:[irq]  from irq::@1
 
 (void()) do_irq()
 do_irq: scope:[do_irq]  from irq
-  *((byte*) BGCOL) ← (byte) WHITE
-  *((byte*) BGCOL) ← (byte) BLACK
-  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
+  *((const byte*) BGCOL) ← (const byte) WHITE
+  *((const byte*) BGCOL) ← (const byte) BLACK
+  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
   to:do_irq::@return
 do_irq::@return: scope:[do_irq]  from do_irq
   return 
@@ -85,22 +69,22 @@ SYMBOL TABLE SSA
 (label) @8
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte) BLACK
-(byte*) BORDERCOL
-(byte*) CIA1_INTERRUPT
-(byte) CIA_INTERRUPT_CLEAR
-(void()**) HARDWARE_IRQ
-(byte*) IRQ_ENABLE
-(byte) IRQ_RASTER
-(byte*) IRQ_STATUS
-(byte*) PROCPORT
-(byte*) PROCPORT_DDR
-(byte) PROCPORT_DDR_MEMORY_MASK
-(byte) PROCPORT_RAM_IO
-(byte*) RASTER
-(byte*) VIC_CONTROL
-(byte) WHITE
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte) BLACK = (number) 0
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
+(const void()**) HARDWARE_IRQ = (void()**)(number) $fffe
+(const byte*) IRQ_ENABLE = (byte*)(number) $d01a
+(const byte) IRQ_RASTER = (number) 1
+(const byte*) IRQ_STATUS = (byte*)(number) $d019
+(const byte*) PROCPORT = (byte*)(number) 1
+(const byte*) PROCPORT_DDR = (byte*)(number) 0
+(const byte) PROCPORT_DDR_MEMORY_MASK = (number) 7
+(const byte) PROCPORT_RAM_IO = (number) 5
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) VIC_CONTROL = (byte*)(number) $d011
+(const byte) WHITE = (number) 1
 (void()) do_irq()
 (label) do_irq::@return
 interrupt(HARDWARE_CLOBBER)(void()) irq()
@@ -112,82 +96,32 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (label) main::@2
 (label) main::@return
 
-Adding number conversion cast (unumber) 7 in (byte) PROCPORT_DDR_MEMORY_MASK ← (number) 7
-Adding number conversion cast (unumber) 5 in (byte) PROCPORT_RAM_IO ← (number) 5
-Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER ← (number) 1
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
-Adding number conversion cast (unumber) $80 in *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) | (number) $80
-Adding number conversion cast (unumber) 0 in *((byte*) RASTER) ← (number) 0
+Adding number conversion cast (unumber) $80 in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (number) $80
+Adding number conversion cast (unumber) 0 in *((const byte*) RASTER) ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) PROCPORT_DDR ← (byte*)(number) 0
-Inlining cast (byte) PROCPORT_DDR_MEMORY_MASK ← (unumber)(number) 7
-Inlining cast (byte*) PROCPORT ← (byte*)(number) 1
-Inlining cast (byte) PROCPORT_RAM_IO ← (unumber)(number) 5
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) VIC_CONTROL ← (byte*)(number) $d011
-Inlining cast (byte*) IRQ_STATUS ← (byte*)(number) $d019
-Inlining cast (byte*) IRQ_ENABLE ← (byte*)(number) $d01a
-Inlining cast (byte) IRQ_RASTER ← (unumber)(number) 1
-Inlining cast (byte*) CIA1_INTERRUPT ← (byte*)(number) $dc0d
-Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
-Inlining cast (void()**) HARDWARE_IRQ ← (void()**)(number) $fffe
-Inlining cast (byte) BLACK ← (unumber)(number) 0
-Inlining cast (byte) WHITE ← (unumber)(number) 1
-Inlining cast *((byte*) RASTER) ← (unumber)(number) 0
+Inlining cast *((const byte*) RASTER) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 0
-Simplifying constant integer cast 7
 Simplifying constant pointer cast (byte*) 1
-Simplifying constant integer cast 5
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53273
 Simplifying constant pointer cast (byte*) 53274
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 56333
-Simplifying constant integer cast $7f
 Simplifying constant pointer cast (void()**) 65534
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
 Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $80
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [23] (void()*~) main::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
+Constant right-side identified [7] (void()*~) main::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) PROCPORT_DDR = (byte*) 0
-Constant (const byte) PROCPORT_DDR_MEMORY_MASK = 7
-Constant (const byte*) PROCPORT = (byte*) 1
-Constant (const byte) PROCPORT_RAM_IO = 5
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) VIC_CONTROL = (byte*) 53265
-Constant (const byte*) IRQ_STATUS = (byte*) 53273
-Constant (const byte*) IRQ_ENABLE = (byte*) 53274
-Constant (const byte) IRQ_RASTER = 1
-Constant (const byte*) CIA1_INTERRUPT = (byte*) 56333
-Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
-Constant (const void()**) HARDWARE_IRQ = (void()**) 65534
-Constant (const byte) BLACK = 0
-Constant (const byte) WHITE = 1
 Constant (const void()*) main::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [26] if(true) goto main::@2
+if() condition always true - replacing block destination [10] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -588,21 +522,21 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte*) BGCOL = (byte*) 53281
-(const byte) BLACK = (byte) 0
+(const byte) BLACK = (number) 0
 (const byte*) BORDERCOL = (byte*) 53280
 (const byte*) CIA1_INTERRUPT = (byte*) 56333
-(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
 (const void()**) HARDWARE_IRQ = (void()**) 65534
 (const byte*) IRQ_ENABLE = (byte*) 53274
-(const byte) IRQ_RASTER = (byte) 1
+(const byte) IRQ_RASTER = (number) 1
 (const byte*) IRQ_STATUS = (byte*) 53273
 (const byte*) PROCPORT = (byte*) 1
 (const byte*) PROCPORT_DDR = (byte*) 0
-(const byte) PROCPORT_DDR_MEMORY_MASK = (byte) 7
-(const byte) PROCPORT_RAM_IO = (byte) 5
+(const byte) PROCPORT_DDR_MEMORY_MASK = (number) 7
+(const byte) PROCPORT_RAM_IO = (number) 5
 (const byte*) RASTER = (byte*) 53266
 (const byte*) VIC_CONTROL = (byte*) 53265
-(const byte) WHITE = (byte) 1
+(const byte) WHITE = (number) 1
 (void()) do_irq()
 (label) do_irq::@return
 interrupt(HARDWARE_CLOBBER)(void()) irq()

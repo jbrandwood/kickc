@@ -2,19 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(__b1)
 .pc = $80d "Program"
-  .const STATUS_FREE = 0
-  .const STATUS_NEW = 1
-  .const STATUS_PROCESSING = 2
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_Y = 2
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_VX = 4
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_VY = 6
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_ID = 8
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_PTR = 9
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
-  // Top of the heap used by malloc()
-  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Processor port data direction register
@@ -69,12 +56,25 @@
   .const NUM_PROCESSING = 8
   // Distance value meaning not found
   .const NOT_FOUND = $ff
+  .const STATUS_FREE = 0
+  .const STATUS_NEW = 1
+  .const STATUS_PROCESSING = 2
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
-  .const XPOS_RIGHTMOST = BORDER_XPOS_RIGHT<<4
-  .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_Y = 2
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_VX = 4
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_VY = 6
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_ID = 8
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_PTR = 9
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .const XPOS_LEFTMOST = BORDER_XPOS_LEFT-8<<4
+  .const XPOS_RIGHTMOST = BORDER_XPOS_RIGHT<<4
   .const YPOS_TOPMOST = BORDER_YPOS_TOP-8<<4
+  .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
   .label heap_head = $18
   .label SCREEN_COPY = 7
   .label SCREEN_DIST = 9
@@ -200,7 +200,7 @@ startProcessing: {
     .label __15 = $15
     .label __16 = $15
     .label __17 = $15
-    .label __23 = $18
+    .label __22 = $18
     .label center_x = $1e
     .label center_y = $b
     .label i = 2
@@ -214,8 +214,8 @@ startProcessing: {
     .label spriteY = $15
     .label spritePtr = $17
     .label freeIdx = 2
-    .label __47 = $e
-    .label __48 = $c
+    .label __45 = $e
+    .label __46 = $c
     ldx #$ff
   __b1:
     lda #0
@@ -247,19 +247,19 @@ startProcessing: {
     sta.z __0+1
     lda.z __0
     asl
-    sta.z __47
+    sta.z __45
     lda.z __0+1
     rol
-    sta.z __47+1
-    asl.z __47
-    rol.z __47+1
-    lda.z __48
+    sta.z __45+1
+    asl.z __45
+    rol.z __45+1
+    lda.z __46
     clc
-    adc.z __47
-    sta.z __48
-    lda.z __48+1
-    adc.z __47+1
-    sta.z __48+1
+    adc.z __45
+    sta.z __46
+    lda.z __46+1
+    adc.z __45+1
+    sta.z __46+1
     asl.z __1
     rol.z __1+1
     asl.z __1
@@ -412,9 +412,9 @@ startProcessing: {
     asl
     asl
     asl
-    sta.z __23
+    sta.z __22
     lda #0
-    sta.z __23+1
+    sta.z __22+1
     lda.z freeIdx
     asl
     clc
@@ -432,9 +432,9 @@ startProcessing: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
     lda.z spriteY+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
-    lda.z __23
+    lda.z __22
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
-    lda.z __23+1
+    lda.z __22+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
     lda #$3c
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,x
@@ -987,8 +987,8 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label __15 = $24
-    .label __25 = $22
+    .label __13 = $24
+    .label __23 = $22
     .label processing = $1f
     .label bitmask = $21
     .label i = 5
@@ -1103,19 +1103,19 @@ processChars: {
     sta SPRITES_XPOS,x
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     lda (processing),y
-    sta.z __15
+    sta.z __13
     iny
     lda (processing),y
-    sta.z __15+1
-    lsr.z __15+1
-    ror.z __15
-    lsr.z __15+1
-    ror.z __15
-    lsr.z __15+1
-    ror.z __15
-    lsr.z __15+1
-    ror.z __15
-    lda.z __15
+    sta.z __13+1
+    lsr.z __13+1
+    ror.z __13
+    lsr.z __13+1
+    ror.z __13
+    lsr.z __13+1
+    ror.z __13
+    lsr.z __13+1
+    ror.z __13
+    lda.z __13
     sta.z ypos
     sta SPRITES_YPOS,x
     // Move sprite
@@ -1175,13 +1175,13 @@ processChars: {
     cmp (processing),y
     bcc __b6
   !:
-    lsr.z __25+1
-    ror.z __25
-    lsr.z __25+1
-    ror.z __25
-    lsr.z __25+1
-    ror.z __25
-    lda.z __25
+    lsr.z __23+1
+    ror.z __23
+    lsr.z __23+1
+    ror.z __23
+    lsr.z __23+1
+    ror.z __23
+    lda.z __23
     sec
     sbc #BORDER_XPOS_LEFT/8
     asl

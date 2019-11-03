@@ -9,7 +9,7 @@ Warning! Adding boolean cast to non-boolean sub-expression (byte) frame_cnt
 Identified constant variable (byte*) BITMAP
 Identified constant variable (byte*) SCREEN
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call (byte~) main::$5 ← call toD018 (byte*) SCREEN (byte*) BITMAP 
+Inlined call (byte~) main::$2 ← call toD018 (const byte*) SCREEN (const byte*) BITMAP 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
@@ -37,26 +37,6 @@ Culled Empty Block (label) @16
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) PROCPORT_DDR ← ((byte*)) (number) 0
-  (byte) PROCPORT_DDR_MEMORY_MASK ← (number) 7
-  (byte*) PROCPORT ← ((byte*)) (number) 1
-  (byte) PROCPORT_RAM_IO ← (number) 5
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) VIC_CONTROL ← ((byte*)) (number) $d011
-  (byte*) D011 ← ((byte*)) (number) $d011
-  (byte) VIC_BMM ← (number) $20
-  (byte) VIC_DEN ← (number) $10
-  (byte) VIC_RSEL ← (number) 8
-  (byte*) D018 ← ((byte*)) (number) $d018
-  (byte*) IRQ_STATUS ← ((byte*)) (number) $d019
-  (byte*) IRQ_ENABLE ← ((byte*)) (number) $d01a
-  (byte) IRQ_RASTER ← (number) 1
-  (byte*) CIA1_INTERRUPT ← ((byte*)) (number) $dc0d
-  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-  (void()**) HARDWARE_IRQ ← ((void()**)) (number) $fffe
-  (byte) BLACK ← (number) 0
-  (byte) WHITE ← (number) 1
   to:@8
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
@@ -242,8 +222,6 @@ bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
 @14: scope:[]  from @8
   (byte*) bitmap_screen#24 ← phi( @8/(byte*) bitmap_screen#0 )
   (byte*) bitmap_gfx#25 ← phi( @8/(byte*) bitmap_gfx#0 )
-  (byte*) BITMAP ← ((byte*)) (number) $2000
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte[$100]) plots_per_frame ← { fill( $100, 0) }
   to:@15
 
@@ -252,8 +230,8 @@ main: scope:[main]  from @17
   (byte) frame_cnt#21 ← phi( @17/(byte) frame_cnt#9 )
   (byte*) bitmap_screen#12 ← phi( @17/(byte*) bitmap_screen#14 )
   (byte*) bitmap_gfx#13 ← phi( @17/(byte*) bitmap_gfx#15 )
-  (byte*) bitmap_init::gfx#0 ← (byte*) BITMAP
-  (byte*) bitmap_init::screen#0 ← (byte*) SCREEN
+  (byte*) bitmap_init::gfx#0 ← (const byte*) BITMAP
+  (byte*) bitmap_init::screen#0 ← (const byte*) SCREEN
   call bitmap_init 
   to:main::@12
 main::@12: scope:[main]  from main
@@ -262,20 +240,17 @@ main::@12: scope:[main]  from main
   (byte*) bitmap_gfx#8 ← phi( main/(byte*) bitmap_gfx#2 )
   (byte*) bitmap_gfx#3 ← (byte*) bitmap_gfx#8
   (byte*) bitmap_screen#3 ← (byte*) bitmap_screen#8
-  (byte) bitmap_clear::bgcol#0 ← (byte) BLACK
-  (byte) bitmap_clear::fgcol#0 ← (byte) WHITE
+  (byte) bitmap_clear::bgcol#0 ← (const byte) BLACK
+  (byte) bitmap_clear::fgcol#0 ← (const byte) WHITE
   call bitmap_clear 
   to:main::@13
 main::@13: scope:[main]  from main::@12
   (byte) frame_cnt#19 ← phi( main::@12/(byte) frame_cnt#20 )
   (byte*) bitmap_screen#33 ← phi( main::@12/(byte*) bitmap_screen#3 )
   (byte*) bitmap_gfx#34 ← phi( main::@12/(byte*) bitmap_gfx#3 )
-  (byte~) main::$2 ← (byte) VIC_BMM | (byte) VIC_DEN
-  (byte~) main::$3 ← (byte~) main::$2 | (byte) VIC_RSEL
-  (number~) main::$4 ← (byte~) main::$3 | (number) 3
-  *((byte*) D011) ← (number~) main::$4
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN
-  (byte*) main::toD0181_gfx#0 ← (byte*) BITMAP
+  *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+  (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
+  (byte*) main::toD0181_gfx#0 ← (const byte*) BITMAP
   to:main::toD0181
 main::toD0181: scope:[main]  from main::@13
   (byte) frame_cnt#18 ← phi( main::@13/(byte) frame_cnt#19 )
@@ -306,8 +281,8 @@ main::@11: scope:[main]  from main::toD0181_@return
   (byte*) bitmap_screen#21 ← phi( main::toD0181_@return/(byte*) bitmap_screen#26 )
   (byte*) bitmap_gfx#22 ← phi( main::toD0181_@return/(byte*) bitmap_gfx#27 )
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
-  (byte~) main::$5 ← (byte) main::toD0181_return#3
-  *((byte*) D018) ← (byte~) main::$5
+  (byte~) main::$2 ← (byte) main::toD0181_return#3
+  *((const byte*) D018) ← (byte~) main::$2
   call init_irq 
   to:main::@14
 main::@14: scope:[main]  from main::@11
@@ -351,11 +326,11 @@ main::@15: scope:[main]  from main::@2
   (word) main::x#3 ← phi( main::@2/(word) main::x#2 )
   (word) main::x#1 ← (word) main::x#3 + (word) main::vx#2
   (byte) main::y#1 ← (byte) main::y#3 + (byte) main::vy#2
-  (bool~) main::$8 ← (word) main::x#1 == (number) $13f
-  (bool~) main::$9 ← (word) main::x#1 == (number) 0
-  (bool~) main::$10 ← (bool~) main::$8 || (bool~) main::$9
-  (bool~) main::$11 ← ! (bool~) main::$10
-  if((bool~) main::$11) goto main::@4
+  (bool~) main::$5 ← (word) main::x#1 == (number) $13f
+  (bool~) main::$6 ← (word) main::x#1 == (number) 0
+  (bool~) main::$7 ← (bool~) main::$5 || (bool~) main::$6
+  (bool~) main::$8 ← ! (bool~) main::$7
+  if((bool~) main::$8) goto main::@4
   to:main::@8
 main::@4: scope:[main]  from main::@15 main::@8
   (word) main::vx#7 ← phi( main::@15/(word) main::vx#2 main::@8/(word) main::vx#1 )
@@ -365,11 +340,11 @@ main::@4: scope:[main]  from main::@15 main::@8
   (byte) main::vy#5 ← phi( main::@15/(byte) main::vy#2 main::@8/(byte) main::vy#7 )
   (byte) frame_cnt#7 ← phi( main::@15/(byte) frame_cnt#11 main::@8/(byte) frame_cnt#12 )
   (byte) main::y#4 ← phi( main::@15/(byte) main::y#1 main::@8/(byte) main::y#6 )
-  (bool~) main::$13 ← (byte) main::y#4 == (number) $c7
-  (bool~) main::$14 ← (byte) main::y#4 == (number) 0
-  (bool~) main::$15 ← (bool~) main::$13 || (bool~) main::$14
-  (bool~) main::$16 ← ! (bool~) main::$15
-  if((bool~) main::$16) goto main::@5
+  (bool~) main::$10 ← (byte) main::y#4 == (number) $c7
+  (bool~) main::$11 ← (byte) main::y#4 == (number) 0
+  (bool~) main::$12 ← (bool~) main::$10 || (bool~) main::$11
+  (bool~) main::$13 ← ! (bool~) main::$12
+  if((bool~) main::$13) goto main::@5
   to:main::@9
 main::@8: scope:[main]  from main::@15
   (byte*) bitmap_screen#28 ← phi( main::@15/(byte*) bitmap_screen#27 )
@@ -379,8 +354,8 @@ main::@8: scope:[main]  from main::@15
   (byte) frame_cnt#12 ← phi( main::@15/(byte) frame_cnt#11 )
   (byte) main::y#6 ← phi( main::@15/(byte) main::y#1 )
   (word) main::vx#3 ← phi( main::@15/(word) main::vx#2 )
-  (word~) main::$12 ← - (word) main::vx#3
-  (word) main::vx#1 ← (word~) main::$12
+  (word~) main::$9 ← - (word) main::vx#3
+  (word) main::vx#1 ← (word~) main::$9
   to:main::@4
 main::@5: scope:[main]  from main::@4 main::@9
   (byte) main::vy#8 ← phi( main::@4/(byte) main::vy#5 main::@9/(byte) main::vy#1 )
@@ -400,8 +375,8 @@ main::@9: scope:[main]  from main::@4
   (word) main::x#7 ← phi( main::@4/(word) main::x#6 )
   (byte) frame_cnt#8 ← phi( main::@4/(byte) frame_cnt#7 )
   (byte) main::vy#3 ← phi( main::@4/(byte) main::vy#5 )
-  (byte~) main::$17 ← - (byte) main::vy#3
-  (byte) main::vy#1 ← (byte~) main::$17
+  (byte~) main::$14 ← - (byte) main::vy#3
+  (byte) main::vy#1 ← (byte~) main::$14
   to:main::@5
 main::@return: scope:[main]  from main::@1
   (byte*) bitmap_screen#9 ← phi( main::@1/(byte*) bitmap_screen#13 )
@@ -419,14 +394,14 @@ main::@return: scope:[main]  from main::@1
 (void()) init_irq()
 init_irq: scope:[init_irq]  from main::@11
   asm { sei  }
-  *((byte*) PROCPORT_DDR) ← (byte) PROCPORT_DDR_MEMORY_MASK
-  *((byte*) PROCPORT) ← (byte) PROCPORT_RAM_IO
-  *((byte*) CIA1_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
-  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) | (number) $80
-  *((byte*) RASTER) ← (number) 0
-  *((byte*) IRQ_ENABLE) ← (byte) IRQ_RASTER
+  *((const byte*) PROCPORT_DDR) ← (const byte) PROCPORT_DDR_MEMORY_MASK
+  *((const byte*) PROCPORT) ← (const byte) PROCPORT_RAM_IO
+  *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
+  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (number) $80
+  *((const byte*) RASTER) ← (number) 0
+  *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
   (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
-  *((void()**) HARDWARE_IRQ) ← (void()*~) init_irq::$0
+  *((const void()**) HARDWARE_IRQ) ← (void()*~) init_irq::$0
   asm { cli  }
   to:init_irq::@return
 init_irq::@return: scope:[init_irq]  from init_irq
@@ -436,15 +411,15 @@ init_irq::@return: scope:[init_irq]  from init_irq
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
   (byte) frame_cnt#4 ← phi( @17/(byte) frame_cnt#9 )
-  *((byte*) BGCOL) ← (byte) WHITE
+  *((const byte*) BGCOL) ← (const byte) WHITE
   (bool~) irq::$1 ← (number) 0 != (byte) frame_cnt#4
   (bool~) irq::$0 ← ! (bool~) irq::$1
   if((bool~) irq::$0) goto irq::@1
   to:irq::@2
 irq::@1: scope:[irq]  from irq irq::@2
   (byte) frame_cnt#10 ← phi( irq/(byte) frame_cnt#4 irq::@2/(byte) frame_cnt#1 )
-  *((byte*) BGCOL) ← (byte) BLACK
-  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
+  *((const byte*) BGCOL) ← (const byte) BLACK
+  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
   to:irq::@return
 irq::@2: scope:[irq]  from irq
   (byte) frame_cnt#5 ← phi( irq/(byte) frame_cnt#4 )
@@ -477,28 +452,28 @@ SYMBOL TABLE SSA
 (label) @8
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) BITMAP
-(byte) BLACK
-(byte*) CIA1_INTERRUPT
-(byte) CIA_INTERRUPT_CLEAR
-(byte*) D011
-(byte*) D018
-(void()**) HARDWARE_IRQ
-(byte*) IRQ_ENABLE
-(byte) IRQ_RASTER
-(byte*) IRQ_STATUS
-(byte*) PROCPORT
-(byte*) PROCPORT_DDR
-(byte) PROCPORT_DDR_MEMORY_MASK
-(byte) PROCPORT_RAM_IO
-(byte*) RASTER
-(byte*) SCREEN
-(byte) VIC_BMM
-(byte*) VIC_CONTROL
-(byte) VIC_DEN
-(byte) VIC_RSEL
-(byte) WHITE
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte*) BITMAP = (byte*)(number) $2000
+(const byte) BLACK = (number) 0
+(const byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
+(const byte*) D011 = (byte*)(number) $d011
+(const byte*) D018 = (byte*)(number) $d018
+(const void()**) HARDWARE_IRQ = (void()**)(number) $fffe
+(const byte*) IRQ_ENABLE = (byte*)(number) $d01a
+(const byte) IRQ_RASTER = (number) 1
+(const byte*) IRQ_STATUS = (byte*)(number) $d019
+(const byte*) PROCPORT = (byte*)(number) 1
+(const byte*) PROCPORT_DDR = (byte*)(number) 0
+(const byte) PROCPORT_DDR_MEMORY_MASK = (number) 7
+(const byte) PROCPORT_RAM_IO = (number) 5
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte) VIC_BMM = (number) $20
+(const byte*) VIC_CONTROL = (byte*)(number) $d011
+(const byte) VIC_DEN = (number) $10
+(const byte) VIC_RSEL = (number) 8
+(const byte) WHITE = (number) 1
 (void()) bitmap_clear((byte) bitmap_clear::bgcol , (byte) bitmap_clear::fgcol)
 (number~) bitmap_clear::$0
 (number~) bitmap_clear::$1
@@ -691,18 +666,15 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (void()) main()
 (bool~) main::$10
 (bool~) main::$11
-(word~) main::$12
+(bool~) main::$12
 (bool~) main::$13
-(bool~) main::$14
-(bool~) main::$15
-(bool~) main::$16
-(byte~) main::$17
+(byte~) main::$14
 (byte~) main::$2
-(byte~) main::$3
-(number~) main::$4
-(byte~) main::$5
+(bool~) main::$5
+(bool~) main::$6
+(bool~) main::$7
 (bool~) main::$8
-(bool~) main::$9
+(word~) main::$9
 (label) main::@1
 (label) main::@11
 (label) main::@12
@@ -827,15 +799,6 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 
 Fixing inline constructor with bitmap_plot::$3 ← (byte)*(bitmap_plot_yhi + bitmap_plot::y#1) w= (byte)*(bitmap_plot_ylo + bitmap_plot::y#1)
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) 7 in (byte) PROCPORT_DDR_MEMORY_MASK ← (number) 7
-Adding number conversion cast (unumber) 5 in (byte) PROCPORT_RAM_IO ← (number) 5
-Adding number conversion cast (unumber) $20 in (byte) VIC_BMM ← (number) $20
-Adding number conversion cast (unumber) $10 in (byte) VIC_DEN ← (number) $10
-Adding number conversion cast (unumber) 8 in (byte) VIC_RSEL ← (number) 8
-Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER ← (number) 1
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#2 > (number) 0
 Adding number conversion cast (unumber) $80 in (byte) bitmap_init::bits#0 ← (number) $80
 Adding number conversion cast (unumber) 1 in (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (number) 1
@@ -854,8 +817,8 @@ Adding number conversion cast (unumber) bitmap_clear::$1 in (number~) bitmap_cle
 Adding number conversion cast (unumber) 0 in (byte) memset::c#1 ← (number) 0
 Adding number conversion cast (unumber) $fff8 in (number~) bitmap_plot::$1 ← (word) bitmap_plot::x#1 & (number) $fff8
 Adding number conversion cast (unumber) bitmap_plot::$1 in (number~) bitmap_plot::$1 ← (word) bitmap_plot::x#1 & (unumber)(number) $fff8
-Adding number conversion cast (unumber) 3 in (number~) main::$4 ← (byte~) main::$3 | (number) 3
-Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (byte~) main::$3 | (unumber)(number) 3
+Adding number conversion cast (unumber) VIC_BMM|VIC_DEN|VIC_RSEL|3 in *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) D011) ← ((unumber)) (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
 Adding number conversion cast (unumber) $3fff in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (number) $3fff
 Adding number conversion cast (unumber) main::toD0181_$1 in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (unumber)(number) $3fff
 Adding number conversion cast (unumber) 4 in (number~) main::toD0181_$2 ← (unumber~) main::toD0181_$1 * (number) 4
@@ -870,42 +833,21 @@ Adding number conversion cast (unumber) 0 in (word) main::x#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) main::y#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (word) main::vx#0 ← (number) 1
 Adding number conversion cast (unumber) 1 in (byte) main::vy#0 ← (number) 1
-Adding number conversion cast (unumber) $13f in (bool~) main::$8 ← (word) main::x#1 == (number) $13f
-Adding number conversion cast (unumber) 0 in (bool~) main::$9 ← (word) main::x#1 == (number) 0
-Adding number conversion cast (unumber) $c7 in (bool~) main::$13 ← (byte) main::y#4 == (number) $c7
-Adding number conversion cast (unumber) 0 in (bool~) main::$14 ← (byte) main::y#4 == (number) 0
+Adding number conversion cast (unumber) $13f in (bool~) main::$5 ← (word) main::x#1 == (number) $13f
+Adding number conversion cast (unumber) 0 in (bool~) main::$6 ← (word) main::x#1 == (number) 0
+Adding number conversion cast (unumber) $c7 in (bool~) main::$10 ← (byte) main::y#4 == (number) $c7
+Adding number conversion cast (unumber) 0 in (bool~) main::$11 ← (byte) main::y#4 == (number) 0
 Adding number conversion cast (unumber) 1 in (byte) frame_cnt#0 ← (number) 1
-Adding number conversion cast (unumber) $80 in *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) | (number) $80
-Adding number conversion cast (unumber) 0 in *((byte*) RASTER) ← (number) 0
+Adding number conversion cast (unumber) $80 in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (number) $80
+Adding number conversion cast (unumber) 0 in *((const byte*) RASTER) ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) irq::$1 ← (number) 0 != (byte) frame_cnt#4
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) PROCPORT_DDR ← (byte*)(number) 0
-Inlining cast (byte) PROCPORT_DDR_MEMORY_MASK ← (unumber)(number) 7
-Inlining cast (byte*) PROCPORT ← (byte*)(number) 1
-Inlining cast (byte) PROCPORT_RAM_IO ← (unumber)(number) 5
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) VIC_CONTROL ← (byte*)(number) $d011
-Inlining cast (byte*) D011 ← (byte*)(number) $d011
-Inlining cast (byte) VIC_BMM ← (unumber)(number) $20
-Inlining cast (byte) VIC_DEN ← (unumber)(number) $10
-Inlining cast (byte) VIC_RSEL ← (unumber)(number) 8
-Inlining cast (byte*) D018 ← (byte*)(number) $d018
-Inlining cast (byte*) IRQ_STATUS ← (byte*)(number) $d019
-Inlining cast (byte*) IRQ_ENABLE ← (byte*)(number) $d01a
-Inlining cast (byte) IRQ_RASTER ← (unumber)(number) 1
-Inlining cast (byte*) CIA1_INTERRUPT ← (byte*)(number) $dc0d
-Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
-Inlining cast (void()**) HARDWARE_IRQ ← (void()**)(number) $fffe
-Inlining cast (byte) BLACK ← (unumber)(number) 0
-Inlining cast (byte) WHITE ← (unumber)(number) 1
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#3
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
 Inlining cast (byte) bitmap_init::bits#0 ← (unumber)(number) $80
 Inlining cast (byte) bitmap_init::bits#2 ← (unumber)(number) $80
 Inlining cast (byte) memset::c#1 ← (unumber)(number) 0
-Inlining cast (byte*) BITMAP ← (byte*)(number) $2000
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
+Inlining cast *((const byte*) D011) ← (unumber)(const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Inlining cast (word) main::x#0 ← (unumber)(number) 0
@@ -913,28 +855,21 @@ Inlining cast (byte) main::y#0 ← (unumber)(number) 0
 Inlining cast (word) main::vx#0 ← (unumber)(number) 1
 Inlining cast (byte) main::vy#0 ← (unumber)(number) 1
 Inlining cast (byte) frame_cnt#0 ← (unumber)(number) 1
-Inlining cast *((byte*) RASTER) ← (unumber)(number) 0
+Inlining cast *((const byte*) RASTER) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 0
-Simplifying constant integer cast 7
 Simplifying constant pointer cast (byte*) 1
-Simplifying constant integer cast 5
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53265
-Simplifying constant integer cast $20
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 53273
 Simplifying constant pointer cast (byte*) 53274
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 56333
-Simplifying constant integer cast $7f
 Simplifying constant pointer cast (void()**) 65534
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
+Simplifying constant pointer cast (byte*) 8192
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast $80
 Simplifying constant integer cast 1
@@ -948,8 +883,7 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#1)
 Simplifying constant integer cast *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#1)
 Simplifying constant integer cast $fff8
-Simplifying constant pointer cast (byte*) 8192
-Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Simplifying constant integer cast 3
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
@@ -968,15 +902,6 @@ Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $80
 Finalized unsigned number type (byte) 1
@@ -1012,7 +937,6 @@ Inferred type updated to byte in (unumber~) bitmap_init::$7 ← (byte) bitmap_in
 Inferred type updated to byte in (unumber~) bitmap_clear::$0 ← (byte) bitmap_clear::fgcol#1 * (byte) $10
 Inferred type updated to byte in (unumber~) bitmap_clear::$1 ← (byte~) bitmap_clear::$0 + (byte) bitmap_clear::bgcol#1
 Inferred type updated to word in (unumber~) bitmap_plot::$1 ← (word) bitmap_plot::x#1 & (word) $fff8
-Inferred type updated to byte in (unumber~) main::$4 ← (byte~) main::$3 | (byte) 3
 Inferred type updated to word in (unumber~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (word) $3fff
 Inferred type updated to word in (unumber~) main::toD0181_$2 ← (word~) main::toD0181_$1 * (byte) 4
 Inferred type updated to byte in (unumber~) main::toD0181_$3 ← > (word~) main::toD0181_$2
@@ -1021,10 +945,10 @@ Inferred type updated to byte in (unumber~) main::toD0181_$7 ← (byte~) main::t
 Inferred type updated to byte in (unumber~) main::toD0181_$8 ← (byte~) main::toD0181_$3 | (byte~) main::toD0181_$7
 Adding pointer type conversion cast (byte*) bitmap_plot::$0 in (byte*~) bitmap_plot::$0 ← (word~) bitmap_plot::$3
 Successful SSA optimization PassNAddTypeConversionAssignment
-Inversing boolean not [22] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [21] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [54] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [53] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
-Inversing boolean not [74] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [73] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
-Inversing boolean not [203] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [202] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
+Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
+Inversing boolean not [34] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [33] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
+Inversing boolean not [54] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [53] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
+Inversing boolean not [178] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [177] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#2 (void*) memset::return#4 (void*) memset::return#1 
 Alias (void*) memset::str#3 = (void*) memset::str#4 
@@ -1059,7 +983,7 @@ Alias (byte*) bitmap_gfx#18 = (byte*) bitmap_gfx#3 (byte*) bitmap_gfx#8 (byte*) 
 Alias (byte*) bitmap_screen#17 = (byte*) bitmap_screen#3 (byte*) bitmap_screen#8 (byte*) bitmap_screen#33 (byte*) bitmap_screen#31 (byte*) bitmap_screen#26 (byte*) bitmap_screen#21 
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
 Alias (byte*) main::toD0181_gfx#0 = (byte*) main::toD0181_gfx#1 
-Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$5 
+Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$2 
 Alias (word) main::x#2 = (word) main::x#4 (word) main::x#3 
 Alias (byte) main::y#2 = (byte) main::y#5 (byte) main::y#3 
 Alias (word) main::vx#2 = (word) main::vx#4 (word) main::vx#5 (word) main::vx#3 
@@ -1069,7 +993,7 @@ Alias (byte*) bitmap_gfx#14 = (byte*) bitmap_gfx#33 (byte*) bitmap_gfx#28 (byte*
 Alias (byte*) bitmap_screen#13 = (byte*) bitmap_screen#32 (byte*) bitmap_screen#27 (byte*) bitmap_screen#28 (byte*) bitmap_screen#9 (byte*) bitmap_screen#4 
 Alias (byte) main::y#1 = (byte) main::y#6 
 Alias (word) main::x#1 = (word) main::x#8 
-Alias (word) main::vx#1 = (word~) main::$12 
+Alias (word) main::vx#1 = (word~) main::$9 
 Alias (byte) main::vy#3 = (byte) main::vy#5 
 Alias (byte) frame_cnt#7 = (byte) frame_cnt#8 
 Alias (word) main::x#6 = (word) main::x#7 
@@ -1077,7 +1001,7 @@ Alias (byte) main::y#4 = (byte) main::y#8
 Alias (byte*) bitmap_gfx#23 = (byte*) bitmap_gfx#24 
 Alias (byte*) bitmap_screen#22 = (byte*) bitmap_screen#23 
 Alias (word) main::vx#7 = (word) main::vx#8 
-Alias (byte) main::vy#1 = (byte~) main::$17 
+Alias (byte) main::vy#1 = (byte~) main::$14 
 Alias (byte) frame_cnt#4 = (byte) frame_cnt#5 
 Alias (byte) frame_cnt#10 = (byte) frame_cnt#6 (byte) frame_cnt#2 
 Alias (byte) frame_cnt#0 = (byte) frame_cnt#9 
@@ -1129,47 +1053,27 @@ Identical Phi Values (byte*) bitmap_screen#10 (byte*) bitmap_screen#13
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [72] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
+Identified duplicate assignment right side [52] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) memset::$1 [23] if((word) memset::num#2<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [33] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) bitmap_init::$1 [55] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
-Simple Condition (bool~) bitmap_init::$2 [59] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
-Simple Condition (bool~) bitmap_init::$9 [75] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
-Simple Condition (bool~) bitmap_init::$11 [79] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) irq::$0 [204] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
+Simple Condition (bool~) memset::$1 [3] if((word) memset::num#2<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) bitmap_init::$1 [35] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
+Simple Condition (bool~) bitmap_init::$2 [39] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
+Simple Condition (bool~) bitmap_init::$9 [55] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
+Simple Condition (bool~) bitmap_init::$11 [59] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
+Simple Condition (bool~) irq::$0 [179] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [167] (bool~) main::$11 ← ! (bool~) main::$10
-Rewriting || if()-condition to two if()s [166] (bool~) main::$10 ← (bool~) main::$8 || (bool~) main::$9
-Rewriting ! if()-condition to reversed if() [173] (bool~) main::$16 ← ! (bool~) main::$15
-Rewriting || if()-condition to two if()s [172] (bool~) main::$15 ← (bool~) main::$13 || (bool~) main::$14
+Rewriting ! if()-condition to reversed if() [142] (bool~) main::$8 ← ! (bool~) main::$7
+Rewriting || if()-condition to two if()s [141] (bool~) main::$7 ← (bool~) main::$5 || (bool~) main::$6
+Rewriting ! if()-condition to reversed if() [148] (bool~) main::$13 ← ! (bool~) main::$12
+Rewriting || if()-condition to two if()s [147] (bool~) main::$12 ← (bool~) main::$10 || (bool~) main::$11
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant right-side identified [42] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-Constant right-side identified [43] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-Constant right-side identified [44] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-Constant right-side identified [115] (byte[$100]) plots_per_frame ← { fill( $100, 0) }
-Constant right-side identified [196] (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
+Constant right-side identified [22] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
+Constant right-side identified [23] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
+Constant right-side identified [24] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
+Constant right-side identified [93] (byte[$100]) plots_per_frame ← { fill( $100, 0) }
+Constant right-side identified [171] (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) PROCPORT_DDR = (byte*) 0
-Constant (const byte) PROCPORT_DDR_MEMORY_MASK = 7
-Constant (const byte*) PROCPORT = (byte*) 1
-Constant (const byte) PROCPORT_RAM_IO = 5
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) VIC_CONTROL = (byte*) 53265
-Constant (const byte*) D011 = (byte*) 53265
-Constant (const byte) VIC_BMM = $20
-Constant (const byte) VIC_DEN = $10
-Constant (const byte) VIC_RSEL = 8
-Constant (const byte*) D018 = (byte*) 53272
-Constant (const byte*) IRQ_STATUS = (byte*) 53273
-Constant (const byte*) IRQ_ENABLE = (byte*) 53274
-Constant (const byte) IRQ_RASTER = 1
-Constant (const byte*) CIA1_INTERRUPT = (byte*) 56333
-Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
-Constant (const void()**) HARDWARE_IRQ = (void()**) 65534
-Constant (const byte) BLACK = 0
-Constant (const byte) WHITE = 1
 Constant (const byte*) bitmap_screen#0 = (byte*) 0
 Constant (const byte*) bitmap_gfx#0 = (byte*) 0
 Constant (const byte[$100]) bitmap_plot_ylo = { fill( $100, 0) }
@@ -1182,21 +1086,18 @@ Constant (const byte) bitmap_init::y#0 = 0
 Constant (const word) memset::num#0 = $3e8
 Constant (const byte) memset::c#1 = 0
 Constant (const word) memset::num#1 = $1f40
-Constant (const byte*) BITMAP = (byte*) 8192
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte[$100]) plots_per_frame = { fill( $100, 0) }
-Constant (const word) main::x#0 = 0
-Constant (const byte) main::y#0 = 0
-Constant (const word) main::vx#0 = 1
-Constant (const byte) main::vy#0 = 1
-Constant (const void()*) init_irq::$0 = &irq
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) bitmap_init::gfx#0 = BITMAP
 Constant (const byte*) bitmap_init::screen#0 = SCREEN
 Constant (const byte) bitmap_clear::bgcol#0 = BLACK
 Constant (const byte) bitmap_clear::fgcol#0 = WHITE
 Constant (const byte*) main::toD0181_screen#0 = SCREEN
 Constant (const byte*) main::toD0181_gfx#0 = BITMAP
+Constant (const word) main::x#0 = 0
+Constant (const byte) main::y#0 = 0
+Constant (const word) main::vx#0 = 1
+Constant (const byte) main::vy#0 = 1
+Constant (const void()*) init_irq::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) bitmap_gfx#1 = bitmap_init::gfx#0
 Constant (const byte*) bitmap_screen#1 = bitmap_init::screen#0
@@ -1206,13 +1107,13 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)bitmap_screen#1
 Constant (const void*) memset::str#1 = (void*)bitmap_gfx#1
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [156] if(true) goto main::@2
+if() condition always true - replacing block destination [131] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [57] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
-Resolved ranged comparison value [59] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
-Resolved ranged next value [77] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
-Resolved ranged comparison value [79] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
-Simplifying expression containing zero bitmap_clear::$0 in [89] (byte) bitmap_clear::col#0 ← (byte~) bitmap_clear::$0 + (const byte) bitmap_clear::bgcol#0
+Resolved ranged next value [37] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
+Resolved ranged comparison value [39] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
+Resolved ranged next value [57] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
+Resolved ranged comparison value [59] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
+Simplifying expression containing zero bitmap_clear::$0 in [69] (byte) bitmap_clear::col#0 ← (byte~) bitmap_clear::$0 + (const byte) bitmap_clear::bgcol#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (void*) memset::return#2 and assignment [35] (void*) memset::return#2 ← (void*) memset::str#3
 Eliminating unused variable (void*) memset::return#3 and assignment [37] (void*) memset::return#3 ← (void*) memset::str#3
@@ -1236,39 +1137,33 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte~) bitmap_init::$7 = (byte~) bitmap_init::$3 
 Alias (byte) bitmap_clear::col#0 = (byte~) bitmap_clear::$0 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$8 [67] if((word) main::x#1==(word) $13f) goto main::@8
-Simple Condition (bool~) main::$13 [71] if((byte) main::y#1==(byte) $c7) goto main::@9
-Simple Condition (bool~) main::$9 [95] if((word) main::x#1==(byte) 0) goto main::@8
-Simple Condition (bool~) main::$14 [96] if((byte) main::y#1==(byte) 0) goto main::@9
+Simple Condition (bool~) main::$5 [64] if((word) main::x#1==(word) $13f) goto main::@8
+Simple Condition (bool~) main::$10 [68] if((byte) main::y#1==(byte) $c7) goto main::@9
+Simple Condition (bool~) main::$6 [92] if((word) main::x#1==(byte) 0) goto main::@8
+Simple Condition (bool~) main::$11 [93] if((byte) main::y#1==(byte) 0) goto main::@9
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [95] if((word) main::x#1!=(byte) 0) goto main::@4
-Negating conditional jump and destination [96] if((byte) main::y#1!=(byte) 0) goto main::@5
+Negating conditional jump and destination [92] if((word) main::x#1!=(byte) 0) goto main::@4
+Negating conditional jump and destination [93] if((byte) main::y#1!=(byte) 0) goto main::@5
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant right-side identified [31] (byte) bitmap_clear::col#0 ← (const byte) bitmap_clear::fgcol#0 * (byte) $10
-Constant right-side identified [46] (byte~) main::$2 ← (const byte) VIC_BMM | (const byte) VIC_DEN
-Constant right-side identified [50] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
-Constant right-side identified [53] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
+Constant right-side identified [47] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
+Constant right-side identified [50] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) bitmap_clear::col#0 = bitmap_clear::fgcol#0*$10
-Constant (const byte) main::$2 = VIC_BMM|VIC_DEN
 Constant (const word) main::toD0181_$1 = main::toD0181_$0&$3fff
 Constant (const byte) main::toD0181_$5 = >main::toD0181_$4
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) memset::c#0 = bitmap_clear::col#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [42] (byte~) main::$3 ← (const byte) main::$2 | (const byte) VIC_RSEL
-Constant right-side identified [45] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
-Constant right-side identified [47] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
+Constant right-side identified [43] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
+Constant right-side identified [45] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$3 = main::$2|VIC_RSEL
 Constant (const word) main::toD0181_$2 = main::toD0181_$1*4
 Constant (const byte) main::toD0181_$6 = main::toD0181_$5/4
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [42] (byte~) main::$4 ← (const byte) main::$3 | (byte) 3
-Constant right-side identified [44] (byte~) main::toD0181_$3 ← > (const word) main::toD0181_$2
-Constant right-side identified [45] (byte~) main::toD0181_$7 ← (const byte) main::toD0181_$6 & (byte) $f
+Constant right-side identified [43] (byte~) main::toD0181_$3 ← > (const word) main::toD0181_$2
+Constant right-side identified [44] (byte~) main::toD0181_$7 ← (const byte) main::toD0181_$6 & (byte) $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$4 = main::$3|3
 Constant (const byte) main::toD0181_$3 = >main::toD0181_$2
 Constant (const byte) main::toD0181_$7 = main::toD0181_$6&$f
 Successful SSA optimization Pass2ConstantIdentification
@@ -1320,12 +1215,9 @@ Constant inlined main::toD0181_$4 = (word)(const byte*) BITMAP
 Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4
 Constant inlined bitmap_screen#1 = (const byte*) SCREEN
 Constant inlined main::vy#0 = (byte) 1
-Constant inlined main::$2 = (const byte) VIC_BMM|(const byte) VIC_DEN
 Constant inlined main::vx#0 = (byte) 1
 Constant inlined bitmap_init::y#0 = (byte) 0
-Constant inlined main::$3 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL
 Constant inlined memset::c#0 = (const byte) bitmap_clear::col#0
-Constant inlined main::$4 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3
 Constant inlined bitmap_init::x#0 = (byte) 0
 Constant inlined memset::c#1 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
@@ -3235,26 +3127,26 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte*) BGCOL = (byte*) 53281
 (const byte*) BITMAP = (byte*) 8192
-(const byte) BLACK = (byte) 0
+(const byte) BLACK = (number) 0
 (const byte*) CIA1_INTERRUPT = (byte*) 56333
-(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
 (const byte*) D011 = (byte*) 53265
 (const byte*) D018 = (byte*) 53272
 (const void()**) HARDWARE_IRQ = (void()**) 65534
 (const byte*) IRQ_ENABLE = (byte*) 53274
-(const byte) IRQ_RASTER = (byte) 1
+(const byte) IRQ_RASTER = (number) 1
 (const byte*) IRQ_STATUS = (byte*) 53273
 (const byte*) PROCPORT = (byte*) 1
 (const byte*) PROCPORT_DDR = (byte*) 0
-(const byte) PROCPORT_DDR_MEMORY_MASK = (byte) 7
-(const byte) PROCPORT_RAM_IO = (byte) 5
+(const byte) PROCPORT_DDR_MEMORY_MASK = (number) 7
+(const byte) PROCPORT_RAM_IO = (number) 5
 (const byte*) RASTER = (byte*) 53266
 (const byte*) SCREEN = (byte*) 1024
-(const byte) VIC_BMM = (byte) $20
+(const byte) VIC_BMM = (number) $20
 (const byte*) VIC_CONTROL = (byte*) 53265
-(const byte) VIC_DEN = (byte) $10
-(const byte) VIC_RSEL = (byte) 8
-(const byte) WHITE = (byte) 1
+(const byte) VIC_DEN = (number) $10
+(const byte) VIC_RSEL = (number) 8
+(const byte) WHITE = (number) 1
 (void()) bitmap_clear((byte) bitmap_clear::bgcol , (byte) bitmap_clear::fgcol)
 (label) bitmap_clear::@1
 (label) bitmap_clear::@return

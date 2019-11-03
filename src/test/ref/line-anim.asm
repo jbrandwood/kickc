@@ -21,12 +21,12 @@
   .label CIA2_PORT_A = $dd00
   // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  .label BITMAP = $a000
-  .label SCREEN = $8800
   // The number of points
   .const SIZE = 4
   // The delay between pixels
   .const DELAY = 8
+  .label BITMAP = $a000
+  .label SCREEN = $8800
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)/$40
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
@@ -475,10 +475,6 @@ bitmap_init: {
   y_start: .byte $a, $a, $a, $14
   x_end: .word $14, $a, $14, $14
   y_end: .byte $14, $14, $a, $14
-  // Tables for the plotter - initialized by calling bitmap_init();
-  bitmap_plot_ylo: .fill $100, 0
-  bitmap_plot_yhi: .fill $100, 0
-  bitmap_plot_bit: .fill $100, 0
   // Current x position fixed point [12.4]
   x_cur: .fill 2*SIZE, 0
   // Current y position fixed point [12.4]
@@ -489,3 +485,7 @@ bitmap_init: {
   y_add: .fill SIZE, 0
   // Frame delay (counted down to 0)
   delay: .fill SIZE, 0
+  // Tables for the plotter - initialized by calling bitmap_init();
+  bitmap_plot_ylo: .fill $100, 0
+  bitmap_plot_yhi: .fill $100, 0
+  bitmap_plot_bit: .fill $100, 0

@@ -561,20 +561,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       SymbolType type = declVarType;
       List<Comment> comments = declVarComments;
       KickCParser.ExprContext initializer = ctx.expr();
-      if(declVarStructMember) {
-         if(initializer != null) {
-            throw new CompileError("Initializers not supported inside structs " + type.getTypeName(), new StatementSource(ctx));
-         }
+      if(declVarStructMember && initializer != null)
+         throw new CompileError("Initializers not supported inside structs " + type.getTypeName(), new StatementSource(ctx));
+      if(initializer != null) {
+         addInitialAssignment(initializer, lValue, comments, new StatementSource(ctx));
       } else {
-         if(initializer != null) {
-            addInitialAssignment(initializer, lValue, comments, new StatementSource(ctx));
-         } else {
-            Statement initStmt;
-            StatementSource statementSource = new StatementSource(ctx);
-            initStmt = createDefaultInitializationStatement((VariableRef) lValue.getRef(), type, statementSource, ensureUnusedComments(comments));
-            sequence.addStatement(initStmt);
-         }
-
+         Statement initStmt;
+         StatementSource statementSource = new StatementSource(ctx);
+         initStmt = createDefaultInitializationStatement((VariableRef) lValue.getRef(), type, statementSource, ensureUnusedComments(comments));
+         sequence.addStatement(initStmt);
       }
       return null;
    }
@@ -641,7 +636,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     * @param comments Any comments to add to the output
     * @return The new statement
     */
-   static Statement createDefaultInitializationStatement(VariableRef varRef, SymbolType type, StatementSource statementSource, List<Comment> comments) {
+   static Statement createDefaultInitializationStatement(VariableRef varRef, SymbolType type, StatementSource
+         statementSource, List<Comment> comments) {
       Statement initStmt;
       if(type instanceof SymbolTypeIntegerFixed) {
          // Add an zero value initializer
@@ -712,7 +708,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     * @param conditional The loop conditional
     * @param directivesCtx The directives to add
     */
-   private void addDirectives(StatementConditionalJump conditional, List<KickCParser.DirectiveContext> directivesCtx) {
+   private void addDirectives(StatementConditionalJump
+                                    conditional, List<KickCParser.DirectiveContext> directivesCtx) {
       List<Directive> directives = getDirectives(directivesCtx);
       for(Directive directive : directives) {
          StatementSource source = new StatementSource(directivesCtx.get(0));
@@ -1323,7 +1320,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     * @param definedLabels All labels defined in the ASM
     * @return All variables/constants referenced in the ASM. Some may be ForwardVariableRefs to be resolved later.
     */
-   private Map<String, SymbolRef> getAsmReferencedSymbolVariables(KickCParser.StmtAsmContext ctx, List<String> definedLabels) {
+   private Map<String, SymbolRef> getAsmReferencedSymbolVariables(KickCParser.StmtAsmContext
+                                                                        ctx, List<String> definedLabels) {
       Map<String, SymbolRef> referenced = new LinkedHashMap<>();
       KickCParserBaseVisitor<Void> findReferenced = new KickCParserBaseVisitor<Void>() {
 
@@ -1399,8 +1397,31 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private void addInitialAssignment(KickCParser.ExprContext initializer, Variable lValue, List<Comment> comments, StatementSource statementSource) {
       PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
       RValue rValue = (RValue) visit(initializer);
-      Statement stmt = new StatementAssignment((LValue) lValue.getRef(), rValue, statementSource, ensureUnusedComments(comments));
-      sequence.addStatement(stmt);
+      if(lValue.isDeclaredConst() && rValue instanceof ConstantValue) {
+         Scope scope = lValue.getScope();
+         ConstantValue constantValue = (ConstantValue) rValue;
+         if(lValue.getType() instanceof SymbolTypePointer && SymbolType.isInteger(constantValue.getType(program.getScope()))) {
+            constantValue = new ConstantCastValue(lValue.getType(), constantValue);
+         }
+         // Convert to a constant value
+         scope.remove(lValue);
+         Variable constVar = new Variable(lValue.getName(), scope, lValue.getType(), lValue.getDataSegment(), constantValue);
+         scope.add(constVar);
+         constVar.setDeclaredConst(lValue.isDeclaredConst());
+         constVar.setDeclaredNotConst(lValue.isDeclaredNotConst());
+         constVar.setDeclaredRegister(lValue.getDeclaredRegister());
+         constVar.setMemoryArea(lValue.getMemoryArea());
+         constVar.setDeclaredAsRegister(lValue.isDeclaredAsRegister());
+         constVar.setDeclaredExport(lValue.isDeclaredExport());
+         constVar.setDeclaredAlignment(lValue.getDeclaredAlignment());
+         constVar.setDeclaredVolatile(lValue.isDeclaredVolatile());
+         constVar.setDeclaredNotRegister(lValue.isDeclaredAsNotRegister());
+         constVar.setComments(lValue.getComments());
+         lValue.getComments().addAll(ensureUnusedComments(comments));
+      } else {
+         Statement stmt = new StatementAssignment((LValue) lValue.getRef(), rValue, statementSource, ensureUnusedComments(comments));
+         sequence.addStatement(stmt);
+      }
       PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
    }
 

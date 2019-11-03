@@ -77,13 +77,13 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN+$32
     sta.z memcpy.destination+1
-    lda #<__8
+    lda #<__5
     sta.z memcpy.source
-    lda #>__8
+    lda #>__5
     sta.z memcpy.source+1
     jsr memcpy
     rts
-    __8: .text "rules"
+    __5: .text "rules"
     .byte 0
     reigns_1: .text "reigns"
     .byte 0

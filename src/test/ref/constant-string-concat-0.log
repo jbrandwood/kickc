@@ -10,18 +10,16 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte[]) main::msg ← (const string) main::$1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (bool~) main::$0 ← *((byte[]) main::msg + (byte) main::i#2) != (number) 0
+  (bool~) main::$0 ← *((const byte[]) main::msg + (byte) main::i#2) != (number) 0
   if((bool~) main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) main::SCREEN + (byte) main::i#3) ← *((byte[]) main::msg + (byte) main::i#3)
+  *((const byte*) main::SCREEN + (byte) main::i#3) ← *((const byte[]) main::msg + (byte) main::i#3)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -41,22 +39,20 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (bool~) main::$0
-(const string) main::$1 = (string) "camelot"
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
 (byte) main::i#3
-(byte[]) main::msg
+(const byte[]) main::msg = (string) "camelot"
 
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← *((byte[]) main::msg + (byte) main::i#2) != (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← *((const byte[]) main::msg + (byte) main::i#2) != (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -68,14 +64,11 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [5] if(*((byte[]) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@2
+Simple Condition (bool~) main::$0 [3] if(*((const byte[]) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[]) main::msg = main::$1
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::$1 = (const byte[]) main::msg
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin

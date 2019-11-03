@@ -3,8 +3,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label q = p
     .label SCREEN = $400
+    .label q = p
     .label p = 2
     lda #<2*$100+3
     sta.z p

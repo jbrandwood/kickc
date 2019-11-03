@@ -6,19 +6,17 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) A#0 ← (byte) 'a'
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) A#1 ← phi( @2/(byte) A#3 )
-  *((byte*) SCREEN + (number) 0) ← (byte) A#1
-  (byte) main::B ← (byte) 'b'
-  *((byte*) SCREEN + (number) 1) ← (byte) main::B
+  *((const byte*) SCREEN + (number) 0) ← (byte) A#1
+  *((const byte*) SCREEN + (number) 1) ← (const byte) main::B
   (byte*~) main::$0 ← & (byte) A#1
   (byte*) main::addrA#0 ← (byte*~) main::$0
-  *((byte*) SCREEN + (number) 2) ← *((byte*) main::addrA#0)
+  *((const byte*) SCREEN + (number) 2) ← *((byte*) main::addrA#0)
   call sub 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -30,11 +28,10 @@ main::@return: scope:[main]  from main::@1
 (void()) sub()
 sub: scope:[sub]  from main
   (byte) A#2 ← phi( main/(byte) A#1 )
-  (byte) sub::C ← (byte) 'c'
-  *((byte*) SCREEN + (number) 3) ← (byte) sub::C
+  *((const byte*) SCREEN + (number) 3) ← (const byte) sub::C
   (number~) sub::$0 ← (byte) A#2 + (number) 1
   (byte) sub::D#0 ← (number~) sub::$0
-  *((byte*) SCREEN + (number) 4) ← (byte) sub::D#0
+  *((const byte*) SCREEN + (number) 4) ← (byte) sub::D#0
   to:sub::@return
 sub::@return: scope:[sub]  from sub
   return 
@@ -57,31 +54,29 @@ SYMBOL TABLE SSA
 (byte) A#1
 (byte) A#2
 (byte) A#3
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (byte*~) main::$0
 (label) main::@1
 (label) main::@return
-(byte) main::B
+(const byte) main::B = (byte) 'b'
 (byte*) main::addrA
 (byte*) main::addrA#0
 (void()) sub()
 (number~) sub::$0
 (label) sub::@return
-(byte) sub::C
+(const byte) sub::C = (byte) 'c'
 (byte) sub::D
 (byte) sub::D#0
 
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte) A#1
-Adding number conversion cast (unumber) 1 in *((byte*) SCREEN + (number) 1) ← (byte) main::B
-Adding number conversion cast (unumber) 2 in *((byte*) SCREEN + (number) 2) ← *((byte*) main::addrA#0)
-Adding number conversion cast (unumber) 3 in *((byte*) SCREEN + (number) 3) ← (byte) sub::C
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) A#1
+Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (const byte) main::B
+Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (number) 2) ← *((byte*) main::addrA#0)
+Adding number conversion cast (unumber) 3 in *((const byte*) SCREEN + (number) 3) ← (const byte) sub::C
 Adding number conversion cast (unumber) 1 in (number~) sub::$0 ← (byte) A#2 + (number) 1
 Adding number conversion cast (unumber) sub::$0 in (number~) sub::$0 ← (byte) A#2 + (unumber)(number) 1
-Adding number conversion cast (unumber) 4 in *((byte*) SCREEN + (number) 4) ← (byte) sub::D#0
+Adding number conversion cast (unumber) 4 in *((const byte*) SCREEN + (number) 4) ← (byte) sub::D#0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -105,14 +100,11 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) A#1 (byte) A#0
 Identical Phi Values (byte) A#2 (byte) A#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [6] (byte*) main::addrA#0 ← & (byte) A#0
+Constant right-side identified [4] (byte*) main::addrA#0 ← & (byte) A#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte) main::B = 'b'
 Constant (const byte*) main::addrA#0 = &A#0
-Constant (const byte) sub::C = 'c'
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [3] *((const byte*) SCREEN + (byte) 0) ← (byte) A#0
+Simplifying expression containing zero SCREEN in [2] *((const byte*) SCREEN + (byte) 0) ← (byte) A#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Consolidated array index constant in *(SCREEN+1)
 Consolidated array index constant in *(SCREEN+2)

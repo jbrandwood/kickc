@@ -2,17 +2,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(__b1)
 .pc = $80d "Program"
-  .const SIZEOF_WORD = 2
   .label D018 = $d018
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
   .const BLACK = 0
-  // Top of the heap used by malloc()
-  .label HEAP_TOP = $a000
+  .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
-  .label print_line_cursor = $400
   // SID registers for random number generation
   .label SID_VOICE3_FREQ = $d40e
   .label SID_VOICE3_CONTROL = $d412
@@ -24,6 +21,9 @@
   .label SCREEN1 = $2800
   // Plasma screen 2
   .label SCREEN2 = $2c00
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
+  .label print_line_cursor = $400
   .const NUM_SQUARES = $30
   // Screen containing distance to center
   .label SCREEN_DIST = $b

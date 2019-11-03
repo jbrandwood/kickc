@@ -1,8 +1,9 @@
 Resolved forward reference init to (void()) init()
+Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@1
+  to:@2
 
 (void()) main()
 main: scope:[main]  from @2
@@ -11,18 +12,15 @@ main: scope:[main]  from @2
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte*) BGCOL ← ((byte*)) (number) $d020
-  to:@2
 
 (void()) init()
 init: scope:[init]  from
-  *((byte*) BGCOL) ← (number) 0
+  *((const byte*) BGCOL) ← (number) 0
   to:init::@return
 init::@return: scope:[init]  from init
   return 
   to:@return
-@2: scope:[]  from @1
+@2: scope:[]  from @begin
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -30,40 +28,34 @@ init::@return: scope:[init]  from init
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(label) @1
 (label) @2
 (label) @3
 (label) @begin
 (label) @end
-(byte*) BGCOL
+(const byte*) BGCOL = (byte*)(number) $d020
 (void()) init()
 (label) init::@return
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((byte*) BGCOL) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) BGCOL) ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d020
-Inlining cast *((byte*) BGCOL) ← (unumber)(number) 0
+Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) BGCOL = (byte*) 53280
-Successful SSA optimization Pass2ConstantIdentification
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:3 
+Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @1
 Culled Empty Block (label) @3
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin

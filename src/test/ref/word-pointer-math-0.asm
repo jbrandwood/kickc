@@ -4,8 +4,8 @@
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
 main: {
-    .label words = $400
     .label SCREEN = $400+6*$28
+    .label words = $400
     .label w1 = 2
     .label w2 = 4
     lda words+1*SIZEOF_WORD

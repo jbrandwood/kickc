@@ -6,7 +6,6 @@ CONTROL FLOW GRAPH SSA
   (byte) idx ← (byte) 0
   (byte*~) $0 ← & (byte) idx
   (byte*) idx_p#0 ← (byte*~) $0
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -17,7 +16,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte*) idx_p#1 ← phi( main/(byte*) idx_p#2 main::@1/(byte*) idx_p#1 )
-  *((byte*) SCREEN + (byte) main::i#2) ← *((byte*) idx_p#1)
+  *((const byte*) SCREEN + (byte) main::i#2) ← *((byte*) idx_p#1)
   *((byte*) idx_p#1) ← *((byte*) idx_p#1) + (byte) main::i#2
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,5)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,5)
@@ -40,7 +39,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (byte) idx notregister
 (byte*) idx_p
 (byte*) idx_p#0
@@ -56,8 +55,6 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
 Alias (byte*) idx_p#0 = (byte*~) $0 (byte*) idx_p#3 
@@ -65,16 +62,15 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) idx_p#2 (byte*) idx_p#0
 Identical Phi Values (byte*) idx_p#1 (byte*) idx_p#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [11] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
+Simple Condition (bool~) main::$0 [10] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [1] (byte*) idx_p#0 ← & (byte) idx
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) idx_p#0 = &idx
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [11] if(main::i#1!=rangelast(0,5)) goto main::@1 to (number) 6
+Resolved ranged next value [8] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [10] if(main::i#1!=rangelast(0,5)) goto main::@1 to (number) 6
 Adding number conversion cast (unumber) 6 in if((byte) main::i#1!=(number) 6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
@@ -155,8 +151,8 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label idx_p = idx
   .label SCREEN = $400
+  .label idx_p = idx
   // @begin
 __bbegin:
   // [0] (byte) idx ← (byte) 0 -- vbum1=vbuc1 
@@ -244,8 +240,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label idx_p = idx
   .label SCREEN = $400
+  .label idx_p = idx
   // @begin
 __bbegin:
   // [0] (byte) idx ← (byte) 0 -- vbum1=vbuc1 
@@ -352,8 +348,8 @@ Score: 319
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label idx_p = idx
   .label SCREEN = $400
+  .label idx_p = idx
   // @begin
 __bbegin:
   // idx

@@ -3,7 +3,6 @@ Culled Empty Block (label) @1
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) cnt#0 ← (number) 0
-  (byte[$100]) SCREEN ← ((byte[$100])) (number) $400
   to:@2
 
 (void()) main()
@@ -14,7 +13,7 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   (byte) cnt#9 ← phi( main/(byte) cnt#7 )
   (byte) cnt#1 ← (byte) cnt#9
-  *((byte[$100]) SCREEN + (number) 0) ← (byte) cnt#1
+  *((const byte[$100]) SCREEN + (number) 0) ← (byte) cnt#1
   (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt 
   to:main::@2
@@ -22,7 +21,7 @@ main::@2: scope:[main]  from main::@1
   (byte) cnt#10 ← phi( main::@1/(byte) cnt#7 )
   (byte) cnt#3 ← (byte) cnt#10
   (byte) cnt#4 ← ++ (byte) cnt#3
-  *((byte[$100]) SCREEN + (number) 1) ← (byte) cnt#4
+  *((const byte[$100]) SCREEN + (number) 1) ← (byte) cnt#4
   to:main::@return
 main::@return: scope:[main]  from main::@2
   (byte) cnt#11 ← phi( main::@2/(byte) cnt#4 )
@@ -55,7 +54,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte[$100]) SCREEN
+(const byte[$100]) SCREEN = (byte[$100])(number) $400
 (byte) cnt
 (byte) cnt#0
 (byte) cnt#1
@@ -82,14 +81,13 @@ SYMBOL TABLE SSA
 (label) main::@return
 
 Adding number conversion cast (unumber) 0 in (byte) cnt#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte[$100]) SCREEN + (number) 0) ← (byte) cnt#1
-Adding number conversion cast (unumber) 1 in *((byte[$100]) SCREEN + (number) 1) ← (byte) cnt#4
+Adding number conversion cast (unumber) 0 in *((const byte[$100]) SCREEN + (number) 0) ← (byte) cnt#1
+Adding number conversion cast (unumber) 1 in *((const byte[$100]) SCREEN + (number) 1) ← (byte) cnt#4
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) cnt#0 ← (unumber)(number) 0
-Inlining cast (byte[$100]) SCREEN ← (byte[$100])(number) $400
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
@@ -110,9 +108,8 @@ Identical Phi Values (byte) cnt#10 (byte) cnt#13
 Identical Phi Values (byte) cnt#14 (byte) cnt#11
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte) cnt#0 = 0
-Constant (const byte[$100]) SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [6] *((const byte[$100]) SCREEN + (byte) 0) ← (byte) cnt#13
+Simplifying expression containing zero SCREEN in [5] *((const byte[$100]) SCREEN + (byte) 0) ← (byte) cnt#13
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte) cnt#0
 Constant inlined cnt#0 = (byte) 0

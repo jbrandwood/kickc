@@ -11,31 +11,27 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  (byte) main::min ← (number) $a
-  (byte) main::max ← (number) $c8
-  (byte~) main::$0 ← (byte) main::min + (byte) main::max
+  (byte~) main::$0 ← (const byte) main::min + (const byte) main::max
   (word) main::sumw#0 ← (byte~) main::$0
   (word~) main::$1 ← (word) main::sumw#0 >> (number) 1
   (byte~) main::$2 ← ((byte)) (word~) main::$1
   (number~) main::$3 ← (byte~) main::$2 + (number) 1
   (byte) main::midw#0 ← (number~) main::$3
-  *((byte*) main::SCREEN + (number) 0) ← (byte) main::midw#0
-  (byte~) main::$4 ← (byte) main::min + (byte) main::max
+  *((const byte*) main::SCREEN + (number) 0) ← (byte) main::midw#0
+  (byte~) main::$4 ← (const byte) main::min + (const byte) main::max
   (byte) main::sumb#0 ← (byte~) main::$4
   (byte~) main::$5 ← (byte) main::sumb#0 >> (number) 1
   (number~) main::$6 ← (byte~) main::$5 + (number) 1
   (byte) main::midb#0 ← (number~) main::$6
-  *((byte*) main::SCREEN + (number) 1) ← (byte) main::midb#0
-  (byte*) main::BGCOL ← ((byte*)) (number) $d021
-  (bool~) main::$7 ← *((byte*) main::SCREEN + (number) 0) == *((byte*) main::SCREEN + (number) 1)
+  *((const byte*) main::SCREEN + (number) 1) ← (byte) main::midb#0
+  (bool~) main::$7 ← *((const byte*) main::SCREEN + (number) 0) == *((const byte*) main::SCREEN + (number) 1)
   if((bool~) main::$7) goto main::@1
   to:main::@3
 main::@1: scope:[main]  from main
-  *((byte*) main::BGCOL) ← (number) 5
+  *((const byte*) main::BGCOL) ← (number) 5
   to:main::@return
 main::@3: scope:[main]  from main
-  *((byte*) main::BGCOL) ← (number) 2
+  *((const byte*) main::BGCOL) ← (number) 2
   to:main::@return
 main::@return: scope:[main]  from main::@1 main::@3
   return 
@@ -64,59 +60,49 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@3
 (label) main::@return
-(byte*) main::BGCOL
-(byte*) main::SCREEN
-(byte) main::max
+(const byte*) main::BGCOL = (byte*)(number) $d021
+(const byte*) main::SCREEN = (byte*)(number) $400
+(const byte) main::max = (number) $c8
 (byte) main::midb
 (byte) main::midb#0
 (byte) main::midw
 (byte) main::midw#0
-(byte) main::min
+(const byte) main::min = (number) $a
 (byte) main::sumb
 (byte) main::sumb#0
 (word) main::sumw
 (word) main::sumw#0
 
-Adding number conversion cast (unumber) $a in (byte) main::min ← (number) $a
-Adding number conversion cast (unumber) $c8 in (byte) main::max ← (number) $c8
 Adding number conversion cast (unumber) 1 in (word~) main::$1 ← (word) main::sumw#0 >> (number) 1
 Adding number conversion cast (unumber) 1 in (number~) main::$3 ← (byte~) main::$2 + (number) 1
 Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (byte~) main::$2 + (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) main::midw#0
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte) main::midw#0
 Adding number conversion cast (unumber) 1 in (byte~) main::$5 ← (byte) main::sumb#0 >> (number) 1
 Adding number conversion cast (unumber) 1 in (number~) main::$6 ← (byte~) main::$5 + (number) 1
 Adding number conversion cast (unumber) main::$6 in (number~) main::$6 ← (byte~) main::$5 + (unumber)(number) 1
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte) main::midb#0
-Adding number conversion cast (unumber) 0 in (bool~) main::$7 ← *((byte*) main::SCREEN + (number) 0) == *((byte*) main::SCREEN + (number) 1)
-Adding number conversion cast (unumber) 1 in (bool~) main::$7 ← *((byte*) main::SCREEN + (unumber)(number) 0) == *((byte*) main::SCREEN + (number) 1)
-Adding number conversion cast (unumber) 5 in *((byte*) main::BGCOL) ← (number) 5
-Adding number conversion cast (unumber) 2 in *((byte*) main::BGCOL) ← (number) 2
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte) main::midb#0
+Adding number conversion cast (unumber) 0 in (bool~) main::$7 ← *((const byte*) main::SCREEN + (number) 0) == *((const byte*) main::SCREEN + (number) 1)
+Adding number conversion cast (unumber) 1 in (bool~) main::$7 ← *((const byte*) main::SCREEN + (unumber)(number) 0) == *((const byte*) main::SCREEN + (number) 1)
+Adding number conversion cast (unumber) 5 in *((const byte*) main::BGCOL) ← (number) 5
+Adding number conversion cast (unumber) 2 in *((const byte*) main::BGCOL) ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Inlining cast (byte) main::min ← (unumber)(number) $a
-Inlining cast (byte) main::max ← (unumber)(number) $c8
 Inlining cast (byte~) main::$2 ← (byte)(word~) main::$1
-Inlining cast (byte*) main::BGCOL ← (byte*)(number) $d021
-Inlining cast *((byte*) main::BGCOL) ← (unumber)(number) 5
-Inlining cast *((byte*) main::BGCOL) ← (unumber)(number) 2
+Inlining cast *((const byte*) main::BGCOL) ← (unumber)(number) 5
+Inlining cast *((const byte*) main::BGCOL) ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast $a
-Simplifying constant integer cast $c8
+Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 5
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $a
-Finalized unsigned number type (byte) $c8
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
@@ -135,22 +121,17 @@ Alias (byte) main::midw#0 = (byte~) main::$3
 Alias (byte) main::sumb#0 = (byte~) main::$4 
 Alias (byte) main::midb#0 = (byte~) main::$6 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$7 [18] if(*((byte*) main::SCREEN + (byte) 0)==*((byte*) main::SCREEN + (byte) 1)) goto main::@1
+Simple Condition (bool~) main::$7 [14] if(*((const byte*) main::SCREEN + (byte) 0)==*((const byte*) main::SCREEN + (byte) 1)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN = (byte*) 1024
-Constant (const byte) main::min = $a
-Constant (const byte) main::max = $c8
-Constant (const byte*) main::BGCOL = (byte*) 53281
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [9] *((const byte*) main::SCREEN + (byte) 0) ← (byte) main::midw#0
-Simplifying expression containing zero main::SCREEN in [18] if(*((const byte*) main::SCREEN + (byte) 0)==*((const byte*) main::SCREEN + (byte) 1)) goto main::@1
-Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [0] (word) main::sumw#0 ← (const byte) main::min + (const byte) main::max
-Constant right-side identified [5] (byte) main::sumb#0 ← (const byte) main::min + (const byte) main::max
+Constant right-side identified [7] (byte) main::sumb#0 ← (const byte) main::min + (const byte) main::max
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::sumw#0 = main::min+main::max
 Constant (const byte) main::sumb#0 = main::min+main::max
 Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (byte) 0) ← (byte) main::midw#0
+Simplifying expression containing zero main::SCREEN in [14] if(*((const byte*) main::SCREEN + (byte) 0)==*((const byte*) main::SCREEN + (byte) 1)) goto main::@1
+Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [0] (word~) main::$1 ← (const word) main::sumw#0 >> (byte) 1
 Constant right-side identified [4] (byte~) main::$5 ← (const byte) main::sumb#0 >> (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -397,12 +378,12 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (const byte*) main::BGCOL = (byte*) 53281
 (const byte*) main::SCREEN = (byte*) 1024
-(const byte) main::max = (byte) $c8
+(const byte) main::max = (number) $c8
 (byte) main::midb
 (const byte) main::midb#0 midb = (const byte) main::sumb#0>>(byte) 1+(byte) 1
 (byte) main::midw
 (const byte) main::midw#0 midw = (byte)(const word) main::sumw#0>>(byte) 1+(byte) 1
-(const byte) main::min = (byte) $a
+(const byte) main::min = (number) $a
 (byte) main::sumb
 (const byte) main::sumb#0 sumb = (const byte) main::min+(const byte) main::max
 (word) main::sumw

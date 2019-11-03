@@ -3,8 +3,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  .label idx_p = idx
   .label SCREEN = $400
+  .label idx_p = idx
 __bbegin:
   lda #0
   sta idx

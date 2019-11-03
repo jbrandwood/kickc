@@ -94,6 +94,8 @@
   .const KEY_MODIFIER_CTRL = 4
   // Commodore is pressed
   .const KEY_MODIFIER_COMMODORE = 8
+  // Any shift is pressed
+  .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
   // VIC Screens
   .label VIC_SCREEN0 = $4000
   .label VIC_SCREEN1 = $4400
@@ -124,12 +126,10 @@
   .label FORM_SCREEN = $400
   // Charset used for the FORM
   .label FORM_CHARSET = $1800
-  // Number of form fields
-  .const form_fields_cnt = $24
   // The number of frames to use for a full blink cycle
   .const FORM_CURSOR_BLINK = $28
-  // Any shift is pressed
-  .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
+  // Number of form fields
+  .const form_fields_cnt = $24
   .label print_char_cursor = $b
   .label print_line_cursor = $e
   .label keyboard_events_size = 8
@@ -160,18 +160,18 @@ main: {
 }
 // Change graphics mode to show the selected graphics mode
 gfx_mode: {
-    .label __22 = 2
-    .label __26 = $1a
-    .label __28 = $1c
-    .label __36 = 2
-    .label __40 = $16
-    .label __42 = $18
+    .label __20 = 2
+    .label __24 = $1a
+    .label __26 = $1c
+    .label __34 = 2
+    .label __38 = $16
+    .label __40 = $18
+    .label __51 = 6
+    .label __52 = 6
     .label __53 = 6
-    .label __54 = 6
-    .label __55 = 6
-    .label __56 = $1f
-    .label __58 = $e
-    .label __59 = $e
+    .label __54 = $1f
+    .label __56 = $e
+    .label __57 = $e
     .label plane_a = 2
     .label plane_b = 2
     .label vic_colors = 6
@@ -269,18 +269,18 @@ gfx_mode: {
     adc #0
     sta.z plane_a+3
     lda.z plane_a
-    sta.z __26
+    sta.z __24
     lda.z plane_a+1
-    sta.z __26+1
-    lda.z __26
+    sta.z __24+1
+    lda.z __24
     sta DTV_PLANEA_START_LO
-    lda.z __26+1
+    lda.z __24+1
     sta DTV_PLANEA_START_MI
     lda.z plane_a+2
-    sta.z __28
+    sta.z __26
     lda.z plane_a+3
-    sta.z __28+1
-    lda.z __28
+    sta.z __26+1
+    lda.z __26
     sta DTV_PLANEA_START_HI
     lda form_fields_val+$d
     asl
@@ -321,18 +321,18 @@ gfx_mode: {
     adc #0
     sta.z plane_b+3
     lda.z plane_b
-    sta.z __40
+    sta.z __38
     lda.z plane_b+1
-    sta.z __40+1
-    lda.z __40
+    sta.z __38+1
+    lda.z __38
     sta DTV_PLANEB_START_LO
-    lda.z __40+1
+    lda.z __38+1
     sta DTV_PLANEB_START_MI
     lda.z plane_b+2
-    sta.z __42
+    sta.z __40
     lda.z plane_b+3
-    sta.z __42+1
-    lda.z __42
+    sta.z __40+1
+    lda.z __40
     sta DTV_PLANEB_START_HI
     lda form_fields_val+$14
     asl
@@ -358,31 +358,31 @@ gfx_mode: {
     sta CIA2_PORT_A
     lda form_fields_val+$18
     jsr get_vic_screen
-    lda.z __54
+    lda.z __52
     and #<$3fff
-    sta.z __54
-    lda.z __54+1
+    sta.z __52
+    lda.z __52+1
     and #>$3fff
-    sta.z __54+1
+    sta.z __52+1
     ldy #6
   !:
-    lsr.z __55+1
-    ror.z __55
+    lsr.z __53+1
+    ror.z __53
     dey
     bne !-
-    lda.z __55
-    sta.z __56
+    lda.z __53
+    sta.z __54
     lda form_fields_val+$19
     jsr get_vic_charset
-    lda.z __59
+    lda.z __57
     and #<$3fff
-    sta.z __59
-    lda.z __59+1
+    sta.z __57
+    lda.z __57+1
     and #>$3fff
-    sta.z __59+1
+    sta.z __57+1
     lsr
     lsr
-    ora.z __56
+    ora.z __54
     // Set VIC Bank
     // VIC memory
     sta VIC_MEMORY
@@ -1860,7 +1860,7 @@ gfx_init_plane_charset8: {
 }
 // Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
-    .label __8 = $18
+    .label __7 = $18
     .label gfxb = $e
     .label x = $b
     .label y = $d
@@ -1895,11 +1895,11 @@ gfx_init_plane_8bppchunky: {
     lda.z y
     clc
     adc.z x
-    sta.z __8
+    sta.z __7
     lda #0
     adc.z x+1
-    sta.z __8+1
-    lda.z __8
+    sta.z __7+1
+    lda.z __7
     ldy #0
     sta (gfxb),y
     inc.z gfxb
@@ -2539,9 +2539,14 @@ keyboard_init: {
     sta CIA1_PORT_B_DDR
     rts
 }
+  print_hextab: .text "0123456789abcdef"
+  // Charset ROM
+  FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @                                        @ PRESET 0 Standard Charset              @                                        @ CONTROL        PLANE  A     VIC II     @ bmm        0   pattern p0   screen s0  @ mcm        0   start   00   gfx    g0  @ ecm        0   step    00   colors c0  @ hicolor    0   modulo  00              @ linear     0                COLORS     @ color off  0   PLANE  B     palet   0  @ chunky     0   pattern p0   bgcol0 00  @ border off 0   start   00   bgcol1 00  @ overscan   0   step    00   bgcol2 00  @                modulo  00   bgcol3 00  @"
+  .byte 0
+  FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm              @ nnnnnnnnnnnn                jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"
+  .byte 0
   // Default vallues for the palette
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
-  print_hextab: .text "0123456789abcdef"
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
@@ -2556,11 +2561,6 @@ keyboard_init: {
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
-  // Charset ROM
-  FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @                                        @ PRESET 0 Standard Charset              @                                        @ CONTROL        PLANE  A     VIC II     @ bmm        0   pattern p0   screen s0  @ mcm        0   start   00   gfx    g0  @ ecm        0   step    00   colors c0  @ hicolor    0   modulo  00              @ linear     0                COLORS     @ color off  0   PLANE  B     palet   0  @ chunky     0   pattern p0   bgcol0 00  @ border off 0   start   00   bgcol1 00  @ overscan   0   step    00   bgcol2 00  @                modulo  00   bgcol3 00  @"
-  .byte 0
-  FORM_COLS: .text "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@                                        @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm   ooooooooo  @ nnnnnnnnnnnn   mmmmmmmmmm              @ nnnnnnnnnnnn                jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @ nnnnnnnnnnnn   mmmmmmmmmm   jjjjjjjjj  @"
-  .byte 0
   // Form fields x/y-positions
   form_fields_x: .byte 8, $c, $c, $c, $c, $c, $c, $c, $c, $c, $19, $18, $19, $18, $19, $18, $19, $19, $18, $19, $18, $19, $18, $19, $25, $25, $25, $25, $24, $25, $24, $25, $24, $25, $24, $25
   form_fields_y: .byte 2, 5, 6, 7, 8, 9, $a, $b, $c, $d, 5, 6, 6, 7, 7, 8, 8, $b, $c, $c, $d, $d, $e, $e, 5, 6, 7, $a, $b, $b, $c, $c, $d, $d, $e, $e

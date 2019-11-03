@@ -5,6 +5,8 @@ Rewriting struct pointer member access *((struct pos[$40]) p + (byte~) main::$3)
 Identified constant variable (byte) OFFSET
 Identified constant variable (byte) XSPACE
 Identified constant variable (byte) YSPACE
+Identified constant variable (byte) pos::x
+Identified constant variable (byte) pos::y
 Culled Empty Block (label) main::@11
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@12
@@ -15,8 +17,6 @@ Culled Empty Block (label) main::@10
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) XSPACE ← (number) $14
-  (byte) YSPACE ← (number) $14
   (struct pos[$40]) p ← { fill( $40, 0) }
   (byte) idx#0 ← (byte) 0
   (byte) line#0 ← (byte) 0
@@ -72,7 +72,7 @@ main::@5: scope:[main]  from main::@4
   (byte*) main::$5 ← (byte*)(struct pos[$40]) p + (const byte) OFFSET_STRUCT_POS_X
   *((byte*) main::$5 + (byte~) main::$3) ← (byte) x#6
   (byte) idx#1 ← ++ (byte) idx#4
-  (byte) x#2 ← (byte) x#6 + (byte) XSPACE
+  (byte) x#2 ← (byte) x#6 + (const byte) XSPACE
   (byte) row#2 ← ++ (byte) row#6
   to:main::@4
 main::@6: scope:[main]  from main::@4
@@ -81,7 +81,7 @@ main::@6: scope:[main]  from main::@4
   (byte) x#13 ← phi( main::@4/(byte) x#10 )
   (byte) line#6 ← phi( main::@4/(byte) line#9 )
   (byte) y#5 ← phi( main::@4/(byte) y#8 )
-  (byte) y#1 ← (byte) y#5 + (byte) YSPACE
+  (byte) y#1 ← (byte) y#5 + (const byte) YSPACE
   (byte) line#2 ← ++ (byte) line#6
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -127,8 +127,8 @@ SYMBOL TABLE SSA
 (const byte) OFFSET_STRUCT_POS_X = (byte) 0
 (const byte) OFFSET_STRUCT_POS_Y = (byte) 1
 (const byte) SIZEOF_STRUCT_POS = (byte) 2
-(byte) XSPACE
-(byte) YSPACE
+(const byte) XSPACE = (number) $14
+(const byte) YSPACE = (number) $14
 (byte) idx
 (byte) idx#0
 (byte) idx#1
@@ -171,8 +171,6 @@ SYMBOL TABLE SSA
 (label) main::@6
 (label) main::@return
 (struct pos[$40]) p
-(byte) pos::x
-(byte) pos::y
 (byte) row
 (byte) row#0
 (byte) row#1
@@ -217,27 +215,19 @@ SYMBOL TABLE SSA
 (byte) y#8
 (byte) y#9
 
-Adding number conversion cast (unumber) $14 in (byte) XSPACE ← (number) $14
-Adding number conversion cast (unumber) $14 in (byte) YSPACE ← (number) $14
 Adding number conversion cast (unumber) 0 in (byte) line#1 ← (number) 0
 Adding number conversion cast (unumber) 8 in (bool~) main::$0 ← (byte) line#5 < (number) 8
 Adding number conversion cast (unumber) 0 in (byte) row#1 ← (number) 0
 Adding number conversion cast (unumber) 8 in (bool~) main::$1 ← (byte) row#5 < (number) 8
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) XSPACE ← (unumber)(number) $14
-Inlining cast (byte) YSPACE ← (unumber)(number) $14
 Inlining cast (byte) line#1 ← (unumber)(number) 0
 Inlining cast (byte) row#1 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $14
-Simplifying constant integer cast $14
 Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $14
-Finalized unsigned number type (byte) $14
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 0
@@ -276,15 +266,13 @@ Identical Phi Values (byte) row#4 (byte) row#3
 Identical Phi Values (byte) idx#3 (byte) idx#12
 Identical Phi Values (byte) y#3 (byte) y#12
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [23] (byte~) main::$3 ← (byte) idx#11 * (const byte) SIZEOF_STRUCT_POS
+Identified duplicate assignment right side [21] (byte~) main::$3 ← (byte) idx#11 * (const byte) SIZEOF_STRUCT_POS
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) main::$0 [12] if((byte) line#11<(byte) 8) goto main::@2
-Simple Condition (bool~) main::$1 [18] if((byte) row#12<(byte) 8) goto main::@5
+Simple Condition (bool~) main::$0 [10] if((byte) line#11<(byte) 8) goto main::@2
+Simple Condition (bool~) main::$1 [16] if((byte) row#12<(byte) 8) goto main::@5
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [2] (struct pos[$40]) p ← { fill( $40, 0) }
+Constant right-side identified [0] (struct pos[$40]) p ← { fill( $40, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) XSPACE = $14
-Constant (const byte) YSPACE = $14
 Constant (const struct pos[$40]) p = { fill( $40, 0) }
 Constant (const byte) idx#0 = 0
 Constant (const byte) line#0 = 0
@@ -294,10 +282,10 @@ Constant (const byte) y#0 = 0
 Constant (const byte) line#1 = 0
 Constant (const byte) row#1 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)p in [21] (byte*) main::$4 ← (byte*)(const struct pos[$40]) p + (const byte) OFFSET_STRUCT_POS_Y
-Constant value identified (byte*)p in [24] (byte*) main::$5 ← (byte*)(const struct pos[$40]) p + (const byte) OFFSET_STRUCT_POS_X
+Constant value identified (byte*)p in [19] (byte*) main::$4 ← (byte*)(const struct pos[$40]) p + (const byte) OFFSET_STRUCT_POS_Y
+Constant value identified (byte*)p in [22] (byte*) main::$5 ← (byte*)(const struct pos[$40]) p + (const byte) OFFSET_STRUCT_POS_X
 Successful SSA optimization Pass2ConstantValues
-Simplifying expression containing zero (byte*)p in [24] (byte*) main::$5 ← (byte*)(const struct pos[$40]) p + (const byte) OFFSET_STRUCT_POS_X
+Simplifying expression containing zero (byte*)p in [22] (byte*) main::$5 ← (byte*)(const struct pos[$40]) p + (const byte) OFFSET_STRUCT_POS_X
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable - keeping the phi block (byte) row#3
 Eliminating unused constant (const byte) OFFSET_STRUCT_POS_X
@@ -415,8 +403,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) line#2 22.0
 (void()) main()
 (byte~) main::$3 151.5
-(byte) pos::x
-(byte) pos::y
 (byte) row
 (byte) row#12 43.285714285714285
 (byte) row#2 202.0
@@ -782,8 +768,8 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte) OFFSET_STRUCT_POS_Y = (byte) 1
-(const byte) XSPACE = (byte) $14
-(const byte) YSPACE = (byte) $14
+(const byte) XSPACE = (number) $14
+(const byte) YSPACE = (number) $14
 (byte) idx
 (byte) idx#1 idx zp[1]:4 67.33333333333333
 (byte) idx#11 idx zp[1]:4 46.42857142857143
@@ -800,8 +786,6 @@ FINAL SYMBOL TABLE
 (label) main::@5
 (label) main::@return
 (const struct pos[$40]) p = { fill( $40, 0) }
-(byte) pos::x
-(byte) pos::y
 (byte) row
 (byte) row#12 reg byte y 43.285714285714285
 (byte) row#2 reg byte y 202.0

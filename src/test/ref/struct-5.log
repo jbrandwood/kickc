@@ -24,6 +24,8 @@ Adding struct value member variable copy (byte) point::return_y ← (byte) point
 Converted procedure struct return value to member unwinding return { (byte) point::return_x, (byte) point::return_y }
 Replacing struct member reference (struct Point) main::q.x with member unwinding reference (byte) main::q_x
 Replacing struct member reference (struct Point) main::q.y with member unwinding reference (byte) main::q_y
+Identified constant variable (byte) Point::x
+Identified constant variable (byte) Point::y
 Identified constant variable (byte) point::p_x
 Identified constant variable (byte) point::p_y
 Culled Empty Block (label) @1
@@ -52,9 +54,8 @@ main::@1: scope:[main]  from main
   (byte) main::$0_y ← (byte) point::return_y#3
   (byte) main::q_x#1 ← (byte) main::$0_x
   (byte) main::q_y#1 ← (byte) main::$0_y
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  *((byte*) main::SCREEN + (number) 0) ← (byte) main::q_x#1
-  *((byte*) main::SCREEN + (number) 1) ← (byte) main::q_y#1
+  *((const byte*) main::SCREEN + (number) 0) ← (byte) main::q_x#1
+  *((const byte*) main::SCREEN + (number) 1) ← (byte) main::q_y#1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -62,10 +63,8 @@ main::@return: scope:[main]  from main::@1
 
 (struct Point()) point()
 point: scope:[point]  from main
-  (byte) point::p_x ← (number) 2
-  (byte) point::p_y ← (number) 3
-  (byte) point::return_x#1 ← (byte) point::p_x
-  (byte) point::return_y#1 ← (byte) point::p_y
+  (byte) point::return_x#1 ← (const byte) point::p_x
+  (byte) point::return_y#1 ← (const byte) point::p_y
   (struct Point) point::return#0 ← struct-unwound {(byte) point::return_x#1, (byte) point::return_y#1}
   to:point::@return
 point::@return: scope:[point]  from point
@@ -88,15 +87,13 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte) Point::x
-(byte) Point::y
 (void()) main()
 (struct Point~) main::$0
 (byte) main::$0_x
 (byte) main::$0_y
 (label) main::@1
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::q_x
 (byte) main::q_x#0
 (byte) main::q_x#1
@@ -105,8 +102,8 @@ SYMBOL TABLE SSA
 (byte) main::q_y#1
 (struct Point()) point()
 (label) point::@return
-(byte) point::p_x
-(byte) point::p_y
+(const byte) point::p_x = (number) 2
+(const byte) point::p_y = (number) 3
 (struct Point) point::return
 (struct Point) point::return#0
 (struct Point) point::return#1
@@ -123,55 +120,46 @@ SYMBOL TABLE SSA
 (byte) point::return_y#3
 (byte) point::return_y#4
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) main::q_x#1
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte) main::q_y#1
-Adding number conversion cast (unumber) 2 in (byte) point::p_x ← (number) 2
-Adding number conversion cast (unumber) 3 in (byte) point::p_y ← (number) 3
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte) main::q_x#1
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte) main::q_y#1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Inlining cast (byte) point::p_x ← (unumber)(number) 2
-Inlining cast (byte) point::p_y ← (unumber)(number) 3
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
-Simplifying constant integer cast 2
-Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) point::return_x#0 = (byte) point::return_x#3 
 Alias (byte) point::return_y#0 = (byte) point::return_y#3 
 Alias (byte) main::q_x#1 = (byte) main::$0_x 
 Alias (byte) main::q_y#1 = (byte) main::$0_y 
-Alias (byte) point::p_x = (byte) point::return_x#1 (byte) point::return_x#4 (byte) point::return_x#2 
-Alias (byte) point::p_y = (byte) point::return_y#1 (byte) point::return_y#4 (byte) point::return_y#2 
+Alias (byte) point::return_x#1 = (byte) point::return_x#4 (byte) point::return_x#2 
+Alias (byte) point::return_y#1 = (byte) point::return_y#4 (byte) point::return_y#2 
 Successful SSA optimization Pass2AliasElimination
 Constant (const byte) main::q_x#0 = 0
 Constant (const byte) main::q_y#0 = 0
-Constant (const byte*) main::SCREEN = (byte*) 1024
-Constant (const byte) point::p_x = 2
-Constant (const byte) point::p_y = 3
+Constant (const byte) point::return_x#1 = point::p_x
+Constant (const byte) point::return_y#1 = point::p_y
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) point::return_x#0 = point::p_x
-Constant (const byte) point::return_y#0 = point::p_y
+Constant (const byte) point::return_x#0 = point::return_x#1
+Constant (const byte) point::return_y#0 = point::return_y#1
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) main::q_x#1 = point::return_x#0
 Constant (const byte) main::q_y#1 = point::return_y#0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [11] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::q_x#1
+Simplifying expression containing zero main::SCREEN in [10] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::q_x#1
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (struct Point) point::return#0 and assignment [4] (struct Point) point::return#0 ← struct-unwound {(const byte) point::p_x, (const byte) point::p_y}
-Eliminating unused variable (struct Point) point::return#1 and assignment [5] (struct Point) point::return#1 ← struct-unwound {(const byte) point::p_x, (const byte) point::p_y}
+Eliminating unused variable (struct Point) point::return#0 and assignment [4] (struct Point) point::return#0 ← struct-unwound {(const byte) point::return_x#1, (const byte) point::return_y#1}
+Eliminating unused variable (struct Point) point::return#1 and assignment [5] (struct Point) point::return#1 ← struct-unwound {(const byte) point::return_x#1, (const byte) point::return_y#1}
 Eliminating unused constant (const byte) main::q_x#0
 Eliminating unused constant (const byte) main::q_y#0
 Successful SSA optimization PassNEliminateUnusedVars
 Constant inlined main::q_x#1 = (const byte) point::p_x
+Constant inlined point::return_x#1 = (const byte) point::p_x
 Constant inlined point::return_y#0 = (const byte) point::p_y
 Constant inlined point::return_x#0 = (const byte) point::p_x
+Constant inlined point::return_y#1 = (const byte) point::p_y
 Constant inlined main::q_y#1 = (const byte) point::p_y
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+1)
@@ -230,8 +218,6 @@ point::@return: scope:[point]  from point
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) Point::x
-(byte) Point::y
 (void()) main()
 (struct Point~) main::$0
 (byte) main::q_x
@@ -405,8 +391,6 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte) Point::x
-(byte) Point::y
 (void()) main()
 (struct Point~) main::$0
 (label) main::@1
@@ -416,8 +400,8 @@ FINAL SYMBOL TABLE
 (byte) main::q_y
 (struct Point()) point()
 (label) point::@return
-(const byte) point::p_x = (byte) 2
-(const byte) point::p_y = (byte) 3
+(const byte) point::p_x = (number) 2
+(const byte) point::p_y = (number) 3
 (struct Point) point::return
 (byte) point::return_x
 (byte) point::return_y

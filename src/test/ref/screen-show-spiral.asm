@@ -3,14 +3,14 @@
 :BasicUpstart(__b1)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
-  // Top of the heap used by malloc()
-  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Screen containing angle to center
   .label SCREEN_FILL = $400
   // Char to fill with
   .const FILL_CHAR = '@'
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .const NUM_SQUARES = $30
   // Screen containing distance to center
   .label SCREEN_DIST = $b

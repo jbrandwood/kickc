@@ -9,7 +9,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   if(true) goto main::@1
   to:main::@2
 main::@1: scope:[main]  from main
@@ -20,7 +19,7 @@ main::@2: scope:[main]  from main
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@2
   (byte~) main::$2 ← phi( main::@1/(byte~) main::$1 main::@2/(byte~) main::$0 )
-  *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$2
+  *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$2
   if(false) goto main::@4
   to:main::@5
 main::@4: scope:[main]  from main::@3
@@ -31,7 +30,7 @@ main::@5: scope:[main]  from main::@3
   to:main::@6
 main::@6: scope:[main]  from main::@4 main::@5
   (byte~) main::$5 ← phi( main::@4/(byte~) main::$4 main::@5/(byte~) main::$3 )
-  *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$5
+  *((const byte*) main::SCREEN + (number) 1) ← (byte~) main::$5
   to:main::@return
 main::@return: scope:[main]  from main::@6
   return 
@@ -62,13 +61,11 @@ SYMBOL TABLE SSA
 (label) main::@5
 (label) main::@6
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$2
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$5
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$2
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte~) main::$5
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -76,16 +73,15 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::$1 = 'a'
 Constant (const byte) main::$0 = 'b'
 Constant (const byte) main::$4 = 'a'
 Constant (const byte) main::$3 = 'b'
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [1] if(true) goto main::@1
-if() condition always false - eliminating [6] if(false) goto main::@4
+if() condition always true - replacing block destination [0] if(true) goto main::@1
+if() condition always false - eliminating [5] if(false) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero main::SCREEN in [5] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$2
+Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$2
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing PHI-reference to removed block (main::@2) in block main::@3
 Removing unused block main::@2

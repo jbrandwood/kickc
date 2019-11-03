@@ -3,7 +3,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(__b1)
 .pc = $80d "Program"
-  .const SIZEOF_SIGNED_WORD = 2
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -42,6 +41,7 @@
   .const PI_u4f28 = $3243f6a9
   // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
+  .const SIZEOF_SIGNED_WORD = 2
   .label BITMAP = $2000
   .label SCREEN = $400
   .label rem16u = $15
@@ -54,12 +54,12 @@ __b1:
   rts
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __10 = $1c
-    .label __11 = $1c
-    .label __16 = $13
-    .label __17 = $13
-    .label __34 = $24
-    .label __35 = $24
+    .label __7 = $1c
+    .label __8 = $1c
+    .label __13 = $13
+    .label __14 = $13
+    .label __31 = $24
+    .label __32 = $24
     .label cos_x = $24
     .label xpos = $a
     .label x = $1c
@@ -70,8 +70,8 @@ main: {
     .label idx_y = $e
     .label r = 4
     .label r_add = $17
-    .label __36 = $24
-    .label __37 = $24
+    .label __33 = $24
+    .label __34 = $24
     jsr sin16s_gen2
     jsr bitmap_init
     jsr bitmap_clear
@@ -94,17 +94,17 @@ main: {
   __b2:
     lda.z idx_x
     asl
-    sta.z __34
+    sta.z __31
     lda.z idx_x+1
     rol
-    sta.z __34+1
+    sta.z __31+1
     clc
-    lda.z __36
+    lda.z __33
     adc #<SINUS
-    sta.z __36
-    lda.z __36+1
+    sta.z __33
+    lda.z __33+1
     adc #>SINUS
-    sta.z __36+1
+    sta.z __33+1
     ldy #0
     lda (cos_x),y
     pha
@@ -115,17 +115,17 @@ main: {
     sta.z cos_x
     jsr mul16s
     lda.z xpos+2
-    sta.z __10
+    sta.z __7
     lda.z xpos+3
-    sta.z __10+1
-    lda.z __11+1
+    sta.z __7+1
+    lda.z __8+1
     cmp #$80
-    ror.z __11+1
-    ror.z __11
-    lda.z __11+1
+    ror.z __8+1
+    ror.z __8
+    lda.z __8+1
     cmp #$80
-    ror.z __11+1
-    ror.z __11
+    ror.z __8+1
+    ror.z __8
     clc
     lda.z x
     adc #<$a0
@@ -135,17 +135,17 @@ main: {
     sta.z x+1
     lda.z idx_y
     asl
-    sta.z __35
+    sta.z __32
     lda.z idx_y+1
     rol
-    sta.z __35+1
+    sta.z __32+1
     clc
-    lda.z __37
+    lda.z __34
     adc #<SINUS
-    sta.z __37
-    lda.z __37+1
+    sta.z __34
+    lda.z __34+1
     adc #>SINUS
-    sta.z __37+1
+    sta.z __34+1
     ldy #0
     lda (sin_y),y
     pha
@@ -156,17 +156,17 @@ main: {
     sta.z sin_y
     jsr mul16s
     lda.z ypos+2
-    sta.z __16
+    sta.z __13
     lda.z ypos+3
-    sta.z __16+1
-    lda.z __17+1
+    sta.z __13+1
+    lda.z __14+1
     cmp #$80
-    ror.z __17+1
-    ror.z __17
-    lda.z __17+1
+    ror.z __14+1
+    ror.z __14
+    lda.z __14+1
     cmp #$80
-    ror.z __17+1
-    ror.z __17
+    ror.z __14+1
+    ror.z __14
     lda.z y
     clc
     adc #<$64

@@ -9,14 +9,12 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::b ← (number) $c
-  (bool~) main::$1 ← (number) 0 != (byte) main::b
+  (bool~) main::$1 ← (number) 0 != (const byte) main::b
   (bool~) main::$0 ← ! (bool~) main::$1
   if((bool~) main::$0) goto main::@return
   to:main::@2
 main::@2: scope:[main]  from main
-  (byte*) main::screen ← ((byte*)) (number) $400
-  *((byte*) main::screen) ← (byte) 'a'
+  *((const byte*) main::screen) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main main::@2
   return 
@@ -38,30 +36,21 @@ SYMBOL TABLE SSA
 (bool~) main::$1
 (label) main::@2
 (label) main::@return
-(byte) main::b
-(byte*) main::screen
+(const byte) main::b = (number) $c
+(const byte*) main::screen = (byte*)(number) $400
 
-Adding number conversion cast (unumber) $c in (byte) main::b ← (number) $c
-Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != (byte) main::b
+Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != (const byte) main::b
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::b ← (unumber)(number) $c
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $c
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $c
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [2] (bool~) main::$0 ← (byte) 0 == (byte) main::b from [1] (bool~) main::$1 ← (byte) 0 != (byte) main::b
+Inversing boolean not [1] (bool~) main::$0 ← (byte) 0 == (const byte) main::b from [0] (bool~) main::$1 ← (byte) 0 != (const byte) main::b
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) main::$0 [3] if((byte) 0==(byte) main::b) goto main::@return
+Simple Condition (bool~) main::$0 [2] if((byte) 0==(const byte) main::b) goto main::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::b = $c
-Constant (const byte*) main::screen = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [3] if((byte) 0==(const byte) main::b) goto main::@return
+if() condition always false - eliminating [2] if((byte) 0==(const byte) main::b) goto main::@return
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused constant (const byte) main::b
 Successful SSA optimization PassNEliminateUnusedVars

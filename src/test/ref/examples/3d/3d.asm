@@ -14,7 +14,6 @@
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .const LIGHT_GREY = $f
-  .label print_screen = $400
   // The rotated point - updated by calling rotate_matrix()
   .label xr = $f0
   .label yr = $f1
@@ -30,6 +29,7 @@
   .const sz = 0
   // A single sprite
   .label SPRITE = $3000
+  .label print_screen = $400
   .label COSH = SINH+$40
   .label COSQ = SINQ+$40
   .label sx = 2

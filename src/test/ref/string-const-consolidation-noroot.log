@@ -13,15 +13,13 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte*) screen#15 ← phi( @2/(byte*) screen#17 )
-  (byte[]) main::rex1 ← (const string) main::$3
-  (byte[]) main::rex2 ← (const string) main::$4
-  (byte*) print::string#0 ← (byte[]) main::rex1
+  (byte*) print::string#0 ← (const byte[]) main::rex1
   call print 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte*) screen#8 ← phi( main/(byte*) screen#6 )
   (byte*) screen#1 ← (byte*) screen#8
-  (byte*) print::string#1 ← (byte[]) main::rex2
+  (byte*) print::string#1 ← (const byte[]) main::rex2
   call print 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -79,14 +77,12 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(const string) main::$3 = (string) "rex"
-(const string) main::$4 = (string) "rex"
 (label) main::@1
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(byte[]) main::rex1
-(byte[]) main::rex2
+(const byte[]) main::rex1 = (string) "rex"
+(const byte[]) main::rex2 = (string) "rex"
 (const string) main::string = (string) "rex"
 (void()) print((byte*) print::string)
 (bool~) print::$0
@@ -145,33 +141,26 @@ Identical Phi Values (byte*) screen#2 (byte*) screen#12
 Identical Phi Values (byte*) screen#10 (byte*) screen#12
 Identical Phi Values (byte*) screen#14 (byte*) screen#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) print::$0 [22] if((byte) 0!=*((byte*) print::string#4)) goto print::@2
+Simple Condition (bool~) print::$0 [20] if((byte) 0!=*((byte*) print::string#4)) goto print::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) screen#0 = (byte*) 1024
-Constant (const byte[]) main::rex1 = main::$3
-Constant (const byte[]) main::rex2 = main::$4
-Constant (const byte*) print::string#2 = main::string
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print::string#0 = main::rex1
 Constant (const byte*) print::string#1 = main::rex2
+Constant (const byte*) print::string#2 = main::string
 Successful SSA optimization Pass2ConstantIdentification
 Successful SSA optimization Pass2ConstantStringConsolidation
-Inlining constant with var siblings (const byte*) print::string#2
 Inlining constant with var siblings (const byte*) print::string#0
 Inlining constant with var siblings (const byte*) print::string#1
+Inlining constant with var siblings (const byte*) print::string#2
 Inlining constant with var siblings (const byte*) screen#0
-Constant inlined main::$3 = (const byte[]) main::rex1
 Constant inlined print::string#0 = (const byte[]) main::rex1
-Constant inlined main::$4 = (const byte[]) main::rex2
-Constant inlined print::string#1 = (const byte[]) main::rex2
-Constant inlined print::string#2 = (const string) main::string
+Constant inlined print::string#1 = (const byte[]) main::rex1
+Constant inlined print::string#2 = (const byte[]) main::rex1
+Constant inlined main::rex2 = (const byte[]) main::rex1
 Constant inlined screen#0 = (byte*) 1024
+Constant inlined main::string = (const byte[]) main::rex1
 Successful SSA optimization Pass2ConstantInlining
-Successful SSA optimization Pass2ConstantStringConsolidation
-Constant inlined main::rex2 = (const string) main::string
-Constant inlined main::rex1 = (const string) main::string
-Successful SSA optimization Pass2ConstantInlining
-Identical Phi Values (byte*) print::string#6 (const string) main::string
+Identical Phi Values (byte*) print::string#6 (const byte[]) main::rex1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -234,7 +223,7 @@ print: scope:[print]  from main main::@1 main::@2
   to:print::@1
 print::@1: scope:[print]  from print print::@2
   [12] (byte*) screen#12 ← phi( print/(byte*) screen#18 print::@2/(byte*) screen#5 )
-  [12] (byte*) print::string#4 ← phi( print/(const string) main::string print::@2/(byte*) print::string#3 )
+  [12] (byte*) print::string#4 ← phi( print/(const byte[]) main::rex1 print::@2/(byte*) print::string#3 )
   [13] if((byte) 0!=*((byte*) print::string#4)) goto print::@2
   to:print::@return
 print::@return: scope:[print]  from print::@1
@@ -329,7 +318,7 @@ main: {
   __breturn:
     // [10] return 
     rts
-    string: .text "rex"
+    rex1: .text "rex"
     .byte 0
 }
   // print
@@ -339,10 +328,10 @@ print: {
     // [12] phi from print to print::@1 [phi:print->print::@1]
   __b1_from_print:
     // [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print->print::@1#0] -- register_copy 
-    // [12] phi (byte*) print::string#4 = (const string) main::string [phi:print->print::@1#1] -- pbuz1=pbuc1 
-    lda #<main.string
+    // [12] phi (byte*) print::string#4 = (const byte[]) main::rex1 [phi:print->print::@1#1] -- pbuz1=pbuc1 
+    lda #<main.rex1
     sta.z string
-    lda #>main.string
+    lda #>main.rex1
     sta.z string+1
     jmp __b1
     // print::@1
@@ -458,7 +447,7 @@ main: {
   __breturn:
     // [10] return 
     rts
-    string: .text "rex"
+    rex1: .text "rex"
     .byte 0
 }
   // print
@@ -468,10 +457,10 @@ print: {
     // [12] phi from print to print::@1 [phi:print->print::@1]
   __b1_from_print:
     // [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print->print::@1#0] -- register_copy 
-    // [12] phi (byte*) print::string#4 = (const string) main::string [phi:print->print::@1#1] -- pbuz1=pbuc1 
-    lda #<main.string
+    // [12] phi (byte*) print::string#4 = (const byte[]) main::rex1 [phi:print->print::@1#1] -- pbuz1=pbuc1 
+    lda #<main.rex1
     sta.z string
-    lda #>main.string
+    lda #>main.rex1
     sta.z string+1
     jmp __b1
     // print::@1
@@ -555,7 +544,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const string) main::string = (string) "rex"
+(const byte[]) main::rex1 = (string) "rex"
 (void()) print((byte*) print::string)
 (label) print::@1
 (label) print::@2
@@ -619,7 +608,7 @@ main: {
     // }
     // [10] return 
     rts
-    string: .text "rex"
+    rex1: .text "rex"
     .byte 0
 }
   // print
@@ -628,10 +617,10 @@ print: {
     .label string = 4
     // [12] phi from print to print::@1 [phi:print->print::@1]
     // [12] phi (byte*) screen#12 = (byte*) screen#18 [phi:print->print::@1#0] -- register_copy 
-    // [12] phi (byte*) print::string#4 = (const string) main::string [phi:print->print::@1#1] -- pbuz1=pbuc1 
-    lda #<main.string
+    // [12] phi (byte*) print::string#4 = (const byte[]) main::rex1 [phi:print->print::@1#1] -- pbuz1=pbuc1 
+    lda #<main.rex1
     sta.z string
-    lda #>main.string
+    lda #>main.rex1
     sta.z string+1
     // print::@1
   __b1:

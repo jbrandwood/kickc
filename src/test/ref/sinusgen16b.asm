@@ -2,7 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SIZEOF_SIGNED_WORD = 2
   // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
   // PI in u[4.28] format
@@ -13,6 +12,7 @@
   .const PI_u4f12 = $3244
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
+  .const SIZEOF_SIGNED_WORD = 2
   .label print_line_cursor = $400
   .label rem16u = 3
   .label print_char_cursor = $1f

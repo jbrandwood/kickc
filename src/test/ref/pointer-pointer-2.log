@@ -66,8 +66,6 @@ main::@return: scope:[main]  from main::@4
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte[]) text1 ← (const string) $0
-  (byte[]) text2 ← (const string) $1
   (byte) textid#2 ← (number) 0
   to:@2
 
@@ -83,12 +81,12 @@ nexttext: scope:[nexttext]  from main::@1
 nexttext::@1: scope:[nexttext]  from nexttext
   (byte) textid#13 ← phi( nexttext/(byte) textid#3 )
   (byte**) nexttext::textp#1 ← phi( nexttext/(byte**) nexttext::textp#3 )
-  *((byte**) nexttext::textp#1) ← (byte[]) text1
+  *((byte**) nexttext::textp#1) ← (const byte[]) text1
   to:nexttext::@return
 nexttext::@3: scope:[nexttext]  from nexttext
   (byte) textid#14 ← phi( nexttext/(byte) textid#3 )
   (byte**) nexttext::textp#2 ← phi( nexttext/(byte**) nexttext::textp#3 )
-  *((byte**) nexttext::textp#2) ← (byte[]) text2
+  *((byte**) nexttext::textp#2) ← (const byte[]) text2
   to:nexttext::@return
 nexttext::@return: scope:[nexttext]  from nexttext::@1 nexttext::@3
   (byte) textid#9 ← phi( nexttext::@1/(byte) textid#13 nexttext::@3/(byte) textid#14 )
@@ -106,8 +104,6 @@ nexttext::@return: scope:[nexttext]  from nexttext::@1 nexttext::@3
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "camelot "
-(const string) $1 = (string) "rex "
 (label) @1
 (label) @2
 (label) @3
@@ -158,8 +154,8 @@ SYMBOL TABLE SSA
 (byte**) nexttext::textp#1
 (byte**) nexttext::textp#2
 (byte**) nexttext::textp#3
-(byte[]) text1
-(byte[]) text2
+(const byte[]) text1 = (string) "camelot "
+(const byte[]) text2 = (string) "rex "
 (byte) textid
 (byte) textid#0
 (byte) textid#1
@@ -229,15 +225,13 @@ Identical Phi Values (byte) textid#10 (byte) textid#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$3 [12] if((byte) 0!=*((byte*) main::text#3)) goto main::@3
 Simple Condition (bool~) main::$2 [20] if((byte) main::i#1!=rangelast(0,$14)) goto main::@1
-Simple Condition (bool~) nexttext::$1 [31] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1
+Simple Condition (bool~) nexttext::$1 [29] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [5] (byte**) nexttext::textp#0 ← & (byte*) main::text#2
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte**) nexttext::textp#0 = &main::text#2
-Constant (const byte[]) text1 = $0
-Constant (const byte[]) text2 = $1
 Constant (const byte) textid#15 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [18] main::i#1 ← ++ main::i#5 to ++
@@ -254,8 +248,6 @@ Inlining constant with var siblings (const byte) textid#15
 Constant inlined main::screen#0 = (byte*) 1024
 Constant inlined main::i#0 = (byte) 0
 Constant inlined textid#15 = (byte) 0
-Constant inlined $0 = (const byte[]) text1
-Constant inlined $1 = (const byte[]) text2
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@10(between main::@4 and main::@1)
 Adding NOP phi() at start of @begin

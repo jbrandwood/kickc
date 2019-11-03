@@ -9,7 +9,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
   (word) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -19,7 +18,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (word) main::i#3 ← phi( main::@1/(word) main::i#2 )
-  *((byte*) main::screen + (word) main::i#3) ← (byte) 'a'
+  *((const byte*) main::screen + (word) main::i#3) ← (byte) 'a'
   (word) main::i#1 ← (word) main::i#3 + (number) $28
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -47,13 +46,12 @@ SYMBOL TABLE SSA
 (word) main::i#1
 (word) main::i#2
 (word) main::i#3
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
 Adding number conversion cast (unumber) 0 in (word) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) $3e8 in (bool~) main::$0 ← (word) main::i#2 < (number) $3e8
 Adding number conversion cast (unumber) $28 in (word) main::i#1 ← (word) main::i#3 + (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Inlining cast (word) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -67,12 +65,11 @@ Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (word) main::i#2 = (word) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [4] if((word) main::i#2<(word) $3e8) goto main::@2
+Simple Condition (bool~) main::$0 [3] if((word) main::i#2<(word) $3e8) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const word) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [6] *((const byte*) main::screen + (word) main::i#2) ← (byte) 'a'
+De-inlining pointer[w] to *(pointer+w)   [5] *((const byte*) main::screen + (word) main::i#2) ← (byte) 'a'
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Inlining constant with var siblings (const word) main::i#0
 Constant inlined main::i#0 = (byte) 0

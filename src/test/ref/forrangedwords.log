@@ -7,15 +7,14 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (word) main::w#0 ← (word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (word) main::w#2 ← phi( main/(word) main::w#0 main::@1/(word) main::w#1 )
   (byte~) main::$0 ← < (word) main::w#2
-  *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
+  *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
   (byte~) main::$1 ← > (word) main::w#2
-  *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
+  *((const byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
   (word) main::w#1 ← (word) main::w#2 + rangenext(0,$ffff)
   (bool~) main::$2 ← (word) main::w#1 != rangelast(0,$ffff)
   if((bool~) main::$2) goto main::@1
@@ -26,9 +25,9 @@ main::@2: scope:[main]  from main::@1
 main::@3: scope:[main]  from main::@2 main::@3
   (signed word) main::sw#2 ← phi( main::@2/(signed word) main::sw#0 main::@3/(signed word) main::sw#1 )
   (byte~) main::$3 ← < (signed word) main::sw#2
-  *((byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
+  *((const byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
   (byte~) main::$4 ← > (signed word) main::sw#2
-  *((byte*) main::SCREEN + (number) 4) ← (byte~) main::$4
+  *((const byte*) main::SCREEN + (number) 4) ← (byte~) main::$4
   (signed word) main::sw#1 ← (signed word) main::sw#2 + rangenext(-$7fff,$7ffe)
   (bool~) main::$5 ← (signed word) main::sw#1 != rangelast(-$7fff,$7ffe)
   if((bool~) main::$5) goto main::@3
@@ -59,7 +58,7 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (signed word) main::sw
 (signed word) main::sw#0
 (signed word) main::sw#1
@@ -69,13 +68,11 @@ SYMBOL TABLE SSA
 (word) main::w#1
 (word) main::w#2
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
-Adding number conversion cast (unumber) 3 in *((byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
-Adding number conversion cast (unumber) 4 in *((byte*) main::SCREEN + (number) 4) ← (byte~) main::$4
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
+Adding number conversion cast (unumber) 3 in *((const byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
+Adding number conversion cast (unumber) 4 in *((const byte*) main::SCREEN + (number) 4) ← (byte~) main::$4
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -87,18 +84,17 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$2 [9] if((word) main::w#1!=rangelast(0,$ffff)) goto main::@1
-Simple Condition (bool~) main::$5 [18] if((signed word) main::sw#1!=rangelast(-$7fff,$7ffe)) goto main::@3
+Simple Condition (bool~) main::$2 [8] if((word) main::w#1!=rangelast(0,$ffff)) goto main::@1
+Simple Condition (bool~) main::$5 [17] if((signed word) main::sw#1!=rangelast(-$7fff,$7ffe)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const word) main::w#0 = 0
 Constant (const signed word) main::sw#0 = -$7fff
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [7] main::w#1 ← ++ main::w#2 to ++
-Resolved ranged comparison value [9] if(main::w#1!=rangelast(0,$ffff)) goto main::@1 to (number) 0
-Resolved ranged next value [16] main::sw#1 ← ++ main::sw#2 to ++
-Resolved ranged comparison value [18] if(main::sw#1!=rangelast(-$7fff,$7ffe)) goto main::@3 to (number) $7fff
-Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$0
+Resolved ranged next value [6] main::w#1 ← ++ main::w#2 to ++
+Resolved ranged comparison value [8] if(main::w#1!=rangelast(0,$ffff)) goto main::@1 to (number) 0
+Resolved ranged next value [15] main::sw#1 ← ++ main::sw#2 to ++
+Resolved ranged comparison value [17] if(main::sw#1!=rangelast(-$7fff,$7ffe)) goto main::@3 to (number) $7fff
+Simplifying expression containing zero main::SCREEN in [3] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding number conversion cast (unumber) 0 in if((word) main::w#1!=(number) 0) goto main::@1
 Adding number conversion cast (snumber) $7fff in if((signed word) main::sw#1!=(number) $7fff) goto main::@3

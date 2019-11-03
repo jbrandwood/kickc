@@ -4,20 +4,17 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) SCREEN2 ← ((byte*)) (number) $400+(number) $28
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte[]) main::txt ← (const string) main::$1
   (byte[]) main::data ← { (number) 1, (number) 2, (number) 3 }
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) SCREEN + (byte) main::i#2) ← *((byte[]) main::txt + (byte) main::i#2)
-  *((byte*) SCREEN2 + (byte) main::i#2) ← *((byte[]) main::data + (byte) main::i#2)
+  *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) main::txt + (byte) main::i#2)
+  *((const byte*) SCREEN2 + (byte) main::i#2) ← *((byte[]) main::data + (byte) main::i#2)
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,3)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,3)
   if((bool~) main::$0) goto main::@1
@@ -37,11 +34,10 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte*) SCREEN2
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte*) SCREEN2 = (byte*)(number) $400+(number) $28
 (void()) main()
 (bool~) main::$0
-(const string) main::$1 = (string) "qwe"z
 (label) main::@1
 (label) main::@return
 (byte[]) main::data
@@ -49,32 +45,24 @@ SYMBOL TABLE SSA
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
-(byte[]) main::txt
+(const byte[]) main::txt = (string) "qwe"z
 
 Added casts to value list in (byte[]) main::data ← (byte[]){ (byte)(number) 1, (byte)(number) 2, (byte)(number) 3 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) SCREEN2 ← (byte*)(number) $400+(number) $28
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$0 [10] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
+Simple Condition (bool~) main::$0 [7] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [1] (byte*) SCREEN2 ← (byte*)(number) $400+(number) $28
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (byte[]) { (byte) 1, (byte) 2, (byte) 3 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) SCREEN2 = (byte*)$400+$28
-Constant (const byte[]) main::txt = main::$1
 Constant (const byte[]) main::data = { 1, 2, 3 }
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [8] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [10] if(main::i#1!=rangelast(0,3)) goto main::@1 to (number) 4
+Resolved ranged next value [5] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [7] if(main::i#1!=rangelast(0,3)) goto main::@1 to (number) 4
 Adding number conversion cast (unumber) 4 in if((byte) main::i#1!=(number) 4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
@@ -82,7 +70,6 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::$1 = (const byte[]) main::txt
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)

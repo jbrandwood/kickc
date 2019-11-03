@@ -90,7 +90,6 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
                      binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
                      modified.set(true);
                   }
-
                }
             }
          }

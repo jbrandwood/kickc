@@ -1,4 +1,4 @@
-Fixing pointer array-indexing *((word*) main::screen + (byte) main::i)
+Fixing pointer array-indexing *((const word*) main::screen + (byte) main::i)
 Culled Empty Block (label) mul8u::@5
 Culled Empty Block (label) mul8u::@6
 Culled Empty Block (label) mul8u::@8
@@ -65,7 +65,6 @@ mul8u::@return: scope:[mul8u]  from mul8u::@3
 
 (void()) main()
 main: scope:[main]  from @6
-  (word*) main::screen ← ((word*)) (number) $400
   (byte) main::i#0 ← (number) 0
   (byte) main::a#0 ← (byte) 0
   to:main::@1
@@ -90,7 +89,7 @@ main::@5: scope:[main]  from main::@2
   (word) mul8u::return#4 ← phi( main::@2/(word) mul8u::return#2 )
   (word~) main::$0 ← (word) mul8u::return#4
   (byte~) main::$3 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
-  *((word*) main::screen + (byte~) main::$3) ← (word~) main::$0
+  *((const word*) main::screen + (byte~) main::$3) ← (word~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
   (byte) main::b#1 ← (byte) main::b#3 + rangenext(0,5)
   (bool~) main::$1 ← (byte) main::b#1 != rangelast(0,5)
@@ -148,7 +147,7 @@ SYMBOL TABLE SSA
 (byte) main::i#3
 (byte) main::i#4
 (byte) main::i#5
-(word*) main::screen
+(const word*) main::screen = (word*)(number) $400
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
 (bool~) mul8u::$0
 (number~) mul8u::$1
@@ -206,16 +205,15 @@ Adding number conversion cast (unumber) 1 in (word~) mul8u::$6 ← (word) mul8u:
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (word) mul8u::res#0 ← (unumber)(number) 0
-Inlining cast (word*) main::screen ← (word*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (word*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
@@ -251,19 +249,18 @@ Identical Phi Values (byte) main::a#2 (byte) main::a#4
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) mul8u::$0 [5] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2
 Simple Condition (bool~) mul8u::$3 [10] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@4
-Simple Condition (bool~) main::$1 [41] if((byte) main::b#1!=rangelast(0,5)) goto main::@2
-Simple Condition (bool~) main::$2 [45] if((byte) main::a#1!=rangelast(0,5)) goto main::@1
+Simple Condition (bool~) main::$1 [40] if((byte) main::b#1!=rangelast(0,5)) goto main::@2
+Simple Condition (bool~) main::$2 [44] if((byte) main::a#1!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const word) mul8u::res#0 = 0
-Constant (const word*) main::screen = (word*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::a#0 = 0
 Constant (const byte) main::b#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [39] main::b#1 ← ++ main::b#2 to ++
-Resolved ranged comparison value [41] if(main::b#1!=rangelast(0,5)) goto main::@2 to (number) 6
-Resolved ranged next value [43] main::a#1 ← ++ main::a#4 to ++
-Resolved ranged comparison value [45] if(main::a#1!=rangelast(0,5)) goto main::@1 to (number) 6
+Resolved ranged next value [38] main::b#1 ← ++ main::b#2 to ++
+Resolved ranged comparison value [40] if(main::b#1!=rangelast(0,5)) goto main::@2 to (number) 6
+Resolved ranged next value [42] main::a#1 ← ++ main::a#4 to ++
+Resolved ranged comparison value [44] if(main::a#1!=rangelast(0,5)) goto main::@1 to (number) 6
 Adding number conversion cast (unumber) 6 in if((byte) main::b#1!=(number) 6) goto main::@2
 Adding number conversion cast (unumber) 6 in if((byte) main::a#1!=(number) 6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions

@@ -2,7 +2,6 @@ Setting inferred volatile on symbol affected by address-of (byte**~) main::$0 �
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte*) ptr#0 ← ((byte*)) (number) $1000
   to:@1
 
@@ -14,7 +13,7 @@ main: scope:[main]  from @1
   (word) main::w#0 ← (word~) main::$1
   (word) main::w#1 ← (word) main::w#0 + (number) $32
   (byte~) main::$2 ← < (word) main::w#1
-  *((byte*) SCREEN + (number) 0) ← (byte~) main::$2
+  *((const byte*) SCREEN + (number) 0) ← (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -32,7 +31,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (byte**~) main::$0
 (word~) main::$1
@@ -47,9 +46,8 @@ SYMBOL TABLE SSA
 (byte*) ptr#2
 
 Adding number conversion cast (unumber) $32 in (word) main::w#1 ← (word) main::w#0 + (number) $32
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte~) main::$2
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte~) main::$2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte*) ptr#0 ← (byte*)(number) $1000
 Inlining cast (word~) main::$1 ← (word)(byte**~) main::$0
 Successful SSA optimization Pass2InlineCast
@@ -66,14 +64,13 @@ Alias (byte*) ptr#0 = (byte*) ptr#2
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) ptr#1 (byte*) ptr#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [3] (byte**~) main::$0 ← & (byte*) ptr#0
+Constant right-side identified [2] (byte**~) main::$0 ← & (byte*) ptr#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte**) main::$0 = &ptr#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) main::w#0 = (word)main::$0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [8] *((const byte*) SCREEN + (byte) 0) ← (byte~) main::$2
+Simplifying expression containing zero SCREEN in [7] *((const byte*) SCREEN + (byte) 0) ← (byte~) main::$2
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [1] (word) main::w#1 ← (const word) main::w#0 + (byte) $32
 Successful SSA optimization Pass2ConstantRValueConsolidation

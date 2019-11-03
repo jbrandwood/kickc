@@ -77,7 +77,6 @@ world::@return: scope:[world]  from world::@1
   return 
   to:@return
 @4: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) idx#4 ← (number) 0
   to:@5
 
@@ -91,7 +90,7 @@ print::@1: scope:[print]  from print print::@1
   (byte) idx#11 ← phi( print/(byte) idx#15 print::@1/(byte) idx#5 )
   (byte) print::i#2 ← phi( print/(byte) print::i#0 print::@1/(byte) print::i#1 )
   (byte*) print::msg#2 ← phi( print/(byte*) print::msg#3 print::@1/(byte*) print::msg#2 )
-  *((byte*) SCREEN + (byte) idx#11) ← *((byte*) print::msg#2 + (byte) print::i#2)
+  *((const byte*) SCREEN + (byte) idx#11) ← *((byte*) print::msg#2 + (byte) print::i#2)
   (byte) idx#5 ← ++ (byte) idx#11
   (byte) print::i#1 ← ++ (byte) print::i#2
   (bool~) print::$0 ← (number) 0 != *((byte*) print::msg#2 + (byte) print::i#1)
@@ -116,7 +115,7 @@ SYMBOL TABLE SSA
 (label) @6
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) do10((void()*) do10::fn)
 (bool~) do10::$1
 (label) do10::@1
@@ -180,7 +179,6 @@ Adding number conversion cast (unumber) 0 in (byte) idx#4 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) print::i#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) print::$0 ← (number) 0 != *((byte*) print::msg#2 + (byte) print::i#1)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) idx#4 ← (unumber)(number) 0
 Inlining cast (byte) print::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
@@ -210,7 +208,7 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte) idx#15 (byte) idx#16
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) do10::$1 [13] if((byte) do10::i#1!=rangelast(0,9)) goto do10::@1
-Simple Condition (bool~) print::$0 [40] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1
+Simple Condition (bool~) print::$0 [39] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [0] (void()*) do10::fn#0 ← & (void()) hello()
 Constant right-side identified [3] (void()*) do10::fn#1 ← & (void()) world()
@@ -220,7 +218,6 @@ Constant (const void()*) do10::fn#1 = &world
 Constant (const byte) do10::i#0 = 0
 Constant (const byte*) print::msg#0 = hello::msg
 Constant (const byte*) print::msg#1 = world::msg
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) print::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [11] do10::i#1 ← ++ do10::i#2 to ++

@@ -23,8 +23,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@4
 @4: scope:[]  from @begin
-  (byte*) HEAP_TOP ← ((byte*)) (number) $a000
-  (byte*) heap_head#0 ← (byte*) HEAP_TOP
+  (byte*) heap_head#0 ← (const byte*) HEAP_TOP
   to:@12
 
 (void*()) malloc((word) malloc::size)
@@ -92,7 +91,7 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(byte*) HEAP_TOP
+(const byte*) HEAP_TOP = (byte*)(number) $a000
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
@@ -140,7 +139,6 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) $200 in (word) malloc::size#0 ← (number) $200
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) HEAP_TOP ← (byte*)(number) $a000
 Inlining cast (void*) malloc::return#0 ← (void*)(byte*) malloc::mem#0
 Inlining cast (word) malloc::size#0 ← (unumber)(number) $200
 Inlining cast (word*) WORDS#0 ← (word*)(void*~) $0
@@ -150,27 +148,27 @@ Simplifying constant integer cast $200
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $200
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte*) HEAP_TOP = (byte*) heap_head#0 (byte*) heap_head#7 
 Alias (byte*) malloc::mem#0 = (byte*~) malloc::$0 
 Alias (void*) malloc::return#0 = (void*) malloc::return#3 (void*) malloc::return#1 
 Alias (byte*) heap_head#1 = (byte*) heap_head#5 (byte*) heap_head#2 
+Alias (byte*) heap_head#0 = (byte*) heap_head#7 
 Alias (void*) malloc::return#2 = (void*) malloc::return#4 
 Alias (byte*) heap_head#3 = (byte*) heap_head#6 
 Alias (word*) WORDS#0 = (word*) WORDS#2 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) heap_head#4 (byte*) HEAP_TOP
+Identical Phi Values (byte*) heap_head#4 (byte*) heap_head#0
 Identical Phi Values (word) malloc::size#1 (word) malloc::size#0
 Identical Phi Values (byte*) heap_head#3 (byte*) heap_head#1
 Identical Phi Values (word*) WORDS#1 (word*) WORDS#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [27] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
+Simple Condition (bool~) main::$0 [26] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) HEAP_TOP = (byte*) 40960
+Constant (const byte*) heap_head#0 = HEAP_TOP
 Constant (const word) malloc::size#0 = $200
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [25] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [27] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
+Resolved ranged next value [24] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [26] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
 Eliminating unused variable (byte*) heap_head#1 and assignment [1] (byte*) heap_head#1 ← (byte*) malloc::mem#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) 0 in if((byte) main::i#1!=(number) 0) goto main::@1
@@ -179,9 +177,9 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) malloc::mem#0 ← (const byte*) HEAP_TOP - (const word) malloc::size#0
+Constant right-side identified [0] (byte*) malloc::mem#0 ← (const byte*) heap_head#0 - (const word) malloc::size#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) malloc::mem#0 = HEAP_TOP-malloc::size#0
+Constant (const byte*) malloc::mem#0 = heap_head#0-malloc::size#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) malloc::return#0 = (void*)malloc::mem#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -196,6 +194,7 @@ Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings (const void*) malloc::return#2
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const word*) main::w#0
+Constant inlined heap_head#0 = (const byte*) HEAP_TOP
 Constant inlined main::i#0 = (byte) 0
 Constant inlined malloc::return#2 = (const void*) malloc::return#0
 Constant inlined $0 = (const void*) malloc::return#0

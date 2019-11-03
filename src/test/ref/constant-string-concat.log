@@ -7,13 +7,11 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte[]) main::s ← (const string) main::$1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) main::SCREEN + (byte) main::i#2) ← *((byte[]) main::s + (byte) main::i#2)
+  *((const byte*) main::SCREEN + (byte) main::i#2) ← *((const byte[]) main::s + (byte) main::i#2)
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,7)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,7)
   if((bool~) main::$0) goto main::@1
@@ -35,28 +33,23 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (bool~) main::$0
-(const string) main::$1 = (string) "camelot"
 (label) main::@1
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
-(byte[]) main::s
+(const byte[]) main::s = (string) "camelot"
 
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$0 [7] if((byte) main::i#1!=rangelast(0,7)) goto main::@1
+Simple Condition (bool~) main::$0 [5] if((byte) main::i#1!=rangelast(0,7)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[]) main::s = main::$1
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [5] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [7] if(main::i#1!=rangelast(0,7)) goto main::@1 to (number) 8
+Resolved ranged next value [3] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [5] if(main::i#1!=rangelast(0,7)) goto main::@1 to (number) 8
 Adding number conversion cast (unumber) 8 in if((byte) main::i#1!=(number) 8) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 8
@@ -64,7 +57,6 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::$1 = (const byte[]) main::s
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)

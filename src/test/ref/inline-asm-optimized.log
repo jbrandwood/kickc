@@ -1,14 +1,13 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  *((byte*) SCREEN) ← (number) 0
+  *((const byte*) SCREEN) ← (number) 0
   asm { lda#0 staSCREEN+1 lda#0 staSCREEN+2  }
-  *((byte*) SCREEN + (number) 3) ← (number) 0
+  *((const byte*) SCREEN + (number) 3) ← (number) 0
   asm { lda#0 staSCREEN+4  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -26,17 +25,16 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 3) ← (number) 0
-Adding number conversion cast (unumber) 3 in *((byte*) SCREEN + (number) 3) ← ((unumber)) (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 3) ← (number) 0
+Adding number conversion cast (unumber) 3 in *((const byte*) SCREEN + (number) 3) ← ((unumber)) (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast *((byte*) SCREEN) ← (unumber)(number) 0
-Inlining cast *((byte*) SCREEN + (unumber)(number) 3) ← (unumber)(number) 0
+Inlining cast *((const byte*) SCREEN) ← (unumber)(number) 0
+Inlining cast *((const byte*) SCREEN + (unumber)(number) 3) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -47,8 +45,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) SCREEN = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
 Consolidated array index constant in *(SCREEN+3)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin

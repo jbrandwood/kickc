@@ -6,19 +6,18 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::a#0 ← (number) 3
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::a#2 ← phi( main/(byte) main::a#0 main::@1/(byte) main::a#1 )
-  *((byte*) main::SCREEN + (byte) main::a#2) ← (byte) main::a#2
+  *((const byte*) main::SCREEN + (byte) main::a#2) ← (byte) main::a#2
   (byte) main::a#1 ← ++ (byte) main::a#2
   (bool~) main::$0 ← (byte) main::a#1 < (number) $e
   unroll if((bool~) main::$0) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte) main::a#3 ← phi( main::@1/(byte) main::a#1 )
-  *((byte*) main::SCREEN + (byte) main::a#3) ← (byte) main::a#3
+  *((const byte*) main::SCREEN + (byte) main::a#3) ← (byte) main::a#3
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -40,7 +39,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::a
 (byte) main::a#0
 (byte) main::a#1
@@ -50,7 +49,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 3 in (byte) main::a#0 ← (number) 3
 Adding number conversion cast (unumber) $e in (bool~) main::$0 ← (byte) main::a#1 < (number) $e
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::a#0 ← (unumber)(number) 3
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -62,9 +60,8 @@ Finalized unsigned number type (byte) $e
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::a#1 = (byte) main::a#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [6] unroll if((byte) main::a#1<(byte) $e) goto main::@1
+Simple Condition (bool~) main::$0 [5] unroll if((byte) main::a#1<(byte) $e) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::a#0 = 3
 Successful SSA optimization Pass2ConstantIdentification
 Unrolling loop Loop head: main::@1 tails: main::@1 blocks: main::@1 

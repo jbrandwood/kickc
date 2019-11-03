@@ -1,10 +1,9 @@
-Fixing pointer array-indexing *((signed word*) SCREEN + (number) 0)
-Fixing pointer array-indexing *((signed word*) SCREEN + (number) 1)
+Fixing pointer array-indexing *((const signed word*) SCREEN + (number) 0)
+Fixing pointer array-indexing *((const signed word*) SCREEN + (number) 1)
 Culled Empty Block (label) next::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (signed word*) SCREEN ← ((signed word*)) (number) $400
   to:@1
 
 (void()) main()
@@ -12,10 +11,10 @@ main: scope:[main]  from @2
   (signed word) current#7 ← phi( @2/(signed word) current#8 )
   (signed word~) main::$0 ← call next 
   (number~) main::$2 ← (number) 0 * (const byte) SIZEOF_SIGNED_WORD
-  *((signed word*) SCREEN + (number~) main::$2) ← (signed word~) main::$0
+  *((const signed word*) SCREEN + (number~) main::$2) ← (signed word~) main::$0
   (signed word~) main::$1 ← call next 
   (number~) main::$3 ← (number) 1 * (const byte) SIZEOF_SIGNED_WORD
-  *((signed word*) SCREEN + (number~) main::$3) ← (signed word~) main::$1
+  *((const signed word*) SCREEN + (number~) main::$3) ← (signed word~) main::$1
   to:main::@return
 main::@return: scope:[main]  from main
   (signed word) current#4 ← phi( main/(signed word) current#7 )
@@ -52,7 +51,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(signed word*) SCREEN
+(const signed word*) SCREEN = (signed word*)(number) $400
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
 (signed word) current
 (signed word) current#0
@@ -82,7 +81,6 @@ Adding number conversion cast (unumber) 1 in (number~) main::$3 ← (number) 1 *
 Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (unumber)(number) 1 * (const byte) SIZEOF_SIGNED_WORD
 Adding number conversion cast (snumber) $30 in (signed word) current#1 ← (number) $30
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (signed word*) SCREEN ← (signed word*)(number) $400
 Inlining cast (signed word) current#1 ← (snumber)(number) $30
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (signed word*) 1024
@@ -104,17 +102,16 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (signed word) current#0 (signed word) current#1
 Identical Phi Values (signed word) current#3 (signed word) current#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [3] (byte~) main::$2 ← (byte) 0 * (const byte) SIZEOF_SIGNED_WORD
-Constant right-side identified [6] (byte~) main::$3 ← (byte) 1 * (const byte) SIZEOF_SIGNED_WORD
+Constant right-side identified [2] (byte~) main::$2 ← (byte) 0 * (const byte) SIZEOF_SIGNED_WORD
+Constant right-side identified [5] (byte~) main::$3 ← (byte) 1 * (const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const signed word*) SCREEN = (signed word*) 1024
 Constant (const byte) main::$2 = 0*SIZEOF_SIGNED_WORD
 Constant (const byte) main::$3 = 1*SIZEOF_SIGNED_WORD
 Constant (const signed word) current#1 = $30
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_SIGNED_WORD in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN in [4] *((const signed word*) SCREEN + (const byte) main::$2) ← (signed word~) main::$0
+Simplifying expression containing zero SCREEN in [3] *((const signed word*) SCREEN + (const byte) main::$2) ← (signed word~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (signed word) current#2 and assignment [7] (signed word) current#2 ← ++ (signed word) current#5
 Eliminating unused constant (const byte) main::$2
@@ -218,8 +215,8 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
+  .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label current = 2
   // @begin
@@ -341,8 +338,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
+  .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label current = 2
   // @begin
@@ -482,8 +479,8 @@ Score: 110
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
+  .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label current = 2
   // @begin

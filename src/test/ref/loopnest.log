@@ -5,7 +5,6 @@ Culled Empty Block (label) nest::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@2
 
 (void()) main()
@@ -32,7 +31,7 @@ nest: scope:[nest]  from main::@1
   to:nest::@1
 nest::@1: scope:[nest]  from nest nest::@1
   (byte) nest::j#2 ← phi( nest/(byte) nest::j#0 nest::@1/(byte) nest::j#1 )
-  *((byte*) SCREEN) ← (byte) nest::j#2
+  *((const byte*) SCREEN) ← (byte) nest::j#2
   (byte) nest::j#1 ← -- (byte) nest::j#2
   (bool~) nest::$0 ← (byte) nest::j#1 > (number) 0
   if((bool~) nest::$0) goto nest::@1
@@ -52,7 +51,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$1
 (label) main::@1
@@ -77,7 +76,6 @@ Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (byte) main::i
 Adding number conversion cast (unumber) $64 in (byte) nest::j#0 ← (number) $64
 Adding number conversion cast (unumber) 0 in (bool~) nest::$0 ← (byte) nest::j#1 > (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) $64
 Inlining cast (byte) nest::j#0 ← (unumber)(number) $64
 Successful SSA optimization Pass2InlineCast
@@ -94,10 +92,9 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [7] if((byte) main::i#1>(byte) 0) goto main::@1
-Simple Condition (bool~) nest::$0 [14] if((byte) nest::j#1>(byte) 0) goto nest::@1
+Simple Condition (bool~) main::$1 [6] if((byte) main::i#1>(byte) 0) goto main::@1
+Simple Condition (bool~) nest::$0 [13] if((byte) nest::j#1>(byte) 0) goto nest::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = $64
 Constant (const byte) nest::j#0 = $64
 Successful SSA optimization Pass2ConstantIdentification

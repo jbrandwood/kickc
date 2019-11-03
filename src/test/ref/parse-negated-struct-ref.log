@@ -4,6 +4,7 @@ Converted struct value to member variables (struct A) aa
 Adding struct value list initializer (byte) aa_b ← (number) 1
 Rewriting struct pointer member access *((struct A*) main::a).b
 Warning! Adding boolean cast to non-boolean sub-expression *((byte*) main::$3)
+Identified constant variable (byte) A::b
 Adding versioned struct unwinding for (struct A) aa#0
 
 CONTROL FLOW GRAPH SSA
@@ -15,7 +16,6 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (struct A) aa#1 ← phi( @1/(struct A) aa#2 )
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (struct A*~) main::$0 ← & (struct A) aa#1
   (struct A*) main::a#0 ← (struct A*~) main::$0
   (byte*) main::$3 ← (byte*)(struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B
@@ -28,7 +28,7 @@ main::@1: scope:[main]  from main main::@2
   asm { jmp!a+ !a:  }
   to:main::@return
 main::@2: scope:[main]  from main
-  *((byte*) main::SCREEN) ← (byte) 'a'
+  *((const byte*) main::SCREEN) ← (byte) 'a'
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -46,7 +46,6 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte) A::b
 (const byte) OFFSET_STRUCT_A_B = (byte) 0
 (struct A) aa
 (struct A) aa#0
@@ -63,7 +62,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (struct A*) main::a
 (struct A*) main::a#0
 
@@ -71,36 +70,34 @@ Adding number conversion cast (unumber) 1 in (byte) aa_b#0 ← (number) 1
 Adding number conversion cast (unumber) 0 in (bool~) main::$4 ← (number) 0 != *((byte*) main::$3)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) aa_b#0 ← (unumber)(number) 1
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [8] (bool~) main::$1 ← (byte) 0 == *((byte*) main::$3) from [7] (bool~) main::$4 ← (byte) 0 != *((byte*) main::$3)
-Inversing boolean not [9] (bool~) main::$2 ← (byte) 0 != *((byte*) main::$3) from [8] (bool~) main::$1 ← (byte) 0 == *((byte*) main::$3)
+Inversing boolean not [7] (bool~) main::$1 ← (byte) 0 == *((byte*) main::$3) from [6] (bool~) main::$4 ← (byte) 0 != *((byte*) main::$3)
+Inversing boolean not [8] (bool~) main::$2 ← (byte) 0 != *((byte*) main::$3) from [7] (bool~) main::$1 ← (byte) 0 == *((byte*) main::$3)
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (struct A*) main::a#0 = (struct A*~) main::$0 
 Alias (struct A) aa#0 = (struct A) aa#2 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (struct A) aa#1 (struct A) aa#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [10] if((byte) 0!=*((byte*) main::$3)) goto main::@1
+Simple Condition (bool~) main::$2 [9] if((byte) 0!=*((byte*) main::$3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting struct address-of to first member [4] (struct A*) main::a#0 ← (struct A*)&(byte) aa_b#0
+Rewriting struct address-of to first member [3] (struct A*) main::a#0 ← (struct A*)&(byte) aa_b#0
 Successful SSA optimization PassNStructAddressOfRewriting
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const struct A*) main::a#0 = (struct A*)&aa_b#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)main::a#0 in [6] (byte*) main::$3 ← (byte*)(const struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B
+Constant value identified (byte*)main::a#0 in [5] (byte*) main::$3 ← (byte*)(const struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B
 Successful SSA optimization Pass2ConstantValues
-Converting *(pointer+n) to pointer[n] [10] if((byte) 0!=*((byte*) main::$3)) goto main::@1  -- *((byte*)main::a#0 + OFFSET_STRUCT_A_B)
+Converting *(pointer+n) to pointer[n] [9] if((byte) 0!=*((byte*) main::$3)) goto main::@1  -- *((byte*)main::a#0 + OFFSET_STRUCT_A_B)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)main::a#0 in [6] (byte*) main::$3 ← (byte*)(const struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B
-Simplifying expression containing zero (byte*)main::a#0 in [10] if((byte) 0!=*((byte*)(const struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B)) goto main::@1
+Simplifying expression containing zero (byte*)main::a#0 in [5] (byte*) main::$3 ← (byte*)(const struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B
+Simplifying expression containing zero (byte*)main::a#0 in [9] if((byte) 0!=*((byte*)(const struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B)) goto main::@1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (struct A) aa#0 and assignment [1] (struct A) aa#0 ← struct-unwound {(byte) aa_b#0}
 Eliminating unused variable (byte*) main::$3 and assignment [2] (byte*) main::$3 ← (byte*)(const struct A*) main::a#0
@@ -145,7 +142,6 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) A::b
 (struct A) aa
 (byte) aa_b
 (byte) aa_b#0 20.0
@@ -313,7 +309,6 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte) A::b
 (struct A) aa
 (byte) aa_b
 (byte) aa_b#0 aa_b zp[1]:2 20.0

@@ -13,7 +13,7 @@ Warning! Adding boolean cast to non-boolean sub-expression (byte) frame_cnt
 Identified constant variable (byte*) BITMAP
 Identified constant variable (byte*) SCREEN
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call (byte~) main::$6 ← call toD018 (byte*) SCREEN (byte*) BITMAP 
+Inlined call (byte~) main::$3 ← call toD018 (const byte*) SCREEN (const byte*) BITMAP 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
@@ -36,6 +36,7 @@ Culled Empty Block (label) mul16u::@8
 Culled Empty Block (label) mul16u::@9
 Culled Empty Block (label) @16
 Culled Empty Block (label) mul16s::@5
+Culled Empty Block (label) @17
 Culled Empty Block (label) @18
 Culled Empty Block (label) sin16s_gen2::@4
 Culled Empty Block (label) sin16s_gen2::@3
@@ -72,30 +73,10 @@ Culled Empty Block (label) @36
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) PROCPORT_DDR ← ((byte*)) (number) 0
-  (byte) PROCPORT_DDR_MEMORY_MASK ← (number) 7
-  (byte*) PROCPORT ← ((byte*)) (number) 1
-  (byte) PROCPORT_RAM_IO ← (number) 5
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) VIC_CONTROL ← ((byte*)) (number) $d011
-  (byte*) D011 ← ((byte*)) (number) $d011
-  (byte) VIC_BMM ← (number) $20
-  (byte) VIC_DEN ← (number) $10
-  (byte) VIC_RSEL ← (number) 8
-  (byte*) D018 ← ((byte*)) (number) $d018
-  (byte*) IRQ_STATUS ← ((byte*)) (number) $d019
-  (byte*) IRQ_ENABLE ← ((byte*)) (number) $d01a
-  (byte) IRQ_RASTER ← (number) 1
-  (byte*) CIA1_INTERRUPT ← ((byte*)) (number) $dc0d
-  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-  (void()**) HARDWARE_IRQ ← ((void()**)) (number) $fffe
-  (byte) BLACK ← (number) 0
-  (byte) WHITE ← (number) 1
   to:@6
 @6: scope:[]  from @begin
   (word) rem16u#0 ← (number) 0
-  to:@17
+  to:@28
 
 (word()) divr16u((word) divr16u::dividend , (word) divr16u::divisor , (word) divr16u::rem)
 divr16u: scope:[divr16u]  from div32u16u div32u16u::@2
@@ -328,12 +309,6 @@ mul16s::@return: scope:[mul16s]  from mul16s::@2
   (signed dword) mul16s::return#1 ← (signed dword) mul16s::return#5
   return 
   to:@return
-@17: scope:[]  from @6
-  (word) rem16u#40 ← phi( @6/(word) rem16u#0 )
-  (dword) PI2_u4f28 ← (number) $6487ed51
-  (dword) PI_u4f28 ← (number) $3243f6a9
-  (dword) PI_HALF_u4f28 ← (number) $1921fb54
-  to:@28
 
 (void()) sin16s_gen2((signed word*) sin16s_gen2::sintab , (word) sin16s_gen2::wavelength , (signed word) sin16s_gen2::min , (signed word) sin16s_gen2::max)
 sin16s_gen2: scope:[sin16s_gen2]  from main
@@ -347,7 +322,7 @@ sin16s_gen2: scope:[sin16s_gen2]  from main
   (signed word~) sin16s_gen2::$1 ← (signed word) sin16s_gen2::ampl#0 >> (number) 1
   (signed word~) sin16s_gen2::$2 ← (signed word) sin16s_gen2::min#1 + (signed word~) sin16s_gen2::$1
   (signed word) sin16s_gen2::offs#0 ← (signed word~) sin16s_gen2::$2
-  (dword) div32u16u::dividend#0 ← (dword) PI2_u4f28
+  (dword) div32u16u::dividend#0 ← (const dword) PI2_u4f28
   (word) div32u16u::divisor#0 ← (word) sin16s_gen2::wavelength#1
   call div32u16u 
   (dword) div32u16u::return#2 ← (dword) div32u16u::return#1
@@ -436,20 +411,20 @@ sin16s_gen2::@return: scope:[sin16s_gen2]  from sin16s_gen2::@1
 sin16s: scope:[sin16s]  from sin16s_gen2::@2
   (dword) sin16s::x#3 ← phi( sin16s_gen2::@2/(dword) sin16s::x#0 )
   (byte) sin16s::isUpper#0 ← (number) 0
-  (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (dword) PI_u4f28
+  (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (const dword) PI_u4f28
   (bool~) sin16s::$1 ← ! (bool~) sin16s::$0
   if((bool~) sin16s::$1) goto sin16s::@1
   to:sin16s::@4
 sin16s::@1: scope:[sin16s]  from sin16s sin16s::@4
   (byte) sin16s::isUpper#8 ← phi( sin16s/(byte) sin16s::isUpper#0 sin16s::@4/(byte) sin16s::isUpper#1 )
   (dword) sin16s::x#4 ← phi( sin16s/(dword) sin16s::x#3 sin16s::@4/(dword) sin16s::x#1 )
-  (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (dword) PI_HALF_u4f28
+  (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (const dword) PI_HALF_u4f28
   (bool~) sin16s::$3 ← ! (bool~) sin16s::$2
   if((bool~) sin16s::$3) goto sin16s::@2
   to:sin16s::@5
 sin16s::@4: scope:[sin16s]  from sin16s
   (dword) sin16s::x#5 ← phi( sin16s/(dword) sin16s::x#3 )
-  (dword~) sin16s::$17 ← (dword) sin16s::x#5 - (dword) PI_u4f28
+  (dword~) sin16s::$17 ← (dword) sin16s::x#5 - (const dword) PI_u4f28
   (dword) sin16s::x#1 ← (dword~) sin16s::$17
   (byte) sin16s::isUpper#1 ← (number) 1
   to:sin16s::@1
@@ -536,7 +511,7 @@ sin16s::@12: scope:[sin16s]  from sin16s::@11
 sin16s::@5: scope:[sin16s]  from sin16s::@1
   (byte) sin16s::isUpper#9 ← phi( sin16s::@1/(byte) sin16s::isUpper#8 )
   (dword) sin16s::x#7 ← phi( sin16s::@1/(dword) sin16s::x#4 )
-  (dword~) sin16s::$18 ← (dword) PI_u4f28 - (dword) sin16s::x#7
+  (dword~) sin16s::$18 ← (const dword) PI_u4f28 - (dword) sin16s::x#7
   (dword) sin16s::x#2 ← (dword~) sin16s::$18
   to:sin16s::@2
 sin16s::@3: scope:[sin16s]  from sin16s::@12 sin16s::@6
@@ -622,8 +597,8 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#4
   return 
   to:@return
-@28: scope:[]  from @17
-  (word) rem16u#36 ← phi( @17/(word) rem16u#40 )
+@28: scope:[]  from @6
+  (word) rem16u#36 ← phi( @6/(word) rem16u#0 )
   (byte*) bitmap_screen#0 ← (byte*) 0
   (byte*) bitmap_gfx#0 ← (byte*) 0
   (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
@@ -764,8 +739,6 @@ bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   (byte*) bitmap_screen#25 ← phi( @28/(byte*) bitmap_screen#0 )
   (byte*) bitmap_gfx#26 ← phi( @28/(byte*) bitmap_gfx#0 )
   (word) rem16u#34 ← phi( @28/(word) rem16u#36 )
-  (byte*) BITMAP ← ((byte*)) (number) $2000
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte[$100]) plots_per_frame ← { fill( $100, 0) }
   (signed word[$200]) SINUS ← { fill( $200, 0) }
   to:@35
@@ -788,38 +761,35 @@ main::@12: scope:[main]  from main
   (byte*) bitmap_gfx#13 ← phi( main/(byte*) bitmap_gfx#18 )
   (word) rem16u#17 ← phi( main/(word) rem16u#7 )
   (word) rem16u#8 ← (word) rem16u#17
-  (byte*) bitmap_init::gfx#0 ← (byte*) BITMAP
-  (byte*) bitmap_init::screen#0 ← (byte*) SCREEN
+  (byte*) bitmap_init::gfx#0 ← (const byte*) BITMAP
+  (byte*) bitmap_init::screen#0 ← (const byte*) SCREEN
   call bitmap_init 
   to:main::@13
 main::@13: scope:[main]  from main::@12
   (byte) frame_cnt#22 ← phi( main::@12/(byte) frame_cnt#23 )
-  (word) rem16u#45 ← phi( main::@12/(word) rem16u#8 )
+  (word) rem16u#44 ← phi( main::@12/(word) rem16u#8 )
   (byte*) bitmap_screen#8 ← phi( main::@12/(byte*) bitmap_screen#2 )
   (byte*) bitmap_gfx#8 ← phi( main::@12/(byte*) bitmap_gfx#2 )
   (byte*) bitmap_gfx#3 ← (byte*) bitmap_gfx#8
   (byte*) bitmap_screen#3 ← (byte*) bitmap_screen#8
-  (byte) bitmap_clear::bgcol#0 ← (byte) BLACK
-  (byte) bitmap_clear::fgcol#0 ← (byte) WHITE
+  (byte) bitmap_clear::bgcol#0 ← (const byte) BLACK
+  (byte) bitmap_clear::fgcol#0 ← (const byte) WHITE
   call bitmap_clear 
   to:main::@14
 main::@14: scope:[main]  from main::@13
   (byte) frame_cnt#21 ← phi( main::@13/(byte) frame_cnt#22 )
   (byte*) bitmap_screen#34 ← phi( main::@13/(byte*) bitmap_screen#3 )
   (byte*) bitmap_gfx#35 ← phi( main::@13/(byte*) bitmap_gfx#3 )
-  (word) rem16u#43 ← phi( main::@13/(word) rem16u#45 )
-  (byte~) main::$3 ← (byte) VIC_BMM | (byte) VIC_DEN
-  (byte~) main::$4 ← (byte~) main::$3 | (byte) VIC_RSEL
-  (number~) main::$5 ← (byte~) main::$4 | (number) 3
-  *((byte*) D011) ← (number~) main::$5
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN
-  (byte*) main::toD0181_gfx#0 ← (byte*) BITMAP
+  (word) rem16u#42 ← phi( main::@13/(word) rem16u#44 )
+  *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+  (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
+  (byte*) main::toD0181_gfx#0 ← (const byte*) BITMAP
   to:main::toD0181
 main::toD0181: scope:[main]  from main::@14
   (byte) frame_cnt#20 ← phi( main::@14/(byte) frame_cnt#21 )
   (byte*) bitmap_screen#32 ← phi( main::@14/(byte*) bitmap_screen#34 )
   (byte*) bitmap_gfx#33 ← phi( main::@14/(byte*) bitmap_gfx#35 )
-  (word) rem16u#41 ← phi( main::@14/(word) rem16u#43 )
+  (word) rem16u#40 ← phi( main::@14/(word) rem16u#42 )
   (byte*) main::toD0181_gfx#1 ← phi( main::@14/(byte*) main::toD0181_gfx#0 )
   (byte*) main::toD0181_screen#1 ← phi( main::@14/(byte*) main::toD0181_screen#0 )
   (word~) main::toD0181_$0 ← ((word)) (byte*) main::toD0181_screen#1
@@ -837,7 +807,7 @@ main::toD0181_@return: scope:[main]  from main::toD0181
   (byte) frame_cnt#19 ← phi( main::toD0181/(byte) frame_cnt#20 )
   (byte*) bitmap_screen#27 ← phi( main::toD0181/(byte*) bitmap_screen#32 )
   (byte*) bitmap_gfx#28 ← phi( main::toD0181/(byte*) bitmap_gfx#33 )
-  (word) rem16u#37 ← phi( main::toD0181/(word) rem16u#41 )
+  (word) rem16u#37 ← phi( main::toD0181/(word) rem16u#40 )
   (byte) main::toD0181_return#2 ← phi( main::toD0181/(byte) main::toD0181_return#0 )
   (byte) main::toD0181_return#1 ← (byte) main::toD0181_return#2
   to:main::@11
@@ -847,8 +817,8 @@ main::@11: scope:[main]  from main::toD0181_@return
   (byte*) bitmap_gfx#23 ← phi( main::toD0181_@return/(byte*) bitmap_gfx#28 )
   (word) rem16u#31 ← phi( main::toD0181_@return/(word) rem16u#37 )
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
-  (byte~) main::$6 ← (byte) main::toD0181_return#3
-  *((byte*) D018) ← (byte~) main::$6
+  (byte~) main::$3 ← (byte) main::toD0181_return#3
+  *((const byte*) D018) ← (byte~) main::$3
   call init_irq 
   to:main::@15
 main::@15: scope:[main]  from main::@11
@@ -871,12 +841,12 @@ main::@1: scope:[main]  from main::@15 main::@5
 main::@2: scope:[main]  from main::@1
   (byte*) bitmap_screen#36 ← phi( main::@1/(byte*) bitmap_screen#13 )
   (byte*) bitmap_gfx#37 ← phi( main::@1/(byte*) bitmap_gfx#14 )
-  (word) rem16u#46 ← phi( main::@1/(word) rem16u#24 )
+  (word) rem16u#45 ← phi( main::@1/(word) rem16u#24 )
   (byte) frame_cnt#15 ← phi( main::@1/(byte) frame_cnt#16 )
   (word) main::idx_y#5 ← phi( main::@1/(word) main::idx_y#8 )
   (word) main::idx_x#3 ← phi( main::@1/(word) main::idx_x#5 )
-  (word~) main::$25 ← (word) main::idx_x#3 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word) main::cos_x#0 ← *((signed word[$200]) SINUS + (word~) main::$25)
+  (word~) main::$22 ← (word) main::idx_x#3 * (const byte) SIZEOF_SIGNED_WORD
+  (signed word) main::cos_x#0 ← *((signed word[$200]) SINUS + (word~) main::$22)
   (signed word) mul16s::a#1 ← (number) $a0
   (signed word) mul16s::b#1 ← (signed word) main::cos_x#0
   call mul16s 
@@ -885,20 +855,20 @@ main::@2: scope:[main]  from main::@1
 main::@16: scope:[main]  from main::@2
   (byte*) bitmap_screen#35 ← phi( main::@2/(byte*) bitmap_screen#36 )
   (byte*) bitmap_gfx#36 ← phi( main::@2/(byte*) bitmap_gfx#37 )
-  (word) rem16u#44 ← phi( main::@2/(word) rem16u#46 )
+  (word) rem16u#43 ← phi( main::@2/(word) rem16u#45 )
   (byte) frame_cnt#14 ← phi( main::@2/(byte) frame_cnt#15 )
   (word) main::idx_x#8 ← phi( main::@2/(word) main::idx_x#3 )
   (word) main::idx_y#3 ← phi( main::@2/(word) main::idx_y#5 )
   (signed dword) mul16s::return#7 ← phi( main::@2/(signed dword) mul16s::return#3 )
-  (signed dword~) main::$8 ← (signed dword) mul16s::return#7
-  (signed dword) main::xpos#0 ← (signed dword~) main::$8
-  (signed dword~) main::$9 ← (signed dword) main::xpos#0 << (number) 4
-  (word~) main::$10 ← > (signed dword~) main::$9
-  (number~) main::$11 ← (number) $a0 + (word~) main::$10
-  (word~) main::$12 ← ((word)) (number~) main::$11
-  (word) main::x#0 ← (word~) main::$12
-  (word~) main::$26 ← (word) main::idx_y#3 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word) main::sin_y#0 ← *((signed word[$200]) SINUS + (word~) main::$26)
+  (signed dword~) main::$5 ← (signed dword) mul16s::return#7
+  (signed dword) main::xpos#0 ← (signed dword~) main::$5
+  (signed dword~) main::$6 ← (signed dword) main::xpos#0 << (number) 4
+  (word~) main::$7 ← > (signed dword~) main::$6
+  (number~) main::$8 ← (number) $a0 + (word~) main::$7
+  (word~) main::$9 ← ((word)) (number~) main::$8
+  (word) main::x#0 ← (word~) main::$9
+  (word~) main::$23 ← (word) main::idx_y#3 * (const byte) SIZEOF_SIGNED_WORD
+  (signed word) main::sin_y#0 ← *((signed word[$200]) SINUS + (word~) main::$23)
   (signed word) mul16s::a#2 ← (number) $64
   (signed word) mul16s::b#2 ← (signed word) main::sin_y#0
   call mul16s 
@@ -907,35 +877,35 @@ main::@16: scope:[main]  from main::@2
 main::@17: scope:[main]  from main::@16
   (byte*) bitmap_screen#33 ← phi( main::@16/(byte*) bitmap_screen#35 )
   (byte*) bitmap_gfx#34 ← phi( main::@16/(byte*) bitmap_gfx#36 )
-  (word) rem16u#42 ← phi( main::@16/(word) rem16u#44 )
+  (word) rem16u#41 ← phi( main::@16/(word) rem16u#43 )
   (byte) frame_cnt#13 ← phi( main::@16/(byte) frame_cnt#14 )
   (word) main::idx_y#9 ← phi( main::@16/(word) main::idx_y#3 )
   (word) main::idx_x#6 ← phi( main::@16/(word) main::idx_x#8 )
   (word) main::x#1 ← phi( main::@16/(word) main::x#0 )
   (signed dword) mul16s::return#8 ← phi( main::@16/(signed dword) mul16s::return#4 )
-  (signed dword~) main::$13 ← (signed dword) mul16s::return#8
-  (signed dword) main::ypos#0 ← (signed dword~) main::$13
-  (signed dword~) main::$14 ← (signed dword) main::ypos#0 << (number) 4
-  (word~) main::$15 ← > (signed dword~) main::$14
-  (number~) main::$16 ← (number) $64 + (word~) main::$15
-  (word~) main::$17 ← ((word)) (number~) main::$16
-  (word) main::y#0 ← (word~) main::$17
-  (byte~) main::$18 ← ((byte)) (word) main::y#0
+  (signed dword~) main::$10 ← (signed dword) mul16s::return#8
+  (signed dword) main::ypos#0 ← (signed dword~) main::$10
+  (signed dword~) main::$11 ← (signed dword) main::ypos#0 << (number) 4
+  (word~) main::$12 ← > (signed dword~) main::$11
+  (number~) main::$13 ← (number) $64 + (word~) main::$12
+  (word~) main::$14 ← ((word)) (number~) main::$13
+  (word) main::y#0 ← (word~) main::$14
+  (byte~) main::$15 ← ((byte)) (word) main::y#0
   (word) bitmap_plot::x#0 ← (word) main::x#1
-  (byte) bitmap_plot::y#0 ← (byte~) main::$18
+  (byte) bitmap_plot::y#0 ← (byte~) main::$15
   call bitmap_plot 
   to:main::@18
 main::@18: scope:[main]  from main::@17
   (byte*) bitmap_screen#28 ← phi( main::@17/(byte*) bitmap_screen#33 )
   (byte*) bitmap_gfx#29 ← phi( main::@17/(byte*) bitmap_gfx#34 )
-  (word) rem16u#38 ← phi( main::@17/(word) rem16u#42 )
+  (word) rem16u#38 ← phi( main::@17/(word) rem16u#41 )
   (byte) frame_cnt#11 ← phi( main::@17/(byte) frame_cnt#13 )
   (word) main::idx_y#6 ← phi( main::@17/(word) main::idx_y#9 )
   (word) main::idx_x#4 ← phi( main::@17/(word) main::idx_x#6 )
   (word) main::idx_x#1 ← ++ (word) main::idx_x#4
-  (bool~) main::$20 ← (word) main::idx_x#1 == (number) $200
-  (bool~) main::$21 ← ! (bool~) main::$20
-  if((bool~) main::$21) goto main::@4
+  (bool~) main::$17 ← (word) main::idx_x#1 == (number) $200
+  (bool~) main::$18 ← ! (bool~) main::$17
+  if((bool~) main::$18) goto main::@4
   to:main::@8
 main::@4: scope:[main]  from main::@18 main::@8
   (byte*) bitmap_screen#23 ← phi( main::@18/(byte*) bitmap_screen#28 main::@8/(byte*) bitmap_screen#29 )
@@ -945,9 +915,9 @@ main::@4: scope:[main]  from main::@18 main::@8
   (byte) frame_cnt#7 ← phi( main::@18/(byte) frame_cnt#11 main::@8/(byte) frame_cnt#12 )
   (word) main::idx_y#4 ← phi( main::@18/(word) main::idx_y#6 main::@8/(word) main::idx_y#7 )
   (word) main::idx_y#1 ← ++ (word) main::idx_y#4
-  (bool~) main::$22 ← (word) main::idx_y#1 == (number) $200
-  (bool~) main::$23 ← ! (bool~) main::$22
-  if((bool~) main::$23) goto main::@5
+  (bool~) main::$19 ← (word) main::idx_y#1 == (number) $200
+  (bool~) main::$20 ← ! (bool~) main::$19
+  if((bool~) main::$20) goto main::@5
   to:main::@9
 main::@8: scope:[main]  from main::@18
   (byte*) bitmap_screen#29 ← phi( main::@18/(byte*) bitmap_screen#28 )
@@ -993,14 +963,14 @@ main::@return: scope:[main]  from main::@1
 (void()) init_irq()
 init_irq: scope:[init_irq]  from main::@11
   asm { sei  }
-  *((byte*) PROCPORT_DDR) ← (byte) PROCPORT_DDR_MEMORY_MASK
-  *((byte*) PROCPORT) ← (byte) PROCPORT_RAM_IO
-  *((byte*) CIA1_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
-  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) | (number) $80
-  *((byte*) RASTER) ← (number) 0
-  *((byte*) IRQ_ENABLE) ← (byte) IRQ_RASTER
+  *((const byte*) PROCPORT_DDR) ← (const byte) PROCPORT_DDR_MEMORY_MASK
+  *((const byte*) PROCPORT) ← (const byte) PROCPORT_RAM_IO
+  *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
+  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (number) $80
+  *((const byte*) RASTER) ← (number) 0
+  *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
   (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
-  *((void()**) HARDWARE_IRQ) ← (void()*~) init_irq::$0
+  *((const void()**) HARDWARE_IRQ) ← (void()*~) init_irq::$0
   asm { cli  }
   to:init_irq::@return
 init_irq::@return: scope:[init_irq]  from init_irq
@@ -1010,15 +980,15 @@ init_irq::@return: scope:[init_irq]  from init_irq
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
   (byte) frame_cnt#4 ← phi( @37/(byte) frame_cnt#9 )
-  *((byte*) BGCOL) ← (byte) WHITE
+  *((const byte*) BGCOL) ← (const byte) WHITE
   (bool~) irq::$1 ← (number) 0 != (byte) frame_cnt#4
   (bool~) irq::$0 ← ! (bool~) irq::$1
   if((bool~) irq::$0) goto irq::@1
   to:irq::@2
 irq::@1: scope:[irq]  from irq irq::@2
   (byte) frame_cnt#10 ← phi( irq/(byte) frame_cnt#4 irq::@2/(byte) frame_cnt#1 )
-  *((byte*) BGCOL) ← (byte) BLACK
-  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
+  *((const byte*) BGCOL) ← (const byte) BLACK
+  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
   to:irq::@return
 irq::@2: scope:[irq]  from irq
   (byte) frame_cnt#5 ← phi( irq/(byte) frame_cnt#4 )
@@ -1047,7 +1017,6 @@ irq::@return: scope:[irq]  from irq::@1
 @end: scope:[]  from @38
 
 SYMBOL TABLE SSA
-(label) @17
 (label) @28
 (label) @34
 (label) @35
@@ -1056,33 +1025,33 @@ SYMBOL TABLE SSA
 (label) @6
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) BITMAP
-(byte) BLACK
-(byte*) CIA1_INTERRUPT
-(byte) CIA_INTERRUPT_CLEAR
-(byte*) D011
-(byte*) D018
-(void()**) HARDWARE_IRQ
-(byte*) IRQ_ENABLE
-(byte) IRQ_RASTER
-(byte*) IRQ_STATUS
-(dword) PI2_u4f28
-(dword) PI_HALF_u4f28
-(dword) PI_u4f28
-(byte*) PROCPORT
-(byte*) PROCPORT_DDR
-(byte) PROCPORT_DDR_MEMORY_MASK
-(byte) PROCPORT_RAM_IO
-(byte*) RASTER
-(byte*) SCREEN
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte*) BITMAP = (byte*)(number) $2000
+(const byte) BLACK = (number) 0
+(const byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
+(const byte*) D011 = (byte*)(number) $d011
+(const byte*) D018 = (byte*)(number) $d018
+(const void()**) HARDWARE_IRQ = (void()**)(number) $fffe
+(const byte*) IRQ_ENABLE = (byte*)(number) $d01a
+(const byte) IRQ_RASTER = (number) 1
+(const byte*) IRQ_STATUS = (byte*)(number) $d019
+(const dword) PI2_u4f28 = (number) $6487ed51
+(const dword) PI_HALF_u4f28 = (number) $1921fb54
+(const dword) PI_u4f28 = (number) $3243f6a9
+(const byte*) PROCPORT = (byte*)(number) 1
+(const byte*) PROCPORT_DDR = (byte*)(number) 0
+(const byte) PROCPORT_DDR_MEMORY_MASK = (number) 7
+(const byte) PROCPORT_RAM_IO = (number) 5
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $400
 (signed word[$200]) SINUS
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
-(byte) VIC_BMM
-(byte*) VIC_CONTROL
-(byte) VIC_DEN
-(byte) VIC_RSEL
-(byte) WHITE
+(const byte) VIC_BMM = (number) $20
+(const byte*) VIC_CONTROL = (byte*)(number) $d011
+(const byte) VIC_DEN = (number) $10
+(const byte) VIC_RSEL = (number) 8
+(const byte) WHITE = (number) 1
 (void()) bitmap_clear((byte) bitmap_clear::bgcol , (byte) bitmap_clear::fgcol)
 (number~) bitmap_clear::$0
 (number~) bitmap_clear::$1
@@ -1389,27 +1358,24 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (label) irq::@2
 (label) irq::@return
 (void()) main()
-(word~) main::$10
-(number~) main::$11
+(signed dword~) main::$10
+(signed dword~) main::$11
 (word~) main::$12
-(signed dword~) main::$13
-(signed dword~) main::$14
-(word~) main::$15
-(number~) main::$16
-(word~) main::$17
-(byte~) main::$18
+(number~) main::$13
+(word~) main::$14
+(byte~) main::$15
+(bool~) main::$17
+(bool~) main::$18
+(bool~) main::$19
 (bool~) main::$20
-(bool~) main::$21
-(bool~) main::$22
-(bool~) main::$23
-(word~) main::$25
-(word~) main::$26
+(word~) main::$22
+(word~) main::$23
 (byte~) main::$3
-(byte~) main::$4
-(number~) main::$5
-(byte~) main::$6
-(signed dword~) main::$8
-(signed dword~) main::$9
+(signed dword~) main::$5
+(signed dword~) main::$6
+(word~) main::$7
+(number~) main::$8
+(word~) main::$9
 (label) main::@1
 (label) main::@11
 (label) main::@12
@@ -1723,7 +1689,6 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (word) rem16u#43
 (word) rem16u#44
 (word) rem16u#45
-(word) rem16u#46
 (word) rem16u#5
 (word) rem16u#6
 (word) rem16u#7
@@ -1897,15 +1862,6 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 Fixing inline constructor with div32u16u::$4 ← (word)div32u16u::quotient_hi#1 dw= (word)div32u16u::quotient_lo#0
 Fixing inline constructor with bitmap_plot::$3 ← (byte)*(bitmap_plot_yhi + bitmap_plot::y#1) w= (byte)*(bitmap_plot_ylo + bitmap_plot::y#1)
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) 7 in (byte) PROCPORT_DDR_MEMORY_MASK ← (number) 7
-Adding number conversion cast (unumber) 5 in (byte) PROCPORT_RAM_IO ← (number) 5
-Adding number conversion cast (unumber) $20 in (byte) VIC_BMM ← (number) $20
-Adding number conversion cast (unumber) $10 in (byte) VIC_DEN ← (number) $10
-Adding number conversion cast (unumber) 8 in (byte) VIC_RSEL ← (number) 8
-Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER ← (number) 1
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
 Adding number conversion cast (unumber) 0 in (word) rem16u#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (word) divr16u::quotient#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (word~) divr16u::$0 ← (word) divr16u::rem#5 << (number) 1
@@ -1926,9 +1882,6 @@ Adding number conversion cast (unumber) 1 in (word~) mul16u::$5 ← (word) mul16
 Adding number conversion cast (unumber) 1 in (dword~) mul16u::$6 ← (dword) mul16u::mb#2 << (number) 1
 Adding number conversion cast (snumber) 0 in (bool~) mul16s::$3 ← (signed word) mul16s::a#4 < (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) mul16s::$5 ← (signed word) mul16s::b#4 < (number) 0
-Adding number conversion cast (unumber) $6487ed51 in (dword) PI2_u4f28 ← (number) $6487ed51
-Adding number conversion cast (unumber) $3243f6a9 in (dword) PI_u4f28 ← (number) $3243f6a9
-Adding number conversion cast (unumber) $1921fb54 in (dword) PI_HALF_u4f28 ← (number) $1921fb54
 Adding number conversion cast (snumber) 1 in (signed word~) sin16s_gen2::$1 ← (signed word) sin16s_gen2::ampl#0 >> (number) 1
 Adding number conversion cast (unumber) 0 in (dword) sin16s_gen2::x#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (word) sin16s_gen2::i#0 ← (number) 0
@@ -1964,8 +1917,8 @@ Adding number conversion cast (unumber) bitmap_plot::$1 in (number~) bitmap_plot
 Adding number conversion cast (unumber) $200 in (word) sin16s_gen2::wavelength#0 ← (number) $200
 Adding number conversion cast (snumber) -$1001 in (signed word) sin16s_gen2::min#0 ← (number) -$1001
 Adding number conversion cast (snumber) $1001 in (signed word) sin16s_gen2::max#0 ← (number) $1001
-Adding number conversion cast (unumber) 3 in (number~) main::$5 ← (byte~) main::$4 | (number) 3
-Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (byte~) main::$4 | (unumber)(number) 3
+Adding number conversion cast (unumber) VIC_BMM|VIC_DEN|VIC_RSEL|3 in *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) D011) ← ((unumber)) (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
 Adding number conversion cast (unumber) $3fff in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (number) $3fff
 Adding number conversion cast (unumber) main::toD0181_$1 in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (unumber)(number) $3fff
 Adding number conversion cast (unumber) 4 in (number~) main::toD0181_$2 ← (unumber~) main::toD0181_$1 * (number) 4
@@ -1979,42 +1932,22 @@ Adding number conversion cast (unumber) main::toD0181_$8 in (number~) main::toD0
 Adding number conversion cast (unumber) 0 in (word) main::idx_x#0 ← (number) 0
 Adding number conversion cast (unumber) $80 in (word) main::idx_y#0 ← (number) $80
 Adding number conversion cast (snumber) $a0 in (signed word) mul16s::a#1 ← (number) $a0
-Adding number conversion cast (snumber) 4 in (signed dword~) main::$9 ← (signed dword) main::xpos#0 << (number) 4
-Adding number conversion cast (unumber) $a0 in (number~) main::$11 ← (number) $a0 + (word~) main::$10
-Adding number conversion cast (unumber) main::$11 in (number~) main::$11 ← (unumber)(number) $a0 + (word~) main::$10
+Adding number conversion cast (snumber) 4 in (signed dword~) main::$6 ← (signed dword) main::xpos#0 << (number) 4
+Adding number conversion cast (unumber) $a0 in (number~) main::$8 ← (number) $a0 + (word~) main::$7
+Adding number conversion cast (unumber) main::$8 in (number~) main::$8 ← (unumber)(number) $a0 + (word~) main::$7
 Adding number conversion cast (snumber) $64 in (signed word) mul16s::a#2 ← (number) $64
-Adding number conversion cast (snumber) 4 in (signed dword~) main::$14 ← (signed dword) main::ypos#0 << (number) 4
-Adding number conversion cast (unumber) $64 in (number~) main::$16 ← (number) $64 + (word~) main::$15
-Adding number conversion cast (unumber) main::$16 in (number~) main::$16 ← (unumber)(number) $64 + (word~) main::$15
-Adding number conversion cast (unumber) $200 in (bool~) main::$20 ← (word) main::idx_x#1 == (number) $200
-Adding number conversion cast (unumber) $200 in (bool~) main::$22 ← (word) main::idx_y#1 == (number) $200
+Adding number conversion cast (snumber) 4 in (signed dword~) main::$11 ← (signed dword) main::ypos#0 << (number) 4
+Adding number conversion cast (unumber) $64 in (number~) main::$13 ← (number) $64 + (word~) main::$12
+Adding number conversion cast (unumber) main::$13 in (number~) main::$13 ← (unumber)(number) $64 + (word~) main::$12
+Adding number conversion cast (unumber) $200 in (bool~) main::$17 ← (word) main::idx_x#1 == (number) $200
+Adding number conversion cast (unumber) $200 in (bool~) main::$19 ← (word) main::idx_y#1 == (number) $200
 Adding number conversion cast (unumber) 0 in (word) main::idx_x#2 ← (number) 0
 Adding number conversion cast (unumber) 0 in (word) main::idx_y#2 ← (number) 0
 Adding number conversion cast (unumber) 1 in (byte) frame_cnt#0 ← (number) 1
-Adding number conversion cast (unumber) $80 in *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) | (number) $80
-Adding number conversion cast (unumber) 0 in *((byte*) RASTER) ← (number) 0
+Adding number conversion cast (unumber) $80 in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (number) $80
+Adding number conversion cast (unumber) 0 in *((const byte*) RASTER) ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) irq::$1 ← (number) 0 != (byte) frame_cnt#4
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) PROCPORT_DDR ← (byte*)(number) 0
-Inlining cast (byte) PROCPORT_DDR_MEMORY_MASK ← (unumber)(number) 7
-Inlining cast (byte*) PROCPORT ← (byte*)(number) 1
-Inlining cast (byte) PROCPORT_RAM_IO ← (unumber)(number) 5
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) VIC_CONTROL ← (byte*)(number) $d011
-Inlining cast (byte*) D011 ← (byte*)(number) $d011
-Inlining cast (byte) VIC_BMM ← (unumber)(number) $20
-Inlining cast (byte) VIC_DEN ← (unumber)(number) $10
-Inlining cast (byte) VIC_RSEL ← (unumber)(number) 8
-Inlining cast (byte*) D018 ← (byte*)(number) $d018
-Inlining cast (byte*) IRQ_STATUS ← (byte*)(number) $d019
-Inlining cast (byte*) IRQ_ENABLE ← (byte*)(number) $d01a
-Inlining cast (byte) IRQ_RASTER ← (unumber)(number) 1
-Inlining cast (byte*) CIA1_INTERRUPT ← (byte*)(number) $dc0d
-Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
-Inlining cast (void()**) HARDWARE_IRQ ← (void()**)(number) $fffe
-Inlining cast (byte) BLACK ← (unumber)(number) 0
-Inlining cast (byte) WHITE ← (unumber)(number) 1
 Inlining cast (word) rem16u#0 ← (unumber)(number) 0
 Inlining cast (word) divr16u::quotient#0 ← (unumber)(number) 0
 Inlining cast (word) divr16u::rem#3 ← (unumber)(number) 0
@@ -2024,9 +1957,6 @@ Inlining cast (word~) mul16s::$1 ← (word)(signed word) mul16s::b#3
 Inlining cast (word~) mul16s::$10 ← (word)(signed word) mul16s::b#5
 Inlining cast (signed dword~) mul16s::$7 ← (signed dword)(dword) mul16s::m#4
 Inlining cast (word~) mul16s::$14 ← (word)(signed word) mul16s::a#5
-Inlining cast (dword) PI2_u4f28 ← (unumber)(number) $6487ed51
-Inlining cast (dword) PI_u4f28 ← (unumber)(number) $3243f6a9
-Inlining cast (dword) PI_HALF_u4f28 ← (unumber)(number) $1921fb54
 Inlining cast (dword) sin16s_gen2::x#0 ← (unumber)(number) 0
 Inlining cast (word) sin16s_gen2::i#0 ← (unumber)(number) 0
 Inlining cast (signed word~) sin16s_gen2::$8 ← (signed word)(word~) sin16s_gen2::$7
@@ -2045,45 +1975,37 @@ Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
 Inlining cast (byte) bitmap_init::bits#0 ← (unumber)(number) $80
 Inlining cast (byte) bitmap_init::bits#2 ← (unumber)(number) $80
 Inlining cast (byte) memset::c#1 ← (unumber)(number) 0
-Inlining cast (byte*) BITMAP ← (byte*)(number) $2000
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (word) sin16s_gen2::wavelength#0 ← (unumber)(number) $200
 Inlining cast (signed word) sin16s_gen2::min#0 ← (snumber)(number) -$1001
 Inlining cast (signed word) sin16s_gen2::max#0 ← (snumber)(number) $1001
+Inlining cast *((const byte*) D011) ← (unumber)(const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Inlining cast (word) main::idx_x#0 ← (unumber)(number) 0
 Inlining cast (word) main::idx_y#0 ← (unumber)(number) $80
 Inlining cast (signed word) mul16s::a#1 ← (snumber)(number) $a0
-Inlining cast (word~) main::$12 ← (word)(unumber~) main::$11
+Inlining cast (word~) main::$9 ← (word)(unumber~) main::$8
 Inlining cast (signed word) mul16s::a#2 ← (snumber)(number) $64
-Inlining cast (word~) main::$17 ← (word)(unumber~) main::$16
-Inlining cast (byte~) main::$18 ← (byte)(word) main::y#0
+Inlining cast (word~) main::$14 ← (word)(unumber~) main::$13
+Inlining cast (byte~) main::$15 ← (byte)(word) main::y#0
 Inlining cast (word) main::idx_x#2 ← (unumber)(number) 0
 Inlining cast (word) main::idx_y#2 ← (unumber)(number) 0
 Inlining cast (byte) frame_cnt#0 ← (unumber)(number) 1
-Inlining cast *((byte*) RASTER) ← (unumber)(number) 0
+Inlining cast *((const byte*) RASTER) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 0
-Simplifying constant integer cast 7
 Simplifying constant pointer cast (byte*) 1
-Simplifying constant integer cast 5
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53265
-Simplifying constant integer cast $20
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 53273
 Simplifying constant pointer cast (byte*) 53274
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 56333
-Simplifying constant integer cast $7f
 Simplifying constant pointer cast (void()**) 65534
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
+Simplifying constant pointer cast (byte*) 8192
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -2103,9 +2025,6 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
-Simplifying constant integer cast $6487ed51
-Simplifying constant integer cast $3243f6a9
-Simplifying constant integer cast $1921fb54
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -2132,11 +2051,10 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#1)
 Simplifying constant integer cast *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#1)
 Simplifying constant integer cast $fff8
-Simplifying constant pointer cast (byte*) 8192
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $200
 Simplifying constant integer cast -$1001
 Simplifying constant integer cast $1001
+Simplifying constant integer cast (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Simplifying constant integer cast 3
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
@@ -2159,15 +2077,6 @@ Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
@@ -2185,9 +2094,6 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Finalized signed number type (signed byte) 0
 Finalized signed number type (signed byte) 0
-Finalized unsigned number type (dword) $6487ed51
-Finalized unsigned number type (dword) $3243f6a9
-Finalized unsigned number type (dword) $1921fb54
 Finalized signed number type (signed byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
@@ -2246,31 +2152,30 @@ Inferred type updated to byte in (unumber~) bitmap_init::$7 ← (byte) bitmap_in
 Inferred type updated to byte in (unumber~) bitmap_clear::$0 ← (byte) bitmap_clear::fgcol#1 * (byte) $10
 Inferred type updated to byte in (unumber~) bitmap_clear::$1 ← (byte~) bitmap_clear::$0 + (byte) bitmap_clear::bgcol#1
 Inferred type updated to word in (unumber~) bitmap_plot::$1 ← (word) bitmap_plot::x#1 & (word) $fff8
-Inferred type updated to byte in (unumber~) main::$5 ← (byte~) main::$4 | (byte) 3
 Inferred type updated to word in (unumber~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (word) $3fff
 Inferred type updated to word in (unumber~) main::toD0181_$2 ← (word~) main::toD0181_$1 * (byte) 4
 Inferred type updated to byte in (unumber~) main::toD0181_$3 ← > (word~) main::toD0181_$2
 Inferred type updated to byte in (unumber~) main::toD0181_$6 ← (byte~) main::toD0181_$5 / (byte) 4
 Inferred type updated to byte in (unumber~) main::toD0181_$7 ← (byte~) main::toD0181_$6 & (byte) $f
 Inferred type updated to byte in (unumber~) main::toD0181_$8 ← (byte~) main::toD0181_$3 | (byte~) main::toD0181_$7
-Inferred type updated to word in (unumber~) main::$11 ← (byte) $a0 + (word~) main::$10
-Inferred type updated to word in (unumber~) main::$16 ← (byte) $64 + (word~) main::$15
+Inferred type updated to word in (unumber~) main::$8 ← (byte) $a0 + (word~) main::$7
+Inferred type updated to word in (unumber~) main::$13 ← (byte) $64 + (word~) main::$12
 Adding pointer type conversion cast (byte*) bitmap_plot::$0 in (byte*~) bitmap_plot::$0 ← (word~) bitmap_plot::$3
 Successful SSA optimization PassNAddTypeConversionAssignment
-Inversing boolean not [30] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [29] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
-Inversing boolean not [38] (bool~) divr16u::$9 ← (word) divr16u::rem#6 < (word) divr16u::divisor#2 from [37] (bool~) divr16u::$8 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
-Inversing boolean not [95] (bool~) mul16u::$3 ← (byte~) mul16u::$1 == (byte) 0 from [94] (bool~) mul16u::$2 ← (byte~) mul16u::$1 != (byte) 0
-Inversing boolean not [121] (bool~) mul16s::$4 ← (signed word) mul16s::a#4 >= (signed byte) 0 from [120] (bool~) mul16s::$3 ← (signed word) mul16s::a#4 < (signed byte) 0
-Inversing boolean not [125] (bool~) mul16s::$6 ← (signed word) mul16s::b#4 >= (signed byte) 0 from [124] (bool~) mul16s::$5 ← (signed word) mul16s::b#4 < (signed byte) 0
-Inversing boolean not [194] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (dword) PI_u4f28 from [193] (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (dword) PI_u4f28
-Inversing boolean not [198] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (dword) PI_HALF_u4f28 from [197] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (dword) PI_HALF_u4f28
-Inversing boolean not [257] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 == (byte) 0 from [256] (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (byte) 0
-Inversing boolean not [286] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [285] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [319] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [318] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
-Inversing boolean not [339] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [338] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
-Inversing boolean not [464] (bool~) main::$21 ← (word) main::idx_x#1 != (word) $200 from [463] (bool~) main::$20 ← (word) main::idx_x#1 == (word) $200
-Inversing boolean not [469] (bool~) main::$23 ← (word) main::idx_y#1 != (word) $200 from [468] (bool~) main::$22 ← (word) main::idx_y#1 == (word) $200
-Inversing boolean not [498] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [497] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
+Inversing boolean not [10] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [9] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
+Inversing boolean not [18] (bool~) divr16u::$9 ← (word) divr16u::rem#6 < (word) divr16u::divisor#2 from [17] (bool~) divr16u::$8 ← (word) divr16u::rem#6 >= (word) divr16u::divisor#2
+Inversing boolean not [75] (bool~) mul16u::$3 ← (byte~) mul16u::$1 == (byte) 0 from [74] (bool~) mul16u::$2 ← (byte~) mul16u::$1 != (byte) 0
+Inversing boolean not [101] (bool~) mul16s::$4 ← (signed word) mul16s::a#4 >= (signed byte) 0 from [100] (bool~) mul16s::$3 ← (signed word) mul16s::a#4 < (signed byte) 0
+Inversing boolean not [105] (bool~) mul16s::$6 ← (signed word) mul16s::b#4 >= (signed byte) 0 from [104] (bool~) mul16s::$5 ← (signed word) mul16s::b#4 < (signed byte) 0
+Inversing boolean not [170] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (const dword) PI_u4f28 from [169] (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (const dword) PI_u4f28
+Inversing boolean not [174] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (const dword) PI_HALF_u4f28 from [173] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (const dword) PI_HALF_u4f28
+Inversing boolean not [233] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 == (byte) 0 from [232] (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (byte) 0
+Inversing boolean not [262] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [261] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
+Inversing boolean not [295] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [294] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
+Inversing boolean not [315] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [314] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
+Inversing boolean not [435] (bool~) main::$18 ← (word) main::idx_x#1 != (word) $200 from [434] (bool~) main::$17 ← (word) main::idx_x#1 == (word) $200
+Inversing boolean not [440] (bool~) main::$20 ← (word) main::idx_y#1 != (word) $200 from [439] (bool~) main::$19 ← (word) main::idx_y#1 == (word) $200
+Inversing boolean not [469] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [468] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -2316,7 +2221,6 @@ Alias (signed dword) mul16s::return#0 = (signed dword~) mul16s::$7 (signed dword
 Alias (dword) mul16s::m#5 = (dword) mul16s::m#6 
 Alias (signed word) mul16s::a#5 = (signed word) mul16s::a#6 
 Alias (word~) mul16s::$17 = (word~) mul16s::$15 
-Alias (word) rem16u#0 = (word) rem16u#40 (word) rem16u#36 (word) rem16u#34 (word) rem16u#29 (word) rem16u#25 
 Alias (signed word) sin16s_gen2::ampl#0 = (signed word~) sin16s_gen2::$0 (signed word) sin16s_gen2::ampl#4 
 Alias (signed word) sin16s_gen2::offs#0 = (signed word~) sin16s_gen2::$2 (signed word) sin16s_gen2::offs#5 
 Alias (dword) div32u16u::return#2 = (dword) div32u16u::return#4 
@@ -2371,6 +2275,7 @@ Alias (byte) memset::c#2 = (byte) memset::c#3
 Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
 Alias (byte*) memset::end#1 = (byte*) memset::end#2 
 Alias (void*) memset::str#5 = (void*) memset::str#6 
+Alias (word) rem16u#0 = (word) rem16u#36 (word) rem16u#34 (word) rem16u#29 (word) rem16u#25 
 Alias (byte) bitmap_init::x#2 = (byte) bitmap_init::x#4 
 Alias (byte*) bitmap_init::gfx#4 = (byte*) bitmap_init::gfx#5 
 Alias (byte*) bitmap_gfx#31 = (byte*) bitmap_gfx#32 
@@ -2393,25 +2298,25 @@ Alias (byte*) bitmap_screen#0 = (byte*) bitmap_screen#25 (byte*) bitmap_screen#2
 Alias (byte*) bitmap_gfx#13 = (byte*) bitmap_gfx#18 
 Alias (byte*) bitmap_screen#12 = (byte*) bitmap_screen#17 
 Alias (byte) frame_cnt#17 = (byte) frame_cnt#23 (byte) frame_cnt#24 (byte) frame_cnt#22 (byte) frame_cnt#21 (byte) frame_cnt#20 (byte) frame_cnt#19 (byte) frame_cnt#18 
-Alias (word) rem16u#17 = (word) rem16u#8 (word) rem16u#45 (word) rem16u#43 (word) rem16u#41 (word) rem16u#37 (word) rem16u#31 (word) rem16u#27 
+Alias (word) rem16u#17 = (word) rem16u#8 (word) rem16u#44 (word) rem16u#42 (word) rem16u#40 (word) rem16u#37 (word) rem16u#31 (word) rem16u#27 
 Alias (byte*) bitmap_gfx#19 = (byte*) bitmap_gfx#3 (byte*) bitmap_gfx#8 (byte*) bitmap_gfx#35 (byte*) bitmap_gfx#33 (byte*) bitmap_gfx#28 (byte*) bitmap_gfx#23 
 Alias (byte*) bitmap_screen#18 = (byte*) bitmap_screen#3 (byte*) bitmap_screen#8 (byte*) bitmap_screen#34 (byte*) bitmap_screen#32 (byte*) bitmap_screen#27 (byte*) bitmap_screen#22 
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
 Alias (byte*) main::toD0181_gfx#0 = (byte*) main::toD0181_gfx#1 
-Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$6 
+Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$3 
 Alias (word) main::idx_x#3 = (word) main::idx_x#5 (word) main::idx_x#8 (word) main::idx_x#6 (word) main::idx_x#4 
 Alias (word) main::idx_y#3 = (word) main::idx_y#5 (word) main::idx_y#8 (word) main::idx_y#9 (word) main::idx_y#6 (word) main::idx_y#7 
 Alias (byte) frame_cnt#11 = (byte) frame_cnt#15 (byte) frame_cnt#16 (byte) frame_cnt#14 (byte) frame_cnt#13 (byte) frame_cnt#12 
-Alias (word) rem16u#18 = (word) rem16u#46 (word) rem16u#24 (word) rem16u#44 (word) rem16u#42 (word) rem16u#38 (word) rem16u#39 (word) rem16u#9 
+Alias (word) rem16u#18 = (word) rem16u#45 (word) rem16u#24 (word) rem16u#43 (word) rem16u#41 (word) rem16u#38 (word) rem16u#39 (word) rem16u#9 
 Alias (byte*) bitmap_gfx#14 = (byte*) bitmap_gfx#37 (byte*) bitmap_gfx#36 (byte*) bitmap_gfx#34 (byte*) bitmap_gfx#29 (byte*) bitmap_gfx#30 (byte*) bitmap_gfx#9 (byte*) bitmap_gfx#4 
 Alias (byte*) bitmap_screen#13 = (byte*) bitmap_screen#36 (byte*) bitmap_screen#35 (byte*) bitmap_screen#33 (byte*) bitmap_screen#28 (byte*) bitmap_screen#29 (byte*) bitmap_screen#9 (byte*) bitmap_screen#4 
 Alias (signed dword) mul16s::return#3 = (signed dword) mul16s::return#7 
-Alias (signed dword) main::xpos#0 = (signed dword~) main::$8 
-Alias (word) main::x#0 = (word~) main::$12 (word) main::x#1 
+Alias (signed dword) main::xpos#0 = (signed dword~) main::$5 
+Alias (word) main::x#0 = (word~) main::$9 (word) main::x#1 
 Alias (signed dword) mul16s::return#4 = (signed dword) mul16s::return#8 
-Alias (signed dword) main::ypos#0 = (signed dword~) main::$13 
-Alias (word) main::y#0 = (word~) main::$17 
-Alias (byte) bitmap_plot::y#0 = (byte~) main::$18 
+Alias (signed dword) main::ypos#0 = (signed dword~) main::$10 
+Alias (word) main::y#0 = (word~) main::$14 
+Alias (byte) bitmap_plot::y#0 = (byte~) main::$15 
 Alias (byte) frame_cnt#7 = (byte) frame_cnt#8 
 Alias (word) main::idx_x#10 = (word) main::idx_x#9 
 Alias (word) rem16u#32 = (word) rem16u#33 
@@ -2500,65 +2405,43 @@ Identical Phi Values (byte*) bitmap_screen#10 (byte*) bitmap_screen#13
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [337] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
+Identified duplicate assignment right side [313] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) divr16u::$4 [31] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
-Simple Condition (bool~) divr16u::$9 [39] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
-Simple Condition (bool~) divr16u::$11 [46] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
-Simple Condition (bool~) mul16u::$0 [91] if((word) mul16u::a#3!=(byte) 0) goto mul16u::@2
-Simple Condition (bool~) mul16u::$3 [96] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@4
-Simple Condition (bool~) mul16s::$4 [122] if((signed word) mul16s::a#3>=(signed byte) 0) goto mul16s::@1
-Simple Condition (bool~) mul16s::$6 [126] if((signed word) mul16s::b#3>=(signed byte) 0) goto mul16s::@2
-Simple Condition (bool~) sin16s_gen2::$4 [167] if((word) sin16s_gen2::i#2<(word) sin16s_gen2::wavelength#0) goto sin16s_gen2::@2
-Simple Condition (bool~) sin16s::$1 [195] if((dword) sin16s::x#0<(dword) PI_u4f28) goto sin16s::@1
-Simple Condition (bool~) sin16s::$3 [199] if((dword) sin16s::x#4<(dword) PI_HALF_u4f28) goto sin16s::@2
-Simple Condition (bool~) sin16s::$16 [258] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@3
-Simple Condition (bool~) memset::$1 [287] if((word) memset::num#2<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [297] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) bitmap_init::$1 [320] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
-Simple Condition (bool~) bitmap_init::$2 [324] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
-Simple Condition (bool~) bitmap_init::$9 [340] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
-Simple Condition (bool~) bitmap_init::$11 [344] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) main::$21 [465] if((word) main::idx_x#1!=(word) $200) goto main::@4
-Simple Condition (bool~) main::$23 [470] if((word) main::idx_y#1!=(word) $200) goto main::@5
-Simple Condition (bool~) irq::$0 [499] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
+Simple Condition (bool~) divr16u::$4 [11] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
+Simple Condition (bool~) divr16u::$9 [19] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
+Simple Condition (bool~) divr16u::$11 [26] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
+Simple Condition (bool~) mul16u::$0 [71] if((word) mul16u::a#3!=(byte) 0) goto mul16u::@2
+Simple Condition (bool~) mul16u::$3 [76] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@4
+Simple Condition (bool~) mul16s::$4 [102] if((signed word) mul16s::a#3>=(signed byte) 0) goto mul16s::@1
+Simple Condition (bool~) mul16s::$6 [106] if((signed word) mul16s::b#3>=(signed byte) 0) goto mul16s::@2
+Simple Condition (bool~) sin16s_gen2::$4 [143] if((word) sin16s_gen2::i#2<(word) sin16s_gen2::wavelength#0) goto sin16s_gen2::@2
+Simple Condition (bool~) sin16s::$1 [171] if((dword) sin16s::x#0<(const dword) PI_u4f28) goto sin16s::@1
+Simple Condition (bool~) sin16s::$3 [175] if((dword) sin16s::x#4<(const dword) PI_HALF_u4f28) goto sin16s::@2
+Simple Condition (bool~) sin16s::$16 [234] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@3
+Simple Condition (bool~) memset::$1 [263] if((word) memset::num#2<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$4 [273] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) bitmap_init::$1 [296] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
+Simple Condition (bool~) bitmap_init::$2 [300] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
+Simple Condition (bool~) bitmap_init::$9 [316] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
+Simple Condition (bool~) bitmap_init::$11 [320] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
+Simple Condition (bool~) main::$18 [436] if((word) main::idx_x#1!=(word) $200) goto main::@4
+Simple Condition (bool~) main::$20 [441] if((word) main::idx_y#1!=(word) $200) goto main::@5
+Simple Condition (bool~) irq::$0 [470] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [225] (word) mulu16_sel::v2#2 ← (unumber)(number) $10000/(number) 6
-Constant right-side identified [307] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-Constant right-side identified [308] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-Constant right-side identified [309] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-Constant right-side identified [380] (byte[$100]) plots_per_frame ← { fill( $100, 0) }
-Constant right-side identified [381] (signed word[$200]) SINUS ← { fill( $200, 0) }
-Constant right-side identified [491] (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
+Constant right-side identified [201] (word) mulu16_sel::v2#2 ← (unumber)(number) $10000/(number) 6
+Constant right-side identified [283] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
+Constant right-side identified [284] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
+Constant right-side identified [285] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
+Constant right-side identified [354] (byte[$100]) plots_per_frame ← { fill( $100, 0) }
+Constant right-side identified [355] (signed word[$200]) SINUS ← { fill( $200, 0) }
+Constant right-side identified [462] (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) PROCPORT_DDR = (byte*) 0
-Constant (const byte) PROCPORT_DDR_MEMORY_MASK = 7
-Constant (const byte*) PROCPORT = (byte*) 1
-Constant (const byte) PROCPORT_RAM_IO = 5
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) VIC_CONTROL = (byte*) 53265
-Constant (const byte*) D011 = (byte*) 53265
-Constant (const byte) VIC_BMM = $20
-Constant (const byte) VIC_DEN = $10
-Constant (const byte) VIC_RSEL = 8
-Constant (const byte*) D018 = (byte*) 53272
-Constant (const byte*) IRQ_STATUS = (byte*) 53273
-Constant (const byte*) IRQ_ENABLE = (byte*) 53274
-Constant (const byte) IRQ_RASTER = 1
-Constant (const byte*) CIA1_INTERRUPT = (byte*) 56333
-Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
-Constant (const void()**) HARDWARE_IRQ = (void()**) 65534
-Constant (const byte) BLACK = 0
-Constant (const byte) WHITE = 1
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
 Constant (const word) divr16u::rem#3 = 0
 Constant (const dword) mul16u::res#0 = 0
-Constant (const dword) PI2_u4f28 = $6487ed51
-Constant (const dword) PI_u4f28 = $3243f6a9
-Constant (const dword) PI_HALF_u4f28 = $1921fb54
+Constant (const dword) div32u16u::dividend#0 = PI2_u4f28
 Constant (const dword) sin16s_gen2::x#0 = 0
 Constant (const word) sin16s_gen2::i#0 = 0
 Constant (const byte) sin16s::isUpper#0 = 0
@@ -2581,13 +2464,17 @@ Constant (const byte) bitmap_init::y#0 = 0
 Constant (const word) memset::num#0 = $3e8
 Constant (const byte) memset::c#1 = 0
 Constant (const word) memset::num#1 = $1f40
-Constant (const byte*) BITMAP = (byte*) 8192
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte[$100]) plots_per_frame = { fill( $100, 0) }
 Constant (const signed word[$200]) SINUS = { fill( $200, 0) }
 Constant (const word) sin16s_gen2::wavelength#0 = $200
 Constant (const signed word) sin16s_gen2::min#0 = -$1001
 Constant (const signed word) sin16s_gen2::max#0 = $1001
+Constant (const byte*) bitmap_init::gfx#0 = BITMAP
+Constant (const byte*) bitmap_init::screen#0 = SCREEN
+Constant (const byte) bitmap_clear::bgcol#0 = BLACK
+Constant (const byte) bitmap_clear::fgcol#0 = WHITE
+Constant (const byte*) main::toD0181_screen#0 = SCREEN
+Constant (const byte*) main::toD0181_gfx#0 = BITMAP
 Constant (const word) main::idx_x#0 = 0
 Constant (const word) main::idx_y#0 = $80
 Constant (const signed word) mul16s::a#1 = $a0
@@ -2596,38 +2483,30 @@ Constant (const word) main::idx_x#2 = 0
 Constant (const word) main::idx_y#2 = 0
 Constant (const void()*) init_irq::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const dword) div32u16u::dividend#0 = PI2_u4f28
 Constant (const word) div32u16u::divisor#0 = sin16s_gen2::wavelength#0
-Constant (const signed word*) sin16s_gen2::sintab#1 = SINUS
-Constant (const byte*) bitmap_init::gfx#0 = BITMAP
-Constant (const byte*) bitmap_init::screen#0 = SCREEN
-Constant (const byte) bitmap_clear::bgcol#0 = BLACK
-Constant (const byte) bitmap_clear::fgcol#0 = WHITE
-Constant (const byte*) main::toD0181_screen#0 = SCREEN
-Constant (const byte*) main::toD0181_gfx#0 = BITMAP
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const word) divr16u::divisor#0 = div32u16u::divisor#0
-Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
 Constant (const byte*) bitmap_gfx#1 = bitmap_init::gfx#0
 Constant (const byte*) bitmap_screen#1 = bitmap_init::screen#0
+Constant (const signed word*) sin16s_gen2::sintab#1 = SINUS
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
+Constant (const word) divr16u::divisor#0 = div32u16u::divisor#0
+Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
 Constant (const void*) memset::str#0 = (void*)bitmap_screen#1
 Constant (const void*) memset::str#1 = (void*)bitmap_gfx#1
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [427] if(true) goto main::@2
+if() condition always true - replacing block destination [398] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [44] divr16u::i#1 ← ++ divr16u::i#2 to ++
-Resolved ranged comparison value [46] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
-Resolved ranged next value [322] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
-Resolved ranged comparison value [324] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
-Resolved ranged next value [342] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
-Resolved ranged comparison value [344] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
-De-inlining pointer[w] to *(pointer+w)   [430] (signed word) main::cos_x#0 ← *((const signed word[$200]) SINUS + (word~) main::$25)
-De-inlining pointer[w] to *(pointer+w)   [444] (signed word) main::sin_y#0 ← *((const signed word[$200]) SINUS + (word~) main::$26)
+Resolved ranged next value [24] divr16u::i#1 ← ++ divr16u::i#2 to ++
+Resolved ranged comparison value [26] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
+Resolved ranged next value [298] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
+Resolved ranged comparison value [300] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
+Resolved ranged next value [318] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
+Resolved ranged comparison value [320] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
+De-inlining pointer[w] to *(pointer+w)   [401] (signed word) main::cos_x#0 ← *((const signed word[$200]) SINUS + (word~) main::$22)
+De-inlining pointer[w] to *(pointer+w)   [415] (signed word) main::sin_y#0 ← *((const signed word[$200]) SINUS + (word~) main::$23)
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Simplifying expression containing zero bitmap_clear::$0 in [354] (byte) bitmap_clear::col#0 ← (byte~) bitmap_clear::$0 + (const byte) bitmap_clear::bgcol#0
+Simplifying expression containing zero bitmap_clear::$0 in [330] (byte) bitmap_clear::col#0 ← (byte~) bitmap_clear::$0 + (const byte) bitmap_clear::bgcol#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (void*) memset::return#2 and assignment [168] (void*) memset::return#2 ← (void*) memset::str#3
 Eliminating unused variable (void*) memset::return#3 and assignment [170] (void*) memset::return#3 ← (void*) memset::str#3
@@ -2647,8 +2526,8 @@ Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $10
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
-Simplifying constant integer cast (word~) main::$11
-Simplifying constant integer cast (word~) main::$16
+Simplifying constant integer cast (word~) main::$8
+Simplifying constant integer cast (word~) main::$13
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $10
 Finalized unsigned number type (byte) 0
@@ -2656,22 +2535,20 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte~) bitmap_init::$7 = (byte~) bitmap_init::$3 
 Alias (byte) bitmap_clear::col#0 = (byte~) bitmap_clear::$0 
-Alias (word) main::x#0 = (word~) main::$11 
-Alias (word) main::y#0 = (word~) main::$16 
+Alias (word) main::x#0 = (word~) main::$8 
+Alias (word) main::y#0 = (word~) main::$13 
 Successful SSA optimization Pass2AliasElimination
 Constant right-side identified [18] (word) divr16u::dividend#1 ← > (const dword) div32u16u::dividend#0
 Constant right-side identified [22] (word) divr16u::dividend#2 ← < (const dword) div32u16u::dividend#0
 Constant right-side identified [59] (signed word) sin16s_gen2::ampl#0 ← (const signed word) sin16s_gen2::max#0 - (const signed word) sin16s_gen2::min#0
 Constant right-side identified [164] (byte) bitmap_clear::col#0 ← (const byte) bitmap_clear::fgcol#0 * (byte) $10
-Constant right-side identified [180] (byte~) main::$3 ← (const byte) VIC_BMM | (const byte) VIC_DEN
-Constant right-side identified [184] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
-Constant right-side identified [187] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
+Constant right-side identified [181] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
+Constant right-side identified [184] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) divr16u::dividend#1 = >div32u16u::dividend#0
 Constant (const word) divr16u::dividend#2 = <div32u16u::dividend#0
 Constant (const signed word) sin16s_gen2::ampl#0 = sin16s_gen2::max#0-sin16s_gen2::min#0
 Constant (const byte) bitmap_clear::col#0 = bitmap_clear::fgcol#0*$10
-Constant (const byte) main::$3 = VIC_BMM|VIC_DEN
 Constant (const word) main::toD0181_$1 = main::toD0181_$0&$3fff
 Constant (const byte) main::toD0181_$5 = >main::toD0181_$4
 Successful SSA optimization Pass2ConstantIdentification
@@ -2679,22 +2556,18 @@ Constant (const signed word) mul16s::b#0 = sin16s_gen2::ampl#0
 Constant (const byte) memset::c#0 = bitmap_clear::col#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [57] (signed word~) sin16s_gen2::$1 ← (const signed word) sin16s_gen2::ampl#0 >> (signed byte) 1
-Constant right-side identified [172] (byte~) main::$4 ← (const byte) main::$3 | (const byte) VIC_RSEL
-Constant right-side identified [175] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
-Constant right-side identified [177] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
+Constant right-side identified [173] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
+Constant right-side identified [175] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const signed word) sin16s_gen2::$1 = sin16s_gen2::ampl#0>>1
-Constant (const byte) main::$4 = main::$3|VIC_RSEL
 Constant (const word) main::toD0181_$2 = main::toD0181_$1*4
 Constant (const byte) main::toD0181_$6 = main::toD0181_$5/4
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [57] (signed word) sin16s_gen2::offs#0 ← (const signed word) sin16s_gen2::min#0 + (const signed word) sin16s_gen2::$1
-Constant right-side identified [171] (byte~) main::$5 ← (const byte) main::$4 | (byte) 3
-Constant right-side identified [173] (byte~) main::toD0181_$3 ← > (const word) main::toD0181_$2
-Constant right-side identified [174] (byte~) main::toD0181_$7 ← (const byte) main::toD0181_$6 & (byte) $f
+Constant right-side identified [172] (byte~) main::toD0181_$3 ← > (const word) main::toD0181_$2
+Constant right-side identified [173] (byte~) main::toD0181_$7 ← (const byte) main::toD0181_$6 & (byte) $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const signed word) sin16s_gen2::offs#0 = sin16s_gen2::min#0+sin16s_gen2::$1
-Constant (const byte) main::$5 = main::$4|3
 Constant (const byte) main::toD0181_$3 = >main::toD0181_$2
 Constant (const byte) main::toD0181_$7 = main::toD0181_$6&$f
 Successful SSA optimization Pass2ConstantIdentification
@@ -2721,8 +2594,8 @@ Successful SSA optimization Pass2NopCastInlining
 Inlining Noop Cast [70] (signed word~) sin16s_gen2::$9 ← (signed word)(word~) sin16s_gen2::$7 keeping sin16s_gen2::$9
 Inlining Noop Cast [160] (byte*) bitmap_plot::plotter#0 ← (byte*)(word~) bitmap_plot::$3 keeping bitmap_plot::plotter#0
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift [173] (word~) main::$25 ← (word) main::idx_x#3 * (const byte) SIZEOF_SIGNED_WORD
-Rewriting multiplication to use shift [183] (word~) main::$26 ← (word) main::idx_y#3 * (const byte) SIZEOF_SIGNED_WORD
+Rewriting multiplication to use shift [173] (word~) main::$22 ← (word) main::idx_x#3 * (const byte) SIZEOF_SIGNED_WORD
+Rewriting multiplication to use shift [183] (word~) main::$23 ← (word) main::idx_y#3 * (const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const word) divr16u::quotient#0
 Inlining constant with var siblings (const byte) divr16u::i#0
@@ -2812,11 +2685,8 @@ Constant inlined divr16u::dividend#1 = >(const dword) PI2_u4f28
 Constant inlined divr16u::dividend#2 = <(const dword) PI2_u4f28
 Constant inlined bitmap_screen#1 = (const byte*) SCREEN
 Constant inlined mulu16_sel::v2#2 = (word)(number) $10000/(number) 6
-Constant inlined main::$5 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3
 Constant inlined bitmap_init::y#0 = (byte) 0
-Constant inlined main::$3 = (const byte) VIC_BMM|(const byte) VIC_DEN
 Constant inlined div32u16u::divisor#0 = (const word) sin16s_gen2::wavelength#0
-Constant inlined main::$4 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) divr16u::divisor#6 (const word) sin16s_gen2::wavelength#0
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -2839,7 +2709,6 @@ Added new block during phi lifting main::@20(between main::@4 and main::@5)
 Added new block during phi lifting irq::@3(between irq and irq::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @6
-Adding NOP phi() at start of @17
 Adding NOP phi() at start of @28
 Adding NOP phi() at start of @34
 Adding NOP phi() at start of @37
@@ -2864,81 +2733,80 @@ Adding NOP phi() at start of bitmap_init::@4
 Adding NOP phi() at start of sin16s_gen2
 Adding NOP phi() at start of div32u16u
 CALL GRAPH
-Calls in [] to main:7 
-Calls in [main] to sin16s_gen2:11 bitmap_init:13 bitmap_clear:15 init_irq:20 mul16s:28 mul16s:39 bitmap_plot:47 
-Calls in [mul16s] to mul16u:72 
-Calls in [bitmap_clear] to memset:120 memset:122 
-Calls in [sin16s_gen2] to div32u16u:167 sin16s:174 mul16s:178 
-Calls in [sin16s] to mulu16_sel:203 mulu16_sel:210 mulu16_sel:215 mulu16_sel:223 mulu16_sel:230 
-Calls in [mulu16_sel] to mul16u:248 
-Calls in [div32u16u] to divr16u:255 divr16u:260 
+Calls in [] to main:6 
+Calls in [main] to sin16s_gen2:10 bitmap_init:12 bitmap_clear:14 init_irq:19 mul16s:27 mul16s:38 bitmap_plot:46 
+Calls in [mul16s] to mul16u:71 
+Calls in [bitmap_clear] to memset:119 memset:121 
+Calls in [sin16s_gen2] to div32u16u:166 sin16s:173 mul16s:177 
+Calls in [sin16s] to mulu16_sel:202 mulu16_sel:209 mulu16_sel:214 mulu16_sel:222 mulu16_sel:229 
+Calls in [mulu16_sel] to mul16u:247 
+Calls in [div32u16u] to divr16u:254 divr16u:259 
 
 Created 44 initial phi equivalence classes
-Coalesced [27] mul16s::b#8 ← mul16s::b#1
-Coalesced [38] mul16s::b#7 ← mul16s::b#2
-Coalesced [57] main::idx_x#11 ← main::idx_x#10
-Coalesced [58] main::idx_y#11 ← main::idx_y#10
-Coalesced [59] main::idx_y#12 ← main::idx_y#1
-Coalesced [60] main::idx_x#12 ← main::idx_x#1
-Coalesced [70] mul16u::mb#6 ← mul16u::b#0
-Coalesced [71] mul16u::a#8 ← mul16u::a#1
-Coalesced [79] mul16s::m#7 ← mul16s::m#1
-Coalesced [85] mul16s::m#10 ← mul16s::m#2
-Coalesced [89] mul16s::m#9 ← mul16s::m#5
-Coalesced [90] mul16s::m#8 ← mul16s::m#0
-Coalesced [92] mul16u::a#10 ← mul16u::a#6
-Coalesced [93] mul16u::mb#8 ← mul16u::mb#0
-Coalesced [101] mul16u::res#9 ← mul16u::res#1
-Coalesced [105] mul16u::a#11 ← mul16u::a#0
-Coalesced [106] mul16u::res#7 ← mul16u::res#6
-Coalesced [107] mul16u::mb#9 ← mul16u::mb#1
-Coalesced (already) [108] mul16u::res#8 ← mul16u::res#2
-Coalesced [135] memset::dst#5 ← memset::dst#1
-Coalesced [155] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
-Coalesced [160] bitmap_init::y#5 ← bitmap_init::y#1
-Coalesced [161] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
-Coalesced (already) [162] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
-Coalesced [163] bitmap_init::bits#5 ← bitmap_init::bits#4
-Coalesced [164] bitmap_init::x#5 ← bitmap_init::x#1
-Coalesced [165] bitmap_init::bits#6 ← bitmap_init::bits#1
-Coalesced [177] mul16s::a#8 ← mul16s::a#0
-Coalesced [186] sin16s_gen2::i#6 ← sin16s_gen2::i#1
-Coalesced [187] sin16s_gen2::x#6 ← sin16s_gen2::x#1
-Coalesced [188] sin16s_gen2::sintab#8 ← sin16s_gen2::sintab#0
-Coalesced [191] sin16s::x#9 ← sin16s::x#1
-Coalesced [195] sin16s::x#11 ← sin16s::x#2
-Coalesced [201] mulu16_sel::v1#8 ← mulu16_sel::v1#0
-Coalesced [202] mulu16_sel::v2#8 ← mulu16_sel::v2#0
-Coalesced [208] mulu16_sel::v1#9 ← mulu16_sel::v1#1
-Coalesced [209] mulu16_sel::v2#9 ← mulu16_sel::v2#1
-Coalesced [214] mulu16_sel::v1#10 ← mulu16_sel::v1#2
-Coalesced [221] mulu16_sel::v1#6 ← mulu16_sel::v1#3
-Coalesced [222] mulu16_sel::v2#6 ← mulu16_sel::v2#3
-Coalesced [228] mulu16_sel::v1#7 ← mulu16_sel::v1#4
-Coalesced [229] mulu16_sel::v2#7 ← mulu16_sel::v2#4
-Coalesced [237] sin16s::return#6 ← sin16s::sinx#1
-Coalesced [241] sin16s::x#10 ← sin16s::x#4
-Coalesced [242] sin16s::x#8 ← sin16s::x#0
-Coalesced [246] mul16u::mb#7 ← mul16u::b#1
-Coalesced [247] mul16u::a#9 ← mul16u::a#2
-Coalesced [259] divr16u::rem#12 ← divr16u::rem#4
-Coalesced [266] divr16u::rem#13 ← divr16u::rem#10
-Coalesced [267] divr16u::dividend#9 ← divr16u::dividend#5
-Coalesced [274] divr16u::rem#16 ← divr16u::rem#1
-Coalesced [281] divr16u::rem#18 ← divr16u::rem#2
-Coalesced [282] divr16u::return#8 ← divr16u::quotient#2
-Coalesced [288] divr16u::rem#14 ← divr16u::rem#11
-Coalesced [289] divr16u::dividend#10 ← divr16u::dividend#0
-Coalesced [290] divr16u::quotient#9 ← divr16u::return#0
-Coalesced [291] divr16u::i#7 ← divr16u::i#1
-Coalesced [292] divr16u::rem#17 ← divr16u::rem#6
-Coalesced [293] divr16u::return#7 ← divr16u::quotient#1
-Coalesced [294] divr16u::rem#15 ← divr16u::rem#0
-Coalesced [298] frame_cnt#26 ← frame_cnt#1
-Coalesced [303] frame_cnt#25 ← frame_cnt#0
+Coalesced [26] mul16s::b#8 ← mul16s::b#1
+Coalesced [37] mul16s::b#7 ← mul16s::b#2
+Coalesced [56] main::idx_x#11 ← main::idx_x#10
+Coalesced [57] main::idx_y#11 ← main::idx_y#10
+Coalesced [58] main::idx_y#12 ← main::idx_y#1
+Coalesced [59] main::idx_x#12 ← main::idx_x#1
+Coalesced [69] mul16u::mb#6 ← mul16u::b#0
+Coalesced [70] mul16u::a#8 ← mul16u::a#1
+Coalesced [78] mul16s::m#7 ← mul16s::m#1
+Coalesced [84] mul16s::m#10 ← mul16s::m#2
+Coalesced [88] mul16s::m#9 ← mul16s::m#5
+Coalesced [89] mul16s::m#8 ← mul16s::m#0
+Coalesced [91] mul16u::a#10 ← mul16u::a#6
+Coalesced [92] mul16u::mb#8 ← mul16u::mb#0
+Coalesced [100] mul16u::res#9 ← mul16u::res#1
+Coalesced [104] mul16u::a#11 ← mul16u::a#0
+Coalesced [105] mul16u::res#7 ← mul16u::res#6
+Coalesced [106] mul16u::mb#9 ← mul16u::mb#1
+Coalesced (already) [107] mul16u::res#8 ← mul16u::res#2
+Coalesced [134] memset::dst#5 ← memset::dst#1
+Coalesced [154] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
+Coalesced [159] bitmap_init::y#5 ← bitmap_init::y#1
+Coalesced [160] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
+Coalesced (already) [161] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
+Coalesced [162] bitmap_init::bits#5 ← bitmap_init::bits#4
+Coalesced [163] bitmap_init::x#5 ← bitmap_init::x#1
+Coalesced [164] bitmap_init::bits#6 ← bitmap_init::bits#1
+Coalesced [176] mul16s::a#8 ← mul16s::a#0
+Coalesced [185] sin16s_gen2::i#6 ← sin16s_gen2::i#1
+Coalesced [186] sin16s_gen2::x#6 ← sin16s_gen2::x#1
+Coalesced [187] sin16s_gen2::sintab#8 ← sin16s_gen2::sintab#0
+Coalesced [190] sin16s::x#9 ← sin16s::x#1
+Coalesced [194] sin16s::x#11 ← sin16s::x#2
+Coalesced [200] mulu16_sel::v1#8 ← mulu16_sel::v1#0
+Coalesced [201] mulu16_sel::v2#8 ← mulu16_sel::v2#0
+Coalesced [207] mulu16_sel::v1#9 ← mulu16_sel::v1#1
+Coalesced [208] mulu16_sel::v2#9 ← mulu16_sel::v2#1
+Coalesced [213] mulu16_sel::v1#10 ← mulu16_sel::v1#2
+Coalesced [220] mulu16_sel::v1#6 ← mulu16_sel::v1#3
+Coalesced [221] mulu16_sel::v2#6 ← mulu16_sel::v2#3
+Coalesced [227] mulu16_sel::v1#7 ← mulu16_sel::v1#4
+Coalesced [228] mulu16_sel::v2#7 ← mulu16_sel::v2#4
+Coalesced [236] sin16s::return#6 ← sin16s::sinx#1
+Coalesced [240] sin16s::x#10 ← sin16s::x#4
+Coalesced [241] sin16s::x#8 ← sin16s::x#0
+Coalesced [245] mul16u::mb#7 ← mul16u::b#1
+Coalesced [246] mul16u::a#9 ← mul16u::a#2
+Coalesced [258] divr16u::rem#12 ← divr16u::rem#4
+Coalesced [265] divr16u::rem#13 ← divr16u::rem#10
+Coalesced [266] divr16u::dividend#9 ← divr16u::dividend#5
+Coalesced [273] divr16u::rem#16 ← divr16u::rem#1
+Coalesced [280] divr16u::rem#18 ← divr16u::rem#2
+Coalesced [281] divr16u::return#8 ← divr16u::quotient#2
+Coalesced [287] divr16u::rem#14 ← divr16u::rem#11
+Coalesced [288] divr16u::dividend#10 ← divr16u::dividend#0
+Coalesced [289] divr16u::quotient#9 ← divr16u::return#0
+Coalesced [290] divr16u::i#7 ← divr16u::i#1
+Coalesced [291] divr16u::rem#17 ← divr16u::rem#6
+Coalesced [292] divr16u::return#7 ← divr16u::quotient#1
+Coalesced [293] divr16u::rem#15 ← divr16u::rem#0
+Coalesced [297] frame_cnt#26 ← frame_cnt#1
+Coalesced [302] frame_cnt#25 ← frame_cnt#0
 Coalesced down to 30 phi equivalence classes
 Culled Empty Block (label) @6
-Culled Empty Block (label) @17
 Culled Empty Block (label) @28
 Culled Empty Block (label) @34
 Culled Empty Block (label) @38
@@ -3056,30 +2924,30 @@ main::@1: scope:[main]  from main::@4 main::@5
   [15] (word) main::idx_x#3 ← phi( main::@5/(byte) 0 main::@4/(word) main::idx_x#10 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [16] (word~) main::$25 ← (word) main::idx_x#3 << (byte) 1
-  [17] (signed word*~) main::$27 ← (const signed word[$200]) SINUS + (word~) main::$25
-  [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$27)
+  [16] (word~) main::$22 ← (word) main::idx_x#3 << (byte) 1
+  [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22
+  [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$24)
   [19] (signed word) mul16s::b#1 ← (signed word) main::cos_x#0
   [20] call mul16s 
   [21] (signed dword) mul16s::return#3 ← (signed dword) mul16s::return#0
   to:main::@9
 main::@9: scope:[main]  from main::@2
   [22] (signed dword) main::xpos#0 ← (signed dword) mul16s::return#3
-  [23] (signed dword~) main::$9 ← (signed dword) main::xpos#0 << (signed byte) 4
-  [24] (word~) main::$10 ← > (signed dword~) main::$9
-  [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$10
-  [26] (word~) main::$26 ← (word) main::idx_y#3 << (byte) 1
-  [27] (signed word*~) main::$28 ← (const signed word[$200]) SINUS + (word~) main::$26
-  [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$28)
+  [23] (signed dword~) main::$6 ← (signed dword) main::xpos#0 << (signed byte) 4
+  [24] (word~) main::$7 ← > (signed dword~) main::$6
+  [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$7
+  [26] (word~) main::$23 ← (word) main::idx_y#3 << (byte) 1
+  [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23
+  [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$25)
   [29] (signed word) mul16s::b#2 ← (signed word) main::sin_y#0
   [30] call mul16s 
   [31] (signed dword) mul16s::return#4 ← (signed dword) mul16s::return#0
   to:main::@10
 main::@10: scope:[main]  from main::@9
   [32] (signed dword) main::ypos#0 ← (signed dword) mul16s::return#4
-  [33] (signed dword~) main::$14 ← (signed dword) main::ypos#0 << (signed byte) 4
-  [34] (word~) main::$15 ← > (signed dword~) main::$14
-  [35] (word) main::y#0 ← (byte) $64 + (word~) main::$15
+  [33] (signed dword~) main::$11 ← (signed dword) main::ypos#0 << (signed byte) 4
+  [34] (word~) main::$12 ← > (signed dword~) main::$11
+  [35] (word) main::y#0 ← (byte) $64 + (word~) main::$12
   [36] (byte) bitmap_plot::y#0 ← (byte)(word) main::y#0
   [37] (word) bitmap_plot::x#0 ← (word) main::x#0
   [38] call bitmap_plot 
@@ -3562,14 +3430,14 @@ VARIABLE REGISTER WEIGHTS
 (void()) init_irq()
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 (void()) main()
-(word~) main::$10 22.0
-(signed dword~) main::$14 22.0
-(word~) main::$15 22.0
-(word~) main::$25 22.0
-(word~) main::$26 22.0
-(signed word*~) main::$27 22.0
-(signed word*~) main::$28 22.0
-(signed dword~) main::$9 22.0
+(signed dword~) main::$11 22.0
+(word~) main::$12 22.0
+(word~) main::$22 22.0
+(word~) main::$23 22.0
+(signed word*~) main::$24 22.0
+(signed word*~) main::$25 22.0
+(signed dword~) main::$6 22.0
+(word~) main::$7 22.0
 (signed word) main::cos_x
 (signed word) main::cos_x#0 22.0
 (word) main::idx_x
@@ -3767,21 +3635,21 @@ Initial phi equivalence classes
 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ]
 [ divr16u::i#2 divr16u::i#1 ]
 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
-Added variable main::$25 to zero page equivalence class [ main::$25 ]
-Added variable main::$27 to zero page equivalence class [ main::$27 ]
+Added variable main::$22 to zero page equivalence class [ main::$22 ]
+Added variable main::$24 to zero page equivalence class [ main::$24 ]
 Added variable main::cos_x#0 to zero page equivalence class [ main::cos_x#0 ]
 Added variable mul16s::return#3 to zero page equivalence class [ mul16s::return#3 ]
 Added variable main::xpos#0 to zero page equivalence class [ main::xpos#0 ]
-Added variable main::$9 to zero page equivalence class [ main::$9 ]
-Added variable main::$10 to zero page equivalence class [ main::$10 ]
+Added variable main::$6 to zero page equivalence class [ main::$6 ]
+Added variable main::$7 to zero page equivalence class [ main::$7 ]
 Added variable main::x#0 to zero page equivalence class [ main::x#0 ]
-Added variable main::$26 to zero page equivalence class [ main::$26 ]
-Added variable main::$28 to zero page equivalence class [ main::$28 ]
+Added variable main::$23 to zero page equivalence class [ main::$23 ]
+Added variable main::$25 to zero page equivalence class [ main::$25 ]
 Added variable main::sin_y#0 to zero page equivalence class [ main::sin_y#0 ]
 Added variable mul16s::return#4 to zero page equivalence class [ mul16s::return#4 ]
 Added variable main::ypos#0 to zero page equivalence class [ main::ypos#0 ]
-Added variable main::$14 to zero page equivalence class [ main::$14 ]
-Added variable main::$15 to zero page equivalence class [ main::$15 ]
+Added variable main::$11 to zero page equivalence class [ main::$11 ]
+Added variable main::$12 to zero page equivalence class [ main::$12 ]
 Added variable main::y#0 to zero page equivalence class [ main::y#0 ]
 Added variable bitmap_plot::y#0 to zero page equivalence class [ bitmap_plot::y#0 ]
 Added variable bitmap_plot::x#0 to zero page equivalence class [ bitmap_plot::x#0 ]
@@ -3867,21 +3735,21 @@ Complete equivalence classes
 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ]
 [ divr16u::i#2 divr16u::i#1 ]
 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
-[ main::$25 ]
-[ main::$27 ]
+[ main::$22 ]
+[ main::$24 ]
 [ main::cos_x#0 ]
 [ mul16s::return#3 ]
 [ main::xpos#0 ]
-[ main::$9 ]
-[ main::$10 ]
+[ main::$6 ]
+[ main::$7 ]
 [ main::x#0 ]
-[ main::$26 ]
-[ main::$28 ]
+[ main::$23 ]
+[ main::$25 ]
 [ main::sin_y#0 ]
 [ mul16s::return#4 ]
 [ main::ypos#0 ]
-[ main::$14 ]
-[ main::$15 ]
+[ main::$11 ]
+[ main::$12 ]
 [ main::y#0 ]
 [ bitmap_plot::y#0 ]
 [ bitmap_plot::x#0 ]
@@ -3966,21 +3834,21 @@ Allocated zp[2]:62 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#0
 Allocated zp[2]:64 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ]
 Allocated zp[1]:66 [ divr16u::i#2 divr16u::i#1 ]
 Allocated zp[1]:67 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
-Allocated zp[2]:68 [ main::$25 ]
-Allocated zp[2]:70 [ main::$27 ]
+Allocated zp[2]:68 [ main::$22 ]
+Allocated zp[2]:70 [ main::$24 ]
 Allocated zp[2]:72 [ main::cos_x#0 ]
 Allocated zp[4]:74 [ mul16s::return#3 ]
 Allocated zp[4]:78 [ main::xpos#0 ]
-Allocated zp[4]:82 [ main::$9 ]
-Allocated zp[2]:86 [ main::$10 ]
+Allocated zp[4]:82 [ main::$6 ]
+Allocated zp[2]:86 [ main::$7 ]
 Allocated zp[2]:88 [ main::x#0 ]
-Allocated zp[2]:90 [ main::$26 ]
-Allocated zp[2]:92 [ main::$28 ]
+Allocated zp[2]:90 [ main::$23 ]
+Allocated zp[2]:92 [ main::$25 ]
 Allocated zp[2]:94 [ main::sin_y#0 ]
 Allocated zp[4]:96 [ mul16s::return#4 ]
 Allocated zp[4]:100 [ main::ypos#0 ]
-Allocated zp[4]:104 [ main::$14 ]
-Allocated zp[2]:108 [ main::$15 ]
+Allocated zp[4]:104 [ main::$11 ]
+Allocated zp[2]:108 [ main::$12 ]
 Allocated zp[2]:110 [ main::y#0 ]
 Allocated zp[1]:112 [ bitmap_plot::y#0 ]
 Allocated zp[2]:113 [ bitmap_plot::x#0 ]
@@ -4044,7 +3912,6 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -4082,6 +3949,7 @@ Target platform is c64basic / MOS6502X
   .const PI_u4f28 = $3243f6a9
   // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
+  .const SIZEOF_SIGNED_WORD = 2
   .label BITMAP = $2000
   .label SCREEN = $400
   .label rem16u = $e1
@@ -4112,12 +3980,12 @@ __bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __9 = $52
-    .label __10 = $56
-    .label __14 = $68
-    .label __15 = $6c
-    .label __25 = $44
-    .label __26 = $5a
+    .label __6 = $52
+    .label __7 = $56
+    .label __11 = $68
+    .label __12 = $6c
+    .label __22 = $44
+    .label __23 = $5a
     .label cos_x = $48
     .label xpos = $4e
     .label x = $58
@@ -4126,8 +3994,8 @@ main: {
     .label y = $6e
     .label idx_x = 2
     .label idx_y = 4
-    .label __27 = $46
-    .label __28 = $5c
+    .label __24 = $46
+    .label __25 = $5c
     // [6] call sin16s_gen2 
     // [128] phi from main to sin16s_gen2 [phi:main->sin16s_gen2]
   sin16s_gen2_from_main:
@@ -4187,27 +4055,27 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [16] (word~) main::$25 ← (word) main::idx_x#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [16] (word~) main::$22 ← (word) main::idx_x#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z idx_x
     asl
-    sta.z __25
+    sta.z __22
     lda.z idx_x+1
     rol
-    sta.z __25+1
-    // [17] (signed word*~) main::$27 ← (const signed word[$200]) SINUS + (word~) main::$25 -- pwsz1=pwsc1_plus_vwuz2 
-    lda.z __25
+    sta.z __22+1
+    // [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22 -- pwsz1=pwsc1_plus_vwuz2 
+    lda.z __22
     clc
     adc #<SINUS
-    sta.z __27
-    lda.z __25+1
+    sta.z __24
+    lda.z __22+1
     adc #>SINUS
-    sta.z __27+1
-    // [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$27) -- vwsz1=_deref_pwsz2 
+    sta.z __24+1
+    // [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$24) -- vwsz1=_deref_pwsz2 
     ldy #0
-    lda (__27),y
+    lda (__24),y
     sta.z cos_x
     iny
-    lda (__27),y
+    lda (__24),y
     sta.z cos_x+1
     // [19] (signed word) mul16s::b#1 ← (signed word) main::cos_x#0 -- vwsz1=vwsz2 
     lda.z cos_x
@@ -4245,65 +4113,65 @@ main: {
     sta.z xpos+2
     lda.z mul16s.return_2+3
     sta.z xpos+3
-    // [23] (signed dword~) main::$9 ← (signed dword) main::xpos#0 << (signed byte) 4 -- vdsz1=vdsz2_rol_4 
+    // [23] (signed dword~) main::$6 ← (signed dword) main::xpos#0 << (signed byte) 4 -- vdsz1=vdsz2_rol_4 
     lda.z xpos
-    sta.z __9
+    sta.z __6
     lda.z xpos+1
-    sta.z __9+1
+    sta.z __6+1
     lda.z xpos+2
-    sta.z __9+2
+    sta.z __6+2
     lda.z xpos+3
-    sta.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    // [24] (word~) main::$10 ← > (signed dword~) main::$9 -- vwuz1=_hi_vdsz2 
-    lda.z __9+2
-    sta.z __10
-    lda.z __9+3
-    sta.z __10+1
-    // [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$10 -- vwuz1=vbuc1_plus_vwuz2 
+    sta.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    // [24] (word~) main::$7 ← > (signed dword~) main::$6 -- vwuz1=_hi_vdsz2 
+    lda.z __6+2
+    sta.z __7
+    lda.z __6+3
+    sta.z __7+1
+    // [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$7 -- vwuz1=vbuc1_plus_vwuz2 
     lda #$a0
     clc
-    adc.z __10
+    adc.z __7
     sta.z x
     lda #0
-    adc.z __10+1
+    adc.z __7+1
     sta.z x+1
-    // [26] (word~) main::$26 ← (word) main::idx_y#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [26] (word~) main::$23 ← (word) main::idx_y#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z idx_y
     asl
-    sta.z __26
+    sta.z __23
     lda.z idx_y+1
     rol
-    sta.z __26+1
-    // [27] (signed word*~) main::$28 ← (const signed word[$200]) SINUS + (word~) main::$26 -- pwsz1=pwsc1_plus_vwuz2 
-    lda.z __26
+    sta.z __23+1
+    // [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23 -- pwsz1=pwsc1_plus_vwuz2 
+    lda.z __23
     clc
     adc #<SINUS
-    sta.z __28
-    lda.z __26+1
+    sta.z __25
+    lda.z __23+1
     adc #>SINUS
-    sta.z __28+1
-    // [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$28) -- vwsz1=_deref_pwsz2 
+    sta.z __25+1
+    // [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$25) -- vwsz1=_deref_pwsz2 
     ldy #0
-    lda (__28),y
+    lda (__25),y
     sta.z sin_y
     iny
-    lda (__28),y
+    lda (__25),y
     sta.z sin_y+1
     // [29] (signed word) mul16s::b#2 ← (signed word) main::sin_y#0 -- vwsz1=vwsz2 
     lda.z sin_y
@@ -4341,43 +4209,43 @@ main: {
     sta.z ypos+2
     lda.z mul16s.return_3+3
     sta.z ypos+3
-    // [33] (signed dword~) main::$14 ← (signed dword) main::ypos#0 << (signed byte) 4 -- vdsz1=vdsz2_rol_4 
+    // [33] (signed dword~) main::$11 ← (signed dword) main::ypos#0 << (signed byte) 4 -- vdsz1=vdsz2_rol_4 
     lda.z ypos
-    sta.z __14
+    sta.z __11
     lda.z ypos+1
-    sta.z __14+1
+    sta.z __11+1
     lda.z ypos+2
-    sta.z __14+2
+    sta.z __11+2
     lda.z ypos+3
-    sta.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    // [34] (word~) main::$15 ← > (signed dword~) main::$14 -- vwuz1=_hi_vdsz2 
-    lda.z __14+2
-    sta.z __15
-    lda.z __14+3
-    sta.z __15+1
-    // [35] (word) main::y#0 ← (byte) $64 + (word~) main::$15 -- vwuz1=vbuc1_plus_vwuz2 
+    sta.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    // [34] (word~) main::$12 ← > (signed dword~) main::$11 -- vwuz1=_hi_vdsz2 
+    lda.z __11+2
+    sta.z __12
+    lda.z __11+3
+    sta.z __12+1
+    // [35] (word) main::y#0 ← (byte) $64 + (word~) main::$12 -- vwuz1=vbuc1_plus_vwuz2 
     lda #$64
     clc
-    adc.z __15
+    adc.z __12
     sta.z y
     lda #0
-    adc.z __15+1
+    adc.z __12+1
     sta.z y+1
     // [36] (byte) bitmap_plot::y#0 ← (byte)(word) main::y#0 -- vbuz1=_byte_vwuz2 
     lda.z y
@@ -5913,28 +5781,28 @@ irq: {
   SINUS: .fill 2*$200, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Equivalence Class zp[2]:86 [ main::$10 ] has ALU potential.
-Equivalence Class zp[2]:108 [ main::$15 ] has ALU potential.
+Equivalence Class zp[2]:86 [ main::$7 ] has ALU potential.
+Equivalence Class zp[2]:108 [ main::$12 ] has ALU potential.
 Equivalence Class zp[1]:142 [ bitmap_init::$4 ] has ALU potential.
 Statement [1] (byte) frame_cnt#0 ← (byte) 1 [ frame_cnt#0 ] (  [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [11] *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3 [ frame_cnt#0 ] ( main:3 [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ frame_cnt#0 ] ( main:3 [ frame_cnt#0 ] ) always clobbers reg byte a 
-Statement [16] (word~) main::$25 ← (word) main::idx_x#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$25 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$25 ] ) always clobbers reg byte a 
-Statement [17] (signed word*~) main::$27 ← (const signed word[$200]) SINUS + (word~) main::$25 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$27 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$27 ] ) always clobbers reg byte a 
-Statement [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$27) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ) always clobbers reg byte a reg byte y 
+Statement [16] (word~) main::$22 ← (word) main::idx_x#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$22 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$22 ] ) always clobbers reg byte a 
+Statement [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ) always clobbers reg byte a 
+Statement [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$24) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ) always clobbers reg byte a reg byte y 
 Statement [19] (signed word) mul16s::b#1 ← (signed word) main::cos_x#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::b#1 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::b#1 ] ) always clobbers reg byte a 
 Statement [21] (signed dword) mul16s::return#3 ← (signed dword) mul16s::return#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::return#3 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::return#3 ] ) always clobbers reg byte a 
 Statement [22] (signed dword) main::xpos#0 ← (signed dword) mul16s::return#3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::xpos#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::xpos#0 ] ) always clobbers reg byte a 
-Statement [23] (signed dword~) main::$9 ← (signed dword) main::xpos#0 << (signed byte) 4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$9 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$9 ] ) always clobbers reg byte a 
-Statement [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$10 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ) always clobbers reg byte a 
-Statement [26] (word~) main::$26 ← (word) main::idx_y#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$26 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$26 ] ) always clobbers reg byte a 
-Statement [27] (signed word*~) main::$28 ← (const signed word[$200]) SINUS + (word~) main::$26 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$28 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$28 ] ) always clobbers reg byte a 
-Statement [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$28) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ) always clobbers reg byte a reg byte y 
+Statement [23] (signed dword~) main::$6 ← (signed dword) main::xpos#0 << (signed byte) 4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$6 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$6 ] ) always clobbers reg byte a 
+Statement [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$7 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ) always clobbers reg byte a 
+Statement [26] (word~) main::$23 ← (word) main::idx_y#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$23 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$23 ] ) always clobbers reg byte a 
+Statement [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ) always clobbers reg byte a 
+Statement [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$25) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ) always clobbers reg byte a reg byte y 
 Statement [29] (signed word) mul16s::b#2 ← (signed word) main::sin_y#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::b#2 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::b#2 ] ) always clobbers reg byte a 
 Statement [31] (signed dword) mul16s::return#4 ← (signed dword) mul16s::return#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::return#4 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::return#4 ] ) always clobbers reg byte a 
 Statement [32] (signed dword) main::ypos#0 ← (signed dword) mul16s::return#4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::ypos#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::ypos#0 ] ) always clobbers reg byte a 
-Statement [33] (signed dword~) main::$14 ← (signed dword) main::ypos#0 << (signed byte) 4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$14 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$14 ] ) always clobbers reg byte a 
-Statement [35] (word) main::y#0 ← (byte) $64 + (word~) main::$15 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::y#0 ] ) always clobbers reg byte a 
+Statement [33] (signed dword~) main::$11 ← (signed dword) main::ypos#0 << (signed byte) 4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$11 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$11 ] ) always clobbers reg byte a 
+Statement [35] (word) main::y#0 ← (byte) $64 + (word~) main::$12 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::y#0 ] ) always clobbers reg byte a 
 Statement [36] (byte) bitmap_plot::y#0 ← (byte)(word) main::y#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 bitmap_plot::y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 bitmap_plot::y#0 ] ) always clobbers reg byte a 
 Statement [37] (word) bitmap_plot::x#0 ← (word) main::x#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::y#0 bitmap_plot::x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::y#0 bitmap_plot::x#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:112 [ bitmap_plot::y#0 ]
@@ -6048,22 +5916,22 @@ Statement [230] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg b
 Statement [1] (byte) frame_cnt#0 ← (byte) 1 [ frame_cnt#0 ] (  [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [11] *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3 [ frame_cnt#0 ] ( main:3 [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ frame_cnt#0 ] ( main:3 [ frame_cnt#0 ] ) always clobbers reg byte a 
-Statement [16] (word~) main::$25 ← (word) main::idx_x#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$25 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$25 ] ) always clobbers reg byte a 
-Statement [17] (signed word*~) main::$27 ← (const signed word[$200]) SINUS + (word~) main::$25 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$27 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$27 ] ) always clobbers reg byte a 
-Statement [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$27) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ) always clobbers reg byte a reg byte y 
+Statement [16] (word~) main::$22 ← (word) main::idx_x#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$22 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$22 ] ) always clobbers reg byte a 
+Statement [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ) always clobbers reg byte a 
+Statement [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$24) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ) always clobbers reg byte a reg byte y 
 Statement [19] (signed word) mul16s::b#1 ← (signed word) main::cos_x#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::b#1 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::b#1 ] ) always clobbers reg byte a 
 Statement [21] (signed dword) mul16s::return#3 ← (signed dword) mul16s::return#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::return#3 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::return#3 ] ) always clobbers reg byte a 
 Statement [22] (signed dword) main::xpos#0 ← (signed dword) mul16s::return#3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::xpos#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::xpos#0 ] ) always clobbers reg byte a 
-Statement [23] (signed dword~) main::$9 ← (signed dword) main::xpos#0 << (signed byte) 4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$9 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$9 ] ) always clobbers reg byte a 
-Statement [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$10 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ) always clobbers reg byte a 
-Statement [26] (word~) main::$26 ← (word) main::idx_y#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$26 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$26 ] ) always clobbers reg byte a 
-Statement [27] (signed word*~) main::$28 ← (const signed word[$200]) SINUS + (word~) main::$26 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$28 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$28 ] ) always clobbers reg byte a 
-Statement [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$28) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ) always clobbers reg byte a reg byte y 
+Statement [23] (signed dword~) main::$6 ← (signed dword) main::xpos#0 << (signed byte) 4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$6 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$6 ] ) always clobbers reg byte a 
+Statement [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$7 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ) always clobbers reg byte a 
+Statement [26] (word~) main::$23 ← (word) main::idx_y#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$23 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$23 ] ) always clobbers reg byte a 
+Statement [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ) always clobbers reg byte a 
+Statement [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$25) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ) always clobbers reg byte a reg byte y 
 Statement [29] (signed word) mul16s::b#2 ← (signed word) main::sin_y#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::b#2 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::b#2 ] ) always clobbers reg byte a 
 Statement [31] (signed dword) mul16s::return#4 ← (signed dword) mul16s::return#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::return#4 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::return#4 ] ) always clobbers reg byte a 
 Statement [32] (signed dword) main::ypos#0 ← (signed dword) mul16s::return#4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::ypos#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::ypos#0 ] ) always clobbers reg byte a 
-Statement [33] (signed dword~) main::$14 ← (signed dword) main::ypos#0 << (signed byte) 4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$14 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$14 ] ) always clobbers reg byte a 
-Statement [35] (word) main::y#0 ← (byte) $64 + (word~) main::$15 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::y#0 ] ) always clobbers reg byte a 
+Statement [33] (signed dword~) main::$11 ← (signed dword) main::ypos#0 << (signed byte) 4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$11 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$11 ] ) always clobbers reg byte a 
+Statement [35] (word) main::y#0 ← (byte) $64 + (word~) main::$12 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::y#0 ] ) always clobbers reg byte a 
 Statement [36] (byte) bitmap_plot::y#0 ← (byte)(word) main::y#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 bitmap_plot::y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 bitmap_plot::y#0 ] ) always clobbers reg byte a 
 Statement [37] (word) bitmap_plot::x#0 ← (word) main::x#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::y#0 bitmap_plot::x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::y#0 bitmap_plot::x#0 ] ) always clobbers reg byte a 
 Statement [40] if((word) main::idx_x#1!=(word) $200) goto main::@12 [ frame_cnt#0 main::idx_y#3 main::idx_x#1 ] ( main:3 [ frame_cnt#0 main::idx_y#3 main::idx_x#1 ] ) always clobbers reg byte a 
@@ -6200,21 +6068,21 @@ Potential registers zp[2]:62 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::
 Potential registers zp[2]:64 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] : zp[2]:64 , 
 Potential registers zp[1]:66 [ divr16u::i#2 divr16u::i#1 ] : zp[1]:66 , reg byte x , reg byte y , 
 Potential registers zp[1]:67 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ] : zp[1]:67 , 
-Potential registers zp[2]:68 [ main::$25 ] : zp[2]:68 , 
-Potential registers zp[2]:70 [ main::$27 ] : zp[2]:70 , 
+Potential registers zp[2]:68 [ main::$22 ] : zp[2]:68 , 
+Potential registers zp[2]:70 [ main::$24 ] : zp[2]:70 , 
 Potential registers zp[2]:72 [ main::cos_x#0 ] : zp[2]:72 , 
 Potential registers zp[4]:74 [ mul16s::return#3 ] : zp[4]:74 , 
 Potential registers zp[4]:78 [ main::xpos#0 ] : zp[4]:78 , 
-Potential registers zp[4]:82 [ main::$9 ] : zp[4]:82 , 
-Potential registers zp[2]:86 [ main::$10 ] : zp[2]:86 , reg byte alu , 
+Potential registers zp[4]:82 [ main::$6 ] : zp[4]:82 , 
+Potential registers zp[2]:86 [ main::$7 ] : zp[2]:86 , reg byte alu , 
 Potential registers zp[2]:88 [ main::x#0 ] : zp[2]:88 , 
-Potential registers zp[2]:90 [ main::$26 ] : zp[2]:90 , 
-Potential registers zp[2]:92 [ main::$28 ] : zp[2]:92 , 
+Potential registers zp[2]:90 [ main::$23 ] : zp[2]:90 , 
+Potential registers zp[2]:92 [ main::$25 ] : zp[2]:92 , 
 Potential registers zp[2]:94 [ main::sin_y#0 ] : zp[2]:94 , 
 Potential registers zp[4]:96 [ mul16s::return#4 ] : zp[4]:96 , 
 Potential registers zp[4]:100 [ main::ypos#0 ] : zp[4]:100 , 
-Potential registers zp[4]:104 [ main::$14 ] : zp[4]:104 , 
-Potential registers zp[2]:108 [ main::$15 ] : zp[2]:108 , reg byte alu , 
+Potential registers zp[4]:104 [ main::$11 ] : zp[4]:104 , 
+Potential registers zp[2]:108 [ main::$12 ] : zp[2]:108 , reg byte alu , 
 Potential registers zp[2]:110 [ main::y#0 ] : zp[2]:110 , 
 Potential registers zp[1]:112 [ bitmap_plot::y#0 ] : zp[1]:112 , reg byte x , reg byte y , 
 Potential registers zp[2]:113 [ bitmap_plot::x#0 ] : zp[2]:113 , 
@@ -6270,7 +6138,7 @@ Potential registers zp[2]:225 [ rem16u#1 ] : zp[2]:225 ,
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [mul16u] 346.86: zp[4]:20 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] 251.57: zp[4]:24 [ mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ] 202: zp[1]:138 [ mul16u::$1 ] 178.67: zp[2]:18 [ mul16u::a#3 mul16u::a#6 mul16u::a#1 mul16u::a#2 mul16u::a#0 ] 4: zp[2]:14 [ mul16u::b#0 ] 4: zp[2]:16 [ mul16u::b#1 ] 4: zp[4]:122 [ mul16u::return#2 ] 4: zp[4]:197 [ mul16u::return#3 ] 
-Uplift Scope [main] 23.18: zp[2]:4 [ main::idx_y#3 main::idx_y#10 main::idx_y#1 ] 22: zp[2]:68 [ main::$25 ] 22: zp[2]:70 [ main::$27 ] 22: zp[2]:72 [ main::cos_x#0 ] 22: zp[4]:78 [ main::xpos#0 ] 22: zp[4]:82 [ main::$9 ] 22: zp[2]:86 [ main::$10 ] 22: zp[2]:90 [ main::$26 ] 22: zp[2]:92 [ main::$28 ] 22: zp[2]:94 [ main::sin_y#0 ] 22: zp[4]:100 [ main::ypos#0 ] 22: zp[4]:104 [ main::$14 ] 22: zp[2]:108 [ main::$15 ] 16.04: zp[2]:2 [ main::idx_x#3 main::idx_x#10 main::idx_x#1 ] 11: zp[2]:110 [ main::y#0 ] 1.83: zp[2]:88 [ main::x#0 ] 
+Uplift Scope [main] 23.18: zp[2]:4 [ main::idx_y#3 main::idx_y#10 main::idx_y#1 ] 22: zp[2]:68 [ main::$22 ] 22: zp[2]:70 [ main::$24 ] 22: zp[2]:72 [ main::cos_x#0 ] 22: zp[4]:78 [ main::xpos#0 ] 22: zp[4]:82 [ main::$6 ] 22: zp[2]:86 [ main::$7 ] 22: zp[2]:90 [ main::$23 ] 22: zp[2]:92 [ main::$25 ] 22: zp[2]:94 [ main::sin_y#0 ] 22: zp[4]:100 [ main::ypos#0 ] 22: zp[4]:104 [ main::$11 ] 22: zp[2]:108 [ main::$12 ] 16.04: zp[2]:2 [ main::idx_x#3 main::idx_x#10 main::idx_x#1 ] 11: zp[2]:110 [ main::y#0 ] 1.83: zp[2]:88 [ main::x#0 ] 
 Uplift Scope [divr16u] 106.92: zp[2]:60 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] 35.54: zp[2]:64 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] 22: zp[1]:223 [ divr16u::$1 ] 22: zp[1]:224 [ divr16u::$2 ] 18.19: zp[1]:66 [ divr16u::i#2 divr16u::i#1 ] 9.75: zp[2]:62 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#0 ] 4: zp[2]:211 [ divr16u::return#2 ] 4: zp[2]:215 [ divr16u::return#3 ] 
 Uplift Scope [bitmap_init] 39.88: zp[2]:38 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] 34.83: zp[1]:35 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] 22: zp[1]:36 [ bitmap_init::x#2 bitmap_init::x#1 ] 22: zp[1]:37 [ bitmap_init::y#2 bitmap_init::y#1 ] 22: zp[1]:142 [ bitmap_init::$4 ] 22: zp[1]:143 [ bitmap_init::$5 ] 22: zp[1]:144 [ bitmap_init::$6 ] 5.5: zp[1]:141 [ bitmap_init::$7 ] 
 Uplift Scope [mul16s] 46.18: zp[2]:8 [ mul16s::b#3 mul16s::b#2 mul16s::b#1 ] 23: zp[2]:6 [ mul16s::a#3 mul16s::a#0 ] 22: zp[4]:74 [ mul16s::return#3 ] 22: zp[4]:96 [ mul16s::return#4 ] 22: zp[4]:155 [ mul16s::return#2 ] 16.5: zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 ] 7: zp[4]:134 [ mul16s::return#0 ] 4: zp[2]:126 [ mul16s::$9 ] 4: zp[2]:128 [ mul16s::$16 ] 4: zp[2]:130 [ mul16s::$13 ] 4: zp[2]:132 [ mul16s::$17 ] 
@@ -6286,7 +6154,7 @@ Uplift Scope [init_irq]
 Uplift Scope [irq] 
 
 Uplifting [mul16u] best 27221 combination zp[4]:20 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] zp[4]:24 [ mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ] reg byte a [ mul16u::$1 ] zp[2]:18 [ mul16u::a#3 mul16u::a#6 mul16u::a#1 mul16u::a#2 mul16u::a#0 ] zp[2]:14 [ mul16u::b#0 ] zp[2]:16 [ mul16u::b#1 ] zp[4]:122 [ mul16u::return#2 ] zp[4]:197 [ mul16u::return#3 ] 
-Uplifting [main] best 26981 combination zp[2]:4 [ main::idx_y#3 main::idx_y#10 main::idx_y#1 ] zp[2]:68 [ main::$25 ] zp[2]:70 [ main::$27 ] zp[2]:72 [ main::cos_x#0 ] zp[4]:78 [ main::xpos#0 ] zp[4]:82 [ main::$9 ] reg byte alu [ main::$10 ] zp[2]:90 [ main::$26 ] zp[2]:92 [ main::$28 ] zp[2]:94 [ main::sin_y#0 ] zp[4]:100 [ main::ypos#0 ] zp[4]:104 [ main::$14 ] reg byte alu [ main::$15 ] zp[2]:2 [ main::idx_x#3 main::idx_x#10 main::idx_x#1 ] zp[2]:110 [ main::y#0 ] zp[2]:88 [ main::x#0 ] 
+Uplifting [main] best 26981 combination zp[2]:4 [ main::idx_y#3 main::idx_y#10 main::idx_y#1 ] zp[2]:68 [ main::$22 ] zp[2]:70 [ main::$24 ] zp[2]:72 [ main::cos_x#0 ] zp[4]:78 [ main::xpos#0 ] zp[4]:82 [ main::$6 ] reg byte alu [ main::$7 ] zp[2]:90 [ main::$23 ] zp[2]:92 [ main::$25 ] zp[2]:94 [ main::sin_y#0 ] zp[4]:100 [ main::ypos#0 ] zp[4]:104 [ main::$11 ] reg byte alu [ main::$12 ] zp[2]:2 [ main::idx_x#3 main::idx_x#10 main::idx_x#1 ] zp[2]:110 [ main::y#0 ] zp[2]:88 [ main::x#0 ] 
 Uplifting [divr16u] best 26771 combination zp[2]:60 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 ] zp[2]:64 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] reg byte a [ divr16u::$1 ] reg byte a [ divr16u::$2 ] reg byte x [ divr16u::i#2 divr16u::i#1 ] zp[2]:62 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#0 ] zp[2]:211 [ divr16u::return#2 ] zp[2]:215 [ divr16u::return#3 ] 
 Uplifting [bitmap_init] best 26261 combination zp[2]:38 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ] reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ] reg byte a [ bitmap_init::$4 ] zp[1]:143 [ bitmap_init::$5 ] zp[1]:144 [ bitmap_init::$6 ] zp[1]:141 [ bitmap_init::$7 ] 
 Limited combination testing to 100 combinations of 15360 possible.
@@ -6326,10 +6194,10 @@ Coalescing zero page register [ zp[2]:55 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mul
 Coalescing zero page register [ zp[2]:55 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 sin16s::x3#0 sin16s::x2#0 ] ] with [ zp[2]:187 [ sin16s::x4#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:64 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 ] ] with [ zp[2]:211 [ divr16u::return#2 ] ] - score: 1
 Coalescing zero page register [ zp[2]:64 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 ] ] with [ zp[2]:215 [ divr16u::return#3 ] ] - score: 1
-Coalescing zero page register [ zp[2]:68 [ main::$25 ] ] with [ zp[2]:70 [ main::$27 ] ] - score: 1
+Coalescing zero page register [ zp[2]:68 [ main::$22 ] ] with [ zp[2]:70 [ main::$24 ] ] - score: 1
 Coalescing zero page register [ zp[4]:74 [ mul16s::return#3 ] ] with [ zp[4]:78 [ main::xpos#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:88 [ main::x#0 ] ] with [ zp[2]:113 [ bitmap_plot::x#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:90 [ main::$26 ] ] with [ zp[2]:92 [ main::$28 ] ] - score: 1
+Coalescing zero page register [ zp[2]:90 [ main::$23 ] ] with [ zp[2]:92 [ main::$25 ] ] - score: 1
 Coalescing zero page register [ zp[4]:96 [ mul16s::return#4 ] ] with [ zp[4]:100 [ main::ypos#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:115 [ bitmap_plot::plotter#0 ] ] with [ zp[2]:119 [ bitmap_plot::plotter#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:126 [ mul16s::$9 ] ] with [ zp[2]:128 [ mul16s::$16 ] ] - score: 1
@@ -6341,8 +6209,8 @@ Coalescing zero page register [ zp[2]:179 [ mulu16_sel::return#2 ] ] with [ zp[2
 Coalescing zero page register [ zp[2]:189 [ mulu16_sel::return#11 ] ] with [ zp[2]:191 [ sin16s::x5#0 ] ] - score: 1
 Coalescing zero page register [ zp[4]:201 [ mulu16_sel::$0 ] ] with [ zp[4]:205 [ mulu16_sel::$1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ mul16s::a#3 mul16s::a#0 mul16s::$17 sin16s::return#0 ] ] with [ zp[2]:53 [ sin16s::return#1 sin16s::return#5 sin16s::sinx#1 sin16s::usinx#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:8 [ mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 ] ] with [ zp[2]:68 [ main::$25 main::$27 ] ] - score: 1
-Coalescing zero page register [ zp[2]:8 [ mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 main::$25 main::$27 ] ] with [ zp[2]:90 [ main::$26 main::$28 ] ] - score: 1
+Coalescing zero page register [ zp[2]:8 [ mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 ] ] with [ zp[2]:68 [ main::$22 main::$24 ] ] - score: 1
+Coalescing zero page register [ zp[2]:8 [ mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 main::$22 main::$24 ] ] with [ zp[2]:90 [ main::$23 main::$25 ] ] - score: 1
 Coalescing zero page register [ zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 ] ] with [ zp[4]:20 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 ] ] - score: 1
 Coalescing zero page register [ zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 ] ] with [ zp[4]:74 [ mul16s::return#3 main::xpos#0 ] ] - score: 1
 Coalescing zero page register [ zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 ] ] with [ zp[4]:96 [ mul16s::return#4 main::ypos#0 ] ] - score: 1
@@ -6353,15 +6221,15 @@ Coalescing zero page register [ zp[2]:64 [ divr16u::quotient#3 divr16u::return#0
 Coalescing zero page register [ zp[2]:171 [ mulu16_sel::return#0 mulu16_sel::return#12 ] ] with [ zp[2]:179 [ mulu16_sel::return#2 sin16s::x3_6#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:171 [ mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 ] ] with [ zp[2]:189 [ mulu16_sel::return#11 sin16s::x5#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ mul16s::a#3 mul16s::a#0 mul16s::$17 sin16s::return#0 sin16s::return#1 sin16s::return#5 sin16s::sinx#1 sin16s::usinx#1 ] ] with [ zp[2]:183 [ sin16s::usinx#0 ] ] - score: 1
-Coalescing zero page register [ zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 ] ] with [ zp[4]:82 [ main::$9 ] ] - score: 1
-Coalescing zero page register [ zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 main::$9 ] ] with [ zp[4]:104 [ main::$14 ] ] - score: 1
-Coalescing zero page register [ zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 main::$9 main::$14 ] ] with [ zp[4]:201 [ mulu16_sel::$0 mulu16_sel::$1 ] ] - score: 1
+Coalescing zero page register [ zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 ] ] with [ zp[4]:82 [ main::$6 ] ] - score: 1
+Coalescing zero page register [ zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 main::$6 ] ] with [ zp[4]:104 [ main::$11 ] ] - score: 1
+Coalescing zero page register [ zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 main::$6 main::$11 ] ] with [ zp[4]:201 [ mulu16_sel::$0 mulu16_sel::$1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:171 [ mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 mulu16_sel::return#11 sin16s::x5#0 ] ] with [ zp[2]:193 [ sin16s::x5_128#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:16 [ mul16u::b#1 mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 ] ] with [ zp[2]:2 [ main::idx_x#3 main::idx_x#10 main::idx_x#1 ] ]
 Coalescing zero page register [ zp[2]:28 [ memset::num#2 memset::end#0 ] ] with [ zp[2]:4 [ main::idx_y#3 main::idx_y#10 main::idx_y#1 ] ]
 Coalescing zero page register [ zp[2]:30 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ] with [ zp[2]:6 [ mul16s::a#3 mul16s::a#0 mul16s::$17 sin16s::return#0 sin16s::return#1 sin16s::return#5 sin16s::sinx#1 sin16s::usinx#1 sin16s::usinx#0 ] ]
-Coalescing zero page register [ zp[2]:38 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] ] with [ zp[2]:8 [ mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 main::$25 main::$27 main::$26 main::$28 ] ]
-Coalescing zero page register [ zp[4]:49 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 ] ] with [ zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 main::$9 main::$14 mulu16_sel::$0 mulu16_sel::$1 ] ]
+Coalescing zero page register [ zp[2]:38 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] ] with [ zp[2]:8 [ mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 main::$22 main::$24 main::$23 main::$25 ] ]
+Coalescing zero page register [ zp[4]:49 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 ] ] with [ zp[4]:10 [ mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 main::$6 main::$11 mulu16_sel::$0 mulu16_sel::$1 ] ]
 Coalescing zero page register [ zp[2]:55 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 sin16s::x3#0 sin16s::x2#0 sin16s::x4#0 mulu16_sel::return#1 mulu16_sel::return#10 ] ] with [ zp[2]:14 [ mul16u::b#0 ] ]
 Coalescing zero page register [ zp[2]:60 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 rem16u#1 ] ] with [ zp[2]:18 [ mul16u::a#3 mul16u::a#6 mul16u::a#1 mul16u::a#2 mul16u::a#0 ] ]
 Coalescing zero page register [ zp[2]:62 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#0 ] ] with [ zp[2]:40 [ sin16s_gen2::i#2 sin16s_gen2::i#1 ] ]
@@ -6375,10 +6243,10 @@ Coalescing zero page register [ zp[2]:213 [ div32u16u::quotient_hi#0 ] ] with [ 
 Coalescing zero page register [ zp[2]:62 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#0 sin16s_gen2::i#2 sin16s_gen2::i#1 ] ] with [ zp[2]:28 [ memset::num#2 memset::end#0 main::idx_y#3 main::idx_y#10 main::idx_y#1 ] ]
 Coalescing zero page register [ zp[2]:115 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 main::y#0 ] ] with [ zp[2]:30 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 mul16s::a#3 mul16s::a#0 mul16s::$17 sin16s::return#0 sin16s::return#1 sin16s::return#5 sin16s::sinx#1 sin16s::usinx#1 sin16s::usinx#0 ] ]
 Coalescing zero page register [ zp[2]:126 [ mul16s::$9 mul16s::$16 bitmap_plot::$1 ] ] with [ zp[2]:55 [ mulu16_sel::v1#5 mulu16_sel::v1#3 mulu16_sel::v1#4 mulu16_sel::v1#0 mulu16_sel::v1#1 mulu16_sel::v1#2 sin16s::x3#0 sin16s::x2#0 sin16s::x4#0 mulu16_sel::return#1 mulu16_sel::return#10 mul16u::b#0 ] ]
-Coalescing zero page register [ zp[2]:213 [ div32u16u::quotient_hi#0 mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 mulu16_sel::return#11 sin16s::x5#0 sin16s::x5_128#0 ] ] with [ zp[2]:38 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 main::$25 main::$27 main::$26 main::$28 ] ]
+Coalescing zero page register [ zp[2]:213 [ div32u16u::quotient_hi#0 mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 mulu16_sel::return#11 sin16s::x5#0 sin16s::x5_128#0 ] ] with [ zp[2]:38 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 main::$22 main::$24 main::$23 main::$25 ] ]
 Allocated (was zp[2]:16) zp[2]:2 [ mul16u::b#1 mulu16_sel::v2#5 mulu16_sel::v2#3 mulu16_sel::v2#4 mulu16_sel::v2#0 mulu16_sel::v2#1 main::idx_x#3 main::idx_x#10 main::idx_x#1 ]
 Allocated (was zp[4]:42) zp[4]:4 [ sin16s_gen2::x#2 sin16s_gen2::x#1 ]
-Allocated (was zp[4]:49) zp[4]:8 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 main::$9 main::$14 mulu16_sel::$0 mulu16_sel::$1 ]
+Allocated (was zp[4]:49) zp[4]:8 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 main::$6 main::$11 mulu16_sel::$0 mulu16_sel::$1 ]
 Allocated (was zp[2]:60) zp[2]:12 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 rem16u#1 mul16u::a#3 mul16u::a#6 mul16u::a#1 mul16u::a#2 mul16u::a#0 ]
 Allocated (was zp[2]:62) zp[2]:14 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#0 sin16s_gen2::i#2 sin16s_gen2::i#1 memset::num#2 memset::end#0 main::idx_y#3 main::idx_y#10 main::idx_y#1 ]
 Allocated (was zp[2]:64) zp[2]:16 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 div32u16u::quotient_lo#0 sin16s_gen2::sintab#2 sin16s_gen2::sintab#0 ]
@@ -6390,7 +6258,7 @@ Allocated (was zp[4]:145) zp[4]:24 [ div32u16u::return#2 sin16s_gen2::step#0 div
 Allocated (was zp[2]:163) zp[2]:28 [ sin16s_gen2::$9 main::x#0 bitmap_plot::x#0 ]
 Allocated (was zp[4]:165) zp[4]:30 [ sin16s::$4 mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ]
 Allocated (was zp[2]:169) zp[2]:34 [ sin16s::x1#0 mul16s::$13 ]
-Allocated (was zp[2]:213) zp[2]:36 [ div32u16u::quotient_hi#0 mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 mulu16_sel::return#11 sin16s::x5#0 sin16s::x5_128#0 bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 main::$25 main::$27 main::$26 main::$28 ]
+Allocated (was zp[2]:213) zp[2]:36 [ div32u16u::quotient_hi#0 mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 mulu16_sel::return#11 sin16s::x5#0 sin16s::x5_128#0 bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 main::$22 main::$24 main::$23 main::$25 ]
 Interrupt procedure irq clobbers ACNZ
 Removing interrupt register storage stx regx+1 in CHU421 entry interrupt(HARDWARE_CLOBBER)
 Removing interrupt register storage sty regy+1 in CHU421 entry interrupt(HARDWARE_CLOBBER)
@@ -6408,7 +6276,6 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -6446,6 +6313,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const PI_u4f28 = $3243f6a9
   // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
+  .const SIZEOF_SIGNED_WORD = 2
   .label BITMAP = $2000
   .label SCREEN = $400
   .label rem16u = $c
@@ -6476,10 +6344,10 @@ __bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __9 = 8
-    .label __14 = 8
-    .label __25 = $24
-    .label __26 = $24
+    .label __6 = 8
+    .label __11 = 8
+    .label __22 = $24
+    .label __23 = $24
     .label cos_x = $24
     .label xpos = 8
     .label x = $1c
@@ -6488,8 +6356,8 @@ main: {
     .label y = $13
     .label idx_x = 2
     .label idx_y = $e
-    .label __27 = $24
-    .label __28 = $24
+    .label __24 = $24
+    .label __25 = $24
     // [6] call sin16s_gen2 
     // [128] phi from main to sin16s_gen2 [phi:main->sin16s_gen2]
   sin16s_gen2_from_main:
@@ -6549,22 +6417,22 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [16] (word~) main::$25 ← (word) main::idx_x#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [16] (word~) main::$22 ← (word) main::idx_x#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z idx_x
     asl
-    sta.z __25
+    sta.z __22
     lda.z idx_x+1
     rol
-    sta.z __25+1
-    // [17] (signed word*~) main::$27 ← (const signed word[$200]) SINUS + (word~) main::$25 -- pwsz1=pwsc1_plus_vwuz1 
+    sta.z __22+1
+    // [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22 -- pwsz1=pwsc1_plus_vwuz1 
     clc
-    lda.z __27
+    lda.z __24
     adc #<SINUS
-    sta.z __27
-    lda.z __27+1
+    sta.z __24
+    lda.z __24+1
     adc #>SINUS
-    sta.z __27+1
-    // [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$27) -- vwsz1=_deref_pwsz1 
+    sta.z __24+1
+    // [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$24) -- vwsz1=_deref_pwsz1 
     ldy #0
     lda (cos_x),y
     pha
@@ -6589,48 +6457,48 @@ main: {
     // main::@9
   __b9:
     // [22] (signed dword) main::xpos#0 ← (signed dword) mul16s::return#3
-    // [23] (signed dword~) main::$9 ← (signed dword) main::xpos#0 << (signed byte) 4 -- vdsz1=vdsz1_rol_4 
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    // [24] (word~) main::$10 ← > (signed dword~) main::$9
-    // [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$10 -- vwuz1=vwuc1_plus__hi_vdsz2 
+    // [23] (signed dword~) main::$6 ← (signed dword) main::xpos#0 << (signed byte) 4 -- vdsz1=vdsz1_rol_4 
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    // [24] (word~) main::$7 ← > (signed dword~) main::$6
+    // [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$7 -- vwuz1=vwuc1_plus__hi_vdsz2 
     clc
     lda #<$a0
-    adc.z __9+2
+    adc.z __6+2
     sta.z x
     lda #>$a0
-    adc.z __9+3
+    adc.z __6+3
     sta.z x+1
-    // [26] (word~) main::$26 ← (word) main::idx_y#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [26] (word~) main::$23 ← (word) main::idx_y#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z idx_y
     asl
-    sta.z __26
+    sta.z __23
     lda.z idx_y+1
     rol
-    sta.z __26+1
-    // [27] (signed word*~) main::$28 ← (const signed word[$200]) SINUS + (word~) main::$26 -- pwsz1=pwsc1_plus_vwuz1 
+    sta.z __23+1
+    // [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23 -- pwsz1=pwsc1_plus_vwuz1 
     clc
-    lda.z __28
+    lda.z __25
     adc #<SINUS
-    sta.z __28
-    lda.z __28+1
+    sta.z __25
+    lda.z __25+1
     adc #>SINUS
-    sta.z __28+1
-    // [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$28) -- vwsz1=_deref_pwsz1 
+    sta.z __25+1
+    // [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$25) -- vwsz1=_deref_pwsz1 
     ldy #0
     lda (sin_y),y
     pha
@@ -6655,31 +6523,31 @@ main: {
     // main::@10
   __b10:
     // [32] (signed dword) main::ypos#0 ← (signed dword) mul16s::return#4
-    // [33] (signed dword~) main::$14 ← (signed dword) main::ypos#0 << (signed byte) 4 -- vdsz1=vdsz1_rol_4 
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    // [34] (word~) main::$15 ← > (signed dword~) main::$14
-    // [35] (word) main::y#0 ← (byte) $64 + (word~) main::$15 -- vwuz1=vwuc1_plus__hi_vdsz2 
+    // [33] (signed dword~) main::$11 ← (signed dword) main::ypos#0 << (signed byte) 4 -- vdsz1=vdsz1_rol_4 
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    // [34] (word~) main::$12 ← > (signed dword~) main::$11
+    // [35] (word) main::y#0 ← (byte) $64 + (word~) main::$12 -- vwuz1=vwuc1_plus__hi_vdsz2 
     clc
     lda #<$64
-    adc.z __14+2
+    adc.z __11+2
     sta.z y
     lda #>$64
-    adc.z __14+3
+    adc.z __11+3
     sta.z y+1
     // [36] (byte) bitmap_plot::y#0 ← (byte)(word) main::y#0 -- vbuxx=_byte_vwuz1 
     lda.z y
@@ -8227,31 +8095,31 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte*) BGCOL = (byte*) 53281
 (const byte*) BITMAP = (byte*) 8192
-(const byte) BLACK = (byte) 0
+(const byte) BLACK = (number) 0
 (const byte*) CIA1_INTERRUPT = (byte*) 56333
-(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
 (const byte*) D011 = (byte*) 53265
 (const byte*) D018 = (byte*) 53272
 (const void()**) HARDWARE_IRQ = (void()**) 65534
 (const byte*) IRQ_ENABLE = (byte*) 53274
-(const byte) IRQ_RASTER = (byte) 1
+(const byte) IRQ_RASTER = (number) 1
 (const byte*) IRQ_STATUS = (byte*) 53273
-(const dword) PI2_u4f28 = (dword) $6487ed51
-(const dword) PI_HALF_u4f28 = (dword) $1921fb54
-(const dword) PI_u4f28 = (dword) $3243f6a9
+(const dword) PI2_u4f28 = (number) $6487ed51
+(const dword) PI_HALF_u4f28 = (number) $1921fb54
+(const dword) PI_u4f28 = (number) $3243f6a9
 (const byte*) PROCPORT = (byte*) 1
 (const byte*) PROCPORT_DDR = (byte*) 0
-(const byte) PROCPORT_DDR_MEMORY_MASK = (byte) 7
-(const byte) PROCPORT_RAM_IO = (byte) 5
+(const byte) PROCPORT_DDR_MEMORY_MASK = (number) 7
+(const byte) PROCPORT_RAM_IO = (number) 5
 (const byte*) RASTER = (byte*) 53266
 (const byte*) SCREEN = (byte*) 1024
 (const signed word[$200]) SINUS = { fill( $200, 0) }
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
-(const byte) VIC_BMM = (byte) $20
+(const byte) VIC_BMM = (number) $20
 (const byte*) VIC_CONTROL = (byte*) 53265
-(const byte) VIC_DEN = (byte) $10
-(const byte) VIC_RSEL = (byte) 8
-(const byte) WHITE = (byte) 1
+(const byte) VIC_DEN = (number) $10
+(const byte) VIC_RSEL = (number) 8
+(const byte) WHITE = (number) 1
 (void()) bitmap_clear((byte) bitmap_clear::bgcol , (byte) bitmap_clear::fgcol)
 (label) bitmap_clear::@1
 (label) bitmap_clear::@return
@@ -8363,14 +8231,14 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (label) irq::@2
 (label) irq::@return
 (void()) main()
-(word~) main::$10 reg byte alu 22.0
-(signed dword~) main::$14 zp[4]:8 22.0
-(word~) main::$15 reg byte alu 22.0
-(word~) main::$25 zp[2]:36 22.0
-(word~) main::$26 zp[2]:36 22.0
-(signed word*~) main::$27 zp[2]:36 22.0
-(signed word*~) main::$28 zp[2]:36 22.0
-(signed dword~) main::$9 zp[4]:8 22.0
+(signed dword~) main::$11 zp[4]:8 22.0
+(word~) main::$12 reg byte alu 22.0
+(word~) main::$22 zp[2]:36 22.0
+(word~) main::$23 zp[2]:36 22.0
+(signed word*~) main::$24 zp[2]:36 22.0
+(signed word*~) main::$25 zp[2]:36 22.0
+(signed dword~) main::$6 zp[4]:8 22.0
+(word~) main::$7 reg byte alu 22.0
 (label) main::@1
 (label) main::@10
 (label) main::@11
@@ -8596,15 +8464,15 @@ reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ]
 reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ]
 zp[4]:4 [ sin16s_gen2::x#2 sin16s_gen2::x#1 ]
 reg byte y [ sin16s::isUpper#2 ]
-zp[4]:8 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 main::$9 main::$14 mulu16_sel::$0 mulu16_sel::$1 ]
+zp[4]:8 [ sin16s::x#6 sin16s::x#4 sin16s::x#0 sin16s::x#1 sin16s::x#2 mul16s::m#4 mul16s::m#5 mul16s::m#1 mul16s::m#0 mul16s::m#2 mul16u::return#2 mul16s::return#0 mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#3 mul16s::return#3 main::xpos#0 mul16s::return#4 main::ypos#0 mul16s::return#2 sin16s_gen2::$6 main::$6 main::$11 mulu16_sel::$0 mulu16_sel::$1 ]
 reg byte x [ mulu16_sel::select#5 ]
 zp[2]:12 [ divr16u::rem#5 divr16u::rem#10 divr16u::rem#4 divr16u::rem#11 divr16u::rem#6 divr16u::rem#0 divr16u::rem#1 divr16u::rem#2 rem16u#1 mul16u::a#3 mul16u::a#6 mul16u::a#1 mul16u::a#2 mul16u::a#0 ]
 zp[2]:14 [ divr16u::dividend#3 divr16u::dividend#5 divr16u::dividend#0 sin16s_gen2::i#2 sin16s_gen2::i#1 memset::num#2 memset::end#0 main::idx_y#3 main::idx_y#10 main::idx_y#1 ]
 zp[2]:16 [ divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 divr16u::return#3 div32u16u::quotient_lo#0 sin16s_gen2::sintab#2 sin16s_gen2::sintab#0 ]
 reg byte x [ divr16u::i#2 divr16u::i#1 ]
 zp[1]:18 [ frame_cnt#10 frame_cnt#0 frame_cnt#1 ]
-reg byte alu [ main::$10 ]
-reg byte alu [ main::$15 ]
+reg byte alu [ main::$7 ]
+reg byte alu [ main::$12 ]
 reg byte x [ bitmap_plot::y#0 ]
 zp[2]:19 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 main::y#0 memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 mul16s::a#3 mul16s::a#0 mul16s::$17 sin16s::return#0 sin16s::return#1 sin16s::return#5 sin16s::sinx#1 sin16s::usinx#1 sin16s::usinx#0 ]
 reg byte a [ bitmap_plot::$2 ]
@@ -8618,7 +8486,7 @@ zp[4]:24 [ div32u16u::return#2 sin16s_gen2::step#0 div32u16u::return#0 ]
 zp[2]:28 [ sin16s_gen2::$9 main::x#0 bitmap_plot::x#0 ]
 zp[4]:30 [ sin16s::$4 mul16u::mb#2 mul16u::mb#0 mul16u::mb#1 ]
 zp[2]:34 [ sin16s::x1#0 mul16s::$13 ]
-zp[2]:36 [ div32u16u::quotient_hi#0 mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 mulu16_sel::return#11 sin16s::x5#0 sin16s::x5_128#0 bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 main::$25 main::$27 main::$26 main::$28 ]
+zp[2]:36 [ div32u16u::quotient_hi#0 mulu16_sel::return#0 mulu16_sel::return#12 mulu16_sel::return#2 sin16s::x3_6#0 mulu16_sel::return#11 sin16s::x5#0 sin16s::x5_128#0 bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 mul16s::b#3 mul16s::b#2 mul16s::b#1 main::cos_x#0 main::sin_y#0 main::$22 main::$24 main::$23 main::$25 ]
 reg byte a [ divr16u::$1 ]
 reg byte a [ divr16u::$2 ]
 
@@ -8634,7 +8502,6 @@ Score: 20428
 :BasicUpstart(__b1)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -8672,6 +8539,7 @@ Score: 20428
   .const PI_u4f28 = $3243f6a9
   // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
+  .const SIZEOF_SIGNED_WORD = 2
   .label BITMAP = $2000
   .label SCREEN = $400
   .label rem16u = $c
@@ -8695,10 +8563,10 @@ __b1:
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __9 = 8
-    .label __14 = 8
-    .label __25 = $24
-    .label __26 = $24
+    .label __6 = 8
+    .label __11 = 8
+    .label __22 = $24
+    .label __23 = $24
     .label cos_x = $24
     .label xpos = 8
     .label x = $1c
@@ -8707,8 +8575,8 @@ main: {
     .label y = $13
     .label idx_x = 2
     .label idx_y = $e
-    .label __27 = $24
-    .label __28 = $24
+    .label __24 = $24
+    .label __25 = $24
     // sin16s_gen2(SINUS, 512, -0x1001, 0x1001)
     // [6] call sin16s_gen2 
     // [128] phi from main to sin16s_gen2 [phi:main->sin16s_gen2]
@@ -8754,22 +8622,22 @@ main: {
     // main::@2
   __b2:
     // cos_x = SINUS[idx_x]
-    // [16] (word~) main::$25 ← (word) main::idx_x#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [16] (word~) main::$22 ← (word) main::idx_x#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z idx_x
     asl
-    sta.z __25
+    sta.z __22
     lda.z idx_x+1
     rol
-    sta.z __25+1
-    // [17] (signed word*~) main::$27 ← (const signed word[$200]) SINUS + (word~) main::$25 -- pwsz1=pwsc1_plus_vwuz1 
+    sta.z __22+1
+    // [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22 -- pwsz1=pwsc1_plus_vwuz1 
     clc
-    lda.z __27
+    lda.z __24
     adc #<SINUS
-    sta.z __27
-    lda.z __27+1
+    sta.z __24
+    lda.z __24+1
     adc #>SINUS
-    sta.z __27+1
-    // [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$27) -- vwsz1=_deref_pwsz1 
+    sta.z __24+1
+    // [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$24) -- vwsz1=_deref_pwsz1 
     ldy #0
     lda (cos_x),y
     pha
@@ -8795,51 +8663,51 @@ main: {
     // xpos = mul16s(160, cos_x)
     // [22] (signed dword) main::xpos#0 ← (signed dword) mul16s::return#3
     // xpos<<4
-    // [23] (signed dword~) main::$9 ← (signed dword) main::xpos#0 << (signed byte) 4 -- vdsz1=vdsz1_rol_4 
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
-    asl.z __9
-    rol.z __9+1
-    rol.z __9+2
-    rol.z __9+3
+    // [23] (signed dword~) main::$6 ← (signed dword) main::xpos#0 << (signed byte) 4 -- vdsz1=vdsz1_rol_4 
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
+    asl.z __6
+    rol.z __6+1
+    rol.z __6+2
+    rol.z __6+3
     // >(xpos<<4)
-    // [24] (word~) main::$10 ← > (signed dword~) main::$9
+    // [24] (word~) main::$7 ← > (signed dword~) main::$6
     // x = (word)(160 + >(xpos<<4))
-    // [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$10 -- vwuz1=vwuc1_plus__hi_vdsz2 
+    // [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$7 -- vwuz1=vwuc1_plus__hi_vdsz2 
     clc
     lda #<$a0
-    adc.z __9+2
+    adc.z __6+2
     sta.z x
     lda #>$a0
-    adc.z __9+3
+    adc.z __6+3
     sta.z x+1
     // sin_y = SINUS[idx_y]
-    // [26] (word~) main::$26 ← (word) main::idx_y#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    // [26] (word~) main::$23 ← (word) main::idx_y#3 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z idx_y
     asl
-    sta.z __26
+    sta.z __23
     lda.z idx_y+1
     rol
-    sta.z __26+1
-    // [27] (signed word*~) main::$28 ← (const signed word[$200]) SINUS + (word~) main::$26 -- pwsz1=pwsc1_plus_vwuz1 
+    sta.z __23+1
+    // [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23 -- pwsz1=pwsc1_plus_vwuz1 
     clc
-    lda.z __28
+    lda.z __25
     adc #<SINUS
-    sta.z __28
-    lda.z __28+1
+    sta.z __25
+    lda.z __25+1
     adc #>SINUS
-    sta.z __28+1
-    // [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$28) -- vwsz1=_deref_pwsz1 
+    sta.z __25+1
+    // [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$25) -- vwsz1=_deref_pwsz1 
     ldy #0
     lda (sin_y),y
     pha
@@ -8865,33 +8733,33 @@ main: {
     // ypos = mul16s(100, sin_y)
     // [32] (signed dword) main::ypos#0 ← (signed dword) mul16s::return#4
     // ypos<<4
-    // [33] (signed dword~) main::$14 ← (signed dword) main::ypos#0 << (signed byte) 4 -- vdsz1=vdsz1_rol_4 
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
-    asl.z __14
-    rol.z __14+1
-    rol.z __14+2
-    rol.z __14+3
+    // [33] (signed dword~) main::$11 ← (signed dword) main::ypos#0 << (signed byte) 4 -- vdsz1=vdsz1_rol_4 
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
+    asl.z __11
+    rol.z __11+1
+    rol.z __11+2
+    rol.z __11+3
     // >(ypos<<4)
-    // [34] (word~) main::$15 ← > (signed dword~) main::$14
+    // [34] (word~) main::$12 ← > (signed dword~) main::$11
     // y = (word)(100 + >(ypos<<4))
-    // [35] (word) main::y#0 ← (byte) $64 + (word~) main::$15 -- vwuz1=vwuc1_plus__hi_vdsz2 
+    // [35] (word) main::y#0 ← (byte) $64 + (word~) main::$12 -- vwuz1=vwuc1_plus__hi_vdsz2 
     clc
     lda #<$64
-    adc.z __14+2
+    adc.z __11+2
     sta.z y
     lda #>$64
-    adc.z __14+3
+    adc.z __11+3
     sta.z y+1
     // bitmap_plot(x, (byte)y)
     // [36] (byte) bitmap_plot::y#0 ← (byte)(word) main::y#0 -- vbuxx=_byte_vwuz1 

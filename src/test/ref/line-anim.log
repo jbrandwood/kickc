@@ -7,8 +7,8 @@ Fixing pointer array-indexing *((word[SIZE]) y_cur + (byte) point_init::point_id
 Identified constant variable (byte*) BITMAP
 Identified constant variable (byte*) SCREEN
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call call vicSelectGfxBank (byte*) SCREEN 
-Inlined call (byte~) main::$4 ← call toD018 (byte*) SCREEN (byte*) BITMAP 
+Inlined call call vicSelectGfxBank (const byte*) SCREEN 
+Inlined call (byte~) main::$1 ← call toD018 (const byte*) SCREEN (const byte*) BITMAP 
 Inlined call (word~) point_init::$6 ← call abs16s (signed word) point_init::x_diff 
 Inlined call (word~) point_init::$7 ← call abs16s (signed word) point_init::y_diff 
 Culled Empty Block (label) @1
@@ -64,19 +64,6 @@ Culled Empty Block (label) @18
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) PROCPORT_DDR ← ((byte*)) (number) 0
-  (byte) PROCPORT_DDR_MEMORY_MASK ← (number) 7
-  (byte*) PROCPORT ← ((byte*)) (number) 1
-  (byte) PROCPORT_RAM_IO ← (number) 5
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) D011 ← ((byte*)) (number) $d011
-  (byte) VIC_BMM ← (number) $20
-  (byte) VIC_DEN ← (number) $10
-  (byte) VIC_RSEL ← (number) 8
-  (byte*) D018 ← ((byte*)) (number) $d018
-  (byte*) CIA2_PORT_A ← ((byte*)) (number) $dd00
-  (byte*) CIA2_PORT_A_DDR ← ((byte*)) (number) $dd02
   to:@12
 
 (word()) divr16u((word) divr16u::dividend , (word) divr16u::divisor , (word) divr16u::rem)
@@ -253,10 +240,6 @@ divr16s::@return: scope:[divr16s]  from divr16s::@11 divr16s::@5
   return 
   to:@return
 @12: scope:[]  from @begin
-  (byte*) BITMAP ← ((byte*)) (number) $a000
-  (byte*) SCREEN ← ((byte*)) (number) $8800
-  (byte) SIZE ← (number) 4
-  (byte) DELAY ← (number) 8
   (word[SIZE]) x_start ← { (number) $a, (number) $14, (number) $1e, (number) $1e }
   (byte[SIZE]) y_start ← { (number) $a, (number) $a, (number) $a, (number) $14 }
   (word[SIZE]) x_end ← { (number) $14, (number) $a, (number) $14, (number) $14 }
@@ -271,17 +254,14 @@ divr16s::@return: scope:[divr16s]  from divr16s::@11 divr16s::@5
 (void()) main()
 main: scope:[main]  from @19
   asm { sei  }
-  *((byte*) PROCPORT_DDR) ← (byte) PROCPORT_DDR_MEMORY_MASK
-  *((byte*) PROCPORT) ← (byte) PROCPORT_RAM_IO
-  (byte~) main::$0 ← (byte) VIC_BMM | (byte) VIC_DEN
-  (byte~) main::$1 ← (byte~) main::$0 | (byte) VIC_RSEL
-  (number~) main::$2 ← (byte~) main::$1 | (number) 3
-  *((byte*) D011) ← (number~) main::$2
-  (byte*) main::vicSelectGfxBank1_gfx#0 ← (byte*) SCREEN
+  *((const byte*) PROCPORT_DDR) ← (const byte) PROCPORT_DDR_MEMORY_MASK
+  *((const byte*) PROCPORT) ← (const byte) PROCPORT_RAM_IO
+  *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+  (byte*) main::vicSelectGfxBank1_gfx#0 ← (const byte*) SCREEN
   to:main::vicSelectGfxBank1
 main::vicSelectGfxBank1: scope:[main]  from main
   (byte*) main::vicSelectGfxBank1_gfx#1 ← phi( main/(byte*) main::vicSelectGfxBank1_gfx#0 )
-  *((byte*) CIA2_PORT_A_DDR) ← (number) 3
+  *((const byte*) CIA2_PORT_A_DDR) ← (number) 3
   (byte*) main::vicSelectGfxBank1_toDd001_gfx#0 ← (byte*) main::vicSelectGfxBank1_gfx#1
   to:main::vicSelectGfxBank1_toDd001
 main::vicSelectGfxBank1_toDd001: scope:[main]  from main::vicSelectGfxBank1
@@ -299,11 +279,11 @@ main::vicSelectGfxBank1_toDd001_@return: scope:[main]  from main::vicSelectGfxBa
 main::vicSelectGfxBank1_@1: scope:[main]  from main::vicSelectGfxBank1_toDd001_@return
   (byte) main::vicSelectGfxBank1_toDd001_return#3 ← phi( main::vicSelectGfxBank1_toDd001_@return/(byte) main::vicSelectGfxBank1_toDd001_return#1 )
   (byte~) main::vicSelectGfxBank1_$0 ← (byte) main::vicSelectGfxBank1_toDd001_return#3
-  *((byte*) CIA2_PORT_A) ← (byte~) main::vicSelectGfxBank1_$0
+  *((const byte*) CIA2_PORT_A) ← (byte~) main::vicSelectGfxBank1_$0
   to:main::@15
 main::@15: scope:[main]  from main::vicSelectGfxBank1_@1
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN
-  (byte*) main::toD0181_gfx#0 ← (byte*) BITMAP
+  (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
+  (byte*) main::toD0181_gfx#0 ← (const byte*) BITMAP
   to:main::toD0181
 main::toD0181: scope:[main]  from main::@15
   (byte*) main::toD0181_gfx#1 ← phi( main::@15/(byte*) main::toD0181_gfx#0 )
@@ -325,21 +305,20 @@ main::toD0181_@return: scope:[main]  from main::toD0181
   to:main::@16
 main::@16: scope:[main]  from main::toD0181_@return
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
-  (byte~) main::$4 ← (byte) main::toD0181_return#3
-  *((byte*) D018) ← (byte~) main::$4
-  (byte*) bitmap_init::bitmap#0 ← (byte*) BITMAP
+  (byte~) main::$1 ← (byte) main::toD0181_return#3
+  *((const byte*) D018) ← (byte~) main::$1
+  (byte*) bitmap_init::bitmap#0 ← (const byte*) BITMAP
   call bitmap_init 
   to:main::@17
 main::@17: scope:[main]  from main::@16
   call bitmap_clear 
   to:main::@18
 main::@18: scope:[main]  from main::@17
-  (byte*) screen_fill::screen#0 ← (byte*) SCREEN
+  (byte*) screen_fill::screen#0 ← (const byte*) SCREEN
   (byte) screen_fill::ch#0 ← (number) $10
   call screen_fill 
   to:main::@19
 main::@19: scope:[main]  from main::@18
-  (number~) main::$8 ← (byte) SIZE - (number) 1
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main::@19 main::@21
@@ -349,26 +328,26 @@ main::@1: scope:[main]  from main::@19 main::@21
   to:main::@20
 main::@20: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (byte~) main::$14 ← (byte) main::i#3 * (const byte) SIZEOF_WORD
-  (word) bitmap_plot::x#0 ← *((word[SIZE]) x_start + (byte~) main::$14)
+  (byte~) main::$10 ← (byte) main::i#3 * (const byte) SIZEOF_WORD
+  (word) bitmap_plot::x#0 ← *((word[SIZE]) x_start + (byte~) main::$10)
   (byte) bitmap_plot::y#0 ← *((byte[SIZE]) y_start + (byte) main::i#3)
   call bitmap_plot 
   to:main::@21
 main::@21: scope:[main]  from main::@20
   (byte) main::i#4 ← phi( main::@20/(byte) main::i#3 )
-  (byte) main::i#1 ← (byte) main::i#4 + rangenext(0,main::$8)
-  (bool~) main::$11 ← (byte) main::i#1 != rangelast(0,main::$8)
-  if((bool~) main::$11) goto main::@1
+  (byte) main::i#1 ← (byte) main::i#4 + rangenext(0,SIZE-1)
+  (bool~) main::$7 ← (byte) main::i#1 != rangelast(0,SIZE-1)
+  if((bool~) main::$7) goto main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@21 main::@8
   if(true) goto main::@6
   to:main::@return
 main::@6: scope:[main]  from main::@3 main::@6
-  (bool~) main::$12 ← *((byte*) RASTER) != (number) $ff
-  if((bool~) main::$12) goto main::@6
+  (bool~) main::$8 ← *((const byte*) RASTER) != (number) $ff
+  if((bool~) main::$8) goto main::@6
   to:main::@8
 main::@8: scope:[main]  from main::@6
-  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   to:main::@3
 main::@return: scope:[main]  from main::@3
   return 
@@ -487,7 +466,7 @@ point_init::@2: scope:[point_init]  from point_init::@10 point_init::@11
   (number~) point_init::$11 ← (word~) point_init::$10 * (number) $10
   (byte~) point_init::$21 ← (byte) point_init::point_idx#2 * (const byte) SIZEOF_WORD
   *((word[SIZE]) y_cur + (byte~) point_init::$21) ← (number~) point_init::$11
-  *((byte[SIZE]) delay + (byte) point_init::point_idx#2) ← (byte) DELAY
+  *((byte[SIZE]) delay + (byte) point_init::point_idx#2) ← (const byte) DELAY
   to:point_init::@return
 point_init::@7: scope:[point_init]  from point_init::@1
   (signed word) point_init::y_diff#5 ← phi( point_init::@1/(signed word) point_init::y_diff#8 )
@@ -690,24 +669,24 @@ SYMBOL TABLE SSA
 (label) @20
 (label) @begin
 (label) @end
-(byte*) BITMAP
-(byte*) BORDERCOL
-(byte*) CIA2_PORT_A
-(byte*) CIA2_PORT_A_DDR
-(byte*) D011
-(byte*) D018
-(byte) DELAY
-(byte*) PROCPORT
-(byte*) PROCPORT_DDR
-(byte) PROCPORT_DDR_MEMORY_MASK
-(byte) PROCPORT_RAM_IO
-(byte*) RASTER
-(byte*) SCREEN
-(byte) SIZE
+(const byte*) BITMAP = (byte*)(number) $a000
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) CIA2_PORT_A = (byte*)(number) $dd00
+(const byte*) CIA2_PORT_A_DDR = (byte*)(number) $dd02
+(const byte*) D011 = (byte*)(number) $d011
+(const byte*) D018 = (byte*)(number) $d018
+(const byte) DELAY = (number) 8
+(const byte*) PROCPORT = (byte*)(number) 1
+(const byte*) PROCPORT_DDR = (byte*)(number) 0
+(const byte) PROCPORT_DDR_MEMORY_MASK = (number) 7
+(const byte) PROCPORT_RAM_IO = (number) 5
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $8800
+(const byte) SIZE = (number) 4
 (const byte) SIZEOF_WORD = (byte) 2
-(byte) VIC_BMM
-(byte) VIC_DEN
-(byte) VIC_RSEL
+(const byte) VIC_BMM = (number) $20
+(const byte) VIC_DEN = (number) $10
+(const byte) VIC_RSEL = (number) 8
 (void()) bitmap_clear()
 (byte*~) bitmap_clear::$0
 (bool~) bitmap_clear::$1
@@ -965,14 +944,10 @@ SYMBOL TABLE SSA
 (word) divr16u::return#3
 (word) divr16u::return#4
 (void()) main()
-(byte~) main::$0
 (byte~) main::$1
-(bool~) main::$11
-(bool~) main::$12
-(byte~) main::$14
-(number~) main::$2
-(byte~) main::$4
-(number~) main::$8
+(byte~) main::$10
+(bool~) main::$7
+(bool~) main::$8
 (label) main::@1
 (label) main::@15
 (label) main::@16
@@ -1198,11 +1173,6 @@ SYMBOL TABLE SSA
 Fixing inline constructor with bitmap_clear::$3 ← (byte)*(bitmap_plot_yhi + 0) w= (byte)*(bitmap_plot_ylo + 0)
 Fixing inline constructor with bitmap_plot::$3 ← (byte)*(bitmap_plot_yhi + bitmap_plot::y#1) w= (byte)*(bitmap_plot_ylo + bitmap_plot::y#1)
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) 7 in (byte) PROCPORT_DDR_MEMORY_MASK ← (number) 7
-Adding number conversion cast (unumber) 5 in (byte) PROCPORT_RAM_IO ← (number) 5
-Adding number conversion cast (unumber) $20 in (byte) VIC_BMM ← (number) $20
-Adding number conversion cast (unumber) $10 in (byte) VIC_DEN ← (number) $10
-Adding number conversion cast (unumber) 8 in (byte) VIC_RSEL ← (number) 8
 Adding number conversion cast (unumber) 0 in (word) divr16u::quotient#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (word~) divr16u::$0 ← (word) divr16u::rem#4 << (number) 1
 Adding number conversion cast (unumber) $80 in (number~) divr16u::$2 ← (byte~) divr16u::$1 & (number) $80
@@ -1223,11 +1193,9 @@ Adding number conversion cast (snumber) 0 in (bool~) divr16s::$3 ← (signed wor
 Adding number conversion cast (unumber) 1 in (number~) divr16s::$15 ← (byte) divr16s::neg#3 ^ (number) 1
 Adding number conversion cast (unumber) divr16s::$15 in (number~) divr16s::$15 ← (byte) divr16s::neg#3 ^ (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (bool~) divr16s::$5 ← (byte) divr16s::neg#4 == (number) 0
-Adding number conversion cast (unumber) 4 in (byte) SIZE ← (number) 4
-Adding number conversion cast (unumber) 8 in (byte) DELAY ← (number) 8
-Adding number conversion cast (unumber) 3 in (number~) main::$2 ← (byte~) main::$1 | (number) 3
-Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (byte~) main::$1 | (unumber)(number) 3
-Adding number conversion cast (unumber) 3 in *((byte*) CIA2_PORT_A_DDR) ← (number) 3
+Adding number conversion cast (unumber) VIC_BMM|VIC_DEN|VIC_RSEL|3 in *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) D011) ← ((unumber)) (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) CIA2_PORT_A_DDR) ← (number) 3
 Adding number conversion cast (unumber) $40 in (number~) main::vicSelectGfxBank1_toDd001_$2 ← (byte~) main::vicSelectGfxBank1_toDd001_$1 / (number) $40
 Adding number conversion cast (unumber) main::vicSelectGfxBank1_toDd001_$2 in (number~) main::vicSelectGfxBank1_toDd001_$2 ← (byte~) main::vicSelectGfxBank1_toDd001_$1 / (unumber)(number) $40
 Adding number conversion cast (unumber) 3 in (number~) main::vicSelectGfxBank1_toDd001_$3 ← (number) 3 ^ (unumber~) main::vicSelectGfxBank1_toDd001_$2
@@ -1243,9 +1211,8 @@ Adding number conversion cast (unumber) $f in (number~) main::toD0181_$7 ← (un
 Adding number conversion cast (unumber) main::toD0181_$7 in (number~) main::toD0181_$7 ← (unumber~) main::toD0181_$6 & (unumber)(number) $f
 Adding number conversion cast (unumber) main::toD0181_$8 in (number~) main::toD0181_$8 ← (unumber~) main::toD0181_$3 | (unumber~) main::toD0181_$7
 Adding number conversion cast (unumber) $10 in (byte) screen_fill::ch#0 ← (number) $10
-Adding number conversion cast (unumber) 1 in (number~) main::$8 ← (byte) SIZE - (number) 1
-Adding number conversion cast (unumber) main::$8 in (number~) main::$8 ← (byte) SIZE - (unumber)(number) 1
-Adding number conversion cast (unumber) $ff in (bool~) main::$12 ← *((byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) 1 in (byte) main::i#1 ← (byte) main::i#4 + rangenext(0,SIZE-1)
+Adding number conversion cast (unumber) $ff in (bool~) main::$8 ← *((const byte*) RASTER) != (number) $ff
 Adding number conversion cast (snumber) 0 in (bool~) point_init::abs16s1_$0 ← (signed word) point_init::abs16s1_w#1 < (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) point_init::abs16s2_$0 ← (signed word) point_init::abs16s2_w#1 < (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) point_init::$12 ← (signed word) point_init::x_diff#1 < (number) 0
@@ -1280,19 +1247,6 @@ Added casts to value list in (byte[SIZE]) y_start ← (byte[SIZE]){ (byte)(numbe
 Added casts to value list in (word[SIZE]) x_end ← (word[SIZE]){ (word)(number) $14, (word)(number) $a, (word)(number) $14, (word)(number) $14 }
 Added casts to value list in (byte[SIZE]) y_end ← (byte[SIZE]){ (byte)(number) $14, (byte)(number) $14, (byte)(number) $a, (byte)(number) $14 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) PROCPORT_DDR ← (byte*)(number) 0
-Inlining cast (byte) PROCPORT_DDR_MEMORY_MASK ← (unumber)(number) 7
-Inlining cast (byte*) PROCPORT ← (byte*)(number) 1
-Inlining cast (byte) PROCPORT_RAM_IO ← (unumber)(number) 5
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) D011 ← (byte*)(number) $d011
-Inlining cast (byte) VIC_BMM ← (unumber)(number) $20
-Inlining cast (byte) VIC_DEN ← (unumber)(number) $10
-Inlining cast (byte) VIC_RSEL ← (unumber)(number) 8
-Inlining cast (byte*) D018 ← (byte*)(number) $d018
-Inlining cast (byte*) CIA2_PORT_A ← (byte*)(number) $dd00
-Inlining cast (byte*) CIA2_PORT_A_DDR ← (byte*)(number) $dd02
 Inlining cast (word) divr16u::quotient#0 ← (unumber)(number) 0
 Inlining cast (byte) divr16s::neg#0 ← (unumber)(number) 0
 Inlining cast (word) divr16s::dividendu#0 ← (unumber)(number) 0
@@ -1307,11 +1261,8 @@ Inlining cast (word~) divr16s::$14 ← (word)(signed word~) divr16s::$13
 Inlining cast (word~) divr16s::$12 ← (word)(signed word) divr16s::divisor#3
 Inlining cast (signed word~) divr16s::$21 ← (signed word)(word) divr16s::resultu#1
 Inlining cast (signed word~) divr16s::$18 ← (signed word)(word) divr16s::resultu#2
-Inlining cast (byte*) BITMAP ← (byte*)(number) $a000
-Inlining cast (byte*) SCREEN ← (byte*)(number) $8800
-Inlining cast (byte) SIZE ← (unumber)(number) 4
-Inlining cast (byte) DELAY ← (unumber)(number) 8
-Inlining cast *((byte*) CIA2_PORT_A_DDR) ← (unumber)(number) 3
+Inlining cast *((const byte*) D011) ← (unumber)(const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
+Inlining cast *((const byte*) CIA2_PORT_A_DDR) ← (unumber)(number) 3
 Inlining cast (word~) main::vicSelectGfxBank1_toDd001_$0 ← (word)(byte*) main::vicSelectGfxBank1_toDd001_gfx#1
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
@@ -1334,18 +1285,15 @@ Inlining cast (byte) bitmap_init::bits#2 ← (unumber)(number) $80
 Inlining cast *((byte*) bitmap_clear::bitmap#2) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 0
-Simplifying constant integer cast 7
 Simplifying constant pointer cast (byte*) 1
-Simplifying constant integer cast 5
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53265
-Simplifying constant integer cast $20
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 56576
 Simplifying constant pointer cast (byte*) 56578
+Simplifying constant pointer cast (byte*) 40960
+Simplifying constant pointer cast (byte*) 34816
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast $80
@@ -1363,10 +1311,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 40960
-Simplifying constant pointer cast (byte*) 34816
-Simplifying constant integer cast 4
-Simplifying constant integer cast 8
 Simplifying constant integer cast $a
 Simplifying constant integer cast $14
 Simplifying constant integer cast $1e
@@ -1383,6 +1327,7 @@ Simplifying constant integer cast $14
 Simplifying constant integer cast $14
 Simplifying constant integer cast $a
 Simplifying constant integer cast $14
+Simplifying constant integer cast (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Simplifying constant integer cast 3
 Simplifying constant integer cast 3
 Simplifying constant integer cast $40
@@ -1419,11 +1364,6 @@ Simplifying constant integer cast *((byte[$100]) bitmap_plot_yhi + (byte) bitmap
 Simplifying constant integer cast *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#1)
 Simplifying constant integer cast $fff8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $80
@@ -1441,8 +1381,6 @@ Finalized unsigned number type (byte) 0
 Finalized signed number type (signed byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) $40
@@ -1478,7 +1416,6 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) divr16u::$2 ← (byte~) divr16u::$1 & (byte) $80
 Inferred type updated to word in (unumber~) divr16u::$5 ← (word) divr16u::rem#6 | (byte) 1
 Inferred type updated to byte in (unumber~) divr16s::$15 ← (byte) divr16s::neg#3 ^ (byte) 1
-Inferred type updated to byte in (unumber~) main::$2 ← (byte~) main::$1 | (byte) 3
 Inferred type updated to byte in (unumber~) main::vicSelectGfxBank1_toDd001_$2 ← (byte~) main::vicSelectGfxBank1_toDd001_$1 / (byte) $40
 Inferred type updated to byte in (unumber~) main::vicSelectGfxBank1_toDd001_$3 ← (byte) 3 ^ (byte~) main::vicSelectGfxBank1_toDd001_$2
 Inferred type updated to word in (unumber~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (word) $3fff
@@ -1487,7 +1424,6 @@ Inferred type updated to byte in (unumber~) main::toD0181_$3 ← > (word~) main:
 Inferred type updated to byte in (unumber~) main::toD0181_$6 ← (byte~) main::toD0181_$5 / (byte) 4
 Inferred type updated to byte in (unumber~) main::toD0181_$7 ← (byte~) main::toD0181_$6 & (byte) $f
 Inferred type updated to byte in (unumber~) main::toD0181_$8 ← (byte~) main::toD0181_$3 | (byte~) main::toD0181_$7
-Inferred type updated to byte in (unumber~) main::$8 ← (byte) SIZE - (byte) 1
 Inferred type updated to word in (unumber~) point_init::$9 ← *((word[SIZE]) x_start + (byte~) point_init::$19) * (byte) $10
 Inferred type updated to word in (unumber~) point_init::$11 ← (word~) point_init::$10 * (byte) $10
 Inferred type updated to byte in (unumber~) point_init::$15 ← (byte~) point_init::$14 / (byte) $10
@@ -1498,10 +1434,10 @@ Inferred type updated to word in (unumber~) bitmap_plot::$1 ← (word) bitmap_pl
 Adding pointer type conversion cast (byte*) bitmap_clear::$0 in (byte*~) bitmap_clear::$0 ← (word~) bitmap_clear::$3
 Adding pointer type conversion cast (byte*) bitmap_plot::$0 in (byte*~) bitmap_plot::$0 ← (word~) bitmap_plot::$3
 Successful SSA optimization PassNAddTypeConversionAssignment
-Inversing boolean not [22] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [21] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
-Inversing boolean not [30] (bool~) divr16u::$9 ← (word) divr16u::rem#5 < (word) divr16u::divisor#1 from [29] (bool~) divr16u::$8 ← (word) divr16u::rem#5 >= (word) divr16u::divisor#1
-Inversing boolean not [280] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [279] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
-Inversing boolean not [300] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [299] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
+Inversing boolean not [9] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [8] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
+Inversing boolean not [17] (bool~) divr16u::$9 ← (word) divr16u::rem#5 < (word) divr16u::divisor#1 from [16] (bool~) divr16u::$8 ← (word) divr16u::rem#5 >= (word) divr16u::divisor#1
+Inversing boolean not [259] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [258] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
+Inversing boolean not [279] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [278] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#6 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#7 
@@ -1541,7 +1477,7 @@ Alias (byte*) main::vicSelectGfxBank1_gfx#0 = (byte*) main::vicSelectGfxBank1_gf
 Alias (byte) main::vicSelectGfxBank1_toDd001_return#0 = (byte~) main::vicSelectGfxBank1_toDd001_$3 (byte) main::vicSelectGfxBank1_toDd001_return#2 (byte) main::vicSelectGfxBank1_toDd001_return#1 (byte) main::vicSelectGfxBank1_toDd001_return#3 (byte~) main::vicSelectGfxBank1_$0 
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
 Alias (byte*) main::toD0181_gfx#0 = (byte*) main::toD0181_gfx#1 
-Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$4 
+Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$1 
 Alias (byte) main::i#2 = (byte) main::i#3 (byte) main::i#4 
 Alias (signed word) point_init::abs16s1_w#0 = (signed word) point_init::x_diff#0 (signed word~) point_init::$2 (signed word) point_init::abs16s1_w#1 (signed word) point_init::x_diff#14 (signed word) point_init::abs16s1_w#2 (signed word) point_init::x_diff#12 (signed word) point_init::abs16s1_w#3 (signed word) point_init::x_diff#13 
 Alias (signed word) point_init::y_diff#0 = (signed word~) point_init::$5 (signed word) point_init::y_diff#9 (signed word) point_init::y_diff#6 (signed word) point_init::y_diff#7 
@@ -1612,55 +1548,47 @@ Identical Phi Values (word) bitmap_plot::x#1 (word) bitmap_plot::x#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte) screen_fill::ch#2 (byte) screen_fill::ch#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [184] (byte~) point_init::$18 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
-Identified duplicate assignment right side [230] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
-Identified duplicate assignment right side [234] (byte~) point_init::$21 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
-Identified duplicate assignment right side [298] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
+Identified duplicate assignment right side [163] (byte~) point_init::$18 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
+Identified duplicate assignment right side [209] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
+Identified duplicate assignment right side [213] (byte~) point_init::$21 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
+Identified duplicate assignment right side [277] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) divr16u::$4 [23] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
-Simple Condition (bool~) divr16u::$9 [31] if((word) divr16u::rem#5<(word) divr16u::divisor#0) goto divr16u::@3
-Simple Condition (bool~) divr16u::$11 [38] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
-Simple Condition (bool~) divr16s::$3 [72] if((signed word) divr16s::divisor#0<(signed byte) 0) goto divr16s::@3
-Simple Condition (bool~) divr16s::$5 [92] if((byte) divr16s::neg#4==(byte) 0) goto divr16s::@5
-Simple Condition (bool~) main::$11 [175] if((byte) main::i#1!=rangelast(0,main::$8)) goto main::@1
-Simple Condition (bool~) main::$12 [178] if(*((byte*) RASTER)!=(byte) $ff) goto main::@6
-Simple Condition (bool~) point_init::abs16s1_$0 [195] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::abs16s1_@1
-Simple Condition (bool~) point_init::abs16s2_$0 [210] if((signed word) point_init::y_diff#0<(signed byte) 0) goto point_init::abs16s2_@1
-Simple Condition (bool~) point_init::$8 [223] if((word) point_init::abs16s1_return#2>(word) point_init::abs16s2_return#2) goto point_init::@1
-Simple Condition (bool~) point_init::$12 [226] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::@7
-Simple Condition (bool~) screen_fill::$0 [264] if((byte) screen_fill::x#1!=rangelast(0,$27)) goto screen_fill::@2
-Simple Condition (bool~) screen_fill::$1 [268] if((byte) screen_fill::y#1!=rangelast(0,$18)) goto screen_fill::@1
-Simple Condition (bool~) bitmap_init::$1 [281] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
-Simple Condition (bool~) bitmap_init::$2 [285] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
-Simple Condition (bool~) bitmap_init::$9 [301] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
-Simple Condition (bool~) bitmap_init::$11 [305] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) bitmap_clear::$1 [321] if((byte) bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2
-Simple Condition (bool~) bitmap_clear::$2 [325] if((byte) bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1
+Simple Condition (bool~) divr16u::$4 [10] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
+Simple Condition (bool~) divr16u::$9 [18] if((word) divr16u::rem#5<(word) divr16u::divisor#0) goto divr16u::@3
+Simple Condition (bool~) divr16u::$11 [25] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
+Simple Condition (bool~) divr16s::$3 [59] if((signed word) divr16s::divisor#0<(signed byte) 0) goto divr16s::@3
+Simple Condition (bool~) divr16s::$5 [79] if((byte) divr16s::neg#4==(byte) 0) goto divr16s::@5
+Simple Condition (bool~) main::$7 [154] if((byte) main::i#1!=rangelast(0,SIZE-1)) goto main::@1
+Simple Condition (bool~) main::$8 [157] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@6
+Simple Condition (bool~) point_init::abs16s1_$0 [174] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::abs16s1_@1
+Simple Condition (bool~) point_init::abs16s2_$0 [189] if((signed word) point_init::y_diff#0<(signed byte) 0) goto point_init::abs16s2_@1
+Simple Condition (bool~) point_init::$8 [202] if((word) point_init::abs16s1_return#2>(word) point_init::abs16s2_return#2) goto point_init::@1
+Simple Condition (bool~) point_init::$12 [205] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::@7
+Simple Condition (bool~) screen_fill::$0 [243] if((byte) screen_fill::x#1!=rangelast(0,$27)) goto screen_fill::@2
+Simple Condition (bool~) screen_fill::$1 [247] if((byte) screen_fill::y#1!=rangelast(0,$18)) goto screen_fill::@1
+Simple Condition (bool~) bitmap_init::$1 [260] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
+Simple Condition (bool~) bitmap_init::$2 [264] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
+Simple Condition (bool~) bitmap_init::$9 [280] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
+Simple Condition (bool~) bitmap_init::$11 [284] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
+Simple Condition (bool~) bitmap_clear::$1 [300] if((byte) bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2
+Simple Condition (bool~) bitmap_clear::$2 [304] if((byte) bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting || if()-condition to two if()s [54] (bool~) divr16s::$2 ← (bool~) divr16s::$0 || (bool~) divr16s::$1
+Rewriting || if()-condition to two if()s [41] (bool~) divr16s::$2 ← (bool~) divr16s::$0 || (bool~) divr16s::$1
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant right-side identified [270] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-Constant right-side identified [271] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-Constant right-side identified [272] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
+Constant right-side identified [94] (word[SIZE]) x_cur ← { fill( SIZE, 0) }
+Constant right-side identified [95] (word[SIZE]) y_cur ← { fill( SIZE, 0) }
+Constant right-side identified [96] (signed byte[SIZE]) x_add ← { fill( SIZE, 0) }
+Constant right-side identified [97] (signed byte[SIZE]) y_add ← { fill( SIZE, 0) }
+Constant right-side identified [98] (byte[SIZE]) delay ← { fill( SIZE, 0) }
+Constant right-side identified [249] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
+Constant right-side identified [250] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
+Constant right-side identified [251] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (word[SIZE]) { (word) $a, (word) $14, (word) $1e, (word) $1e }
 Identified constant from value list (byte[SIZE]) { (byte) $a, (byte) $a, (byte) $a, (byte) $14 }
 Identified constant from value list (word[SIZE]) { (word) $14, (word) $a, (word) $14, (word) $14 }
 Identified constant from value list (byte[SIZE]) { (byte) $14, (byte) $14, (byte) $a, (byte) $14 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) PROCPORT_DDR = (byte*) 0
-Constant (const byte) PROCPORT_DDR_MEMORY_MASK = 7
-Constant (const byte*) PROCPORT = (byte*) 1
-Constant (const byte) PROCPORT_RAM_IO = 5
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) D011 = (byte*) 53265
-Constant (const byte) VIC_BMM = $20
-Constant (const byte) VIC_DEN = $10
-Constant (const byte) VIC_RSEL = 8
-Constant (const byte*) D018 = (byte*) 53272
-Constant (const byte*) CIA2_PORT_A = (byte*) 56576
-Constant (const byte*) CIA2_PORT_A_DDR = (byte*) 56578
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
 Constant (const byte) divr16s::neg#0 = 0
@@ -1668,14 +1596,20 @@ Constant (const word) divr16s::dividendu#0 = 0
 Constant (const word) divr16s::remu#0 = 0
 Constant (const byte) divr16s::neg#1 = 1
 Constant (const word) divr16s::divisoru#0 = 0
-Constant (const byte*) BITMAP = (byte*) 40960
-Constant (const byte*) SCREEN = (byte*) 34816
-Constant (const byte) SIZE = 4
-Constant (const byte) DELAY = 8
 Constant (const word[SIZE]) x_start = { $a, $14, $1e, $1e }
 Constant (const byte[SIZE]) y_start = { $a, $a, $a, $14 }
 Constant (const word[SIZE]) x_end = { $14, $a, $14, $14 }
 Constant (const byte[SIZE]) y_end = { $14, $14, $a, $14 }
+Constant (const word[SIZE]) x_cur = { fill( SIZE, 0) }
+Constant (const word[SIZE]) y_cur = { fill( SIZE, 0) }
+Constant (const signed byte[SIZE]) x_add = { fill( SIZE, 0) }
+Constant (const signed byte[SIZE]) y_add = { fill( SIZE, 0) }
+Constant (const byte[SIZE]) delay = { fill( SIZE, 0) }
+Constant (const byte*) main::vicSelectGfxBank1_gfx#0 = SCREEN
+Constant (const byte*) main::toD0181_screen#0 = SCREEN
+Constant (const byte*) main::toD0181_gfx#0 = BITMAP
+Constant (const byte*) bitmap_init::bitmap#0 = BITMAP
+Constant (const byte*) screen_fill::screen#0 = SCREEN
 Constant (const byte) screen_fill::ch#0 = $10
 Constant (const byte) main::i#0 = 0
 Constant (const signed word) divr16s::dividend#0 = 0
@@ -1692,41 +1626,32 @@ Constant (const byte) bitmap_clear::y#0 = 0
 Constant (const byte) bitmap_clear::x#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16s::dividendu#2 = (word)divr16s::dividend#0
-Constant (const word[SIZE]) x_cur = { fill( SIZE, 0) }
-Constant (const word[SIZE]) y_cur = { fill( SIZE, 0) }
-Constant (const signed byte[SIZE]) x_add = { fill( SIZE, 0) }
-Constant (const signed byte[SIZE]) y_add = { fill( SIZE, 0) }
-Constant (const byte[SIZE]) delay = { fill( SIZE, 0) }
-Constant (const byte*) main::vicSelectGfxBank1_gfx#0 = SCREEN
-Constant (const byte*) main::toD0181_screen#0 = SCREEN
-Constant (const byte*) main::toD0181_gfx#0 = BITMAP
-Constant (const byte*) bitmap_init::bitmap#0 = BITMAP
-Constant (const byte*) screen_fill::screen#0 = SCREEN
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) main::vicSelectGfxBank1_toDd001_$0 = (word)main::vicSelectGfxBank1_gfx#0
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [176] if(true) goto main::@6
+if() condition always true - replacing block destination [155] if(true) goto main::@6
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [36] divr16u::i#1 ← ++ divr16u::i#2 to ++
-Resolved ranged comparison value [38] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
-Resolved ranged next value [262] screen_fill::x#1 ← ++ screen_fill::x#2 to ++
-Resolved ranged comparison value [264] if(screen_fill::x#1!=rangelast(0,$27)) goto screen_fill::@2 to (number) $28
-Resolved ranged next value [266] screen_fill::y#1 ← ++ screen_fill::y#4 to ++
-Resolved ranged comparison value [268] if(screen_fill::y#1!=rangelast(0,$18)) goto screen_fill::@1 to (number) $19
-Resolved ranged next value [283] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
-Resolved ranged comparison value [285] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
-Resolved ranged next value [303] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
-Resolved ranged comparison value [305] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
-Resolved ranged next value [319] bitmap_clear::x#1 ← ++ bitmap_clear::x#2 to ++
-Resolved ranged comparison value [321] if(bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2 to (number) $c8
-Resolved ranged next value [323] bitmap_clear::y#1 ← ++ bitmap_clear::y#4 to ++
-Resolved ranged comparison value [325] if(bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1 to (number) $28
+Resolved ranged next value [23] divr16u::i#1 ← ++ divr16u::i#2 to ++
+Resolved ranged comparison value [25] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
+Resolved ranged next value [152] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [154] if(main::i#1!=rangelast(0,SIZE-1)) goto main::@1 to (const byte) SIZE-(byte) 1+(number) 1
+Resolved ranged next value [241] screen_fill::x#1 ← ++ screen_fill::x#2 to ++
+Resolved ranged comparison value [243] if(screen_fill::x#1!=rangelast(0,$27)) goto screen_fill::@2 to (number) $28
+Resolved ranged next value [245] screen_fill::y#1 ← ++ screen_fill::y#4 to ++
+Resolved ranged comparison value [247] if(screen_fill::y#1!=rangelast(0,$18)) goto screen_fill::@1 to (number) $19
+Resolved ranged next value [262] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
+Resolved ranged comparison value [264] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
+Resolved ranged next value [282] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
+Resolved ranged comparison value [284] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
+Resolved ranged next value [298] bitmap_clear::x#1 ← ++ bitmap_clear::x#2 to ++
+Resolved ranged comparison value [300] if(bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2 to (number) $c8
+Resolved ranged next value [302] bitmap_clear::y#1 ← ++ bitmap_clear::y#4 to ++
+Resolved ranged comparison value [304] if(bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1 to (number) $28
 Simplifying constant evaluating to zero (word)(const signed word) divr16s::dividend#0 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero bitmap_plot_yhi in [310] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_yhi + (byte) 0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) 0)
-Simplifying expression containing zero bitmap_plot_ylo in [310] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_yhi) w= *((const byte[$100]) bitmap_plot_ylo + (byte) 0)
+Simplifying expression containing zero bitmap_plot_yhi in [289] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_yhi + (byte) 0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) 0)
+Simplifying expression containing zero bitmap_plot_ylo in [289] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_yhi) w= *((const byte[$100]) bitmap_plot_ylo + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const word) divr16s::dividendu#0
 Eliminating unused constant (const word) divr16s::remu#0
@@ -1735,6 +1660,8 @@ Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $10 in if((byte) divr16u::i#1!=(number) $10) goto divr16u::@1
+Adding number conversion cast (unumber) SIZE-1+1 in if((byte) main::i#1!=(const byte) SIZE-(byte) 1+(number) 1) goto main::@1
+Adding number conversion cast (unumber) 1 in if((byte) main::i#1!=(unumber)(const byte) SIZE-(byte) 1+(number) 1) goto main::@1
 Adding number conversion cast (unumber) $28 in if((byte) screen_fill::x#1!=(number) $28) goto screen_fill::@2
 Adding number conversion cast (unumber) $19 in if((byte) screen_fill::y#1!=(number) $19) goto screen_fill::@1
 Adding number conversion cast (unumber) 0 in if((byte) bitmap_init::x#1!=(number) 0) goto bitmap_init::@1
@@ -1746,6 +1673,8 @@ Inlining cast (byte*) bitmap_clear::bitmap#0 ← (byte*)(word~) bitmap_clear::$3
 Inlining cast (byte*) bitmap_plot::plotter#0 ← (byte*)(word~) bitmap_plot::$3
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $10
+Simplifying constant integer cast (const byte) SIZE-(byte) 1+(unumber)(number) 1
+Simplifying constant integer cast 1
 Simplifying constant integer cast $28
 Simplifying constant integer cast $19
 Simplifying constant integer cast 0
@@ -1754,6 +1683,7 @@ Simplifying constant integer cast $c8
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) 0
@@ -1766,58 +1696,40 @@ Alias (byte~) point_init::$20 = (byte~) point_init::$19 (byte~) point_init::$21
 Alias (byte~) bitmap_init::$7 = (byte~) bitmap_init::$3 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) divr16s::$0 [18] if((const signed word) divr16s::dividend#0<(signed byte) 0) goto divr16s::@1
-Simple Condition (bool~) divr16s::$1 [168] if((signed word) divr16s::rem#0<(signed byte) 0) goto divr16s::@1
+Simple Condition (bool~) divr16s::$1 [164] if((signed word) divr16s::rem#0<(signed byte) 0) goto divr16s::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [19] (signed word~) divr16s::$8 ← - (const signed word) divr16s::dividend#0
-Constant right-side identified [46] (byte~) main::$0 ← (const byte) VIC_BMM | (const byte) VIC_DEN
-Constant right-side identified [51] (byte~) main::vicSelectGfxBank1_toDd001_$1 ← > (const word) main::vicSelectGfxBank1_toDd001_$0
-Constant right-side identified [55] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
-Constant right-side identified [58] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
-Constant right-side identified [66] (byte~) main::$8 ← (const byte) SIZE - (byte) 1
+Constant right-side identified [48] (byte~) main::vicSelectGfxBank1_toDd001_$1 ← > (const word) main::vicSelectGfxBank1_toDd001_$0
+Constant right-side identified [52] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
+Constant right-side identified [55] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const signed word) divr16s::$8 = -divr16s::dividend#0
-Constant (const byte) main::$0 = VIC_BMM|VIC_DEN
 Constant (const byte) main::vicSelectGfxBank1_toDd001_$1 = >main::vicSelectGfxBank1_toDd001_$0
 Constant (const word) main::toD0181_$1 = main::toD0181_$0&$3fff
 Constant (const byte) main::toD0181_$5 = >main::toD0181_$4
-Constant (const byte) main::$8 = SIZE-1
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16s::dividendu#1 = (word)divr16s::$8
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [18] if((const signed word) divr16s::dividend#0<(signed byte) 0) goto divr16s::@1
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [74] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [75] if(main::i#1!=rangelast(0,main::$8)) goto main::@1 to (const byte) main::$8+(number) 1
 Simplifying constant evaluating to zero -(const signed word) divr16s::dividend#0 in 
 Simplifying constant evaluating to zero (word)(const signed word) divr16s::$8 in 
 Successful SSA optimization PassNSimplifyConstantZero
 Eliminating unused constant (const signed word) divr16s::dividend#0
 Eliminating unused constant (const signed word) divr16s::$8
 Successful SSA optimization PassNEliminateUnusedVars
-Adding number conversion cast (unumber) main::$8+1 in if((byte) main::i#1!=(const byte) main::$8+(number) 1) goto main::@1
-Adding number conversion cast (unumber) 1 in if((byte) main::i#1!=(unumber)(const byte) main::$8+(number) 1) goto main::@1
-Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant integer cast (const byte) main::$8+(unumber)(number) 1
-Simplifying constant integer cast 1
-Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [41] (byte~) main::$1 ← (const byte) main::$0 | (const byte) VIC_RSEL
-Constant right-side identified [45] (byte~) main::vicSelectGfxBank1_toDd001_$2 ← (const byte) main::vicSelectGfxBank1_toDd001_$1 / (byte) $40
-Constant right-side identified [48] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
-Constant right-side identified [50] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
+Constant right-side identified [43] (byte~) main::vicSelectGfxBank1_toDd001_$2 ← (const byte) main::vicSelectGfxBank1_toDd001_$1 / (byte) $40
+Constant right-side identified [46] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
+Constant right-side identified [48] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$1 = main::$0|VIC_RSEL
 Constant (const byte) main::vicSelectGfxBank1_toDd001_$2 = main::vicSelectGfxBank1_toDd001_$1/$40
 Constant (const word) main::toD0181_$2 = main::toD0181_$1*4
 Constant (const byte) main::toD0181_$6 = main::toD0181_$5/4
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [41] (byte~) main::$2 ← (const byte) main::$1 | (byte) 3
-Constant right-side identified [44] (byte) main::vicSelectGfxBank1_toDd001_return#0 ← (byte) 3 ^ (const byte) main::vicSelectGfxBank1_toDd001_$2
-Constant right-side identified [46] (byte~) main::toD0181_$3 ← > (const word) main::toD0181_$2
-Constant right-side identified [47] (byte~) main::toD0181_$7 ← (const byte) main::toD0181_$6 & (byte) $f
+Constant right-side identified [43] (byte) main::vicSelectGfxBank1_toDd001_return#0 ← (byte) 3 ^ (const byte) main::vicSelectGfxBank1_toDd001_$2
+Constant right-side identified [45] (byte~) main::toD0181_$3 ← > (const word) main::toD0181_$2
+Constant right-side identified [46] (byte~) main::toD0181_$7 ← (const byte) main::toD0181_$6 & (byte) $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = main::$1|3
 Constant (const byte) main::vicSelectGfxBank1_toDd001_return#0 = 3^main::vicSelectGfxBank1_toDd001_$2
 Constant (const byte) main::toD0181_$3 = >main::toD0181_$2
 Constant (const byte) main::toD0181_$7 = main::toD0181_$6&$f
@@ -1843,7 +1755,7 @@ Inlining Noop Cast [61] (signed word~) point_init::$1 ← (signed word)*((const 
 Inlining Noop Cast [69] (word) point_init::abs16s1_return#1 ← (word)(signed word) point_init::x_diff#1 keeping point_init::x_diff#1
 Inlining Noop Cast [74] (word) point_init::abs16s2_return#1 ← (word)(signed word) point_init::y_diff#0 keeping point_init::y_diff#0
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift [51] (byte~) main::$14 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [51] (byte~) main::$10 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
 Rewriting multiplication to use shift [59] (byte~) point_init::$18 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
 Rewriting multiplication to use shift [78] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
 Rewriting multiplication to use shift [79] (word~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$20) * (byte) $10
@@ -1857,9 +1769,9 @@ Inlining constant with var siblings (const byte) divr16s::neg#1
 Inlining constant with var siblings (const word) divr16s::dividendu#2
 Inlining constant with var siblings (const word) divr16s::dividendu#1
 Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte*) screen_fill::screen#0
 Inlining constant with var siblings (const byte) screen_fill::y#0
 Inlining constant with var siblings (const byte) screen_fill::x#0
-Inlining constant with var siblings (const byte*) screen_fill::screen#0
 Inlining constant with var siblings (const byte) bitmap_init::bits#0
 Inlining constant with var siblings (const byte) bitmap_init::x#0
 Inlining constant with var siblings (const byte) bitmap_init::bits#2
@@ -1892,15 +1804,11 @@ Constant inlined main::vicSelectGfxBank1_toDd001_$2 = >(word)(const byte*) SCREE
 Constant inlined main::vicSelectGfxBank1_toDd001_$1 = >(word)(const byte*) SCREEN
 Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4
 Constant inlined screen_fill::screen#0 = (const byte*) SCREEN
-Constant inlined main::$1 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL
-Constant inlined main::$2 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3
-Constant inlined main::$0 = (const byte) VIC_BMM|(const byte) VIC_DEN
 Constant inlined main::vicSelectGfxBank1_gfx#0 = (const byte*) SCREEN
 Constant inlined bitmap_init::y#0 = (byte) 0
 Constant inlined screen_fill::y#0 = (byte) 0
 Constant inlined bitmap_init::x#0 = (byte) 0
 Constant inlined bitmap_init::bitmap#0 = (const byte*) BITMAP
-Constant inlined main::$8 = (const byte) SIZE-(byte) 1
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) divr16s::dividendu#3 (word) 0
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -2091,8 +1999,8 @@ main::@1: scope:[main]  from main::@6 main::@8
   [20] call point_init 
   to:main::@7
 main::@7: scope:[main]  from main::@1
-  [21] (byte~) main::$14 ← (byte) main::i#2 << (byte) 1
-  [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$14)
+  [21] (byte~) main::$10 ← (byte) main::i#2 << (byte) 1
+  [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10)
   [23] (byte) bitmap_plot::y#0 ← *((const byte[SIZE]) y_start + (byte) main::i#2)
   [24] call bitmap_plot 
   to:main::@8
@@ -2468,7 +2376,7 @@ VARIABLE REGISTER WEIGHTS
 (word) divr16u::return#0 61.0
 (word) divr16u::return#2 4.0
 (void()) main()
-(byte~) main::$14 22.0
+(byte~) main::$10 22.0
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 7.857142857142857
@@ -2544,7 +2452,7 @@ Initial phi equivalence classes
 [ bitmap_init::y#2 bitmap_init::y#1 ]
 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
 Added variable point_init::point_idx#0 to zero page equivalence class [ point_init::point_idx#0 ]
-Added variable main::$14 to zero page equivalence class [ main::$14 ]
+Added variable main::$10 to zero page equivalence class [ main::$10 ]
 Added variable bitmap_plot::x#0 to zero page equivalence class [ bitmap_plot::x#0 ]
 Added variable bitmap_plot::y#0 to zero page equivalence class [ bitmap_plot::y#0 ]
 Added variable bitmap_plot::plotter#0 to zero page equivalence class [ bitmap_plot::plotter#0 ]
@@ -2603,7 +2511,7 @@ Complete equivalence classes
 [ bitmap_init::y#2 bitmap_init::y#1 ]
 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
 [ point_init::point_idx#0 ]
-[ main::$14 ]
+[ main::$10 ]
 [ bitmap_plot::x#0 ]
 [ bitmap_plot::y#0 ]
 [ bitmap_plot::plotter#0 ]
@@ -2661,7 +2569,7 @@ Allocated zp[1]:30 [ bitmap_init::x#2 bitmap_init::x#1 ]
 Allocated zp[1]:31 [ bitmap_init::y#2 bitmap_init::y#1 ]
 Allocated zp[2]:32 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
 Allocated zp[1]:34 [ point_init::point_idx#0 ]
-Allocated zp[1]:35 [ main::$14 ]
+Allocated zp[1]:35 [ main::$10 ]
 Allocated zp[2]:36 [ bitmap_plot::x#0 ]
 Allocated zp[1]:38 [ bitmap_plot::y#0 ]
 Allocated zp[2]:39 [ bitmap_plot::plotter#0 ]
@@ -2726,12 +2634,12 @@ Target platform is c64basic / MOS6502X
   .label CIA2_PORT_A = $dd00
   // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  .label BITMAP = $a000
-  .label SCREEN = $8800
   // The number of points
   .const SIZE = 4
   // The delay between pixels
   .const DELAY = 8
+  .label BITMAP = $a000
+  .label SCREEN = $8800
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -2750,7 +2658,7 @@ __bend:
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)/$40
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __14 = $23
+    .label __10 = $23
     .label i = 2
     // asm { sei  }
     // Disable normal interrupt
@@ -2833,12 +2741,12 @@ main: {
     jmp __b7
     // main::@7
   __b7:
-    // [21] (byte~) main::$14 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [21] (byte~) main::$10 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z __14
-    // [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$14) -- vwuz1=pwuc1_derefidx_vbuz2 
-    ldy.z __14
+    sta.z __10
+    // [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuz2 
+    ldy.z __10
     lda x_start,y
     sta.z bitmap_plot.x
     lda x_start+1,y
@@ -3755,10 +3663,6 @@ bitmap_init: {
   y_start: .byte $a, $a, $a, $14
   x_end: .word $14, $a, $14, $14
   y_end: .byte $14, $14, $a, $14
-  // Tables for the plotter - initialized by calling bitmap_init();
-  bitmap_plot_ylo: .fill $100, 0
-  bitmap_plot_yhi: .fill $100, 0
-  bitmap_plot_bit: .fill $100, 0
   // Current x position fixed point [12.4]
   x_cur: .fill 2*SIZE, 0
   // Current y position fixed point [12.4]
@@ -3769,6 +3673,10 @@ bitmap_init: {
   y_add: .fill SIZE, 0
   // Frame delay (counted down to 0)
   delay: .fill SIZE, 0
+  // Tables for the plotter - initialized by calling bitmap_init();
+  bitmap_plot_ylo: .fill $100, 0
+  bitmap_plot_yhi: .fill $100, 0
+  bitmap_plot_bit: .fill $100, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Equivalence Class zp[1]:91 [ bitmap_init::$4 ] has ALU potential.
@@ -3778,9 +3686,9 @@ Statement [7] *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DE
 Statement [8] *((const byte*) CIA2_PORT_A_DDR) ← (byte) 3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) CIA2_PORT_A) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [21] (byte~) main::$14 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$14 ] ( main:2 [ main::i#2 main::$14 ] ) always clobbers reg byte a 
+Statement [21] (byte~) main::$10 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$10 ] ( main:2 [ main::i#2 main::$10 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$14) [ main::i#2 bitmap_plot::x#0 ] ( main:2 [ main::i#2 bitmap_plot::x#0 ] ) always clobbers reg byte a 
+Statement [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10) [ main::i#2 bitmap_plot::x#0 ] ( main:2 [ main::i#2 bitmap_plot::x#0 ] ) always clobbers reg byte a 
 Statement [27] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [29] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
 Statement [30] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
@@ -3861,8 +3769,8 @@ Statement [7] *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DE
 Statement [8] *((const byte*) CIA2_PORT_A_DDR) ← (byte) 3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) CIA2_PORT_A) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [21] (byte~) main::$14 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$14 ] ( main:2 [ main::i#2 main::$14 ] ) always clobbers reg byte a 
-Statement [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$14) [ main::i#2 bitmap_plot::x#0 ] ( main:2 [ main::i#2 bitmap_plot::x#0 ] ) always clobbers reg byte a 
+Statement [21] (byte~) main::$10 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$10 ] ( main:2 [ main::i#2 main::$10 ] ) always clobbers reg byte a 
+Statement [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10) [ main::i#2 bitmap_plot::x#0 ] ( main:2 [ main::i#2 bitmap_plot::x#0 ] ) always clobbers reg byte a 
 Statement [27] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [29] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
 Statement [30] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
@@ -3946,7 +3854,7 @@ Potential registers zp[1]:30 [ bitmap_init::x#2 bitmap_init::x#1 ] : zp[1]:30 , 
 Potential registers zp[1]:31 [ bitmap_init::y#2 bitmap_init::y#1 ] : zp[1]:31 , reg byte x , reg byte y , 
 Potential registers zp[2]:32 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] : zp[2]:32 , 
 Potential registers zp[1]:34 [ point_init::point_idx#0 ] : zp[1]:34 , reg byte x , reg byte y , 
-Potential registers zp[1]:35 [ main::$14 ] : zp[1]:35 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:35 [ main::$10 ] : zp[1]:35 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:36 [ bitmap_plot::x#0 ] : zp[2]:36 , 
 Potential registers zp[1]:38 [ bitmap_plot::y#0 ] : zp[1]:38 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:39 [ bitmap_plot::plotter#0 ] : zp[2]:39 , 
@@ -3990,7 +3898,7 @@ Uplift Scope [screen_fill] 221.6: zp[2]:22 [ screen_fill::screen#2 screen_fill::
 Uplift Scope [bitmap_init] 39.88: zp[2]:32 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] 34.83: zp[1]:29 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ] 22: zp[1]:30 [ bitmap_init::x#2 bitmap_init::x#1 ] 22: zp[1]:31 [ bitmap_init::y#2 bitmap_init::y#1 ] 22: zp[1]:91 [ bitmap_init::$4 ] 22: zp[1]:92 [ bitmap_init::$5 ] 22: zp[1]:93 [ bitmap_init::$6 ] 5.5: zp[1]:90 [ bitmap_init::$7 ] 
 Uplift Scope [point_init] 14: zp[2]:5 [ point_init::abs16s2_return#2 point_init::abs16s2_return#5 point_init::abs16s2_return#6 ] 9: zp[2]:3 [ point_init::abs16s1_return#2 point_init::abs16s1_return#5 point_init::abs16s1_return#6 ] 4: zp[2]:51 [ point_init::$4 ] 4: zp[2]:56 [ point_init::$9 ] 4: zp[2]:58 [ point_init::$10 ] 4: zp[2]:60 [ point_init::$11 ] 4: zp[2]:68 [ point_init::x_stepf#0 ] 4: zp[1]:70 [ point_init::$14 ] 2: zp[1]:46 [ point_init::$18 ] 2: zp[2]:49 [ point_init::$3 ] 2: zp[1]:71 [ point_init::$16 ] 2: zp[2]:72 [ point_init::abs16s2_return#0 ] 2: zp[2]:74 [ point_init::abs16s1_return#0 ] 1.6: zp[1]:55 [ point_init::$20 ] 0.68: zp[1]:34 [ point_init::point_idx#0 ] 0.56: zp[2]:47 [ point_init::x_diff#1 ] 0.5: zp[2]:53 [ point_init::y_diff#0 ] 
 Uplift Scope [divr16s] 14: zp[2]:9 [ divr16s::divisoru#3 divr16s::divisoru#4 divr16s::divisoru#5 ] 10: zp[2]:12 [ divr16s::return#2 divr16s::return#1 divr16s::return#7 ] 8.75: zp[2]:7 [ divr16s::remu#3 divr16s::remu#7 divr16s::remu#8 ] 4: zp[1]:11 [ divr16s::neg#4 divr16s::neg#2 divr16s::neg#3 ] 4: zp[2]:66 [ divr16s::return#3 ] 2: zp[2]:64 [ divr16s::rem#0 ] 2: zp[2]:84 [ divr16s::remu#1 ] 1: zp[2]:80 [ divr16s::resultu#0 ] 1: zp[2]:82 [ divr16s::divisoru#1 ] 0.67: zp[2]:62 [ divr16s::divisor#0 ] 
-Uplift Scope [main] 24.36: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:35 [ main::$14 ] 
+Uplift Scope [main] 24.36: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:35 [ main::$10 ] 
 Uplift Scope [bitmap_plot] 15: zp[1]:38 [ bitmap_plot::y#0 ] 4: zp[2]:41 [ bitmap_plot::$1 ] 4: zp[1]:45 [ bitmap_plot::$2 ] 3: zp[2]:36 [ bitmap_plot::x#0 ] 3: zp[2]:43 [ bitmap_plot::plotter#1 ] 1: zp[2]:39 [ bitmap_plot::plotter#0 ] 
 Uplift Scope [] 
 
@@ -4002,7 +3910,7 @@ Limited combination testing to 100 combinations of 15360 possible.
 Uplifting [point_init] best 28101 combination zp[2]:5 [ point_init::abs16s2_return#2 point_init::abs16s2_return#5 point_init::abs16s2_return#6 ] zp[2]:3 [ point_init::abs16s1_return#2 point_init::abs16s1_return#5 point_init::abs16s1_return#6 ] zp[2]:51 [ point_init::$4 ] zp[2]:56 [ point_init::$9 ] zp[2]:58 [ point_init::$10 ] zp[2]:60 [ point_init::$11 ] zp[2]:68 [ point_init::x_stepf#0 ] reg byte a [ point_init::$14 ] reg byte a [ point_init::$18 ] zp[2]:49 [ point_init::$3 ] reg byte a [ point_init::$16 ] zp[2]:72 [ point_init::abs16s2_return#0 ] zp[2]:74 [ point_init::abs16s1_return#0 ] reg byte x [ point_init::$20 ] zp[1]:34 [ point_init::point_idx#0 ] zp[2]:47 [ point_init::x_diff#1 ] zp[2]:53 [ point_init::y_diff#0 ] 
 Limited combination testing to 100 combinations of 576 possible.
 Uplifting [divr16s] best 28090 combination zp[2]:9 [ divr16s::divisoru#3 divr16s::divisoru#4 divr16s::divisoru#5 ] zp[2]:12 [ divr16s::return#2 divr16s::return#1 divr16s::return#7 ] zp[2]:7 [ divr16s::remu#3 divr16s::remu#7 divr16s::remu#8 ] reg byte y [ divr16s::neg#4 divr16s::neg#2 divr16s::neg#3 ] zp[2]:66 [ divr16s::return#3 ] zp[2]:64 [ divr16s::rem#0 ] zp[2]:84 [ divr16s::remu#1 ] zp[2]:80 [ divr16s::resultu#0 ] zp[2]:82 [ divr16s::divisoru#1 ] zp[2]:62 [ divr16s::divisor#0 ] 
-Uplifting [main] best 28050 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$14 ] 
+Uplifting [main] best 28050 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$10 ] 
 Uplifting [bitmap_plot] best 28013 combination reg byte x [ bitmap_plot::y#0 ] zp[2]:41 [ bitmap_plot::$1 ] reg byte a [ bitmap_plot::$2 ] zp[2]:36 [ bitmap_plot::x#0 ] zp[2]:43 [ bitmap_plot::plotter#1 ] zp[2]:39 [ bitmap_plot::plotter#0 ] 
 Uplifting [] best 28013 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
@@ -4086,12 +3994,12 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CIA2_PORT_A = $dd00
   // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  .label BITMAP = $a000
-  .label SCREEN = $8800
   // The number of points
   .const SIZE = 4
   // The delay between pixels
   .const DELAY = 8
+  .label BITMAP = $a000
+  .label SCREEN = $8800
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -4190,10 +4098,10 @@ main: {
     jmp __b7
     // main::@7
   __b7:
-    // [21] (byte~) main::$14 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // [21] (byte~) main::$10 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
-    // [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$14) -- vwuz1=pwuc1_derefidx_vbuaa 
+    // [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda x_start,y
     sta.z bitmap_plot.x
@@ -4975,10 +4883,6 @@ bitmap_init: {
   y_start: .byte $a, $a, $a, $14
   x_end: .word $14, $a, $14, $14
   y_end: .byte $14, $14, $a, $14
-  // Tables for the plotter - initialized by calling bitmap_init();
-  bitmap_plot_ylo: .fill $100, 0
-  bitmap_plot_yhi: .fill $100, 0
-  bitmap_plot_bit: .fill $100, 0
   // Current x position fixed point [12.4]
   x_cur: .fill 2*SIZE, 0
   // Current y position fixed point [12.4]
@@ -4989,6 +4893,10 @@ bitmap_init: {
   y_add: .fill SIZE, 0
   // Frame delay (counted down to 0)
   delay: .fill SIZE, 0
+  // Tables for the plotter - initialized by calling bitmap_init();
+  bitmap_plot_ylo: .fill $100, 0
+  bitmap_plot_yhi: .fill $100, 0
+  bitmap_plot_bit: .fill $100, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -5192,17 +5100,17 @@ FINAL SYMBOL TABLE
 (const byte*) CIA2_PORT_A_DDR = (byte*) 56578
 (const byte*) D011 = (byte*) 53265
 (const byte*) D018 = (byte*) 53272
-(const byte) DELAY = (byte) 8
+(const byte) DELAY = (number) 8
 (const byte*) PROCPORT = (byte*) 1
 (const byte*) PROCPORT_DDR = (byte*) 0
-(const byte) PROCPORT_DDR_MEMORY_MASK = (byte) 7
-(const byte) PROCPORT_RAM_IO = (byte) 5
+(const byte) PROCPORT_DDR_MEMORY_MASK = (number) 7
+(const byte) PROCPORT_RAM_IO = (number) 5
 (const byte*) RASTER = (byte*) 53266
 (const byte*) SCREEN = (byte*) 34816
-(const byte) SIZE = (byte) 4
-(const byte) VIC_BMM = (byte) $20
-(const byte) VIC_DEN = (byte) $10
-(const byte) VIC_RSEL = (byte) 8
+(const byte) SIZE = (number) 4
+(const byte) VIC_BMM = (number) $20
+(const byte) VIC_DEN = (number) $10
+(const byte) VIC_RSEL = (number) 8
 (void()) bitmap_clear()
 (label) bitmap_clear::@1
 (label) bitmap_clear::@2
@@ -5334,7 +5242,7 @@ FINAL SYMBOL TABLE
 (word) divr16u::return#0 return zp[2]:10 61.0
 (word) divr16u::return#2 return zp[2]:10 4.0
 (void()) main()
-(byte~) main::$14 reg byte a 22.0
+(byte~) main::$10 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -5441,7 +5349,7 @@ reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ]
 reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ]
 reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ]
 zp[2]:8 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 divr16s::divisoru#3 divr16s::divisoru#4 divr16s::divisoru#5 divr16s::divisor#0 divr16u::divisor#0 divr16s::divisoru#1 point_init::x_diff#1 ]
-reg byte a [ main::$14 ]
+reg byte a [ main::$10 ]
 zp[2]:10 [ bitmap_plot::x#0 divr16s::return#2 divr16s::return#1 divr16s::return#7 divr16s::resultu#0 divr16s::return#3 divr16u::quotient#3 divr16u::return#0 divr16u::quotient#1 divr16u::quotient#2 divr16u::return#2 point_init::x_stepf#0 ]
 reg byte x [ bitmap_plot::y#0 ]
 reg byte a [ bitmap_plot::$2 ]
@@ -5489,12 +5397,12 @@ Score: 21969
   .label CIA2_PORT_A = $dd00
   // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  .label BITMAP = $a000
-  .label SCREEN = $8800
   // The number of points
   .const SIZE = 4
   // The delay between pixels
   .const DELAY = 8
+  .label BITMAP = $a000
+  .label SCREEN = $8800
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -5571,10 +5479,10 @@ main: {
     jsr point_init
     // main::@7
     // bitmap_plot(x_start[i], y_start[i])
-    // [21] (byte~) main::$14 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // [21] (byte~) main::$10 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
-    // [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$14) -- vwuz1=pwuc1_derefidx_vbuaa 
+    // [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda x_start,y
     sta.z bitmap_plot.x
@@ -6321,10 +6229,6 @@ bitmap_init: {
   y_start: .byte $a, $a, $a, $14
   x_end: .word $14, $a, $14, $14
   y_end: .byte $14, $14, $a, $14
-  // Tables for the plotter - initialized by calling bitmap_init();
-  bitmap_plot_ylo: .fill $100, 0
-  bitmap_plot_yhi: .fill $100, 0
-  bitmap_plot_bit: .fill $100, 0
   // Current x position fixed point [12.4]
   x_cur: .fill 2*SIZE, 0
   // Current y position fixed point [12.4]
@@ -6335,4 +6239,8 @@ bitmap_init: {
   y_add: .fill SIZE, 0
   // Frame delay (counted down to 0)
   delay: .fill SIZE, 0
+  // Tables for the plotter - initialized by calling bitmap_init();
+  bitmap_plot_ylo: .fill $100, 0
+  bitmap_plot_yhi: .fill $100, 0
+  bitmap_plot_bit: .fill $100, 0
 

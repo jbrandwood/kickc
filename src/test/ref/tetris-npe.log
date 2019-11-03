@@ -14,11 +14,8 @@ Culled Empty Block (label) main::@14
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) ypos#0 ← (number) 0
-  (byte) RATE ← (number) $32
-  (byte) counter#0 ← (byte) RATE
+  (byte) counter#0 ← (const byte) RATE
   to:@1
 
 (void()) main()
@@ -34,7 +31,7 @@ main::@1: scope:[main]  from main main::@10 main::@6
 main::@4: scope:[main]  from main::@1 main::@4
   (byte) ypos#11 ← phi( main::@1/(byte) ypos#8 main::@4/(byte) ypos#11 )
   (byte) counter#8 ← phi( main::@1/(byte) counter#9 main::@4/(byte) counter#8 )
-  (bool~) main::$0 ← *((byte*) RASTER) != (number) $ff
+  (bool~) main::$0 ← *((const byte*) RASTER) != (number) $ff
   if((bool~) main::$0) goto main::@4
   to:main::@6
 main::@6: scope:[main]  from main::@4
@@ -47,9 +44,9 @@ main::@6: scope:[main]  from main::@4
   to:main::@10
 main::@10: scope:[main]  from main::@6
   (byte) ypos#4 ← phi( main::@6/(byte) ypos#7 )
-  (byte) counter#2 ← (byte) RATE
+  (byte) counter#2 ← (const byte) RATE
   (byte) ypos#1 ← ++ (byte) ypos#4
-  *((byte*) SCREEN) ← (byte) ypos#1
+  *((const byte*) SCREEN) ← (byte) ypos#1
   to:main::@1
 main::@return: scope:[main]  from main::@1
   (byte) ypos#5 ← phi( main::@1/(byte) ypos#8 )
@@ -76,9 +73,9 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) RASTER
-(byte) RATE
-(byte*) SCREEN
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte) RATE = (number) $32
+(const byte*) SCREEN = (byte*)(number) $400
 (byte) counter
 (byte) counter#0
 (byte) counter#1
@@ -116,61 +113,54 @@ SYMBOL TABLE SSA
 (byte) ypos#9
 
 Adding number conversion cast (unumber) 0 in (byte) ypos#0 ← (number) 0
-Adding number conversion cast (unumber) $32 in (byte) RATE ← (number) $32
-Adding number conversion cast (unumber) $ff in (bool~) main::$0 ← *((byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) $ff in (bool~) main::$0 ← *((const byte*) RASTER) != (number) $ff
 Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (byte) counter#1 == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) ypos#0 ← (unumber)(number) 0
-Inlining cast (byte) RATE ← (unumber)(number) $32
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
-Simplifying constant integer cast $32
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $32
 Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [14] (bool~) main::$2 ← (byte) counter#1 != (byte) 0 from [13] (bool~) main::$1 ← (byte) counter#1 == (byte) 0
+Inversing boolean not [11] (bool~) main::$2 ← (byte) counter#1 != (byte) 0 from [10] (bool~) main::$1 ← (byte) counter#1 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte) RATE = (byte) counter#0 (byte) counter#10 
 Alias (byte) counter#5 = (byte) counter#8 
 Alias (byte) ypos#11 = (byte) ypos#7 (byte) ypos#4 
 Alias (byte) counter#3 = (byte) counter#6 (byte) counter#9 
 Alias (byte) ypos#2 = (byte) ypos#5 (byte) ypos#8 
+Alias (byte) counter#0 = (byte) counter#10 
 Alias (byte) ypos#0 = (byte) ypos#9 
 Alias (byte) counter#4 = (byte) counter#7 
 Alias (byte) ypos#3 = (byte) ypos#6 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) counter#11 (byte) RATE
+Identical Phi Values (byte) counter#11 (byte) counter#0
 Identical Phi Values (byte) ypos#10 (byte) ypos#0
 Identical Phi Values (byte) counter#5 (byte) counter#3
 Identical Phi Values (byte) ypos#11 (byte) ypos#2
 Identical Phi Values (byte) counter#4 (byte) counter#3
 Identical Phi Values (byte) ypos#3 (byte) ypos#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [10] if(*((byte*) RASTER)!=(byte) $ff) goto main::@4
-Simple Condition (bool~) main::$2 [15] if((byte) counter#1!=(byte) 0) goto main::@1
+Simple Condition (bool~) main::$0 [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4
+Simple Condition (bool~) main::$2 [12] if((byte) counter#1!=(byte) 0) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) ypos#0 = 0
-Constant (const byte) RATE = $32
-Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte) counter#0 = RATE
 Constant (const byte) counter#2 = RATE
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [7] if(true) goto main::@4
+if() condition always true - replacing block destination [4] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Inlining constant with var siblings (const byte) ypos#0
+Inlining constant with var siblings (const byte) counter#0
 Inlining constant with var siblings (const byte) counter#2
+Constant inlined counter#0 = (const byte) RATE
 Constant inlined ypos#0 = (byte) 0
 Constant inlined counter#2 = (const byte) RATE
 Successful SSA optimization Pass2ConstantInlining
@@ -457,7 +447,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte*) RASTER = (byte*) 53266
-(const byte) RATE = (byte) $32
+(const byte) RATE = (number) $32
 (const byte*) SCREEN = (byte*) 1024
 (byte) counter
 (byte) counter#1 reg byte y 151.5

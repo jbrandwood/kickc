@@ -6,16 +6,14 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::BITMAP ← ((byte*)) (number) $2000
-  (byte*~) main::$0 ← (byte*) main::BITMAP + (number) $1fff
-  (byte*) main::b#0 ← (byte*~) main::$0
+  (byte*) main::b#0 ← (const byte*) main::BITMAP+(number) $1fff
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte*) main::b#2 ← phi( main/(byte*) main::b#0 main::@1/(byte*) main::b#1 )
   *((byte*) main::b#2) ← (number) $5a
-  (byte*) main::b#1 ← (byte*) main::b#2 + rangenext(main::$0,main::BITMAP)
-  (bool~) main::$1 ← (byte*) main::b#1 != rangelast(main::$0,main::BITMAP)
-  if((bool~) main::$1) goto main::@1
+  (byte*) main::b#1 ← (byte*) main::b#2 + rangenext(main::BITMAP+$1fff,main::BITMAP)
+  (bool~) main::$0 ← (byte*) main::b#1 != rangelast(main::BITMAP+$1fff,main::BITMAP)
+  if((bool~) main::$0) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -33,20 +31,18 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte*~) main::$0
-(bool~) main::$1
+(bool~) main::$0
 (label) main::@1
 (label) main::@return
-(byte*) main::BITMAP
+(const byte*) main::BITMAP = (byte*)(number) $2000
 (byte*) main::b
 (byte*) main::b#0
 (byte*) main::b#1
 (byte*) main::b#2
 
-Adding number conversion cast (unumber) $1fff in (byte*~) main::$0 ← (byte*) main::BITMAP + (number) $1fff
+Adding number conversion cast (unumber) $1fff in (byte*) main::b#0 ← (const byte*) main::BITMAP+(number) $1fff
 Adding number conversion cast (unumber) $5a in *((byte*) main::b#2) ← (number) $5a
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::BITMAP ← (byte*)(number) $2000
 Inlining cast *((byte*) main::b#2) ← (unumber)(number) $5a
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 8192
@@ -56,18 +52,12 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $1fff
 Finalized unsigned number type (byte) $5a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte*) main::b#0 = (byte*~) main::$0 
-Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [7] if((byte*) main::b#1!=rangelast(main::b#0,main::BITMAP)) goto main::@1
+Simple Condition (bool~) main::$0 [5] if((byte*) main::b#1!=rangelast(main::BITMAP+$1fff,main::BITMAP)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::BITMAP = (byte*) 8192
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [0] (byte*) main::b#0 ← (const byte*) main::BITMAP + (word) $1fff
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::b#0 = main::BITMAP+$1fff
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [3] main::b#1 ← -- main::b#2 to --
-Resolved ranged comparison value [4] if(main::b#1!=rangelast(main::b#0,main::BITMAP)) goto main::@1 to (byte*)(const byte*) main::BITMAP-(number) 1
+Resolved ranged comparison value [5] if(main::b#1!=rangelast(main::BITMAP+$1fff,main::BITMAP)) goto main::@1 to (byte*)(const byte*) main::BITMAP-(number) 1
 Adding number conversion cast (unumber) 1 in if((byte*) main::b#1!=(byte*)(const byte*) main::BITMAP-(number) 1) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast (const byte*) main::BITMAP-(unumber)(number) 1

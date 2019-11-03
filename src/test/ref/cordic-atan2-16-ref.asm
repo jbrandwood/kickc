@@ -12,8 +12,9 @@
   .label SCREEN = $2800
   .label print_char_cursor = 2
 main: {
+    .label col00 = COLS+$c*$28+$13
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    .label __12 = 6
+    .label __10 = 6
     .label xw = $15
     .label yw = $17
     .label angle_w = 6
@@ -52,12 +53,12 @@ main: {
     jsr atan2_16
     lda #$80
     clc
-    adc.z __12
-    sta.z __12
+    adc.z __10
+    sta.z __10
     bcc !+
-    inc.z __12+1
+    inc.z __10+1
   !:
-    lda.z __12+1
+    lda.z __10+1
     tax
     ldy #0
     lda (screen_ref),y
@@ -93,10 +94,7 @@ main: {
     bne __b1
     jsr print_word
   __b5:
-    lda COLS+$c*$28+$13
-    clc
-    adc #1
-    sta COLS+$c*$28+$13
+    inc col00
     jmp __b5
 }
 // Print a word as HEX
@@ -438,14 +436,14 @@ init_font_hex: {
     bne __b1
     rts
 }
+  print_hextab: .text "0123456789abcdef"
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
-  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
+// Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:
 .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
 
-  print_hextab: .text "0123456789abcdef"
 SCREEN_REF:
 .for(var y=-12;y<=12;y++)
         .for(var x=-19;x<=20;x++)

@@ -16,6 +16,7 @@ Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
+Culled Empty Block (label) @12
 Culled Empty Block (label) menu::@7
 Culled Empty Block (label) menu::@3
 Culled Empty Block (label) menu::@8
@@ -34,27 +35,17 @@ Culled Empty Block (label) pressed::@9
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) CIA1_PORT_A ← ((byte*)) (number) $dc00
-  (byte*) CIA1_PORT_B ← ((byte*)) (number) $dc01
-  (byte) RED ← (number) 2
-  (byte) GREEN ← (number) 5
   to:@4
 @4: scope:[]  from @begin
-  (byte) KEY_E ← (number) $e
-  (byte) KEY_C ← (number) $14
-  (byte) KEY_I ← (number) $21
-  (byte) KEY_SPACE ← (number) $3c
   (byte[8]) keyboard_matrix_row_bitmask ← { (number) $fe, (number) $fd, (number) $fb, (number) $f7, (number) $ef, (number) $df, (number) $bf, (number) $7f }
   (byte[8]) keyboard_matrix_col_bitmask ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
-  to:@12
+  to:@14
 
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   (byte) keyboard_matrix_read::rowid#1 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 )
-  *((byte*) CIA1_PORT_A) ← *((byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
-  (byte~) keyboard_matrix_read::$0 ← ~ *((byte*) CIA1_PORT_B)
+  *((const byte*) CIA1_PORT_A) ← *((byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
+  (byte~) keyboard_matrix_read::$0 ← ~ *((const byte*) CIA1_PORT_B)
   (byte) keyboard_matrix_read::row_pressed_bits#0 ← (byte~) keyboard_matrix_read::$0
   (byte) keyboard_matrix_read::return#0 ← (byte) keyboard_matrix_read::row_pressed_bits#0
   to:keyboard_matrix_read::@return
@@ -90,7 +81,7 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 
 (void()) main()
 main: scope:[main]  from @14
-  *((byte*) BORDERCOL) ← (byte) GREEN
+  *((const byte*) BORDERCOL) ← (const byte) GREEN
   to:main::@1
 main::@1: scope:[main]  from main main::@7
   if(true) goto main::@2
@@ -103,9 +94,6 @@ main::@7: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@12: scope:[]  from @4
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  to:@14
 
 (void()) menu()
 menu: scope:[menu]  from main::@2
@@ -114,7 +102,7 @@ menu::@1: scope:[menu]  from menu menu::@6
   if(true) goto menu::@2
   to:menu::@return
 menu::@2: scope:[menu]  from menu::@1
-  (byte) keyboard_key_pressed::key#0 ← (byte) KEY_C
+  (byte) keyboard_key_pressed::key#0 ← (const byte) KEY_C
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#1
   to:menu::@16
@@ -126,7 +114,7 @@ menu::@16: scope:[menu]  from menu::@2
   if((bool~) menu::$2) goto menu::@4
   to:menu::@9
 menu::@4: scope:[menu]  from menu::@16
-  (byte) keyboard_key_pressed::key#1 ← (byte) KEY_I
+  (byte) keyboard_key_pressed::key#1 ← (const byte) KEY_I
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#1
   to:menu::@17
@@ -146,7 +134,7 @@ menu::@return: scope:[menu]  from menu::@1 menu::@11 menu::@13 menu::@18
   return 
   to:@return
 menu::@5: scope:[menu]  from menu::@17
-  (byte) keyboard_key_pressed::key#2 ← (byte) KEY_E
+  (byte) keyboard_key_pressed::key#2 ← (const byte) KEY_E
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#1
   to:menu::@19
@@ -158,26 +146,26 @@ menu::@19: scope:[menu]  from menu::@5
   if((bool~) menu::$9) goto menu::@6
   to:menu::@13
 menu::@11: scope:[menu]  from menu::@17
-  *((byte*) BORDERCOL) ← (byte) RED
+  *((const byte*) BORDERCOL) ← (const byte) RED
   asm { sei  }
   to:menu::@return
 menu::@6: scope:[menu]  from menu::@19
-  *((byte*) SCREEN) ← ++ *((byte*) SCREEN)
+  *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN)
   to:menu::@1
 menu::@13: scope:[menu]  from menu::@19
-  *((byte*) BORDERCOL) ← (byte) GREEN
+  *((const byte*) BORDERCOL) ← (const byte) GREEN
   asm { cli  }
   to:menu::@return
 
 (void()) pressed()
 pressed: scope:[pressed]  from menu::@9
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   to:pressed::@1
 pressed::@1: scope:[pressed]  from pressed pressed::@10
   if(true) goto pressed::@2
   to:pressed::@return
 pressed::@2: scope:[pressed]  from pressed::@1
-  (byte) keyboard_key_pressed::key#3 ← (byte) KEY_SPACE
+  (byte) keyboard_key_pressed::key#3 ← (const byte) KEY_SPACE
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#5 ← (byte) keyboard_key_pressed::return#1
   to:pressed::@10
@@ -191,7 +179,7 @@ pressed::@10: scope:[pressed]  from pressed::@2
 pressed::@return: scope:[pressed]  from pressed::@1 pressed::@10
   return 
   to:@return
-@14: scope:[]  from @12
+@14: scope:[]  from @4
   call main 
   to:@15
 @15: scope:[]  from @14
@@ -199,23 +187,22 @@ pressed::@return: scope:[pressed]  from pressed::@1 pressed::@10
 @end: scope:[]  from @15
 
 SYMBOL TABLE SSA
-(label) @12
 (label) @14
 (label) @15
 (label) @4
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) BORDERCOL
-(byte*) CIA1_PORT_A
-(byte*) CIA1_PORT_B
-(byte) GREEN
-(byte) KEY_C
-(byte) KEY_E
-(byte) KEY_I
-(byte) KEY_SPACE
-(byte) RED
-(byte*) SCREEN
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) CIA1_PORT_A = (byte*)(number) $dc00
+(const byte*) CIA1_PORT_B = (byte*)(number) $dc01
+(const byte) GREEN = (number) 5
+(const byte) KEY_C = (number) $14
+(const byte) KEY_E = (number) $e
+(const byte) KEY_I = (number) $21
+(const byte) KEY_SPACE = (number) $3c
+(const byte) RED = (number) 2
+(const byte*) SCREEN = (byte*)(number) $400
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 (number~) keyboard_key_pressed::$0
 (byte~) keyboard_key_pressed::$1
@@ -299,12 +286,6 @@ SYMBOL TABLE SSA
 (label) pressed::@2
 (label) pressed::@return
 
-Adding number conversion cast (unumber) 2 in (byte) RED ← (number) 2
-Adding number conversion cast (unumber) 5 in (byte) GREEN ← (number) 5
-Adding number conversion cast (unumber) $e in (byte) KEY_E ← (number) $e
-Adding number conversion cast (unumber) $14 in (byte) KEY_C ← (number) $14
-Adding number conversion cast (unumber) $21 in (byte) KEY_I ← (number) $21
-Adding number conversion cast (unumber) $3c in (byte) KEY_SPACE ← (number) $3c
 Adding number conversion cast (unumber) 7 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#4 & (number) 7
 Adding number conversion cast (unumber) keyboard_key_pressed::$0 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#4 & (unumber)(number) 7
 Adding number conversion cast (unumber) 3 in (byte~) keyboard_key_pressed::$1 ← (byte) keyboard_key_pressed::key#4 >> (number) 3
@@ -316,28 +297,11 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (byte[8]) keyboard_matrix_row_bitmask ← (byte[8]){ (byte)(number) $fe, (byte)(number) $fd, (byte)(number) $fb, (byte)(number) $f7, (byte)(number) $ef, (byte)(number) $df, (byte)(number) $bf, (byte)(number) $7f }
 Added casts to value list in (byte[8]) keyboard_matrix_col_bitmask ← (byte[8]){ (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) CIA1_PORT_A ← (byte*)(number) $dc00
-Inlining cast (byte*) CIA1_PORT_B ← (byte*)(number) $dc01
-Inlining cast (byte) RED ← (unumber)(number) 2
-Inlining cast (byte) GREEN ← (unumber)(number) 5
-Inlining cast (byte) KEY_E ← (unumber)(number) $e
-Inlining cast (byte) KEY_C ← (unumber)(number) $14
-Inlining cast (byte) KEY_I ← (unumber)(number) $21
-Inlining cast (byte) KEY_SPACE ← (unumber)(number) $3c
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 56320
 Simplifying constant pointer cast (byte*) 56321
-Simplifying constant integer cast 2
-Simplifying constant integer cast 5
-Simplifying constant integer cast $e
-Simplifying constant integer cast $14
-Simplifying constant integer cast $21
-Simplifying constant integer cast $3c
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $fe
 Simplifying constant integer cast $fd
 Simplifying constant integer cast $fb
@@ -356,18 +320,11 @@ Simplifying constant integer cast $40
 Simplifying constant integer cast $80
 Simplifying constant integer cast 7
 Simplifying constant integer cast 3
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) $e
-Finalized unsigned number type (byte) $14
-Finalized unsigned number type (byte) $21
-Finalized unsigned number type (byte) $3c
 Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 0
@@ -376,10 +333,10 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7
-Inversing boolean not [47] (bool~) menu::$2 ← (byte~) menu::$0 == (byte) 0 from [46] (bool~) menu::$1 ← (byte~) menu::$0 != (byte) 0
-Inversing boolean not [55] (bool~) menu::$6 ← (byte~) menu::$4 == (byte) 0 from [54] (bool~) menu::$5 ← (byte~) menu::$4 != (byte) 0
-Inversing boolean not [65] (bool~) menu::$9 ← (byte~) menu::$7 == (byte) 0 from [64] (bool~) menu::$8 ← (byte~) menu::$7 != (byte) 0
-Inversing boolean not [80] (bool~) pressed::$3 ← (byte~) pressed::$1 == (byte) 0 from [79] (bool~) pressed::$2 ← (byte~) pressed::$1 != (byte) 0
+Inversing boolean not [36] (bool~) menu::$2 ← (byte~) menu::$0 == (byte) 0 from [35] (bool~) menu::$1 ← (byte~) menu::$0 != (byte) 0
+Inversing boolean not [44] (bool~) menu::$6 ← (byte~) menu::$4 == (byte) 0 from [43] (bool~) menu::$5 ← (byte~) menu::$4 != (byte) 0
+Inversing boolean not [54] (bool~) menu::$9 ← (byte~) menu::$7 == (byte) 0 from [53] (bool~) menu::$8 ← (byte~) menu::$7 != (byte) 0
+Inversing boolean not [69] (bool~) pressed::$3 ← (byte~) pressed::$1 == (byte) 0 from [68] (bool~) pressed::$2 ← (byte~) pressed::$1 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) keyboard_matrix_read::return#0 = (byte) keyboard_matrix_read::row_pressed_bits#0 (byte~) keyboard_matrix_read::$0 (byte) keyboard_matrix_read::return#3 (byte) keyboard_matrix_read::return#1 
 Alias (byte) keyboard_key_pressed::colidx#0 = (byte~) keyboard_key_pressed::$0 (byte) keyboard_key_pressed::colidx#1 
@@ -393,38 +350,26 @@ Alias (byte) keyboard_key_pressed::return#10 = (byte) keyboard_key_pressed::retu
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) keyboard_matrix_read::rowid#1 (byte) keyboard_matrix_read::rowid#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) menu::$2 [48] if((byte~) menu::$0==(byte) 0) goto menu::@4
-Simple Condition (bool~) menu::$6 [56] if((byte~) menu::$4==(byte) 0) goto menu::@5
-Simple Condition (bool~) menu::$9 [66] if((byte~) menu::$7==(byte) 0) goto menu::@6
-Simple Condition (bool~) pressed::$3 [81] if((byte~) pressed::$1==(byte) 0) goto pressed::@1
+Simple Condition (bool~) menu::$2 [37] if((byte~) menu::$0==(byte) 0) goto menu::@4
+Simple Condition (bool~) menu::$6 [45] if((byte~) menu::$4==(byte) 0) goto menu::@5
+Simple Condition (bool~) menu::$9 [55] if((byte~) menu::$7==(byte) 0) goto menu::@6
+Simple Condition (bool~) pressed::$3 [70] if((byte~) pressed::$1==(byte) 0) goto pressed::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [81] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return
+Negating conditional jump and destination [70] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Identified constant from value list (byte[8]) { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
 Identified constant from value list (byte[8]) { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) CIA1_PORT_A = (byte*) 56320
-Constant (const byte*) CIA1_PORT_B = (byte*) 56321
-Constant (const byte) RED = 2
-Constant (const byte) GREEN = 5
-Constant (const byte) KEY_E = $e
-Constant (const byte) KEY_C = $14
-Constant (const byte) KEY_I = $21
-Constant (const byte) KEY_SPACE = $3c
 Constant (const byte[8]) keyboard_matrix_row_bitmask = { $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f }
 Constant (const byte[8]) keyboard_matrix_col_bitmask = { 1, 2, 4, 8, $10, $20, $40, $80 }
-Constant (const byte*) SCREEN = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) keyboard_key_pressed::key#0 = KEY_C
 Constant (const byte) keyboard_key_pressed::key#1 = KEY_I
 Constant (const byte) keyboard_key_pressed::key#2 = KEY_E
 Constant (const byte) keyboard_key_pressed::key#3 = KEY_SPACE
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [36] if(true) goto main::@2
-if() condition always true - replacing block destination [40] if(true) goto menu::@2
-if() condition always true - replacing block destination [73] if(true) goto pressed::@2
+if() condition always true - replacing block destination [26] if(true) goto main::@2
+if() condition always true - replacing block destination [29] if(true) goto menu::@2
+if() condition always true - replacing block destination [62] if(true) goto pressed::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -439,7 +384,6 @@ Constant inlined keyboard_key_pressed::key#3 = (const byte) KEY_SPACE
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
-Adding NOP phi() at start of @12
 Adding NOP phi() at start of @14
 Adding NOP phi() at start of @15
 Adding NOP phi() at start of @end
@@ -456,16 +400,15 @@ Adding NOP phi() at start of menu::@5
 Adding NOP phi() at start of pressed::@1
 Adding NOP phi() at start of pressed::@2
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to menu:10 
-Calls in [menu] to keyboard_key_pressed:15 pressed:20 keyboard_key_pressed:24 keyboard_key_pressed:31 
-Calls in [keyboard_key_pressed] to keyboard_matrix_read:42 
-Calls in [pressed] to keyboard_key_pressed:53 
+Calls in [] to main:3 
+Calls in [main] to menu:9 
+Calls in [menu] to keyboard_key_pressed:14 pressed:19 keyboard_key_pressed:23 keyboard_key_pressed:30 
+Calls in [keyboard_key_pressed] to keyboard_matrix_read:41 
+Calls in [pressed] to keyboard_key_pressed:52 
 
 Created 1 initial phi equivalence classes
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @4
-Culled Empty Block (label) @12
 Culled Empty Block (label) @15
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@7
@@ -1363,12 +1306,12 @@ FINAL SYMBOL TABLE
 (const byte*) BORDERCOL = (byte*) 53280
 (const byte*) CIA1_PORT_A = (byte*) 56320
 (const byte*) CIA1_PORT_B = (byte*) 56321
-(const byte) GREEN = (byte) 5
-(const byte) KEY_C = (byte) $14
-(const byte) KEY_E = (byte) $e
-(const byte) KEY_I = (byte) $21
-(const byte) KEY_SPACE = (byte) $3c
-(const byte) RED = (byte) 2
+(const byte) GREEN = (number) 5
+(const byte) KEY_C = (number) $14
+(const byte) KEY_E = (number) $e
+(const byte) KEY_I = (number) $21
+(const byte) KEY_SPACE = (number) $3c
+(const byte) RED = (number) 2
 (const byte*) SCREEN = (byte*) 1024
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 (byte~) keyboard_key_pressed::$2 reg byte a 4.0

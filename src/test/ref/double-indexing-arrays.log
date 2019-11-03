@@ -7,8 +7,6 @@ CONTROL FLOW GRAPH SSA
   (byte[$3e8]) MAPDATA ← { fill( $3e8, 0) }
   (byte[$100]) COLORMAP1 ← { fill( $100, 0) }
   (byte[$100]) COLORMAP2 ← { fill( $100, 0) }
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) COLS ← ((byte*)) (number) $d800
   to:@1
 
 (void()) main()
@@ -17,32 +15,32 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::x#2 ← phi( main/(byte) main::x#0 main::@1/(byte) main::x#1 )
-  *((byte*) SCREEN + (byte) main::x#2) ← *((byte[$3e8]) MAPDATA + (byte) main::x#2)
-  *((byte*) COLS + (byte) main::x#2) ← *((byte[$100]) COLORMAP1 + *((byte[$3e8]) MAPDATA + (byte) main::x#2))
+  *((const byte*) SCREEN + (byte) main::x#2) ← *((byte[$3e8]) MAPDATA + (byte) main::x#2)
+  *((const byte*) COLS + (byte) main::x#2) ← *((byte[$100]) COLORMAP1 + *((byte[$3e8]) MAPDATA + (byte) main::x#2))
   (number~) main::$0 ← (number) $c8 + (byte) main::x#2
   (number~) main::$1 ← (number) $c8 + (byte) main::x#2
-  *((byte*) SCREEN + (number~) main::$0) ← *((byte[$3e8]) MAPDATA + (number~) main::$1)
+  *((const byte*) SCREEN + (number~) main::$0) ← *((byte[$3e8]) MAPDATA + (number~) main::$1)
   (number~) main::$2 ← (number) $c8 + (byte) main::x#2
   (number~) main::$3 ← (number) $c8 + (byte) main::x#2
-  *((byte*) COLS + (number~) main::$2) ← *((byte[$100]) COLORMAP1 + *((byte[$3e8]) MAPDATA + (number~) main::$3))
+  *((const byte*) COLS + (number~) main::$2) ← *((byte[$100]) COLORMAP1 + *((byte[$3e8]) MAPDATA + (number~) main::$3))
   (number~) main::$4 ← (number) $190 + (byte) main::x#2
   (number~) main::$5 ← (number) $190 + (byte) main::x#2
-  *((byte*) SCREEN + (number~) main::$4) ← *((byte[$3e8]) MAPDATA + (number~) main::$5)
+  *((const byte*) SCREEN + (number~) main::$4) ← *((byte[$3e8]) MAPDATA + (number~) main::$5)
   (number~) main::$6 ← (number) $190 + (byte) main::x#2
   (number~) main::$7 ← (number) $190 + (byte) main::x#2
-  *((byte*) COLS + (number~) main::$6) ← *((byte[$100]) COLORMAP1 + *((byte[$3e8]) MAPDATA + (number~) main::$7))
+  *((const byte*) COLS + (number~) main::$6) ← *((byte[$100]) COLORMAP1 + *((byte[$3e8]) MAPDATA + (number~) main::$7))
   (number~) main::$8 ← (number) $258 + (byte) main::x#2
   (number~) main::$9 ← (number) $258 + (byte) main::x#2
-  *((byte*) SCREEN + (number~) main::$8) ← *((byte[$3e8]) MAPDATA + (number~) main::$9)
+  *((const byte*) SCREEN + (number~) main::$8) ← *((byte[$3e8]) MAPDATA + (number~) main::$9)
   (number~) main::$10 ← (number) $258 + (byte) main::x#2
   (number~) main::$11 ← (number) $258 + (byte) main::x#2
-  *((byte*) COLS + (number~) main::$10) ← *((byte[$100]) COLORMAP2 + *((byte[$3e8]) MAPDATA + (number~) main::$11))
+  *((const byte*) COLS + (number~) main::$10) ← *((byte[$100]) COLORMAP2 + *((byte[$3e8]) MAPDATA + (number~) main::$11))
   (number~) main::$12 ← (number) $320 + (byte) main::x#2
   (number~) main::$13 ← (number) $320 + (byte) main::x#2
-  *((byte*) SCREEN + (number~) main::$12) ← *((byte[$3e8]) MAPDATA + (number~) main::$13)
+  *((const byte*) SCREEN + (number~) main::$12) ← *((byte[$3e8]) MAPDATA + (number~) main::$13)
   (number~) main::$14 ← (number) $320 + (byte) main::x#2
   (number~) main::$15 ← (number) $320 + (byte) main::x#2
-  *((byte*) COLS + (number~) main::$14) ← *((byte[$100]) COLORMAP2 + *((byte[$3e8]) MAPDATA + (number~) main::$15))
+  *((const byte*) COLS + (number~) main::$14) ← *((byte[$100]) COLORMAP2 + *((byte[$3e8]) MAPDATA + (number~) main::$15))
   (byte) main::x#1 ← (byte) main::x#2 + rangenext(0,$c8)
   (bool~) main::$16 ← (byte) main::x#1 != rangelast(0,$c8)
   if((bool~) main::$16) goto main::@1
@@ -64,9 +62,9 @@ SYMBOL TABLE SSA
 (label) @end
 (byte[$100]) COLORMAP1
 (byte[$100]) COLORMAP2
-(byte*) COLS
+(const byte*) COLS = (byte*)(number) $d800
 (byte[$3e8]) MAPDATA
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (number~) main::$0
 (number~) main::$1
@@ -125,9 +123,6 @@ Adding number conversion cast (unumber) main::$14 in (number~) main::$14 ← (un
 Adding number conversion cast (unumber) $320 in (number~) main::$15 ← (number) $320 + (byte) main::x#2
 Adding number conversion cast (unumber) main::$15 in (number~) main::$15 ← (unumber)(number) $320 + (byte) main::x#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) COLS ← (byte*)(number) $d800
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant integer cast $c8
@@ -180,7 +175,7 @@ Inferred type updated to word in (unumber~) main::$12 ← (word) $320 + (byte) m
 Inferred type updated to word in (unumber~) main::$13 ← (word) $320 + (byte) main::x#2
 Inferred type updated to word in (unumber~) main::$14 ← (word) $320 + (byte) main::x#2
 Inferred type updated to word in (unumber~) main::$15 ← (word) $320 + (byte) main::x#2
-Simple Condition (bool~) main::$16 [35] if((byte) main::x#1!=rangelast(0,$c8)) goto main::@1
+Simple Condition (bool~) main::$16 [33] if((byte) main::x#1!=rangelast(0,$c8)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [0] (byte[$3e8]) MAPDATA ← { fill( $3e8, 0) }
 Constant right-side identified [1] (byte[$100]) COLORMAP1 ← { fill( $100, 0) }
@@ -189,24 +184,22 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte[$3e8]) MAPDATA = { fill( $3e8, 0) }
 Constant (const byte[$100]) COLORMAP1 = { fill( $100, 0) }
 Constant (const byte[$100]) COLORMAP2 = { fill( $100, 0) }
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) COLS = (byte*) 55296
 Constant (const byte) main::x#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [33] main::x#1 ← ++ main::x#2 to ++
-Resolved ranged comparison value [35] if(main::x#1!=rangelast(0,$c8)) goto main::@1 to (number) $c9
-De-inlining pointer[w] to *(pointer+w)   [17] *((const byte*) SCREEN + (word~) main::$4) ← *((const byte[$3e8]) MAPDATA + (word~) main::$5)
-De-inlining pointer[w] to *(pointer+w)   [17] *((const byte*) SCREEN + (word~) main::$4) ← *((byte*~) main::$17)
-De-inlining pointer[w] to *(pointer+w)   [20] *((const byte*) COLS + (word~) main::$6) ← *((const byte[$100]) COLORMAP1 + *((const byte[$3e8]) MAPDATA + (word~) main::$7))
-De-inlining pointer[w] to *(pointer+w)   [20] *((const byte*) COLS + (word~) main::$6) ← *((const byte[$100]) COLORMAP1 + *((byte*~) main::$19))
-De-inlining pointer[w] to *(pointer+w)   [23] *((const byte*) SCREEN + (word~) main::$8) ← *((const byte[$3e8]) MAPDATA + (word~) main::$9)
-De-inlining pointer[w] to *(pointer+w)   [23] *((const byte*) SCREEN + (word~) main::$8) ← *((byte*~) main::$21)
-De-inlining pointer[w] to *(pointer+w)   [26] *((const byte*) COLS + (word~) main::$10) ← *((const byte[$100]) COLORMAP2 + *((const byte[$3e8]) MAPDATA + (word~) main::$11))
-De-inlining pointer[w] to *(pointer+w)   [26] *((const byte*) COLS + (word~) main::$10) ← *((const byte[$100]) COLORMAP2 + *((byte*~) main::$23))
-De-inlining pointer[w] to *(pointer+w)   [29] *((const byte*) SCREEN + (word~) main::$12) ← *((const byte[$3e8]) MAPDATA + (word~) main::$13)
-De-inlining pointer[w] to *(pointer+w)   [29] *((const byte*) SCREEN + (word~) main::$12) ← *((byte*~) main::$25)
-De-inlining pointer[w] to *(pointer+w)   [32] *((const byte*) COLS + (word~) main::$14) ← *((const byte[$100]) COLORMAP2 + *((const byte[$3e8]) MAPDATA + (word~) main::$15))
-De-inlining pointer[w] to *(pointer+w)   [32] *((const byte*) COLS + (word~) main::$14) ← *((const byte[$100]) COLORMAP2 + *((byte*~) main::$27))
+Resolved ranged next value [31] main::x#1 ← ++ main::x#2 to ++
+Resolved ranged comparison value [33] if(main::x#1!=rangelast(0,$c8)) goto main::@1 to (number) $c9
+De-inlining pointer[w] to *(pointer+w)   [15] *((const byte*) SCREEN + (word~) main::$4) ← *((const byte[$3e8]) MAPDATA + (word~) main::$5)
+De-inlining pointer[w] to *(pointer+w)   [15] *((const byte*) SCREEN + (word~) main::$4) ← *((byte*~) main::$17)
+De-inlining pointer[w] to *(pointer+w)   [18] *((const byte*) COLS + (word~) main::$6) ← *((const byte[$100]) COLORMAP1 + *((const byte[$3e8]) MAPDATA + (word~) main::$7))
+De-inlining pointer[w] to *(pointer+w)   [18] *((const byte*) COLS + (word~) main::$6) ← *((const byte[$100]) COLORMAP1 + *((byte*~) main::$19))
+De-inlining pointer[w] to *(pointer+w)   [21] *((const byte*) SCREEN + (word~) main::$8) ← *((const byte[$3e8]) MAPDATA + (word~) main::$9)
+De-inlining pointer[w] to *(pointer+w)   [21] *((const byte*) SCREEN + (word~) main::$8) ← *((byte*~) main::$21)
+De-inlining pointer[w] to *(pointer+w)   [24] *((const byte*) COLS + (word~) main::$10) ← *((const byte[$100]) COLORMAP2 + *((const byte[$3e8]) MAPDATA + (word~) main::$11))
+De-inlining pointer[w] to *(pointer+w)   [24] *((const byte*) COLS + (word~) main::$10) ← *((const byte[$100]) COLORMAP2 + *((byte*~) main::$23))
+De-inlining pointer[w] to *(pointer+w)   [27] *((const byte*) SCREEN + (word~) main::$12) ← *((const byte[$3e8]) MAPDATA + (word~) main::$13)
+De-inlining pointer[w] to *(pointer+w)   [27] *((const byte*) SCREEN + (word~) main::$12) ← *((byte*~) main::$25)
+De-inlining pointer[w] to *(pointer+w)   [30] *((const byte*) COLS + (word~) main::$14) ← *((const byte[$100]) COLORMAP2 + *((const byte[$3e8]) MAPDATA + (word~) main::$15))
+De-inlining pointer[w] to *(pointer+w)   [30] *((const byte*) COLS + (word~) main::$14) ← *((const byte[$100]) COLORMAP2 + *((byte*~) main::$27))
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Adding number conversion cast (unumber) $c9 in if((byte) main::x#1!=(number) $c9) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions

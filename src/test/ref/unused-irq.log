@@ -1,26 +1,23 @@
 Resolved forward reference irq2 to interrupt(KERNEL_MIN)(void()) irq2()
+Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  to:@1
+  to:@3
 
 (void()) main()
 main: scope:[main]  from @3
-  *((byte*) SCREEN) ← (byte) 'x'
+  *((const byte*) SCREEN) ← (byte) 'x'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
-  (void()**) HARDWARE_IRQ ← ((void()**)) (number) $fffe
-  to:@3
 
 interrupt(KERNEL_MIN)(void()) irq1()
 irq1: scope:[irq1]  from
   (void()*~) irq1::$0 ← & interrupt(KERNEL_MIN)(void()) irq2()
-  *((void()**) HARDWARE_IRQ) ← (void()*~) irq1::$0
+  *((const void()**) HARDWARE_IRQ) ← (void()*~) irq1::$0
   to:irq1::@return
 irq1::@return: scope:[irq1]  from irq1
   return 
@@ -29,12 +26,12 @@ irq1::@return: scope:[irq1]  from irq1
 interrupt(KERNEL_MIN)(void()) irq2()
 irq2: scope:[irq2]  from
   (void()*~) irq2::$0 ← & interrupt(KERNEL_MIN)(void()) irq1()
-  *((void()**) HARDWARE_IRQ) ← (void()*~) irq2::$0
+  *((const void()**) HARDWARE_IRQ) ← (void()*~) irq2::$0
   to:irq2::@return
 irq2::@return: scope:[irq2]  from irq2
   return 
   to:@return
-@3: scope:[]  from @1
+@3: scope:[]  from @begin
   call main 
   to:@4
 @4: scope:[]  from @3
@@ -42,13 +39,12 @@ irq2::@return: scope:[irq2]  from irq2
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(label) @1
 (label) @3
 (label) @4
 (label) @begin
 (label) @end
-(void()**) HARDWARE_IRQ
-(byte*) SCREEN
+(const void()**) HARDWARE_IRQ = (void()**)(number) $fffe
+(const byte*) SCREEN = (byte*)(number) $400
 interrupt(KERNEL_MIN)(void()) irq1()
 (void()*~) irq1::$0
 (label) irq1::@return
@@ -58,17 +54,12 @@ interrupt(KERNEL_MIN)(void()) irq2()
 (void()) main()
 (label) main::@return
 
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (void()**) HARDWARE_IRQ ← (void()**)(number) $fffe
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (void()**) 65534
 Successful SSA optimization PassNCastSimplification
-Constant right-side identified [4] (void()*~) irq1::$0 ← & interrupt(KERNEL_MIN)(void()) irq2()
-Constant right-side identified [7] (void()*~) irq2::$0 ← & interrupt(KERNEL_MIN)(void()) irq1()
+Constant right-side identified [2] (void()*~) irq1::$0 ← & interrupt(KERNEL_MIN)(void()) irq2()
+Constant right-side identified [5] (void()*~) irq2::$0 ← & interrupt(KERNEL_MIN)(void()) irq1()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const void()**) HARDWARE_IRQ = (void()**) 65534
 Constant (const void()*) irq1::$0 = &irq2
 Constant (const void()*) irq2::$0 = &irq1
 Successful SSA optimization Pass2ConstantIdentification
@@ -76,16 +67,14 @@ Constant inlined irq1::$0 = &interrupt(KERNEL_MIN)(void()) irq2()
 Constant inlined irq2::$0 = &interrupt(KERNEL_MIN)(void()) irq1()
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:3 
+Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @1
 Culled Empty Block (label) @4
 Renumbering block @3 to @1
 Adding NOP phi() at start of @begin

@@ -16,7 +16,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @3
-  (byte*) main::DSP ← ((byte*)) (number) $400
   (byte) main::getScreen1_id#0 ← (number) 0
   to:main::getScreen1
 main::getScreen1: scope:[main]  from main
@@ -46,7 +45,7 @@ main::spritePtr1_@return: scope:[main]  from main::spritePtr1
 main::@2: scope:[main]  from main::spritePtr1_@return
   (byte) main::spritePtr1_return#3 ← phi( main::spritePtr1_@return/(byte) main::spritePtr1_return#1 )
   (byte~) main::$1 ← (byte) main::spritePtr1_return#3
-  *((byte*) main::DSP + (number) 0) ← (byte~) main::$1
+  *((const byte*) main::DSP + (number) 0) ← (byte~) main::$1
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -72,7 +71,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::DSP
+(const byte*) main::DSP = (byte*)(number) $400
 (label) main::getScreen1
 (byte~) main::getScreen1_$0
 (label) main::getScreen1_@return
@@ -100,17 +99,16 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (byte) main::getScreen1_id#0 ← (number) 0
 Adding number conversion cast (unumber) $378 in (byte*~) main::spritePtr1_$0 ← (byte*) main::spritePtr1_screen#1 + (number) $378
-Adding number conversion cast (unumber) 0 in *((byte*) main::DSP + (number) 0) ← (byte~) main::$1
+Adding number conversion cast (unumber) 0 in *((const byte*) main::DSP + (number) 0) ← (byte~) main::$1
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*~) $0 ← (byte*)(number) $400
 Inlining cast (byte*~) $1 ← (byte*)(number) $1400
-Inlining cast (byte*) main::DSP ← (byte*)(number) $400
 Inlining cast (byte) main::getScreen1_id#0 ← (unumber)(number) 0
 Inlining cast (byte~) main::spritePtr1_$1 ← (byte)*((byte*~) main::spritePtr1_$0)
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 5120
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 5120
 Simplifying constant integer cast 0
 Simplifying constant integer cast $378
 Simplifying constant integer cast *((byte*~) main::spritePtr1_$0)
@@ -126,10 +124,9 @@ Alias (byte) main::spritePtr1_return#0 = (byte~) main::spritePtr1_$1 (byte) main
 Successful SSA optimization Pass2AliasElimination
 Constant (const byte*) $0 = (byte*) 1024
 Constant (const byte*) $1 = (byte*) 5120
-Constant (const byte*) main::DSP = (byte*) 1024
 Constant (const byte) main::getScreen1_id#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::DSP in [21] *((const byte*) main::DSP + (byte) 0) ← (byte) main::spritePtr1_return#0
+Simplifying expression containing zero main::DSP in [20] *((const byte*) main::DSP + (byte) 0) ← (byte) main::spritePtr1_return#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [1] (byte~) main::getScreen1_$0 ← (const byte) main::getScreen1_id#0 * (const byte) SIZEOF_POINTER
 Successful SSA optimization Pass2ConstantRValueConsolidation

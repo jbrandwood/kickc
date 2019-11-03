@@ -12,6 +12,8 @@ Rewriting struct pointer member access *((struct Entry*) main::entry).next
 Rewriting struct pointer member access *((struct Entry*) main::entry).next
 Rewriting struct pointer member access *((struct Entry*) main::entry).next
 Warning! Adding boolean cast to non-boolean condition (struct Entry*) main::entry
+Identified constant variable (byte) Entry::value
+Identified constant variable (struct Entry*) Entry::next
 Identified constant variable (struct Entry*) ENTRIES
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
@@ -20,17 +22,16 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (struct Entry*) ENTRIES ← ((struct Entry*)) (number) $1000
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (struct Entry*) main::entry0#0 ← (struct Entry*) ENTRIES
+  (struct Entry*) main::entry0#0 ← (const struct Entry*) ENTRIES
   (number~) main::$5 ← (number) 1 * (const byte) SIZEOF_STRUCT_ENTRY
-  (struct Entry*~) main::$0 ← (struct Entry*) ENTRIES + (number~) main::$5
+  (struct Entry*~) main::$0 ← (const struct Entry*) ENTRIES + (number~) main::$5
   (struct Entry*) main::entry1#0 ← (struct Entry*~) main::$0
   (number~) main::$6 ← (number) 2 * (const byte) SIZEOF_STRUCT_ENTRY
-  (struct Entry*~) main::$1 ← (struct Entry*) ENTRIES + (number~) main::$6
+  (struct Entry*~) main::$1 ← (const struct Entry*) ENTRIES + (number~) main::$6
   (struct Entry*) main::entry2#0 ← (struct Entry*~) main::$1
   (struct Entry**) main::$7 ← (struct Entry**)(struct Entry*) main::entry0#0 + (const byte) OFFSET_STRUCT_ENTRY_NEXT
   *((struct Entry**) main::$7) ← (struct Entry*) main::entry2#0
@@ -44,9 +45,8 @@ main: scope:[main]  from @1
   *((struct Entry**) main::$11) ← ((struct Entry*)) (number) 0
   (byte*) main::$12 ← (byte*)(struct Entry*) main::entry1#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
   *((byte*) main::$12) ← (number) 3
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::idx#0 ← (number) 0
-  (struct Entry*) main::entry#0 ← (struct Entry*) ENTRIES
+  (struct Entry*) main::entry#0 ← (const struct Entry*) ENTRIES
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::idx#6 ← phi( main/(byte) main::idx#0 main::@2/(byte) main::idx#4 )
@@ -59,17 +59,17 @@ main::@2: scope:[main]  from main::@1
   (struct Entry*) main::entry#3 ← phi( main::@1/(struct Entry*) main::entry#2 )
   (byte*) main::$13 ← (byte*)(struct Entry*) main::entry#3 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
   (byte~) main::$2 ← (byte) '0' + *((byte*) main::$13)
-  *((byte*) main::SCREEN + (byte) main::idx#5) ← (byte~) main::$2
+  *((const byte*) main::SCREEN + (byte) main::idx#5) ← (byte~) main::$2
   (byte) main::idx#1 ← ++ (byte) main::idx#5
   (struct Entry**) main::$14 ← (struct Entry**)(struct Entry*) main::entry#3 + (const byte) OFFSET_STRUCT_ENTRY_NEXT
   (byte~) main::$3 ← < *((struct Entry**) main::$14)
-  *((byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$3
+  *((const byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$3
   (byte) main::idx#2 ← ++ (byte) main::idx#1
   (struct Entry**) main::$15 ← (struct Entry**)(struct Entry*) main::entry#3 + (const byte) OFFSET_STRUCT_ENTRY_NEXT
   (byte~) main::$4 ← > *((struct Entry**) main::$15)
-  *((byte*) main::SCREEN + (byte) main::idx#2) ← (byte~) main::$4
+  *((const byte*) main::SCREEN + (byte) main::idx#2) ← (byte~) main::$4
   (byte) main::idx#3 ← ++ (byte) main::idx#2
-  *((byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' '
+  *((const byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' '
   (byte) main::idx#4 ← ++ (byte) main::idx#3
   (struct Entry**) main::$16 ← (struct Entry**)(struct Entry*) main::entry#3 + (const byte) OFFSET_STRUCT_ENTRY_NEXT
   (struct Entry*) main::entry#1 ← *((struct Entry**) main::$16)
@@ -89,9 +89,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(struct Entry*) ENTRIES
-(struct Entry*) Entry::next
-(byte) Entry::value
+(const struct Entry*) ENTRIES = (struct Entry*)(number) $1000
 (const byte) OFFSET_STRUCT_ENTRY_NEXT = (byte) 1
 (const byte) OFFSET_STRUCT_ENTRY_VALUE = (byte) 0
 (const byte) SIZEOF_STRUCT_ENTRY = (byte) 3
@@ -117,7 +115,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (struct Entry*) main::entry
 (struct Entry*) main::entry#0
 (struct Entry*) main::entry#1
@@ -147,14 +145,13 @@ Adding number conversion cast (unumber) 2 in *((byte*) main::$10) ← (number) 2
 Adding number conversion cast (unumber) 3 in *((byte*) main::$12) ← (number) 3
 Adding number conversion cast (unumber) 0 in (byte) main::idx#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (struct Entry*) ENTRIES ← (struct Entry*)(number) $1000
 Inlining cast *((byte*) main::$8) ← (unumber)(number) 1
 Inlining cast *((byte*) main::$10) ← (unumber)(number) 2
 Inlining cast *((struct Entry**) main::$11) ← (struct Entry*)(number) 0
 Inlining cast *((byte*) main::$12) ← (unumber)(number) 3
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::idx#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (struct Entry*) 4096
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
@@ -162,7 +159,6 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant pointer cast (struct Entry*) 0
 Simplifying constant integer cast 3
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
@@ -179,42 +175,39 @@ Alias (struct Entry*) main::entry2#0 = (struct Entry*~) main::$1
 Alias (struct Entry*) main::entry#2 = (struct Entry*) main::entry#3 
 Alias (byte) main::idx#5 = (byte) main::idx#6 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$17 [25] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2
+Simple Condition (bool~) main::$17 [23] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [2] (byte~) main::$5 ← (byte) 1 * (const byte) SIZEOF_STRUCT_ENTRY
-Constant right-side identified [5] (byte~) main::$6 ← (byte) 2 * (const byte) SIZEOF_STRUCT_ENTRY
+Constant right-side identified [1] (byte~) main::$5 ← (byte) 1 * (const byte) SIZEOF_STRUCT_ENTRY
+Constant right-side identified [4] (byte~) main::$6 ← (byte) 2 * (const byte) SIZEOF_STRUCT_ENTRY
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const struct Entry*) ENTRIES = (struct Entry*) 4096
+Constant (const struct Entry*) main::entry0#0 = ENTRIES
 Constant (const byte) main::$5 = 1*SIZEOF_STRUCT_ENTRY
 Constant (const byte) main::$6 = 2*SIZEOF_STRUCT_ENTRY
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::idx#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const struct Entry*) main::entry0#0 = ENTRIES
 Constant (const struct Entry*) main::entry#0 = ENTRIES
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (struct Entry**)main::entry0#0 in [8] (struct Entry**) main::$7 ← (struct Entry**)(const struct Entry*) main::entry0#0 + (const byte) OFFSET_STRUCT_ENTRY_NEXT
-Constant value identified (byte*)main::entry0#0 in [10] (byte*) main::$8 ← (byte*)(const struct Entry*) main::entry0#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
+Constant value identified (struct Entry**)main::entry0#0 in [7] (struct Entry**) main::$7 ← (struct Entry**)(const struct Entry*) main::entry0#0 + (const byte) OFFSET_STRUCT_ENTRY_NEXT
+Constant value identified (byte*)main::entry0#0 in [9] (byte*) main::$8 ← (byte*)(const struct Entry*) main::entry0#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
 Successful SSA optimization Pass2ConstantValues
-Converting *(pointer+n) to pointer[n] [9] *((struct Entry**) main::$7) ← (struct Entry*) main::entry2#0  -- *((struct Entry**)main::entry0#0 + OFFSET_STRUCT_ENTRY_NEXT)
-Converting *(pointer+n) to pointer[n] [11] *((byte*) main::$8) ← (byte) 1  -- *((byte*)main::entry0#0 + OFFSET_STRUCT_ENTRY_VALUE)
-Converting *(pointer+n) to pointer[n] [13] *((struct Entry**) main::$9) ← (struct Entry*) main::entry1#0  -- *((struct Entry**)main::entry2#0 + OFFSET_STRUCT_ENTRY_NEXT)
-Converting *(pointer+n) to pointer[n] [15] *((byte*) main::$10) ← (byte) 2  -- *((byte*)main::entry2#0 + OFFSET_STRUCT_ENTRY_VALUE)
-Converting *(pointer+n) to pointer[n] [17] *((struct Entry**) main::$11) ← (struct Entry*) 0  -- *((struct Entry**)main::entry1#0 + OFFSET_STRUCT_ENTRY_NEXT)
-Converting *(pointer+n) to pointer[n] [19] *((byte*) main::$12) ← (byte) 3  -- *((byte*)main::entry1#0 + OFFSET_STRUCT_ENTRY_VALUE)
-Converting *(pointer+n) to pointer[n] [28] (byte~) main::$2 ← (byte) '0' + *((byte*) main::$13)  -- *((byte*)main::entry#2 + OFFSET_STRUCT_ENTRY_VALUE)
-Converting *(pointer+n) to pointer[n] [32] (byte~) main::$3 ← < *((struct Entry**) main::$14)  -- *((struct Entry**)main::entry#2 + OFFSET_STRUCT_ENTRY_NEXT)
-Converting *(pointer+n) to pointer[n] [36] (byte~) main::$4 ← > *((struct Entry**) main::$15)  -- *((struct Entry**)main::entry#2 + OFFSET_STRUCT_ENTRY_NEXT)
-Converting *(pointer+n) to pointer[n] [42] (struct Entry*) main::entry#1 ← *((struct Entry**) main::$16)  -- *((struct Entry**)main::entry#2 + OFFSET_STRUCT_ENTRY_NEXT)
+Converting *(pointer+n) to pointer[n] [8] *((struct Entry**) main::$7) ← (struct Entry*) main::entry2#0  -- *((struct Entry**)main::entry0#0 + OFFSET_STRUCT_ENTRY_NEXT)
+Converting *(pointer+n) to pointer[n] [10] *((byte*) main::$8) ← (byte) 1  -- *((byte*)main::entry0#0 + OFFSET_STRUCT_ENTRY_VALUE)
+Converting *(pointer+n) to pointer[n] [12] *((struct Entry**) main::$9) ← (struct Entry*) main::entry1#0  -- *((struct Entry**)main::entry2#0 + OFFSET_STRUCT_ENTRY_NEXT)
+Converting *(pointer+n) to pointer[n] [14] *((byte*) main::$10) ← (byte) 2  -- *((byte*)main::entry2#0 + OFFSET_STRUCT_ENTRY_VALUE)
+Converting *(pointer+n) to pointer[n] [16] *((struct Entry**) main::$11) ← (struct Entry*) 0  -- *((struct Entry**)main::entry1#0 + OFFSET_STRUCT_ENTRY_NEXT)
+Converting *(pointer+n) to pointer[n] [18] *((byte*) main::$12) ← (byte) 3  -- *((byte*)main::entry1#0 + OFFSET_STRUCT_ENTRY_VALUE)
+Converting *(pointer+n) to pointer[n] [26] (byte~) main::$2 ← (byte) '0' + *((byte*) main::$13)  -- *((byte*)main::entry#2 + OFFSET_STRUCT_ENTRY_VALUE)
+Converting *(pointer+n) to pointer[n] [30] (byte~) main::$3 ← < *((struct Entry**) main::$14)  -- *((struct Entry**)main::entry#2 + OFFSET_STRUCT_ENTRY_NEXT)
+Converting *(pointer+n) to pointer[n] [34] (byte~) main::$4 ← > *((struct Entry**) main::$15)  -- *((struct Entry**)main::entry#2 + OFFSET_STRUCT_ENTRY_NEXT)
+Converting *(pointer+n) to pointer[n] [40] (struct Entry*) main::entry#1 ← *((struct Entry**) main::$16)  -- *((struct Entry**)main::entry#2 + OFFSET_STRUCT_ENTRY_NEXT)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)main::entry0#0 in [10] (byte*) main::$8 ← (byte*)(const struct Entry*) main::entry0#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
-Simplifying expression containing zero (byte*)main::entry0#0 in [11] *((byte*)(const struct Entry*) main::entry0#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE) ← (byte) 1
-Simplifying expression containing zero (byte*)main::entry2#0 in [14] (byte*) main::$10 ← (byte*)(struct Entry*) main::entry2#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
-Simplifying expression containing zero (byte*)main::entry2#0 in [15] *((byte*)(struct Entry*) main::entry2#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE) ← (byte) 2
-Simplifying expression containing zero (byte*)main::entry1#0 in [18] (byte*) main::$12 ← (byte*)(struct Entry*) main::entry1#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
-Simplifying expression containing zero (byte*)main::entry1#0 in [19] *((byte*)(struct Entry*) main::entry1#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE) ← (byte) 3
-Simplifying expression containing zero (byte*)main::entry#2 in [27] (byte*) main::$13 ← (byte*)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
-Simplifying expression containing zero (byte*)main::entry#2 in [28] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_VALUE)
+Simplifying expression containing zero (byte*)main::entry0#0 in [9] (byte*) main::$8 ← (byte*)(const struct Entry*) main::entry0#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
+Simplifying expression containing zero (byte*)main::entry0#0 in [10] *((byte*)(const struct Entry*) main::entry0#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE) ← (byte) 1
+Simplifying expression containing zero (byte*)main::entry2#0 in [13] (byte*) main::$10 ← (byte*)(struct Entry*) main::entry2#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
+Simplifying expression containing zero (byte*)main::entry2#0 in [14] *((byte*)(struct Entry*) main::entry2#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE) ← (byte) 2
+Simplifying expression containing zero (byte*)main::entry1#0 in [17] (byte*) main::$12 ← (byte*)(struct Entry*) main::entry1#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
+Simplifying expression containing zero (byte*)main::entry1#0 in [18] *((byte*)(struct Entry*) main::entry1#0 + (const byte) OFFSET_STRUCT_ENTRY_VALUE) ← (byte) 3
+Simplifying expression containing zero (byte*)main::entry#2 in [25] (byte*) main::$13 ← (byte*)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_VALUE
+Simplifying expression containing zero (byte*)main::entry#2 in [26] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_VALUE)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (struct Entry**) main::$7 and assignment [2] (struct Entry**) main::$7 ← (struct Entry**)(const struct Entry*) main::entry0#0 + (const byte) OFFSET_STRUCT_ENTRY_NEXT
 Eliminating unused variable (byte*) main::$8 and assignment [4] (byte*) main::$8 ← (byte*)(const struct Entry*) main::entry0#0
@@ -312,8 +305,6 @@ main::@2: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(struct Entry*) Entry::next
-(byte) Entry::value
 (void()) main()
 (byte~) main::$2 22.0
 (byte~) main::$3 22.0
@@ -725,8 +716,6 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const struct Entry*) ENTRIES = (struct Entry*) 4096
-(struct Entry*) Entry::next
-(byte) Entry::value
 (const byte) OFFSET_STRUCT_ENTRY_NEXT = (byte) 1
 (const byte) SIZEOF_STRUCT_ENTRY = (byte) 3
 (void()) main()

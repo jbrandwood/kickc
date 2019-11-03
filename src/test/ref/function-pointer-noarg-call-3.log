@@ -64,8 +64,7 @@ getfn::@return: scope:[getfn]  from getfn::@1 getfn::@3
 
 (void()) fn1()
 fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL ← ((byte*)) (number) $d020
-  *((byte*) fn1::BORDERCOL) ← ++ *((byte*) fn1::BORDERCOL)
+  *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   return 
@@ -73,8 +72,7 @@ fn1::@return: scope:[fn1]  from fn1
 
 (void()) fn2()
 fn2: scope:[fn2]  from
-  (byte*) fn2::BGCOL ← ((byte*)) (number) $d021
-  *((byte*) fn2::BGCOL) ← ++ *((byte*) fn2::BGCOL)
+  *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL)
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
   return 
@@ -93,10 +91,10 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) fn1()
 (label) fn1::@return
-(byte*) fn1::BORDERCOL
+(const byte*) fn1::BORDERCOL = (byte*)(number) $d020
 (void()) fn2()
 (label) fn2::@return
-(byte*) fn2::BGCOL
+(const byte*) fn2::BGCOL = (byte*)(number) $d021
 (void()*()) getfn((byte) getfn::b)
 (number~) getfn::$0
 (bool~) getfn::$1
@@ -134,14 +132,12 @@ Adding number conversion cast (unumber) getfn::$0 in (number~) getfn::$0 ← (by
 Adding number conversion cast (unumber) 0 in (bool~) getfn::$1 ← (unumber~) getfn::$0 == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Inlining cast (byte*) fn1::BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) fn2::BGCOL ← (byte*)(number) $d021
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 53280
+Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 53280
-Simplifying constant pointer cast (byte*) 53281
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
@@ -165,8 +161,6 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::i#0 = 0
 Constant (const void()*) getfn::return#1 = &fn1
 Constant (const void()*) getfn::return#2 = &fn2
-Constant (const byte*) fn1::BORDERCOL = (byte*) 53280
-Constant (const byte*) fn2::BGCOL = (byte*) 53281
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [2] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs

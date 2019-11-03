@@ -6,10 +6,11 @@ Culled Empty Block (label) memcpy::@7
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@4
+  to:@5
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 memcpy: scope:[memcpy]  from main::@4 main::@5
@@ -48,15 +49,11 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
   (void*) memcpy::return#1 ← (void*) memcpy::return#4
   return 
   to:@return
-@4: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte[]) CAMELOT ← (const string) $0
-  to:@5
 
 (void()) main()
 main: scope:[main]  from @5
-  (byte*) main::sc#0 ← (byte*) SCREEN
-  (byte*) main::camelot#0 ← (byte[]) CAMELOT
+  (byte*) main::sc#0 ← (const byte*) SCREEN
+  (byte*) main::camelot#0 ← (const byte[]) CAMELOT
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -67,13 +64,12 @@ main::@1: scope:[main]  from main main::@1
   (byte*) main::sc#1 ← ++ (byte*) main::sc#2
   (byte*) main::camelot#1 ← ++ (byte*) main::camelot#2
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,6)
-  (bool~) main::$5 ← (byte) main::i#1 != rangelast(0,6)
-  if((bool~) main::$5) goto main::@1
+  (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,6)
+  if((bool~) main::$2) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte*~) main::$0 ← (byte*) SCREEN + (number) $28
-  (byte*) main::sc2#0 ← (byte*~) main::$0
-  (byte*) main::reigns#0 ← (const string) main::$7
+  (byte*) main::sc2#0 ← (const byte*) SCREEN+(number) $28
+  (byte*) main::reigns#0 ← (const string) main::$4
   (byte) main::i1#0 ← (byte) 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@3
@@ -84,21 +80,19 @@ main::@3: scope:[main]  from main::@2 main::@3
   (byte*) main::sc2#1 ← ++ (byte*) main::sc2#2
   (byte*) main::reigns#1 ← ++ (byte*) main::reigns#2
   (byte) main::i1#1 ← (byte) main::i1#2 + rangenext(0,5)
-  (bool~) main::$6 ← (byte) main::i1#1 != rangelast(0,5)
-  if((bool~) main::$6) goto main::@3
+  (bool~) main::$3 ← (byte) main::i1#1 != rangelast(0,5)
+  if((bool~) main::$3) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@3
-  (byte*~) main::$1 ← (byte*) SCREEN + (number) $a
-  (void*) memcpy::destination#0 ← (void*)(byte*~) main::$1
-  (void*) memcpy::source#0 ← (void*)(byte[]) CAMELOT
+  (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN+(number) $a
+  (void*) memcpy::source#0 ← (void*)(const byte[]) CAMELOT
   (word) memcpy::num#0 ← (number) 7
   call memcpy 
   (void*) memcpy::return#2 ← (void*) memcpy::return#1
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  (byte*~) main::$3 ← (byte*) SCREEN + (number) $32
-  (void*) memcpy::destination#1 ← (void*)(byte*~) main::$3
-  (void*) memcpy::source#1 ← (void*)(const string) main::$8
+  (void*) memcpy::destination#1 ← (void*)(const byte*) SCREEN+(number) $32
+  (void*) memcpy::source#1 ← (void*)(const string) main::$5
   (word) memcpy::num#1 ← (number) 5
   call memcpy 
   (void*) memcpy::return#3 ← (void*) memcpy::return#1
@@ -108,7 +102,7 @@ main::@6: scope:[main]  from main::@5
 main::@return: scope:[main]  from main::@6
   return 
   to:@return
-@5: scope:[]  from @4
+@5: scope:[]  from @begin
   call main 
   to:@6
 @6: scope:[]  from @5
@@ -116,22 +110,17 @@ main::@return: scope:[main]  from main::@6
 @end: scope:[]  from @6
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "camelot"
-(label) @4
 (label) @5
 (label) @6
 (label) @begin
 (label) @end
-(byte[]) CAMELOT
-(byte*) SCREEN
+(const byte[]) CAMELOT = (string) "camelot"
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
-(byte*~) main::$0
-(byte*~) main::$1
-(byte*~) main::$3
-(bool~) main::$5
-(bool~) main::$6
-(const string) main::$7 = (string) "reigns"
-(const string) main::$8 = (string) "rules"
+(bool~) main::$2
+(bool~) main::$3
+(const string) main::$4 = (string) "reigns"
+(const string) main::$5 = (string) "rules"
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -207,16 +196,15 @@ SYMBOL TABLE SSA
 (byte*) memcpy::src_end#1
 (byte*) memcpy::src_end#2
 
-Adding number conversion cast (unumber) $28 in (byte*~) main::$0 ← (byte*) SCREEN + (number) $28
-Adding number conversion cast (unumber) $a in (byte*~) main::$1 ← (byte*) SCREEN + (number) $a
+Adding number conversion cast (unumber) $28 in (byte*) main::sc2#0 ← (const byte*) SCREEN+(number) $28
+Adding number conversion cast (unumber) $a in (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN+(number) $a
 Adding number conversion cast (unumber) 7 in (word) memcpy::num#0 ← (number) 7
-Adding number conversion cast (unumber) $32 in (byte*~) main::$3 ← (byte*) SCREEN + (number) $32
+Adding number conversion cast (unumber) $32 in (void*) memcpy::destination#1 ← (void*)(const byte*) SCREEN+(number) $32
 Adding number conversion cast (unumber) 5 in (word) memcpy::num#1 ← (number) 5
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2
 Inlining cast (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2
 Inlining cast (byte*~) memcpy::$0 ← (byte*)(void*) memcpy::source#2
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (word) memcpy::num#0 ← (unumber)(number) 7
 Inlining cast (word) memcpy::num#1 ← (unumber)(number) 5
 Successful SSA optimization Pass2InlineCast
@@ -238,34 +226,33 @@ Alias (byte*) memcpy::src#2 = (byte*) memcpy::src#3
 Alias (byte*) memcpy::dst#2 = (byte*) memcpy::dst#3 
 Alias (byte*) memcpy::src_end#1 = (byte*) memcpy::src_end#2 
 Alias (void*) memcpy::destination#3 = (void*) memcpy::destination#5 (void*) memcpy::destination#4 (void*) memcpy::return#0 (void*) memcpy::return#4 (void*) memcpy::return#1 
-Alias (byte*) main::sc2#0 = (byte*~) main::$0 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) memcpy::src_end#1 (byte*) memcpy::src_end#0
 Identical Phi Values (void*) memcpy::destination#3 (void*) memcpy::destination#2
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memcpy::$2 [8] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
-Simple Condition (bool~) main::$5 [29] if((byte) main::i#1!=rangelast(0,6)) goto main::@1
-Simple Condition (bool~) main::$6 [40] if((byte) main::i1#1!=rangelast(0,5)) goto main::@3
+Simple Condition (bool~) main::$2 [27] if((byte) main::i#1!=rangelast(0,6)) goto main::@1
+Simple Condition (bool~) main::$3 [37] if((byte) main::i1#1!=rangelast(0,5)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte[]) CAMELOT = $0
-Constant (const byte) main::i#0 = 0
-Constant (const byte*) main::reigns#0 = main::$7
-Constant (const byte) main::i1#0 = 0
-Constant (const word) memcpy::num#0 = 7
-Constant (const void*) memcpy::source#1 = (void*)main::$8
-Constant (const word) memcpy::num#1 = 5
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::sc#0 = SCREEN
 Constant (const byte*) main::camelot#0 = CAMELOT
+Constant (const byte) main::i#0 = 0
+Constant (const byte*) main::sc2#0 = SCREEN+$28
+Constant (const byte*) main::reigns#0 = main::$4
+Constant (const byte) main::i1#0 = 0
+Constant (const void*) memcpy::destination#0 = (void*)SCREEN+$a
 Constant (const void*) memcpy::source#0 = (void*)CAMELOT
+Constant (const word) memcpy::num#0 = 7
+Constant (const void*) memcpy::destination#1 = (void*)SCREEN+$32
+Constant (const void*) memcpy::source#1 = (void*)main::$5
+Constant (const word) memcpy::num#1 = 5
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [27] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [29] if(main::i#1!=rangelast(0,6)) goto main::@1 to (number) 7
-Resolved ranged next value [38] main::i1#1 ← ++ main::i1#2 to ++
-Resolved ranged comparison value [40] if(main::i1#1!=rangelast(0,5)) goto main::@3 to (number) 6
-Eliminating unused variable (void*) memcpy::return#2 and assignment [27] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
-Eliminating unused variable (void*) memcpy::return#3 and assignment [31] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
+Resolved ranged next value [25] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [27] if(main::i#1!=rangelast(0,6)) goto main::@1 to (number) 7
+Resolved ranged next value [35] main::i1#1 ← ++ main::i1#2 to ++
+Resolved ranged comparison value [37] if(main::i1#1!=rangelast(0,5)) goto main::@3 to (number) 6
+Eliminating unused variable (void*) memcpy::return#2 and assignment [24] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
+Eliminating unused variable (void*) memcpy::return#3 and assignment [26] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) 7 in if((byte) main::i#1!=(number) 7) goto main::@1
 Adding number conversion cast (unumber) 6 in if((byte) main::i1#1!=(number) 6) goto main::@3
@@ -276,55 +263,40 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) 6
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [17] (byte*) main::sc2#0 ← (const byte*) SCREEN + (byte) $28
-Constant right-side identified [24] (byte*~) main::$1 ← (const byte*) SCREEN + (byte) $a
-Constant right-side identified [27] (byte*~) main::$3 ← (const byte*) SCREEN + (byte) $32
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::sc2#0 = SCREEN+$28
-Constant (const byte*) main::$1 = SCREEN+$a
-Constant (const byte*) main::$3 = SCREEN+$32
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const void*) memcpy::destination#0 = (void*)main::$1
-Constant (const void*) memcpy::destination#1 = (void*)main::$3
-Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [1] (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2 keeping memcpy::source#2
 Inlining Noop Cast [2] (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2 keeping memcpy::destination#2
 Inlining Noop Cast [3] (byte*~) memcpy::$0 ← (byte*)(void*) memcpy::source#2 keeping memcpy::source#2
 Successful SSA optimization Pass2NopCastInlining
+Inlining constant with var siblings (const void*) memcpy::destination#0
+Inlining constant with var siblings (const void*) memcpy::source#0
 Inlining constant with var siblings (const word) memcpy::num#0
+Inlining constant with var siblings (const void*) memcpy::destination#1
 Inlining constant with var siblings (const void*) memcpy::source#1
 Inlining constant with var siblings (const word) memcpy::num#1
-Inlining constant with var siblings (const void*) memcpy::source#0
-Inlining constant with var siblings (const void*) memcpy::destination#0
-Inlining constant with var siblings (const void*) memcpy::destination#1
-Inlining constant with var siblings (const byte) main::i#0
-Inlining constant with var siblings (const byte*) main::reigns#0
-Inlining constant with var siblings (const byte) main::i1#0
 Inlining constant with var siblings (const byte*) main::sc#0
 Inlining constant with var siblings (const byte*) main::camelot#0
+Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte*) main::sc2#0
+Inlining constant with var siblings (const byte*) main::reigns#0
+Inlining constant with var siblings (const byte) main::i1#0
 Constant inlined main::camelot#0 = (const byte[]) CAMELOT
 Constant inlined main::sc#0 = (const byte*) SCREEN
 Constant inlined memcpy::destination#0 = (void*)(const byte*) SCREEN+(byte) $a
 Constant inlined memcpy::destination#1 = (void*)(const byte*) SCREEN+(byte) $32
-Constant inlined $0 = (const byte[]) CAMELOT
 Constant inlined memcpy::source#0 = (void*)(const byte[]) CAMELOT
 Constant inlined memcpy::num#1 = (byte) 5
 Constant inlined memcpy::num#0 = (byte) 7
-Constant inlined memcpy::source#1 = (void*)(const string) main::$8
-Constant inlined main::$1 = (const byte*) SCREEN+(byte) $a
+Constant inlined memcpy::source#1 = (void*)(const string) main::$5
 Constant inlined main::i#0 = (byte) 0
 Constant inlined main::i1#0 = (byte) 0
-Constant inlined main::$3 = (const byte*) SCREEN+(byte) $32
+Constant inlined main::$4 = (const byte*) main::reigns#0
 Constant inlined main::sc2#0 = (const byte*) SCREEN+(byte) $28
-Constant inlined main::$7 = (const byte*) main::reigns#0
 Successful SSA optimization Pass2ConstantInlining
 Inlining constant with var siblings (const byte*) main::reigns#0
 Inlining constant with var siblings (const byte*) main::reigns#0
 Added new block during phi lifting main::@7(between main::@1 and main::@1)
 Added new block during phi lifting main::@8(between main::@3 and main::@3)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @5
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @end
@@ -335,20 +307,19 @@ Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of main::@6
 Adding NOP phi() at start of memcpy::@3
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to memcpy:21 memcpy:23 
+Calls in [] to main:2 
+Calls in [main] to memcpy:20 memcpy:22 
 
 Created 11 initial phi equivalence classes
-Coalesced [26] main::reigns#3 ← main::reigns#1
-Coalesced [27] main::sc2#3 ← main::sc2#1
-Coalesced [28] main::i1#3 ← main::i1#1
-Coalesced [29] main::camelot#3 ← main::camelot#1
-Coalesced [30] main::sc#3 ← main::sc#1
-Coalesced [31] main::i#3 ← main::i#1
-Coalesced [43] memcpy::src#5 ← memcpy::src#1
-Coalesced [44] memcpy::dst#5 ← memcpy::dst#1
+Coalesced [25] main::reigns#3 ← main::reigns#1
+Coalesced [26] main::sc2#3 ← main::sc2#1
+Coalesced [27] main::i1#3 ← main::i1#1
+Coalesced [28] main::camelot#3 ← main::camelot#1
+Coalesced [29] main::sc#3 ← main::sc#1
+Coalesced [30] main::i#3 ← main::i#1
+Coalesced [42] memcpy::src#5 ← memcpy::src#1
+Coalesced [43] memcpy::dst#5 ← memcpy::dst#1
 Coalesced down to 11 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @6
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@6
@@ -417,7 +388,7 @@ main::@return: scope:[main]  from main::@4
 memcpy: scope:[memcpy]  from main::@3 main::@4
   [22] (word) memcpy::num#2 ← phi( main::@3/(byte) 7 main::@4/(byte) 5 )
   [22] (void*) memcpy::destination#2 ← phi( main::@3/(void*)(const byte*) SCREEN+(byte) $a main::@4/(void*)(const byte*) SCREEN+(byte) $32 )
-  [22] (void*) memcpy::source#2 ← phi( main::@3/(void*)(const byte[]) CAMELOT main::@4/(void*)(const string) main::$8 )
+  [22] (void*) memcpy::source#2 ← phi( main::@3/(void*)(const byte[]) CAMELOT main::@4/(void*)(const string) main::$5 )
   [23] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2
   [24] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
   [25] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
@@ -681,10 +652,10 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN+$32
     sta.z memcpy.destination+1
-    // [22] phi (void*) memcpy::source#2 = (void*)(const string) main::$8 [phi:main::@4->memcpy#2] -- pvoz1=pvoc1 
-    lda #<__8
+    // [22] phi (void*) memcpy::source#2 = (void*)(const string) main::$5 [phi:main::@4->memcpy#2] -- pvoz1=pvoc1 
+    lda #<__5
     sta.z memcpy.source
-    lda #>__8
+    lda #>__5
     sta.z memcpy.source+1
     jsr memcpy
     jmp __breturn
@@ -692,7 +663,7 @@ main: {
   __breturn:
     // [21] return 
     rts
-    __8: .text "rules"
+    __5: .text "rules"
     .byte 0
     reigns_1: .text "reigns"
     .byte 0
@@ -979,10 +950,10 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN+$32
     sta.z memcpy.destination+1
-    // [22] phi (void*) memcpy::source#2 = (void*)(const string) main::$8 [phi:main::@4->memcpy#2] -- pvoz1=pvoc1 
-    lda #<__8
+    // [22] phi (void*) memcpy::source#2 = (void*)(const string) main::$5 [phi:main::@4->memcpy#2] -- pvoz1=pvoc1 
+    lda #<__5
     sta.z memcpy.source
-    lda #>__8
+    lda #>__5
     sta.z memcpy.source+1
     jsr memcpy
     jmp __breturn
@@ -990,7 +961,7 @@ main: {
   __breturn:
     // [21] return 
     rts
-    __8: .text "rules"
+    __5: .text "rules"
     .byte 0
     reigns_1: .text "reigns"
     .byte 0
@@ -1115,7 +1086,7 @@ FINAL SYMBOL TABLE
 (const byte[]) CAMELOT = (string) "camelot"
 (const byte*) SCREEN = (byte*) 1024
 (void()) main()
-(const string) main::$8 = (string) "rules"
+(const string) main::$5 = (string) "rules"
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -1312,17 +1283,17 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN+$32
     sta.z memcpy.destination+1
-    // [22] phi (void*) memcpy::source#2 = (void*)(const string) main::$8 [phi:main::@4->memcpy#2] -- pvoz1=pvoc1 
-    lda #<__8
+    // [22] phi (void*) memcpy::source#2 = (void*)(const string) main::$5 [phi:main::@4->memcpy#2] -- pvoz1=pvoc1 
+    lda #<__5
     sta.z memcpy.source
-    lda #>__8
+    lda #>__5
     sta.z memcpy.source+1
     jsr memcpy
     // main::@return
     // }
     // [21] return 
     rts
-    __8: .text "rules"
+    __5: .text "rules"
     .byte 0
     reigns_1: .text "reigns"
     .byte 0

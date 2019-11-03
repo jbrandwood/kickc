@@ -9,11 +9,10 @@ main: scope:[main]  from @1
   (word) main::p#0 ← ((word)) { (number) 2, (number) 3 }
   (word*~) main::$0 ← & (word) main::p#0
   (word*) main::q#0 ← (word*~) main::$0
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte~) main::$1 ← < *((word*) main::q#0)
-  *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$1
+  *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$1
   (byte~) main::$2 ← > *((word*) main::q#0)
-  *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$2
+  *((const byte*) main::SCREEN + (number) 1) ← (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -35,7 +34,7 @@ SYMBOL TABLE SSA
 (byte~) main::$1
 (byte~) main::$2
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (word) main::p
 (word) main::p#0
 (word*) main::q
@@ -43,14 +42,12 @@ SYMBOL TABLE SSA
 
 Fixing inline constructor with main::$3 ← (byte)2 w= (byte)3
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte~) main::$1
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte~) main::$2
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$1
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte~) main::$2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
@@ -65,9 +62,8 @@ Constant right-side identified [0] (word~) main::$3 ← (byte) 2 w= (byte) 3
 Constant right-side identified [2] (word*) main::q#0 ← & (word) main::p#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word*) main::q#0 = &main::p#0
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$1
+Simplifying expression containing zero main::SCREEN in [5] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding number conversion cast (unumber) 2*$100+3 in (word~) main::$3 ← (byte) 2*(number) $100+(byte) 3
 Adding number conversion cast (unumber) 2*$100 in (word~) main::$3 ← ((unumber)) (byte) 2*(number) $100+(byte) 3
@@ -170,8 +166,8 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label q = p
     .label SCREEN = $400
+    .label q = p
     .label __1 = 4
     .label __2 = 5
     .label p = 2
@@ -237,8 +233,8 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label q = p
     .label SCREEN = $400
+    .label q = p
     .label p = 2
     // [4] (word) main::p#0 ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
     lda #<2*$100+3
@@ -317,8 +313,8 @@ Score: 30
   // @end
   // main
 main: {
-    .label q = p
     .label SCREEN = $400
+    .label q = p
     .label p = 2
     // p = { 2, 3 }
     // [4] (word) main::p#0 ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 

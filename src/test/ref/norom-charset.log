@@ -10,15 +10,12 @@ Culled Empty Block (label) gen_char3::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) VIC_MEMORY ← ((byte*)) (number) $d018
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) CHARSET ← ((byte*)) (number) $3000
   (word[]) charset_spec_row ← { (number) $f7da, (number) $f7de, (number) $f24e, (number) $d6de }
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*~) main::$0 ← (byte*) CHARSET + (number) 8
+  (byte*~) main::$0 ← (const byte*) CHARSET + (number) 8
   (byte*) main::charset#0 ← (byte*~) main::$0
   (byte) main::c#0 ← (number) 0
   to:main::@1
@@ -44,13 +41,13 @@ main::@7: scope:[main]  from main::@2
   (byte) main::c#1 ← ++ (byte) main::c#4
   to:main::@1
 main::@3: scope:[main]  from main::@1
-  (word~) main::$1 ← ((word)) (byte*) SCREEN
+  (word~) main::$1 ← ((word)) (const byte*) SCREEN
   (number~) main::$2 ← (word~) main::$1 / (number) $40
-  (word~) main::$3 ← ((word)) (byte*) CHARSET
+  (word~) main::$3 ← ((word)) (const byte*) CHARSET
   (number~) main::$4 ← (word~) main::$3 / (number) $400
   (number~) main::$5 ← (number~) main::$2 | (number~) main::$4
   (byte~) main::$6 ← ((byte)) (number~) main::$5
-  *((byte*) VIC_MEMORY) ← (byte~) main::$6
+  *((const byte*) VIC_MEMORY) ← (byte~) main::$6
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -129,10 +126,10 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) CHARSET
-(byte*) SCREEN
+(const byte*) CHARSET = (byte*)(number) $3000
+(const byte*) SCREEN = (byte*)(number) $400
 (const byte) SIZEOF_WORD = (byte) 2
-(byte*) VIC_MEMORY
+(const byte*) VIC_MEMORY = (byte*)(number) $d018
 (word[]) charset_spec_row
 (void()) gen_char3((byte*) gen_char3::dst , (word) gen_char3::spec)
 (byte~) gen_char3::$0
@@ -218,7 +215,7 @@ SYMBOL TABLE SSA
 (byte*) main::charset#3
 (byte*) main::charset#4
 
-Adding number conversion cast (unumber) 8 in (byte*~) main::$0 ← (byte*) CHARSET + (number) 8
+Adding number conversion cast (unumber) 8 in (byte*~) main::$0 ← (const byte*) CHARSET + (number) 8
 Adding number conversion cast (unumber) 0 in (byte) main::c#0 ← (number) 0
 Adding number conversion cast (unumber) 4 in (bool~) main::$7 ← (byte) main::c#2 != (number) 4
 Adding number conversion cast (unumber) 8 in (byte*~) main::$9 ← (byte*) main::charset#3 + (number) 8
@@ -240,12 +237,9 @@ Adding number conversion cast (unumber) gen_char3::$4 in (number~) gen_char3::$4
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (word[]) charset_spec_row ← (word[]){ (word)(number) $f7da, (word)(number) $f7de, (word)(number) $f24e, (word)(number) $d6de }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) VIC_MEMORY ← (byte*)(number) $d018
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) CHARSET ← (byte*)(number) $3000
 Inlining cast (byte) main::c#0 ← (unumber)(number) 0
-Inlining cast (word~) main::$1 ← (word)(byte*) SCREEN
-Inlining cast (word~) main::$3 ← (word)(byte*) CHARSET
+Inlining cast (word~) main::$1 ← (word)(const byte*) SCREEN
+Inlining cast (word~) main::$3 ← (word)(const byte*) CHARSET
 Inlining cast (byte~) main::$6 ← (byte)(unumber~) main::$5
 Inlining cast (byte) gen_char3::b#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
@@ -289,7 +283,7 @@ Inferred type updated to byte in (unumber~) gen_char3::$1 ← (byte~) gen_char3:
 Inferred type updated to byte in (unumber~) gen_char3::$5 ← (byte) gen_char3::b#3 * (byte) 2
 Inferred type updated to word in (unumber~) gen_char3::$6 ← (word) gen_char3::spec#3 * (byte) 2
 Inferred type updated to byte in (unumber~) gen_char3::$4 ← (byte) gen_char3::b#4 | (byte) 1
-Inversing boolean not [36] (bool~) gen_char3::$3 ← (byte~) gen_char3::$1 == (byte) 0 from [35] (bool~) gen_char3::$2 ← (byte~) gen_char3::$1 != (byte) 0
+Inversing boolean not [33] (bool~) gen_char3::$3 ← (byte~) gen_char3::$1 == (byte) 0 from [32] (bool~) gen_char3::$2 ← (byte~) gen_char3::$1 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte*) main::charset#0 = (byte*~) main::$0 
 Alias (byte) main::c#2 = (byte) main::c#3 (byte) main::c#4 
@@ -318,29 +312,30 @@ Identical Phi Values (byte) gen_char3::r#2 (byte) gen_char3::r#6
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) gen_char3::dst#5 (byte*) gen_char3::dst#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$7 [9] if((byte) main::c#2!=(byte) 4) goto main::@2
-Simple Condition (bool~) gen_char3::$3 [37] if((byte~) gen_char3::$1==(byte) 0) goto gen_char3::@3
-Simple Condition (bool~) gen_char3::$7 [45] if((byte) gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2
-Simple Condition (bool~) gen_char3::$8 [53] if((byte) gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1
+Simple Condition (bool~) main::$7 [6] if((byte) main::c#2!=(byte) 4) goto main::@2
+Simple Condition (bool~) gen_char3::$3 [34] if((byte~) gen_char3::$1==(byte) 0) goto gen_char3::@3
+Simple Condition (bool~) gen_char3::$7 [42] if((byte) gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2
+Simple Condition (bool~) gen_char3::$8 [50] if((byte) gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [1] (byte*) main::charset#0 ← (const byte*) CHARSET + (byte) 8
+Constant right-side identified [16] (word~) main::$1 ← (word)(const byte*) SCREEN
+Constant right-side identified [18] (word~) main::$3 ← (word)(const byte*) CHARSET
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (word[]) { (word) $f7da, (word) $f7de, (word) $f24e, (word) $d6de }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) VIC_MEMORY = (byte*) 53272
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) CHARSET = (byte*) 12288
 Constant (const word[]) charset_spec_row = { $f7da, $f7de, $f24e, $d6de }
+Constant (const byte*) main::charset#0 = CHARSET+8
 Constant (const byte) main::c#0 = 0
+Constant (const word) main::$1 = (word)SCREEN
+Constant (const word) main::$3 = (word)CHARSET
 Constant (const byte) gen_char3::r#0 = 0
 Constant (const byte) gen_char3::b#0 = 0
 Constant (const byte) gen_char3::c#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const word) main::$1 = (word)SCREEN
-Constant (const word) main::$3 = (word)CHARSET
-Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [43] gen_char3::c#1 ← ++ gen_char3::c#2 to ++
-Resolved ranged comparison value [45] if(gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2 to (number) 3
-Resolved ranged next value [51] gen_char3::r#1 ← ++ gen_char3::r#6 to ++
-Resolved ranged comparison value [53] if(gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1 to (number) 5
+Resolved ranged next value [40] gen_char3::c#1 ← ++ gen_char3::c#2 to ++
+Resolved ranged comparison value [42] if(gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2 to (number) 3
+Resolved ranged next value [48] gen_char3::r#1 ← ++ gen_char3::r#6 to ++
+Resolved ranged comparison value [50] if(gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1 to (number) 5
 Adding number conversion cast (unumber) 3 in if((byte) gen_char3::c#1!=(number) 3) goto gen_char3::@2
 Adding number conversion cast (unumber) 5 in if((byte) gen_char3::r#1!=(number) 5) goto gen_char3::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -350,11 +345,9 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) main::charset#0 ← (const byte*) CHARSET + (byte) 8
-Constant right-side identified [9] (word~) main::$2 ← (const word) main::$1 / (byte) $40
-Constant right-side identified [10] (word~) main::$4 ← (const word) main::$3 / (word) $400
+Constant right-side identified [8] (word~) main::$2 ← (const word) main::$1 / (byte) $40
+Constant right-side identified [9] (word~) main::$4 ← (const word) main::$3 / (word) $400
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::charset#0 = CHARSET+8
 Constant (const word) main::$2 = main::$1/$40
 Constant (const word) main::$4 = main::$3/$400
 Successful SSA optimization Pass2ConstantIdentification
@@ -368,8 +361,8 @@ Rewriting multiplication to use shift [2] (byte~) main::$10 ← (byte) main::c#2
 Rewriting multiplication to use shift [16] (byte) gen_char3::b#1 ← (byte) gen_char3::b#3 * (byte) 2
 Rewriting multiplication to use shift [17] (word) gen_char3::spec#1 ← (word) gen_char3::spec#2 * (byte) 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
-Inlining constant with var siblings (const byte) main::c#0
 Inlining constant with var siblings (const byte*) main::charset#0
+Inlining constant with var siblings (const byte) main::c#0
 Inlining constant with var siblings (const byte) gen_char3::r#0
 Inlining constant with var siblings (const byte) gen_char3::b#0
 Inlining constant with var siblings (const byte) gen_char3::c#0

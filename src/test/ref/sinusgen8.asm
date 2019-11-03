@@ -7,8 +7,8 @@
   .const PI_u4f12 = $3244
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
-  .label print_line_cursor = $400
   .const wavelength = $c0
+  .label print_line_cursor = $400
   .label print_char_cursor = 2
 main: {
     jsr sin8s_gen

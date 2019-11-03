@@ -3,7 +3,6 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400+(number) $28*(number) $a
   to:@1
 
 (void()) main()
@@ -12,7 +11,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (signed word) main::i#2 ← phi( main/(signed word) main::i#0 main::@1/(signed word) main::i#1 )
-  (byte*~) main::$0 ← (byte*) SCREEN + (signed word) main::i#2
+  (byte*~) main::$0 ← (const byte*) SCREEN + (signed word) main::i#2
   (byte*) main::sc#0 ← (byte*~) main::$0
   (byte~) main::$1 ← ((byte)) (signed word) main::i#2
   *((byte*) main::sc#0) ← (byte~) main::$1
@@ -35,7 +34,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400+(number) $28*(number) $a
 (void()) main()
 (byte*~) main::$0
 (byte~) main::$1
@@ -49,20 +48,16 @@ SYMBOL TABLE SSA
 (byte*) main::sc
 (byte*) main::sc#0
 
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400+(number) $28*(number) $a
 Inlining cast (byte~) main::$1 ← (byte)(signed word) main::i#2
 Successful SSA optimization Pass2InlineCast
 Alias (byte*) main::sc#0 = (byte*~) main::$0 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$2 [9] if((signed word) main::i#1!=rangelast(-$a,$a)) goto main::@1
+Simple Condition (bool~) main::$2 [8] if((signed word) main::i#1!=rangelast(-$a,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (byte*) SCREEN ← (byte*)(number) $400+(number) $28*(number) $a
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN = (byte*)$400+$28*$a
 Constant (const signed word) main::i#0 = -$a
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [7] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [9] if(main::i#1!=rangelast(-$a,$a)) goto main::@1 to (number) $b
+Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [8] if(main::i#1!=rangelast(-$a,$a)) goto main::@1 to (number) $b
 Adding number conversion cast (snumber) $b in if((signed word) main::i#1!=(number) $b) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b

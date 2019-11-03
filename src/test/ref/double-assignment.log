@@ -8,11 +8,10 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @1
   (byte) main::a#0 ← (byte) 0
   (byte) main::b#0 ← (byte) 0
-  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::b#1 ← (number) $c
   (byte) main::a#1 ← (byte) main::b#1
-  *((byte*) main::screen + (number) 0) ← (byte) main::a#1
-  *((byte*) main::screen + (number) 1) ← (byte) main::b#1
+  *((const byte*) main::screen + (number) 0) ← (byte) main::a#1
+  *((const byte*) main::screen + (number) 1) ← (byte) main::b#1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -37,13 +36,12 @@ SYMBOL TABLE SSA
 (byte) main::b
 (byte) main::b#0
 (byte) main::b#1
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
 Adding number conversion cast (unumber) $c in (byte) main::b#1 ← (number) $c
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) main::a#1
-Adding number conversion cast (unumber) 1 in *((byte*) main::screen + (number) 1) ← (byte) main::b#1
+Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte) main::a#1
+Adding number conversion cast (unumber) 1 in *((const byte*) main::screen + (number) 1) ← (byte) main::b#1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Inlining cast (byte) main::b#1 ← (unumber)(number) $c
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -59,10 +57,9 @@ Alias (byte) main::a#1 = (byte) main::b#1
 Successful SSA optimization Pass2AliasElimination
 Constant (const byte) main::a#0 = 0
 Constant (const byte) main::b#0 = 0
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::a#1 = $c
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen in [5] *((const byte*) main::screen + (byte) 0) ← (const byte) main::a#1
+Simplifying expression containing zero main::screen in [4] *((const byte*) main::screen + (byte) 0) ← (const byte) main::a#1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::a#0
 Eliminating unused constant (const byte) main::b#0

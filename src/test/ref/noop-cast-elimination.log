@@ -1,4 +1,4 @@
-Fixing pointer array-indexing *((signed word*) main::screen + (byte) main::i)
+Fixing pointer array-indexing *((const signed word*) main::screen + (byte) main::i)
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
@@ -7,7 +7,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (signed word*) main::screen ← ((signed word*)) (number) $400
   (signed word) main::sw#0 ← (number) $1234
   (byte) main::i#0 ← (byte) 0
   to:main::@1
@@ -17,7 +16,7 @@ main::@1: scope:[main]  from main main::@1
   (signed byte~) main::$0 ← ((signed byte)) (byte) main::i#2
   (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte~) main::$0
   (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
-  *((signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1
+  *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$a)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,$a)
   if((bool~) main::$1) goto main::@1
@@ -48,7 +47,7 @@ SYMBOL TABLE SSA
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
-(signed word*) main::screen
+(const signed word*) main::screen = (signed word*)(number) $400
 (signed word) main::sw
 (signed word) main::sw#0
 (signed word) main::sw#1
@@ -56,7 +55,6 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (snumber) $1234 in (signed word) main::sw#0 ← (number) $1234
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (signed word*) main::screen ← (signed word*)(number) $400
 Inlining cast (signed word) main::sw#0 ← (snumber)(number) $1234
 Inlining cast (signed byte~) main::$0 ← (signed byte)(byte) main::i#2
 Successful SSA optimization Pass2InlineCast
@@ -65,14 +63,13 @@ Simplifying constant integer cast $1234
 Successful SSA optimization PassNCastSimplification
 Finalized signed number type (signed word) $1234
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$1 [10] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
+Simple Condition (bool~) main::$1 [9] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const signed word*) main::screen = (signed word*) 1024
 Constant (const signed word) main::sw#0 = $1234
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [8] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [10] if(main::i#1!=rangelast(0,$a)) goto main::@1 to (number) $b
+Resolved ranged next value [7] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [9] if(main::i#1!=rangelast(0,$a)) goto main::@1 to (number) $b
 Adding number conversion cast (unumber) $b in if((byte) main::i#1!=(number) $b) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b

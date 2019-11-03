@@ -19,6 +19,9 @@ Rewriting struct pointer member access *((struct Point*) main::$10 + (number~) m
 Rewriting struct pointer member access *((struct Point*) main::$11 + (number~) main::$5).y
 Rewriting struct pointer member access *((struct Point*) main::$13).x
 Rewriting struct pointer member access *((struct Point*) main::$14).y
+Identified constant variable (byte) Point::x
+Identified constant variable (byte) Point::y
+Identified constant variable (byte) Circle::radius
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
@@ -50,7 +53,6 @@ main: scope:[main]  from @1
   (number~) main::$6 ← (number) 1 * (const byte) SIZEOF_STRUCT_CIRCLE
   (byte*) main::$12 ← (byte*)(struct Circle[2]) circles + (const byte) OFFSET_STRUCT_CIRCLE_RADIUS
   *((byte*) main::$12 + (number~) main::$6) ← (number) $f
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::idx#0 ← (number) 0
   (struct Circle*) main::ptr#0 ← (struct Circle[2]) circles
   (byte) main::i#0 ← (byte) 0
@@ -65,9 +67,9 @@ main::@1: scope:[main]  from main main::@1
   (struct Point*) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER
   (byte*) main::$20 ← (byte*)(struct Point*) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y
   (byte) main::y#0 ← *((byte*) main::$20)
-  *((byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0
+  *((const byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0
   (byte) main::idx#1 ← ++ (byte) main::idx#3
-  *((byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0
+  *((const byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0
   (byte) main::idx#2 ← ++ (byte) main::idx#1
   (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,1)
@@ -89,14 +91,10 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(struct Point) Circle::center
-(byte) Circle::radius
 (const byte) OFFSET_STRUCT_CIRCLE_CENTER = (byte) 1
 (const byte) OFFSET_STRUCT_CIRCLE_RADIUS = (byte) 0
 (const byte) OFFSET_STRUCT_POINT_X = (byte) 0
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
-(byte) Point::x
-(byte) Point::y
 (const byte) SIZEOF_STRUCT_CIRCLE = (byte) 3
 (struct Circle[2]) circles
 (void()) main()
@@ -123,7 +121,7 @@ SYMBOL TABLE SSA
 (byte*) main::$9
 (label) main::@1
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -168,9 +166,9 @@ Inlining cast *((byte*) main::$9 + (unumber~) main::$3) ← (unumber)(number) 5
 Inlining cast *((byte*) main::$17 + (unumber~) main::$4) ← (unumber)(number) 8
 Inlining cast *((byte*) main::$18 + (unumber~) main::$5) ← (unumber)(number) 9
 Inlining cast *((byte*) main::$12 + (unumber~) main::$6) ← (unumber)(number) $f
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::idx#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Simplifying constant integer cast 0
@@ -183,7 +181,6 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 9
 Simplifying constant integer cast 1
 Simplifying constant integer cast $f
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
@@ -206,7 +203,7 @@ Inferred type updated to byte in (unumber~) main::$3 ← (byte) 0 * (const byte)
 Inferred type updated to byte in (unumber~) main::$4 ← (byte) 1 * (const byte) SIZEOF_STRUCT_CIRCLE
 Inferred type updated to byte in (unumber~) main::$5 ← (byte) 1 * (const byte) SIZEOF_STRUCT_CIRCLE
 Inferred type updated to byte in (unumber~) main::$6 ← (byte) 1 * (const byte) SIZEOF_STRUCT_CIRCLE
-Simple Condition (bool~) main::$0 [41] if((byte) main::i#1!=rangelast(0,1)) goto main::@1
+Simple Condition (bool~) main::$0 [40] if((byte) main::i#1!=rangelast(0,1)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [0] (struct Circle[2]) circles ← { fill( 2, 0) }
 Constant right-side identified [1] (byte~) main::$1 ← (byte) 0 * (const byte) SIZEOF_STRUCT_CIRCLE
@@ -223,7 +220,6 @@ Constant (const byte) main::$3 = 0*SIZEOF_STRUCT_CIRCLE
 Constant (const byte) main::$4 = 1*SIZEOF_STRUCT_CIRCLE
 Constant (const byte) main::$5 = 1*SIZEOF_STRUCT_CIRCLE
 Constant (const byte) main::$6 = 1*SIZEOF_STRUCT_CIRCLE
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::idx#0 = 0
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
@@ -236,10 +232,10 @@ Constant value identified (struct Point*)circles in [13] (struct Point*) main::$
 Constant value identified (struct Point*)circles in [17] (struct Point*) main::$11 ← (struct Point*)(const struct Circle[2]) circles + (const byte) OFFSET_STRUCT_CIRCLE_CENTER
 Constant value identified (byte*)circles in [21] (byte*) main::$12 ← (byte*)(const struct Circle[2]) circles + (const byte) OFFSET_STRUCT_CIRCLE_RADIUS
 Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [39] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [41] if(main::i#1!=rangelast(0,1)) goto main::@1 to (number) 2
-Converting *(pointer+n) to pointer[n] [30] (byte) main::x#0 ← *((byte*) main::$19)  -- *((byte*)main::$13 + OFFSET_STRUCT_POINT_X)
-Converting *(pointer+n) to pointer[n] [33] (byte) main::y#0 ← *((byte*) main::$20)  -- *((byte*)main::$14 + OFFSET_STRUCT_POINT_Y)
+Resolved ranged next value [38] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [40] if(main::i#1!=rangelast(0,1)) goto main::@1 to (number) 2
+Converting *(pointer+n) to pointer[n] [29] (byte) main::x#0 ← *((byte*) main::$19)  -- *((byte*)main::$13 + OFFSET_STRUCT_POINT_X)
+Converting *(pointer+n) to pointer[n] [32] (byte) main::y#0 ← *((byte*) main::$20)  -- *((byte*)main::$14 + OFFSET_STRUCT_POINT_Y)
 Successful SSA optimization Pass2InlineDerefIdx
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_STRUCT_CIRCLE in 
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_STRUCT_CIRCLE in 
@@ -252,8 +248,8 @@ Simplifying expression containing zero (byte*)circles in [10] (byte*) main::$9 �
 Simplifying expression containing zero main::$9 in [11] *((byte*) main::$9 + (const byte) main::$3) ← (byte) 5
 Simplifying expression containing zero (byte*)main::$10 in [14] (byte*) main::$17 ← (byte*)(struct Point*) main::$10 + (const byte) OFFSET_STRUCT_POINT_X
 Simplifying expression containing zero (byte*)circles in [21] (byte*) main::$12 ← (byte*)(const struct Circle[2]) circles + (const byte) OFFSET_STRUCT_CIRCLE_RADIUS
-Simplifying expression containing zero (byte*)main::$13 in [29] (byte*) main::$19 ← (byte*)(struct Point*) main::$13 + (const byte) OFFSET_STRUCT_POINT_X
-Simplifying expression containing zero (byte*)main::$13 in [30] (byte) main::x#0 ← *((byte*)(struct Point*) main::$13 + (const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero (byte*)main::$13 in [28] (byte*) main::$19 ← (byte*)(struct Point*) main::$13 + (const byte) OFFSET_STRUCT_POINT_X
+Simplifying expression containing zero (byte*)main::$13 in [29] (byte) main::x#0 ← *((byte*)(struct Point*) main::$13 + (const byte) OFFSET_STRUCT_POINT_X)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*) main::$19 and assignment [18] (byte*) main::$19 ← (byte*)(struct Point*) main::$13
 Eliminating unused variable (byte*) main::$20 and assignment [21] (byte*) main::$20 ← (byte*)(struct Point*) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y
@@ -381,10 +377,6 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(struct Point) Circle::center
-(byte) Circle::radius
-(byte) Point::x
-(byte) Point::y
 (void()) main()
 (struct Point*) main::$14 11.0
 (byte) main::i
@@ -767,12 +759,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(struct Point) Circle::center
-(byte) Circle::radius
 (const byte) OFFSET_STRUCT_CIRCLE_CENTER = (byte) 1
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
-(byte) Point::x
-(byte) Point::y
 (const byte) SIZEOF_STRUCT_CIRCLE = (byte) 3
 (const struct Circle[2]) circles = { fill( 2, 0) }
 (void()) main()

@@ -3,7 +3,6 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) idx#0 ← (number) 0
   to:@2
 
@@ -13,9 +12,9 @@ main: scope:[main]  from @2
   (void()*~) main::$0 ← & (void()) fn1()
   (void()*) main::f#0 ← (void()*~) main::$0
   call *((void()*) main::f#0) 
-  *((byte*) SCREEN + (byte) idx#3) ← (byte) 'a'
+  *((const byte*) SCREEN + (byte) idx#3) ← (byte) 'a'
   call *((void()*) main::f#0) 
-  *((byte*) SCREEN + (byte) idx#3) ← (byte) 'a'
+  *((const byte*) SCREEN + (byte) idx#3) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -44,7 +43,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) fn1()
 (label) fn1::@return
 (byte) idx
@@ -63,7 +62,6 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (byte) idx#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) idx#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -78,13 +76,12 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) idx#3 (byte) idx#0
 Identical Phi Values (byte) idx#4 (byte) idx#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [3] (void()*) main::f#0 ← & (void()) fn1()
+Constant right-side identified [2] (void()*) main::f#0 ← & (void()) fn1()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const void()*) main::f#0 = &fn1
 Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function [5] call fn1 
-Replacing constant pointer function [7] call fn1 
+Replacing constant pointer function [4] call fn1 
+Replacing constant pointer function [6] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant (const void()*) main::f#0
 Successful SSA optimization PassNEliminateUnusedVars

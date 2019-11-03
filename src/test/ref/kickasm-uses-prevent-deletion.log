@@ -3,10 +3,6 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte) BLACK ← (number) 0
-  (byte) WHITE ← (number) 1
   to:@2
 
 (void()) main()
@@ -25,8 +21,8 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_KEYBOARD)(void()) irq()
 irq: scope:[irq]  from
-  *((byte*) BGCOL) ← (byte) WHITE
-  *((byte*) BGCOL) ← (byte) BLACK
+  *((const byte*) BGCOL) ← (const byte) WHITE
+  *((const byte*) BGCOL) ← (const byte) BLACK
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
@@ -43,36 +39,18 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte) BLACK
-(void()**) KERNEL_IRQ
-(byte) WHITE
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte) BLACK = (number) 0
+(const void()**) KERNEL_IRQ = (void()**)(number) $314
+(const byte) WHITE = (number) 1
 interrupt(KERNEL_KEYBOARD)(void()) irq()
 (label) irq::@return
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
-Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte) BLACK ← (unumber)(number) 0
-Inlining cast (byte) WHITE ← (unumber)(number) 1
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 53281
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const void()**) KERNEL_IRQ = (void()**) 788
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte) BLACK = 0
-Constant (const byte) WHITE = 1
-Successful SSA optimization Pass2ConstantIdentification
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
@@ -292,9 +270,9 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte*) BGCOL = (byte*) 53281
-(const byte) BLACK = (byte) 0
+(const byte) BLACK = (number) 0
 (const void()**) KERNEL_IRQ = (void()**) 788
-(const byte) WHITE = (byte) 1
+(const byte) WHITE = (number) 1
 interrupt(KERNEL_KEYBOARD)(void()) irq()
 (label) irq::@return
 (void()) main()

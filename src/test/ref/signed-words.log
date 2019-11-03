@@ -2,6 +2,7 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) @5
@@ -12,21 +13,6 @@ Culled Empty Block (label) init::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SPRITES_XPOS ← ((byte*)) (number) $d000
-  (byte*) SPRITES_YPOS ← ((byte*)) (number) $d001
-  (byte*) SPRITES_XMSB ← ((byte*)) (number) $d010
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) SPRITES_ENABLE ← ((byte*)) (number) $d015
-  (byte*) SPRITES_EXPAND_Y ← ((byte*)) (number) $d017
-  (byte*) SPRITES_EXPAND_X ← ((byte*)) (number) $d01d
-  (byte*) SPRITES_COLS ← ((byte*)) (number) $d027
-  (byte) WHITE ← (number) 1
-  to:@4
-@4: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*~) $0 ← (byte*) SCREEN + (number) $3f8
-  (byte*) SPRITES_PTR ← (byte*~) $0
-  (byte*) SPRITE ← ((byte*)) (number) $2000
   to:@6
 
 (void()) main()
@@ -51,7 +37,7 @@ main::@2: scope:[main]  from main::@2 main::@5 main::@6
   (signed word) ypos#16 ← phi( main::@2/(signed word) ypos#16 main::@5/(signed word) ypos#18 main::@6/(signed word) ypos#0 )
   (signed word) xpos#16 ← phi( main::@2/(signed word) xpos#16 main::@5/(signed word) xpos#18 main::@6/(signed word) xpos#0 )
   (signed word) yvel#15 ← phi( main::@2/(signed word) yvel#15 main::@5/(signed word) yvel#16 main::@6/(signed word) yvel#0 )
-  (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
+  (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
   if((bool~) main::$1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -91,22 +77,20 @@ main::@return: scope:[main]  from main::@6
 
 (void()) init()
 init: scope:[init]  from main
-  *((byte*) SPRITES_ENABLE) ← (number) 1
-  *((byte*) SPRITES_EXPAND_X) ← (number) 0
-  *((byte*) SPRITES_EXPAND_Y) ← (number) 0
-  *((byte*) SPRITES_XPOS + (number) 0) ← (number) $64
-  *((byte*) SPRITES_YPOS + (number) 0) ← (number) $64
-  *((byte*) SPRITES_COLS + (number) 0) ← (byte) WHITE
-  (byte*~) init::$0 ← (byte*) SPRITE / (number) $40
-  (byte~) init::$1 ← ((byte)) (byte*~) init::$0
-  *((byte*) SPRITES_PTR + (number) 0) ← (byte~) init::$1
-  (byte*) init::sc#0 ← (byte*) SCREEN
+  *((const byte*) SPRITES_ENABLE) ← (number) 1
+  *((const byte*) SPRITES_EXPAND_X) ← (number) 0
+  *((const byte*) SPRITES_EXPAND_Y) ← (number) 0
+  *((const byte*) SPRITES_XPOS + (number) 0) ← (number) $64
+  *((const byte*) SPRITES_YPOS + (number) 0) ← (number) $64
+  *((const byte*) SPRITES_COLS + (number) 0) ← (const byte) WHITE
+  (byte~) init::$0 ← ((byte)) (const byte*) SPRITE/(number) $40
+  *((const byte*) SPRITES_PTR + (number) 0) ← (byte~) init::$0
+  (byte*) init::sc#0 ← (const byte*) SCREEN
   to:init::@1
 init::@1: scope:[init]  from init init::@2
   (byte*) init::sc#2 ← phi( init/(byte*) init::sc#0 init::@2/(byte*) init::sc#1 )
-  (byte*~) init::$2 ← (byte*) SCREEN + (number) $3e8
-  (bool~) init::$3 ← (byte*) init::sc#2 != (byte*~) init::$2
-  if((bool~) init::$3) goto init::@2
+  (bool~) init::$1 ← (byte*) init::sc#2 != (const byte*) SCREEN+(number) $3e8
+  if((bool~) init::$1) goto init::@2
   to:init::@3
 init::@2: scope:[init]  from init::@1
   (byte*) init::sc#3 ← phi( init::@1/(byte*) init::sc#2 )
@@ -118,21 +102,20 @@ init::@3: scope:[init]  from init::@1
   to:init::@7
 init::@7: scope:[init]  from init::@3 init::@7
   (byte) init::i#2 ← phi( init::@3/(byte) init::i#0 init::@7/(byte) init::i#1 )
-  *((byte*) SPRITE + (byte) init::i#2) ← (number) $ff
+  *((const byte*) SPRITE + (byte) init::i#2) ← (number) $ff
   (byte) init::i#1 ← (byte) init::i#2 + rangenext(0,$3f)
-  (bool~) init::$4 ← (byte) init::i#1 != rangelast(0,$3f)
-  if((bool~) init::$4) goto init::@7
+  (bool~) init::$2 ← (byte) init::i#1 != rangelast(0,$3f)
+  if((bool~) init::$2) goto init::@7
   to:init::@return
 init::@return: scope:[init]  from init::@7
   return 
   to:@return
-@6: scope:[]  from @4
+@6: scope:[]  from @begin
   (signed word) xpos#2 ← (number) 0
   (signed word) ypos#2 ← (number) 0
   (signed word) yvel_init#2 ← (number) $64
   (signed word) xvel#2 ← (number) $c8
   (signed word) yvel#2 ← (signed word) yvel_init#2
-  (signed word) g ← (number) -5
   to:@7
 
 (void()) anim()
@@ -152,7 +135,7 @@ anim::@1: scope:[anim]  from anim anim::@4
   (signed word) xvel#8 ← phi( anim/(signed word) xvel#13 anim::@4/(signed word) xvel#14 )
   (signed word) xpos#9 ← phi( anim/(signed word) xpos#13 anim::@4/(signed word) xpos#14 )
   (signed word) yvel#9 ← phi( anim/(signed word) yvel#13 anim::@4/(signed word) yvel#4 )
-  (signed word~) anim::$2 ← (signed word) yvel#9 + (signed word) g
+  (signed word~) anim::$2 ← (signed word) yvel#9 + (const signed word) g
   (signed word) yvel#3 ← (signed word~) anim::$2
   (signed word~) anim::$3 ← (signed word) xpos#9 + (signed word) xvel#8
   (signed word) xpos#3 ← (signed word~) anim::$3
@@ -165,11 +148,11 @@ anim::@1: scope:[anim]  from anim anim::@4
   (number~) anim::$8 ← (number) $e6 - (signed word~) anim::$7
   (signed word) anim::sprite_y#0 ← (number~) anim::$8
   (byte~) anim::$9 ← ((byte)) (signed word) anim::sprite_x#0
-  *((byte*) SPRITES_XPOS + (number) 0) ← (byte~) anim::$9
+  *((const byte*) SPRITES_XPOS + (number) 0) ← (byte~) anim::$9
   (byte~) anim::$10 ← ((byte)) (signed word) anim::sprite_y#0
-  *((byte*) SPRITES_YPOS + (number) 0) ← (byte~) anim::$10
+  *((const byte*) SPRITES_YPOS + (number) 0) ← (byte~) anim::$10
   (byte~) anim::$11 ← > (signed word) anim::sprite_x#0
-  *((byte*) SPRITES_XMSB) ← (byte~) anim::$11
+  *((const byte*) SPRITES_XMSB) ← (byte~) anim::$11
   to:anim::@return
 anim::@2: scope:[anim]  from anim
   (signed word) yvel_init#9 ← phi( anim/(signed word) yvel_init#14 )
@@ -233,25 +216,23 @@ anim::@return: scope:[anim]  from anim::@1
 @end: scope:[]  from @8
 
 SYMBOL TABLE SSA
-(byte*~) $0
-(label) @4
 (label) @6
 (label) @7
 (label) @8
 (label) @begin
 (label) @end
-(byte*) RASTER
-(byte*) SCREEN
-(byte*) SPRITE
-(byte*) SPRITES_COLS
-(byte*) SPRITES_ENABLE
-(byte*) SPRITES_EXPAND_X
-(byte*) SPRITES_EXPAND_Y
-(byte*) SPRITES_PTR
-(byte*) SPRITES_XMSB
-(byte*) SPRITES_XPOS
-(byte*) SPRITES_YPOS
-(byte) WHITE
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte*) SPRITE = (byte*)(number) $2000
+(const byte*) SPRITES_COLS = (byte*)(number) $d027
+(const byte*) SPRITES_ENABLE = (byte*)(number) $d015
+(const byte*) SPRITES_EXPAND_X = (byte*)(number) $d01d
+(const byte*) SPRITES_EXPAND_Y = (byte*)(number) $d017
+(const byte*) SPRITES_PTR = (const byte*) SCREEN+(number) $3f8
+(const byte*) SPRITES_XMSB = (byte*)(number) $d010
+(const byte*) SPRITES_XPOS = (byte*)(number) $d000
+(const byte*) SPRITES_YPOS = (byte*)(number) $d001
+(const byte) WHITE = (number) 1
 (void()) anim()
 (bool~) anim::$0
 (bool~) anim::$1
@@ -278,13 +259,11 @@ SYMBOL TABLE SSA
 (signed word) anim::sprite_x#0
 (signed word) anim::sprite_y
 (signed word) anim::sprite_y#0
-(signed word) g
+(const signed word) g = (number) -5
 (void()) init()
-(byte*~) init::$0
-(byte~) init::$1
-(byte*~) init::$2
-(bool~) init::$3
-(bool~) init::$4
+(byte~) init::$0
+(bool~) init::$1
+(bool~) init::$2
 (label) init::@1
 (label) init::@2
 (label) init::@3
@@ -410,26 +389,24 @@ SYMBOL TABLE SSA
 (signed word) yvel_init#8
 (signed word) yvel_init#9
 
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
-Adding number conversion cast (unumber) $3f8 in (byte*~) $0 ← (byte*) SCREEN + (number) $3f8
-Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
-Adding number conversion cast (unumber) 1 in *((byte*) SPRITES_ENABLE) ← (number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_EXPAND_X) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_EXPAND_Y) ← (number) 0
-Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_XPOS + (number) 0) ← (number) $64
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_XPOS + (number) 0) ← ((unumber)) (number) $64
-Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_YPOS + (number) 0) ← (number) $64
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_YPOS + (number) 0) ← ((unumber)) (number) $64
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_COLS + (number) 0) ← (byte) WHITE
-Adding number conversion cast (unumber) $40 in (byte*~) init::$0 ← (byte*) SPRITE / (number) $40
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_PTR + (number) 0) ← (byte~) init::$1
-Adding number conversion cast (unumber) $3e8 in (byte*~) init::$2 ← (byte*) SCREEN + (number) $3e8
-Adding number conversion cast (unumber) $ff in *((byte*) SPRITE + (byte) init::i#2) ← (number) $ff
+Adding number conversion cast (unumber) $3f8 in 
+Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) 1 in *((const byte*) SPRITES_ENABLE) ← (number) 1
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_EXPAND_X) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_EXPAND_Y) ← (number) 0
+Adding number conversion cast (unumber) $64 in *((const byte*) SPRITES_XPOS + (number) 0) ← (number) $64
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_XPOS + (number) 0) ← ((unumber)) (number) $64
+Adding number conversion cast (unumber) $64 in *((const byte*) SPRITES_YPOS + (number) 0) ← (number) $64
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_YPOS + (number) 0) ← ((unumber)) (number) $64
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_COLS + (number) 0) ← (const byte) WHITE
+Adding number conversion cast (unumber) $40 in (byte~) init::$0 ← ((byte)) (const byte*) SPRITE/(number) $40
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_PTR + (number) 0) ← (byte~) init::$0
+Adding number conversion cast (unumber) $3e8 in (bool~) init::$1 ← (byte*) init::sc#2 != (const byte*) SCREEN+(number) $3e8
+Adding number conversion cast (unumber) $ff in *((const byte*) SPRITE + (byte) init::i#2) ← (number) $ff
 Adding number conversion cast (snumber) 0 in (signed word) xpos#2 ← (number) 0
 Adding number conversion cast (snumber) 0 in (signed word) ypos#2 ← (number) 0
 Adding number conversion cast (snumber) $64 in (signed word) yvel_init#2 ← (number) $64
 Adding number conversion cast (snumber) $c8 in (signed word) xvel#2 ← (number) $c8
-Adding number conversion cast (snumber) -5 in (signed word) g ← (number) -5
 Adding number conversion cast (snumber) 0 in (bool~) anim::$0 ← (signed word) ypos#9 < (number) 0
 Adding number conversion cast (snumber) 7 in (signed word~) anim::$5 ← (signed word) xpos#3 >> (number) 7
 Adding number conversion cast (snumber) $a0 in (number~) anim::$6 ← (signed word~) anim::$5 + (number) $a0
@@ -437,8 +414,8 @@ Adding number conversion cast (snumber) anim::$6 in (number~) anim::$6 ← (sign
 Adding number conversion cast (snumber) 5 in (signed word~) anim::$7 ← (signed word) ypos#3 >> (number) 5
 Adding number conversion cast (snumber) $e6 in (number~) anim::$8 ← (number) $e6 - (signed word~) anim::$7
 Adding number conversion cast (snumber) anim::$8 in (number~) anim::$8 ← (snumber)(number) $e6 - (signed word~) anim::$7
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_XPOS + (number) 0) ← (byte~) anim::$9
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_YPOS + (number) 0) ← (byte~) anim::$10
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_XPOS + (number) 0) ← (byte~) anim::$9
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_YPOS + (number) 0) ← (byte~) anim::$10
 Adding number conversion cast (snumber) 0 in (signed word) xpos#4 ← (number) 0
 Adding number conversion cast (snumber) 0 in (signed word) ypos#4 ← (number) 0
 Adding number conversion cast (snumber) $a in (number~) anim::$13 ← (signed word) yvel_init#9 - (number) $a
@@ -446,29 +423,17 @@ Adding number conversion cast (snumber) anim::$13 in (number~) anim::$13 ← (si
 Adding number conversion cast (snumber) -$c8 in (bool~) anim::$14 ← (signed word) yvel_init#3 < (number) -$c8
 Adding number conversion cast (snumber) $c8 in (signed word) yvel_init#4 ← (number) $c8
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SPRITES_XPOS ← (byte*)(number) $d000
-Inlining cast (byte*) SPRITES_YPOS ← (byte*)(number) $d001
-Inlining cast (byte*) SPRITES_XMSB ← (byte*)(number) $d010
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) SPRITES_ENABLE ← (byte*)(number) $d015
-Inlining cast (byte*) SPRITES_EXPAND_Y ← (byte*)(number) $d017
-Inlining cast (byte*) SPRITES_EXPAND_X ← (byte*)(number) $d01d
-Inlining cast (byte*) SPRITES_COLS ← (byte*)(number) $d027
-Inlining cast (byte) WHITE ← (unumber)(number) 1
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) SPRITE ← (byte*)(number) $2000
-Inlining cast *((byte*) SPRITES_ENABLE) ← (unumber)(number) 1
-Inlining cast *((byte*) SPRITES_EXPAND_X) ← (unumber)(number) 0
-Inlining cast *((byte*) SPRITES_EXPAND_Y) ← (unumber)(number) 0
-Inlining cast *((byte*) SPRITES_XPOS + (unumber)(number) 0) ← (unumber)(number) $64
-Inlining cast *((byte*) SPRITES_YPOS + (unumber)(number) 0) ← (unumber)(number) $64
-Inlining cast (byte~) init::$1 ← (byte)(byte*~) init::$0
-Inlining cast *((byte*) SPRITE + (byte) init::i#2) ← (unumber)(number) $ff
+Inlining cast *((const byte*) SPRITES_ENABLE) ← (unumber)(number) 1
+Inlining cast *((const byte*) SPRITES_EXPAND_X) ← (unumber)(number) 0
+Inlining cast *((const byte*) SPRITES_EXPAND_Y) ← (unumber)(number) 0
+Inlining cast *((const byte*) SPRITES_XPOS + (unumber)(number) 0) ← (unumber)(number) $64
+Inlining cast *((const byte*) SPRITES_YPOS + (unumber)(number) 0) ← (unumber)(number) $64
+Inlining cast (byte~) init::$0 ← (byte)(const byte*) SPRITE/(unumber)(number) $40
+Inlining cast *((const byte*) SPRITE + (byte) init::i#2) ← (unumber)(number) $ff
 Inlining cast (signed word) xpos#2 ← (snumber)(number) 0
 Inlining cast (signed word) ypos#2 ← (snumber)(number) 0
 Inlining cast (signed word) yvel_init#2 ← (snumber)(number) $64
 Inlining cast (signed word) xvel#2 ← (snumber)(number) $c8
-Inlining cast (signed word) g ← (snumber)(number) -5
 Inlining cast (byte~) anim::$9 ← (byte)(signed word) anim::sprite_x#0
 Inlining cast (byte~) anim::$10 ← (byte)(signed word) anim::sprite_y#0
 Inlining cast (signed word) xpos#4 ← (snumber)(number) 0
@@ -483,7 +448,6 @@ Simplifying constant pointer cast (byte*) 53269
 Simplifying constant pointer cast (byte*) 53271
 Simplifying constant pointer cast (byte*) 53277
 Simplifying constant pointer cast (byte*) 53287
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $3f8
 Simplifying constant pointer cast (byte*) 8192
@@ -504,7 +468,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $64
 Simplifying constant integer cast $c8
-Simplifying constant integer cast -5
 Simplifying constant integer cast 0
 Simplifying constant integer cast 7
 Simplifying constant integer cast $a0
@@ -518,7 +481,6 @@ Simplifying constant integer cast $a
 Simplifying constant integer cast -$c8
 Simplifying constant integer cast $c8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
 Finalized unsigned number type (word) $3f8
 Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) 1
@@ -537,7 +499,6 @@ Finalized signed number type (signed byte) 0
 Finalized signed number type (signed byte) 0
 Finalized signed number type (signed byte) $64
 Finalized signed number type (signed word) $c8
-Finalized signed number type (signed byte) -5
 Finalized signed number type (signed byte) 0
 Finalized signed number type (signed byte) 7
 Finalized signed number type (signed word) $a0
@@ -554,10 +515,9 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to signed word in (snumber~) anim::$6 ← (signed word~) anim::$5 + (signed word) $a0
 Inferred type updated to signed word in (snumber~) anim::$8 ← (signed word) $e6 - (signed word~) anim::$7
 Inferred type updated to signed word in (snumber~) anim::$13 ← (signed word) yvel_init#9 - (signed byte) $a
-Inversing boolean not [67] (bool~) anim::$1 ← (signed word) ypos#9 >= (signed byte) 0 from [66] (bool~) anim::$0 ← (signed word) ypos#9 < (signed byte) 0
-Inversing boolean not [96] (bool~) anim::$15 ← (signed word) yvel_init#3 >= (signed word) -$c8 from [95] (bool~) anim::$14 ← (signed word) yvel_init#3 < (signed word) -$c8
+Inversing boolean not [51] (bool~) anim::$1 ← (signed word) ypos#9 >= (signed byte) 0 from [50] (bool~) anim::$0 ← (signed word) ypos#9 < (signed byte) 0
+Inversing boolean not [80] (bool~) anim::$15 ← (signed word) yvel_init#3 >= (signed word) -$c8 from [79] (bool~) anim::$14 ← (signed word) yvel_init#3 < (signed word) -$c8
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte*) SPRITES_PTR = (byte*~) $0 
 Alias (signed word) yvel#16 = (signed word) yvel#17 
 Alias (signed word) xpos#18 = (signed word) xpos#19 
 Alias (signed word) ypos#18 = (signed word) ypos#19 
@@ -623,45 +583,35 @@ Identical Phi Values (signed word) ypos#12 (signed word) ypos#0
 Identical Phi Values (signed word) xvel#11 (signed word) xvel#0
 Identical Phi Values (signed word) yvel_init#12 (signed word) yvel_init#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [18] if(*((byte*) RASTER)!=(byte) $ff) goto main::@2
-Simple Condition (bool~) init::$3 [48] if((byte*) init::sc#2!=(byte*~) init::$2) goto init::@2
-Simple Condition (bool~) init::$4 [57] if((byte) init::i#1!=rangelast(0,$3f)) goto init::@7
-Simple Condition (bool~) anim::$1 [68] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1
-Simple Condition (bool~) anim::$15 [97] if((signed word) yvel_init#3>=(signed word) -$c8) goto anim::@4
+Simple Condition (bool~) main::$1 [5] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
+Simple Condition (bool~) init::$1 [33] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2
+Simple Condition (bool~) init::$2 [42] if((byte) init::i#1!=rangelast(0,$3f)) goto init::@7
+Simple Condition (bool~) anim::$1 [52] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1
+Simple Condition (bool~) anim::$15 [81] if((signed word) yvel_init#3>=(signed word) -$c8) goto anim::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SPRITES_XPOS = (byte*) 53248
-Constant (const byte*) SPRITES_YPOS = (byte*) 53249
-Constant (const byte*) SPRITES_XMSB = (byte*) 53264
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) SPRITES_ENABLE = (byte*) 53269
-Constant (const byte*) SPRITES_EXPAND_Y = (byte*) 53271
-Constant (const byte*) SPRITES_EXPAND_X = (byte*) 53277
-Constant (const byte*) SPRITES_COLS = (byte*) 53287
-Constant (const byte) WHITE = 1
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) SPRITE = (byte*) 8192
+Constant right-side identified [28] (byte~) init::$0 ← (byte)(const byte*) SPRITE/(byte) $40
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) init::$0 = (byte)SPRITE/$40
+Constant (const byte*) init::sc#0 = SCREEN
 Constant (const byte) init::i#0 = 0
 Constant (const signed word) xpos#15 = 0
 Constant (const signed word) ypos#15 = 0
 Constant (const signed word) yvel#14 = $64
 Constant (const signed word) xvel#15 = $c8
-Constant (const signed word) g = -5
 Constant (const signed word) xpos#14 = 0
 Constant (const signed word) ypos#14 = 0
 Constant (const signed word) yvel_init#4 = $c8
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) init::sc#0 = SCREEN
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [27] if(true) goto main::@2
+if() condition always true - replacing block destination [14] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [55] init::i#1 ← ++ init::i#2 to ++
-Resolved ranged comparison value [57] if(init::i#1!=rangelast(0,$3f)) goto init::@7 to (number) $40
-Simplifying expression containing zero SPRITES_XPOS in [38] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte) $64
-Simplifying expression containing zero SPRITES_YPOS in [39] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) $64
-Simplifying expression containing zero SPRITES_COLS in [40] *((const byte*) SPRITES_COLS + (byte) 0) ← (const byte) WHITE
-Simplifying expression containing zero SPRITES_PTR in [43] *((byte*) SPRITES_PTR + (byte) 0) ← (byte~) init::$1
-Simplifying expression containing zero SPRITES_XPOS in [83] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte~) anim::$9
-Simplifying expression containing zero SPRITES_YPOS in [85] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte~) anim::$10
+Resolved ranged next value [40] init::i#1 ← ++ init::i#2 to ++
+Resolved ranged comparison value [42] if(init::i#1!=rangelast(0,$3f)) goto init::@7 to (number) $40
+Simplifying expression containing zero SPRITES_XPOS in [25] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte) $64
+Simplifying expression containing zero SPRITES_YPOS in [26] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) $64
+Simplifying expression containing zero SPRITES_COLS in [27] *((const byte*) SPRITES_COLS + (byte) 0) ← (const byte) WHITE
+Simplifying expression containing zero SPRITES_PTR in [29] *((const byte*) SPRITES_PTR + (byte) 0) ← (const byte) init::$0
+Simplifying expression containing zero SPRITES_XPOS in [67] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte~) anim::$9
+Simplifying expression containing zero SPRITES_YPOS in [69] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte~) anim::$10
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -671,18 +621,8 @@ Simplifying constant integer cast $40
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $40
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) SPRITES_PTR ← (const byte*) SCREEN + (word) $3f8
-Constant right-side identified [11] (byte*~) init::$0 ← (const byte*) SPRITE / (byte) $40
-Constant right-side identified [15] (byte*~) init::$2 ← (const byte*) SCREEN + (word) $3e8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SPRITES_PTR = SCREEN+$3f8
-Constant (const byte*) init::$0 = SPRITE/$40
-Constant (const byte*) init::$2 = SCREEN+$3e8
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) init::$1 = (byte)init::$0
-Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte) init::i#0
 Inlining constant with var siblings (const byte*) init::sc#0
+Inlining constant with var siblings (const byte) init::i#0
 Inlining constant with var siblings (const signed word) xpos#15
 Inlining constant with var siblings (const signed word) ypos#15
 Inlining constant with var siblings (const signed word) yvel#14
@@ -698,17 +638,14 @@ Constant inlined init::sc#0 = (const byte*) SCREEN
 Constant inlined xvel#15 = (signed word) $c8
 Constant inlined ypos#14 = (signed byte) 0
 Constant inlined yvel#14 = (signed byte) $64
-Constant inlined init::$2 = (const byte*) SCREEN+(word) $3e8
 Constant inlined ypos#15 = (signed byte) 0
-Constant inlined init::$1 = (byte)(const byte*) SPRITE/(byte) $40
-Constant inlined init::$0 = (const byte*) SPRITE/(byte) $40
+Constant inlined init::$0 = (byte)(const byte*) SPRITE/(byte) $40
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@7(between main::@2 and main::@2)
 Added new block during phi lifting init::@9(between init::@7 and init::@7)
 Added new block during phi lifting anim::@5(between anim and anim::@1)
 Added new block during phi lifting anim::@6(between anim::@2 and anim::@4)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @7
 Adding NOP phi() at start of @8
@@ -719,33 +656,32 @@ Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of anim::@3
 Adding NOP phi() at start of init::@3
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to init:8 anim:13 
+Calls in [] to main:3 
+Calls in [main] to init:7 anim:12 
 
 Created 13 initial phi equivalence classes
-Coalesced [14] yvel#19 ← yvel#10
-Coalesced [15] xpos#21 ← xpos#10
-Coalesced [16] ypos#21 ← ypos#11
-Coalesced [17] xvel#21 ← xvel#10
-Coalesced [18] yvel_init#21 ← yvel_init#11
-Coalesced (already) [19] yvel#18 ← yvel#12
-Coalesced (already) [20] xpos#20 ← xpos#12
-Coalesced (already) [21] ypos#20 ← ypos#13
-Coalesced (already) [22] xvel#20 ← xvel#12
-Coalesced (already) [23] yvel_init#20 ← yvel_init#13
-Not coalescing [30] yvel#21 ← yvel#4
-Coalesced [31] xvel#23 ← xvel#14
-Coalesced [32] yvel_init#23 ← yvel#4
-Coalesced [48] yvel#22 ← yvel_init#3
-Coalesced [49] yvel#20 ← yvel#12
-Coalesced [50] xpos#22 ← xpos#12
-Coalesced (already) [51] xvel#22 ← xvel#12
-Coalesced [52] ypos#22 ← ypos#13
-Coalesced (already) [53] yvel_init#22 ← yvel_init#13
-Coalesced [69] init::i#3 ← init::i#1
-Coalesced [72] init::sc#4 ← init::sc#1
+Coalesced [13] yvel#19 ← yvel#10
+Coalesced [14] xpos#21 ← xpos#10
+Coalesced [15] ypos#21 ← ypos#11
+Coalesced [16] xvel#21 ← xvel#10
+Coalesced [17] yvel_init#21 ← yvel_init#11
+Coalesced (already) [18] yvel#18 ← yvel#12
+Coalesced (already) [19] xpos#20 ← xpos#12
+Coalesced (already) [20] ypos#20 ← ypos#13
+Coalesced (already) [21] xvel#20 ← xvel#12
+Coalesced (already) [22] yvel_init#20 ← yvel_init#13
+Not coalescing [29] yvel#21 ← yvel#4
+Coalesced [30] xvel#23 ← xvel#14
+Coalesced [31] yvel_init#23 ← yvel#4
+Coalesced [47] yvel#22 ← yvel_init#3
+Coalesced [48] yvel#20 ← yvel#12
+Coalesced [49] xpos#22 ← xpos#12
+Coalesced (already) [50] xvel#22 ← xvel#12
+Coalesced [51] ypos#22 ← ypos#13
+Coalesced (already) [52] yvel_init#22 ← yvel_init#13
+Coalesced [68] init::i#3 ← init::i#1
+Coalesced [71] init::sc#4 ← init::sc#1
 Coalesced down to 7 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @6
 Culled Empty Block (label) @8
 Culled Empty Block (label) main::@5
@@ -971,9 +907,9 @@ Target platform is c64basic / MOS6502X
   .label SPRITES_COLS = $d027
   .const WHITE = 1
   .label SCREEN = $400
+  .label SPRITES_PTR = SCREEN+$3f8
   .label SPRITE = $2000
   .const g = -5
-  .label SPRITES_PTR = SCREEN+$3f8
   .label yvel_init = 4
   .label yvel = 4
   .label yvel_1 = 6
@@ -1435,9 +1371,9 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_COLS = $d027
   .const WHITE = 1
   .label SCREEN = $400
+  .label SPRITES_PTR = SCREEN+$3f8
   .label SPRITE = $2000
   .const g = -5
-  .label SPRITES_PTR = SCREEN+$3f8
   .label yvel_init = 2
   .label yvel = 2
   .label yvel_1 = 4
@@ -1859,7 +1795,7 @@ FINAL SYMBOL TABLE
 (const byte*) SPRITES_XMSB = (byte*) 53264
 (const byte*) SPRITES_XPOS = (byte*) 53248
 (const byte*) SPRITES_YPOS = (byte*) 53249
-(const byte) WHITE = (byte) 1
+(const byte) WHITE = (number) 1
 (void()) anim()
 (byte~) anim::$10 reg byte a 4.0
 (byte~) anim::$11 reg byte a 4.0
@@ -1875,7 +1811,7 @@ FINAL SYMBOL TABLE
 (signed word) anim::sprite_x#0 sprite_x zp[2]:12 0.5714285714285714
 (signed word) anim::sprite_y
 (signed word) anim::sprite_y#0 sprite_y zp[2]:14 0.6666666666666666
-(const signed word) g = (signed byte) -5
+(const signed word) g = (number) -5
 (void()) init()
 (label) init::@1
 (label) init::@2
@@ -1945,9 +1881,9 @@ Score: 6373
   .label SPRITES_COLS = $d027
   .const WHITE = 1
   .label SCREEN = $400
+  .label SPRITES_PTR = SCREEN+$3f8
   .label SPRITE = $2000
   .const g = -5
-  .label SPRITES_PTR = SCREEN+$3f8
   .label yvel_init = 2
   .label yvel = 2
   .label yvel_1 = 4

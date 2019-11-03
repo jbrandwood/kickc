@@ -10,9 +10,6 @@ Culled Empty Block (label) position_sprite::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SPRITES_XPOS ← ((byte*)) (number) $d000
-  (byte*) SPRITES_YPOS ← ((byte*)) (number) $d001
-  (byte*) SPRITES_XMSB ← ((byte*)) (number) $d010
   to:@6
 
 (void()) main()
@@ -46,23 +43,23 @@ position_sprite: scope:[position_sprite]  from main::@1
   (byte) position_sprite::y#1 ← phi( main::@1/(byte) position_sprite::y#0 )
   (byte) position_sprite::spriteno#1 ← phi( main::@1/(byte) position_sprite::spriteno#0 )
   (number~) position_sprite::$0 ← (byte) position_sprite::spriteno#1 * (number) 2
-  *((byte*) SPRITES_YPOS + (number~) position_sprite::$0) ← (byte) position_sprite::y#1
+  *((const byte*) SPRITES_YPOS + (number~) position_sprite::$0) ← (byte) position_sprite::y#1
   (number~) position_sprite::$1 ← (byte) position_sprite::spriteno#1 * (number) 2
   (byte~) position_sprite::$2 ← < (word) position_sprite::x#1
-  *((byte*) SPRITES_XPOS + (number~) position_sprite::$1) ← (byte~) position_sprite::$2
+  *((const byte*) SPRITES_XPOS + (number~) position_sprite::$1) ← (byte~) position_sprite::$2
   (bool~) position_sprite::$3 ← (word) position_sprite::x#1 > (number) $ff
   if((bool~) position_sprite::$3) goto position_sprite::@1
   to:position_sprite::@3
 position_sprite::@1: scope:[position_sprite]  from position_sprite
   (byte) position_sprite::spriteno#2 ← phi( position_sprite/(byte) position_sprite::spriteno#1 )
   (number~) position_sprite::$6 ← (number) 1 << (byte) position_sprite::spriteno#2
-  *((byte*) SPRITES_XMSB) ← *((byte*) SPRITES_XMSB) | (number~) position_sprite::$6
+  *((const byte*) SPRITES_XMSB) ← *((const byte*) SPRITES_XMSB) | (number~) position_sprite::$6
   to:position_sprite::@return
 position_sprite::@3: scope:[position_sprite]  from position_sprite
   (byte) position_sprite::spriteno#3 ← phi( position_sprite/(byte) position_sprite::spriteno#1 )
   (number~) position_sprite::$4 ← (number) 1 << (byte) position_sprite::spriteno#3
   (number~) position_sprite::$5 ← (number~) position_sprite::$4 ^ (number) $ff
-  *((byte*) SPRITES_XMSB) ← *((byte*) SPRITES_XMSB) & (number~) position_sprite::$5
+  *((const byte*) SPRITES_XMSB) ← *((const byte*) SPRITES_XMSB) & (number~) position_sprite::$5
   to:position_sprite::@return
 position_sprite::@return: scope:[position_sprite]  from position_sprite::@1 position_sprite::@3
   return 
@@ -79,9 +76,9 @@ SYMBOL TABLE SSA
 (label) @7
 (label) @begin
 (label) @end
-(byte*) SPRITES_XMSB
-(byte*) SPRITES_XPOS
-(byte*) SPRITES_YPOS
+(const byte*) SPRITES_XMSB = (byte*)(number) $d010
+(const byte*) SPRITES_XPOS = (byte*)(number) $d000
+(const byte*) SPRITES_YPOS = (byte*)(number) $d001
 (void()) main()
 (bool~) main::$1
 (label) main::@1
@@ -135,9 +132,6 @@ Adding number conversion cast (unumber) position_sprite::$4 in (number~) positio
 Adding number conversion cast (unumber) $ff in (number~) position_sprite::$5 ← (unumber~) position_sprite::$4 ^ (number) $ff
 Adding number conversion cast (unumber) position_sprite::$5 in (number~) position_sprite::$5 ← (unumber~) position_sprite::$4 ^ (unumber)(number) $ff
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SPRITES_XPOS ← (byte*)(number) $d000
-Inlining cast (byte*) SPRITES_YPOS ← (byte*)(number) $d001
-Inlining cast (byte*) SPRITES_XMSB ← (byte*)(number) $d010
 Inlining cast (word) main::xpos#0 ← (unumber)(number) $c8
 Inlining cast (byte) position_sprite::y#0 ← (unumber)(number) $32
 Successful SSA optimization Pass2InlineCast
@@ -177,20 +171,17 @@ Identical Phi Values (byte) position_sprite::spriteno#1 (byte) position_sprite::
 Identical Phi Values (byte) position_sprite::y#1 (byte) position_sprite::y#0
 Identical Phi Values (word) position_sprite::x#1 (word) position_sprite::x#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [19] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 * (byte) 2
+Identified duplicate assignment right side [16] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 * (byte) 2
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) main::$1 [14] if((byte) main::s#1!=rangelast(0,7)) goto main::@1
-Simple Condition (bool~) position_sprite::$3 [23] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1
+Simple Condition (bool~) main::$1 [11] if((byte) main::s#1!=rangelast(0,7)) goto main::@1
+Simple Condition (bool~) position_sprite::$3 [20] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SPRITES_XPOS = (byte*) 53248
-Constant (const byte*) SPRITES_YPOS = (byte*) 53249
-Constant (const byte*) SPRITES_XMSB = (byte*) 53264
 Constant (const word) main::xpos#0 = $c8
 Constant (const byte) main::s#0 = 0
 Constant (const byte) position_sprite::y#0 = $32
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [12] main::s#1 ← ++ main::s#2 to ++
-Resolved ranged comparison value [14] if(main::s#1!=rangelast(0,7)) goto main::@1 to (number) 8
+Resolved ranged next value [9] main::s#1 ← ++ main::s#2 to ++
+Resolved ranged comparison value [11] if(main::s#1!=rangelast(0,7)) goto main::@1 to (number) 8
 Adding number conversion cast (unumber) 8 in if((byte) main::s#1!=(number) 8) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 8

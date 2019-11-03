@@ -5,25 +5,21 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte) ch ← (byte) 'a'
-  (byte) num ← (number) 1
-  (byte[]) str ← (const string) $0
   (byte[]) nums ← { (number) 2, (number) 3, (number) 4, (number) 5 }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  *((byte*) SCREEN + (number) 0) ← (byte) ch
-  *((byte*) SCREEN + (number) 2) ← (byte) num
+  *((const byte*) SCREEN + (number) 0) ← (const byte) ch
+  *((const byte*) SCREEN + (number) 2) ← (const byte) num
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (number~) main::$0 ← (number) 4 + (byte) main::i#2
-  *((byte*) SCREEN + (number~) main::$0) ← *((byte[]) str + (byte) main::i#2)
+  *((const byte*) SCREEN + (number~) main::$0) ← *((const byte[]) str + (byte) main::i#2)
   (number~) main::$1 ← (number) 9 + (byte) main::i#2
-  *((byte*) SCREEN + (number~) main::$1) ← *((byte[]) nums + (byte) main::i#2)
+  *((const byte*) SCREEN + (number~) main::$1) ← *((byte[]) nums + (byte) main::i#2)
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,3)
   (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,3)
   if((bool~) main::$2) goto main::@1
@@ -39,13 +35,12 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "bcde"
 (label) @1
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte) ch
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte) ch = (byte) 'a'
 (void()) main()
 (number~) main::$0
 (number~) main::$1
@@ -56,13 +51,12 @@ SYMBOL TABLE SSA
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
-(byte) num
+(const byte) num = (number) 1
 (byte[]) nums
-(byte[]) str
+(const byte[]) str = (string) "bcde"
 
-Adding number conversion cast (unumber) 1 in (byte) num ← (number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte) ch
-Adding number conversion cast (unumber) 2 in *((byte*) SCREEN + (number) 2) ← (byte) num
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (const byte) ch
+Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (number) 2) ← (const byte) num
 Adding number conversion cast (unumber) 4 in (number~) main::$0 ← (number) 4 + (byte) main::i#2
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) 4 + (byte) main::i#2
 Adding number conversion cast (unumber) 9 in (number~) main::$1 ← (number) 9 + (byte) main::i#2
@@ -70,11 +64,7 @@ Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (unum
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (byte[]) nums ← (byte[]){ (byte)(number) 2, (byte)(number) 3, (byte)(number) 4, (byte)(number) 5 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte) num ← (unumber)(number) 1
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
@@ -84,7 +74,6 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast 4
 Simplifying constant integer cast 9
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 4
@@ -92,20 +81,16 @@ Finalized unsigned number type (byte) 9
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) 4 + (byte) main::i#2
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) 9 + (byte) main::i#2
-Simple Condition (bool~) main::$2 [15] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
+Simple Condition (bool~) main::$2 [11] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (byte[]) { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte) ch = 'a'
-Constant (const byte) num = 1
-Constant (const byte[]) str = $0
 Constant (const byte[]) nums = { 2, 3, 4, 5 }
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [13] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [15] if(main::i#1!=rangelast(0,3)) goto main::@1 to (number) 4
-Simplifying expression containing zero SCREEN in [5] *((const byte*) SCREEN + (byte) 0) ← (const byte) ch
+Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [11] if(main::i#1!=rangelast(0,3)) goto main::@1 to (number) 4
+Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (byte) 0) ← (const byte) ch
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding number conversion cast (unumber) 4 in if((byte) main::i#1!=(number) 4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -114,7 +99,6 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined $0 = (const byte[]) str
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+2)
@@ -372,7 +356,7 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 22.0
-(const byte) num = (byte) 1
+(const byte) num = (number) 1
 (const byte[]) nums = { (byte) 2, (byte) 3, (byte) 4, (byte) 5 }
 (const byte[]) str = (string) "bcde"
 

@@ -1,10 +1,11 @@
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) @1
+Culled Empty Block (label) @2
 Culled Empty Block (label) c::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@2
+  to:@3
 
 (void()) main()
 main: scope:[main]  from @3
@@ -36,9 +37,6 @@ b::@1: scope:[b]  from b
 b::@return: scope:[b]  from b::@1
   return 
   to:@return
-@2: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  to:@3
 
 (void()) c((byte) c::i)
 c: scope:[c]  from b
@@ -48,7 +46,7 @@ c: scope:[c]  from b
 c::@1: scope:[c]  from c c::@1
   (byte) c::j#2 ← phi( c/(byte) c::j#0 c::@1/(byte) c::j#1 )
   (byte) c::i#1 ← phi( c/(byte) c::i#2 c::@1/(byte) c::i#1 )
-  *((byte*) SCREEN + (byte) c::j#2) ← (byte) c::i#1
+  *((const byte*) SCREEN + (byte) c::j#2) ← (byte) c::i#1
   (byte) c::j#1 ← (byte) c::j#2 + rangenext(0,$64)
   (bool~) c::$0 ← (byte) c::j#1 != rangelast(0,$64)
   if((bool~) c::$0) goto c::@1
@@ -56,7 +54,7 @@ c::@1: scope:[c]  from c c::@1
 c::@return: scope:[c]  from c::@1
   return 
   to:@return
-@3: scope:[]  from @2
+@3: scope:[]  from @begin
   call main 
   to:@4
 @4: scope:[]  from @3
@@ -64,12 +62,11 @@ c::@return: scope:[c]  from c::@1
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(label) @2
 (label) @3
 (label) @4
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) b((byte) b::i)
 (label) b::@1
 (label) b::@return
@@ -99,8 +96,6 @@ SYMBOL TABLE SSA
 (byte) main::i#2
 (byte) main::i#3
 
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
 Alias (byte) main::i#2 = (byte) main::i#3 
@@ -110,16 +105,15 @@ Identical Phi Values (byte) c::i#2 (byte) c::i#0
 Identical Phi Values (byte) c::i#1 (byte) c::i#2
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$1 [7] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
-Simple Condition (bool~) c::$0 [20] if((byte) c::j#1!=rangelast(0,$64)) goto c::@1
+Simple Condition (bool~) c::$0 [19] if((byte) c::j#1!=rangelast(0,$64)) goto c::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = 0
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) c::j#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [5] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [7] if(main::i#1!=rangelast(0,$64)) goto main::@1 to (number) $65
-Resolved ranged next value [18] c::j#1 ← ++ c::j#2 to ++
-Resolved ranged comparison value [20] if(c::j#1!=rangelast(0,$64)) goto c::@1 to (number) $65
+Resolved ranged next value [17] c::j#1 ← ++ c::j#2 to ++
+Resolved ranged comparison value [19] if(c::j#1!=rangelast(0,$64)) goto c::@1 to (number) $65
 Adding number conversion cast (unumber) $65 in if((byte) main::i#1!=(number) $65) goto main::@1
 Adding number conversion cast (unumber) $65 in if((byte) c::j#1!=(number) $65) goto c::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -137,7 +131,6 @@ Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@4(between main::@3 and main::@1)
 Added new block during phi lifting c::@3(between c::@1 and c::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
@@ -145,15 +138,14 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of b::@1
 Adding NOP phi() at start of c
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to b:9 
-Calls in [b] to c:15 
+Calls in [] to main:2 
+Calls in [main] to b:8 
+Calls in [b] to c:14 
 
 Created 2 initial phi equivalence classes
-Coalesced [13] main::i#4 ← main::i#1
-Coalesced [24] c::j#3 ← c::j#1
+Coalesced [12] main::i#4 ← main::i#1
+Coalesced [23] c::j#3 ← c::j#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) @4
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) b::@1

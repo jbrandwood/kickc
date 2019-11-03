@@ -3,6 +3,8 @@ Rewriting struct pointer member access *((struct Point*) points).x
 Rewriting struct pointer member access *((struct Point*) points).y
 Rewriting struct pointer member access *((struct Point*) points).x
 Rewriting struct pointer member access *((struct Point*) points).y
+Identified constant variable (byte) Point::x
+Identified constant variable (byte) Point::y
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -12,16 +14,15 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (struct Point*) points#4 ← phi( @1/(struct Point*) points#7 )
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte*) main::$0 ← (byte*)(struct Point*) points#4 + (const byte) OFFSET_STRUCT_POINT_X
-  *((byte*) main::SCREEN + (number) 0) ← *((byte*) main::$0)
+  *((const byte*) main::SCREEN + (number) 0) ← *((byte*) main::$0)
   (byte*) main::$1 ← (byte*)(struct Point*) points#4 + (const byte) OFFSET_STRUCT_POINT_Y
-  *((byte*) main::SCREEN + (number) 1) ← *((byte*) main::$1)
+  *((const byte*) main::SCREEN + (number) 1) ← *((byte*) main::$1)
   (struct Point*) points#1 ← (struct Point*) points#4 + (const byte) SIZEOF_STRUCT_POINT
   (byte*) main::$2 ← (byte*)(struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_X
-  *((byte*) main::SCREEN + (number) 2) ← *((byte*) main::$2)
+  *((const byte*) main::SCREEN + (number) 2) ← *((byte*) main::$2)
   (byte*) main::$3 ← (byte*)(struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_Y
-  *((byte*) main::SCREEN + (number) 3) ← *((byte*) main::$3)
+  *((const byte*) main::SCREEN + (number) 3) ← *((byte*) main::$3)
   to:main::@return
 main::@return: scope:[main]  from main
   (struct Point*) points#5 ← phi( main/(struct Point*) points#1 )
@@ -45,8 +46,6 @@ SYMBOL TABLE SSA
 (label) @end
 (const byte) OFFSET_STRUCT_POINT_X = (byte) 0
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
-(byte) Point::x
-(byte) Point::y
 (const byte) SIZEOF_STRUCT_POINT = (byte) 2
 (void()) main()
 (byte*) main::$0
@@ -54,7 +53,7 @@ SYMBOL TABLE SSA
 (byte*) main::$2
 (byte*) main::$3
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (struct Point*) points
 (struct Point*) points#0
 (struct Point*) points#1
@@ -65,16 +64,15 @@ SYMBOL TABLE SSA
 (struct Point*) points#6
 (struct Point*) points#7
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← *((byte*) main::$0)
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← *((byte*) main::$1)
-Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN + (number) 2) ← *((byte*) main::$2)
-Adding number conversion cast (unumber) 3 in *((byte*) main::SCREEN + (number) 3) ← *((byte*) main::$3)
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte*) main::$0)
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte*) main::$1)
+Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 2) ← *((byte*) main::$2)
+Adding number conversion cast (unumber) 3 in *((const byte*) main::SCREEN + (number) 3) ← *((byte*) main::$3)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (struct Point*) points#0 ← (struct Point*)(number) $1000
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (struct Point*) 4096
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (struct Point*) 4096
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
@@ -93,21 +91,20 @@ Identical Phi Values (struct Point*) points#4 (struct Point*) points#0
 Identical Phi Values (struct Point*) points#3 (struct Point*) points#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const struct Point*) points#0 = (struct Point*) 4096
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)points#0 in [3] (byte*) main::$0 ← (byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_X
-Constant value identified (byte*)points#0 in [5] (byte*) main::$1 ← (byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_Y
+Constant value identified (byte*)points#0 in [2] (byte*) main::$0 ← (byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_X
+Constant value identified (byte*)points#0 in [4] (byte*) main::$1 ← (byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantValues
-Converting *(pointer+n) to pointer[n] [4] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*) main::$0)  -- *((byte*)points#0 + OFFSET_STRUCT_POINT_X)
-Converting *(pointer+n) to pointer[n] [6] *((const byte*) main::SCREEN + (byte) 1) ← *((byte*) main::$1)  -- *((byte*)points#0 + OFFSET_STRUCT_POINT_Y)
-Converting *(pointer+n) to pointer[n] [9] *((const byte*) main::SCREEN + (byte) 2) ← *((byte*) main::$2)  -- *((byte*)points#1 + OFFSET_STRUCT_POINT_X)
-Converting *(pointer+n) to pointer[n] [11] *((const byte*) main::SCREEN + (byte) 3) ← *((byte*) main::$3)  -- *((byte*)points#1 + OFFSET_STRUCT_POINT_Y)
+Converting *(pointer+n) to pointer[n] [3] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*) main::$0)  -- *((byte*)points#0 + OFFSET_STRUCT_POINT_X)
+Converting *(pointer+n) to pointer[n] [5] *((const byte*) main::SCREEN + (byte) 1) ← *((byte*) main::$1)  -- *((byte*)points#0 + OFFSET_STRUCT_POINT_Y)
+Converting *(pointer+n) to pointer[n] [8] *((const byte*) main::SCREEN + (byte) 2) ← *((byte*) main::$2)  -- *((byte*)points#1 + OFFSET_STRUCT_POINT_X)
+Converting *(pointer+n) to pointer[n] [10] *((const byte*) main::SCREEN + (byte) 3) ← *((byte*) main::$3)  -- *((byte*)points#1 + OFFSET_STRUCT_POINT_Y)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)points#0 in [3] (byte*) main::$0 ← (byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_X
-Simplifying expression containing zero (byte*)points#0 in [4] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*)(const struct Point*) points#0)
-Simplifying expression containing zero (byte*)points#1 in [8] (byte*) main::$2 ← (byte*)(struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_X
-Simplifying expression containing zero (byte*)points#1 in [9] *((const byte*) main::SCREEN + (byte) 2) ← *((byte*)(struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero (byte*)points#0 in [2] (byte*) main::$0 ← (byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_X
+Simplifying expression containing zero (byte*)points#0 in [3] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero main::SCREEN in [3] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*)(const struct Point*) points#0)
+Simplifying expression containing zero (byte*)points#1 in [7] (byte*) main::$2 ← (byte*)(struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_X
+Simplifying expression containing zero (byte*)points#1 in [8] *((const byte*) main::SCREEN + (byte) 2) ← *((byte*)(struct Point*) points#1 + (const byte) OFFSET_STRUCT_POINT_X)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*) main::$0 and assignment [0] (byte*) main::$0 ← (byte*)(const struct Point*) points#0
 Eliminating unused variable (byte*) main::$1 and assignment [2] (byte*) main::$1 ← (byte*)(const struct Point*) points#0 + (const byte) OFFSET_STRUCT_POINT_Y
@@ -171,8 +168,6 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) Point::x
-(byte) Point::y
 (void()) main()
 (struct Point*) points
 
@@ -313,8 +308,6 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
-(byte) Point::x
-(byte) Point::y
 (const byte) SIZEOF_STRUCT_POINT = (byte) 2
 (void()) main()
 (label) main::@return

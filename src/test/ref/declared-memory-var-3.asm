@@ -12,8 +12,8 @@ __bbegin:
   jsr main
   rts
 main: {
-    .label barp = bar_thing1
     .label SCREEN = $400
+    .label barp = bar_thing1
     lda barp
     sta SCREEN
     lda barp+OFFSET_STRUCT_FOO_THING2

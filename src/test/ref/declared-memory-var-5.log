@@ -5,6 +5,8 @@ Adding struct value list initializer (byte) bar_thing1 ← (byte) 'a'
 Adding struct value list initializer (byte) bar_thing2 ← (byte) 'b'
 Replacing struct member reference (struct foo) bar.thing1 with member unwinding reference (byte) bar_thing1
 Replacing struct member reference (struct foo) bar.thing2 with member unwinding reference (byte) bar_thing2
+Identified constant variable (byte) foo::thing1
+Identified constant variable (byte) foo::thing2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -14,11 +16,10 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (number) 0
-  *((byte*) main::SCREEN + (byte) main::i#0) ← (byte) bar_thing1
+  *((const byte*) main::SCREEN + (byte) main::i#0) ← (byte) bar_thing1
   (byte) main::i#1 ← ++ (byte) main::i#0
-  *((byte*) main::SCREEN + (byte) main::i#1) ← (byte) bar_thing2
+  *((const byte*) main::SCREEN + (byte) main::i#1) ← (byte) bar_thing2
   (byte) main::i#2 ← ++ (byte) main::i#1
   to:main::@return
 main::@return: scope:[main]  from main
@@ -38,11 +39,9 @@ SYMBOL TABLE SSA
 (label) @end
 (byte) bar_thing1 notregister
 (byte) bar_thing2 notregister
-(byte) foo::thing1
-(byte) foo::thing2
 (void()) main()
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -50,7 +49,6 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -58,10 +56,9 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (const byte) main::i#0) ← (byte) bar_thing1
+Simplifying expression containing zero main::SCREEN in [3] *((const byte*) main::SCREEN + (const byte) main::i#0) ← (byte) bar_thing1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) main::i#2 and assignment [5] (byte) main::i#2 ← ++ (byte) main::i#1
 Successful SSA optimization PassNEliminateUnusedVars
@@ -115,8 +112,6 @@ main::@return: scope:[main]  from main
 VARIABLE REGISTER WEIGHTS
 (byte) bar_thing1 notregister 1.3333333333333333
 (byte) bar_thing2 notregister 1.3333333333333333
-(byte) foo::thing1
-(byte) foo::thing2
 (void()) main()
 (byte) main::i
 
@@ -268,8 +263,6 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte) bar_thing1 notregister mem[1] 1.3333333333333333
 (byte) bar_thing2 notregister mem[1] 1.3333333333333333
-(byte) foo::thing1
-(byte) foo::thing2
 (void()) main()
 (label) main::@return
 (const byte*) main::SCREEN = (byte*) 1024

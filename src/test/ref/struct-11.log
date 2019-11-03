@@ -31,6 +31,7 @@ Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_at::str)
 Warning! Adding boolean cast to non-boolean sub-expression (byte) print_str_lines::ch
 Identified constant variable (byte*) HEAP_TOP
+Identified constant variable (dword) Person::id
 Identified constant variable (dword) jesper_id
 Identified constant variable (byte[3]) jesper_initials
 Identified constant variable (dword) henry_id
@@ -42,6 +43,7 @@ Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
 Culled Empty Block (label) @7
+Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) ultoa::@13
 Culled Empty Block (label) ultoa::@5
@@ -85,15 +87,13 @@ Culled Empty Block (label) @32
 Culled Empty Block (label) @33
 Culled Empty Block (label) @34
 Culled Empty Block (label) @35
+Culled Empty Block (label) @36
 Culled Empty Block (label) @37
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@8
-@8: scope:[]  from @begin
-  (byte[]) DIGITS ← (const string) $0
   to:@10
-@10: scope:[]  from @8
+@10: scope:[]  from @begin
   (dword[]) RADIX_BINARY_VALUES_LONG ← { (number) $80000000, (number) $40000000, (number) $20000000, (number) $10000000, (number) $8000000, (number) $4000000, (number) $2000000, (number) $1000000, (number) $800000, (number) $400000, (number) $200000, (number) $100000, (number) $80000, (number) $40000, (number) $20000, (number) $10000, (number) $8000, (number) $4000, (number) $2000, (number) $1000, (number) $800, (number) $400, (number) $200, (number) $100, (number) $80, (number) $40, (number) $20, (number) $10, (number) 8, (number) 4, (number) 2 }
   (dword[]) RADIX_OCTAL_VALUES_LONG ← { (number) $40000000, (number) $8000000, (number) $1000000, (number) $200000, (number) $40000, (number) $8000, (number) $1000, (number) $200, (number) $40, (number) 8 }
   (dword[]) RADIX_DECIMAL_VALUES_LONG ← { (number) $3b9aca00, (number) $5f5e100, (number) $989680, (number) $f4240, (number) $186a0, (number) $2710, (number) $3e8, (number) $64, (number) $a }
@@ -205,7 +205,7 @@ ultoa::@20: scope:[ultoa]  from ultoa::@18
   (byte*) ultoa::buffer#7 ← phi( ultoa::@18/(byte*) ultoa::buffer#11 )
   (dword) ultoa::value#3 ← phi( ultoa::@18/(dword) ultoa::value#5 )
   (byte~) ultoa::$4 ← ((byte)) (dword) ultoa::value#3
-  *((byte*) ultoa::buffer#7) ← *((byte[]) DIGITS + (byte~) ultoa::$4)
+  *((byte*) ultoa::buffer#7) ← *((const byte[]) DIGITS + (byte~) ultoa::$4)
   (byte*) ultoa::buffer#3 ← ++ (byte*) ultoa::buffer#7
   *((byte*) ultoa::buffer#3) ← (number) 0
   to:ultoa::@return
@@ -270,7 +270,7 @@ ultoa_append::@3: scope:[ultoa_append]  from ultoa_append::@1
   (dword) ultoa_append::value#4 ← phi( ultoa_append::@1/(dword) ultoa_append::value#2 )
   (byte*) ultoa_append::buffer#1 ← phi( ultoa_append::@1/(byte*) ultoa_append::buffer#2 )
   (byte) ultoa_append::digit#3 ← phi( ultoa_append::@1/(byte) ultoa_append::digit#4 )
-  *((byte*) ultoa_append::buffer#1) ← *((byte[]) DIGITS + (byte) ultoa_append::digit#3)
+  *((byte*) ultoa_append::buffer#1) ← *((const byte[]) DIGITS + (byte) ultoa_append::digit#3)
   (dword) ultoa_append::return#1 ← (dword) ultoa_append::value#4
   to:ultoa_append::@return
 ultoa_append::@return: scope:[ultoa_append]  from ultoa_append::@3
@@ -333,10 +333,10 @@ print_ln::@return: scope:[print_ln]  from print_ln::@2
   return 
   to:@return
 @26: scope:[]  from @12
-  (byte*) print_line_cursor#24 ← phi( @12/(byte*) print_line_cursor#0 )
-  (byte*) print_char_cursor#44 ← phi( @12/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#23 ← phi( @12/(byte*) print_line_cursor#0 )
+  (byte*) print_char_cursor#43 ← phi( @12/(byte*) print_char_cursor#0 )
   (byte[$b]) decimal_digits_long ← { fill( $b, 0) }
-  to:@36
+  to:@38
 
 (void()) print_dword_decimal((dword) print_dword_decimal::w)
 print_dword_decimal: scope:[print_dword_decimal]  from print_person
@@ -374,21 +374,13 @@ print_char::@return: scope:[print_char]  from print_char
   (byte*) print_char_cursor#8 ← (byte*) print_char_cursor#25
   return 
   to:@return
-@36: scope:[]  from @26
-  (byte*) print_line_cursor#23 ← phi( @26/(byte*) print_line_cursor#24 )
-  (byte*) print_char_cursor#43 ← phi( @26/(byte*) print_char_cursor#44 )
-  (dword) jesper_id ← (number) $1b244
-  (byte[3]) jesper_initials ← (const string) $1
-  (dword) henry_id ← (number) $4466d
-  (byte[3]) henry_initials ← (const string) $2
-  to:@38
 
 (void()) main()
 main: scope:[main]  from @38
   (byte*) print_line_cursor#19 ← phi( @38/(byte*) print_line_cursor#21 )
   (byte*) print_char_cursor#38 ← phi( @38/(byte*) print_char_cursor#40 )
-  (dword) print_person::person_id#0 ← (dword) jesper_id
-  (byte[3]) print_person::person_initials#0 ← (byte[3]) jesper_initials
+  (dword) print_person::person_id#0 ← (const dword) jesper_id
+  (byte[3]) print_person::person_initials#0 ← (const byte[3]) jesper_initials
   call print_person 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -396,8 +388,8 @@ main::@1: scope:[main]  from main
   (byte*) print_char_cursor#26 ← phi( main/(byte*) print_char_cursor#16 )
   (byte*) print_char_cursor#9 ← (byte*) print_char_cursor#26
   (byte*) print_line_cursor#3 ← (byte*) print_line_cursor#12
-  (dword) print_person::person_id#1 ← (dword) henry_id
-  (byte[3]) print_person::person_initials#1 ← (byte[3]) henry_initials
+  (dword) print_person::person_id#1 ← (const dword) henry_id
+  (byte[3]) print_person::person_initials#1 ← (const byte[3]) henry_initials
   call print_person 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -416,7 +408,7 @@ main::@return: scope:[main]  from main::@2
 
 (void()) print_person((dword) print_person::person_id , (byte[3]) print_person::person_initials)
 print_person: scope:[print_person]  from main main::@1
-  (byte*) print_line_cursor#26 ← phi( main/(byte*) print_line_cursor#19 main::@1/(byte*) print_line_cursor#3 )
+  (byte*) print_line_cursor#25 ← phi( main/(byte*) print_line_cursor#19 main::@1/(byte*) print_line_cursor#3 )
   (byte[3]) print_person::person_initials#4 ← phi( main/(byte[3]) print_person::person_initials#0 main::@1/(byte[3]) print_person::person_initials#1 )
   (byte*) print_char_cursor#39 ← phi( main/(byte*) print_char_cursor#38 main::@1/(byte*) print_char_cursor#9 )
   (dword) print_person::person_id#2 ← phi( main/(dword) print_person::person_id#0 main::@1/(dword) print_person::person_id#1 )
@@ -424,7 +416,7 @@ print_person: scope:[print_person]  from main main::@1
   call print_dword_decimal 
   to:print_person::@1
 print_person::@1: scope:[print_person]  from print_person
-  (byte*) print_line_cursor#25 ← phi( print_person/(byte*) print_line_cursor#26 )
+  (byte*) print_line_cursor#24 ← phi( print_person/(byte*) print_line_cursor#25 )
   (byte[3]) print_person::person_initials#3 ← phi( print_person/(byte[3]) print_person::person_initials#4 )
   (byte*) print_char_cursor#29 ← phi( print_person/(byte*) print_char_cursor#6 )
   (byte*) print_char_cursor#12 ← (byte*) print_char_cursor#29
@@ -432,7 +424,7 @@ print_person::@1: scope:[print_person]  from print_person
   call print_char 
   to:print_person::@2
 print_person::@2: scope:[print_person]  from print_person::@1
-  (byte*) print_line_cursor#22 ← phi( print_person::@1/(byte*) print_line_cursor#25 )
+  (byte*) print_line_cursor#22 ← phi( print_person::@1/(byte*) print_line_cursor#24 )
   (byte[3]) print_person::person_initials#2 ← phi( print_person::@1/(byte[3]) print_person::person_initials#3 )
   (byte*) print_char_cursor#30 ← phi( print_person::@1/(byte*) print_char_cursor#8 )
   (byte*) print_char_cursor#13 ← (byte*) print_char_cursor#30
@@ -458,9 +450,9 @@ print_person::@return: scope:[print_person]  from print_person::@4
   (byte*) print_line_cursor#7 ← (byte*) print_line_cursor#16
   return 
   to:@return
-@38: scope:[]  from @36
-  (byte*) print_line_cursor#21 ← phi( @36/(byte*) print_line_cursor#23 )
-  (byte*) print_char_cursor#40 ← phi( @36/(byte*) print_char_cursor#43 )
+@38: scope:[]  from @26
+  (byte*) print_line_cursor#21 ← phi( @26/(byte*) print_line_cursor#23 )
+  (byte*) print_char_cursor#40 ← phi( @26/(byte*) print_char_cursor#43 )
   call main 
   to:@39
 @39: scope:[]  from @38
@@ -472,25 +464,18 @@ print_person::@return: scope:[print_person]  from print_person::@4
 @end: scope:[]  from @39
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "0123456789abcdef"z
-(const string) $1 = (string) "jg"
-(const string) $2 = (string) "hg"
 (label) @10
 (label) @12
 (label) @26
-(label) @36
 (label) @38
 (label) @39
-(label) @8
 (label) @begin
 (label) @end
 (const byte) BINARY = (number) 2
 (const byte) DECIMAL = (number) $a
-(byte[]) DIGITS
+(const byte[]) DIGITS = (string) "0123456789abcdef"z
 (const byte) HEXADECIMAL = (number) $10
 (const byte) OCTAL = (number) 8
-(dword) Person::id
-(byte[3]) Person::initials
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
@@ -501,10 +486,10 @@ SYMBOL TABLE SSA
 (dword[]) RADIX_OCTAL_VALUES_LONG
 (const byte) SIZEOF_DWORD = (byte) 4
 (byte[$b]) decimal_digits_long
-(dword) henry_id
-(byte[3]) henry_initials
-(dword) jesper_id
-(byte[3]) jesper_initials
+(const dword) henry_id = (number) $4466d
+(const byte[3]) henry_initials = (string) "hg"
+(const dword) jesper_id = (number) $1b244
+(const byte[3]) jesper_initials = (string) "jg"
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -554,7 +539,6 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#41
 (byte*) print_char_cursor#42
 (byte*) print_char_cursor#43
-(byte*) print_char_cursor#44
 (byte*) print_char_cursor#5
 (byte*) print_char_cursor#6
 (byte*) print_char_cursor#7
@@ -587,7 +571,6 @@ SYMBOL TABLE SSA
 (byte*) print_line_cursor#23
 (byte*) print_line_cursor#24
 (byte*) print_line_cursor#25
-(byte*) print_line_cursor#26
 (byte*) print_line_cursor#3
 (byte*) print_line_cursor#4
 (byte*) print_line_cursor#5
@@ -799,8 +782,6 @@ Adding number conversion cast (unumber) 1 in (byte) ultoa::started#1 ← (number
 Adding number conversion cast (unumber) 0 in (byte) ultoa_append::digit#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#3)
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#9 + (number) $28
-Adding number conversion cast (unumber) $1b244 in (dword) jesper_id ← (number) $1b244
-Adding number conversion cast (unumber) $4466d in (dword) henry_id ← (number) $4466d
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (dword[]) RADIX_BINARY_VALUES_LONG ← (dword[]){ (dword)(number) $80000000, (dword)(number) $40000000, (dword)(number) $20000000, (dword)(number) $10000000, (dword)(number) $8000000, (dword)(number) $4000000, (dword)(number) $2000000, (dword)(number) $1000000, (dword)(number) $800000, (dword)(number) $400000, (dword)(number) $200000, (dword)(number) $100000, (dword)(number) $80000, (dword)(number) $40000, (dword)(number) $20000, (dword)(number) $10000, (dword)(number) $8000, (dword)(number) $4000, (dword)(number) $2000, (dword)(number) $1000, (dword)(number) $800, (dword)(number) $400, (dword)(number) $200, (dword)(number) $100, (dword)(number) $80, (dword)(number) $40, (dword)(number) $20, (dword)(number) $10, (dword)(number) 8, (dword)(number) 4, (dword)(number) 2 }
 Added casts to value list in (dword[]) RADIX_OCTAL_VALUES_LONG ← (dword[]){ (dword)(number) $40000000, (dword)(number) $8000000, (dword)(number) $1000000, (dword)(number) $200000, (dword)(number) $40000, (dword)(number) $8000, (dword)(number) $1000, (dword)(number) $200, (dword)(number) $40, (dword)(number) 8 }
@@ -819,8 +800,6 @@ Inlining cast *((byte*) ultoa::buffer#3) ← (unumber)(number) 0
 Inlining cast (byte) ultoa::started#1 ← (unumber)(number) 1
 Inlining cast (byte) ultoa_append::digit#0 ← (unumber)(number) 0
 Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
-Inlining cast (dword) jesper_id ← (unumber)(number) $1b244
-Inlining cast (dword) henry_id ← (unumber)(number) $4466d
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $80000000
 Simplifying constant integer cast $40000000
@@ -893,8 +872,6 @@ Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
-Simplifying constant integer cast $1b244
-Simplifying constant integer cast $4466d
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $a
 Finalized unsigned number type (byte) 8
@@ -909,8 +886,6 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
-Finalized unsigned number type (dword) $1b244
-Finalized unsigned number type (dword) $4466d
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) ultoa::$5 ← (byte) ultoa::max_digits#5 - (byte) 1
 Alias (dword) ultoa::value#10 = (dword) ultoa::value#8 (dword) ultoa::value#12 (dword) ultoa::value#13 (dword) ultoa::value#9 (dword) ultoa::value#14 (dword) ultoa::value#15 (dword) ultoa::value#11 
@@ -929,7 +904,7 @@ Alias (byte) ultoa_append::digit#2 = (byte) ultoa_append::digit#4 (byte) ultoa_a
 Alias (dword) ultoa_append::value#2 = (dword) ultoa_append::value#3 (dword) ultoa_append::value#4 (dword) ultoa_append::return#1 (dword) ultoa_append::return#4 (dword) ultoa_append::return#2 
 Alias (dword) ultoa_append::sub#1 = (dword) ultoa_append::sub#2 
 Alias (byte*) ultoa_append::buffer#1 = (byte*) ultoa_append::buffer#4 (byte*) ultoa_append::buffer#2 
-Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#44 (byte*) print_line_cursor#24 (byte*) print_char_cursor#43 (byte*) print_line_cursor#23 (byte*) print_char_cursor#40 (byte*) print_line_cursor#21 
+Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#43 (byte*) print_line_cursor#23 (byte*) print_char_cursor#40 (byte*) print_line_cursor#21 
 Alias (byte*) print_str::str#3 = (byte*) print_str::str#4 
 Alias (byte*) print_char_cursor#18 = (byte*) print_char_cursor#35 (byte*) print_char_cursor#19 (byte*) print_char_cursor#2 
 Alias (byte*) print_line_cursor#1 = (byte*~) print_ln::$0 (byte*) print_line_cursor#10 (byte*) print_char_cursor#3 (byte*) print_line_cursor#11 (byte*) print_char_cursor#21 (byte*) print_line_cursor#2 (byte*) print_char_cursor#4 
@@ -941,7 +916,7 @@ Alias (byte*) print_line_cursor#12 = (byte*) print_line_cursor#3
 Alias (byte*) print_char_cursor#10 = (byte*) print_char_cursor#27 (byte*) print_char_cursor#28 (byte*) print_char_cursor#11 
 Alias (byte*) print_line_cursor#13 = (byte*) print_line_cursor#4 (byte*) print_line_cursor#14 (byte*) print_line_cursor#5 
 Alias (byte[3]) print_person::person_initials#2 = (byte[3]) print_person::person_initials#3 (byte[3]) print_person::person_initials#4 
-Alias (byte*) print_line_cursor#20 = (byte*) print_line_cursor#25 (byte*) print_line_cursor#26 (byte*) print_line_cursor#22 
+Alias (byte*) print_line_cursor#20 = (byte*) print_line_cursor#24 (byte*) print_line_cursor#25 (byte*) print_line_cursor#22 
 Alias (byte*) print_char_cursor#12 = (byte*) print_char_cursor#29 
 Alias (byte*) print_char_cursor#13 = (byte*) print_char_cursor#30 
 Alias (byte*) print_char_cursor#14 = (byte*) print_char_cursor#31 
@@ -988,27 +963,26 @@ Identical Phi Values (byte*) print_char_cursor#15 (byte*) print_line_cursor#1
 Identical Phi Values (byte*) print_char_cursor#17 (byte*) print_char_cursor#10
 Identical Phi Values (byte*) print_line_cursor#17 (byte*) print_line_cursor#13
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) ultoa::$0 [9] if((byte) ultoa::radix#0==(const byte) DECIMAL) goto ultoa::@1
-Simple Condition (bool~) ultoa::$1 [15] if((byte) ultoa::radix#0==(const byte) HEXADECIMAL) goto ultoa::@2
-Simple Condition (bool~) ultoa::$2 [21] if((byte) ultoa::radix#0==(const byte) OCTAL) goto ultoa::@3
-Simple Condition (bool~) ultoa::$3 [27] if((byte) ultoa::radix#0==(const byte) BINARY) goto ultoa::@4
-Simple Condition (bool~) ultoa::$6 [46] if((byte) ultoa::digit#2<(byte~) ultoa::$5) goto ultoa::@19
-Simple Condition (bool~) ultoa_append::$0 [76] if((dword) ultoa_append::value#2>=(dword) ultoa_append::sub#0) goto ultoa_append::@2
-Simple Condition (bool~) print_str::$0 [92] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2
-Simple Condition (bool~) print_ln::$1 [105] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#18) goto print_ln::@1
+Simple Condition (bool~) ultoa::$0 [8] if((byte) ultoa::radix#0==(const byte) DECIMAL) goto ultoa::@1
+Simple Condition (bool~) ultoa::$1 [14] if((byte) ultoa::radix#0==(const byte) HEXADECIMAL) goto ultoa::@2
+Simple Condition (bool~) ultoa::$2 [20] if((byte) ultoa::radix#0==(const byte) OCTAL) goto ultoa::@3
+Simple Condition (bool~) ultoa::$3 [26] if((byte) ultoa::radix#0==(const byte) BINARY) goto ultoa::@4
+Simple Condition (bool~) ultoa::$6 [45] if((byte) ultoa::digit#2<(byte~) ultoa::$5) goto ultoa::@19
+Simple Condition (bool~) ultoa_append::$0 [75] if((dword) ultoa_append::value#2>=(dword) ultoa_append::sub#0) goto ultoa_append::@2
+Simple Condition (bool~) print_str::$0 [91] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2
+Simple Condition (bool~) print_ln::$1 [104] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#18) goto print_ln::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [52] (bool~) ultoa::$9 ← ! (bool~) ultoa::$8
-Rewriting || if()-condition to two if()s [51] (bool~) ultoa::$8 ← (byte) ultoa::started#2 || (bool~) ultoa::$7
+Rewriting ! if()-condition to reversed if() [51] (bool~) ultoa::$9 ← ! (bool~) ultoa::$8
+Rewriting || if()-condition to two if()s [50] (bool~) ultoa::$8 ← (byte) ultoa::started#2 || (bool~) ultoa::$7
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 Warning! Adding boolean cast to non-boolean condition (byte) ultoa::started#2
-Constant right-side identified [113] (byte[$b]) decimal_digits_long ← { fill( $b, 0) }
+Constant right-side identified [112] (byte[$b]) decimal_digits_long ← { fill( $b, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (dword[]) { (dword) $80000000, (dword) $40000000, (dword) $20000000, (dword) $10000000, (dword) $8000000, (dword) $4000000, (dword) $2000000, (dword) $1000000, (dword) $800000, (dword) $400000, (dword) $200000, (dword) $100000, (dword) $80000, (dword) $40000, (dword) $20000, (dword) $10000, (dword) $8000, (dword) $4000, (dword) $2000, (dword) $1000, (dword) $800, (dword) $400, (dword) $200, (dword) $100, (dword) $80, (dword) $40, (dword) $20, (dword) $10, (dword) 8, (dword) 4, (dword) 2 }
 Identified constant from value list (dword[]) { (dword) $40000000, (dword) $8000000, (dword) $1000000, (dword) $200000, (dword) $40000, (dword) $8000, (dword) $1000, (dword) $200, (dword) $40, (dword) 8 }
 Identified constant from value list (dword[]) { (dword) $3b9aca00, (dword) $5f5e100, (dword) $989680, (dword) $f4240, (dword) $186a0, (dword) $2710, (dword) $3e8, (dword) $64, (dword) $a }
 Identified constant from value list (dword[]) { (dword) $10000000, (dword) $1000000, (dword) $100000, (dword) $10000, (dword) $1000, (dword) $100, (dword) $10 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[]) DIGITS = $0
 Constant (const dword[]) RADIX_BINARY_VALUES_LONG = { $80000000, $40000000, $20000000, $10000000, $8000000, $4000000, $2000000, $1000000, $800000, $400000, $200000, $100000, $80000, $40000, $20000, $10000, $8000, $4000, $2000, $1000, $800, $400, $200, $100, $80, $40, $20, $10, 8, 4, 2 }
 Constant (const dword[]) RADIX_OCTAL_VALUES_LONG = { $40000000, $8000000, $1000000, $200000, $40000, $8000, $1000, $200, $40, 8 }
 Constant (const dword[]) RADIX_DECIMAL_VALUES_LONG = { $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a }
@@ -1026,10 +1000,10 @@ Constant (const byte) ultoa_append::digit#0 = 0
 Constant (const byte*) print_char_cursor#0 = (byte*) 1024
 Constant (const byte[$b]) decimal_digits_long = { fill( $b, 0) }
 Constant (const byte) ultoa::radix#0 = DECIMAL
-Constant (const dword) jesper_id = $1b244
-Constant (const byte[3]) jesper_initials = $1
-Constant (const dword) henry_id = $4466d
-Constant (const byte[3]) henry_initials = $2
+Constant (const dword) print_person::person_id#0 = jesper_id
+Constant (const byte[3]) print_person::person_initials#0 = jesper_initials
+Constant (const dword) print_person::person_id#1 = henry_id
+Constant (const byte[3]) print_person::person_initials#1 = henry_initials
 Constant (const byte) print_char::ch#0 = ' '
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const dword*) ultoa::digit_values#1 = RADIX_DECIMAL_VALUES_LONG
@@ -1038,15 +1012,11 @@ Constant (const dword*) ultoa::digit_values#3 = RADIX_OCTAL_VALUES_LONG
 Constant (const dword*) ultoa::digit_values#4 = RADIX_BINARY_VALUES_LONG
 Constant (const byte*) ultoa::buffer#5 = decimal_digits_long
 Constant (const byte*) print_str::str#1 = decimal_digits_long
-Constant (const dword) print_person::person_id#0 = jesper_id
-Constant (const byte[3]) print_person::person_initials#0 = jesper_initials
-Constant (const dword) print_person::person_id#1 = henry_id
-Constant (const byte[3]) print_person::person_initials#1 = henry_initials
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [9] if((const byte) ultoa::radix#0==(const byte) DECIMAL) goto ultoa::@1
-if() condition always false - eliminating [15] if((const byte) ultoa::radix#0==(const byte) HEXADECIMAL) goto ultoa::@2
-if() condition always false - eliminating [21] if((const byte) ultoa::radix#0==(const byte) OCTAL) goto ultoa::@3
-if() condition always false - eliminating [27] if((const byte) ultoa::radix#0==(const byte) BINARY) goto ultoa::@4
+if() condition always true - replacing block destination [8] if((const byte) ultoa::radix#0==(const byte) DECIMAL) goto ultoa::@1
+if() condition always false - eliminating [14] if((const byte) ultoa::radix#0==(const byte) HEXADECIMAL) goto ultoa::@2
+if() condition always false - eliminating [20] if((const byte) ultoa::radix#0==(const byte) OCTAL) goto ultoa::@3
+if() condition always false - eliminating [26] if((const byte) ultoa::radix#0==(const byte) BINARY) goto ultoa::@4
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused constant (const byte) BINARY
 Eliminating unused constant (const byte) OCTAL
@@ -1116,9 +1086,6 @@ Inlining constant with var siblings (const byte[3]) print_person::person_initial
 Inlining constant with var siblings (const byte*) print_char_cursor#0
 Constant inlined print_person::person_initials#1 = (const byte[3]) henry_initials
 Constant inlined ultoa::started#1 = (byte) 1
-Constant inlined $0 = (const byte[]) DIGITS
-Constant inlined $1 = (const byte[3]) jesper_initials
-Constant inlined $2 = (const byte[3]) henry_initials
 Constant inlined print_char_cursor#0 = (byte*) 1024
 Constant inlined ultoa::buffer#5 = (const byte[$b]) decimal_digits_long
 Constant inlined print_person::person_id#1 = (const dword) henry_id
@@ -1136,11 +1103,9 @@ Successful SSA optimization PassNEliminateUnusedVars
 Added new block during phi lifting ultoa::@28(between ultoa::@27 and ultoa::@21)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @8
 Adding NOP phi() at start of @10
 Adding NOP phi() at start of @12
 Adding NOP phi() at start of @26
-Adding NOP phi() at start of @36
 Adding NOP phi() at start of @38
 Adding NOP phi() at start of @39
 Adding NOP phi() at start of @end
@@ -1154,43 +1119,41 @@ Adding NOP phi() at start of print_dword_decimal::@2
 Adding NOP phi() at start of ultoa
 Adding NOP phi() at start of ultoa::@1
 CALL GRAPH
-Calls in [] to main:7 
-Calls in [main] to print_person:11 print_person:14 
-Calls in [print_person] to print_dword_decimal:19 print_char:21 print_str:25 print_ln:27 
-Calls in [print_dword_decimal] to ultoa:52 print_str:54 
-Calls in [ultoa] to ultoa_append:83 
+Calls in [] to main:5 
+Calls in [main] to print_person:9 print_person:12 
+Calls in [print_person] to print_dword_decimal:17 print_char:19 print_str:23 print_ln:25 
+Calls in [print_dword_decimal] to ultoa:50 print_str:52 
+Calls in [ultoa] to ultoa_append:81 
 
 Created 18 initial phi equivalence classes
-Not coalescing [12] print_char_cursor#49 ← print_line_cursor#1
-Coalesced [13] print_line_cursor#29 ← print_line_cursor#1
-Coalesced [23] print_str::str#6 ← print_str::str#2
-Coalesced [24] print_char_cursor#46 ← print_char_cursor#25
-Coalesced [30] print_line_cursor#27 ← print_line_cursor#20
-Coalesced (already) [36] print_line_cursor#28 ← print_line_cursor#1
-Coalesced [38] print_str::str#7 ← print_str::str#5
-Coalesced [39] print_char_cursor#47 ← print_char_cursor#41
-Coalesced [46] print_str::str#8 ← print_str::str#0
-Coalesced [47] print_char_cursor#48 ← print_char_cursor#1
-Coalesced [53] print_char_cursor#45 ← print_char_cursor#39
-Coalesced [59] ultoa::value#17 ← ultoa::value#1
-Coalesced [71] ultoa::value#18 ← ultoa::value#2
-Coalesced [72] ultoa::started#6 ← ultoa::started#2
-Coalesced [73] ultoa::buffer#23 ← ultoa::buffer#11
-Coalesced [76] ultoa::digit#7 ← ultoa::digit#1
-Coalesced (already) [77] ultoa::value#16 ← ultoa::value#6
-Coalesced (already) [78] ultoa::started#5 ← ultoa::started#4
-Coalesced (already) [79] ultoa::buffer#22 ← ultoa::buffer#14
-Coalesced [87] ultoa::value#19 ← ultoa::value#0
-Coalesced [88] ultoa::buffer#24 ← ultoa::buffer#4
-Coalesced [89] ultoa_append::value#6 ← ultoa_append::value#0
-Coalesced [96] ultoa_append::value#7 ← ultoa_append::value#1
-Coalesced [97] ultoa_append::digit#5 ← ultoa_append::digit#1
+Not coalescing [10] print_char_cursor#48 ← print_line_cursor#1
+Coalesced [11] print_line_cursor#28 ← print_line_cursor#1
+Coalesced [21] print_str::str#6 ← print_str::str#2
+Coalesced [22] print_char_cursor#45 ← print_char_cursor#25
+Coalesced [28] print_line_cursor#26 ← print_line_cursor#20
+Coalesced (already) [34] print_line_cursor#27 ← print_line_cursor#1
+Coalesced [36] print_str::str#7 ← print_str::str#5
+Coalesced [37] print_char_cursor#46 ← print_char_cursor#41
+Coalesced [44] print_str::str#8 ← print_str::str#0
+Coalesced [45] print_char_cursor#47 ← print_char_cursor#1
+Coalesced [51] print_char_cursor#44 ← print_char_cursor#39
+Coalesced [57] ultoa::value#17 ← ultoa::value#1
+Coalesced [69] ultoa::value#18 ← ultoa::value#2
+Coalesced [70] ultoa::started#6 ← ultoa::started#2
+Coalesced [71] ultoa::buffer#23 ← ultoa::buffer#11
+Coalesced [74] ultoa::digit#7 ← ultoa::digit#1
+Coalesced (already) [75] ultoa::value#16 ← ultoa::value#6
+Coalesced (already) [76] ultoa::started#5 ← ultoa::started#4
+Coalesced (already) [77] ultoa::buffer#22 ← ultoa::buffer#14
+Coalesced [85] ultoa::value#19 ← ultoa::value#0
+Coalesced [86] ultoa::buffer#24 ← ultoa::buffer#4
+Coalesced [87] ultoa_append::value#6 ← ultoa_append::value#0
+Coalesced [94] ultoa_append::value#7 ← ultoa_append::value#1
+Coalesced [95] ultoa_append::digit#5 ← ultoa_append::digit#1
 Coalesced down to 11 phi equivalence classes
-Culled Empty Block (label) @8
 Culled Empty Block (label) @10
 Culled Empty Block (label) @12
 Culled Empty Block (label) @26
-Culled Empty Block (label) @36
 Culled Empty Block (label) @39
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) print_person::@4
@@ -1236,7 +1199,7 @@ main: scope:[main]  from @1
   [5] call print_person 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1
+  [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1
   [7] call print_person 
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -1247,7 +1210,7 @@ main::@return: scope:[main]  from main::@1
 print_person: scope:[print_person]  from main main::@1
   [9] (byte*) print_line_cursor#20 ← phi( main/(byte*) 1024 main::@1/(byte*) print_line_cursor#1 )
   [9] (byte[3]) print_person::person_initials#2 ← phi( main/(const byte[3]) jesper_initials main::@1/(const byte[3]) henry_initials )
-  [9] (byte*) print_char_cursor#39 ← phi( main/(byte*) 1024 main::@1/(byte*~) print_char_cursor#49 )
+  [9] (byte*) print_char_cursor#39 ← phi( main/(byte*) 1024 main::@1/(byte*~) print_char_cursor#48 )
   [9] (dword) print_person::person_id#2 ← phi( main/(const dword) jesper_id main::@1/(const dword) henry_id )
   [10] (dword) print_dword_decimal::w#0 ← (dword) print_person::person_id#2
   [11] call print_dword_decimal 
@@ -1390,8 +1353,6 @@ ultoa_append::@2: scope:[ultoa_append]  from ultoa_append::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(dword) Person::id
-(byte[3]) Person::initials
 (void()) main()
 (void()) print_char((byte) print_char::ch)
 (byte) print_char::ch
@@ -1401,7 +1362,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor#25 1.0
 (byte*) print_char_cursor#39 0.8
 (byte*) print_char_cursor#41 6.0
-(byte*~) print_char_cursor#49 4.0
+(byte*~) print_char_cursor#48 4.0
 (void()) print_dword_decimal((dword) print_dword_decimal::w)
 (dword) print_dword_decimal::w
 (dword) print_dword_decimal::w#0 4.0
@@ -1467,7 +1428,7 @@ Initial phi equivalence classes
 [ print_person::person_initials#2 ]
 [ print_line_cursor#9 print_line_cursor#20 print_line_cursor#1 ]
 [ print_str::str#3 print_str::str#5 print_str::str#2 print_str::str#0 ]
-[ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#49 print_char_cursor#25 print_char_cursor#1 ]
+[ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#48 print_char_cursor#25 print_char_cursor#1 ]
 [ ultoa::digit#2 ultoa::digit#1 ]
 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ]
 [ ultoa::started#2 ultoa::started#4 ]
@@ -1487,7 +1448,7 @@ Complete equivalence classes
 [ print_person::person_initials#2 ]
 [ print_line_cursor#9 print_line_cursor#20 print_line_cursor#1 ]
 [ print_str::str#3 print_str::str#5 print_str::str#2 print_str::str#0 ]
-[ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#49 print_char_cursor#25 print_char_cursor#1 ]
+[ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#48 print_char_cursor#25 print_char_cursor#1 ]
 [ ultoa::digit#2 ultoa::digit#1 ]
 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ]
 [ ultoa::started#2 ultoa::started#4 ]
@@ -1506,7 +1467,7 @@ Allocated zp[4]:2 [ print_person::person_id#2 ]
 Allocated zp[2]:6 [ print_person::person_initials#2 ]
 Allocated zp[2]:8 [ print_line_cursor#9 print_line_cursor#20 print_line_cursor#1 ]
 Allocated zp[2]:10 [ print_str::str#3 print_str::str#5 print_str::str#2 print_str::str#0 ]
-Allocated zp[2]:12 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#49 print_char_cursor#25 print_char_cursor#1 ]
+Allocated zp[2]:12 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#48 print_char_cursor#25 print_char_cursor#1 ]
 Allocated zp[1]:14 [ ultoa::digit#2 ultoa::digit#1 ]
 Allocated zp[4]:15 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ]
 Allocated zp[1]:19 [ ultoa::started#2 ultoa::started#4 ]
@@ -1584,7 +1545,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -1598,7 +1559,7 @@ main: {
     sta.z print_person.person_initials
     lda #>henry_initials
     sta.z print_person.person_initials+1
-    // [9] phi (byte*) print_char_cursor#39 = (byte*~) print_char_cursor#49 [phi:main::@1->print_person#2] -- register_copy 
+    // [9] phi (byte*) print_char_cursor#39 = (byte*~) print_char_cursor#48 [phi:main::@1->print_person#2] -- register_copy 
     // [9] phi (dword) print_person::person_id#2 = (const dword) henry_id [phi:main::@1->print_person#3] -- vduz1=vduc1 
     lda #<henry_id
     sta.z print_person.person_id
@@ -2070,17 +2031,17 @@ ultoa_append: {
   // File Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
-  // Values of decimal digits
-  RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
-  // Digits used for storing the decimal word
-  decimal_digits_long: .fill $b, 0
   jesper_initials: .text "jg"
   .byte 0
   henry_initials: .text "hg"
   .byte 0
+  // Values of decimal digits
+  RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
+  // Digits used for storing the decimal word
+  decimal_digits_long: .fill $b, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 [ print_char_cursor#49 print_line_cursor#1 ] ( main:2 [ print_char_cursor#49 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ print_char_cursor#48 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [10] (dword) print_dword_decimal::w#0 ← (dword) print_person::person_id#2 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] ( main:2::print_person:5 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] main:2::print_person:7 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] ) always clobbers reg byte a 
 Statement [14] (byte*) print_str::str#2 ← (byte[3]) print_person::person_initials#2 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] ( main:2::print_person:5 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] main:2::print_person:7 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] ) always clobbers reg byte a 
 Statement [21] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 [ print_line_cursor#1 print_char_cursor#18 ] ( main:2::print_person:5::print_ln:17 [ print_line_cursor#1 print_char_cursor#18 ] main:2::print_person:7::print_ln:17 [ print_line_cursor#1 print_char_cursor#18 ] ) always clobbers reg byte a 
@@ -2108,7 +2069,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:26 [ ultoa_
 Statement [63] *((byte*) ultoa_append::buffer#0) ← *((const byte[]) DIGITS + (byte) ultoa_append::digit#2) [ ultoa_append::value#2 ] ( main:2::print_person:5::print_dword_decimal:11::ultoa:35::ultoa_append:56 [ print_person::person_initials#2 print_line_cursor#20 print_char_cursor#39 ultoa::digit#2 ultoa::buffer#11 ultoa_append::value#2 ] main:2::print_person:7::print_dword_decimal:11::ultoa:35::ultoa_append:56 [ print_person::person_initials#2 print_line_cursor#20 print_char_cursor#39 ultoa::digit#2 ultoa::buffer#11 ultoa_append::value#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:14 [ ultoa::digit#2 ultoa::digit#1 ]
 Statement [66] (dword) ultoa_append::value#1 ← (dword) ultoa_append::value#2 - (dword) ultoa_append::sub#0 [ ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#1 ultoa_append::digit#1 ] ( main:2::print_person:5::print_dword_decimal:11::ultoa:35::ultoa_append:56 [ print_person::person_initials#2 print_line_cursor#20 print_char_cursor#39 ultoa::digit#2 ultoa::buffer#11 ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#1 ultoa_append::digit#1 ] main:2::print_person:7::print_dword_decimal:11::ultoa:35::ultoa_append:56 [ print_person::person_initials#2 print_line_cursor#20 print_char_cursor#39 ultoa::digit#2 ultoa::buffer#11 ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#1 ultoa_append::digit#1 ] ) always clobbers reg byte a 
-Statement [6] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 [ print_char_cursor#49 print_line_cursor#1 ] ( main:2 [ print_char_cursor#49 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ print_char_cursor#48 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [10] (dword) print_dword_decimal::w#0 ← (dword) print_person::person_id#2 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] ( main:2::print_person:5 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] main:2::print_person:7 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] ) always clobbers reg byte a 
 Statement [14] (byte*) print_str::str#2 ← (byte[3]) print_person::person_initials#2 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] ( main:2::print_person:5 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] main:2::print_person:7 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] ) always clobbers reg byte a 
 Statement [21] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 [ print_line_cursor#1 print_char_cursor#18 ] ( main:2::print_person:5::print_ln:17 [ print_line_cursor#1 print_char_cursor#18 ] main:2::print_person:7::print_ln:17 [ print_line_cursor#1 print_char_cursor#18 ] ) always clobbers reg byte a 
@@ -2136,7 +2097,7 @@ Potential registers zp[4]:2 [ print_person::person_id#2 ] : zp[4]:2 ,
 Potential registers zp[2]:6 [ print_person::person_initials#2 ] : zp[2]:6 , 
 Potential registers zp[2]:8 [ print_line_cursor#9 print_line_cursor#20 print_line_cursor#1 ] : zp[2]:8 , 
 Potential registers zp[2]:10 [ print_str::str#3 print_str::str#5 print_str::str#2 print_str::str#0 ] : zp[2]:10 , 
-Potential registers zp[2]:12 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#49 print_char_cursor#25 print_char_cursor#1 ] : zp[2]:12 , 
+Potential registers zp[2]:12 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#48 print_char_cursor#25 print_char_cursor#1 ] : zp[2]:12 , 
 Potential registers zp[1]:14 [ ultoa::digit#2 ultoa::digit#1 ] : zp[1]:14 , reg byte x , 
 Potential registers zp[4]:15 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ] : zp[4]:15 , 
 Potential registers zp[1]:19 [ ultoa::started#2 ultoa::started#4 ] : zp[1]:19 , reg byte x , reg byte y , 
@@ -2155,7 +2116,7 @@ Potential registers zp[4]:45 [ ultoa_append::return#0 ] : zp[4]:45 ,
 REGISTER UPLIFT SCOPES
 Uplift Scope [ultoa_append] 259: zp[4]:22 [ ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 ] 203: zp[1]:26 [ ultoa_append::digit#2 ultoa_append::digit#1 ] 35.5: zp[4]:41 [ ultoa_append::sub#0 ] 22: zp[4]:45 [ ultoa_append::return#0 ] 1.62: zp[2]:39 [ ultoa_append::buffer#0 ] 
 Uplift Scope [ultoa] 41.93: zp[2]:20 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ] 36.07: zp[4]:15 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ] 25.14: zp[1]:14 [ ultoa::digit#2 ultoa::digit#1 ] 22: zp[1]:34 [ ultoa::$11 ] 16.5: zp[1]:19 [ ultoa::started#2 ultoa::started#4 ] 6.6: zp[4]:35 [ ultoa::digit_value#0 ] 4: zp[1]:31 [ ultoa::$4 ] 4: zp[2]:32 [ ultoa::buffer#3 ] 
-Uplift Scope [] 29.73: zp[2]:8 [ print_line_cursor#9 print_line_cursor#20 print_line_cursor#1 ] 26.13: zp[2]:12 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#49 print_char_cursor#25 print_char_cursor#1 ] 
+Uplift Scope [] 29.73: zp[2]:8 [ print_line_cursor#9 print_line_cursor#20 print_line_cursor#1 ] 26.13: zp[2]:12 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#48 print_char_cursor#25 print_char_cursor#1 ] 
 Uplift Scope [print_str] 41.5: zp[2]:10 [ print_str::str#3 print_str::str#5 print_str::str#2 print_str::str#0 ] 
 Uplift Scope [print_dword_decimal] 4: zp[4]:27 [ print_dword_decimal::w#0 ] 
 Uplift Scope [print_person] 2: zp[4]:2 [ print_person::person_id#2 ] 0.4: zp[2]:6 [ print_person::person_initials#2 ] 
@@ -2167,7 +2128,7 @@ Uplift Scope [main]
 
 Uplifting [ultoa_append] best 13397 combination zp[4]:22 [ ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 ] reg byte x [ ultoa_append::digit#2 ultoa_append::digit#1 ] zp[4]:41 [ ultoa_append::sub#0 ] zp[4]:45 [ ultoa_append::return#0 ] zp[2]:39 [ ultoa_append::buffer#0 ] 
 Uplifting [ultoa] best 13263 combination zp[2]:20 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ] zp[4]:15 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ] zp[1]:14 [ ultoa::digit#2 ultoa::digit#1 ] reg byte a [ ultoa::$11 ] reg byte x [ ultoa::started#2 ultoa::started#4 ] zp[4]:35 [ ultoa::digit_value#0 ] reg byte a [ ultoa::$4 ] zp[2]:32 [ ultoa::buffer#3 ] 
-Uplifting [] best 13263 combination zp[2]:8 [ print_line_cursor#9 print_line_cursor#20 print_line_cursor#1 ] zp[2]:12 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#49 print_char_cursor#25 print_char_cursor#1 ] 
+Uplifting [] best 13263 combination zp[2]:8 [ print_line_cursor#9 print_line_cursor#20 print_line_cursor#1 ] zp[2]:12 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#48 print_char_cursor#25 print_char_cursor#1 ] 
 Uplifting [print_str] best 13263 combination zp[2]:10 [ print_str::str#3 print_str::str#5 print_str::str#2 print_str::str#0 ] 
 Uplifting [print_dword_decimal] best 13263 combination zp[4]:27 [ print_dword_decimal::w#0 ] 
 Uplifting [print_person] best 13263 combination zp[4]:2 [ print_person::person_id#2 ] zp[2]:6 [ print_person::person_initials#2 ] 
@@ -2186,7 +2147,7 @@ Coalescing zero page register [ zp[2]:20 [ ultoa::buffer#11 ultoa::buffer#14 ult
 Coalescing zero page register [ zp[4]:35 [ ultoa::digit_value#0 ] ] with [ zp[4]:41 [ ultoa_append::sub#0 ] ] - score: 1
 Coalescing zero page register [ zp[4]:2 [ print_person::person_id#2 print_dword_decimal::w#0 ] ] with [ zp[4]:15 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 ultoa_append::return#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:20 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ultoa::buffer#3 ultoa_append::buffer#0 ] ] with [ zp[2]:10 [ print_str::str#3 print_str::str#5 print_str::str#2 print_str::str#0 ] ]
-Allocated (was zp[2]:12) zp[2]:10 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#49 print_char_cursor#25 print_char_cursor#1 ]
+Allocated (was zp[2]:12) zp[2]:10 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#48 print_char_cursor#25 print_char_cursor#1 ]
 Allocated (was zp[1]:14) zp[1]:12 [ ultoa::digit#2 ultoa::digit#1 ]
 Allocated (was zp[2]:20) zp[2]:13 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ultoa::buffer#3 ultoa_append::buffer#0 print_str::str#3 print_str::str#5 print_str::str#2 print_str::str#0 ]
 Allocated (was zp[4]:35) zp[4]:15 [ ultoa::digit_value#0 ultoa_append::sub#0 ]
@@ -2252,7 +2213,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -2266,7 +2227,7 @@ main: {
     sta.z print_person.person_initials
     lda #>henry_initials
     sta.z print_person.person_initials+1
-    // [9] phi (byte*) print_char_cursor#39 = (byte*~) print_char_cursor#49 [phi:main::@1->print_person#2] -- register_copy 
+    // [9] phi (byte*) print_char_cursor#39 = (byte*~) print_char_cursor#48 [phi:main::@1->print_person#2] -- register_copy 
     // [9] phi (dword) print_person::person_id#2 = (const dword) henry_id [phi:main::@1->print_person#3] -- vduz1=vduc1 
     lda #<henry_id
     sta.z print_person.person_id
@@ -2671,14 +2632,14 @@ ultoa_append: {
   // File Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
-  // Values of decimal digits
-  RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
-  // Digits used for storing the decimal word
-  decimal_digits_long: .fill $b, 0
   jesper_initials: .text "jg"
   .byte 0
   henry_initials: .text "hg"
   .byte 0
+  // Values of decimal digits
+  RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
+  // Digits used for storing the decimal word
+  decimal_digits_long: .fill $b, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -2769,17 +2730,15 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte[]) DIGITS = (string) "0123456789abcdef"z
-(dword) Person::id
-(byte[3]) Person::initials
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
 (const dword[]) RADIX_DECIMAL_VALUES_LONG = { (dword) $3b9aca00, (dword) $5f5e100, (dword) $989680, (dword) $f4240, (dword) $186a0, (dword) $2710, (dword) $3e8, (dword) $64, (dword) $a }
 (const byte[$b]) decimal_digits_long = { fill( $b, 0) }
-(const dword) henry_id = (dword) $4466d
+(const dword) henry_id = (number) $4466d
 (const byte[3]) henry_initials = (string) "hg"
-(const dword) jesper_id = (dword) $1b244
+(const dword) jesper_id = (number) $1b244
 (const byte[3]) jesper_initials = (string) "jg"
 (void()) main()
 (label) main::@1
@@ -2794,7 +2753,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#25 print_char_cursor zp[2]:10 1.0
 (byte*) print_char_cursor#39 print_char_cursor zp[2]:10 0.8
 (byte*) print_char_cursor#41 print_char_cursor zp[2]:10 6.0
-(byte*~) print_char_cursor#49 print_char_cursor zp[2]:10 4.0
+(byte*~) print_char_cursor#48 print_char_cursor zp[2]:10 4.0
 (void()) print_dword_decimal((dword) print_dword_decimal::w)
 (label) print_dword_decimal::@1
 (label) print_dword_decimal::@return
@@ -2882,7 +2841,7 @@ FINAL SYMBOL TABLE
 zp[4]:2 [ print_person::person_id#2 print_dword_decimal::w#0 ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 ultoa_append::return#0 ]
 zp[2]:6 [ print_person::person_initials#2 ]
 zp[2]:8 [ print_line_cursor#9 print_line_cursor#20 print_line_cursor#1 ]
-zp[2]:10 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#49 print_char_cursor#25 print_char_cursor#1 ]
+zp[2]:10 [ print_char_cursor#18 print_char_cursor#41 print_char_cursor#39 print_char_cursor#48 print_char_cursor#25 print_char_cursor#1 ]
 zp[1]:12 [ ultoa::digit#2 ultoa::digit#1 ]
 reg byte x [ ultoa::started#2 ultoa::started#4 ]
 zp[2]:13 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ultoa::buffer#3 ultoa_append::buffer#0 print_str::str#3 print_str::str#5 print_str::str#2 print_str::str#0 ]
@@ -2944,7 +2903,7 @@ main: {
     sta.z print_person.person_id+3
     jsr print_person
     // main::@1
-    // [6] (byte*~) print_char_cursor#49 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -2958,7 +2917,7 @@ main: {
     sta.z print_person.person_initials
     lda #>henry_initials
     sta.z print_person.person_initials+1
-    // [9] phi (byte*) print_char_cursor#39 = (byte*~) print_char_cursor#49 [phi:main::@1->print_person#2] -- register_copy 
+    // [9] phi (byte*) print_char_cursor#39 = (byte*~) print_char_cursor#48 [phi:main::@1->print_person#2] -- register_copy 
     // [9] phi (dword) print_person::person_id#2 = (const dword) henry_id [phi:main::@1->print_person#3] -- vduz1=vduc1 
     lda #<henry_id
     sta.z print_person.person_id
@@ -3344,12 +3303,12 @@ ultoa_append: {
   // File Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
-  // Values of decimal digits
-  RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
-  // Digits used for storing the decimal word
-  decimal_digits_long: .fill $b, 0
   jesper_initials: .text "jg"
   .byte 0
   henry_initials: .text "hg"
   .byte 0
+  // Values of decimal digits
+  RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
+  // Digits used for storing the decimal word
+  decimal_digits_long: .fill $b, 0
 

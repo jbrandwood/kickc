@@ -3,7 +3,6 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) line#0 ← (number) $40
   (byte) ch#0 ← (byte) line#0
   to:@2
@@ -35,8 +34,8 @@ main::@3: scope:[main]  from main::@2
   (byte) line#10 ← phi( main::@2/(byte) line#6 )
   (byte) line#3 ← (byte) line#10
   (byte) ch#5 ← (byte) ch#12
-  *((byte*) SCREEN) ← (byte) ch#5
-  (byte*~) main::$3 ← (byte*) SCREEN + (number) $28
+  *((const byte*) SCREEN) ← (byte) ch#5
+  (byte*~) main::$3 ← (const byte*) SCREEN + (number) $28
   *((byte*~) main::$3) ← (byte) line#3
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -79,7 +78,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (byte) ch
 (byte) ch#0
 (byte) ch#1
@@ -128,11 +127,10 @@ SYMBOL TABLE SSA
 (label) main::@return
 
 Adding number conversion cast (unumber) $40 in (byte) line#0 ← (number) $40
-Adding number conversion cast (unumber) $28 in (byte*~) main::$3 ← (byte*) SCREEN + (number) $28
+Adding number conversion cast (unumber) $28 in (byte*~) main::$3 ← (const byte*) SCREEN + (number) $28
 Adding number conversion cast (unumber) 2 in (number~) ln::$0 ← (byte) line#12 + (number) 2
 Adding number conversion cast (unumber) ln::$0 in (number~) ln::$0 ← (byte) line#12 + (unumber)(number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) line#0 ← (unumber)(number) $40
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -167,20 +165,18 @@ Identical Phi Values (byte) ch#12 (byte) line#13
 Identical Phi Values (byte) line#14 (byte) line#10
 Identical Phi Values (byte) ch#15 (byte) ch#12
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte*) SCREEN = (byte*) 1024
+Constant right-side identified [18] (byte*~) main::$3 ← (const byte*) SCREEN + (byte) $28
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) line#0 = $40
+Constant (const byte*) main::$3 = SCREEN+$28
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [20] *((byte*~) main::$3) ← (byte) line#13  -- *(SCREEN + $28)
-Successful SSA optimization Pass2InlineDerefIdx
 Eliminating unused variable (byte) ch#2 and assignment [1] (byte) ch#2 ← ++ (byte) line#13
 Eliminating unused variable (byte) ch#4 and assignment [3] (byte) ch#4 ← ++ (byte) line#13
-Eliminating unused variable (byte*~) main::$3 and assignment [6] (byte*~) main::$3 ← (const byte*) SCREEN + (byte) $28
 Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte) line#0
+Constant inlined main::$3 = (const byte*) SCREEN+(byte) $28
 Constant inlined line#0 = (byte) $40
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(SCREEN+$28)
-Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3

@@ -59,8 +59,6 @@
   // No transparancy
   // Bit[2]==Bit[1]==0: write in any case
   .const DTV_BLIT_TRANSPARANCY_NONE = 0
-  // Controls the ALU operation
-  .label DTV_BLITTER_ALU = $d33e
   .const DTV_BLIT_ADD = $30
   // Blitter Control 2
   .label DTV_BLITTER_CONTROL2 = $d33f
@@ -71,6 +69,8 @@
   // Bit[0] Busy when set (When reading)
   .const DTV_BLIT_STATUS_BUSY = 1
   .label SCREEN = $400
+  // Controls the ALU operation
+  .label DTV_BLITTER_ALU = $d33e
 main: {
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE

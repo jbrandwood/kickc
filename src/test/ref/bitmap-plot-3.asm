@@ -14,8 +14,8 @@
   .label COSTAB = SINTAB+$40
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __7 = $b
-    .label __11 = $f
+    .label __4 = $b
+    .label __8 = $f
     .label a = 2
     .label i = $1b
     jsr bitmap_init
@@ -37,9 +37,9 @@ main: {
   __b2:
     ldy.z a
     lda COSTAB,y
-    sta.z __7
+    sta.z __4
     lda #0
-    sta.z __7+1
+    sta.z __4+1
     lda #$78
     clc
     adc.z bitmap_line.x1
@@ -53,9 +53,9 @@ main: {
     lda #0
     sta.z bitmap_line.y1+1
     lda COSTAB+$20,y
-    sta.z __11
+    sta.z __8
     lda #0
-    sta.z __11+1
+    sta.z __8+1
     lda #$78
     clc
     adc.z bitmap_line.x2

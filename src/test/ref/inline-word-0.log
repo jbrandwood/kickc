@@ -8,9 +8,8 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (word) main::w#0 ← ((word)) { (byte) 2, (byte) 1 }
-  (word*) main::screen ← ((word*)) (number) $400
   (number~) main::$0 ← (number) 0 * (const byte) SIZEOF_WORD
-  *((word*) main::screen + (number~) main::$0) ← (word) main::w#0
+  *((const word*) main::screen + (number~) main::$0) ← (word) main::w#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -31,7 +30,7 @@ SYMBOL TABLE SSA
 (void()) main()
 (number~) main::$0
 (label) main::@return
-(word*) main::screen
+(const word*) main::screen = (word*)(number) $400
 (word) main::w
 (word) main::w#0
 
@@ -40,11 +39,9 @@ Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) 0 in (number~) main::$0 ← (number) 0 * (const byte) SIZEOF_WORD
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) 0 * (const byte) SIZEOF_WORD
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word*) main::screen ← (word*)(number) $400
-Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast (byte) 2
 Simplifying constant integer cast (byte) 1
-Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
@@ -53,14 +50,13 @@ Inferred type updated to byte in (unumber~) main::$0 ← (byte) 0 * (const byte)
 Alias (word) main::w#0 = (word~) main::$1 
 Successful SSA optimization Pass2AliasElimination
 Constant right-side identified [0] (word) main::w#0 ← (byte) 2 w= (byte) 1
-Constant right-side identified [3] (byte~) main::$0 ← (byte) 0 * (const byte) SIZEOF_WORD
+Constant right-side identified [2] (byte~) main::$0 ← (byte) 0 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word*) main::screen = (word*) 1024
 Constant (const byte) main::$0 = 0*SIZEOF_WORD
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_WORD in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero main::screen in [4] *((const word*) main::screen + (const byte) main::$0) ← (word) main::w#0
+Simplifying expression containing zero main::screen in [3] *((const word*) main::screen + (const byte) main::$0) ← (word) main::w#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$0
 Eliminating unused constant (const byte) SIZEOF_WORD

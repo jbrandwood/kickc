@@ -6,7 +6,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::idx#0 ← (number) 0
   (byte) main::a#0 ← (byte) 0
   to:main::@1
@@ -27,7 +26,7 @@ main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::f#0 ← (byte~) main::$1
   (byte~) main::$2 ← (byte) main::e#0 + (byte) main::f#0
   (byte) main::g#0 ← (byte~) main::$2
-  *((byte*) main::SCREEN + (byte) main::idx#2) ← (byte) main::g#0
+  *((const byte*) main::SCREEN + (byte) main::idx#2) ← (byte) main::g#0
   (byte) main::idx#1 ← ++ (byte) main::idx#2
   (byte) main::b#1 ← (byte) main::b#2 + rangenext(0,5)
   (bool~) main::$3 ← (byte) main::b#1 != rangelast(0,5)
@@ -65,7 +64,7 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::a
 (byte) main::a#0
 (byte) main::a#1
@@ -95,7 +94,6 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (byte) main::idx#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::idx#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -112,18 +110,17 @@ Alias (byte) main::idx#1 = (byte) main::idx#4
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) main::a#2 (byte) main::a#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [18] if((byte) main::b#1!=rangelast(0,5)) goto main::@2
-Simple Condition (bool~) main::$4 [22] if((byte) main::a#1!=rangelast(0,5)) goto main::@1
+Simple Condition (bool~) main::$3 [17] if((byte) main::b#1!=rangelast(0,5)) goto main::@2
+Simple Condition (bool~) main::$4 [21] if((byte) main::a#1!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::idx#0 = 0
 Constant (const byte) main::a#0 = 0
 Constant (const byte) main::b#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [16] main::b#1 ← ++ main::d#0 to ++
-Resolved ranged comparison value [18] if(main::b#1!=rangelast(0,5)) goto main::@2 to (number) 6
-Resolved ranged next value [20] main::a#1 ← ++ main::a#4 to ++
-Resolved ranged comparison value [22] if(main::a#1!=rangelast(0,5)) goto main::@1 to (number) 6
+Resolved ranged next value [15] main::b#1 ← ++ main::d#0 to ++
+Resolved ranged comparison value [17] if(main::b#1!=rangelast(0,5)) goto main::@2 to (number) 6
+Resolved ranged next value [19] main::a#1 ← ++ main::a#4 to ++
+Resolved ranged comparison value [21] if(main::a#1!=rangelast(0,5)) goto main::@1 to (number) 6
 Adding number conversion cast (unumber) 6 in if((byte) main::b#1!=(number) 6) goto main::@2
 Adding number conversion cast (unumber) 6 in if((byte) main::a#1!=(number) 6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions

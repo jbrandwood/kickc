@@ -1,7 +1,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SIZEOF_SIGNED_WORD = 2
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
@@ -22,9 +21,10 @@
   .const PI_u4f28 = $3243f6a9
   // PI/2 in u[4.28] format
   .const PI_HALF_u4f28 = $1921fb54
+  .const XSIN_SIZE = $200
+  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
   .label LOGO = $2000
-  .const XSIN_SIZE = $200
   .label rem16u = $c
   .label xsin_idx = $23
 main: {

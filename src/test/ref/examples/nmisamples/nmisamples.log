@@ -9,16 +9,8 @@ Culled Empty Block (label) @6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (word*) CIA2_TIMER_A ← ((word*)) (number) $dd04
-  (byte*) CIA2_INTERRUPT ← ((byte*)) (number) $dd0d
-  (byte*) CIA2_TIMER_A_CONTROL ← ((byte*)) (number) $dd0e
-  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-  (void()**) KERNEL_NMI ← ((void()**)) (number) $318
-  (byte*) SID_VOLUME ← ((byte*)) (number) $d418
   to:@4
 @4: scope:[]  from @begin
-  (word) SAMPLE_SIZE ← (number) $6100
   (byte[SAMPLE_SIZE]) SAMPLE ← kickasm {{ .import binary "moments_sample.bin"  }}
   (byte*) sample#0 ← (byte[SAMPLE_SIZE]) SAMPLE
   to:@7
@@ -27,12 +19,12 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @7
   asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
   asm { sei  }
-  *((byte*) CIA2_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
+  *((const byte*) CIA2_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
   (void()*~) main::$0 ← & interrupt(HARDWARE_ALL)(void()) nmi()
-  *((void()**) KERNEL_NMI) ← (void()*~) main::$0
-  *((word*) CIA2_TIMER_A) ← (number) $88
-  *((byte*) CIA2_INTERRUPT) ← (number) $81
-  *((byte*) CIA2_TIMER_A_CONTROL) ← (number) 1
+  *((const void()**) KERNEL_NMI) ← (void()*~) main::$0
+  *((const word*) CIA2_TIMER_A) ← (number) $88
+  *((const byte*) CIA2_INTERRUPT) ← (number) $81
+  *((const byte*) CIA2_TIMER_A_CONTROL) ← (number) 1
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -42,13 +34,13 @@ main::@return: scope:[main]  from main
 interrupt(HARDWARE_ALL)(void()) nmi()
 nmi: scope:[nmi]  from
   (byte*) sample#4 ← phi( @7/(byte*) sample#7 )
-  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   asm { ldaCIA2_INTERRUPT  }
   (number~) nmi::$1 ← *((byte*) sample#4) & (number) $f
-  *((byte*) SID_VOLUME) ← (number~) nmi::$1
+  *((const byte*) SID_VOLUME) ← (number~) nmi::$1
   (void()*~) nmi::$2 ← & interrupt(HARDWARE_ALL)(void()) nmi2()
-  *((void()**) KERNEL_NMI) ← (void()*~) nmi::$2
-  *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
+  *((const void()**) KERNEL_NMI) ← (void()*~) nmi::$2
+  *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:nmi::@return
 nmi::@return: scope:[nmi]  from nmi
   return 
@@ -57,10 +49,10 @@ nmi::@return: scope:[nmi]  from nmi
 interrupt(HARDWARE_ALL)(void()) nmi2()
 nmi2: scope:[nmi2]  from
   (byte*) sample#5 ← phi( @7/(byte*) sample#7 )
-  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   asm { ldaCIA2_INTERRUPT  }
   (byte~) nmi2::$1 ← *((byte*) sample#5) >> (number) 4
-  *((byte*) SID_VOLUME) ← (byte~) nmi2::$1
+  *((const byte*) SID_VOLUME) ← (byte~) nmi2::$1
   (byte*) sample#1 ← ++ (byte*) sample#5
   (byte~) nmi2::$2 ← > (byte*) sample#1
   (byte*~) nmi2::$3 ← (byte[SAMPLE_SIZE]) SAMPLE + (number) $6100
@@ -72,8 +64,8 @@ nmi2: scope:[nmi2]  from
 nmi2::@1: scope:[nmi2]  from nmi2 nmi2::@2
   (byte*) sample#8 ← phi( nmi2/(byte*) sample#1 nmi2::@2/(byte*) sample#2 )
   (void()*~) nmi2::$7 ← & interrupt(HARDWARE_ALL)(void()) nmi()
-  *((void()**) KERNEL_NMI) ← (void()*~) nmi2::$7
-  *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
+  *((const void()**) KERNEL_NMI) ← (void()*~) nmi2::$7
+  *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:nmi2::@return
 nmi2::@2: scope:[nmi2]  from nmi2
   (byte*) sample#2 ← (byte[SAMPLE_SIZE]) SAMPLE
@@ -97,15 +89,15 @@ SYMBOL TABLE SSA
 (label) @8
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
-(byte*) CIA2_INTERRUPT
-(word*) CIA2_TIMER_A
-(byte*) CIA2_TIMER_A_CONTROL
-(byte) CIA_INTERRUPT_CLEAR
-(void()**) KERNEL_NMI
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) CIA2_INTERRUPT = (byte*)(number) $dd0d
+(const word*) CIA2_TIMER_A = (word*)(number) $dd04
+(const byte*) CIA2_TIMER_A_CONTROL = (byte*)(number) $dd0e
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
+(const void()**) KERNEL_NMI = (void()**)(number) $318
 (byte[SAMPLE_SIZE]) SAMPLE
-(word) SAMPLE_SIZE
-(byte*) SID_VOLUME
+(const word) SAMPLE_SIZE = (number) $6100
+(const byte*) SID_VOLUME = (byte*)(number) $d418
 (void()) main()
 (void()*~) main::$0
 (label) main::@return
@@ -135,36 +127,24 @@ interrupt(HARDWARE_ALL)(void()) nmi2()
 (byte*) sample#7
 (byte*) sample#8
 
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-Adding number conversion cast (unumber) $6100 in (word) SAMPLE_SIZE ← (number) $6100
-Adding number conversion cast (unumber) $88 in *((word*) CIA2_TIMER_A) ← (number) $88
-Adding number conversion cast (unumber) $81 in *((byte*) CIA2_INTERRUPT) ← (number) $81
-Adding number conversion cast (unumber) 1 in *((byte*) CIA2_TIMER_A_CONTROL) ← (number) 1
+Adding number conversion cast (unumber) $88 in *((const word*) CIA2_TIMER_A) ← (number) $88
+Adding number conversion cast (unumber) $81 in *((const byte*) CIA2_INTERRUPT) ← (number) $81
+Adding number conversion cast (unumber) 1 in *((const byte*) CIA2_TIMER_A_CONTROL) ← (number) 1
 Adding number conversion cast (unumber) $f in (number~) nmi::$1 ← *((byte*) sample#4) & (number) $f
 Adding number conversion cast (unumber) nmi::$1 in (number~) nmi::$1 ← *((byte*) sample#4) & (unumber)(number) $f
 Adding number conversion cast (unumber) 4 in (byte~) nmi2::$1 ← *((byte*) sample#5) >> (number) 4
 Adding number conversion cast (unumber) $6100 in (byte*~) nmi2::$3 ← (byte[SAMPLE_SIZE]) SAMPLE + (number) $6100
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (word*) CIA2_TIMER_A ← (word*)(number) $dd04
-Inlining cast (byte*) CIA2_INTERRUPT ← (byte*)(number) $dd0d
-Inlining cast (byte*) CIA2_TIMER_A_CONTROL ← (byte*)(number) $dd0e
-Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
-Inlining cast (void()**) KERNEL_NMI ← (void()**)(number) $318
-Inlining cast (byte*) SID_VOLUME ← (byte*)(number) $d418
-Inlining cast (word) SAMPLE_SIZE ← (unumber)(number) $6100
-Inlining cast *((word*) CIA2_TIMER_A) ← (unumber)(number) $88
-Inlining cast *((byte*) CIA2_INTERRUPT) ← (unumber)(number) $81
-Inlining cast *((byte*) CIA2_TIMER_A_CONTROL) ← (unumber)(number) 1
+Inlining cast *((const word*) CIA2_TIMER_A) ← (unumber)(number) $88
+Inlining cast *((const byte*) CIA2_INTERRUPT) ← (unumber)(number) $81
+Inlining cast *((const byte*) CIA2_TIMER_A_CONTROL) ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (word*) 56580
 Simplifying constant pointer cast (byte*) 56589
 Simplifying constant pointer cast (byte*) 56590
-Simplifying constant integer cast $7f
 Simplifying constant pointer cast (void()**) 792
 Simplifying constant pointer cast (byte*) 54296
-Simplifying constant integer cast $6100
 Simplifying constant integer cast $88
 Simplifying constant integer cast $81
 Simplifying constant integer cast 1
@@ -172,8 +152,6 @@ Simplifying constant integer cast $f
 Simplifying constant integer cast 4
 Simplifying constant integer cast $6100
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (word) $6100
 Finalized unsigned number type (byte) $88
 Finalized unsigned number type (byte) $81
 Finalized unsigned number type (byte) 1
@@ -182,7 +160,7 @@ Finalized unsigned number type (byte) 4
 Finalized unsigned number type (word) $6100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) nmi::$1 ← *((byte*) sample#4) & (byte) $f
-Inversing boolean not [39] (bool~) nmi2::$6 ← (byte~) nmi2::$2 != (byte~) nmi2::$4 from [38] (bool~) nmi2::$5 ← (byte~) nmi2::$2 == (byte~) nmi2::$4
+Inversing boolean not [31] (bool~) nmi2::$6 ← (byte~) nmi2::$2 != (byte~) nmi2::$4 from [30] (bool~) nmi2::$5 ← (byte~) nmi2::$2 == (byte~) nmi2::$4
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)(byte[SAMPLE_SIZE]) SAMPLE = (byte*) sample#0 (byte*) sample#7 
 Alias (byte*) sample#3 = (byte*) sample#6 (byte*) sample#8 
@@ -192,20 +170,12 @@ Identical Phi Values (byte*) sample#4 (byte*) sample#7
 Identical Phi Values (byte*) sample#5 (byte*) sample#7
 Identical Phi Values (byte*) sample#7 (byte*) sample#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) nmi2::$6 [40] if((byte~) nmi2::$2!=(byte~) nmi2::$4) goto nmi2::@1
+Simple Condition (bool~) nmi2::$6 [32] if((byte~) nmi2::$2!=(byte~) nmi2::$4) goto nmi2::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [13] (void()*~) main::$0 ← & interrupt(HARDWARE_ALL)(void()) nmi()
-Constant right-side identified [25] (void()*~) nmi::$2 ← & interrupt(HARDWARE_ALL)(void()) nmi2()
-Constant right-side identified [42] (void()*~) nmi2::$7 ← & interrupt(HARDWARE_ALL)(void()) nmi()
+Constant right-side identified [5] (void()*~) main::$0 ← & interrupt(HARDWARE_ALL)(void()) nmi()
+Constant right-side identified [17] (void()*~) nmi::$2 ← & interrupt(HARDWARE_ALL)(void()) nmi2()
+Constant right-side identified [34] (void()*~) nmi2::$7 ← & interrupt(HARDWARE_ALL)(void()) nmi()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const word*) CIA2_TIMER_A = (word*) 56580
-Constant (const byte*) CIA2_INTERRUPT = (byte*) 56589
-Constant (const byte*) CIA2_TIMER_A_CONTROL = (byte*) 56590
-Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
-Constant (const void()**) KERNEL_NMI = (void()**) 792
-Constant (const byte*) SID_VOLUME = (byte*) 54296
-Constant (const word) SAMPLE_SIZE = $6100
 Constant (const byte[SAMPLE_SIZE]) SAMPLE = kickasm {{ .import binary "moments_sample.bin"  }}
 Constant (const void()*) main::$0 = &nmi
 Constant (const void()*) nmi::$2 = &nmi2
@@ -803,10 +773,10 @@ FINAL SYMBOL TABLE
 (const byte*) CIA2_INTERRUPT = (byte*) 56589
 (const word*) CIA2_TIMER_A = (word*) 56580
 (const byte*) CIA2_TIMER_A_CONTROL = (byte*) 56590
-(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
 (const void()**) KERNEL_NMI = (void()**) 792
 (const byte[SAMPLE_SIZE]) SAMPLE = kickasm {{ .import binary "moments_sample.bin"  }}
-(const word) SAMPLE_SIZE = (word) $6100
+(const word) SAMPLE_SIZE = (number) $6100
 (const byte*) SID_VOLUME = (byte*) 54296
 (void()) main()
 (label) main::@return

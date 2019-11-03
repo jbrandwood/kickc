@@ -1,8 +1,8 @@
 Warning! Adding boolean cast to non-boolean condition *((byte*) print::msg + (byte) print::i)
 Identified constant variable (byte*) screen
 Identified constant variable (byte*) main::hello
-Inlined call call print (byte*) screen (byte*) main::hello 
-Inlined call call print (byte*~) main::$1 (byte*) main::hello 
+Inlined call call print (const byte*) screen (const byte*) main::hello 
+Inlined call call print (byte*~) main::$1 (const byte*) main::hello 
 Culled Empty Block (label) main::print1_@4
 Culled Empty Block (label) main::print1_@3
 Culled Empty Block (label) main::print1_@5
@@ -18,14 +18,12 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) screen ← ((byte*)) (number) $400
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) main::hello ← (const string) main::$3
-  (byte*) main::print1_at#0 ← (byte*) screen
-  (byte*) main::print1_msg#0 ← (byte*) main::hello
+  (byte*) main::print1_at#0 ← (const byte*) screen
+  (byte*) main::print1_msg#0 ← (const byte*) main::hello
   to:main::print1
 main::print1: scope:[main]  from main
   (byte*) main::print1_at#3 ← phi( main/(byte*) main::print1_at#0 )
@@ -51,9 +49,9 @@ main::print1_@2: scope:[main]  from main::print1_@1
   (byte) main::print1_i#1 ← ++ (byte) main::print1_i#3
   to:main::print1_@1
 main::@1: scope:[main]  from main::print1_@1
-  (byte*~) main::$1 ← (byte*) screen + (number) 2*(number) $28
+  (byte*~) main::$1 ← (const byte*) screen + (number) 2*(number) $28
   (byte*) main::print2_at#0 ← (byte*~) main::$1
-  (byte*) main::print2_msg#0 ← (byte*) main::hello
+  (byte*) main::print2_msg#0 ← (const byte*) main::hello
   to:main::print2
 main::print2: scope:[main]  from main::@1
   (byte*) main::print2_at#3 ← phi( main::@1/(byte*) main::print2_at#0 )
@@ -95,10 +93,9 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (byte*~) main::$1
-(const string) main::$3 = (string) "hello world!"
 (label) main::@1
 (label) main::@return
-(byte*) main::hello
+(const byte*) main::hello = (string) "hello world!"
 (label) main::print1
 (bool~) main::print1_$0
 (label) main::print1_@1
@@ -147,19 +144,18 @@ SYMBOL TABLE SSA
 (byte*) main::print2_msg#1
 (byte*) main::print2_msg#2
 (byte*) main::print2_msg#3
-(byte*) screen
+(const byte*) screen = (byte*)(number) $400
 
 Adding number conversion cast (unumber) 0 in (byte) main::print1_j#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) main::print1_i#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) main::print1_$0 ← (number) 0 != *((byte*) main::print1_msg#1 + (byte) main::print1_i#2)
 Adding number conversion cast (unumber) 2 in (byte) main::print1_j#1 ← (byte) main::print1_j#2 + (number) 2
-Adding number conversion cast (unumber) 2*$28 in (byte*~) main::$1 ← (byte*) screen + (number) 2*(number) $28
+Adding number conversion cast (unumber) 2*$28 in (byte*~) main::$1 ← (const byte*) screen + (number) 2*(number) $28
 Adding number conversion cast (unumber) 0 in (byte) main::print2_j#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) main::print2_i#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) main::print2_$0 ← (number) 0 != *((byte*) main::print2_msg#1 + (byte) main::print2_i#2)
 Adding number conversion cast (unumber) 2 in (byte) main::print2_j#1 ← (byte) main::print2_j#2 + (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) screen ← (byte*)(number) $400
 Inlining cast (byte) main::print1_j#0 ← (unumber)(number) 0
 Inlining cast (byte) main::print1_i#0 ← (unumber)(number) 0
 Inlining cast (byte) main::print2_j#0 ← (unumber)(number) 0
@@ -184,38 +180,37 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte*) main::hello = (byte*) main::print1_msg#0 (byte*) main::print1_msg#3 (byte*) main::print2_msg#0 (byte*) main::print2_msg#3 
+Alias (byte*) main::print1_msg#0 = (byte*) main::print1_msg#3 
 Alias (byte*) main::print1_at#0 = (byte*) main::print1_at#3 
 Alias (byte*) main::print1_msg#1 = (byte*) main::print1_msg#2 
 Alias (byte) main::print1_i#2 = (byte) main::print1_i#3 
 Alias (byte*) main::print1_at#1 = (byte*) main::print1_at#2 
 Alias (byte) main::print1_j#2 = (byte) main::print1_j#3 
 Alias (byte*) main::print2_at#0 = (byte*~) main::$1 (byte*) main::print2_at#3 
+Alias (byte*) main::print2_msg#0 = (byte*) main::print2_msg#3 
 Alias (byte*) main::print2_msg#1 = (byte*) main::print2_msg#2 
 Alias (byte) main::print2_i#2 = (byte) main::print2_i#3 
 Alias (byte*) main::print2_at#1 = (byte*) main::print2_at#2 
 Alias (byte) main::print2_j#2 = (byte) main::print2_j#3 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) main::print1_msg#1 (byte*) main::hello
+Identical Phi Values (byte*) main::print1_msg#1 (byte*) main::print1_msg#0
 Identical Phi Values (byte*) main::print1_at#1 (byte*) main::print1_at#0
-Identical Phi Values (byte*) main::print2_msg#1 (byte*) main::hello
+Identical Phi Values (byte*) main::print2_msg#1 (byte*) main::print2_msg#0
 Identical Phi Values (byte*) main::print2_at#1 (byte*) main::print2_at#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::print1_$0 [9] if((byte) 0!=*((byte*) main::hello + (byte) main::print1_i#2)) goto main::print1_@2
-Simple Condition (bool~) main::print2_$0 [22] if((byte) 0!=*((byte*) main::hello + (byte) main::print2_i#2)) goto main::print2_@2
+Simple Condition (bool~) main::print1_$0 [7] if((byte) 0!=*((byte*) main::print1_msg#0 + (byte) main::print1_i#2)) goto main::print1_@2
+Simple Condition (bool~) main::print2_$0 [20] if((byte) 0!=*((byte*) main::print2_msg#0 + (byte) main::print2_i#2)) goto main::print2_@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) screen = (byte*) 1024
-Constant (const byte*) main::hello = main::$3
+Constant right-side identified [12] (byte*) main::print2_at#0 ← (const byte*) screen + (byte)(number) 2*(number) $28
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) main::print1_at#0 = screen
+Constant (const byte*) main::print1_msg#0 = main::hello
 Constant (const byte) main::print1_j#0 = 0
 Constant (const byte) main::print1_i#0 = 0
+Constant (const byte*) main::print2_at#0 = screen+(byte)2*$28
+Constant (const byte*) main::print2_msg#0 = main::hello
 Constant (const byte) main::print2_j#0 = 0
 Constant (const byte) main::print2_i#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::print1_at#0 = screen
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [5] (byte*) main::print2_at#0 ← (const byte*) screen + (byte)(number) 2*(number) $28
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::print2_at#0 = screen+(byte)2*$28
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::print1_j#0
 Inlining constant with var siblings (const byte) main::print1_i#0
@@ -223,8 +218,9 @@ Inlining constant with var siblings (const byte) main::print2_j#0
 Inlining constant with var siblings (const byte) main::print2_i#0
 Constant inlined main::print2_j#0 = (byte) 0
 Constant inlined main::print1_at#0 = (const byte*) screen
-Constant inlined main::$3 = (const byte*) main::hello
+Constant inlined main::print2_msg#0 = (const byte*) main::hello
 Constant inlined main::print2_i#0 = (byte) 0
+Constant inlined main::print1_msg#0 = (const byte*) main::hello
 Constant inlined main::print1_i#0 = (byte) 0
 Constant inlined main::print1_j#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining

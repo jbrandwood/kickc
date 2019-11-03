@@ -10,6 +10,7 @@ Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_at::str)
 Warning! Adding boolean cast to non-boolean sub-expression (byte) print_str_lines::ch
 Identified constant variable (byte*) HEAP_TOP
+Identified constant variable (byte*) place_sprites::sprites_ptr
 Identified constant variable (byte*) gen_sintab::f_2pi
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call call prepareMEM (word) setFAC::w 
@@ -24,6 +25,7 @@ Inlined call call prepareMEM (word~) pwrMEMbyFAC::$0
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) setFAC::prepareMEM1_@return
 Culled Empty Block (label) @6
@@ -114,22 +116,6 @@ Culled Empty Block (label) gen_sintab::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) PROCPORT ← ((byte*)) (number) 1
-  (byte*) CHARGEN ← ((byte*)) (number) $d000
-  (byte*) SPRITES_XPOS ← ((byte*)) (number) $d000
-  (byte*) SPRITES_YPOS ← ((byte*)) (number) $d001
-  (byte*) SPRITES_XMSB ← ((byte*)) (number) $d010
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) SPRITES_ENABLE ← ((byte*)) (number) $d015
-  (byte*) SPRITES_EXPAND_Y ← ((byte*)) (number) $d017
-  (byte*) SPRITES_EXPAND_X ← ((byte*)) (number) $d01d
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) SPRITES_COLS ← ((byte*)) (number) $d027
-  (byte*) COLS ← ((byte*)) (number) $d800
-  to:@4
-@4: scope:[]  from @begin
-  (byte*) memLo ← ((byte*)) (number) $fe
-  (byte*) memHi ← ((byte*)) (number) $ff
   to:@67
 
 (void()) setFAC((word) setFAC::w)
@@ -140,9 +126,9 @@ setFAC: scope:[setFAC]  from gen_sintab gen_sintab::@12 gen_sintab::@2 gen_sinta
 setFAC::prepareMEM1: scope:[setFAC]  from setFAC
   (word) setFAC::prepareMEM1_mem#1 ← phi( setFAC/(word) setFAC::prepareMEM1_mem#0 )
   (byte~) setFAC::prepareMEM1_$0 ← < (word) setFAC::prepareMEM1_mem#1
-  *((byte*) memLo) ← (byte~) setFAC::prepareMEM1_$0
+  *((const byte*) memLo) ← (byte~) setFAC::prepareMEM1_$0
   (byte~) setFAC::prepareMEM1_$1 ← > (word) setFAC::prepareMEM1_mem#1
-  *((byte*) memHi) ← (byte~) setFAC::prepareMEM1_$1
+  *((const byte*) memHi) ← (byte~) setFAC::prepareMEM1_$1
   to:setFAC::@1
 setFAC::@1: scope:[setFAC]  from setFAC::prepareMEM1
   asm { ldymemLo ldamemHi jsr$b391  }
@@ -154,7 +140,7 @@ setFAC::@return: scope:[setFAC]  from setFAC::@1
 (word()) getFAC()
 getFAC: scope:[getFAC]  from gen_sintab::@25
   asm { jsr$b1aa stymemLo stamemHi  }
-  (word) getFAC::w#0 ← ((word)) { *((byte*) memHi), *((byte*) memLo) }
+  (word) getFAC::w#0 ← ((word)) { *((const byte*) memHi), *((const byte*) memLo) }
   (word) getFAC::return#0 ← (word) getFAC::w#0
   to:getFAC::@return
 getFAC::@return: scope:[getFAC]  from getFAC
@@ -180,9 +166,9 @@ setMEMtoFAC: scope:[setMEMtoFAC]  from gen_sintab::@11 gen_sintab::@14 gen_sinta
 setMEMtoFAC::prepareMEM1: scope:[setMEMtoFAC]  from setMEMtoFAC
   (word) setMEMtoFAC::prepareMEM1_mem#1 ← phi( setMEMtoFAC/(word) setMEMtoFAC::prepareMEM1_mem#0 )
   (byte~) setMEMtoFAC::prepareMEM1_$0 ← < (word) setMEMtoFAC::prepareMEM1_mem#1
-  *((byte*) memLo) ← (byte~) setMEMtoFAC::prepareMEM1_$0
+  *((const byte*) memLo) ← (byte~) setMEMtoFAC::prepareMEM1_$0
   (byte~) setMEMtoFAC::prepareMEM1_$1 ← > (word) setMEMtoFAC::prepareMEM1_mem#1
-  *((byte*) memHi) ← (byte~) setMEMtoFAC::prepareMEM1_$1
+  *((const byte*) memHi) ← (byte~) setMEMtoFAC::prepareMEM1_$1
   to:setMEMtoFAC::@1
 setMEMtoFAC::@1: scope:[setMEMtoFAC]  from setMEMtoFAC::prepareMEM1
   asm { ldxmemLo ldymemHi jsr$bbd4  }
@@ -200,9 +186,9 @@ addMEMtoFAC: scope:[addMEMtoFAC]  from gen_sintab::@15 gen_sintab::@24
 addMEMtoFAC::prepareMEM1: scope:[addMEMtoFAC]  from addMEMtoFAC
   (word) addMEMtoFAC::prepareMEM1_mem#1 ← phi( addMEMtoFAC/(word) addMEMtoFAC::prepareMEM1_mem#0 )
   (byte~) addMEMtoFAC::prepareMEM1_$0 ← < (word) addMEMtoFAC::prepareMEM1_mem#1
-  *((byte*) memLo) ← (byte~) addMEMtoFAC::prepareMEM1_$0
+  *((const byte*) memLo) ← (byte~) addMEMtoFAC::prepareMEM1_$0
   (byte~) addMEMtoFAC::prepareMEM1_$1 ← > (word) addMEMtoFAC::prepareMEM1_mem#1
-  *((byte*) memHi) ← (byte~) addMEMtoFAC::prepareMEM1_$1
+  *((const byte*) memHi) ← (byte~) addMEMtoFAC::prepareMEM1_$1
   to:addMEMtoFAC::@1
 addMEMtoFAC::@1: scope:[addMEMtoFAC]  from addMEMtoFAC::prepareMEM1
   asm { ldamemLo ldymemHi jsr$b867  }
@@ -228,9 +214,9 @@ divMEMbyFAC: scope:[divMEMbyFAC]  from gen_sintab::@13 gen_sintab::@21
 divMEMbyFAC::prepareMEM1: scope:[divMEMbyFAC]  from divMEMbyFAC
   (word) divMEMbyFAC::prepareMEM1_mem#1 ← phi( divMEMbyFAC/(word) divMEMbyFAC::prepareMEM1_mem#0 )
   (byte~) divMEMbyFAC::prepareMEM1_$0 ← < (word) divMEMbyFAC::prepareMEM1_mem#1
-  *((byte*) memLo) ← (byte~) divMEMbyFAC::prepareMEM1_$0
+  *((const byte*) memLo) ← (byte~) divMEMbyFAC::prepareMEM1_$0
   (byte~) divMEMbyFAC::prepareMEM1_$1 ← > (word) divMEMbyFAC::prepareMEM1_mem#1
-  *((byte*) memHi) ← (byte~) divMEMbyFAC::prepareMEM1_$1
+  *((const byte*) memHi) ← (byte~) divMEMbyFAC::prepareMEM1_$1
   to:divMEMbyFAC::@1
 divMEMbyFAC::@1: scope:[divMEMbyFAC]  from divMEMbyFAC::prepareMEM1
   asm { ldamemLo ldymemHi jsr$bb0f  }
@@ -248,9 +234,9 @@ mulFACbyMEM: scope:[mulFACbyMEM]  from gen_sintab::@18 gen_sintab::@23
 mulFACbyMEM::prepareMEM1: scope:[mulFACbyMEM]  from mulFACbyMEM
   (word) mulFACbyMEM::prepareMEM1_mem#1 ← phi( mulFACbyMEM/(word) mulFACbyMEM::prepareMEM1_mem#0 )
   (byte~) mulFACbyMEM::prepareMEM1_$0 ← < (word) mulFACbyMEM::prepareMEM1_mem#1
-  *((byte*) memLo) ← (byte~) mulFACbyMEM::prepareMEM1_$0
+  *((const byte*) memLo) ← (byte~) mulFACbyMEM::prepareMEM1_$0
   (byte~) mulFACbyMEM::prepareMEM1_$1 ← > (word) mulFACbyMEM::prepareMEM1_mem#1
-  *((byte*) memHi) ← (byte~) mulFACbyMEM::prepareMEM1_$1
+  *((const byte*) memHi) ← (byte~) mulFACbyMEM::prepareMEM1_$1
   to:mulFACbyMEM::@1
 mulFACbyMEM::@1: scope:[mulFACbyMEM]  from mulFACbyMEM::prepareMEM1
   asm { ldamemLo ldymemHi jsr$ba28  }
@@ -266,13 +252,9 @@ sinFAC: scope:[sinFAC]  from gen_sintab::@22
 sinFAC::@return: scope:[sinFAC]  from sinFAC
   return 
   to:@return
-@67: scope:[]  from @4
-  (byte) sinlen_x ← (number) $dd
+@67: scope:[]  from @begin
   (byte[$dd]) sintab_x ← { fill( $dd, 0) }
-  (byte) sinlen_y ← (number) $c5
   (byte[$c5]) sintab_y ← { fill( $c5, 0) }
-  (byte*) sprites ← ((byte*)) (number) $2000
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@70
 
 (void()) main()
@@ -296,7 +278,7 @@ main::@2: scope:[main]  from main::@2 main::@5 main::@6
   (byte*) progress_cursor#42 ← phi( main::@2/(byte*) progress_cursor#42 main::@5/(byte*) progress_cursor#0 main::@6/(byte*) progress_cursor#30 )
   (byte) sin_idx_y#18 ← phi( main::@2/(byte) sin_idx_y#18 main::@5/(byte) sin_idx_y#20 main::@6/(byte) sin_idx_y#0 )
   (byte) sin_idx_x#17 ← phi( main::@2/(byte) sin_idx_x#17 main::@5/(byte) sin_idx_x#22 main::@6/(byte) sin_idx_x#0 )
-  (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
+  (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
   if((bool~) main::$1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -342,12 +324,12 @@ init::@1: scope:[init]  from init::@1 init::@3
   (byte) progress_idx#46 ← phi( init::@1/(byte) progress_idx#46 init::@3/(byte) progress_idx#49 )
   (byte*) progress_cursor#46 ← phi( init::@1/(byte*) progress_cursor#46 init::@3/(byte*) progress_cursor#49 )
   (byte) init::i#2 ← phi( init::@1/(byte) init::i#1 init::@3/(byte) init::i#0 )
-  *((byte*) COLS + (byte) init::i#2) ← (number) 0
-  (number~) init::$9 ← (number) $28 + (byte) init::i#2
-  *((byte*) COLS + (number~) init::$9) ← (number) $b
+  *((const byte*) COLS + (byte) init::i#2) ← (number) 0
+  (number~) init::$8 ← (number) $28 + (byte) init::i#2
+  *((const byte*) COLS + (number~) init::$8) ← (number) $b
   (byte) init::i#1 ← (byte) init::i#2 + rangenext(0,$27)
-  (bool~) init::$10 ← (byte) init::i#1 != rangelast(0,$27)
-  if((bool~) init::$10) goto init::@1
+  (bool~) init::$9 ← (byte) init::i#1 != rangelast(0,$27)
+  if((bool~) init::$9) goto init::@1
   to:init::@2
 init::@2: scope:[init]  from init::@1
   (byte) progress_idx#43 ← phi( init::@1/(byte) progress_idx#46 )
@@ -362,7 +344,7 @@ init::@4: scope:[init]  from init::@2
 init::@5: scope:[init]  from init::@4
   (byte) progress_idx#32 ← phi( init::@4/(byte) progress_idx#38 )
   (byte*) progress_cursor#31 ← phi( init::@4/(byte*) progress_cursor#38 )
-  (byte*) progress_init::line#0 ← (byte*) SCREEN
+  (byte*) progress_init::line#0 ← (const byte*) SCREEN
   call progress_init 
   to:init::@6
 init::@6: scope:[init]  from init::@5
@@ -371,7 +353,7 @@ init::@6: scope:[init]  from init::@5
   (byte*) progress_cursor#2 ← (byte*) progress_cursor#17
   (byte) progress_idx#2 ← (byte) progress_idx#18
   (byte*) gen_sintab::sintab#0 ← (byte[$dd]) sintab_x
-  (byte) gen_sintab::length#0 ← (byte) sinlen_x
+  (byte) gen_sintab::length#0 ← (const byte) sinlen_x
   (byte) gen_sintab::min#0 ← (number) 0
   (byte) gen_sintab::max#0 ← (number) $ff
   call gen_sintab 
@@ -381,8 +363,7 @@ init::@7: scope:[init]  from init::@6
   (byte) progress_idx#19 ← phi( init::@6/(byte) progress_idx#14 )
   (byte) progress_idx#3 ← (byte) progress_idx#19
   (byte*) progress_cursor#3 ← (byte*) progress_cursor#18
-  (byte*~) init::$5 ← (byte*) SCREEN + (number) $28
-  (byte*) progress_init::line#1 ← (byte*~) init::$5
+  (byte*) progress_init::line#1 ← (const byte*) SCREEN+(number) $28
   call progress_init 
   to:init::@8
 init::@8: scope:[init]  from init::@7
@@ -391,7 +372,7 @@ init::@8: scope:[init]  from init::@7
   (byte*) progress_cursor#4 ← (byte*) progress_cursor#19
   (byte) progress_idx#4 ← (byte) progress_idx#20
   (byte*) gen_sintab::sintab#1 ← (byte[$c5]) sintab_y
-  (byte) gen_sintab::length#1 ← (byte) sinlen_y
+  (byte) gen_sintab::length#1 ← (const byte) sinlen_y
   (byte) gen_sintab::min#1 ← (number) $32
   (byte) gen_sintab::max#1 ← (number) $d0
   call gen_sintab 
@@ -417,13 +398,12 @@ init::@return: scope:[init]  from init::@10
 
 (void()) clear_screen()
 clear_screen: scope:[clear_screen]  from init init::@9
-  (byte*) clear_screen::sc#0 ← (byte*) SCREEN
+  (byte*) clear_screen::sc#0 ← (const byte*) SCREEN
   to:clear_screen::@1
 clear_screen::@1: scope:[clear_screen]  from clear_screen clear_screen::@2
   (byte*) clear_screen::sc#2 ← phi( clear_screen/(byte*) clear_screen::sc#0 clear_screen::@2/(byte*) clear_screen::sc#1 )
-  (byte*~) clear_screen::$0 ← (byte*) SCREEN + (number) $3e8
-  (bool~) clear_screen::$1 ← (byte*) clear_screen::sc#2 < (byte*~) clear_screen::$0
-  if((bool~) clear_screen::$1) goto clear_screen::@2
+  (bool~) clear_screen::$0 ← (byte*) clear_screen::sc#2 < (const byte*) SCREEN+(number) $3e8
+  if((bool~) clear_screen::$0) goto clear_screen::@2
   to:clear_screen::@return
 clear_screen::@2: scope:[clear_screen]  from clear_screen::@1
   (byte*) clear_screen::sc#3 ← phi( clear_screen::@1/(byte*) clear_screen::sc#2 )
@@ -434,7 +414,7 @@ clear_screen::@return: scope:[clear_screen]  from clear_screen::@1
   return 
   to:@return
 @70: scope:[]  from @67
-  (byte*) progress_cursor#7 ← (byte*) SCREEN
+  (byte*) progress_cursor#7 ← (const byte*) SCREEN
   (byte) progress_idx#7 ← (number) 0
   to:@72
 
@@ -491,7 +471,7 @@ progress_inc::@return: scope:[progress_inc]  from progress_inc::@1
 anim: scope:[anim]  from main::@3
   (byte) sin_idx_y#9 ← phi( main::@3/(byte) sin_idx_y#13 )
   (byte) sin_idx_x#9 ← phi( main::@3/(byte) sin_idx_x#13 )
-  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   (byte) anim::xidx#0 ← (byte) sin_idx_x#9
   (byte) anim::yidx#0 ← (byte) sin_idx_y#9
   (byte) anim::j2#0 ← (number) $c
@@ -514,11 +494,11 @@ anim::@4: scope:[anim]  from anim anim::@6
   (number~) anim::$10 ← (number~) anim::$8 | (byte~) anim::$9
   (byte) anim::x_msb#1 ← (number~) anim::$10
   (byte~) anim::$11 ← < (word) anim::x#0
-  *((byte*) SPRITES_XPOS + (byte) anim::j2#2) ← (byte~) anim::$11
-  *((byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((byte[$c5]) sintab_y + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_XPOS + (byte) anim::j2#2) ← (byte~) anim::$11
+  *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((byte[$c5]) sintab_y + (byte) anim::yidx#3)
   (number~) anim::$12 ← (byte) anim::xidx#3 + (number) $a
   (byte) anim::xidx#1 ← (number~) anim::$12
-  (bool~) anim::$13 ← (byte) anim::xidx#1 >= (byte) sinlen_x
+  (bool~) anim::$13 ← (byte) anim::xidx#1 >= (const byte) sinlen_x
   (bool~) anim::$14 ← ! (bool~) anim::$13
   if((bool~) anim::$14) goto anim::@5
   to:anim::@7
@@ -532,7 +512,7 @@ anim::@5: scope:[anim]  from anim::@4 anim::@7
   (byte) anim::yidx#4 ← phi( anim::@4/(byte) anim::yidx#3 anim::@7/(byte) anim::yidx#7 )
   (number~) anim::$16 ← (byte) anim::yidx#4 + (number) 8
   (byte) anim::yidx#1 ← (number~) anim::$16
-  (bool~) anim::$17 ← (byte) anim::yidx#1 >= (byte) sinlen_y
+  (bool~) anim::$17 ← (byte) anim::yidx#1 >= (const byte) sinlen_y
   (bool~) anim::$18 ← ! (bool~) anim::$17
   if((bool~) anim::$18) goto anim::@6
   to:anim::@8
@@ -544,7 +524,7 @@ anim::@7: scope:[anim]  from anim::@4
   (byte) anim::j2#6 ← phi( anim::@4/(byte) anim::j2#2 )
   (byte) anim::yidx#7 ← phi( anim::@4/(byte) anim::yidx#3 )
   (byte) anim::xidx#4 ← phi( anim::@4/(byte) anim::xidx#1 )
-  (byte~) anim::$15 ← (byte) anim::xidx#4 - (byte) sinlen_x
+  (byte~) anim::$15 ← (byte) anim::xidx#4 - (const byte) sinlen_x
   (byte) anim::xidx#2 ← (byte~) anim::$15
   to:anim::@5
 anim::@6: scope:[anim]  from anim::@5 anim::@8
@@ -569,16 +549,16 @@ anim::@8: scope:[anim]  from anim::@5
   (byte) anim::j#4 ← phi( anim::@5/(byte) anim::j#3 )
   (byte) anim::j2#5 ← phi( anim::@5/(byte) anim::j2#4 )
   (byte) anim::yidx#5 ← phi( anim::@5/(byte) anim::yidx#1 )
-  (byte~) anim::$19 ← (byte) anim::yidx#5 - (byte) sinlen_y
+  (byte~) anim::$19 ← (byte) anim::yidx#5 - (const byte) sinlen_y
   (byte) anim::yidx#2 ← (byte~) anim::$19
   to:anim::@6
 anim::@9: scope:[anim]  from anim::@6
   (byte) sin_idx_y#15 ← phi( anim::@6/(byte) sin_idx_y#19 )
   (byte) sin_idx_x#10 ← phi( anim::@6/(byte) sin_idx_x#14 )
   (byte) anim::x_msb#3 ← phi( anim::@6/(byte) anim::x_msb#4 )
-  *((byte*) SPRITES_XMSB) ← (byte) anim::x_msb#3
+  *((const byte*) SPRITES_XMSB) ← (byte) anim::x_msb#3
   (byte) sin_idx_x#3 ← ++ (byte) sin_idx_x#10
-  (bool~) anim::$1 ← (byte) sin_idx_x#3 >= (byte) sinlen_x
+  (bool~) anim::$1 ← (byte) sin_idx_x#3 >= (const byte) sinlen_x
   (bool~) anim::$2 ← ! (bool~) anim::$1
   if((bool~) anim::$2) goto anim::@1
   to:anim::@10
@@ -586,7 +566,7 @@ anim::@1: scope:[anim]  from anim::@10 anim::@9
   (byte) sin_idx_x#20 ← phi( anim::@10/(byte) sin_idx_x#4 anim::@9/(byte) sin_idx_x#3 )
   (byte) sin_idx_y#10 ← phi( anim::@10/(byte) sin_idx_y#14 anim::@9/(byte) sin_idx_y#15 )
   (byte) sin_idx_y#3 ← ++ (byte) sin_idx_y#10
-  (bool~) anim::$3 ← (byte) sin_idx_y#3 >= (byte) sinlen_y
+  (bool~) anim::$3 ← (byte) sin_idx_y#3 >= (const byte) sinlen_y
   (bool~) anim::$4 ← ! (bool~) anim::$3
   if((bool~) anim::$4) goto anim::@2
   to:anim::@3
@@ -597,7 +577,7 @@ anim::@10: scope:[anim]  from anim::@9
 anim::@2: scope:[anim]  from anim::@1 anim::@3
   (byte) sin_idx_y#16 ← phi( anim::@1/(byte) sin_idx_y#3 anim::@3/(byte) sin_idx_y#4 )
   (byte) sin_idx_x#15 ← phi( anim::@1/(byte) sin_idx_x#20 anim::@3/(byte) sin_idx_x#21 )
-  *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:anim::@return
 anim::@3: scope:[anim]  from anim::@1
   (byte) sin_idx_x#21 ← phi( anim::@1/(byte) sin_idx_x#20 )
@@ -613,15 +593,13 @@ anim::@return: scope:[anim]  from anim::@2
 
 (void()) place_sprites()
 place_sprites: scope:[place_sprites]  from init::@2
-  *((byte*) SPRITES_ENABLE) ← (number) $7f
-  *((byte*) SPRITES_EXPAND_X) ← (number) $7f
-  *((byte*) SPRITES_EXPAND_Y) ← (number) $7f
-  (byte*~) place_sprites::$0 ← (byte*) SCREEN + (number) $3f8
-  (byte*) place_sprites::sprites_ptr#0 ← (byte*~) place_sprites::$0
-  (word~) place_sprites::$1 ← ((word)) (byte*) sprites
-  (number~) place_sprites::$2 ← (word~) place_sprites::$1 / (number) $40
-  (byte~) place_sprites::$3 ← ((byte)) (number~) place_sprites::$2
-  (byte) place_sprites::spr_id#0 ← (byte~) place_sprites::$3
+  *((const byte*) SPRITES_ENABLE) ← (number) $7f
+  *((const byte*) SPRITES_EXPAND_X) ← (number) $7f
+  *((const byte*) SPRITES_EXPAND_Y) ← (number) $7f
+  (word~) place_sprites::$0 ← ((word)) (const byte*) sprites
+  (number~) place_sprites::$1 ← (word~) place_sprites::$0 / (number) $40
+  (byte~) place_sprites::$2 ← ((byte)) (number~) place_sprites::$1
+  (byte) place_sprites::spr_id#0 ← (byte~) place_sprites::$2
   (byte) place_sprites::spr_x#0 ← (number) $3c
   (byte) place_sprites::j2#0 ← (number) 0
   (byte) place_sprites::col#0 ← (number) 5
@@ -632,22 +610,21 @@ place_sprites::@1: scope:[place_sprites]  from place_sprites place_sprites::@1
   (byte) place_sprites::j2#3 ← phi( place_sprites/(byte) place_sprites::j2#0 place_sprites::@1/(byte) place_sprites::j2#2 )
   (byte) place_sprites::spr_x#2 ← phi( place_sprites/(byte) place_sprites::spr_x#0 place_sprites::@1/(byte) place_sprites::spr_x#1 )
   (byte) place_sprites::j#2 ← phi( place_sprites/(byte) place_sprites::j#0 place_sprites::@1/(byte) place_sprites::j#1 )
-  (byte*) place_sprites::sprites_ptr#1 ← phi( place_sprites/(byte*) place_sprites::sprites_ptr#0 place_sprites::@1/(byte*) place_sprites::sprites_ptr#1 )
   (byte) place_sprites::spr_id#2 ← phi( place_sprites/(byte) place_sprites::spr_id#0 place_sprites::@1/(byte) place_sprites::spr_id#1 )
-  *((byte*) place_sprites::sprites_ptr#1 + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2
+  *((const byte*) place_sprites::sprites_ptr + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2
   (byte) place_sprites::spr_id#1 ← ++ (byte) place_sprites::spr_id#2
-  *((byte*) SPRITES_XPOS + (byte) place_sprites::j2#3) ← (byte) place_sprites::spr_x#2
-  *((byte*) SPRITES_YPOS + (byte) place_sprites::j2#3) ← (number) $50
-  *((byte*) SPRITES_COLS + (byte) place_sprites::j#2) ← (byte) place_sprites::col#2
-  (number~) place_sprites::$4 ← (byte) place_sprites::spr_x#2 + (number) $20
-  (byte) place_sprites::spr_x#1 ← (number~) place_sprites::$4
-  (number~) place_sprites::$5 ← (byte) place_sprites::col#2 ^ (number) 7^(number) 5
-  (byte) place_sprites::col#1 ← (number~) place_sprites::$5
+  *((const byte*) SPRITES_XPOS + (byte) place_sprites::j2#3) ← (byte) place_sprites::spr_x#2
+  *((const byte*) SPRITES_YPOS + (byte) place_sprites::j2#3) ← (number) $50
+  *((const byte*) SPRITES_COLS + (byte) place_sprites::j#2) ← (byte) place_sprites::col#2
+  (number~) place_sprites::$3 ← (byte) place_sprites::spr_x#2 + (number) $20
+  (byte) place_sprites::spr_x#1 ← (number~) place_sprites::$3
+  (number~) place_sprites::$4 ← (byte) place_sprites::col#2 ^ (number) 7^(number) 5
+  (byte) place_sprites::col#1 ← (number~) place_sprites::$4
   (byte) place_sprites::j2#1 ← ++ (byte) place_sprites::j2#3
   (byte) place_sprites::j2#2 ← ++ (byte) place_sprites::j2#1
   (byte) place_sprites::j#1 ← (byte) place_sprites::j#2 + rangenext(0,6)
-  (bool~) place_sprites::$6 ← (byte) place_sprites::j#1 != rangelast(0,6)
-  if((bool~) place_sprites::$6) goto place_sprites::@1
+  (bool~) place_sprites::$5 ← (byte) place_sprites::j#1 != rangelast(0,6)
+  if((bool~) place_sprites::$5) goto place_sprites::@1
   to:place_sprites::@return
 place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
   return 
@@ -655,14 +632,13 @@ place_sprites::@return: scope:[place_sprites]  from place_sprites::@1
 
 (void()) gen_sprites()
 gen_sprites: scope:[gen_sprites]  from init::@4
-  (byte[]) gen_sprites::cml ← (const string) gen_sprites::$3
-  (byte*) gen_sprites::spr#0 ← (byte*) sprites
+  (byte*) gen_sprites::spr#0 ← (const byte*) sprites
   (byte) gen_sprites::i#0 ← (byte) 0
   to:gen_sprites::@1
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
   (byte*) gen_sprites::spr#2 ← phi( gen_sprites/(byte*) gen_sprites::spr#0 gen_sprites::@3/(byte*) gen_sprites::spr#1 )
   (byte) gen_sprites::i#2 ← phi( gen_sprites/(byte) gen_sprites::i#0 gen_sprites::@3/(byte) gen_sprites::i#1 )
-  (byte) gen_chargen_sprite::ch#0 ← *((byte[]) gen_sprites::cml + (byte) gen_sprites::i#2)
+  (byte) gen_chargen_sprite::ch#0 ← *((const byte[]) gen_sprites::cml + (byte) gen_sprites::i#2)
   (byte*) gen_chargen_sprite::sprite#0 ← (byte*) gen_sprites::spr#2
   call gen_chargen_sprite 
   to:gen_sprites::@3
@@ -685,10 +661,10 @@ gen_chargen_sprite: scope:[gen_chargen_sprite]  from gen_sprites::@1
   (byte) gen_chargen_sprite::ch#1 ← phi( gen_sprites::@1/(byte) gen_chargen_sprite::ch#0 )
   (word~) gen_chargen_sprite::$0 ← ((word)) (byte) gen_chargen_sprite::ch#1
   (number~) gen_chargen_sprite::$1 ← (word~) gen_chargen_sprite::$0 * (number) 8
-  (byte*~) gen_chargen_sprite::$2 ← (byte*) CHARGEN + (number~) gen_chargen_sprite::$1
+  (byte*~) gen_chargen_sprite::$2 ← (const byte*) CHARGEN + (number~) gen_chargen_sprite::$1
   (byte*) gen_chargen_sprite::chargen#0 ← (byte*~) gen_chargen_sprite::$2
   asm { sei  }
-  *((byte*) PROCPORT) ← (number) $32
+  *((const byte*) PROCPORT) ← (number) $32
   (byte) gen_chargen_sprite::y#0 ← (byte) 0
   to:gen_chargen_sprite::@1
 gen_chargen_sprite::@1: scope:[gen_chargen_sprite]  from gen_chargen_sprite gen_chargen_sprite::@8
@@ -808,7 +784,7 @@ gen_chargen_sprite::@8: scope:[gen_chargen_sprite]  from gen_chargen_sprite::@7
   if((bool~) gen_chargen_sprite::$14) goto gen_chargen_sprite::@1
   to:gen_chargen_sprite::@9
 gen_chargen_sprite::@9: scope:[gen_chargen_sprite]  from gen_chargen_sprite::@8
-  *((byte*) PROCPORT) ← (number) $37
+  *((const byte*) PROCPORT) ← (number) $37
   asm { cli  }
   to:gen_chargen_sprite::@return
 gen_chargen_sprite::@return: scope:[gen_chargen_sprite]  from gen_chargen_sprite::@9
@@ -826,7 +802,6 @@ gen_sintab: scope:[gen_sintab]  from init::@6 init::@8
   (byte[]) gen_sintab::f_i ← { (number) 0, (number) 0, (number) 0, (number) 0, (number) 0 }
   (byte[]) gen_sintab::f_min ← { (number) 0, (number) 0, (number) 0, (number) 0, (number) 0 }
   (byte[]) gen_sintab::f_amp ← { (number) 0, (number) 0, (number) 0, (number) 0, (number) 0 }
-  (byte*) gen_sintab::f_2pi ← ((byte*)) (number) $e2e5
   (word~) gen_sintab::$0 ← ((word)) (byte) gen_sintab::max#2
   (word) setFAC::w#0 ← (word~) gen_sintab::$0
   call setFAC 
@@ -944,7 +919,7 @@ gen_sintab::@18: scope:[gen_sintab]  from gen_sintab::@2
   (byte) gen_sintab::i#13 ← phi( gen_sintab::@2/(byte) gen_sintab::i#3 )
   (byte*) gen_sintab::sintab#10 ← phi( gen_sintab::@2/(byte*) gen_sintab::sintab#11 )
   (byte) gen_sintab::length#8 ← phi( gen_sintab::@2/(byte) gen_sintab::length#11 )
-  (byte*) mulFACbyMEM::mem#0 ← (byte*) gen_sintab::f_2pi
+  (byte*) mulFACbyMEM::mem#0 ← (const byte*) gen_sintab::f_2pi
   call mulFACbyMEM 
   to:gen_sintab::@19
 gen_sintab::@19: scope:[gen_sintab]  from gen_sintab::@18
@@ -1059,7 +1034,6 @@ gen_sintab::@return: scope:[gen_sintab]  from gen_sintab::@1
 @end: scope:[]  from @78
 
 SYMBOL TABLE SSA
-(label) @4
 (label) @67
 (label) @70
 (label) @72
@@ -1067,23 +1041,23 @@ SYMBOL TABLE SSA
 (label) @78
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
-(byte*) CHARGEN
-(byte*) COLS
-(byte*) PROCPORT
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) CHARGEN = (byte*)(number) $d000
+(const byte*) COLS = (byte*)(number) $d800
+(const byte*) PROCPORT = (byte*)(number) 1
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(byte*) RASTER
-(byte*) SCREEN
-(byte*) SPRITES_COLS
-(byte*) SPRITES_ENABLE
-(byte*) SPRITES_EXPAND_X
-(byte*) SPRITES_EXPAND_Y
-(byte*) SPRITES_XMSB
-(byte*) SPRITES_XPOS
-(byte*) SPRITES_YPOS
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte*) SPRITES_COLS = (byte*)(number) $d027
+(const byte*) SPRITES_ENABLE = (byte*)(number) $d015
+(const byte*) SPRITES_EXPAND_X = (byte*)(number) $d01d
+(const byte*) SPRITES_EXPAND_Y = (byte*)(number) $d017
+(const byte*) SPRITES_XMSB = (byte*)(number) $d010
+(const byte*) SPRITES_XPOS = (byte*)(number) $d000
+(const byte*) SPRITES_YPOS = (byte*)(number) $d001
 (void()) addMEMtoFAC((byte*) addMEMtoFAC::mem)
 (word~) addMEMtoFAC::$0
 (label) addMEMtoFAC::@1
@@ -1176,8 +1150,7 @@ SYMBOL TABLE SSA
 (byte) anim::yidx#6
 (byte) anim::yidx#7
 (void()) clear_screen()
-(byte*~) clear_screen::$0
-(bool~) clear_screen::$1
+(bool~) clear_screen::$0
 (label) clear_screen::@1
 (label) clear_screen::@2
 (label) clear_screen::@return
@@ -1353,7 +1326,7 @@ SYMBOL TABLE SSA
 (label) gen_sintab::@8
 (label) gen_sintab::@9
 (label) gen_sintab::@return
-(byte*) gen_sintab::f_2pi
+(const byte*) gen_sintab::f_2pi = (byte*)(number) $e2e5
 (byte[]) gen_sintab::f_amp
 (byte[]) gen_sintab::f_i
 (byte[]) gen_sintab::f_min
@@ -1439,11 +1412,10 @@ SYMBOL TABLE SSA
 (void()) gen_sprites()
 (byte*~) gen_sprites::$1
 (bool~) gen_sprites::$2
-(const string) gen_sprites::$3 = (string) "camelot"z
 (label) gen_sprites::@1
 (label) gen_sprites::@3
 (label) gen_sprites::@return
-(byte[]) gen_sprites::cml
+(const byte[]) gen_sprites::cml = (string) "camelot"z
 (byte) gen_sprites::i
 (byte) gen_sprites::i#0
 (byte) gen_sprites::i#1
@@ -1465,9 +1437,8 @@ SYMBOL TABLE SSA
 (word) getFAC::w
 (word) getFAC::w#0
 (void()) init()
-(bool~) init::$10
-(byte*~) init::$5
-(number~) init::$9
+(number~) init::$8
+(bool~) init::$9
 (label) init::@1
 (label) init::@10
 (label) init::@2
@@ -1490,8 +1461,8 @@ SYMBOL TABLE SSA
 (label) main::@5
 (label) main::@6
 (label) main::@return
-(byte*) memHi
-(byte*) memLo
+(const byte*) memHi = (byte*)(number) $ff
+(const byte*) memLo = (byte*)(number) $fe
 (void()) mulFACbyMEM((byte*) mulFACbyMEM::mem)
 (word~) mulFACbyMEM::$0
 (label) mulFACbyMEM::@1
@@ -1507,13 +1478,12 @@ SYMBOL TABLE SSA
 (word) mulFACbyMEM::prepareMEM1_mem#0
 (word) mulFACbyMEM::prepareMEM1_mem#1
 (void()) place_sprites()
-(byte*~) place_sprites::$0
-(word~) place_sprites::$1
-(number~) place_sprites::$2
-(byte~) place_sprites::$3
+(word~) place_sprites::$0
+(number~) place_sprites::$1
+(byte~) place_sprites::$2
+(number~) place_sprites::$3
 (number~) place_sprites::$4
-(number~) place_sprites::$5
-(bool~) place_sprites::$6
+(bool~) place_sprites::$5
 (label) place_sprites::@1
 (label) place_sprites::@return
 (byte) place_sprites::col
@@ -1537,9 +1507,7 @@ SYMBOL TABLE SSA
 (byte) place_sprites::spr_x#0
 (byte) place_sprites::spr_x#1
 (byte) place_sprites::spr_x#2
-(byte*) place_sprites::sprites_ptr
-(byte*) place_sprites::sprites_ptr#0
-(byte*) place_sprites::sprites_ptr#1
+(const byte*) place_sprites::sprites_ptr = (const byte*) SCREEN+(number) $3f8
 (byte*) progress_cursor
 (byte*) progress_cursor#0
 (byte*) progress_cursor#1
@@ -1778,29 +1746,28 @@ SYMBOL TABLE SSA
 (byte) sin_idx_y#7
 (byte) sin_idx_y#8
 (byte) sin_idx_y#9
-(byte) sinlen_x
-(byte) sinlen_y
+(const byte) sinlen_x = (number) $dd
+(const byte) sinlen_y = (number) $c5
 (byte[$dd]) sintab_x
 (byte[$c5]) sintab_y
-(byte*) sprites
+(const byte*) sprites = (byte*)(number) $2000
 (void()) subFACfromARG()
 (label) subFACfromARG::@return
 
 Fixing inline constructor with getFAC::$0 ← (byte)*(memHi) w= (byte)*(memLo)
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) $dd in (byte) sinlen_x ← (number) $dd
-Adding number conversion cast (unumber) $c5 in (byte) sinlen_y ← (number) $c5
-Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
-Adding number conversion cast (unumber) 0 in *((byte*) COLS + (byte) init::i#2) ← (number) 0
-Adding number conversion cast (unumber) $28 in (number~) init::$9 ← (number) $28 + (byte) init::i#2
-Adding number conversion cast (unumber) init::$9 in (number~) init::$9 ← (unumber)(number) $28 + (byte) init::i#2
-Adding number conversion cast (unumber) $b in *((byte*) COLS + (unumber~) init::$9) ← (number) $b
+Adding number conversion cast (unumber) $3f8 in 
+Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) 0 in *((const byte*) COLS + (byte) init::i#2) ← (number) 0
+Adding number conversion cast (unumber) $28 in (number~) init::$8 ← (number) $28 + (byte) init::i#2
+Adding number conversion cast (unumber) init::$8 in (number~) init::$8 ← (unumber)(number) $28 + (byte) init::i#2
+Adding number conversion cast (unumber) $b in *((const byte*) COLS + (unumber~) init::$8) ← (number) $b
 Adding number conversion cast (unumber) 0 in (byte) gen_sintab::min#0 ← (number) 0
 Adding number conversion cast (unumber) $ff in (byte) gen_sintab::max#0 ← (number) $ff
-Adding number conversion cast (unumber) $28 in (byte*~) init::$5 ← (byte*) SCREEN + (number) $28
+Adding number conversion cast (unumber) $28 in (byte*) progress_init::line#1 ← (const byte*) SCREEN+(number) $28
 Adding number conversion cast (unumber) $32 in (byte) gen_sintab::min#1 ← (number) $32
 Adding number conversion cast (unumber) $d0 in (byte) gen_sintab::max#1 ← (number) $d0
-Adding number conversion cast (unumber) $3e8 in (byte*~) clear_screen::$0 ← (byte*) SCREEN + (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (bool~) clear_screen::$0 ← (byte*) clear_screen::sc#2 < (const byte*) SCREEN+(number) $3e8
 Adding number conversion cast (unumber) 0 in (byte) progress_idx#7 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) progress_idx#8 ← (number) 0
 Adding number conversion cast (unumber) 8 in (bool~) progress_inc::$0 ← (byte) progress_idx#10 == (number) 8
@@ -1821,24 +1788,23 @@ Adding number conversion cast (unumber) 2 in (number~) anim::$20 ← (byte) anim
 Adding number conversion cast (unumber) anim::$20 in (number~) anim::$20 ← (byte) anim::j2#3 - (unumber)(number) 2
 Adding number conversion cast (unumber) 0 in (byte) sin_idx_x#4 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) sin_idx_y#4 ← (number) 0
-Adding number conversion cast (unumber) $7f in *((byte*) SPRITES_ENABLE) ← (number) $7f
-Adding number conversion cast (unumber) $7f in *((byte*) SPRITES_EXPAND_X) ← (number) $7f
-Adding number conversion cast (unumber) $7f in *((byte*) SPRITES_EXPAND_Y) ← (number) $7f
-Adding number conversion cast (unumber) $3f8 in (byte*~) place_sprites::$0 ← (byte*) SCREEN + (number) $3f8
-Adding number conversion cast (unumber) $40 in (number~) place_sprites::$2 ← (word~) place_sprites::$1 / (number) $40
-Adding number conversion cast (unumber) place_sprites::$2 in (number~) place_sprites::$2 ← (word~) place_sprites::$1 / (unumber)(number) $40
+Adding number conversion cast (unumber) $7f in *((const byte*) SPRITES_ENABLE) ← (number) $7f
+Adding number conversion cast (unumber) $7f in *((const byte*) SPRITES_EXPAND_X) ← (number) $7f
+Adding number conversion cast (unumber) $7f in *((const byte*) SPRITES_EXPAND_Y) ← (number) $7f
+Adding number conversion cast (unumber) $40 in (number~) place_sprites::$1 ← (word~) place_sprites::$0 / (number) $40
+Adding number conversion cast (unumber) place_sprites::$1 in (number~) place_sprites::$1 ← (word~) place_sprites::$0 / (unumber)(number) $40
 Adding number conversion cast (unumber) $3c in (byte) place_sprites::spr_x#0 ← (number) $3c
 Adding number conversion cast (unumber) 0 in (byte) place_sprites::j2#0 ← (number) 0
 Adding number conversion cast (unumber) 5 in (byte) place_sprites::col#0 ← (number) 5
-Adding number conversion cast (unumber) $50 in *((byte*) SPRITES_YPOS + (byte) place_sprites::j2#3) ← (number) $50
-Adding number conversion cast (unumber) $20 in (number~) place_sprites::$4 ← (byte) place_sprites::spr_x#2 + (number) $20
-Adding number conversion cast (unumber) place_sprites::$4 in (number~) place_sprites::$4 ← (byte) place_sprites::spr_x#2 + (unumber)(number) $20
-Adding number conversion cast (unumber) 7^5 in (number~) place_sprites::$5 ← (byte) place_sprites::col#2 ^ (number) 7^(number) 5
-Adding number conversion cast (unumber) place_sprites::$5 in (number~) place_sprites::$5 ← (byte) place_sprites::col#2 ^ (unumber)(number) 7^(number) 5
+Adding number conversion cast (unumber) $50 in *((const byte*) SPRITES_YPOS + (byte) place_sprites::j2#3) ← (number) $50
+Adding number conversion cast (unumber) $20 in (number~) place_sprites::$3 ← (byte) place_sprites::spr_x#2 + (number) $20
+Adding number conversion cast (unumber) place_sprites::$3 in (number~) place_sprites::$3 ← (byte) place_sprites::spr_x#2 + (unumber)(number) $20
+Adding number conversion cast (unumber) 7^5 in (number~) place_sprites::$4 ← (byte) place_sprites::col#2 ^ (number) 7^(number) 5
+Adding number conversion cast (unumber) place_sprites::$4 in (number~) place_sprites::$4 ← (byte) place_sprites::col#2 ^ (unumber)(number) 7^(number) 5
 Adding number conversion cast (unumber) $40 in (byte*~) gen_sprites::$1 ← (byte*) gen_sprites::spr#3 + (number) $40
 Adding number conversion cast (unumber) 8 in (number~) gen_chargen_sprite::$1 ← (word~) gen_chargen_sprite::$0 * (number) 8
 Adding number conversion cast (unumber) gen_chargen_sprite::$1 in (number~) gen_chargen_sprite::$1 ← (word~) gen_chargen_sprite::$0 * (unumber)(number) 8
-Adding number conversion cast (unumber) $32 in *((byte*) PROCPORT) ← (number) $32
+Adding number conversion cast (unumber) $32 in *((const byte*) PROCPORT) ← (number) $32
 Adding number conversion cast (unumber) 0 in (byte) gen_chargen_sprite::s_gen#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) gen_chargen_sprite::s_gen_cnt#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) gen_chargen_sprite::c#0 ← (number) 0
@@ -1858,7 +1824,7 @@ Adding number conversion cast (unumber) 0 in (byte) gen_chargen_sprite::s_gen_cn
 Adding number conversion cast (unumber) 2 in (number~) gen_chargen_sprite::$11 ← (byte) gen_chargen_sprite::bits#3 * (number) 2
 Adding number conversion cast (unumber) gen_chargen_sprite::$11 in (number~) gen_chargen_sprite::$11 ← (byte) gen_chargen_sprite::bits#3 * (unumber)(number) 2
 Adding number conversion cast (unumber) 6 in (byte*~) gen_chargen_sprite::$13 ← (byte*) gen_chargen_sprite::sprite#4 + (number) 6
-Adding number conversion cast (unumber) $37 in *((byte*) PROCPORT) ← (number) $37
+Adding number conversion cast (unumber) $37 in *((const byte*) PROCPORT) ← (number) $37
 Adding number conversion cast (unumber) 2 in (word) setFAC::w#2 ← (number) 2
 Adding number conversion cast (unumber) 0 in (byte) gen_sintab::i#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -1867,30 +1833,12 @@ Added casts to value list in (byte[]) gen_sintab::f_i ← (byte[]){ (byte)(numbe
 Added casts to value list in (byte[]) gen_sintab::f_min ← (byte[]){ (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0 }
 Added casts to value list in (byte[]) gen_sintab::f_amp ← (byte[]){ (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) PROCPORT ← (byte*)(number) 1
-Inlining cast (byte*) CHARGEN ← (byte*)(number) $d000
-Inlining cast (byte*) SPRITES_XPOS ← (byte*)(number) $d000
-Inlining cast (byte*) SPRITES_YPOS ← (byte*)(number) $d001
-Inlining cast (byte*) SPRITES_XMSB ← (byte*)(number) $d010
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) SPRITES_ENABLE ← (byte*)(number) $d015
-Inlining cast (byte*) SPRITES_EXPAND_Y ← (byte*)(number) $d017
-Inlining cast (byte*) SPRITES_EXPAND_X ← (byte*)(number) $d01d
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) SPRITES_COLS ← (byte*)(number) $d027
-Inlining cast (byte*) COLS ← (byte*)(number) $d800
-Inlining cast (byte*) memLo ← (byte*)(number) $fe
-Inlining cast (byte*) memHi ← (byte*)(number) $ff
 Inlining cast (word~) setMEMtoFAC::$0 ← (word)(byte*) setMEMtoFAC::mem#5
 Inlining cast (word~) addMEMtoFAC::$0 ← (word)(byte*) addMEMtoFAC::mem#2
 Inlining cast (word~) divMEMbyFAC::$0 ← (word)(byte*) divMEMbyFAC::mem#2
 Inlining cast (word~) mulFACbyMEM::$0 ← (word)(byte*) mulFACbyMEM::mem#2
-Inlining cast (byte) sinlen_x ← (unumber)(number) $dd
-Inlining cast (byte) sinlen_y ← (unumber)(number) $c5
-Inlining cast (byte*) sprites ← (byte*)(number) $2000
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast *((byte*) COLS + (byte) init::i#2) ← (unumber)(number) 0
-Inlining cast *((byte*) COLS + (unumber~) init::$9) ← (unumber)(number) $b
+Inlining cast *((const byte*) COLS + (byte) init::i#2) ← (unumber)(number) 0
+Inlining cast *((const byte*) COLS + (unumber~) init::$8) ← (unumber)(number) $b
 Inlining cast (byte) gen_sintab::min#0 ← (unumber)(number) 0
 Inlining cast (byte) gen_sintab::max#0 ← (unumber)(number) $ff
 Inlining cast (byte) gen_sintab::min#1 ← (unumber)(number) $32
@@ -1905,25 +1853,24 @@ Inlining cast (byte) anim::x_msb#0 ← (unumber)(number) 0
 Inlining cast (word~) anim::$6 ← (word)(number) $1e
 Inlining cast (byte) sin_idx_x#4 ← (unumber)(number) 0
 Inlining cast (byte) sin_idx_y#4 ← (unumber)(number) 0
-Inlining cast *((byte*) SPRITES_ENABLE) ← (unumber)(number) $7f
-Inlining cast *((byte*) SPRITES_EXPAND_X) ← (unumber)(number) $7f
-Inlining cast *((byte*) SPRITES_EXPAND_Y) ← (unumber)(number) $7f
-Inlining cast (word~) place_sprites::$1 ← (word)(byte*) sprites
-Inlining cast (byte~) place_sprites::$3 ← (byte)(unumber~) place_sprites::$2
+Inlining cast *((const byte*) SPRITES_ENABLE) ← (unumber)(number) $7f
+Inlining cast *((const byte*) SPRITES_EXPAND_X) ← (unumber)(number) $7f
+Inlining cast *((const byte*) SPRITES_EXPAND_Y) ← (unumber)(number) $7f
+Inlining cast (word~) place_sprites::$0 ← (word)(const byte*) sprites
+Inlining cast (byte~) place_sprites::$2 ← (byte)(unumber~) place_sprites::$1
 Inlining cast (byte) place_sprites::spr_x#0 ← (unumber)(number) $3c
 Inlining cast (byte) place_sprites::j2#0 ← (unumber)(number) 0
 Inlining cast (byte) place_sprites::col#0 ← (unumber)(number) 5
-Inlining cast *((byte*) SPRITES_YPOS + (byte) place_sprites::j2#3) ← (unumber)(number) $50
+Inlining cast *((const byte*) SPRITES_YPOS + (byte) place_sprites::j2#3) ← (unumber)(number) $50
 Inlining cast (word~) gen_chargen_sprite::$0 ← (word)(byte) gen_chargen_sprite::ch#1
-Inlining cast *((byte*) PROCPORT) ← (unumber)(number) $32
+Inlining cast *((const byte*) PROCPORT) ← (unumber)(number) $32
 Inlining cast (byte) gen_chargen_sprite::s_gen#0 ← (unumber)(number) 0
 Inlining cast (byte) gen_chargen_sprite::s_gen_cnt#0 ← (unumber)(number) 0
 Inlining cast (byte) gen_chargen_sprite::c#0 ← (unumber)(number) 0
 Inlining cast (byte) gen_chargen_sprite::c#1 ← (unumber)(number) 1
 Inlining cast (byte) gen_chargen_sprite::s_gen#2 ← (unumber)(number) 0
 Inlining cast (byte) gen_chargen_sprite::s_gen_cnt#2 ← (unumber)(number) 0
-Inlining cast *((byte*) PROCPORT) ← (unumber)(number) $37
-Inlining cast (byte*) gen_sintab::f_2pi ← (byte*)(number) $e2e5
+Inlining cast *((const byte*) PROCPORT) ← (unumber)(number) $37
 Inlining cast (word~) gen_sintab::$0 ← (word)(byte) gen_sintab::max#2
 Inlining cast (word~) gen_sintab::$3 ← (word)(byte) gen_sintab::min#2
 Inlining cast (word) setFAC::w#2 ← (unumber)(number) 2
@@ -1946,12 +1893,12 @@ Simplifying constant pointer cast (byte*) 53287
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 254
 Simplifying constant pointer cast (byte*) 255
-Simplifying constant integer cast *((byte*) memHi)
-Simplifying constant integer cast *((byte*) memLo)
-Simplifying constant integer cast $dd
-Simplifying constant integer cast $c5
 Simplifying constant pointer cast (byte*) 8192
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $3f8
+Simplifying constant pointer cast (byte*) 58085
+Simplifying constant integer cast *((const byte*) memHi)
+Simplifying constant integer cast *((const byte*) memLo)
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
@@ -1990,7 +1937,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $7f
 Simplifying constant integer cast $7f
 Simplifying constant integer cast $7f
-Simplifying constant integer cast $3f8
 Simplifying constant integer cast $40
 Simplifying constant integer cast $3c
 Simplifying constant integer cast 0
@@ -2031,12 +1977,10 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 58085
 Simplifying constant integer cast 2
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $dd
-Finalized unsigned number type (byte) $c5
+Finalized unsigned number type (word) $3f8
 Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
@@ -2065,7 +2009,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (word) $3f8
 Finalized unsigned number type (byte) $40
 Finalized unsigned number type (byte) $3c
 Finalized unsigned number type (byte) 0
@@ -2094,27 +2037,27 @@ Finalized unsigned number type (byte) $37
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) init::$9 ← (byte) $28 + (byte) init::i#2
+Inferred type updated to byte in (unumber~) init::$8 ← (byte) $28 + (byte) init::i#2
 Inferred type updated to byte in (unumber~) anim::$8 ← (byte) anim::x_msb#2 * (byte) 2
 Inferred type updated to byte in (unumber~) anim::$10 ← (byte~) anim::$8 | (byte~) anim::$9
 Inferred type updated to byte in (unumber~) anim::$12 ← (byte) anim::xidx#3 + (byte) $a
 Inferred type updated to byte in (unumber~) anim::$16 ← (byte) anim::yidx#4 + (byte) 8
 Inferred type updated to byte in (unumber~) anim::$20 ← (byte) anim::j2#3 - (byte) 2
-Inferred type updated to word in (unumber~) place_sprites::$2 ← (word~) place_sprites::$1 / (byte) $40
-Inferred type updated to byte in (unumber~) place_sprites::$4 ← (byte) place_sprites::spr_x#2 + (byte) $20
-Inferred type updated to byte in (unumber~) place_sprites::$5 ← (byte) place_sprites::col#2 ^ (byte)(number) 7^(number) 5
+Inferred type updated to word in (unumber~) place_sprites::$1 ← (word~) place_sprites::$0 / (byte) $40
+Inferred type updated to byte in (unumber~) place_sprites::$3 ← (byte) place_sprites::spr_x#2 + (byte) $20
+Inferred type updated to byte in (unumber~) place_sprites::$4 ← (byte) place_sprites::col#2 ^ (byte)(number) 7^(number) 5
 Inferred type updated to word in (unumber~) gen_chargen_sprite::$1 ← (word~) gen_chargen_sprite::$0 * (byte) 8
 Inferred type updated to byte in (unumber~) gen_chargen_sprite::$3 ← (byte) gen_chargen_sprite::bits#2 & (byte) $80
 Inferred type updated to byte in (unumber~) gen_chargen_sprite::$6 ← (byte) gen_chargen_sprite::s_gen#3 * (byte) 2
 Inferred type updated to byte in (unumber~) gen_chargen_sprite::$7 ← (byte~) gen_chargen_sprite::$6 | (byte) gen_chargen_sprite::c#2
 Inferred type updated to byte in (unumber~) gen_chargen_sprite::$11 ← (byte) gen_chargen_sprite::bits#3 * (byte) 2
-Inversing boolean not [173] (bool~) progress_inc::$1 ← (byte) progress_idx#10 != (byte) 8 from [172] (bool~) progress_inc::$0 ← (byte) progress_idx#10 == (byte) 8
-Inversing boolean not [209] (bool~) anim::$14 ← (byte) anim::xidx#1 < (byte) sinlen_x from [208] (bool~) anim::$13 ← (byte) anim::xidx#1 >= (byte) sinlen_x
-Inversing boolean not [215] (bool~) anim::$18 ← (byte) anim::yidx#1 < (byte) sinlen_y from [214] (bool~) anim::$17 ← (byte) anim::yidx#1 >= (byte) sinlen_y
-Inversing boolean not [233] (bool~) anim::$2 ← (byte) sin_idx_x#3 < (byte) sinlen_x from [232] (bool~) anim::$1 ← (byte) sin_idx_x#3 >= (byte) sinlen_x
-Inversing boolean not [238] (bool~) anim::$4 ← (byte) sin_idx_y#3 < (byte) sinlen_y from [237] (bool~) anim::$3 ← (byte) sin_idx_y#3 >= (byte) sinlen_y
-Inversing boolean not [310] (bool~) gen_chargen_sprite::$5 ← (byte~) gen_chargen_sprite::$3 == (byte) 0 from [309] (bool~) gen_chargen_sprite::$4 ← (byte~) gen_chargen_sprite::$3 != (byte) 0
-Inversing boolean not [322] (bool~) gen_chargen_sprite::$9 ← (byte) gen_chargen_sprite::s_gen_cnt#1 != (byte) 8 from [321] (bool~) gen_chargen_sprite::$8 ← (byte) gen_chargen_sprite::s_gen_cnt#1 == (byte) 8
+Inversing boolean not [153] (bool~) progress_inc::$1 ← (byte) progress_idx#10 != (byte) 8 from [152] (bool~) progress_inc::$0 ← (byte) progress_idx#10 == (byte) 8
+Inversing boolean not [189] (bool~) anim::$14 ← (byte) anim::xidx#1 < (const byte) sinlen_x from [188] (bool~) anim::$13 ← (byte) anim::xidx#1 >= (const byte) sinlen_x
+Inversing boolean not [195] (bool~) anim::$18 ← (byte) anim::yidx#1 < (const byte) sinlen_y from [194] (bool~) anim::$17 ← (byte) anim::yidx#1 >= (const byte) sinlen_y
+Inversing boolean not [213] (bool~) anim::$2 ← (byte) sin_idx_x#3 < (const byte) sinlen_x from [212] (bool~) anim::$1 ← (byte) sin_idx_x#3 >= (const byte) sinlen_x
+Inversing boolean not [218] (bool~) anim::$4 ← (byte) sin_idx_y#3 < (const byte) sinlen_y from [217] (bool~) anim::$3 ← (byte) sin_idx_y#3 >= (const byte) sinlen_y
+Inversing boolean not [287] (bool~) gen_chargen_sprite::$5 ← (byte~) gen_chargen_sprite::$3 == (byte) 0 from [286] (bool~) gen_chargen_sprite::$4 ← (byte~) gen_chargen_sprite::$3 != (byte) 0
+Inversing boolean not [299] (bool~) gen_chargen_sprite::$9 ← (byte) gen_chargen_sprite::s_gen_cnt#1 != (byte) 8 from [298] (bool~) gen_chargen_sprite::$8 ← (byte) gen_chargen_sprite::s_gen_cnt#1 == (byte) 8
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) setFAC::prepareMEM1_mem#0 = (word) setFAC::w#5 (word) setFAC::prepareMEM1_mem#1 
 Alias (word) getFAC::return#0 = (word) getFAC::w#0 (word~) getFAC::$0 (word) getFAC::return#3 (word) getFAC::return#1 
@@ -2140,18 +2083,17 @@ Alias (byte*) progress_cursor#17 = (byte*) progress_cursor#2
 Alias (byte) progress_idx#18 = (byte) progress_idx#2 
 Alias (byte) progress_idx#19 = (byte) progress_idx#3 
 Alias (byte*) progress_cursor#18 = (byte*) progress_cursor#3 
-Alias (byte*) progress_init::line#1 = (byte*~) init::$5 
 Alias (byte*) progress_cursor#19 = (byte*) progress_cursor#4 
 Alias (byte) progress_idx#20 = (byte) progress_idx#4 
 Alias (byte) progress_idx#21 = (byte) progress_idx#5 (byte) progress_idx#33 (byte) progress_idx#22 (byte) progress_idx#6 
 Alias (byte*) progress_cursor#20 = (byte*) progress_cursor#5 (byte*) progress_cursor#32 (byte*) progress_cursor#21 (byte*) progress_cursor#6 
 Alias (byte*) clear_screen::sc#2 = (byte*) clear_screen::sc#3 
-Alias (byte*) SCREEN = (byte*) progress_cursor#7 (byte*) progress_cursor#41 (byte*) progress_cursor#36 
 Alias (byte*) progress_cursor#22 = (byte*) progress_cursor#8 (byte*) progress_cursor#9 
 Alias (byte) progress_idx#23 = (byte) progress_idx#8 (byte) progress_idx#9 
 Alias (byte*) progress_cursor#24 = (byte*) progress_cursor#33 
 Alias (byte) progress_idx#12 = (byte) progress_idx#26 (byte) progress_idx#25 
 Alias (byte*) progress_cursor#11 = (byte*) progress_cursor#25 (byte*) progress_cursor#23 
+Alias (byte*) progress_cursor#36 = (byte*) progress_cursor#41 (byte*) progress_cursor#7 
 Alias (byte) progress_idx#36 = (byte) progress_idx#41 (byte) progress_idx#7 
 Alias (word) anim::x#0 = (word~) anim::$7 
 Alias (byte) anim::x_msb#1 = (byte~) anim::$10 (byte) anim::x_msb#7 
@@ -2177,10 +2119,9 @@ Alias (byte) sin_idx_y#14 = (byte) sin_idx_y#15 (byte) sin_idx_y#19
 Alias (byte) sin_idx_x#20 = (byte) sin_idx_x#21 
 Alias (byte) sin_idx_x#11 = (byte) sin_idx_x#15 (byte) sin_idx_x#5 
 Alias (byte) sin_idx_y#11 = (byte) sin_idx_y#16 (byte) sin_idx_y#5 
-Alias (byte*) place_sprites::sprites_ptr#0 = (byte*~) place_sprites::$0 
-Alias (byte) place_sprites::spr_id#0 = (byte~) place_sprites::$3 
-Alias (byte) place_sprites::spr_x#1 = (byte~) place_sprites::$4 
-Alias (byte) place_sprites::col#1 = (byte~) place_sprites::$5 
+Alias (byte) place_sprites::spr_id#0 = (byte~) place_sprites::$2 
+Alias (byte) place_sprites::spr_x#1 = (byte~) place_sprites::$3 
+Alias (byte) place_sprites::col#1 = (byte~) place_sprites::$4 
 Alias (byte*) gen_sprites::spr#2 = (byte*) gen_sprites::spr#3 
 Alias (byte) gen_sprites::i#2 = (byte) gen_sprites::i#3 
 Alias (byte*) gen_sprites::spr#1 = (byte*~) gen_sprites::$1 
@@ -2255,7 +2196,7 @@ Alias (byte) gen_chargen_sprite::x#2 = (byte) gen_chargen_sprite::x#4
 Alias (byte) gen_chargen_sprite::y#3 = (byte) gen_chargen_sprite::y#6 
 Alias (byte*) gen_chargen_sprite::chargen#2 = (byte*) gen_chargen_sprite::chargen#5 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) progress_cursor#29 (byte*) SCREEN
+Identical Phi Values (byte*) progress_cursor#29 (byte*) progress_cursor#36
 Identical Phi Values (byte) progress_idx#30 (byte) progress_idx#36
 Identical Phi Values (byte) sin_idx_x#22 (byte) sin_idx_x#16
 Identical Phi Values (byte) sin_idx_y#20 (byte) sin_idx_y#17
@@ -2283,7 +2224,6 @@ Identical Phi Values (byte) sin_idx_x#9 (byte) sin_idx_x#13
 Identical Phi Values (byte) sin_idx_y#9 (byte) sin_idx_y#13
 Identical Phi Values (byte) sin_idx_x#10 (byte) sin_idx_x#9
 Identical Phi Values (byte) sin_idx_y#10 (byte) sin_idx_y#9
-Identical Phi Values (byte*) place_sprites::sprites_ptr#1 (byte*) place_sprites::sprites_ptr#0
 Identical Phi Values (byte) gen_chargen_sprite::ch#1 (byte) gen_chargen_sprite::ch#0
 Identical Phi Values (byte*) gen_chargen_sprite::sprite#12 (byte*) gen_chargen_sprite::sprite#0
 Identical Phi Values (byte) gen_chargen_sprite::c#2 (byte) gen_chargen_sprite::c#3
@@ -2307,57 +2247,46 @@ Identical Phi Values (byte*) progress_cursor#39 (byte*) progress_cursor#22
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) gen_chargen_sprite::chargen#1 (byte*) gen_chargen_sprite::chargen#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [89] if(*((byte*) RASTER)!=(byte) $ff) goto main::@2
-Simple Condition (bool~) init::$10 [112] if((byte) init::i#1!=rangelast(0,$27)) goto init::@1
-Simple Condition (bool~) clear_screen::$1 [155] if((byte*) clear_screen::sc#2<(byte*~) clear_screen::$0) goto clear_screen::@2
-Simple Condition (bool~) progress_inc::$1 [174] if((byte) progress_idx#10!=(byte) 8) goto progress_inc::@1
-Simple Condition (bool~) anim::$14 [210] if((byte) anim::xidx#1<(byte) sinlen_x) goto anim::@5
-Simple Condition (bool~) anim::$18 [216] if((byte) anim::yidx#1<(byte) sinlen_y) goto anim::@6
-Simple Condition (bool~) anim::$21 [225] if((byte) anim::j#1!=rangelast(0,6)) goto anim::@4
-Simple Condition (bool~) anim::$2 [234] if((byte) sin_idx_x#3<(byte) sinlen_x) goto anim::@1
-Simple Condition (bool~) anim::$4 [239] if((byte) sin_idx_y#3<(byte) sinlen_y) goto anim::@2
-Simple Condition (bool~) place_sprites::$6 [277] if((byte) place_sprites::j#1!=rangelast(0,6)) goto place_sprites::@1
-Simple Condition (bool~) gen_sprites::$2 [291] if((byte) gen_sprites::i#1!=rangelast(0,6)) goto gen_sprites::@1
-Simple Condition (bool~) gen_chargen_sprite::$5 [311] if((byte~) gen_chargen_sprite::$3==(byte) 0) goto gen_chargen_sprite::@3
-Simple Condition (bool~) gen_chargen_sprite::$9 [323] if((byte) gen_chargen_sprite::s_gen_cnt#1!=(byte) 8) goto gen_chargen_sprite::@5
-Simple Condition (bool~) gen_chargen_sprite::$10 [327] if((byte) gen_chargen_sprite::b#1!=rangelast(0,2)) goto gen_chargen_sprite::@4
-Simple Condition (bool~) gen_chargen_sprite::$12 [340] if((byte) gen_chargen_sprite::x#1!=rangelast(0,7)) goto gen_chargen_sprite::@2
-Simple Condition (bool~) gen_chargen_sprite::$14 [346] if((byte) gen_chargen_sprite::y#1!=rangelast(0,7)) goto gen_chargen_sprite::@1
-Simple Condition (bool~) gen_sintab::$13 [391] if((byte) gen_sintab::i#10<(byte) gen_sintab::length#10) goto gen_sintab::@2
+Simple Condition (bool~) main::$1 [71] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
+Simple Condition (bool~) init::$9 [94] if((byte) init::i#1!=rangelast(0,$27)) goto init::@1
+Simple Condition (bool~) clear_screen::$0 [135] if((byte*) clear_screen::sc#2<(const byte*) SCREEN+(word) $3e8) goto clear_screen::@2
+Simple Condition (bool~) progress_inc::$1 [154] if((byte) progress_idx#10!=(byte) 8) goto progress_inc::@1
+Simple Condition (bool~) anim::$14 [190] if((byte) anim::xidx#1<(const byte) sinlen_x) goto anim::@5
+Simple Condition (bool~) anim::$18 [196] if((byte) anim::yidx#1<(const byte) sinlen_y) goto anim::@6
+Simple Condition (bool~) anim::$21 [205] if((byte) anim::j#1!=rangelast(0,6)) goto anim::@4
+Simple Condition (bool~) anim::$2 [214] if((byte) sin_idx_x#3<(const byte) sinlen_x) goto anim::@1
+Simple Condition (bool~) anim::$4 [219] if((byte) sin_idx_y#3<(const byte) sinlen_y) goto anim::@2
+Simple Condition (bool~) place_sprites::$5 [255] if((byte) place_sprites::j#1!=rangelast(0,6)) goto place_sprites::@1
+Simple Condition (bool~) gen_sprites::$2 [268] if((byte) gen_sprites::i#1!=rangelast(0,6)) goto gen_sprites::@1
+Simple Condition (bool~) gen_chargen_sprite::$5 [288] if((byte~) gen_chargen_sprite::$3==(byte) 0) goto gen_chargen_sprite::@3
+Simple Condition (bool~) gen_chargen_sprite::$9 [300] if((byte) gen_chargen_sprite::s_gen_cnt#1!=(byte) 8) goto gen_chargen_sprite::@5
+Simple Condition (bool~) gen_chargen_sprite::$10 [304] if((byte) gen_chargen_sprite::b#1!=rangelast(0,2)) goto gen_chargen_sprite::@4
+Simple Condition (bool~) gen_chargen_sprite::$12 [317] if((byte) gen_chargen_sprite::x#1!=rangelast(0,7)) goto gen_chargen_sprite::@2
+Simple Condition (bool~) gen_chargen_sprite::$14 [323] if((byte) gen_chargen_sprite::y#1!=rangelast(0,7)) goto gen_chargen_sprite::@1
+Simple Condition (bool~) gen_sintab::$13 [367] if((byte) gen_sintab::i#10<(byte) gen_sintab::length#10) goto gen_sintab::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [77] (byte[$dd]) sintab_x ← { fill( $dd, 0) }
-Constant right-side identified [79] (byte[$c5]) sintab_y ← { fill( $c5, 0) }
+Constant right-side identified [62] (byte[$dd]) sintab_x ← { fill( $dd, 0) }
+Constant right-side identified [63] (byte[$c5]) sintab_y ← { fill( $c5, 0) }
+Constant right-side identified [233] (word~) place_sprites::$0 ← (word)(const byte*) sprites
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (byte[]) { (byte) $20, (byte) $65, (byte) $74, (byte) $75, (byte) $61, (byte) $f6, (byte) $e7, (byte) $ea, (byte) $e0 }
 Identified constant from value list (byte[]) { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
 Identified constant from value list (byte[]) { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
 Identified constant from value list (byte[]) { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) PROCPORT = (byte*) 1
-Constant (const byte*) CHARGEN = (byte*) 53248
-Constant (const byte*) SPRITES_XPOS = (byte*) 53248
-Constant (const byte*) SPRITES_YPOS = (byte*) 53249
-Constant (const byte*) SPRITES_XMSB = (byte*) 53264
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) SPRITES_ENABLE = (byte*) 53269
-Constant (const byte*) SPRITES_EXPAND_Y = (byte*) 53271
-Constant (const byte*) SPRITES_EXPAND_X = (byte*) 53277
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) SPRITES_COLS = (byte*) 53287
-Constant (const byte*) COLS = (byte*) 55296
-Constant (const byte*) memLo = (byte*) 254
-Constant (const byte*) memHi = (byte*) 255
-Constant (const byte) sinlen_x = $dd
 Constant (const byte[$dd]) sintab_x = { fill( $dd, 0) }
-Constant (const byte) sinlen_y = $c5
 Constant (const byte[$c5]) sintab_y = { fill( $c5, 0) }
-Constant (const byte*) sprites = (byte*) 8192
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) init::i#0 = 0
+Constant (const byte*) progress_init::line#0 = SCREEN
+Constant (const byte) gen_sintab::length#0 = sinlen_x
 Constant (const byte) gen_sintab::min#0 = 0
 Constant (const byte) gen_sintab::max#0 = $ff
+Constant (const byte*) progress_init::line#1 = SCREEN+$28
+Constant (const byte) gen_sintab::length#1 = sinlen_y
 Constant (const byte) gen_sintab::min#1 = $32
 Constant (const byte) gen_sintab::max#1 = $d0
+Constant (const byte*) clear_screen::sc#0 = SCREEN
+Constant (const byte*) progress_cursor#36 = SCREEN
 Constant (const byte) progress_idx#36 = 0
 Constant (const byte) progress_idx#23 = 0
 Constant (const byte[]) progress_inc::progress_chars = { $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0 }
@@ -2370,11 +2299,12 @@ Constant (const byte) anim::j#0 = 0
 Constant (const word) anim::$6 = $1e
 Constant (const byte) sin_idx_x#4 = 0
 Constant (const byte) sin_idx_y#4 = 0
+Constant (const word) place_sprites::$0 = (word)sprites
 Constant (const byte) place_sprites::spr_x#0 = $3c
 Constant (const byte) place_sprites::j2#0 = 0
 Constant (const byte) place_sprites::col#0 = 5
 Constant (const byte) place_sprites::j#0 = 0
-Constant (const byte[]) gen_sprites::cml = gen_sprites::$3
+Constant (const byte*) gen_sprites::spr#0 = sprites
 Constant (const byte) gen_sprites::i#0 = 0
 Constant (const byte) gen_chargen_sprite::y#0 = 0
 Constant (const byte) gen_chargen_sprite::s_gen#0 = 0
@@ -2388,48 +2318,42 @@ Constant (const byte) gen_chargen_sprite::s_gen_cnt#2 = 0
 Constant (const byte[]) gen_sintab::f_i = { 0, 0, 0, 0, 0 }
 Constant (const byte[]) gen_sintab::f_min = { 0, 0, 0, 0, 0 }
 Constant (const byte[]) gen_sintab::f_amp = { 0, 0, 0, 0, 0 }
-Constant (const byte*) gen_sintab::f_2pi = (byte*) 58085
 Constant (const word) setFAC::w#2 = 2
 Constant (const byte) gen_sintab::i#0 = 0
+Constant (const byte*) mulFACbyMEM::mem#0 = gen_sintab::f_2pi
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) progress_init::line#0 = SCREEN
 Constant (const byte*) gen_sintab::sintab#0 = sintab_x
-Constant (const byte) gen_sintab::length#0 = sinlen_x
 Constant (const byte*) gen_sintab::sintab#1 = sintab_y
-Constant (const byte) gen_sintab::length#1 = sinlen_y
-Constant (const byte*) clear_screen::sc#0 = SCREEN
-Constant (const word) place_sprites::$1 = (word)sprites
-Constant (const byte*) gen_sprites::spr#0 = sprites
 Constant (const byte*) setMEMtoFAC::mem#0 = gen_sintab::f_min
 Constant (const byte*) setMEMtoFAC::mem#1 = gen_sintab::f_amp
 Constant (const byte*) divMEMbyFAC::mem#0 = gen_sintab::f_amp
 Constant (const byte*) setMEMtoFAC::mem#2 = gen_sintab::f_amp
 Constant (const byte*) addMEMtoFAC::mem#0 = gen_sintab::f_min
 Constant (const byte*) setMEMtoFAC::mem#3 = gen_sintab::f_min
-Constant (const byte*) mulFACbyMEM::mem#0 = gen_sintab::f_2pi
 Constant (const byte*) setMEMtoFAC::mem#4 = gen_sintab::f_i
 Constant (const byte*) divMEMbyFAC::mem#1 = gen_sintab::f_i
 Constant (const byte*) mulFACbyMEM::mem#1 = gen_sintab::f_amp
 Constant (const byte*) addMEMtoFAC::mem#1 = gen_sintab::f_min
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [95] if(true) goto main::@2
+if() condition always true - replacing block destination [77] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [110] init::i#1 ← ++ init::i#2 to ++
-Resolved ranged comparison value [112] if(init::i#1!=rangelast(0,$27)) goto init::@1 to (number) $28
-Resolved ranged next value [223] anim::j#1 ← ++ anim::j#2 to ++
-Resolved ranged comparison value [225] if(anim::j#1!=rangelast(0,6)) goto anim::@4 to (number) 7
-Resolved ranged next value [275] place_sprites::j#1 ← ++ place_sprites::j#2 to ++
-Resolved ranged comparison value [277] if(place_sprites::j#1!=rangelast(0,6)) goto place_sprites::@1 to (number) 7
-Resolved ranged next value [289] gen_sprites::i#1 ← ++ gen_sprites::i#2 to ++
-Resolved ranged comparison value [291] if(gen_sprites::i#1!=rangelast(0,6)) goto gen_sprites::@1 to (number) 7
-Resolved ranged next value [325] gen_chargen_sprite::b#1 ← ++ gen_chargen_sprite::b#2 to ++
-Resolved ranged comparison value [327] if(gen_chargen_sprite::b#1!=rangelast(0,2)) goto gen_chargen_sprite::@4 to (number) 3
-Resolved ranged next value [338] gen_chargen_sprite::x#1 ← ++ gen_chargen_sprite::x#6 to ++
-Resolved ranged comparison value [340] if(gen_chargen_sprite::x#1!=rangelast(0,7)) goto gen_chargen_sprite::@2 to (number) 8
-Resolved ranged next value [344] gen_chargen_sprite::y#1 ← ++ gen_chargen_sprite::y#2 to ++
-Resolved ranged comparison value [346] if(gen_chargen_sprite::y#1!=rangelast(0,7)) goto gen_chargen_sprite::@1 to (number) 8
-Simplifying expression containing zero gen_chargen_sprite::sprite#3 in [329] *((byte*) gen_chargen_sprite::sprite#3 + (byte) 0) ← (byte) gen_chargen_sprite::s_gen#1
+Resolved ranged next value [92] init::i#1 ← ++ init::i#2 to ++
+Resolved ranged comparison value [94] if(init::i#1!=rangelast(0,$27)) goto init::@1 to (number) $28
+Resolved ranged next value [203] anim::j#1 ← ++ anim::j#2 to ++
+Resolved ranged comparison value [205] if(anim::j#1!=rangelast(0,6)) goto anim::@4 to (number) 7
+Resolved ranged next value [253] place_sprites::j#1 ← ++ place_sprites::j#2 to ++
+Resolved ranged comparison value [255] if(place_sprites::j#1!=rangelast(0,6)) goto place_sprites::@1 to (number) 7
+Resolved ranged next value [266] gen_sprites::i#1 ← ++ gen_sprites::i#2 to ++
+Resolved ranged comparison value [268] if(gen_sprites::i#1!=rangelast(0,6)) goto gen_sprites::@1 to (number) 7
+Resolved ranged next value [302] gen_chargen_sprite::b#1 ← ++ gen_chargen_sprite::b#2 to ++
+Resolved ranged comparison value [304] if(gen_chargen_sprite::b#1!=rangelast(0,2)) goto gen_chargen_sprite::@4 to (number) 3
+Resolved ranged next value [315] gen_chargen_sprite::x#1 ← ++ gen_chargen_sprite::x#6 to ++
+Resolved ranged comparison value [317] if(gen_chargen_sprite::x#1!=rangelast(0,7)) goto gen_chargen_sprite::@2 to (number) 8
+Resolved ranged next value [321] gen_chargen_sprite::y#1 ← ++ gen_chargen_sprite::y#2 to ++
+Resolved ranged comparison value [323] if(gen_chargen_sprite::y#1!=rangelast(0,7)) goto gen_chargen_sprite::@1 to (number) 8
+Simplifying expression containing zero gen_chargen_sprite::sprite#3 in [306] *((byte*) gen_chargen_sprite::sprite#3 + (byte) 0) ← (byte) gen_chargen_sprite::s_gen#1
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant (const byte*) progress_cursor#36
 Eliminating unused constant (const byte) progress_idx#36
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
@@ -2458,17 +2382,11 @@ Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [63] (byte*) progress_init::line#1 ← (const byte*) SCREEN + (byte) $28
-Constant right-side identified [69] (byte*~) clear_screen::$0 ← (const byte*) SCREEN + (word) $3e8
-Constant right-side identified [118] (byte*) place_sprites::sprites_ptr#0 ← (const byte*) SCREEN + (word) $3f8
-Constant right-side identified [119] (word~) place_sprites::$2 ← (const word) place_sprites::$1 / (byte) $40
+Constant right-side identified [116] (word~) place_sprites::$1 ← (const word) place_sprites::$0 / (byte) $40
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) progress_init::line#1 = SCREEN+$28
-Constant (const byte*) clear_screen::$0 = SCREEN+$3e8
-Constant (const byte*) place_sprites::sprites_ptr#0 = SCREEN+$3f8
-Constant (const word) place_sprites::$2 = place_sprites::$1/$40
+Constant (const word) place_sprites::$1 = place_sprites::$0/$40
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) place_sprites::spr_id#0 = (byte)place_sprites::$2
+Constant (const byte) place_sprites::spr_id#0 = (byte)place_sprites::$1
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [13] (word) setMEMtoFAC::prepareMEM1_mem#0 ← (word)(byte*) setMEMtoFAC::mem#5 keeping setMEMtoFAC::mem#5
 Inlining Noop Cast [21] (word) addMEMtoFAC::prepareMEM1_mem#0 ← (word)(byte*) addMEMtoFAC::mem#2 keeping addMEMtoFAC::mem#2
@@ -2504,8 +2422,8 @@ Inlining constant with var siblings (const byte) place_sprites::j2#0
 Inlining constant with var siblings (const byte) place_sprites::col#0
 Inlining constant with var siblings (const byte) place_sprites::j#0
 Inlining constant with var siblings (const byte) place_sprites::spr_id#0
-Inlining constant with var siblings (const byte) gen_sprites::i#0
 Inlining constant with var siblings (const byte*) gen_sprites::spr#0
+Inlining constant with var siblings (const byte) gen_sprites::i#0
 Inlining constant with var siblings (const byte) gen_chargen_sprite::y#0
 Inlining constant with var siblings (const byte) gen_chargen_sprite::s_gen#0
 Inlining constant with var siblings (const byte) gen_chargen_sprite::s_gen_cnt#0
@@ -2515,15 +2433,15 @@ Inlining constant with var siblings (const byte) gen_chargen_sprite::b#0
 Inlining constant with var siblings (const byte) gen_chargen_sprite::c#1
 Inlining constant with var siblings (const byte) gen_chargen_sprite::s_gen#2
 Inlining constant with var siblings (const byte) gen_chargen_sprite::s_gen_cnt#2
+Inlining constant with var siblings (const byte) gen_sintab::length#0
 Inlining constant with var siblings (const byte) gen_sintab::min#0
 Inlining constant with var siblings (const byte) gen_sintab::max#0
+Inlining constant with var siblings (const byte) gen_sintab::length#1
 Inlining constant with var siblings (const byte) gen_sintab::min#1
 Inlining constant with var siblings (const byte) gen_sintab::max#1
 Inlining constant with var siblings (const byte) gen_sintab::i#0
 Inlining constant with var siblings (const byte*) gen_sintab::sintab#0
-Inlining constant with var siblings (const byte) gen_sintab::length#0
 Inlining constant with var siblings (const byte*) gen_sintab::sintab#1
-Inlining constant with var siblings (const byte) gen_sintab::length#1
 Inlining constant with var siblings (const byte) progress_idx#23
 Inlining constant with var siblings (const byte) progress_idx#11
 Inlining constant with var siblings (const byte) sin_idx_x#16
@@ -2560,15 +2478,14 @@ Constant inlined gen_sintab::max#1 = (byte) $d0
 Constant inlined mulFACbyMEM::mem#0 = (const byte*) gen_sintab::f_2pi
 Constant inlined mulFACbyMEM::mem#1 = (const byte[]) gen_sintab::f_amp
 Constant inlined gen_sintab::min#1 = (byte) $32
-Constant inlined clear_screen::$0 = (const byte*) SCREEN+(word) $3e8
 Constant inlined init::i#0 = (byte) 0
 Constant inlined gen_sintab::min#0 = (byte) 0
 Constant inlined sin_idx_x#16 = (byte) 0
 Constant inlined progress_init::line#0 = (const byte*) SCREEN
 Constant inlined gen_chargen_sprite::s_gen_cnt#2 = (byte) 0
-Constant inlined place_sprites::$2 = (word)(const byte*) sprites/(byte) $40
-Constant inlined place_sprites::$1 = (word)(const byte*) sprites
+Constant inlined place_sprites::$1 = (word)(const byte*) sprites/(byte) $40
 Constant inlined gen_chargen_sprite::s_gen_cnt#0 = (byte) 0
+Constant inlined place_sprites::$0 = (word)(const byte*) sprites
 Constant inlined progress_init::line#1 = (const byte*) SCREEN+(byte) $28
 Constant inlined anim::j#0 = (byte) 0
 Constant inlined gen_chargen_sprite::b#0 = (byte) 0
@@ -2583,13 +2500,12 @@ Constant inlined anim::$6 = (word) $1e
 Constant inlined gen_chargen_sprite::y#0 = (byte) 0
 Constant inlined sin_idx_y#4 = (byte) 0
 Constant inlined progress_idx#11 = (byte) 0
-Constant inlined gen_sprites::$3 = (const byte[]) gen_sprites::cml
 Constant inlined anim::j2#0 = (byte) $c
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in assignment *(COLS+$28 + init::$9)
+Consolidated array index constant in assignment *(COLS+$28 + init::$8)
 Consolidated array index constant in *(progress_inc::progress_chars+8)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Alias (byte) init::i#2 = (byte~) init::$9 
+Alias (byte) init::i#2 = (byte~) init::$8 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) addMEMtoFAC::mem#2 (const byte[]) gen_sintab::f_min
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -2617,7 +2533,6 @@ Added new block during phi lifting gen_chargen_sprite::@12(between gen_chargen_s
 Added new block during phi lifting gen_chargen_sprite::@13(between gen_chargen_sprite::@5 and gen_chargen_sprite::@4)
 Added new block during phi lifting gen_chargen_sprite::@14(between gen_chargen_sprite::@4 and gen_chargen_sprite::@5)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @67
 Adding NOP phi() at start of @70
 Adding NOP phi() at start of @72
@@ -2660,74 +2575,73 @@ Adding NOP phi() at start of addMEMtoFAC
 Adding NOP phi() at start of gen_sprites
 Adding NOP phi() at start of gen_chargen_sprite::@10
 CALL GRAPH
-Calls in [] to main:6 
-Calls in [main] to init:10 anim:15 
-Calls in [init] to clear_screen:67 place_sprites:75 gen_sprites:77 progress_init:79 gen_sintab:81 progress_init:83 gen_sintab:85 clear_screen:87 
-Calls in [gen_sintab] to setFAC:101 setARGtoFAC:103 setFAC:106 setMEMtoFAC:108 subFACfromARG:110 setMEMtoFAC:112 setFAC:114 divMEMbyFAC:116 setMEMtoFAC:118 addMEMtoFAC:120 setMEMtoFAC:122 setFAC:129 mulFACbyMEM:131 setMEMtoFAC:133 setFAC:136 divMEMbyFAC:138 sinFAC:140 mulFACbyMEM:142 addMEMtoFAC:144 getFAC:146 progress_inc:151 
-Calls in [gen_sprites] to gen_chargen_sprite:215 
+Calls in [] to main:5 
+Calls in [main] to init:9 anim:14 
+Calls in [init] to clear_screen:66 place_sprites:74 gen_sprites:76 progress_init:78 gen_sintab:80 progress_init:82 gen_sintab:84 clear_screen:86 
+Calls in [gen_sintab] to setFAC:100 setARGtoFAC:102 setFAC:105 setMEMtoFAC:107 subFACfromARG:109 setMEMtoFAC:111 setFAC:113 divMEMbyFAC:115 setMEMtoFAC:117 addMEMtoFAC:119 setMEMtoFAC:121 setFAC:128 mulFACbyMEM:130 setMEMtoFAC:132 setFAC:135 divMEMbyFAC:137 sinFAC:139 mulFACbyMEM:141 addMEMtoFAC:143 getFAC:145 progress_inc:150 
+Calls in [gen_sprites] to gen_chargen_sprite:214 
 
 Created 49 initial phi equivalence classes
-Coalesced [16] sin_idx_x#27 ← sin_idx_x#11
-Coalesced [17] sin_idx_y#27 ← sin_idx_y#11
-Coalesced (already) [18] sin_idx_x#26 ← sin_idx_x#13
-Coalesced (already) [19] sin_idx_y#26 ← sin_idx_y#13
-Coalesced [23] anim::xidx#8 ← anim::xidx#0
-Coalesced [24] anim::yidx#8 ← anim::yidx#0
-Coalesced [36] anim::xidx#11 ← anim::xidx#2
-Coalesced [41] anim::yidx#11 ← anim::yidx#2
-Coalesced [57] sin_idx_y#28 ← sin_idx_y#3
-Coalesced [58] sin_idx_x#28 ← sin_idx_x#3
-Coalesced [59] anim::xidx#9 ← anim::xidx#5
-Coalesced [60] anim::x_msb#8 ← anim::x_msb#1
-Coalesced [61] anim::j2#7 ← anim::j2#1
-Coalesced [62] anim::yidx#9 ← anim::yidx#6
-Coalesced [63] anim::j#7 ← anim::j#1
-Coalesced [64] anim::yidx#10 ← anim::yidx#1
-Coalesced [65] anim::xidx#10 ← anim::xidx#1
-Coalesced [90] init::i#3 ← init::i#1
-Coalesced [97] clear_screen::sc#4 ← clear_screen::sc#1
-Coalesced [100] setFAC::prepareMEM1_mem#2 ← setFAC::w#0
-Coalesced [105] setFAC::prepareMEM1_mem#5 ← setFAC::w#1
-Coalesced [123] progress_cursor#68 ← progress_cursor#22
-Coalesced [128] setFAC::prepareMEM1_mem#3 ← setFAC::w#3
-Coalesced [135] setFAC::prepareMEM1_mem#4 ← setFAC::w#4
-Coalesced [153] gen_sintab::i#14 ← gen_sintab::i#1
-Coalesced [154] progress_idx#67 ← progress_idx#12
-Coalesced [155] progress_cursor#69 ← progress_cursor#11
-Coalesced [160] progress_cursor#67 ← progress_cursor#10
-Coalesced [164] progress_idx#66 ← progress_idx#10
-Coalesced (already) [165] progress_cursor#66 ← progress_cursor#13
-Coalesced [209] progress_cursor#22 ← progress_init::line#2
-Coalesced [220] gen_sprites::i#4 ← gen_sprites::i#1
-Coalesced [221] gen_sprites::spr#4 ← gen_sprites::spr#1
-Coalesced [227] gen_chargen_sprite::sprite#13 ← gen_chargen_sprite::sprite#0
-Coalesced [230] gen_chargen_sprite::bits#9 ← gen_chargen_sprite::bits#0
-Coalesced [231] gen_chargen_sprite::sprite#15 ← gen_chargen_sprite::sprite#11
-Coalesced [237] gen_chargen_sprite::s_gen#11 ← gen_chargen_sprite::s_gen#5
-Coalesced [238] gen_chargen_sprite::s_gen_cnt#10 ← gen_chargen_sprite::s_gen_cnt#4
-Coalesced [239] gen_chargen_sprite::sprite#17 ← gen_chargen_sprite::sprite#10
-Coalesced [249] gen_chargen_sprite::sprite#20 ← gen_chargen_sprite::sprite#1
-Coalesced [262] gen_chargen_sprite::y#11 ← gen_chargen_sprite::y#1
-Coalesced [263] gen_chargen_sprite::sprite#14 ← gen_chargen_sprite::sprite#2
-Coalesced [264] gen_chargen_sprite::bits#10 ← gen_chargen_sprite::bits#1
-Coalesced [265] gen_chargen_sprite::s_gen#10 ← gen_chargen_sprite::s_gen#6
-Coalesced [266] gen_chargen_sprite::s_gen_cnt#9 ← gen_chargen_sprite::s_gen_cnt#5
-Coalesced [267] gen_chargen_sprite::sprite#16 ← gen_chargen_sprite::sprite#4
-Coalesced [268] gen_chargen_sprite::x#9 ← gen_chargen_sprite::x#1
-Coalesced (already) [269] gen_chargen_sprite::s_gen#12 ← gen_chargen_sprite::s_gen#6
-Coalesced (already) [270] gen_chargen_sprite::s_gen_cnt#11 ← gen_chargen_sprite::s_gen_cnt#5
-Coalesced [271] gen_chargen_sprite::b#5 ← gen_chargen_sprite::b#1
-Coalesced (already) [272] gen_chargen_sprite::sprite#18 ← gen_chargen_sprite::sprite#4
-Coalesced [273] gen_chargen_sprite::s_gen#13 ← gen_chargen_sprite::s_gen#1
-Coalesced [274] gen_chargen_sprite::s_gen_cnt#12 ← gen_chargen_sprite::s_gen_cnt#1
-Coalesced (already) [275] gen_chargen_sprite::sprite#19 ← gen_chargen_sprite::sprite#3
-Coalesced [292] place_sprites::spr_id#3 ← place_sprites::spr_id#1
-Coalesced [293] place_sprites::j#3 ← place_sprites::j#1
-Coalesced [294] place_sprites::spr_x#3 ← place_sprites::spr_x#1
-Coalesced [295] place_sprites::j2#4 ← place_sprites::j2#2
-Coalesced [296] place_sprites::col#3 ← place_sprites::col#1
+Coalesced [15] sin_idx_x#27 ← sin_idx_x#11
+Coalesced [16] sin_idx_y#27 ← sin_idx_y#11
+Coalesced (already) [17] sin_idx_x#26 ← sin_idx_x#13
+Coalesced (already) [18] sin_idx_y#26 ← sin_idx_y#13
+Coalesced [22] anim::xidx#8 ← anim::xidx#0
+Coalesced [23] anim::yidx#8 ← anim::yidx#0
+Coalesced [35] anim::xidx#11 ← anim::xidx#2
+Coalesced [40] anim::yidx#11 ← anim::yidx#2
+Coalesced [56] sin_idx_y#28 ← sin_idx_y#3
+Coalesced [57] sin_idx_x#28 ← sin_idx_x#3
+Coalesced [58] anim::xidx#9 ← anim::xidx#5
+Coalesced [59] anim::x_msb#8 ← anim::x_msb#1
+Coalesced [60] anim::j2#7 ← anim::j2#1
+Coalesced [61] anim::yidx#9 ← anim::yidx#6
+Coalesced [62] anim::j#7 ← anim::j#1
+Coalesced [63] anim::yidx#10 ← anim::yidx#1
+Coalesced [64] anim::xidx#10 ← anim::xidx#1
+Coalesced [89] init::i#3 ← init::i#1
+Coalesced [96] clear_screen::sc#4 ← clear_screen::sc#1
+Coalesced [99] setFAC::prepareMEM1_mem#2 ← setFAC::w#0
+Coalesced [104] setFAC::prepareMEM1_mem#5 ← setFAC::w#1
+Coalesced [122] progress_cursor#68 ← progress_cursor#22
+Coalesced [127] setFAC::prepareMEM1_mem#3 ← setFAC::w#3
+Coalesced [134] setFAC::prepareMEM1_mem#4 ← setFAC::w#4
+Coalesced [152] gen_sintab::i#14 ← gen_sintab::i#1
+Coalesced [153] progress_idx#67 ← progress_idx#12
+Coalesced [154] progress_cursor#69 ← progress_cursor#11
+Coalesced [159] progress_cursor#67 ← progress_cursor#10
+Coalesced [163] progress_idx#66 ← progress_idx#10
+Coalesced (already) [164] progress_cursor#66 ← progress_cursor#13
+Coalesced [208] progress_cursor#22 ← progress_init::line#2
+Coalesced [219] gen_sprites::i#4 ← gen_sprites::i#1
+Coalesced [220] gen_sprites::spr#4 ← gen_sprites::spr#1
+Coalesced [226] gen_chargen_sprite::sprite#13 ← gen_chargen_sprite::sprite#0
+Coalesced [229] gen_chargen_sprite::bits#9 ← gen_chargen_sprite::bits#0
+Coalesced [230] gen_chargen_sprite::sprite#15 ← gen_chargen_sprite::sprite#11
+Coalesced [236] gen_chargen_sprite::s_gen#11 ← gen_chargen_sprite::s_gen#5
+Coalesced [237] gen_chargen_sprite::s_gen_cnt#10 ← gen_chargen_sprite::s_gen_cnt#4
+Coalesced [238] gen_chargen_sprite::sprite#17 ← gen_chargen_sprite::sprite#10
+Coalesced [248] gen_chargen_sprite::sprite#20 ← gen_chargen_sprite::sprite#1
+Coalesced [261] gen_chargen_sprite::y#11 ← gen_chargen_sprite::y#1
+Coalesced [262] gen_chargen_sprite::sprite#14 ← gen_chargen_sprite::sprite#2
+Coalesced [263] gen_chargen_sprite::bits#10 ← gen_chargen_sprite::bits#1
+Coalesced [264] gen_chargen_sprite::s_gen#10 ← gen_chargen_sprite::s_gen#6
+Coalesced [265] gen_chargen_sprite::s_gen_cnt#9 ← gen_chargen_sprite::s_gen_cnt#5
+Coalesced [266] gen_chargen_sprite::sprite#16 ← gen_chargen_sprite::sprite#4
+Coalesced [267] gen_chargen_sprite::x#9 ← gen_chargen_sprite::x#1
+Coalesced (already) [268] gen_chargen_sprite::s_gen#12 ← gen_chargen_sprite::s_gen#6
+Coalesced (already) [269] gen_chargen_sprite::s_gen_cnt#11 ← gen_chargen_sprite::s_gen_cnt#5
+Coalesced [270] gen_chargen_sprite::b#5 ← gen_chargen_sprite::b#1
+Coalesced (already) [271] gen_chargen_sprite::sprite#18 ← gen_chargen_sprite::sprite#4
+Coalesced [272] gen_chargen_sprite::s_gen#13 ← gen_chargen_sprite::s_gen#1
+Coalesced [273] gen_chargen_sprite::s_gen_cnt#12 ← gen_chargen_sprite::s_gen_cnt#1
+Coalesced (already) [274] gen_chargen_sprite::sprite#19 ← gen_chargen_sprite::sprite#3
+Coalesced [291] place_sprites::spr_id#3 ← place_sprites::spr_id#1
+Coalesced [292] place_sprites::j#3 ← place_sprites::j#1
+Coalesced [293] place_sprites::spr_x#3 ← place_sprites::spr_x#1
+Coalesced [294] place_sprites::j2#4 ← place_sprites::j2#2
+Coalesced [295] place_sprites::col#3 ← place_sprites::col#1
 Coalesced down to 35 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @67
 Culled Empty Block (label) @70
 Culled Empty Block (label) @72
@@ -3322,7 +3236,7 @@ place_sprites::@1: scope:[place_sprites]  from place_sprites place_sprites::@1
   [217] (byte) place_sprites::spr_x#2 ← phi( place_sprites/(byte) $3c place_sprites::@1/(byte) place_sprites::spr_x#1 )
   [217] (byte) place_sprites::j#2 ← phi( place_sprites/(byte) 0 place_sprites::@1/(byte) place_sprites::j#1 )
   [217] (byte) place_sprites::spr_id#2 ← phi( place_sprites/(byte)(word)(const byte*) sprites/(byte) $40 place_sprites::@1/(byte) place_sprites::spr_id#1 )
-  [218] *((const byte*) place_sprites::sprites_ptr#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2
+  [218] *((const byte*) place_sprites::sprites_ptr + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2
   [219] (byte) place_sprites::spr_id#1 ← ++ (byte) place_sprites::spr_id#2
   [220] *((const byte*) SPRITES_XPOS + (byte) place_sprites::j2#3) ← (byte) place_sprites::spr_x#2
   [221] *((const byte*) SPRITES_YPOS + (byte) place_sprites::j2#3) ← (byte) $50
@@ -3476,7 +3390,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) place_sprites::spr_x
 (byte) place_sprites::spr_x#1 3.6666666666666665
 (byte) place_sprites::spr_x#2 5.5
-(byte*) place_sprites::sprites_ptr
 (byte*) progress_cursor
 (byte*) progress_cursor#10 4.0
 (byte*) progress_cursor#11 3.4
@@ -5100,7 +5013,7 @@ place_sprites: {
     jmp __b1
     // place_sprites::@1
   __b1:
-    // [218] *((const byte*) place_sprites::sprites_ptr#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [218] *((const byte*) place_sprites::sprites_ptr + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z spr_id
     ldy.z j
     sta sprites_ptr,y
@@ -5317,7 +5230,7 @@ Statement [211] *((const byte*) PROCPORT) ← (byte) $37 [ ] ( main:2::init:5::g
 Statement [214] *((const byte*) SPRITES_ENABLE) ← (byte) $7f [ ] ( main:2::init:5::place_sprites:51 [ ] ) always clobbers reg byte a 
 Statement [215] *((const byte*) SPRITES_EXPAND_X) ← (byte) $7f [ ] ( main:2::init:5::place_sprites:51 [ ] ) always clobbers reg byte a 
 Statement [216] *((const byte*) SPRITES_EXPAND_Y) ← (byte) $7f [ ] ( main:2::init:5::place_sprites:51 [ ] ) always clobbers reg byte a 
-Statement [218] *((const byte*) place_sprites::sprites_ptr#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 [ place_sprites::spr_id#2 place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 ] ( main:2::init:5::place_sprites:51 [ place_sprites::spr_id#2 place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 ] ) always clobbers reg byte a 
+Statement [218] *((const byte*) place_sprites::sprites_ptr + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 [ place_sprites::spr_id#2 place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 ] ( main:2::init:5::place_sprites:51 [ place_sprites::spr_id#2 place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 ] ) always clobbers reg byte a 
 Statement [220] *((const byte*) SPRITES_XPOS + (byte) place_sprites::j2#3) ← (byte) place_sprites::spr_x#2 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ( main:2::init:5::place_sprites:51 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ) always clobbers reg byte a 
 Statement [221] *((const byte*) SPRITES_YPOS + (byte) place_sprites::j2#3) ← (byte) $50 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ( main:2::init:5::place_sprites:51 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ) always clobbers reg byte a 
 Statement [222] *((const byte*) SPRITES_COLS + (byte) place_sprites::j#2) ← (byte) place_sprites::col#2 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ( main:2::init:5::place_sprites:51 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ) always clobbers reg byte a 
@@ -5385,7 +5298,7 @@ Statement [211] *((const byte*) PROCPORT) ← (byte) $37 [ ] ( main:2::init:5::g
 Statement [214] *((const byte*) SPRITES_ENABLE) ← (byte) $7f [ ] ( main:2::init:5::place_sprites:51 [ ] ) always clobbers reg byte a 
 Statement [215] *((const byte*) SPRITES_EXPAND_X) ← (byte) $7f [ ] ( main:2::init:5::place_sprites:51 [ ] ) always clobbers reg byte a 
 Statement [216] *((const byte*) SPRITES_EXPAND_Y) ← (byte) $7f [ ] ( main:2::init:5::place_sprites:51 [ ] ) always clobbers reg byte a 
-Statement [218] *((const byte*) place_sprites::sprites_ptr#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 [ place_sprites::spr_id#2 place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 ] ( main:2::init:5::place_sprites:51 [ place_sprites::spr_id#2 place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 ] ) always clobbers reg byte a 
+Statement [218] *((const byte*) place_sprites::sprites_ptr + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 [ place_sprites::spr_id#2 place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 ] ( main:2::init:5::place_sprites:51 [ place_sprites::spr_id#2 place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 ] ) always clobbers reg byte a 
 Statement [220] *((const byte*) SPRITES_XPOS + (byte) place_sprites::j2#3) ← (byte) place_sprites::spr_x#2 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ( main:2::init:5::place_sprites:51 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ) always clobbers reg byte a 
 Statement [221] *((const byte*) SPRITES_YPOS + (byte) place_sprites::j2#3) ← (byte) $50 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ( main:2::init:5::place_sprites:51 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ) always clobbers reg byte a 
 Statement [222] *((const byte*) SPRITES_COLS + (byte) place_sprites::j#2) ← (byte) place_sprites::col#2 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ( main:2::init:5::place_sprites:51 [ place_sprites::j#2 place_sprites::spr_x#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 ] ) always clobbers reg byte a 
@@ -6918,7 +6831,7 @@ place_sprites: {
     jmp __b1
     // place_sprites::@1
   __b1:
-    // [218] *((const byte*) place_sprites::sprites_ptr#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [218] *((const byte*) place_sprites::sprites_ptr + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z spr_id
     ldy.z j
     sta sprites_ptr,y
@@ -7509,8 +7422,7 @@ FINAL SYMBOL TABLE
 (byte) place_sprites::spr_x
 (byte) place_sprites::spr_x#1 spr_x zp[1]:9 3.6666666666666665
 (byte) place_sprites::spr_x#2 spr_x zp[1]:9 5.5
-(byte*) place_sprites::sprites_ptr
-(const byte*) place_sprites::sprites_ptr#0 sprites_ptr = (const byte*) SCREEN+(word) $3f8
+(const byte*) place_sprites::sprites_ptr = (const byte*) SCREEN+(word) $3f8
 (byte*) progress_cursor
 (byte*) progress_cursor#10 progress_cursor zp[2]:2 4.0
 (byte*) progress_cursor#11 progress_cursor zp[2]:2 3.4
@@ -7562,8 +7474,8 @@ FINAL SYMBOL TABLE
 (byte) sin_idx_y#11 sin_idx_y zp[1]:8 3.25
 (byte) sin_idx_y#13 sin_idx_y zp[1]:8 7.2333333333333325
 (byte) sin_idx_y#3 sin_idx_y zp[1]:8 2.0
-(const byte) sinlen_x = (byte) $dd
-(const byte) sinlen_y = (byte) $c5
+(const byte) sinlen_x = (number) $dd
+(const byte) sinlen_y = (number) $c5
 (const byte[$dd]) sintab_x = { fill( $dd, 0) }
 (const byte[$c5]) sintab_y = { fill( $c5, 0) }
 (const byte*) sprites = (byte*) 8192
@@ -8810,7 +8722,7 @@ place_sprites: {
     // place_sprites::@1
   __b1:
     // sprites_ptr[j] = spr_id++
-    // [218] *((const byte*) place_sprites::sprites_ptr#0 + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [218] *((const byte*) place_sprites::sprites_ptr + (byte) place_sprites::j#2) ← (byte) place_sprites::spr_id#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z spr_id
     ldy.z j
     sta sprites_ptr,y

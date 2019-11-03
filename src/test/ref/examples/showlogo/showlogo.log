@@ -2,7 +2,7 @@ Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) LOGO
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call (byte~) main::$0 ← call toD018 (byte*) SCREEN (byte*) LOGO 
+Inlined call (byte~) main::$0 ← call toD018 (const byte*) SCREEN (const byte*) LOGO 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
@@ -24,18 +24,6 @@ Culled Empty Block (label) main::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) BGCOL2 ← ((byte*)) (number) $d022
-  (byte*) BGCOL3 ← ((byte*)) (number) $d023
-  (byte*) D016 ← ((byte*)) (number) $d016
-  (byte) VIC_MCM ← (number) $10
-  (byte) VIC_CSEL ← (number) 8
-  (byte*) D018 ← ((byte*)) (number) $d018
-  (byte*) COLS ← ((byte*)) (number) $d800
-  (byte) BLACK ← (number) 0
-  (byte) WHITE ← (number) 1
-  (byte) DARK_GREY ← (number) $b
   to:@8
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
@@ -82,9 +70,7 @@ memset::@return: scope:[memset]  from memset::@1
   return 
   to:@return
 @8: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) LOGO ← ((byte*)) (number) $2000
-  kickasm(location (byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+  kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)
@@ -94,12 +80,12 @@ memset::@return: scope:[memset]  from memset::@1
 
 (void()) main()
 main: scope:[main]  from @9
-  *((byte*) BORDERCOL) ← (byte) WHITE
-  *((byte*) BGCOL2) ← (byte) DARK_GREY
-  *((byte*) BGCOL) ← *((byte*) BGCOL2)
-  *((byte*) BGCOL3) ← (byte) BLACK
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN
-  (byte*) main::toD0181_gfx#0 ← (byte*) LOGO
+  *((const byte*) BORDERCOL) ← (const byte) WHITE
+  *((const byte*) BGCOL2) ← (const byte) DARK_GREY
+  *((const byte*) BGCOL) ← *((const byte*) BGCOL2)
+  *((const byte*) BGCOL3) ← (const byte) BLACK
+  (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
+  (byte*) main::toD0181_gfx#0 ← (const byte*) LOGO
   to:main::toD0181
 main::toD0181: scope:[main]  from main
   (byte*) main::toD0181_gfx#1 ← phi( main/(byte*) main::toD0181_gfx#0 )
@@ -122,19 +108,17 @@ main::toD0181_@return: scope:[main]  from main::toD0181
 main::@9: scope:[main]  from main::toD0181_@return
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
   (byte~) main::$0 ← (byte) main::toD0181_return#3
-  *((byte*) D018) ← (byte~) main::$0
-  (byte~) main::$1 ← (byte) VIC_MCM | (byte) VIC_CSEL
-  *((byte*) D016) ← (byte~) main::$1
-  (void*) memset::str#0 ← (void*)(byte*) SCREEN
-  (byte) memset::c#0 ← (byte) BLACK
+  *((const byte*) D018) ← (byte~) main::$0
+  *((const byte*) D016) ← (const byte) VIC_MCM|(const byte) VIC_CSEL
+  (void*) memset::str#0 ← (void*)(const byte*) SCREEN
+  (byte) memset::c#0 ← (const byte) BLACK
   (word) memset::num#0 ← (number) $28*(number) $19
   call memset 
   (void*) memset::return#2 ← (void*) memset::return#1
   to:main::@10
 main::@10: scope:[main]  from main::@9
-  (number~) main::$3 ← (byte) WHITE | (number) 8
-  (void*) memset::str#1 ← (void*)(byte*) COLS
-  (byte) memset::c#1 ← (number~) main::$3
+  (void*) memset::str#1 ← (void*)(const byte*) COLS
+  (byte) memset::c#1 ← (const byte) WHITE|(number) 8
   (word) memset::num#1 ← (number) $28*(number) $19
   call memset 
   (void*) memset::return#3 ← (void*) memset::return#1
@@ -144,17 +128,17 @@ main::@11: scope:[main]  from main::@10
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@11
   (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@11/(byte) main::ch#0 )
-  *((byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2
+  *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2
   (byte) main::ch#1 ← (byte) main::ch#2 + rangenext(0,$ef)
-  (bool~) main::$5 ← (byte) main::ch#1 != rangelast(0,$ef)
-  if((bool~) main::$5) goto main::@1
+  (bool~) main::$3 ← (byte) main::ch#1 != rangelast(0,$ef)
+  if((bool~) main::$3) goto main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@4
   if(true) goto main::@4
   to:main::@return
 main::@4: scope:[main]  from main::@3
-  (byte*~) main::$9 ← (byte*) SCREEN + (number) $3e7
-  *((byte*~) main::$9) ← ++ *((byte*~) main::$9)
+  (byte*~) main::$7 ← (const byte*) SCREEN + (number) $3e7
+  *((byte*~) main::$7) ← ++ *((byte*~) main::$7)
   kickasm() {{ inc $d020  }}
   to:main::@3
 main::@return: scope:[main]  from main::@3
@@ -173,26 +157,24 @@ SYMBOL TABLE SSA
 (label) @9
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) BGCOL2
-(byte*) BGCOL3
-(byte) BLACK
-(byte*) BORDERCOL
-(byte*) COLS
-(byte*) D016
-(byte*) D018
-(byte) DARK_GREY
-(byte*) LOGO
-(byte*) SCREEN
-(byte) VIC_CSEL
-(byte) VIC_MCM
-(byte) WHITE
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte*) BGCOL2 = (byte*)(number) $d022
+(const byte*) BGCOL3 = (byte*)(number) $d023
+(const byte) BLACK = (number) 0
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) COLS = (byte*)(number) $d800
+(const byte*) D016 = (byte*)(number) $d016
+(const byte*) D018 = (byte*)(number) $d018
+(const byte) DARK_GREY = (number) $b
+(const byte*) LOGO = (byte*)(number) $2000
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte) VIC_CSEL = (number) 8
+(const byte) VIC_MCM = (number) $10
+(const byte) WHITE = (number) 1
 (void()) main()
 (byte~) main::$0
-(byte~) main::$1
-(number~) main::$3
-(bool~) main::$5
-(byte*~) main::$9
+(bool~) main::$3
+(byte*~) main::$7
 (label) main::@1
 (label) main::@10
 (label) main::@11
@@ -273,11 +255,6 @@ SYMBOL TABLE SSA
 (void*) memset::str#5
 (void*) memset::str#6
 
-Adding number conversion cast (unumber) $10 in (byte) VIC_MCM ← (number) $10
-Adding number conversion cast (unumber) 8 in (byte) VIC_CSEL ← (number) 8
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
-Adding number conversion cast (unumber) $b in (byte) DARK_GREY ← (number) $b
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#2 > (number) 0
 Adding number conversion cast (unumber) $3fff in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (number) $3fff
 Adding number conversion cast (unumber) main::toD0181_$1 in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (unumber)(number) $3fff
@@ -290,30 +267,17 @@ Adding number conversion cast (unumber) $f in (number~) main::toD0181_$7 ← (un
 Adding number conversion cast (unumber) main::toD0181_$7 in (number~) main::toD0181_$7 ← (unumber~) main::toD0181_$6 & (unumber)(number) $f
 Adding number conversion cast (unumber) main::toD0181_$8 in (number~) main::toD0181_$8 ← (unumber~) main::toD0181_$3 | (unumber~) main::toD0181_$7
 Adding number conversion cast (unumber) $28*$19 in (word) memset::num#0 ← (number) $28*(number) $19
-Adding number conversion cast (unumber) 8 in (number~) main::$3 ← (byte) WHITE | (number) 8
-Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (byte) WHITE | (unumber)(number) 8
+Adding number conversion cast (unumber) WHITE|8 in (byte) memset::c#1 ← (const byte) WHITE|(number) 8
+Adding number conversion cast (unumber) 8 in (byte) memset::c#1 ← ((unumber)) (const byte) WHITE|(number) 8
 Adding number conversion cast (unumber) $28*$19 in (word) memset::num#1 ← (number) $28*(number) $19
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$9 ← (byte*) SCREEN + (number) $3e7
+Adding number conversion cast (unumber) $3e7 in (byte*~) main::$7 ← (const byte*) SCREEN + (number) $3e7
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) BGCOL2 ← (byte*)(number) $d022
-Inlining cast (byte*) BGCOL3 ← (byte*)(number) $d023
-Inlining cast (byte*) D016 ← (byte*)(number) $d016
-Inlining cast (byte) VIC_MCM ← (unumber)(number) $10
-Inlining cast (byte) VIC_CSEL ← (unumber)(number) 8
-Inlining cast (byte*) D018 ← (byte*)(number) $d018
-Inlining cast (byte*) COLS ← (byte*)(number) $d800
-Inlining cast (byte) BLACK ← (unumber)(number) 0
-Inlining cast (byte) WHITE ← (unumber)(number) 1
-Inlining cast (byte) DARK_GREY ← (unumber)(number) $b
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#3
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) LOGO ← (byte*)(number) $2000
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Inlining cast (word) memset::num#0 ← (unumber)(number) $28*(number) $19
+Inlining cast (byte) memset::c#1 ← (unumber)(const byte) WHITE|(unumber)(number) 8
 Inlining cast (word) memset::num#1 ← (unumber)(number) $28*(number) $19
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
@@ -321,28 +285,19 @@ Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53282
 Simplifying constant pointer cast (byte*) 53283
 Simplifying constant pointer cast (byte*) 53270
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 55296
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast $b
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 8192
+Simplifying constant integer cast 0
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
+Simplifying constant integer cast (const byte) WHITE|(unumber)(number) 8
 Simplifying constant integer cast 8
 Simplifying constant integer cast $3e7
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $b
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $3fff
 Finalized unsigned number type (byte) 4
@@ -357,8 +312,7 @@ Inferred type updated to byte in (unumber~) main::toD0181_$3 ← > (word~) main:
 Inferred type updated to byte in (unumber~) main::toD0181_$6 ← (byte~) main::toD0181_$5 / (byte) 4
 Inferred type updated to byte in (unumber~) main::toD0181_$7 ← (byte~) main::toD0181_$6 & (byte) $f
 Inferred type updated to byte in (unumber~) main::toD0181_$8 ← (byte~) main::toD0181_$3 | (byte~) main::toD0181_$7
-Inferred type updated to byte in (unumber~) main::$3 ← (byte) WHITE | (byte) 8
-Inversing boolean not [14] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [13] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
+Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#2 (void*) memset::return#4 (void*) memset::return#1 
 Alias (void*) memset::str#3 = (void*) memset::str#4 
@@ -372,7 +326,6 @@ Alias (void*) memset::str#5 = (void*) memset::str#6
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
 Alias (byte*) main::toD0181_gfx#0 = (byte*) main::toD0181_gfx#1 
 Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$0 
-Alias (byte) memset::c#1 = (byte~) main::$3 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
 Identical Phi Values (void*) memset::str#5 (void*) memset::str#3
@@ -380,46 +333,35 @@ Identical Phi Values (byte) memset::c#2 (byte) memset::c#4
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) memset::$1 [15] if((word) memset::num#2<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [25] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) main::$5 [75] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
+Simple Condition (bool~) memset::$1 [3] if((word) memset::num#2<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) main::$3 [59] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [61] (word) memset::num#0 ← (unumber)(number) $28*(number) $19
-Constant right-side identified [67] (word) memset::num#1 ← (unumber)(number) $28*(number) $19
+Constant right-side identified [44] (void*) memset::str#0 ← (void*)(const byte*) SCREEN
+Constant right-side identified [46] (word) memset::num#0 ← (unumber)(number) $28*(number) $19
+Constant right-side identified [51] (word) memset::num#1 ← (unumber)(number) $28*(number) $19
+Constant right-side identified [61] (byte*~) main::$7 ← (const byte*) SCREEN + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) BGCOL2 = (byte*) 53282
-Constant (const byte*) BGCOL3 = (byte*) 53283
-Constant (const byte*) D016 = (byte*) 53270
-Constant (const byte) VIC_MCM = $10
-Constant (const byte) VIC_CSEL = 8
-Constant (const byte*) D018 = (byte*) 53272
-Constant (const byte*) COLS = (byte*) 55296
-Constant (const byte) BLACK = 0
-Constant (const byte) WHITE = 1
-Constant (const byte) DARK_GREY = $b
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) LOGO = (byte*) 8192
-Constant (const word) memset::num#0 = (unumber)$28*$19
-Constant (const word) memset::num#1 = (unumber)$28*$19
-Constant (const byte) main::ch#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::toD0181_screen#0 = SCREEN
 Constant (const byte*) main::toD0181_gfx#0 = LOGO
 Constant (const void*) memset::str#0 = (void*)SCREEN
 Constant (const byte) memset::c#0 = BLACK
+Constant (const word) memset::num#0 = (unumber)$28*$19
 Constant (const void*) memset::str#1 = (void*)COLS
+Constant (const byte) memset::c#1 = WHITE|8
+Constant (const word) memset::num#1 = (unumber)$28*$19
+Constant (const byte) main::ch#0 = 0
+Constant (const byte*) main::$7 = SCREEN+$3e7
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [76] if(true) goto main::@4
+if() condition always true - replacing block destination [60] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [73] main::ch#1 ← ++ main::ch#2 to ++
-Resolved ranged comparison value [75] if(main::ch#1!=rangelast(0,$ef)) goto main::@1 to (number) $f0
-Eliminating unused variable (void*) memset::return#2 and assignment [26] (void*) memset::return#2 ← (void*) memset::str#3
-Eliminating unused variable (void*) memset::return#3 and assignment [29] (void*) memset::return#3 ← (void*) memset::str#3
+Resolved ranged next value [57] main::ch#1 ← ++ main::ch#2 to ++
+Resolved ranged comparison value [59] if(main::ch#1!=rangelast(0,$ef)) goto main::@1 to (number) $f0
+Eliminating unused variable (void*) memset::return#2 and assignment [25] (void*) memset::return#2 ← (void*) memset::str#3
+Eliminating unused variable (void*) memset::return#3 and assignment [27] (void*) memset::return#3 ← (void*) memset::str#3
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -431,15 +373,9 @@ Finalized unsigned number type (byte) $f0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [15] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
 Constant right-side identified [18] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
-Constant right-side identified [23] (byte~) main::$1 ← (const byte) VIC_MCM | (const byte) VIC_CSEL
-Constant right-side identified [26] (byte) memset::c#1 ← (const byte) WHITE | (byte) 8
-Constant right-side identified [32] (byte*~) main::$9 ← (const byte*) SCREEN + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::toD0181_$1 = main::toD0181_$0&$3fff
 Constant (const byte) main::toD0181_$5 = >main::toD0181_$4
-Constant (const byte) main::$1 = VIC_MCM|VIC_CSEL
-Constant (const byte) memset::c#1 = WHITE|8
-Constant (const byte*) main::$9 = SCREEN+$3e7
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [15] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
 Constant right-side identified [17] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
@@ -460,12 +396,12 @@ Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [2] (byte*~) memset::$2 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Inlining Noop Cast [4] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Successful SSA optimization Pass2NopCastInlining
-Inlining constant with var siblings (const word) memset::num#0
-Inlining constant with var siblings (const word) memset::num#1
 Inlining constant with var siblings (const void*) memset::str#0
 Inlining constant with var siblings (const byte) memset::c#0
+Inlining constant with var siblings (const word) memset::num#0
 Inlining constant with var siblings (const void*) memset::str#1
 Inlining constant with var siblings (const byte) memset::c#1
+Inlining constant with var siblings (const word) memset::num#1
 Inlining constant with var siblings (const byte) main::ch#0
 Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN
 Constant inlined main::toD0181_gfx#0 = (const byte*) LOGO
@@ -481,10 +417,9 @@ Constant inlined main::toD0181_$6 = >(word)(const byte*) LOGO/(byte) 4
 Constant inlined main::toD0181_$5 = >(word)(const byte*) LOGO
 Constant inlined main::toD0181_$4 = (word)(const byte*) LOGO
 Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4
-Constant inlined main::$1 = (const byte) VIC_MCM|(const byte) VIC_CSEL
 Constant inlined memset::c#0 = (const byte) BLACK
-Constant inlined main::$9 = (const byte*) SCREEN+(word) $3e7
 Constant inlined memset::c#1 = (const byte) WHITE|(byte) 8
+Constant inlined main::$7 = (const byte*) SCREEN+(word) $3e7
 Constant inlined main::ch#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@12(between main::@1 and main::@1)
@@ -1157,17 +1092,17 @@ FINAL SYMBOL TABLE
 (const byte*) BGCOL = (byte*) 53281
 (const byte*) BGCOL2 = (byte*) 53282
 (const byte*) BGCOL3 = (byte*) 53283
-(const byte) BLACK = (byte) 0
+(const byte) BLACK = (number) 0
 (const byte*) BORDERCOL = (byte*) 53280
 (const byte*) COLS = (byte*) 55296
 (const byte*) D016 = (byte*) 53270
 (const byte*) D018 = (byte*) 53272
-(const byte) DARK_GREY = (byte) $b
+(const byte) DARK_GREY = (number) $b
 (const byte*) LOGO = (byte*) 8192
 (const byte*) SCREEN = (byte*) 1024
-(const byte) VIC_CSEL = (byte) 8
-(const byte) VIC_MCM = (byte) $10
-(const byte) WHITE = (byte) 1
+(const byte) VIC_CSEL = (number) 8
+(const byte) VIC_MCM = (number) $10
+(const byte) WHITE = (number) 1
 (void()) main()
 (label) main::@1
 (label) main::@2

@@ -10,7 +10,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
@@ -30,11 +29,11 @@ main::@7: scope:[main]  from main::@1
   to:main::@4
 main::@2: scope:[main]  from main::@7
   (byte) main::i#3 ← phi( main::@7/(byte) main::i#6 )
-  *((byte*) main::screen + (byte) main::i#3) ← (byte) '*'
+  *((const byte*) main::screen + (byte) main::i#3) ← (byte) '*'
   to:main::@3
 main::@4: scope:[main]  from main::@7
   (byte) main::i#4 ← phi( main::@7/(byte) main::i#6 )
-  *((byte*) main::screen + (byte) main::i#4) ← (byte) ' '
+  *((const byte*) main::screen + (byte) main::i#4) ← (byte) ' '
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
   (byte) main::i#5 ← phi( main::@2/(byte) main::i#3 main::@4/(byte) main::i#4 )
@@ -108,7 +107,7 @@ SYMBOL TABLE SSA
 (byte) main::i#4
 (byte) main::i#5
 (byte) main::i#6
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
 Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::i#2 & (number) 1
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::i#2 & (unumber)(number) 1
@@ -117,8 +116,6 @@ Adding number conversion cast (unumber) 8 in (number~) isSet::$0 ← (byte) isSe
 Adding number conversion cast (unumber) isSet::$0 in (number~) isSet::$0 ← (byte) isSet::i#1 & (unumber)(number) 8
 Adding number conversion cast (unumber) 0 in (bool~) isSet::$1 ← (unumber~) isSet::$0 != (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
@@ -142,13 +139,12 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) isSet::i#1 (byte) isSet::i#0
 Identical Phi Values (bool) isSet::b#1 (bool) isSet::b#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [19] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
+Simple Condition (bool~) main::$3 [18] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [17] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [19] if(main::i#1!=rangelast(0,$64)) goto main::@1 to (number) $65
+Resolved ranged next value [16] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [18] if(main::i#1!=rangelast(0,$64)) goto main::@1 to (number) $65
 Adding number conversion cast (unumber) $65 in if((byte) main::i#1!=(number) $65) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $65

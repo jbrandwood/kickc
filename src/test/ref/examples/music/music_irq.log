@@ -7,33 +7,23 @@ Culled Empty Block (label) @5
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) VIC_CONTROL ← ((byte*)) (number) $d011
-  (byte*) IRQ_STATUS ← ((byte*)) (number) $d019
-  (byte*) IRQ_ENABLE ← ((byte*)) (number) $d01a
-  (byte) IRQ_RASTER ← (number) 1
-  (byte*) CIA1_INTERRUPT ← ((byte*)) (number) $dc0d
-  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
   to:@4
 @4: scope:[]  from @begin
-  (byte*) MUSIC ← ((byte*)) (number) $1000
   kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")
  }}
-  kickasm(location (byte*) MUSIC) {{ .fill music.size, music.getData(i)
+  kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)
  }}
   to:@6
 
 (void()) main()
 main: scope:[main]  from @6
   asm { sei jsrmusic.init  }
-  *((byte*) CIA1_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
-  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
-  *((byte*) RASTER) ← (number) $fd
-  *((byte*) IRQ_ENABLE) ← (byte) IRQ_RASTER
+  *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
+  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
+  *((const byte*) RASTER) ← (number) $fd
+  *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
   (void()*~) main::$0 ← & interrupt(KERNEL_KEYBOARD)(void()) irq_play()
-  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const void()**) KERNEL_IRQ) ← (void()*~) main::$0
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -42,10 +32,10 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_KEYBOARD)(void()) irq_play()
 irq_play: scope:[irq_play]  from
-  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   asm { jsrmusic.play  }
-  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
-  *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
+  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
+  *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:irq_play::@return
 irq_play::@return: scope:[irq_play]  from irq_play
   return 
@@ -63,69 +53,43 @@ SYMBOL TABLE SSA
 (label) @7
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
-(byte*) CIA1_INTERRUPT
-(byte) CIA_INTERRUPT_CLEAR
-(byte*) IRQ_ENABLE
-(byte) IRQ_RASTER
-(byte*) IRQ_STATUS
-(void()**) KERNEL_IRQ
-(byte*) MUSIC
-(byte*) RASTER
-(byte*) VIC_CONTROL
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
+(const byte*) IRQ_ENABLE = (byte*)(number) $d01a
+(const byte) IRQ_RASTER = (number) 1
+(const byte*) IRQ_STATUS = (byte*)(number) $d019
+(const void()**) KERNEL_IRQ = (void()**)(number) $314
+(const byte*) MUSIC = (byte*)(number) $1000
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) VIC_CONTROL = (byte*)(number) $d011
 interrupt(KERNEL_KEYBOARD)(void()) irq_play()
 (label) irq_play::@return
 (void()) main()
 (void()*~) main::$0
 (label) main::@return
 
-Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER ← (number) 1
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-Adding number conversion cast (unumber) $7f in *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
-Adding number conversion cast (unumber) $fd in *((byte*) RASTER) ← (number) $fd
+Adding number conversion cast (unumber) $7f in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
+Adding number conversion cast (unumber) $fd in *((const byte*) RASTER) ← (number) $fd
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) VIC_CONTROL ← (byte*)(number) $d011
-Inlining cast (byte*) IRQ_STATUS ← (byte*)(number) $d019
-Inlining cast (byte*) IRQ_ENABLE ← (byte*)(number) $d01a
-Inlining cast (byte) IRQ_RASTER ← (unumber)(number) 1
-Inlining cast (byte*) CIA1_INTERRUPT ← (byte*)(number) $dc0d
-Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
-Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
-Inlining cast (byte*) MUSIC ← (byte*)(number) $1000
-Inlining cast *((byte*) RASTER) ← (unumber)(number) $fd
+Inlining cast *((const byte*) RASTER) ← (unumber)(number) $fd
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53273
 Simplifying constant pointer cast (byte*) 53274
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 56333
-Simplifying constant integer cast $7f
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 4096
 Simplifying constant integer cast $7f
 Simplifying constant integer cast $fd
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $fd
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [17] (void()*~) main::$0 ← & interrupt(KERNEL_KEYBOARD)(void()) irq_play()
+Constant right-side identified [7] (void()*~) main::$0 ← & interrupt(KERNEL_KEYBOARD)(void()) irq_play()
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) VIC_CONTROL = (byte*) 53265
-Constant (const byte*) IRQ_STATUS = (byte*) 53273
-Constant (const byte*) IRQ_ENABLE = (byte*) 53274
-Constant (const byte) IRQ_RASTER = 1
-Constant (const byte*) CIA1_INTERRUPT = (byte*) 56333
-Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
-Constant (const void()**) KERNEL_IRQ = (void()**) 788
-Constant (const byte*) MUSIC = (byte*) 4096
 Constant (const void()*) main::$0 = &irq_play
 Successful SSA optimization Pass2ConstantIdentification
 Constant inlined main::$0 = &interrupt(KERNEL_KEYBOARD)(void()) irq_play()
@@ -464,9 +428,9 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte*) BORDERCOL = (byte*) 53280
 (const byte*) CIA1_INTERRUPT = (byte*) 56333
-(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte) CIA_INTERRUPT_CLEAR = (number) $7f
 (const byte*) IRQ_ENABLE = (byte*) 53274
-(const byte) IRQ_RASTER = (byte) 1
+(const byte) IRQ_RASTER = (number) 1
 (const byte*) IRQ_STATUS = (byte*) 53273
 (const void()**) KERNEL_IRQ = (void()**) 788
 (const byte*) MUSIC = (byte*) 4096

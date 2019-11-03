@@ -4,8 +4,8 @@
 .pc = $80d "Program"
   .const OFFSET_STRUCT_POINT_Y = 1
 main: {
-    .label q = p_x
     .label SCREEN = $400
+    .label q = p_x
     .label p_x = 2
     .label p_y = 3
     lda #2

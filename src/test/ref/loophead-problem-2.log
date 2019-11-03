@@ -15,7 +15,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) main::screen ← ((byte*)) (number) $400
   call scan_for_lowest 
   (byte) scan_for_lowest::return#0 ← (byte) scan_for_lowest::return#2
   to:main::@1
@@ -23,13 +22,13 @@ main::@1: scope:[main]  from main
   (byte) scan_for_lowest::return#3 ← phi( main/(byte) scan_for_lowest::return#0 )
   (byte~) main::$0 ← (byte) scan_for_lowest::return#3
   (byte) main::hit_check#0 ← (byte~) main::$0
-  *((byte*) main::screen + (number) 0) ← (byte) main::hit_check#0
+  *((const byte*) main::screen + (number) 0) ← (byte) main::hit_check#0
   (byte~) main::$3 ← (byte) main::hit_check#0 * (const byte) SIZEOF_SIGNED_WORD
   (byte~) main::$1 ← < *((signed word[8]) ball_y + (byte~) main::$3)
-  *((byte*) main::screen + (number) 2) ← (byte~) main::$1
+  *((const byte*) main::screen + (number) 2) ← (byte~) main::$1
   (byte~) main::$4 ← (byte) main::hit_check#0 * (const byte) SIZEOF_SIGNED_WORD
   (byte~) main::$2 ← > *((signed word[8]) ball_y + (byte~) main::$4)
-  *((byte*) main::screen + (number) 3) ← (byte~) main::$2
+  *((const byte*) main::screen + (number) 3) ← (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -102,7 +101,7 @@ SYMBOL TABLE SSA
 (label) main::@return
 (byte) main::hit_check
 (byte) main::hit_check#0
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 (byte()) scan_for_lowest()
 (bool~) scan_for_lowest::$0
 (bool~) scan_for_lowest::$1
@@ -142,9 +141,9 @@ SYMBOL TABLE SSA
 (byte) scan_for_lowest::return#3
 (byte) scan_for_lowest::return#4
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) main::hit_check#0
-Adding number conversion cast (unumber) 2 in *((byte*) main::screen + (number) 2) ← (byte~) main::$1
-Adding number conversion cast (unumber) 3 in *((byte*) main::screen + (number) 3) ← (byte~) main::$2
+Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte) main::hit_check#0
+Adding number conversion cast (unumber) 2 in *((const byte*) main::screen + (number) 2) ← (byte~) main::$1
+Adding number conversion cast (unumber) 3 in *((const byte*) main::screen + (number) 3) ← (byte~) main::$2
 Adding number conversion cast (unumber) $ff in (byte) scan_for_lowest::lowest#0 ← (number) $ff
 Adding number conversion cast (snumber) $258 in (signed word) scan_for_lowest::height#0 ← (number) $258
 Adding number conversion cast (unumber) 0 in (byte) scan_for_lowest::i#0 ← (number) 0
@@ -152,11 +151,11 @@ Adding number conversion cast (unumber) 8 in (bool~) scan_for_lowest::$0 ← (by
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (signed word[8]) ball_y ← (signed word[8]){ (signed word)(number) $32, (signed word)(number) $64, (signed word)(number) -$c8, (signed word)(number) $c, (signed word)(number) -$64, (signed word)(number) $4b, (signed word)(number) 0, (signed word)(number) -$79 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
 Inlining cast (byte) scan_for_lowest::lowest#0 ← (unumber)(number) $ff
 Inlining cast (signed word) scan_for_lowest::height#0 ← (snumber)(number) $258
 Inlining cast (byte) scan_for_lowest::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $32
 Simplifying constant integer cast $64
 Simplifying constant integer cast -$c8
@@ -165,7 +164,6 @@ Simplifying constant integer cast -$64
 Simplifying constant integer cast $4b
 Simplifying constant integer cast 0
 Simplifying constant integer cast -$79
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
@@ -182,7 +180,7 @@ Finalized signed number type (signed word) $258
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [24] (bool~) scan_for_lowest::$2 ← *((signed word[8]) ball_y + (byte~) scan_for_lowest::$3) >= (signed word) scan_for_lowest::height#2 from [23] (bool~) scan_for_lowest::$1 ← *((signed word[8]) ball_y + (byte~) scan_for_lowest::$3) < (signed word) scan_for_lowest::height#2
+Inversing boolean not [23] (bool~) scan_for_lowest::$2 ← *((signed word[8]) ball_y + (byte~) scan_for_lowest::$3) >= (signed word) scan_for_lowest::height#2 from [22] (bool~) scan_for_lowest::$1 ← *((signed word[8]) ball_y + (byte~) scan_for_lowest::$3) < (signed word) scan_for_lowest::height#2
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) scan_for_lowest::return#0 = (byte) scan_for_lowest::return#3 
 Alias (byte) main::hit_check#0 = (byte~) main::$0 
@@ -193,20 +191,19 @@ Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (phi-usage) (byte) scan_for_lowest::i#2 = (byte) scan_for_lowest::i#4 
 Identical Phi Values (byte) scan_for_lowest::i#4 (byte) scan_for_lowest::i#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [11] (byte~) main::$4 ← (byte) main::hit_check#0 * (const byte) SIZEOF_SIGNED_WORD
+Identified duplicate assignment right side [10] (byte~) main::$4 ← (byte) main::hit_check#0 * (const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) scan_for_lowest::$0 [20] if((byte) scan_for_lowest::i#2<(byte) 8) goto scan_for_lowest::@2
-Simple Condition (bool~) scan_for_lowest::$2 [25] if(*((signed word[8]) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@4
+Simple Condition (bool~) scan_for_lowest::$0 [19] if((byte) scan_for_lowest::i#2<(byte) 8) goto scan_for_lowest::@2
+Simple Condition (bool~) scan_for_lowest::$2 [24] if(*((signed word[8]) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (signed word[8]) { (signed word) $32, (signed word) $64, (signed word) -$c8, (signed word) $c, (signed word) -$64, (signed word) $4b, (signed word) 0, (signed word) -$79 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const signed word[8]) ball_y = { $32, $64, -$c8, $c, -$64, $4b, 0, -$79 }
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) scan_for_lowest::lowest#0 = $ff
 Constant (const signed word) scan_for_lowest::height#0 = $258
 Constant (const byte) scan_for_lowest::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen in [7] *((const byte*) main::screen + (byte) 0) ← (byte) main::hit_check#0
+Simplifying expression containing zero main::screen in [6] *((const byte*) main::screen + (byte) 0) ← (byte) main::hit_check#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Alias (byte~) main::$4 = (byte~) main::$3 
 Successful SSA optimization Pass2AliasElimination

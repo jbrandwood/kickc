@@ -36,15 +36,6 @@ Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) D011 ← ((byte*)) (number) $d011
-  (byte) VIC_BMM ← (number) $20
-  (byte) VIC_DEN ← (number) $10
-  (byte) VIC_RSEL ← (number) 8
-  (byte*) VIC_MEMORY ← ((byte*)) (number) $d018
-  (byte) WHITE ← (number) 1
-  (byte) PURPLE ← (number) 4
   to:@8
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
@@ -514,8 +505,6 @@ sgn_u16::@return: scope:[sgn_u16]  from sgn_u16::@1 sgn_u16::@3
 @14: scope:[]  from @8
   (byte*) bitmap_screen#19 ← phi( @8/(byte*) bitmap_screen#0 )
   (byte*) bitmap_gfx#20 ← phi( @8/(byte*) bitmap_gfx#0 )
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) BITMAP ← ((byte*)) (number) $2000
   (word) next#0 ← (number) 0
   to:@15
 
@@ -524,23 +513,20 @@ main: scope:[main]  from @15
   (word) next#13 ← phi( @15/(word) next#11 )
   (byte*) bitmap_screen#12 ← phi( @15/(byte*) bitmap_screen#14 )
   (byte*) bitmap_gfx#13 ← phi( @15/(byte*) bitmap_gfx#15 )
-  *((byte*) BORDERCOL) ← (number) 0
-  *((byte*) BGCOL) ← (number) 0
-  (byte~) main::$0 ← (byte) VIC_BMM | (byte) VIC_DEN
-  (byte~) main::$1 ← (byte~) main::$0 | (byte) VIC_RSEL
-  (number~) main::$2 ← (byte~) main::$1 | (number) 3
-  *((byte*) D011) ← (number~) main::$2
-  (word~) main::$3 ← ((word)) (byte*) SCREEN
+  *((const byte*) BORDERCOL) ← (number) 0
+  *((const byte*) BGCOL) ← (number) 0
+  *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+  (word~) main::$0 ← ((word)) (const byte*) SCREEN
+  (number~) main::$1 ← (word~) main::$0 & (number) $3fff
+  (number~) main::$2 ← (number~) main::$1 / (number) $40
+  (word~) main::$3 ← ((word)) (const byte*) BITMAP
   (number~) main::$4 ← (word~) main::$3 & (number) $3fff
-  (number~) main::$5 ← (number~) main::$4 / (number) $40
-  (word~) main::$6 ← ((word)) (byte*) BITMAP
-  (number~) main::$7 ← (word~) main::$6 & (number) $3fff
-  (number~) main::$8 ← (number~) main::$7 / (number) $400
-  (number~) main::$9 ← (number~) main::$5 | (number~) main::$8
-  (byte~) main::$10 ← ((byte)) (number~) main::$9
-  *((byte*) VIC_MEMORY) ← (byte~) main::$10
-  (byte*) bitmap_init::gfx#0 ← (byte*) BITMAP
-  (byte*) bitmap_init::screen#0 ← (byte*) SCREEN
+  (number~) main::$5 ← (number~) main::$4 / (number) $400
+  (number~) main::$6 ← (number~) main::$2 | (number~) main::$5
+  (byte~) main::$7 ← ((byte)) (number~) main::$6
+  *((const byte*) VIC_MEMORY) ← (byte~) main::$7
+  (byte*) bitmap_init::gfx#0 ← (const byte*) BITMAP
+  (byte*) bitmap_init::screen#0 ← (const byte*) SCREEN
   call bitmap_init 
   to:main::@5
 main::@5: scope:[main]  from main
@@ -549,8 +535,8 @@ main::@5: scope:[main]  from main
   (byte*) bitmap_gfx#8 ← phi( main/(byte*) bitmap_gfx#2 )
   (byte*) bitmap_gfx#3 ← (byte*) bitmap_gfx#8
   (byte*) bitmap_screen#3 ← (byte*) bitmap_screen#8
-  (byte) bitmap_clear::bgcol#0 ← (byte) PURPLE
-  (byte) bitmap_clear::fgcol#0 ← (byte) WHITE
+  (byte) bitmap_clear::bgcol#0 ← (const byte) PURPLE
+  (byte) bitmap_clear::fgcol#0 ← (const byte) WHITE
   call bitmap_clear 
   to:main::@6
 main::@6: scope:[main]  from main::@5
@@ -573,9 +559,9 @@ main::@7: scope:[main]  from main::@1
   (byte*) bitmap_gfx#19 ← phi( main::@1/(byte*) bitmap_gfx#22 )
   (word) next#6 ← phi( main::@1/(word) next#5 )
   (word) next#1 ← ++ (word) next#6
-  (bool~) main::$14 ← (word) next#1 == (number) $140
-  (bool~) main::$15 ← ! (bool~) main::$14
-  if((bool~) main::$15) goto main::@2
+  (bool~) main::$11 ← (word) next#1 == (number) $140
+  (bool~) main::$12 ← ! (bool~) main::$11
+  if((bool~) main::$12) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@3 main::@7
   (byte*) bitmap_screen#13 ← phi( main::@3/(byte*) bitmap_screen#17 main::@7/(byte*) bitmap_screen#18 )
@@ -620,17 +606,17 @@ SYMBOL TABLE SSA
 (label) @8
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) BITMAP
-(byte*) BORDERCOL
-(byte*) D011
-(byte) PURPLE
-(byte*) SCREEN
-(byte) VIC_BMM
-(byte) VIC_DEN
-(byte*) VIC_MEMORY
-(byte) VIC_RSEL
-(byte) WHITE
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte*) BITMAP = (byte*)(number) $2000
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) D011 = (byte*)(number) $d011
+(const byte) PURPLE = (number) 4
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte) VIC_BMM = (number) $20
+(const byte) VIC_DEN = (number) $10
+(const byte*) VIC_MEMORY = (byte*)(number) $d018
+(const byte) VIC_RSEL = (number) 8
+(const byte) WHITE = (number) 1
 (word()) abs_u16((word) abs_u16::w)
 (byte~) abs_u16::$0
 (number~) abs_u16::$1
@@ -1001,19 +987,16 @@ SYMBOL TABLE SSA
 (byte*) bitmap_screen#8
 (byte*) bitmap_screen#9
 (void()) main()
-(byte~) main::$0
-(byte~) main::$1
-(byte~) main::$10
-(bool~) main::$14
-(bool~) main::$15
+(word~) main::$0
+(number~) main::$1
+(bool~) main::$11
+(bool~) main::$12
 (number~) main::$2
 (word~) main::$3
 (number~) main::$4
 (number~) main::$5
-(word~) main::$6
-(number~) main::$7
-(number~) main::$8
-(number~) main::$9
+(number~) main::$6
+(byte~) main::$7
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -1105,11 +1088,6 @@ SYMBOL TABLE SSA
 
 Fixing inline constructor with bitmap_plot::$3 ← (byte)*(bitmap_plot_yhi + bitmap_plot::y#4) w= (byte)*(bitmap_plot_ylo + bitmap_plot::y#4)
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) $20 in (byte) VIC_BMM ← (number) $20
-Adding number conversion cast (unumber) $10 in (byte) VIC_DEN ← (number) $10
-Adding number conversion cast (unumber) 8 in (byte) VIC_RSEL ← (number) 8
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
-Adding number conversion cast (unumber) 4 in (byte) PURPLE ← (number) 4
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#2 > (number) 0
 Adding number conversion cast (unumber) $80 in (byte) bitmap_init::bits#0 ← (number) $80
 Adding number conversion cast (unumber) 1 in (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (number) 1
@@ -1143,34 +1121,25 @@ Adding number conversion cast (unumber) 0 in (bool~) sgn_u16::$2 ← (number) 0 
 Adding number conversion cast (unumber) -1 in (word) sgn_u16::return#2 ← (number) -1
 Adding number conversion cast (unumber) 1 in (word) sgn_u16::return#3 ← (number) 1
 Adding number conversion cast (unumber) 0 in (word) next#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) BORDERCOL) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) BGCOL) ← (number) 0
-Adding number conversion cast (unumber) 3 in (number~) main::$2 ← (byte~) main::$1 | (number) 3
-Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (byte~) main::$1 | (unumber)(number) 3
+Adding number conversion cast (unumber) 0 in *((const byte*) BORDERCOL) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) BGCOL) ← (number) 0
+Adding number conversion cast (unumber) VIC_BMM|VIC_DEN|VIC_RSEL|3 in *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) D011) ← ((unumber)) (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) $3fff in (number~) main::$1 ← (word~) main::$0 & (number) $3fff
+Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (word~) main::$0 & (unumber)(number) $3fff
+Adding number conversion cast (unumber) $40 in (number~) main::$2 ← (unumber~) main::$1 / (number) $40
+Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (unumber~) main::$1 / (unumber)(number) $40
 Adding number conversion cast (unumber) $3fff in (number~) main::$4 ← (word~) main::$3 & (number) $3fff
 Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (word~) main::$3 & (unumber)(number) $3fff
-Adding number conversion cast (unumber) $40 in (number~) main::$5 ← (unumber~) main::$4 / (number) $40
-Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (unumber~) main::$4 / (unumber)(number) $40
-Adding number conversion cast (unumber) $3fff in (number~) main::$7 ← (word~) main::$6 & (number) $3fff
-Adding number conversion cast (unumber) main::$7 in (number~) main::$7 ← (word~) main::$6 & (unumber)(number) $3fff
-Adding number conversion cast (unumber) $400 in (number~) main::$8 ← (unumber~) main::$7 / (number) $400
-Adding number conversion cast (unumber) main::$8 in (number~) main::$8 ← (unumber~) main::$7 / (unumber)(number) $400
-Adding number conversion cast (unumber) main::$9 in (number~) main::$9 ← (unumber~) main::$5 | (unumber~) main::$8
+Adding number conversion cast (unumber) $400 in (number~) main::$5 ← (unumber~) main::$4 / (number) $400
+Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (unumber~) main::$4 / (unumber)(number) $400
+Adding number conversion cast (unumber) main::$6 in (number~) main::$6 ← (unumber~) main::$2 | (unumber~) main::$5
 Adding number conversion cast (unumber) 0 in (word) bitmap_line::x1#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (word) bitmap_line::y1#0 ← (number) 0
 Adding number conversion cast (unumber) $64 in (word) bitmap_line::y2#0 ← (number) $64
-Adding number conversion cast (unumber) $140 in (bool~) main::$14 ← (word) next#1 == (number) $140
+Adding number conversion cast (unumber) $140 in (bool~) main::$11 ← (word) next#1 == (number) $140
 Adding number conversion cast (unumber) 0 in (word) next#2 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) D011 ← (byte*)(number) $d011
-Inlining cast (byte) VIC_BMM ← (unumber)(number) $20
-Inlining cast (byte) VIC_DEN ← (unumber)(number) $10
-Inlining cast (byte) VIC_RSEL ← (unumber)(number) 8
-Inlining cast (byte*) VIC_MEMORY ← (byte*)(number) $d018
-Inlining cast (byte) WHITE ← (unumber)(number) 1
-Inlining cast (byte) PURPLE ← (unumber)(number) 4
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#3
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
 Inlining cast (byte) bitmap_init::bits#0 ← (unumber)(number) $80
@@ -1182,14 +1151,13 @@ Inlining cast (byte~) bitmap_line::$13 ← (byte)(word) bitmap_line::y#7
 Inlining cast (byte~) bitmap_line::$24 ← (byte)(word) bitmap_line::y#8
 Inlining cast (word) sgn_u16::return#2 ← (unumber)(number) -1
 Inlining cast (word) sgn_u16::return#3 ← (unumber)(number) 1
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) BITMAP ← (byte*)(number) $2000
 Inlining cast (word) next#0 ← (unumber)(number) 0
-Inlining cast *((byte*) BORDERCOL) ← (unumber)(number) 0
-Inlining cast *((byte*) BGCOL) ← (unumber)(number) 0
-Inlining cast (word~) main::$3 ← (word)(byte*) SCREEN
-Inlining cast (word~) main::$6 ← (word)(byte*) BITMAP
-Inlining cast (byte~) main::$10 ← (byte)(unumber~) main::$9
+Inlining cast *((const byte*) BORDERCOL) ← (unumber)(number) 0
+Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 0
+Inlining cast *((const byte*) D011) ← (unumber)(const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
+Inlining cast (word~) main::$0 ← (word)(const byte*) SCREEN
+Inlining cast (word~) main::$3 ← (word)(const byte*) BITMAP
+Inlining cast (byte~) main::$7 ← (byte)(unumber~) main::$6
 Inlining cast (word) bitmap_line::x1#0 ← (unumber)(number) 0
 Inlining cast (word) bitmap_line::y1#0 ← (unumber)(number) 0
 Inlining cast (word) bitmap_line::y2#0 ← (unumber)(number) $64
@@ -1198,12 +1166,9 @@ Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53265
-Simplifying constant integer cast $20
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
 Simplifying constant pointer cast (byte*) 53272
-Simplifying constant integer cast 1
-Simplifying constant integer cast 4
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 8192
 Simplifying constant integer cast 0
 Simplifying constant integer cast $80
 Simplifying constant integer cast 1
@@ -1227,11 +1192,10 @@ Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Simplifying constant integer cast -1
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 8192
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
+Simplifying constant integer cast (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Simplifying constant integer cast 3
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast $40
@@ -1243,11 +1207,6 @@ Simplifying constant integer cast $64
 Simplifying constant integer cast $140
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $80
 Finalized unsigned number type (byte) 1
@@ -1293,20 +1252,19 @@ Inferred type updated to word in (unumber~) bitmap_line::$23 ← (word) bitmap_l
 Inferred type updated to word in (unumber~) bitmap_line::$17 ← (word) bitmap_line::dx#3 / (byte) 2
 Inferred type updated to byte in (unumber~) abs_u16::$1 ← (byte~) abs_u16::$0 & (byte) $80
 Inferred type updated to byte in (unumber~) sgn_u16::$1 ← (byte~) sgn_u16::$0 & (byte) $80
-Inferred type updated to byte in (unumber~) main::$2 ← (byte~) main::$1 | (byte) 3
+Inferred type updated to word in (unumber~) main::$1 ← (word~) main::$0 & (word) $3fff
+Inferred type updated to word in (unumber~) main::$2 ← (word~) main::$1 / (byte) $40
 Inferred type updated to word in (unumber~) main::$4 ← (word~) main::$3 & (word) $3fff
-Inferred type updated to word in (unumber~) main::$5 ← (word~) main::$4 / (byte) $40
-Inferred type updated to word in (unumber~) main::$7 ← (word~) main::$6 & (word) $3fff
-Inferred type updated to word in (unumber~) main::$8 ← (word~) main::$7 / (word) $400
-Inferred type updated to word in (unumber~) main::$9 ← (word~) main::$5 | (word~) main::$8
+Inferred type updated to word in (unumber~) main::$5 ← (word~) main::$4 / (word) $400
+Inferred type updated to word in (unumber~) main::$6 ← (word~) main::$2 | (word~) main::$5
 Adding pointer type conversion cast (byte*) bitmap_plot::$0 in (byte*~) bitmap_plot::$0 ← (word~) bitmap_plot::$3
 Successful SSA optimization PassNAddTypeConversionAssignment
-Inversing boolean not [11] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [10] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [43] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [42] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
-Inversing boolean not [63] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [62] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
-Inversing boolean not [161] (bool~) bitmap_line::$21 ← (word) bitmap_line::dy#3 >= (word) bitmap_line::e#1 from [160] (bool~) bitmap_line::$20 ← (word) bitmap_line::dy#3 < (word) bitmap_line::e#1
-Inversing boolean not [183] (bool~) bitmap_line::$27 ← (word) bitmap_line::dx#5 >= (word) bitmap_line::e1#1 from [182] (bool~) bitmap_line::$26 ← (word) bitmap_line::dx#5 < (word) bitmap_line::e1#1
-Inversing boolean not [253] (bool~) main::$15 ← (word) next#1 != (word) $140 from [252] (bool~) main::$14 ← (word) next#1 == (word) $140
+Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
+Inversing boolean not [34] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [33] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
+Inversing boolean not [54] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [53] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
+Inversing boolean not [152] (bool~) bitmap_line::$21 ← (word) bitmap_line::dy#3 >= (word) bitmap_line::e#1 from [151] (bool~) bitmap_line::$20 ← (word) bitmap_line::dy#3 < (word) bitmap_line::e#1
+Inversing boolean not [174] (bool~) bitmap_line::$27 ← (word) bitmap_line::dx#5 >= (word) bitmap_line::e1#1 from [173] (bool~) bitmap_line::$26 ← (word) bitmap_line::dx#5 < (word) bitmap_line::e1#1
+Inversing boolean not [239] (bool~) main::$12 ← (word) next#1 != (word) $140 from [238] (bool~) main::$11 ← (word) next#1 == (word) $140
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#2 (void*) memset::return#4 (void*) memset::return#1 
 Alias (void*) memset::str#3 = (void*) memset::str#4 
@@ -1459,39 +1417,32 @@ Identical Phi Values (word) next#4 (word) next#3
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [61] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
+Identified duplicate assignment right side [52] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) memset::$1 [12] if((word) memset::num#2<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [22] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) bitmap_init::$1 [44] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
-Simple Condition (bool~) bitmap_init::$2 [48] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
-Simple Condition (bool~) bitmap_init::$9 [64] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
-Simple Condition (bool~) bitmap_init::$11 [68] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) bitmap_line::$12 [139] if((word) bitmap_line::dx#0>(word) bitmap_line::dy#0) goto bitmap_line::@2
-Simple Condition (bool~) bitmap_line::$21 [162] if((word) bitmap_line::dy#0>=(word) bitmap_line::e#1) goto bitmap_line::@8
-Simple Condition (bool~) bitmap_line::$22 [165] if((word) bitmap_line::y#1!=(word) bitmap_line::y2#0) goto bitmap_line::@7
-Simple Condition (bool~) bitmap_line::$27 [184] if((word) bitmap_line::dx#0>=(word) bitmap_line::e1#1) goto bitmap_line::@13
-Simple Condition (bool~) bitmap_line::$28 [187] if((word) bitmap_line::x#15!=(word) bitmap_line::x2#0) goto bitmap_line::@12
-Simple Condition (bool~) abs_u16::$3 [195] if((byte) 0!=(byte~) abs_u16::$1) goto abs_u16::@1
-Simple Condition (bool~) sgn_u16::$2 [208] if((byte) 0!=(byte~) sgn_u16::$1) goto sgn_u16::@1
-Simple Condition (bool~) main::$15 [254] if((word) next#1!=(word) $140) goto main::@2
+Simple Condition (bool~) memset::$1 [3] if((word) memset::num#2<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) bitmap_init::$1 [35] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
+Simple Condition (bool~) bitmap_init::$2 [39] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
+Simple Condition (bool~) bitmap_init::$9 [55] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
+Simple Condition (bool~) bitmap_init::$11 [59] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
+Simple Condition (bool~) bitmap_line::$12 [130] if((word) bitmap_line::dx#0>(word) bitmap_line::dy#0) goto bitmap_line::@2
+Simple Condition (bool~) bitmap_line::$21 [153] if((word) bitmap_line::dy#0>=(word) bitmap_line::e#1) goto bitmap_line::@8
+Simple Condition (bool~) bitmap_line::$22 [156] if((word) bitmap_line::y#1!=(word) bitmap_line::y2#0) goto bitmap_line::@7
+Simple Condition (bool~) bitmap_line::$27 [175] if((word) bitmap_line::dx#0>=(word) bitmap_line::e1#1) goto bitmap_line::@13
+Simple Condition (bool~) bitmap_line::$28 [178] if((word) bitmap_line::x#15!=(word) bitmap_line::x2#0) goto bitmap_line::@12
+Simple Condition (bool~) abs_u16::$3 [186] if((byte) 0!=(byte~) abs_u16::$1) goto abs_u16::@1
+Simple Condition (bool~) sgn_u16::$2 [199] if((byte) 0!=(byte~) sgn_u16::$1) goto sgn_u16::@1
+Simple Condition (bool~) main::$12 [240] if((word) next#1!=(word) $140) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [121] (bool~) bitmap_line::$7 ← ! (bool~) bitmap_line::$6
-Rewriting && if()-condition to two if()s [120] (bool~) bitmap_line::$6 ← (bool~) bitmap_line::$4 && (bool~) bitmap_line::$5
+Rewriting ! if()-condition to reversed if() [112] (bool~) bitmap_line::$7 ← ! (bool~) bitmap_line::$6
+Rewriting && if()-condition to two if()s [111] (bool~) bitmap_line::$6 ← (bool~) bitmap_line::$4 && (bool~) bitmap_line::$5
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant right-side identified [31] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-Constant right-side identified [32] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-Constant right-side identified [33] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
+Constant right-side identified [22] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
+Constant right-side identified [23] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
+Constant right-side identified [24] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
+Constant right-side identified [211] (word~) main::$0 ← (word)(const byte*) SCREEN
+Constant right-side identified [214] (word~) main::$3 ← (word)(const byte*) BITMAP
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) D011 = (byte*) 53265
-Constant (const byte) VIC_BMM = $20
-Constant (const byte) VIC_DEN = $10
-Constant (const byte) VIC_RSEL = 8
-Constant (const byte*) VIC_MEMORY = (byte*) 53272
-Constant (const byte) WHITE = 1
-Constant (const byte) PURPLE = 4
 Constant (const byte*) bitmap_screen#0 = (byte*) 0
 Constant (const byte*) bitmap_gfx#0 = (byte*) 0
 Constant (const byte[$100]) bitmap_plot_ylo = { fill( $100, 0) }
@@ -1506,41 +1457,38 @@ Constant (const byte) memset::c#1 = 0
 Constant (const word) memset::num#1 = $1f40
 Constant (const word) sgn_u16::return#2 = -1
 Constant (const word) sgn_u16::return#3 = 1
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) BITMAP = (byte*) 8192
 Constant (const word) next#0 = 0
+Constant (const word) main::$0 = (word)SCREEN
+Constant (const word) main::$3 = (word)BITMAP
+Constant (const byte*) bitmap_init::gfx#0 = BITMAP
+Constant (const byte*) bitmap_init::screen#0 = SCREEN
+Constant (const byte) bitmap_clear::bgcol#0 = PURPLE
+Constant (const byte) bitmap_clear::fgcol#0 = WHITE
 Constant (const word) bitmap_line::x1#0 = 0
 Constant (const word) bitmap_line::y1#0 = 0
 Constant (const word) bitmap_line::y2#0 = $64
 Constant (const word) next#2 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) bitmap_plot::y#0 = (byte)bitmap_line::y1#0
-Constant (const word) bitmap_plot::x#0 = bitmap_line::x1#0
-Constant (const word) main::$3 = (word)SCREEN
-Constant (const word) main::$6 = (word)BITMAP
-Constant (const byte*) bitmap_init::gfx#0 = BITMAP
-Constant (const byte*) bitmap_init::screen#0 = SCREEN
-Constant (const byte) bitmap_clear::bgcol#0 = PURPLE
-Constant (const byte) bitmap_clear::fgcol#0 = WHITE
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) bitmap_gfx#1 = bitmap_init::gfx#0
 Constant (const byte*) bitmap_screen#1 = bitmap_init::screen#0
+Constant (const byte) bitmap_plot::y#0 = (byte)bitmap_line::y1#0
+Constant (const word) bitmap_plot::x#0 = bitmap_line::x1#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)bitmap_screen#1
 Constant (const void*) memset::str#1 = (void*)bitmap_gfx#1
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [256] if(true) goto main::@1
+if() condition always true - replacing block destination [242] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [46] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
-Resolved ranged comparison value [48] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
-Resolved ranged next value [66] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
-Resolved ranged comparison value [68] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
+Resolved ranged next value [37] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
+Resolved ranged comparison value [39] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
+Resolved ranged next value [57] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
+Resolved ranged comparison value [59] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
 Simplifying constant evaluating to zero (byte)(const word) bitmap_line::y1#0 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero bitmap_line::x2#0 in [104] (word) abs_u16::w#0 ← (word) bitmap_line::x2#0 - (const word) bitmap_line::x1#0
-Simplifying expression containing zero bitmap_line::y2#0 in [111] (word) abs_u16::w#1 ← (const word) bitmap_line::y2#0 - (const word) bitmap_line::y1#0
-Simplifying expression containing zero bitmap_line::x2#0 in [124] (word) sgn_u16::w#0 ← (word) bitmap_line::x2#0 - (const word) bitmap_line::x1#0
-Simplifying expression containing zero bitmap_line::y2#0 in [131] (word) sgn_u16::w#1 ← (const word) bitmap_line::y2#0 - (const word) bitmap_line::y1#0
+Simplifying expression containing zero bitmap_line::x2#0 in [95] (word) abs_u16::w#0 ← (word) bitmap_line::x2#0 - (const word) bitmap_line::x1#0
+Simplifying expression containing zero bitmap_line::y2#0 in [102] (word) abs_u16::w#1 ← (const word) bitmap_line::y2#0 - (const word) bitmap_line::y1#0
+Simplifying expression containing zero bitmap_line::x2#0 in [115] (word) sgn_u16::w#0 ← (word) bitmap_line::x2#0 - (const word) bitmap_line::x1#0
+Simplifying expression containing zero bitmap_line::y2#0 in [122] (word) sgn_u16::w#1 ← (const word) bitmap_line::y2#0 - (const word) bitmap_line::y1#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (void*) memset::return#2 and assignment [35] (void*) memset::return#2 ← (void*) memset::str#3
 Eliminating unused variable (void*) memset::return#3 and assignment [37] (void*) memset::return#3 ← (void*) memset::str#3
@@ -1563,41 +1511,35 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte~) bitmap_init::$7 = (byte~) bitmap_init::$3 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) bitmap_line::$4 [55] if((word) bitmap_line::dx#0==(byte) 0) goto bitmap_line::@24
-Simple Condition (bool~) bitmap_line::$5 [130] if((word) bitmap_line::dy#0==(byte) 0) goto bitmap_line::@4
+Simple Condition (bool~) bitmap_line::$5 [127] if((word) bitmap_line::dy#0==(byte) 0) goto bitmap_line::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Negating conditional jump and destination [55] if((word) bitmap_line::dx#0!=(byte) 0) goto bitmap_line::@1
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant right-side identified [31] (byte~) bitmap_clear::$0 ← (const byte) bitmap_clear::fgcol#0 * (byte) $10
-Constant right-side identified [110] (byte~) main::$0 ← (const byte) VIC_BMM | (const byte) VIC_DEN
-Constant right-side identified [114] (word~) main::$4 ← (const word) main::$3 & (word) $3fff
-Constant right-side identified [116] (word~) main::$7 ← (const word) main::$6 & (word) $3fff
+Constant right-side identified [111] (word~) main::$1 ← (const word) main::$0 & (word) $3fff
+Constant right-side identified [113] (word~) main::$4 ← (const word) main::$3 & (word) $3fff
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) bitmap_clear::$0 = bitmap_clear::fgcol#0*$10
 Constant (const word) abs_u16::w#1 = bitmap_line::y2#0
 Constant (const word) sgn_u16::w#1 = bitmap_line::y2#0
-Constant (const byte) main::$0 = VIC_BMM|VIC_DEN
+Constant (const word) main::$1 = main::$0&$3fff
 Constant (const word) main::$4 = main::$3&$3fff
-Constant (const word) main::$7 = main::$6&$3fff
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [30] (byte) bitmap_clear::col#0 ← (const byte) bitmap_clear::$0 + (const byte) bitmap_clear::bgcol#0
-Constant right-side identified [104] (byte~) main::$1 ← (const byte) main::$0 | (const byte) VIC_RSEL
-Constant right-side identified [107] (word~) main::$5 ← (const word) main::$4 / (byte) $40
-Constant right-side identified [108] (word~) main::$8 ← (const word) main::$7 / (word) $400
+Constant right-side identified [105] (word~) main::$2 ← (const word) main::$1 / (byte) $40
+Constant right-side identified [106] (word~) main::$5 ← (const word) main::$4 / (word) $400
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) bitmap_clear::col#0 = bitmap_clear::$0+bitmap_clear::bgcol#0
-Constant (const byte) main::$1 = main::$0|VIC_RSEL
-Constant (const word) main::$5 = main::$4/$40
-Constant (const word) main::$8 = main::$7/$400
+Constant (const word) main::$2 = main::$1/$40
+Constant (const word) main::$5 = main::$4/$400
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) memset::c#0 = bitmap_clear::col#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [102] (byte~) main::$2 ← (const byte) main::$1 | (byte) 3
-Constant right-side identified [104] (word~) main::$9 ← (const word) main::$5 | (const word) main::$8
+Constant right-side identified [103] (word~) main::$6 ← (const word) main::$2 | (const word) main::$5
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = main::$1|3
-Constant (const word) main::$9 = main::$5|main::$8
+Constant (const word) main::$6 = main::$2|main::$5
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) main::$10 = (byte)main::$9
+Constant (const byte) main::$7 = (byte)main::$6
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [2] (byte*~) memset::$2 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Inlining Noop Cast [4] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3 keeping memset::str#3
@@ -1632,7 +1574,6 @@ Constant inlined memset::num#1 = (word) $1f40
 Constant inlined memset::num#0 = (word) $3e8
 Constant inlined bitmap_init::bits#0 = (byte) $80
 Constant inlined bitmap_init::bits#2 = (byte) $80
-Constant inlined main::$10 = (byte)(word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400
 Constant inlined bitmap_plot::x#0 = (const word) bitmap_line::x1#0
 Constant inlined abs_u16::w#1 = (const word) bitmap_line::y2#0
 Constant inlined bitmap_plot::y#0 = (byte) 0
@@ -1646,21 +1587,19 @@ Constant inlined sgn_u16::w#1 = (const word) bitmap_line::y2#0
 Constant inlined bitmap_gfx#1 = (const byte*) BITMAP
 Constant inlined bitmap_clear::fgcol#0 = (const byte) WHITE
 Constant inlined bitmap_screen#1 = (const byte*) SCREEN
-Constant inlined main::$1 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL
-Constant inlined main::$2 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3
-Constant inlined main::$0 = (const byte) VIC_BMM|(const byte) VIC_DEN
-Constant inlined main::$5 = (word)(const byte*) SCREEN&(word) $3fff/(byte) $40
+Constant inlined main::$1 = (word)(const byte*) SCREEN&(word) $3fff
+Constant inlined main::$2 = (word)(const byte*) SCREEN&(word) $3fff/(byte) $40
+Constant inlined main::$0 = (word)(const byte*) SCREEN
+Constant inlined main::$5 = (word)(const byte*) BITMAP&(word) $3fff/(word) $400
 Constant inlined bitmap_init::y#0 = (byte) 0
 Constant inlined bitmap_clear::$0 = (const byte) WHITE*(byte) $10
-Constant inlined main::$6 = (word)(const byte*) BITMAP
-Constant inlined main::$3 = (word)(const byte*) SCREEN
+Constant inlined main::$6 = (word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400
+Constant inlined main::$3 = (word)(const byte*) BITMAP
 Constant inlined memset::c#0 = (const byte) bitmap_clear::col#0
-Constant inlined main::$4 = (word)(const byte*) SCREEN&(word) $3fff
+Constant inlined main::$4 = (word)(const byte*) BITMAP&(word) $3fff
 Constant inlined bitmap_init::x#0 = (byte) 0
-Constant inlined main::$9 = (word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400
 Constant inlined memset::c#1 = (byte) 0
-Constant inlined main::$7 = (word)(const byte*) BITMAP&(word) $3fff
-Constant inlined main::$8 = (word)(const byte*) BITMAP&(word) $3fff/(word) $400
+Constant inlined main::$7 = (byte)(word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting bitmap_init::@9(between bitmap_init::@2 and bitmap_init::@1)
 Added new block during phi lifting bitmap_init::@10(between bitmap_init::@1 and bitmap_init::@2)
@@ -4410,13 +4349,13 @@ FINAL SYMBOL TABLE
 (const byte*) BITMAP = (byte*) 8192
 (const byte*) BORDERCOL = (byte*) 53280
 (const byte*) D011 = (byte*) 53265
-(const byte) PURPLE = (byte) 4
+(const byte) PURPLE = (number) 4
 (const byte*) SCREEN = (byte*) 1024
-(const byte) VIC_BMM = (byte) $20
-(const byte) VIC_DEN = (byte) $10
+(const byte) VIC_BMM = (number) $20
+(const byte) VIC_DEN = (number) $10
 (const byte*) VIC_MEMORY = (byte*) 53272
-(const byte) VIC_RSEL = (byte) 8
-(const byte) WHITE = (byte) 1
+(const byte) VIC_RSEL = (number) 8
+(const byte) WHITE = (number) 1
 (word()) abs_u16((word) abs_u16::w)
 (byte~) abs_u16::$0 reg byte a 4.0
 (byte~) abs_u16::$1 reg byte a 4.0

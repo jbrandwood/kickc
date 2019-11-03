@@ -1,18 +1,17 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  *((byte*) SCREEN + (number) 0) ← (byte) 'a'
+  *((const byte*) SCREEN + (number) 0) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main main::@1
   return 
   to:@return
 main::@1: scope:[main]  from
-  *((byte*) SCREEN + (number) 1) ← (byte) 'a'
+  *((const byte*) SCREEN + (number) 1) ← (byte) 'a'
   to:main::@return
 @1: scope:[]  from @begin
   call main 
@@ -26,16 +25,14 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@1
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte) 'a'
-Adding number conversion cast (unumber) 1 in *((byte*) SCREEN + (number) 1) ← (byte) 'a'
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) 'a'
+Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte) 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -43,9 +40,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) SCREEN = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero SCREEN in [0] *((const byte*) SCREEN + (byte) 0) ← (byte) 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@1
 Successful SSA optimization Pass2EliminateUnusedBlocks

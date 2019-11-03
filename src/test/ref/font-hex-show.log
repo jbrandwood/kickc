@@ -4,7 +4,7 @@ Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) CHARSET
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call (byte~) main::$0 ← call toD018 (byte*) SCREEN (byte*) CHARSET 
+Inlined call (byte~) main::$0 ← call toD018 (const byte*) SCREEN (const byte*) CHARSET 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
@@ -19,7 +19,6 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) D018 ← ((byte*)) (number) $d018
   to:@9
 
 (void()) init_font_hex((byte*) init_font_hex::charset)
@@ -94,14 +93,12 @@ init_font_hex::@return: scope:[init_font_hex]  from init_font_hex::@5
   to:@return
 @9: scope:[]  from @begin
   (byte[]) FONT_HEX_PROTO ← { (number) 2, (number) 5, (number) 5, (number) 5, (number) 2, (number) 6, (number) 2, (number) 2, (number) 2, (number) 7, (number) 6, (number) 1, (number) 2, (number) 4, (number) 7, (number) 6, (number) 1, (number) 2, (number) 1, (number) 6, (number) 5, (number) 5, (number) 7, (number) 1, (number) 1, (number) 7, (number) 4, (number) 6, (number) 1, (number) 6, (number) 3, (number) 4, (number) 6, (number) 5, (number) 2, (number) 7, (number) 1, (number) 1, (number) 1, (number) 1, (number) 2, (number) 5, (number) 2, (number) 5, (number) 2, (number) 2, (number) 5, (number) 3, (number) 1, (number) 1, (number) 2, (number) 5, (number) 7, (number) 5, (number) 5, (number) 6, (number) 5, (number) 6, (number) 5, (number) 6, (number) 2, (number) 5, (number) 4, (number) 5, (number) 2, (number) 6, (number) 5, (number) 5, (number) 5, (number) 6, (number) 7, (number) 4, (number) 6, (number) 4, (number) 7, (number) 7, (number) 4, (number) 6, (number) 4, (number) 4 }
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) CHARSET ← ((byte*)) (number) $2000
   to:@10
 
 (void()) main()
 main: scope:[main]  from @10
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN
-  (byte*) main::toD0181_gfx#0 ← (byte*) CHARSET
+  (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
+  (byte*) main::toD0181_gfx#0 ← (const byte*) CHARSET
   to:main::toD0181
 main::toD0181: scope:[main]  from main
   (byte*) main::toD0181_gfx#1 ← phi( main/(byte*) main::toD0181_gfx#0 )
@@ -124,8 +121,8 @@ main::toD0181_@return: scope:[main]  from main::toD0181
 main::@3: scope:[main]  from main::toD0181_@return
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
   (byte~) main::$0 ← (byte) main::toD0181_return#3
-  *((byte*) D018) ← (byte~) main::$0
-  (byte*) init_font_hex::charset#1 ← (byte*) CHARSET
+  *((const byte*) D018) ← (byte~) main::$0
+  (byte*) init_font_hex::charset#1 ← (const byte*) CHARSET
   call init_font_hex 
   to:main::@4
 main::@4: scope:[main]  from main::@3
@@ -133,7 +130,7 @@ main::@4: scope:[main]  from main::@3
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@4
   (byte) main::c#2 ← phi( main::@1/(byte) main::c#1 main::@4/(byte) main::c#0 )
-  *((byte*) SCREEN + (byte) main::c#2) ← (byte) main::c#2
+  *((const byte*) SCREEN + (byte) main::c#2) ← (byte) main::c#2
   (byte) main::c#1 ← (byte) main::c#2 + rangenext(0,$ff)
   (bool~) main::$2 ← (byte) main::c#1 != rangelast(0,$ff)
   if((bool~) main::$2) goto main::@1
@@ -154,10 +151,10 @@ SYMBOL TABLE SSA
 (label) @9
 (label) @begin
 (label) @end
-(byte*) CHARSET
-(byte*) D018
+(const byte*) CHARSET = (byte*)(number) $2000
+(const byte*) D018 = (byte*)(number) $d018
 (byte[]) FONT_HEX_PROTO
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) init_font_hex((byte*) init_font_hex::charset)
 (byte~) init_font_hex::$0
 (byte~) init_font_hex::$1
@@ -276,17 +273,16 @@ Adding number conversion cast (unumber) main::toD0181_$8 in (number~) main::toD0
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (byte[]) FONT_HEX_PROTO ← (byte[]){ (byte)(number) 2, (byte)(number) 5, (byte)(number) 5, (byte)(number) 5, (byte)(number) 2, (byte)(number) 6, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 7, (byte)(number) 6, (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 7, (byte)(number) 6, (byte)(number) 1, (byte)(number) 2, (byte)(number) 1, (byte)(number) 6, (byte)(number) 5, (byte)(number) 5, (byte)(number) 7, (byte)(number) 1, (byte)(number) 1, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 1, (byte)(number) 6, (byte)(number) 3, (byte)(number) 4, (byte)(number) 6, (byte)(number) 5, (byte)(number) 2, (byte)(number) 7, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 2, (byte)(number) 5, (byte)(number) 2, (byte)(number) 5, (byte)(number) 2, (byte)(number) 2, (byte)(number) 5, (byte)(number) 3, (byte)(number) 1, (byte)(number) 1, (byte)(number) 2, (byte)(number) 5, (byte)(number) 7, (byte)(number) 5, (byte)(number) 5, (byte)(number) 6, (byte)(number) 5, (byte)(number) 6, (byte)(number) 5, (byte)(number) 6, (byte)(number) 2, (byte)(number) 5, (byte)(number) 4, (byte)(number) 5, (byte)(number) 2, (byte)(number) 6, (byte)(number) 5, (byte)(number) 5, (byte)(number) 5, (byte)(number) 6, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 4, (byte)(number) 7, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 4, (byte)(number) 4 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) D018 ← (byte*)(number) $d018
 Inlining cast (byte) init_font_hex::idx#0 ← (unumber)(number) 0
 Inlining cast *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#0) ← (unumber)(number) 0
 Inlining cast *((byte*) init_font_hex::charset#4 + (byte) init_font_hex::idx#6) ← (unumber)(number) 0
 Inlining cast *((byte*) init_font_hex::charset#4 + (byte) init_font_hex::idx#3) ← (unumber)(number) 0
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) CHARSET ← (byte*)(number) $2000
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53272
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 8192
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 4
@@ -376,8 +372,6 @@ Simplifying constant integer cast 4
 Simplifying constant integer cast 6
 Simplifying constant integer cast 4
 Simplifying constant integer cast 4
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 8192
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
 Simplifying constant integer cast 4
@@ -424,41 +418,37 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) init_font_hex::proto_hi#4 (byte*) init_font_hex::proto_hi#6
 Identical Phi Values (byte) init_font_hex::c#5 (byte) init_font_hex::c#6
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) init_font_hex::$3 [20] if((byte) init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3
-Simple Condition (bool~) init_font_hex::$4 [30] if((byte) init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2
-Simple Condition (bool~) init_font_hex::$5 [35] if((byte) init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1
-Simple Condition (bool~) main::$2 [65] if((byte) main::c#1!=rangelast(0,$ff)) goto main::@1
+Simple Condition (bool~) init_font_hex::$3 [19] if((byte) init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3
+Simple Condition (bool~) init_font_hex::$4 [29] if((byte) init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2
+Simple Condition (bool~) init_font_hex::$5 [34] if((byte) init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1
+Simple Condition (bool~) main::$2 [62] if((byte) main::c#1!=rangelast(0,$ff)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (byte[]) { (byte) 2, (byte) 5, (byte) 5, (byte) 5, (byte) 2, (byte) 6, (byte) 2, (byte) 2, (byte) 2, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 4, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 1, (byte) 6, (byte) 5, (byte) 5, (byte) 7, (byte) 1, (byte) 1, (byte) 7, (byte) 4, (byte) 6, (byte) 1, (byte) 6, (byte) 3, (byte) 4, (byte) 6, (byte) 5, (byte) 2, (byte) 7, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 2, (byte) 5, (byte) 2, (byte) 2, (byte) 5, (byte) 3, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 7, (byte) 5, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 2, (byte) 5, (byte) 4, (byte) 5, (byte) 2, (byte) 6, (byte) 5, (byte) 5, (byte) 5, (byte) 6, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 7, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 4 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) D018 = (byte*) 53272
 Constant (const byte) init_font_hex::c#0 = 0
 Constant (const byte) init_font_hex::c1#0 = 0
 Constant (const byte) init_font_hex::idx#0 = 0
 Constant (const byte) init_font_hex::i#0 = 0
 Constant (const byte[]) FONT_HEX_PROTO = { 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4 }
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) CHARSET = (byte*) 8192
+Constant (const byte*) main::toD0181_screen#0 = SCREEN
+Constant (const byte*) main::toD0181_gfx#0 = CHARSET
+Constant (const byte*) init_font_hex::charset#1 = CHARSET
 Constant (const byte) main::c#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) init_font_hex::proto_hi#0 = FONT_HEX_PROTO
 Constant (const byte*) init_font_hex::proto_lo#0 = FONT_HEX_PROTO
-Constant (const byte*) main::toD0181_screen#0 = SCREEN
-Constant (const byte*) main::toD0181_gfx#0 = CHARSET
-Constant (const byte*) init_font_hex::charset#1 = CHARSET
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [18] init_font_hex::i#1 ← ++ init_font_hex::i#2 to ++
-Resolved ranged comparison value [20] if(init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3 to (number) 5
-Resolved ranged next value [28] init_font_hex::c1#1 ← ++ init_font_hex::c1#4 to ++
-Resolved ranged comparison value [30] if(init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2 to (number) $10
-Resolved ranged next value [33] init_font_hex::c#1 ← ++ init_font_hex::c#6 to ++
-Resolved ranged comparison value [35] if(init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1 to (number) $10
-Resolved ranged next value [63] main::c#1 ← ++ main::c#2 to ++
-Resolved ranged comparison value [65] if(main::c#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
-Simplifying expression containing zero init_font_hex::charset#2 in [9] *((byte*) init_font_hex::charset#2 + (const byte) init_font_hex::idx#0) ← (byte) 0
+Resolved ranged next value [17] init_font_hex::i#1 ← ++ init_font_hex::i#2 to ++
+Resolved ranged comparison value [19] if(init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3 to (number) 5
+Resolved ranged next value [27] init_font_hex::c1#1 ← ++ init_font_hex::c1#4 to ++
+Resolved ranged comparison value [29] if(init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2 to (number) $10
+Resolved ranged next value [32] init_font_hex::c#1 ← ++ init_font_hex::c#6 to ++
+Resolved ranged comparison value [34] if(init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1 to (number) $10
+Resolved ranged next value [60] main::c#1 ← ++ main::c#2 to ++
+Resolved ranged comparison value [62] if(main::c#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
+Simplifying expression containing zero init_font_hex::charset#2 in [8] *((byte*) init_font_hex::charset#2 + (const byte) init_font_hex::idx#0) ← (byte) 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) init_font_hex::idx#4 and assignment [15] (byte) init_font_hex::idx#4 ← ++ (byte) init_font_hex::idx#3
 Successful SSA optimization PassNEliminateUnusedVars
@@ -505,9 +495,9 @@ Inlining constant with var siblings (const byte) init_font_hex::c#0
 Inlining constant with var siblings (const byte) init_font_hex::c1#0
 Inlining constant with var siblings (const byte) init_font_hex::idx#0
 Inlining constant with var siblings (const byte) init_font_hex::i#0
+Inlining constant with var siblings (const byte*) init_font_hex::charset#1
 Inlining constant with var siblings (const byte*) init_font_hex::proto_hi#0
 Inlining constant with var siblings (const byte*) init_font_hex::proto_lo#0
-Inlining constant with var siblings (const byte*) init_font_hex::charset#1
 Inlining constant with var siblings (const byte) init_font_hex::idx#1
 Inlining constant with var siblings (const byte) main::c#0
 Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN

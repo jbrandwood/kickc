@@ -7,9 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::b ← (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
-  (byte*) main::screen ← ((byte*)) (number) $400
-  *((byte*) main::screen + (number) 0) ← (byte) main::b
+  *((const byte*) main::screen + (number) 0) ← (const byte) main::b
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -28,26 +26,17 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (label) main::@return
-(byte) main::b
-(byte*) main::screen
+(const byte) main::b = (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
+(const byte*) main::screen = (byte*)(number) $400
 
-Adding number conversion cast (unumber) 6*$e/3+$16%3 in (byte) main::b ← (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) main::b
+Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (const byte) main::b
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::b ← (unumber)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte) main::b ← (unumber)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::b = (unumber)6*$e/3+$16%3
-Constant (const byte*) main::screen = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen in [2] *((const byte*) main::screen + (byte) 0) ← (const byte) main::b
+Simplifying expression containing zero main::screen in [0] *((const byte*) main::screen + (byte) 0) ← (const byte) main::b
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -199,7 +188,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte) main::b = (byte)(number) 6*(number) $e/(number) 3+(number) $16%(number) 3
+(const byte) main::b = (number) 6*(number) $e/(number) 3+(number) $16%(number) 3
 (const byte*) main::screen = (byte*) 1024
 
 

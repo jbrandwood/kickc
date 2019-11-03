@@ -1,20 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (dword) DVAL ← (number) $20000
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (number~) main::$0 ← (dword) DVAL / (number) $400
-  (word~) main::$1 ← ((word)) (number~) main::$0
-  (byte~) main::$2 ← < (word~) main::$1
-  *((byte*) SCREEN + (number) 0) ← (byte~) main::$2
-  (number~) main::$3 ← (dword) DVAL / (number) $400
-  (word~) main::$4 ← ((word)) (number~) main::$3
-  (byte~) main::$5 ← > (word~) main::$4
-  *((byte*) SCREEN + (number) 1) ← (byte~) main::$5
+  (word~) main::$0 ← ((word)) (const dword) DVAL/(number) $400
+  (byte~) main::$1 ← < (word~) main::$0
+  *((const byte*) SCREEN + (number) 0) ← (byte~) main::$1
+  (word~) main::$2 ← ((word)) (const dword) DVAL/(number) $400
+  (byte~) main::$3 ← > (word~) main::$2
+  *((const byte*) SCREEN + (number) 1) ← (byte~) main::$3
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -31,75 +27,55 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(dword) DVAL
-(byte*) SCREEN
+(const dword) DVAL = (number) $20000
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
-(number~) main::$0
-(word~) main::$1
-(byte~) main::$2
-(number~) main::$3
-(word~) main::$4
-(byte~) main::$5
+(word~) main::$0
+(byte~) main::$1
+(word~) main::$2
+(byte~) main::$3
 (label) main::@return
 
-Adding number conversion cast (unumber) $20000 in (dword) DVAL ← (number) $20000
-Adding number conversion cast (unumber) $400 in (number~) main::$0 ← (dword) DVAL / (number) $400
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (dword) DVAL / (unumber)(number) $400
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte~) main::$2
-Adding number conversion cast (unumber) $400 in (number~) main::$3 ← (dword) DVAL / (number) $400
-Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (dword) DVAL / (unumber)(number) $400
-Adding number conversion cast (unumber) 1 in *((byte*) SCREEN + (number) 1) ← (byte~) main::$5
+Adding number conversion cast (unumber) $400 in (word~) main::$0 ← ((word)) (const dword) DVAL/(number) $400
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte~) main::$1
+Adding number conversion cast (unumber) $400 in (word~) main::$2 ← ((word)) (const dword) DVAL/(number) $400
+Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte~) main::$3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (dword) DVAL ← (unumber)(number) $20000
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (word~) main::$1 ← (word)(unumber~) main::$0
-Inlining cast (word~) main::$4 ← (word)(unumber~) main::$3
+Inlining cast (word~) main::$0 ← (word)(const dword) DVAL/(unumber)(number) $400
+Inlining cast (word~) main::$2 ← (word)(const dword) DVAL/(unumber)(number) $400
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $20000
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $400
 Simplifying constant integer cast 0
 Simplifying constant integer cast $400
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (dword) $20000
 Finalized unsigned number type (word) $400
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $400
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to dword in (unumber~) main::$0 ← (dword) DVAL / (word) $400
-Inferred type updated to dword in (unumber~) main::$3 ← (dword) DVAL / (word) $400
-Identified duplicate assignment right side [6] (dword~) main::$3 ← (dword) DVAL / (word) $400
-Successful SSA optimization Pass2DuplicateRValueIdentification
-Constant (const dword) DVAL = $20000
-Constant (const byte*) SCREEN = (byte*) 1024
+Constant right-side identified [0] (word~) main::$0 ← (word)(const dword) DVAL/(word) $400
+Constant right-side identified [3] (word~) main::$2 ← (word)(const dword) DVAL/(word) $400
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const word) main::$0 = (word)DVAL/$400
+Constant (const word) main::$2 = (word)DVAL/$400
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [5] *((const byte*) SCREEN + (byte) 0) ← (byte~) main::$2
+Simplifying expression containing zero SCREEN in [2] *((const byte*) SCREEN + (byte) 0) ← (byte~) main::$1
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Alias (dword~) main::$3 = (dword~) main::$0 
-Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] (dword~) main::$3 ← (const dword) DVAL / (word) $400
+Constant right-side identified [0] (byte~) main::$1 ← < (const word) main::$0
+Constant right-side identified [2] (byte~) main::$3 ← > (const word) main::$2
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const dword) main::$3 = DVAL/$400
+Constant (const byte) main::$1 = <main::$0
+Constant (const byte) main::$3 = >main::$2
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const word) main::$1 = (word)main::$3
-Constant (const word) main::$4 = (word)main::$3
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [0] (byte~) main::$2 ← < (const word) main::$1
-Constant right-side identified [2] (byte~) main::$5 ← > (const word) main::$4
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = <main::$1
-Constant (const byte) main::$5 = >main::$4
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant evaluating to zero >(const word) main::$4 in 
+Simplifying constant evaluating to zero >(const word) main::$2 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Eliminating unused constant (const word) main::$4
+Eliminating unused constant (const word) main::$2
 Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined main::$5 = (byte) 0
-Constant inlined main::$3 = (const dword) DVAL/(word) $400
-Constant inlined main::$1 = (word)(const dword) DVAL/(word) $400
-Constant inlined main::$2 = <(word)(const dword) DVAL/(word) $400
+Constant inlined main::$3 = (byte) 0
+Constant inlined main::$1 = <(word)(const dword) DVAL/(word) $400
+Constant inlined main::$0 = (word)(const dword) DVAL/(word) $400
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -267,7 +243,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const dword) DVAL = (dword) $20000
+(const dword) DVAL = (number) $20000
 (const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return

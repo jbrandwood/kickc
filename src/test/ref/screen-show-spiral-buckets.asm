@@ -3,15 +3,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(__b1)
 .pc = $80d "Program"
-  .const SIZEOF_WORD = 2
-  .const SIZEOF_BYTE = 1
-  .const SIZEOF_POINTER = 2
   .label RASTER = $d012
   .label BORDERCOL = $d020
   // Color Ram
   .label COLS = $d800
-  // Top of the heap used by malloc()
-  .label HEAP_TOP = $a000
+  .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Screen containing angle to center
@@ -20,6 +16,10 @@
   .const FILL_CHAR = '*'
   // The number of buckets in our bucket sort
   .const NUM_BUCKETS = $30
+  .const SIZEOF_BYTE = 1
+  .const SIZEOF_POINTER = 2
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   .const NUM_SQUARES = $30
   // Screen containing distance to center
   .label SCREEN_DIST = $16
@@ -229,11 +229,11 @@ main: {
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
 // init_buckets(byte* zeropage($16) screen)
 init_buckets: {
-    .label __6 = 5
-    .label __10 = $22
-    .label __11 = $1c
-    .label __15 = $20
-    .label __16 = $22
+    .label __4 = 5
+    .label __7 = $22
+    .label __8 = $1c
+    .label __12 = $20
+    .label __13 = $22
     .label screen = $16
     .label dist = 8
     .label i1 = $a
@@ -242,9 +242,9 @@ init_buckets: {
     .label bucket = $22
     .label dist_1 = 2
     .label i4 = $1e
-    .label __18 = 5
-    .label __19 = $20
-    .label __20 = $22
+    .label __15 = 5
+    .label __16 = $20
+    .label __17 = $22
     ldy #0
   // Init bucket sizes to 0
   __b1:
@@ -290,10 +290,10 @@ init_buckets: {
     lda.z BUCKET_SIZES
     clc
     adc.z i2
-    sta.z __18
+    sta.z __15
     lda.z BUCKET_SIZES+1
     adc.z i2+1
-    sta.z __18+1
+    sta.z __15+1
     ldy #0
     lda (malloc.size),y
     asl
@@ -304,23 +304,23 @@ init_buckets: {
     jsr malloc
     lda.z i2
     asl
-    sta.z __15
+    sta.z __12
     lda.z i2+1
     rol
-    sta.z __15+1
-    lda.z __19
+    sta.z __12+1
+    lda.z __16
     clc
     adc.z BUCKETS
-    sta.z __19
-    lda.z __19+1
+    sta.z __16
+    lda.z __16+1
     adc.z BUCKETS+1
-    sta.z __19+1
+    sta.z __16+1
     ldy #0
-    lda.z __6
-    sta (__19),y
+    lda.z __4
+    sta (__16),y
     iny
-    lda.z __6+1
-    sta (__19),y
+    lda.z __4+1
+    sta (__16),y
     inc.z i2
     bne !+
     inc.z i2+1
@@ -350,18 +350,18 @@ init_buckets: {
     ldy #0
     lda (dist_1),y
     sta.z distance
-    sta.z __10
+    sta.z __7
     tya
-    sta.z __10+1
-    asl.z __16
-    rol.z __16+1
-    lda.z __20
+    sta.z __7+1
+    asl.z __13
+    rol.z __13+1
+    lda.z __17
     clc
     adc.z BUCKETS
-    sta.z __20
-    lda.z __20+1
+    sta.z __17
+    lda.z __17+1
     adc.z BUCKETS+1
-    sta.z __20+1
+    sta.z __17+1
     lda (bucket),y
     pha
     iny
@@ -372,18 +372,18 @@ init_buckets: {
     lda.z dist_1
     sec
     sbc.z screen
-    sta.z __11
+    sta.z __8
     lda.z dist_1+1
     sbc.z screen+1
-    sta.z __11+1
+    sta.z __8+1
     ldy.z distance
     lda (BUCKET_IDX),y
     asl
     tay
-    lda.z __11
+    lda.z __8
     sta (bucket),y
     iny
-    lda.z __11+1
+    lda.z __8+1
     sta (bucket),y
     ldy.z distance
     lda (BUCKET_IDX),y

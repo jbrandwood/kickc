@@ -24,9 +24,9 @@ main: {
     sta.z print.msg+1
     jsr print
     rts
-    msg: .text "message 3 "
-    .byte 0
     msg2: .text "message 2 "
+    .byte 0
+    msg: .text "message 3 "
     .byte 0
 }
 // print(byte* zeropage(4) msg)

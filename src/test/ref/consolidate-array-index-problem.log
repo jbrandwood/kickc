@@ -9,17 +9,14 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::BLACK ← (number) 0
-  (byte*) main::screen ← ((byte*)) (number) $400
-  (byte*) main::cols ← ((byte*)) (number) $d800
   (byte) main::x#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::x#2 ← phi( main/(byte) main::x#0 main::@1/(byte) main::x#1 )
   (number~) main::$0 ← (byte) main::x#2 + (number) $c
   (byte) main::y#0 ← (number~) main::$0
-  *((byte*) main::screen + (byte) main::y#0) ← (byte) 'a'
-  *((byte*) main::cols + (byte) main::y#0) ← (byte) main::BLACK
+  *((const byte*) main::screen + (byte) main::y#0) ← (byte) 'a'
+  *((const byte*) main::cols + (byte) main::y#0) ← (const byte) main::BLACK
   (byte) main::x#1 ← (byte) main::x#2 + rangenext(0,$a)
   (bool~) main::$1 ← (byte) main::x#1 != rangelast(0,$a)
   if((bool~) main::$1) goto main::@1
@@ -44,9 +41,9 @@ SYMBOL TABLE SSA
 (bool~) main::$1
 (label) main::@1
 (label) main::@return
-(byte) main::BLACK
-(byte*) main::cols
-(byte*) main::screen
+(const byte) main::BLACK = (number) 0
+(const byte*) main::cols = (byte*)(number) $d800
+(const byte*) main::screen = (byte*)(number) $400
 (byte) main::x
 (byte) main::x#0
 (byte) main::x#1
@@ -54,34 +51,24 @@ SYMBOL TABLE SSA
 (byte) main::y
 (byte) main::y#0
 
-Adding number conversion cast (unumber) 0 in (byte) main::BLACK ← (number) 0
 Adding number conversion cast (unumber) $c in (number~) main::$0 ← (byte) main::x#2 + (number) $c
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::x#2 + (unumber)(number) $c
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::BLACK ← (unumber)(number) 0
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Inlining cast (byte*) main::cols ← (byte*)(number) $d800
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant integer cast $c
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $c
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::x#2 + (byte) $c
 Alias (byte) main::y#0 = (byte~) main::$0 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [11] if((byte) main::x#1!=rangelast(0,$a)) goto main::@1
+Simple Condition (bool~) main::$1 [8] if((byte) main::x#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::BLACK = 0
-Constant (const byte*) main::screen = (byte*) 1024
-Constant (const byte*) main::cols = (byte*) 55296
 Constant (const byte) main::x#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [9] main::x#1 ← ++ main::x#2 to ++
-Resolved ranged comparison value [11] if(main::x#1!=rangelast(0,$a)) goto main::@1 to (number) $b
+Resolved ranged next value [6] main::x#1 ← ++ main::x#2 to ++
+Resolved ranged comparison value [8] if(main::x#1!=rangelast(0,$a)) goto main::@1 to (number) $b
 Adding number conversion cast (unumber) $b in if((byte) main::x#1!=(number) $b) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
@@ -337,7 +324,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const byte) main::BLACK = (byte) 0
+(const byte) main::BLACK = (number) 0
 (const byte*) main::cols = (byte*) 55296
 (const byte*) main::screen = (byte*) 1024
 (byte) main::x

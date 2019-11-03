@@ -4,22 +4,20 @@ Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) ITEM_COUNT ← (number) 3
-  (byte) ITEM_SIZE ← (number) 5
-  (byte~) $0 ← (byte) ITEM_COUNT * (byte) ITEM_SIZE
+  (byte~) $0 ← (const byte) ITEM_COUNT * (const byte) ITEM_SIZE
   (byte[$0]) items ← { (number) 0, (number) 0, (number) 0, (number) 0, (number) 0, (number) 0, (number) 0, (number) 0, (number) 0, (number) 0, (number) 0, (number) 0, (number) 0, (number) 0, (number) 0 }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
   (byte*) main::cur_item#0 ← (byte[$0]) items
-  (number~) main::$0 ← (byte) ITEM_COUNT - (number) 1
+  (number~) main::$0 ← (const byte) ITEM_COUNT - (number) 1
   (byte) main::item#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
   (byte*) main::cur_item#4 ← phi( main/(byte*) main::cur_item#0 main::@3/(byte*) main::cur_item#1 )
   (byte) main::item#4 ← phi( main/(byte) main::item#0 main::@3/(byte) main::item#1 )
-  (number~) main::$1 ← (byte) ITEM_SIZE - (number) 1
+  (number~) main::$1 ← (const byte) ITEM_SIZE - (number) 1
   (byte) main::sub#0 ← (byte) 0
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
@@ -36,7 +34,7 @@ main::@2: scope:[main]  from main::@1 main::@2
 main::@3: scope:[main]  from main::@2
   (byte) main::item#3 ← phi( main::@2/(byte) main::item#2 )
   (byte*) main::cur_item#3 ← phi( main::@2/(byte*) main::cur_item#2 )
-  (byte*) main::cur_item#1 ← (byte*) main::cur_item#3 + (byte) ITEM_SIZE
+  (byte*) main::cur_item#1 ← (byte*) main::cur_item#3 + (const byte) ITEM_SIZE
   (byte) main::item#1 ← (byte) main::item#3 + rangenext(0,main::$0)
   (bool~) main::$5 ← (byte) main::item#1 != rangelast(0,main::$0)
   if((bool~) main::$5) goto main::@1
@@ -57,8 +55,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte) ITEM_COUNT
-(byte) ITEM_SIZE
+(const byte) ITEM_COUNT = (number) 3
+(const byte) ITEM_SIZE = (number) 5
 (byte[$0]) items
 (void()) main()
 (number~) main::$0
@@ -88,23 +86,16 @@ SYMBOL TABLE SSA
 (byte) main::sub#1
 (byte) main::sub#2
 
-Adding number conversion cast (unumber) 3 in (byte) ITEM_COUNT ← (number) 3
-Adding number conversion cast (unumber) 5 in (byte) ITEM_SIZE ← (number) 5
-Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) ITEM_COUNT - (number) 1
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) ITEM_COUNT - (unumber)(number) 1
-Adding number conversion cast (unumber) 1 in (number~) main::$1 ← (byte) ITEM_SIZE - (number) 1
-Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) ITEM_SIZE - (unumber)(number) 1
+Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (const byte) ITEM_COUNT - (number) 1
+Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (const byte) ITEM_COUNT - (unumber)(number) 1
+Adding number conversion cast (unumber) 1 in (number~) main::$1 ← (const byte) ITEM_SIZE - (number) 1
+Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (const byte) ITEM_SIZE - (unumber)(number) 1
 Adding number conversion cast (unumber) $10 in (number~) main::$2 ← (byte) main::item#2 * (number) $10
 Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (byte) main::item#2 * (unumber)(number) $10
 Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (unumber~) main::$2 | (byte) main::sub#2
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (byte[$0]) items ← (byte[$0]){ (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte) ITEM_COUNT ← (unumber)(number) 3
-Inlining cast (byte) ITEM_SIZE ← (unumber)(number) 5
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 3
-Simplifying constant integer cast 5
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -124,14 +115,12 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast $10
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 5
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $10
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) ITEM_COUNT - (byte) 1
-Inferred type updated to byte in (unumber~) main::$1 ← (byte) ITEM_SIZE - (byte) 1
+Inferred type updated to byte in (unumber~) main::$0 ← (const byte) ITEM_COUNT - (byte) 1
+Inferred type updated to byte in (unumber~) main::$1 ← (const byte) ITEM_SIZE - (byte) 1
 Inferred type updated to byte in (unumber~) main::$2 ← (byte) main::item#2 * (byte) $10
 Inferred type updated to byte in (unumber~) main::$3 ← (byte~) main::$2 | (byte) main::sub#2
 Alias (byte*) main::cur_item#2 = (byte*) main::cur_item#3 
@@ -140,31 +129,28 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) main::item#2 (byte) main::item#4
 Identical Phi Values (byte*) main::cur_item#2 (byte*) main::cur_item#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$4 [16] if((byte) main::sub#1!=rangelast(0,main::$1)) goto main::@2
-Simple Condition (bool~) main::$5 [21] if((byte) main::item#1!=rangelast(0,main::$0)) goto main::@1
+Simple Condition (bool~) main::$4 [14] if((byte) main::sub#1!=rangelast(0,main::$1)) goto main::@2
+Simple Condition (bool~) main::$5 [19] if((byte) main::item#1!=rangelast(0,main::$0)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [0] (byte~) $0 ← (const byte) ITEM_COUNT * (const byte) ITEM_SIZE
+Constant right-side identified [3] (byte~) main::$0 ← (const byte) ITEM_COUNT - (byte) 1
+Constant right-side identified [6] (byte~) main::$1 ← (const byte) ITEM_SIZE - (byte) 1
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (byte[$0]) { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte) ITEM_COUNT = 3
-Constant (const byte) ITEM_SIZE = 5
+Constant (const byte) $0 = ITEM_COUNT*ITEM_SIZE
 Constant (const byte[$0]) items = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+Constant (const byte) main::$0 = ITEM_COUNT-1
 Constant (const byte) main::item#0 = 0
+Constant (const byte) main::$1 = ITEM_SIZE-1
 Constant (const byte) main::sub#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::cur_item#0 = items
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [0] (byte~) $0 ← (const byte) ITEM_COUNT * (const byte) ITEM_SIZE
-Constant right-side identified [1] (byte~) main::$0 ← (const byte) ITEM_COUNT - (byte) 1
-Constant right-side identified [3] (byte~) main::$1 ← (const byte) ITEM_SIZE - (byte) 1
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) $0 = ITEM_COUNT*ITEM_SIZE
-Constant (const byte) main::$0 = ITEM_COUNT-1
-Constant (const byte) main::$1 = ITEM_SIZE-1
-Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [8] main::sub#1 ← ++ main::sub#2 to ++
-Resolved ranged comparison value [9] if(main::sub#1!=rangelast(0,main::$1)) goto main::@2 to (const byte) main::$1+(number) 1
-Resolved ranged next value [11] main::item#1 ← ++ main::item#4 to ++
-Resolved ranged comparison value [12] if(main::item#1!=rangelast(0,main::$0)) goto main::@1 to (const byte) main::$0+(number) 1
+Resolved ranged next value [12] main::sub#1 ← ++ main::sub#2 to ++
+Resolved ranged comparison value [14] if(main::sub#1!=rangelast(0,main::$1)) goto main::@2 to (const byte) main::$1+(number) 1
+Resolved ranged next value [17] main::item#1 ← ++ main::item#4 to ++
+Resolved ranged comparison value [19] if(main::item#1!=rangelast(0,main::$0)) goto main::@1 to (const byte) main::$0+(number) 1
 Adding number conversion cast (unumber) main::$1+1 in if((byte) main::sub#1!=(const byte) main::$1+(number) 1) goto main::@2
 Adding number conversion cast (unumber) 1 in if((byte) main::sub#1!=(unumber)(const byte) main::$1+(number) 1) goto main::@2
 Adding number conversion cast (unumber) main::$0+1 in if((byte) main::item#1!=(const byte) main::$0+(number) 1) goto main::@1
@@ -552,8 +538,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) ITEM_COUNT = (byte) 3
-(const byte) ITEM_SIZE = (byte) 5
+(const byte) ITEM_COUNT = (number) 3
+(const byte) ITEM_SIZE = (number) 5
 (const byte[ITEM_COUNT*ITEM_SIZE]) items = { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
 (void()) main()
 (byte~) main::$2 reg byte a 202.0

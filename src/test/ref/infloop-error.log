@@ -6,7 +6,6 @@ Culled Empty Block (label) main::@10
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -47,9 +46,9 @@ main::@5: scope:[main]  from main::@4 main::@9
   (byte) main::pos#5 ← phi( main::@4/(byte) main::pos#3 main::@9/(byte) main::pos#6 )
   (byte) main::max#3 ← phi( main::@4/(byte) main::max#2 main::@9/(byte) main::max#1 )
   (byte) main::min#3 ← phi( main::@4/(byte) main::min#5 main::@9/(byte) main::min#6 )
-  *((byte*) SCREEN + (number) 0) ← (byte) main::min#3
-  *((byte*) SCREEN + (number) 1) ← (byte) main::max#3
-  *((byte*) SCREEN + (number) 2) ← (byte) main::pos#5
+  *((const byte*) SCREEN + (number) 0) ← (byte) main::min#3
+  *((const byte*) SCREEN + (number) 1) ← (byte) main::max#3
+  *((const byte*) SCREEN + (number) 2) ← (byte) main::pos#5
   to:main::@1
 main::@9: scope:[main]  from main::@4
   (byte) main::min#6 ← phi( main::@4/(byte) main::min#5 )
@@ -71,7 +70,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -113,11 +112,10 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) $ff in (byte) main::min#0 ← (number) $ff
 Adding number conversion cast (unumber) 0 in (byte) main::max#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) main::pos#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte) main::min#3
-Adding number conversion cast (unumber) 1 in *((byte*) SCREEN + (number) 1) ← (byte) main::max#3
-Adding number conversion cast (unumber) 2 in *((byte*) SCREEN + (number) 2) ← (byte) main::pos#5
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) main::min#3
+Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte) main::max#3
+Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (number) 2) ← (byte) main::pos#5
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::min#0 ← (unumber)(number) $ff
 Inlining cast (byte) main::max#0 ← (unumber)(number) 0
 Inlining cast (byte) main::pos#0 ← (unumber)(number) 0
@@ -137,8 +135,8 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [9] (bool~) main::$1 ← (byte) main::pos#1 >= (byte) main::min#2 from [8] (bool~) main::$0 ← (byte) main::pos#1 < (byte) main::min#2
-Inversing boolean not [13] (bool~) main::$3 ← (byte) main::pos#3 <= (byte) main::max#2 from [12] (bool~) main::$2 ← (byte) main::pos#3 > (byte) main::max#2
+Inversing boolean not [8] (bool~) main::$1 ← (byte) main::pos#1 >= (byte) main::min#2 from [7] (bool~) main::$0 ← (byte) main::pos#1 < (byte) main::min#2
+Inversing boolean not [12] (bool~) main::$3 ← (byte) main::pos#3 <= (byte) main::max#2 from [11] (bool~) main::$2 ← (byte) main::pos#3 > (byte) main::max#2
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::pos#2 = (byte) main::pos#7 
 Alias (byte) main::min#2 = (byte) main::min#4 
@@ -155,17 +153,16 @@ Alias candidate removed (phi-usage) (byte) main::pos#1 = (byte) main::pos#3 (byt
 Identical Phi Values (byte) main::pos#3 (byte) main::pos#1
 Identical Phi Values (byte) main::pos#5 (byte) main::pos#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [10] if((byte) main::pos#1>=(byte) main::min#2) goto main::@4
-Simple Condition (bool~) main::$3 [14] if((byte) main::pos#1<=(byte) main::max#2) goto main::@5
+Simple Condition (bool~) main::$1 [9] if((byte) main::pos#1>=(byte) main::min#2) goto main::@4
+Simple Condition (bool~) main::$3 [13] if((byte) main::pos#1<=(byte) main::max#2) goto main::@5
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::min#0 = $ff
 Constant (const byte) main::max#0 = 0
 Constant (const byte) main::pos#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [5] if(true) goto main::@2
+if() condition always true - replacing block destination [4] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero SCREEN in [18] *((const byte*) SCREEN + (byte) 0) ← (byte) main::min#3
+Simplifying expression containing zero SCREEN in [17] *((const byte*) SCREEN + (byte) 0) ← (byte) main::min#3
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks

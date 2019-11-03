@@ -3,15 +3,13 @@ Identified constant variable (byte*) SCREEN
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) sprite ← ((byte*)) (number) $5000
-  (byte*) SCREEN ← ((byte*)) (number) $4400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*~) main::$0 ← (byte*) SCREEN + (number) $378
+  (byte*~) main::$0 ← (const byte*) SCREEN + (number) $378
   (byte*) main::sprite_ptr#0 ← (byte*~) main::$0
-  (byte*~) main::$1 ← (byte*) sprite / (number) $40
+  (byte*~) main::$1 ← (const byte*) sprite / (number) $40
   (byte~) main::$2 ← ((byte)) (byte*~) main::$1
   *((byte*) main::sprite_ptr#0 + (number) 0) ← (byte~) main::$2
   to:main::@return
@@ -30,7 +28,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $4400
 (void()) main()
 (byte*~) main::$0
 (byte*~) main::$1
@@ -38,14 +36,12 @@ SYMBOL TABLE SSA
 (label) main::@return
 (byte*) main::sprite_ptr
 (byte*) main::sprite_ptr#0
-(byte*) sprite
+(const byte*) sprite = (byte*)(number) $5000
 
-Adding number conversion cast (unumber) $378 in (byte*~) main::$0 ← (byte*) SCREEN + (number) $378
-Adding number conversion cast (unumber) $40 in (byte*~) main::$1 ← (byte*) sprite / (number) $40
+Adding number conversion cast (unumber) $378 in (byte*~) main::$0 ← (const byte*) SCREEN + (number) $378
+Adding number conversion cast (unumber) $40 in (byte*~) main::$1 ← (const byte*) sprite / (number) $40
 Adding number conversion cast (unumber) 0 in *((byte*) main::sprite_ptr#0 + (number) 0) ← (byte~) main::$2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) sprite ← (byte*)(number) $5000
-Inlining cast (byte*) SCREEN ← (byte*)(number) $4400
 Inlining cast (byte~) main::$2 ← (byte)(byte*~) main::$1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 20480
@@ -60,19 +56,16 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte*) main::sprite_ptr#0 = (byte*~) main::$0 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) sprite = (byte*) 20480
-Constant (const byte*) SCREEN = (byte*) 17408
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::sprite_ptr#0 in [6] *((byte*) main::sprite_ptr#0 + (byte) 0) ← (byte~) main::$2
-Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [0] (byte*) main::sprite_ptr#0 ← (const byte*) SCREEN + (word) $378
-Constant right-side identified [1] (byte*~) main::$1 ← (const byte*) sprite / (byte) $40
+Constant right-side identified [2] (byte*~) main::$1 ← (const byte*) sprite / (byte) $40
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::sprite_ptr#0 = SCREEN+$378
 Constant (const byte*) main::$1 = sprite/$40
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) main::$2 = (byte)main::$1
 Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::sprite_ptr#0 in [4] *((const byte*) main::sprite_ptr#0 + (byte) 0) ← (const byte) main::$2
+Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant inlined main::$1 = (const byte*) sprite/(byte) $40
 Constant inlined main::$2 = (byte)(const byte*) sprite/(byte) $40
 Successful SSA optimization Pass2ConstantInlining

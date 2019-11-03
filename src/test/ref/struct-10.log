@@ -1,11 +1,12 @@
 Fixing pointer array-indexing *((struct RadixInfo) main::info.values + (number) 1)
-Fixing pointer array-indexing *((word*) main::SCREEN + (number) 0)
+Fixing pointer array-indexing *((const word*) main::SCREEN + (number) 0)
 Fixing pointer array-indexing *((word[]) RADIX_DECIMAL_VALUES + (number) 1)
-Fixing pointer array-indexing *((word*) main::SCREEN + (number) 1)
+Fixing pointer array-indexing *((const word*) main::SCREEN + (number) 1)
 Created struct value member variable (word*) main::info_values
 Converted struct value to member variables (struct RadixInfo) main::info
 Adding struct value list initializer (word*) main::info_values ← (word[]) RADIX_DECIMAL_VALUES
 Replacing struct member reference (struct RadixInfo) main::info.values with member unwinding reference (word*) main::info_values
+Identified constant variable (word*) RadixInfo::values
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -14,13 +15,12 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word*) main::SCREEN ← ((word*)) (number) $400
   (word*) main::info_values#0 ← (word[]) RADIX_DECIMAL_VALUES
   (number~) main::$0 ← (number) 1 * (const byte) SIZEOF_WORD
   (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_WORD
-  *((word*) main::SCREEN + (number~) main::$1) ← *((word*) main::info_values#0 + (number~) main::$0)
+  *((const word*) main::SCREEN + (number~) main::$1) ← *((word*) main::info_values#0 + (number~) main::$0)
   (number~) main::$2 ← (number) 1 * (const byte) SIZEOF_WORD
-  *((word*) main::SCREEN + (number~) main::$2) ← *((word[]) RADIX_DECIMAL_VALUES + (number~) main::$2)
+  *((const word*) main::SCREEN + (number~) main::$2) ← *((word[]) RADIX_DECIMAL_VALUES + (number~) main::$2)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -38,14 +38,13 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (word[]) RADIX_DECIMAL_VALUES
-(word*) RadixInfo::values
 (const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
 (number~) main::$0
 (number~) main::$1
 (number~) main::$2
 (label) main::@return
-(word*) main::SCREEN
+(const word*) main::SCREEN = (word*)(number) $400
 (word*) main::info_values
 (word*) main::info_values#0
 
@@ -58,13 +57,11 @@ Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (unum
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (word[]) RADIX_DECIMAL_VALUES ← (word[]){ (word)(number) $2710, (word)(number) $3e8, (word)(number) $64, (word)(number) $a }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (word*) main::SCREEN ← (word*)(number) $400
-Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast $2710
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $64
 Simplifying constant integer cast $a
-Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -76,14 +73,13 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) 1 * (const byte) SIZEOF_WORD
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) 0 * (const byte) SIZEOF_WORD
 Inferred type updated to byte in (unumber~) main::$2 ← (byte) 1 * (const byte) SIZEOF_WORD
-Constant right-side identified [3] (byte~) main::$0 ← (byte) 1 * (const byte) SIZEOF_WORD
-Constant right-side identified [4] (byte~) main::$1 ← (byte) 0 * (const byte) SIZEOF_WORD
-Constant right-side identified [6] (byte~) main::$2 ← (byte) 1 * (const byte) SIZEOF_WORD
+Constant right-side identified [2] (byte~) main::$0 ← (byte) 1 * (const byte) SIZEOF_WORD
+Constant right-side identified [3] (byte~) main::$1 ← (byte) 0 * (const byte) SIZEOF_WORD
+Constant right-side identified [5] (byte~) main::$2 ← (byte) 1 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (word[]) { (word) $2710, (word) $3e8, (word) $64, (word) $a }
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const word[]) RADIX_DECIMAL_VALUES = { $2710, $3e8, $64, $a }
-Constant (const word*) main::SCREEN = (word*) 1024
 Constant (const byte) main::$0 = 1*SIZEOF_WORD
 Constant (const byte) main::$1 = 0*SIZEOF_WORD
 Constant (const byte) main::$2 = 1*SIZEOF_WORD
@@ -92,7 +88,7 @@ Constant (const word*) main::info_values#0 = RADIX_DECIMAL_VALUES
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_WORD in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero main::SCREEN in [5] *((const word*) main::SCREEN + (const byte) main::$1) ← *((const word*) main::info_values#0 + (const byte) main::$0)
+Simplifying expression containing zero main::SCREEN in [4] *((const word*) main::SCREEN + (const byte) main::$1) ← *((const word*) main::info_values#0 + (const byte) main::$0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$1
 Successful SSA optimization PassNEliminateUnusedVars
@@ -140,7 +136,6 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(word*) RadixInfo::values
 (void()) main()
 (word*) main::info_values
 
@@ -275,7 +270,6 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const word[]) RADIX_DECIMAL_VALUES = { (word) $2710, (word) $3e8, (word) $64, (word) $a }
-(word*) RadixInfo::values
 (const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
 (label) main::@return

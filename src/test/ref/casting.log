@@ -6,12 +6,11 @@ Culled Empty Block (label) w::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*~) $0 ← (byte*) SCREEN + (number) $28*(number) 3
+  (byte*~) $0 ← (const byte*) SCREEN + (number) $28*(number) 3
   (byte*) SCREEN2#0 ← (byte*~) $0
-  (byte*~) $1 ← (byte*) SCREEN + (number) $28*(number) 6
+  (byte*~) $1 ← (const byte*) SCREEN + (number) $28*(number) 6
   (byte*) SCREEN3#0 ← (byte*~) $1
-  (byte*~) $2 ← (byte*) SCREEN + (number) $28*(number) 9
+  (byte*~) $2 ← (const byte*) SCREEN + (number) $28*(number) 9
   (byte*) SCREEN4#0 ← (byte*~) $2
   to:@2
 
@@ -29,7 +28,7 @@ main::@1: scope:[main]  from main main::@1
   (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@1/(byte) main::b#1 )
   (number~) main::$1 ← (number) $c8 - (byte) main::b#2
   (byte) main::b2#0 ← (number~) main::$1
-  *((byte*) SCREEN + (byte) main::b#2) ← (byte) main::b2#0
+  *((const byte*) SCREEN + (byte) main::b#2) ← (byte) main::b2#0
   (signed byte~) main::$2 ← ((signed byte)) (byte) main::b#2
   (signed byte~) main::$3 ← - (signed byte~) main::$2
   (signed byte) main::sb#0 ← (signed byte~) main::$3
@@ -60,9 +59,7 @@ w::@1: scope:[w]  from w w::@1
   (byte*) SCREEN4#1 ← phi( w/(byte*) SCREEN4#2 w::@1/(byte*) SCREEN4#1 )
   (byte*) SCREEN3#1 ← phi( w/(byte*) SCREEN3#2 w::@1/(byte*) SCREEN3#1 )
   (byte) w::i#2 ← phi( w/(byte) w::i#0 w::@1/(byte) w::i#1 )
-  (word) w::w1 ← (number) $514
-  (word) w::w2 ← (number) $4e2
-  (word~) w::$0 ← (word) w::w1 - (word) w::w2
+  (word~) w::$0 ← (const word) w::w1 - (const word) w::w2
   (byte~) w::$1 ← ((byte)) (word~) w::$0
   (byte) w::b#0 ← (byte~) w::$1
   (number~) w::$2 ← (number) $578-(number) $546 + (byte) w::i#2
@@ -94,7 +91,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (byte*) SCREEN2
 (byte*) SCREEN2#0
 (byte*) SCREEN2#1
@@ -149,34 +146,25 @@ SYMBOL TABLE SSA
 (byte) w::i#0
 (byte) w::i#1
 (byte) w::i#2
-(word) w::w1
-(word) w::w2
+(const word) w::w1 = (number) $514
+(const word) w::w2 = (number) $4e2
 
-Adding number conversion cast (unumber) $28*3 in (byte*~) $0 ← (byte*) SCREEN + (number) $28*(number) 3
-Adding number conversion cast (unumber) $28*6 in (byte*~) $1 ← (byte*) SCREEN + (number) $28*(number) 6
-Adding number conversion cast (unumber) $28*9 in (byte*~) $2 ← (byte*) SCREEN + (number) $28*(number) 9
+Adding number conversion cast (unumber) $28*3 in (byte*~) $0 ← (const byte*) SCREEN + (number) $28*(number) 3
+Adding number conversion cast (unumber) $28*6 in (byte*~) $1 ← (const byte*) SCREEN + (number) $28*(number) 6
+Adding number conversion cast (unumber) $28*9 in (byte*~) $2 ← (const byte*) SCREEN + (number) $28*(number) 9
 Adding number conversion cast (unumber) $c8 in (number~) main::$1 ← (number) $c8 - (byte) main::b#2
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (unumber)(number) $c8 - (byte) main::b#2
-Adding number conversion cast (unumber) $514 in (word) w::w1 ← (number) $514
-Adding number conversion cast (unumber) $4e2 in (word) w::w2 ← (number) $4e2
 Adding number conversion cast (unumber) $578-$546 in (number~) w::$2 ← (number) $578-(number) $546 + (byte) w::i#2
 Adding number conversion cast (unumber) w::$2 in (number~) w::$2 ← (unumber)(number) $578-(number) $546 + (byte) w::i#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (signed byte~) main::$2 ← (signed byte)(byte) main::b#2
 Inlining cast (byte~) main::$4 ← (byte)(signed byte) main::sb#0
-Inlining cast (word) w::w1 ← (unumber)(number) $514
-Inlining cast (word) w::w2 ← (unumber)(number) $4e2
 Inlining cast (byte~) w::$1 ← (byte)(word~) w::$0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $c8
-Simplifying constant integer cast $514
-Simplifying constant integer cast $4e2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $c8
-Finalized unsigned number type (word) $514
-Finalized unsigned number type (word) $4e2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) $c8 - (byte) main::b#2
 Inferred type updated to byte in (unumber~) w::$2 ← (byte)(number) $578-(number) $546 + (byte) w::i#2
@@ -201,19 +189,27 @@ Identical Phi Values (byte*) SCREEN4#2 (byte*) SCREEN4#3
 Identical Phi Values (byte*) SCREEN3#1 (byte*) SCREEN3#2
 Identical Phi Values (byte*) SCREEN4#1 (byte*) SCREEN4#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$5 [20] if((byte) main::b#1!=rangelast(0,$64)) goto main::@1
-Simple Condition (bool~) w::$3 [38] if((byte) w::i#1!=rangelast(0,$a)) goto w::@1
+Simple Condition (bool~) main::$5 [19] if((byte) main::b#1!=rangelast(0,$64)) goto main::@1
+Simple Condition (bool~) w::$3 [35] if((byte) w::i#1!=rangelast(0,$a)) goto w::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
+Constant right-side identified [0] (byte*) SCREEN2#0 ← (const byte*) SCREEN + (byte)(number) $28*(number) 3
+Constant right-side identified [2] (byte*) SCREEN3#0 ← (const byte*) SCREEN + (byte)(number) $28*(number) 6
+Constant right-side identified [4] (byte*) SCREEN4#0 ← (const byte*) SCREEN + (word)(number) $28*(number) 9
+Constant right-side identified [26] (word~) w::$0 ← (const word) w::w1 - (const word) w::w2
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) SCREEN2#0 = SCREEN+(byte)$28*3
+Constant (const byte*) SCREEN3#0 = SCREEN+(byte)$28*6
+Constant (const byte*) SCREEN4#0 = SCREEN+(word)$28*9
 Constant (const byte) main::b#0 = 0
 Constant (const byte) w::i#0 = 0
-Constant (const word) w::w1 = $514
-Constant (const word) w::w2 = $4e2
+Constant (const word) w::$0 = w::w1-w::w2
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [18] main::b#1 ← ++ main::b#2 to ++
-Resolved ranged comparison value [20] if(main::b#1!=rangelast(0,$64)) goto main::@1 to (number) $65
-Resolved ranged next value [36] w::i#1 ← ++ w::i#2 to ++
-Resolved ranged comparison value [38] if(w::i#1!=rangelast(0,$a)) goto w::@1 to (number) $b
+Constant (const byte) w::b#0 = (byte)w::$0
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value [17] main::b#1 ← ++ main::b#2 to ++
+Resolved ranged comparison value [19] if(main::b#1!=rangelast(0,$64)) goto main::@1 to (number) $65
+Resolved ranged next value [33] w::i#1 ← ++ w::i#2 to ++
+Resolved ranged comparison value [35] if(w::i#1!=rangelast(0,$a)) goto w::@1 to (number) $b
 Adding number conversion cast (unumber) $65 in if((byte) main::b#1!=(number) $65) goto main::@1
 Adding number conversion cast (unumber) $b in if((byte) w::i#1!=(number) $b) goto w::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -223,18 +219,6 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $65
 Finalized unsigned number type (byte) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) SCREEN2#0 ← (const byte*) SCREEN + (byte)(number) $28*(number) 3
-Constant right-side identified [1] (byte*) SCREEN3#0 ← (const byte*) SCREEN + (byte)(number) $28*(number) 6
-Constant right-side identified [2] (byte*) SCREEN4#0 ← (const byte*) SCREEN + (word)(number) $28*(number) 9
-Constant right-side identified [15] (word~) w::$0 ← (const word) w::w1 - (const word) w::w2
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN2#0 = SCREEN+(byte)$28*3
-Constant (const byte*) SCREEN3#0 = SCREEN+(byte)$28*6
-Constant (const byte*) SCREEN4#0 = SCREEN+(word)$28*9
-Constant (const word) w::$0 = w::w1-w::w2
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) w::b#0 = (byte)w::$0
-Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [3] (signed byte~) main::$2 ← (signed byte)(byte) main::b#2 keeping main::b#2
 Inlining Noop Cast [5] (byte~) main::$4 ← (byte)(signed byte) main::sb#0 keeping main::sb#0
 Successful SSA optimization Pass2NopCastInlining
@@ -701,8 +685,8 @@ FINAL SYMBOL TABLE
 (byte) w::i
 (byte) w::i#1 reg byte y 16.5
 (byte) w::i#2 reg byte y 13.75
-(const word) w::w1 = (word) $514
-(const word) w::w2 = (word) $4e2
+(const word) w::w1 = (number) $514
+(const word) w::w2 = (number) $4e2
 
 reg byte x [ main::b#2 main::b#1 ]
 reg byte y [ w::i#2 w::i#1 ]

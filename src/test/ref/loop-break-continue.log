@@ -12,27 +12,26 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (byte*) main::screen#0 ← ((byte*)) (number) $400
-  (byte[]) main::str ← (const string) main::$5
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@5
   (byte*) main::screen#4 ← phi( main/(byte*) main::screen#0 main::@5/(byte*) main::screen#5 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@5/(byte) main::i#1 )
-  (bool~) main::$0 ← *((byte[]) main::str + (byte) main::i#2) == (number) 0
+  (bool~) main::$0 ← *((const byte[]) main::str + (byte) main::i#2) == (number) 0
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte*) main::screen#3 ← phi( main::@1/(byte*) main::screen#4 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (bool~) main::$2 ← *((byte[]) main::str + (byte) main::i#3) == (byte) ' '
+  (bool~) main::$2 ← *((const byte[]) main::str + (byte) main::i#3) == (byte) ' '
   (bool~) main::$3 ← ! (bool~) main::$2
   if((bool~) main::$3) goto main::@4
   to:main::@5
 main::@4: scope:[main]  from main::@2
   (byte*) main::screen#2 ← phi( main::@2/(byte*) main::screen#3 )
   (byte) main::i#4 ← phi( main::@2/(byte) main::i#3 )
-  *((byte*) main::screen#2) ← *((byte[]) main::str + (byte) main::i#4)
+  *((byte*) main::screen#2) ← *((const byte[]) main::str + (byte) main::i#4)
   (byte*) main::screen#1 ← ++ (byte*) main::screen#2
   to:main::@5
 main::@5: scope:[main]  from main::@2 main::@4
@@ -63,7 +62,6 @@ SYMBOL TABLE SSA
 (bool~) main::$2
 (bool~) main::$3
 (bool~) main::$4
-(const string) main::$5 = (string) "hello brave new world"
 (label) main::@1
 (label) main::@2
 (label) main::@4
@@ -83,9 +81,9 @@ SYMBOL TABLE SSA
 (byte*) main::screen#3
 (byte*) main::screen#4
 (byte*) main::screen#5
-(byte[]) main::str
+(const byte[]) main::str = (string) "hello brave new world"
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← *((byte[]) main::str + (byte) main::i#2) == (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← *((const byte[]) main::str + (byte) main::i#2) == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
@@ -94,27 +92,26 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [5] (bool~) main::$1 ← *((byte[]) main::str + (byte) main::i#2) != (byte) 0 from [4] (bool~) main::$0 ← *((byte[]) main::str + (byte) main::i#2) == (byte) 0
-Inversing boolean not [9] (bool~) main::$3 ← *((byte[]) main::str + (byte) main::i#3) != (byte) ' ' from [8] (bool~) main::$2 ← *((byte[]) main::str + (byte) main::i#3) == (byte) ' '
+Inversing boolean not [4] (bool~) main::$1 ← *((const byte[]) main::str + (byte) main::i#2) != (byte) 0 from [3] (bool~) main::$0 ← *((const byte[]) main::str + (byte) main::i#2) == (byte) 0
+Inversing boolean not [8] (bool~) main::$3 ← *((const byte[]) main::str + (byte) main::i#3) != (byte) ' ' from [7] (bool~) main::$2 ← *((const byte[]) main::str + (byte) main::i#3) == (byte) ' '
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::i#2 = (byte) main::i#3 (byte) main::i#4 
 Alias (byte*) main::screen#2 = (byte*) main::screen#3 (byte*) main::screen#4 
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::i#2 = (byte) main::i#5 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [6] if(*((byte[]) main::str + (byte) main::i#2)!=(byte) 0) goto main::@2
-Simple Condition (bool~) main::$3 [10] if(*((byte[]) main::str + (byte) main::i#2)!=(byte) ' ') goto main::@4
-Simple Condition (bool~) main::$4 [17] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
+Simple Condition (bool~) main::$1 [5] if(*((const byte[]) main::str + (byte) main::i#2)!=(byte) 0) goto main::@2
+Simple Condition (bool~) main::$3 [9] if(*((const byte[]) main::str + (byte) main::i#2)!=(byte) ' ') goto main::@4
+Simple Condition (bool~) main::$4 [16] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [10] if(*((byte[]) main::str + (byte) main::i#2)==(byte) ' ') goto main::@5
-Negating conditional jump and destination [17] if((byte) main::i#1==rangelast(0,$ff)) goto main::@return
+Negating conditional jump and destination [9] if(*((const byte[]) main::str + (byte) main::i#2)==(byte) ' ') goto main::@5
+Negating conditional jump and destination [16] if((byte) main::i#1==rangelast(0,$ff)) goto main::@return
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant (const byte*) main::screen#0 = (byte*) 1024
-Constant (const byte[]) main::str = main::$5
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [15] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [17] if(main::i#1==rangelast(0,$ff)) goto main::@return to (number) 0
+Resolved ranged next value [14] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [16] if(main::i#1==rangelast(0,$ff)) goto main::@return to (number) 0
 Adding number conversion cast (unumber) 0 in if((byte) main::i#1==(number) 0) goto main::@return
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
@@ -123,7 +120,6 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte*) main::screen#0
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::$5 = (const byte[]) main::str
 Constant inlined main::screen#0 = (byte*) 1024
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining

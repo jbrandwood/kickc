@@ -4,18 +4,15 @@ Identified constant variable (byte*) SCREEN
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) PROCPORT ← ((byte*)) (number) 1
-  (byte*) CHARGEN ← ((byte*)) (number) $d000
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
   asm { sei  }
-  (byte*~) main::$0 ← (byte*) CHARGEN + (number) 8
+  (byte*~) main::$0 ← (const byte*) CHARGEN + (number) 8
   (byte*) main::CHAR_A#0 ← (byte*~) main::$0
-  *((byte*) PROCPORT) ← (number) $32
-  (byte*) main::sc#0 ← (byte*) SCREEN
+  *((const byte*) PROCPORT) ← (number) $32
+  (byte*) main::sc#0 ← (const byte*) SCREEN
   (byte) main::y#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@5
@@ -71,7 +68,7 @@ main::@5: scope:[main]  from main::@3
   if((bool~) main::$7) goto main::@1
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  *((byte*) PROCPORT) ← (number) $37
+  *((const byte*) PROCPORT) ← (number) $37
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main::@6
@@ -89,9 +86,9 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) CHARGEN
-(byte*) PROCPORT
-(byte*) SCREEN
+(const byte*) CHARGEN = (byte*)(number) $d000
+(const byte*) PROCPORT = (byte*)(number) 1
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (byte*~) main::$0
 (number~) main::$1
@@ -149,21 +146,18 @@ SYMBOL TABLE SSA
 (byte) main::y#5
 (byte) main::y#6
 
-Adding number conversion cast (unumber) 8 in (byte*~) main::$0 ← (byte*) CHARGEN + (number) 8
-Adding number conversion cast (unumber) $32 in *((byte*) PROCPORT) ← (number) $32
+Adding number conversion cast (unumber) 8 in (byte*~) main::$0 ← (const byte*) CHARGEN + (number) 8
+Adding number conversion cast (unumber) $32 in *((const byte*) PROCPORT) ← (number) $32
 Adding number conversion cast (unumber) $80 in (number~) main::$1 ← (byte) main::bits#2 & (number) $80
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) main::bits#2 & (unumber)(number) $80
 Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (unumber~) main::$1 != (number) 0
 Adding number conversion cast (unumber) 2 in (number~) main::$4 ← (byte) main::bits#3 * (number) 2
 Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (byte) main::bits#3 * (unumber)(number) 2
 Adding number conversion cast (unumber) $20 in (byte*~) main::$6 ← (byte*) main::sc#4 + (number) $20
-Adding number conversion cast (unumber) $37 in *((byte*) PROCPORT) ← (number) $37
+Adding number conversion cast (unumber) $37 in *((const byte*) PROCPORT) ← (number) $37
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) PROCPORT ← (byte*)(number) 1
-Inlining cast (byte*) CHARGEN ← (byte*)(number) $d000
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast *((byte*) PROCPORT) ← (unumber)(number) $32
-Inlining cast *((byte*) PROCPORT) ← (unumber)(number) $37
+Inlining cast *((const byte*) PROCPORT) ← (unumber)(number) $32
+Inlining cast *((const byte*) PROCPORT) ← (unumber)(number) $37
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1
 Simplifying constant pointer cast (byte*) 53248
@@ -186,7 +180,7 @@ Finalized unsigned number type (byte) $37
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) main::bits#2 & (byte) $80
 Inferred type updated to byte in (unumber~) main::$4 ← (byte) main::bits#3 * (byte) 2
-Inversing boolean not [16] (bool~) main::$3 ← (byte~) main::$1 == (byte) 0 from [15] (bool~) main::$2 ← (byte~) main::$1 != (byte) 0
+Inversing boolean not [13] (bool~) main::$3 ← (byte~) main::$1 == (byte) 0 from [12] (bool~) main::$2 ← (byte~) main::$1 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte*) main::CHAR_A#0 = (byte*~) main::$0 
 Alias (byte) main::bits#1 = (byte~) main::$4 
@@ -211,24 +205,23 @@ Identical Phi Values (byte*) main::CHAR_A#2 (byte*) main::CHAR_A#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) main::CHAR_A#1 (byte*) main::CHAR_A#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [17] if((byte~) main::$1==(byte) 0) goto main::@3
-Simple Condition (bool~) main::$5 [25] if((byte) main::x#1!=rangelast(0,7)) goto main::@2
-Simple Condition (bool~) main::$7 [33] if((byte) main::y#1!=rangelast(0,7)) goto main::@1
+Simple Condition (bool~) main::$3 [14] if((byte~) main::$1==(byte) 0) goto main::@3
+Simple Condition (bool~) main::$5 [22] if((byte) main::x#1!=rangelast(0,7)) goto main::@2
+Simple Condition (bool~) main::$7 [30] if((byte) main::y#1!=rangelast(0,7)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) PROCPORT = (byte*) 1
-Constant (const byte*) CHARGEN = (byte*) 53248
-Constant (const byte*) SCREEN = (byte*) 1024
+Constant right-side identified [1] (byte*) main::CHAR_A#0 ← (const byte*) CHARGEN + (byte) 8
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) main::CHAR_A#0 = CHARGEN+8
+Constant (const byte*) main::sc#0 = SCREEN
 Constant (const byte) main::y#0 = 0
 Constant (const byte) main::x#0 = 0
 Constant (const byte) main::c#0 = '.'
 Constant (const byte) main::c#1 = '*'
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::sc#0 = SCREEN
-Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [23] main::x#1 ← ++ main::x#2 to ++
-Resolved ranged comparison value [25] if(main::x#1!=rangelast(0,7)) goto main::@2 to (number) 8
-Resolved ranged next value [31] main::y#1 ← ++ main::y#2 to ++
-Resolved ranged comparison value [33] if(main::y#1!=rangelast(0,7)) goto main::@1 to (number) 8
+Resolved ranged next value [20] main::x#1 ← ++ main::x#2 to ++
+Resolved ranged comparison value [22] if(main::x#1!=rangelast(0,7)) goto main::@2 to (number) 8
+Resolved ranged next value [28] main::y#1 ← ++ main::y#2 to ++
+Resolved ranged comparison value [30] if(main::y#1!=rangelast(0,7)) goto main::@1 to (number) 8
 Adding number conversion cast (unumber) 8 in if((byte) main::x#1!=(number) 8) goto main::@2
 Adding number conversion cast (unumber) 8 in if((byte) main::y#1!=(number) 8) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -238,17 +231,13 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [1] (byte*) main::CHAR_A#0 ← (const byte*) CHARGEN + (byte) 8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::CHAR_A#0 = CHARGEN+8
-Successful SSA optimization Pass2ConstantIdentification
 Rewriting multiplication to use shift [10] (byte) main::bits#1 ← (byte) main::bits#2 * (byte) 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings (const byte*) main::sc#0
 Inlining constant with var siblings (const byte) main::y#0
 Inlining constant with var siblings (const byte) main::x#0
 Inlining constant with var siblings (const byte) main::c#0
 Inlining constant with var siblings (const byte) main::c#1
-Inlining constant with var siblings (const byte*) main::sc#0
 Constant inlined main::sc#0 = (const byte*) SCREEN
 Constant inlined main::c#0 = (byte) '.'
 Constant inlined main::x#0 = (byte) 0

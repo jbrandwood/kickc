@@ -10,9 +10,6 @@ Culled Empty Block (label) raster::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) BGCOL ← ((byte*)) (number) $d021
   to:@5
 
 (void()) main()
@@ -20,11 +17,11 @@ main: scope:[main]  from @6
   asm { sei  }
   to:main::@2
 main::@2: scope:[main]  from main main::@2 main::@7
-  (bool~) main::$0 ← *((byte*) RASTER) != (number) $a
+  (bool~) main::$0 ← *((const byte*) RASTER) != (number) $a
   if((bool~) main::$0) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2 main::@4
-  (bool~) main::$1 ← *((byte*) RASTER) != (number) $b
+  (bool~) main::$1 ← *((const byte*) RASTER) != (number) $b
   if((bool~) main::$1) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@4
@@ -49,8 +46,8 @@ raster: scope:[raster]  from main::@5
 raster::@1: scope:[raster]  from raster raster::@1
   (byte) raster::i#2 ← phi( raster/(byte) raster::i#0 raster::@1/(byte) raster::i#1 )
   (byte) raster::col#2 ← phi( raster/(byte) raster::col#0 raster::@1/(byte) raster::col#1 )
-  *((byte*) BGCOL) ← (byte) raster::col#2
-  *((byte*) BORDERCOL) ← (byte) raster::col#2
+  *((const byte*) BGCOL) ← (byte) raster::col#2
+  *((const byte*) BORDERCOL) ← (byte) raster::col#2
   (byte) raster::i#1 ← ++ (byte) raster::i#2
   (byte) raster::col#1 ← *((byte[]) rastercols + (byte) raster::i#1)
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
@@ -73,9 +70,9 @@ SYMBOL TABLE SSA
 (label) @7
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) BORDERCOL
-(byte*) RASTER
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) RASTER = (byte*)(number) $d012
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -98,16 +95,13 @@ SYMBOL TABLE SSA
 (byte) raster::i#2
 (byte[]) rastercols
 
-Adding number conversion cast (unumber) $a in (bool~) main::$0 ← *((byte*) RASTER) != (number) $a
-Adding number conversion cast (unumber) $b in (bool~) main::$1 ← *((byte*) RASTER) != (number) $b
+Adding number conversion cast (unumber) $a in (bool~) main::$0 ← *((const byte*) RASTER) != (number) $a
+Adding number conversion cast (unumber) $b in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $b
 Adding number conversion cast (unumber) 0 in (byte) raster::i#0 ← (number) 0
 Adding number conversion cast (unumber) $ff in (bool~) raster::$0 ← (byte) raster::col#1 != (number) $ff
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (byte[]) rastercols ← (byte[]){ (byte)(number) $b, (byte)(number) 0, (byte)(number) $b, (byte)(number) $b, (byte)(number) $c, (byte)(number) $b, (byte)(number) $c, (byte)(number) $c, (byte)(number) $f, (byte)(number) $c, (byte)(number) $f, (byte)(number) $f, (byte)(number) 1, (byte)(number) $f, (byte)(number) 1, (byte)(number) 1, (byte)(number) $f, (byte)(number) 1, (byte)(number) $f, (byte)(number) $f, (byte)(number) $c, (byte)(number) $f, (byte)(number) $c, (byte)(number) $c, (byte)(number) $b, (byte)(number) $c, (byte)(number) $b, (byte)(number) $b, (byte)(number) 0, (byte)(number) $b, (byte)(number) 0, (byte)(number) $ff }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
 Inlining cast (byte) raster::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
@@ -155,21 +149,18 @@ Finalized unsigned number type (byte) $b
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $ff
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [5] if(*((byte*) RASTER)!=(byte) $a) goto main::@2
-Simple Condition (bool~) main::$1 [7] if(*((byte*) RASTER)!=(byte) $b) goto main::@4
-Simple Condition (bool~) raster::$0 [22] if((byte) raster::col#1!=(byte) $ff) goto raster::@1
+Simple Condition (bool~) main::$0 [2] if(*((const byte*) RASTER)!=(byte) $a) goto main::@2
+Simple Condition (bool~) main::$1 [4] if(*((const byte*) RASTER)!=(byte) $b) goto main::@4
+Simple Condition (bool~) raster::$0 [19] if((byte) raster::col#1!=(byte) $ff) goto raster::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Identified constant from value list (byte[]) { (byte) $b, (byte) 0, (byte) $b, (byte) $b, (byte) $c, (byte) $b, (byte) $c, (byte) $c, (byte) $f, (byte) $c, (byte) $f, (byte) $f, (byte) 1, (byte) $f, (byte) 1, (byte) 1, (byte) $f, (byte) 1, (byte) $f, (byte) $f, (byte) $c, (byte) $f, (byte) $c, (byte) $c, (byte) $b, (byte) $c, (byte) $b, (byte) $b, (byte) 0, (byte) $b, (byte) 0, (byte) $ff }
 Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) BGCOL = (byte*) 53281
 Constant (const byte[]) rastercols = { $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff }
 Constant (const byte) raster::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [9] if(true) goto main::@2
+if() condition always true - replacing block destination [6] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero rastercols in [14] (byte) raster::col#0 ← *((const byte[]) rastercols + (const byte) raster::i#0)
+Simplifying expression containing zero rastercols in [11] (byte) raster::col#0 ← *((const byte[]) rastercols + (const byte) raster::i#0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks

@@ -6,11 +6,9 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  (byte) main::b ← (number) 3
-  (number~) main::$0 ← (byte) main::b + (number) 1
+  (number~) main::$0 ← (const byte) main::b + (number) 1
   (byte) main::c#0 ← (number~) main::$0
-  *((byte*) main::SCREEN + (number) 0) ← (byte) main::c#0
+  *((const byte*) main::SCREEN + (number) 0) ← (byte) main::c#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -30,40 +28,31 @@ SYMBOL TABLE SSA
 (void()) main()
 (number~) main::$0
 (label) main::@return
-(byte*) main::SCREEN
-(byte) main::b
+(const byte*) main::SCREEN = (byte*)(number) $400
+(const byte) main::b = (number) 3
 (byte) main::c
 (byte) main::c#0
 
-Adding number conversion cast (unumber) 3 in (byte) main::b ← (number) 3
-Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::b + (number) 1
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::b + (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) main::c#0
+Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (const byte) main::b + (number) 1
+Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (const byte) main::b + (unumber)(number) 1
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte) main::c#0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Inlining cast (byte) main::b ← (unumber)(number) 3
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 3
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::b + (byte) 1
+Inferred type updated to byte in (unumber~) main::$0 ← (const byte) main::b + (byte) 1
 Alias (byte) main::c#0 = (byte~) main::$0 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) main::SCREEN = (byte*) 1024
-Constant (const byte) main::b = 3
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← (byte) main::c#0
-Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [0] (byte) main::c#0 ← (const byte) main::b + (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::c#0 = main::b+1
 Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::SCREEN in [2] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::c#0
+Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -218,7 +207,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (const byte*) main::SCREEN = (byte*) 1024
-(const byte) main::b = (byte) 3
+(const byte) main::b = (number) 3
 (byte) main::c
 (const byte) main::c#0 c = (const byte) main::b+(byte) 1
 

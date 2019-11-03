@@ -8,11 +8,12 @@ Culled Empty Block (label) memset::@8
 Culled Empty Block (label) memset::@9
 Culled Empty Block (label) memset::@3
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@4
+  to:@5
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from main
@@ -57,20 +58,17 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#3
   return 
   to:@return
-@4: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  to:@5
 
 (void()) main()
 main: scope:[main]  from @5
-  (void*) memset::str#0 ← (void*)(byte*) SCREEN
+  (void*) memset::str#0 ← (void*)(const byte*) SCREEN
   (byte) memset::c#0 ← (byte) ' '
   (word) memset::num#0 ← (number) $3e8
   call memset 
   (void*) memset::return#2 ← (void*) memset::return#1
   to:main::@5
 main::@5: scope:[main]  from main
-  (byte*~) main::$1 ← (byte*) SCREEN + (number) $28
+  (byte*~) main::$1 ← (const byte*) SCREEN + (number) $28
   (byte*~) main::$2 ← (byte*~) main::$1 + (number) 1
   (byte*) main::screen#0 ← (byte*~) main::$2
   (byte) main::ch#0 ← (number) 0
@@ -106,7 +104,7 @@ main::@3: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
-@5: scope:[]  from @4
+@5: scope:[]  from @begin
   call main 
   to:@6
 @6: scope:[]  from @5
@@ -114,12 +112,11 @@ main::@return: scope:[main]  from main::@3
 @end: scope:[]  from @6
 
 SYMBOL TABLE SSA
-(label) @4
 (label) @5
 (label) @6
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (byte*~) main::$1
 (byte*~) main::$2
@@ -198,19 +195,18 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
-Adding number conversion cast (unumber) $28 in (byte*~) main::$1 ← (byte*) SCREEN + (number) $28
+Adding number conversion cast (unumber) $28 in (byte*~) main::$1 ← (const byte*) SCREEN + (number) $28
 Adding number conversion cast (unumber) 1 in (byte*~) main::$2 ← (byte*~) main::$1 + (number) 1
 Adding number conversion cast (unumber) 0 in (byte) main::ch#0 ← (number) 0
 Adding number conversion cast (unumber) $28-$10 in (byte*) main::screen#2 ← (byte*) main::screen#4 + (number) $28-(number) $10
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (byte) main::ch#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $28
 Simplifying constant integer cast 1
@@ -250,17 +246,19 @@ Identical Phi Values (void*) memset::return#0 (void*) memset::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [3] if((word) memset::num#0<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) main::$3 [39] if((byte) main::y#1!=rangelast(0,$f)) goto main::@2
-Simple Condition (bool~) main::$4 [44] if((byte) main::x#1!=rangelast(0,$f)) goto main::@1
+Simple Condition (bool~) main::$3 [38] if((byte) main::y#1!=rangelast(0,$f)) goto main::@2
+Simple Condition (bool~) main::$4 [43] if((byte) main::x#1!=rangelast(0,$f)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
+Constant right-side identified [20] (void*) memset::str#0 ← (void*)(const byte*) SCREEN
+Constant right-side identified [25] (byte*~) main::$1 ← (const byte*) SCREEN + (byte) $28
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const void*) memset::str#0 = (void*)SCREEN
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
+Constant (const byte*) main::$1 = SCREEN+$28
 Constant (const byte) main::ch#0 = 0
 Constant (const byte) main::x#0 = 0
 Constant (const byte) main::y#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const void*) memset::str#0 = (void*)SCREEN
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) memset::$2 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
@@ -268,10 +266,10 @@ Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [3] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [37] main::y#1 ← ++ main::y#2 to ++
-Resolved ranged comparison value [39] if(main::y#1!=rangelast(0,$f)) goto main::@2 to (number) $10
-Resolved ranged next value [42] main::x#1 ← ++ main::x#4 to ++
-Resolved ranged comparison value [44] if(main::x#1!=rangelast(0,$f)) goto main::@1 to (number) $10
+Resolved ranged next value [36] main::y#1 ← ++ main::y#2 to ++
+Resolved ranged comparison value [38] if(main::y#1!=rangelast(0,$f)) goto main::@2 to (number) $10
+Resolved ranged next value [41] main::x#1 ← ++ main::x#4 to ++
+Resolved ranged comparison value [43] if(main::x#1!=rangelast(0,$f)) goto main::@1 to (number) $10
 Eliminating unused constant (const void*) memset::return#2
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) $10 in if((byte) main::y#1!=(number) $10) goto main::@2
@@ -284,13 +282,9 @@ Finalized unsigned number type (byte) $10
 Finalized unsigned number type (byte) $10
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
-Constant right-side identified [7] (byte*~) main::$1 ← (const byte*) SCREEN + (byte) $28
+Constant right-side identified [7] (byte*) main::screen#0 ← (const byte*) main::$1 + (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
-Constant (const byte*) main::$1 = SCREEN+$28
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [6] (byte*) main::screen#0 ← (const byte*) main::$1 + (byte) 1
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::screen#0 = main::$1+1
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) memset::dst#0
@@ -309,7 +303,6 @@ Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@6(between main::@3 and main::@1)
 Added new block during phi lifting main::@7(between main::@2 and main::@2)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @5
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @end
@@ -319,21 +312,20 @@ Adding NOP phi() at start of memset
 Adding NOP phi() at start of memset::@2
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to memset:7 
+Calls in [] to main:2 
+Calls in [main] to memset:6 
 
 Created 7 initial phi equivalence classes
-Coalesced [10] main::ch#6 ← main::ch#3
-Coalesced [11] main::screen#7 ← main::screen#5
-Coalesced [22] main::ch#5 ← main::ch#1
-Coalesced [23] main::screen#6 ← main::screen#2
-Coalesced [24] main::x#5 ← main::x#1
-Coalesced (already) [25] main::ch#7 ← main::ch#1
-Coalesced [26] main::screen#8 ← main::screen#1
-Coalesced [27] main::y#3 ← main::y#1
-Coalesced [36] memset::dst#4 ← memset::dst#1
+Coalesced [9] main::ch#6 ← main::ch#3
+Coalesced [10] main::screen#7 ← main::screen#5
+Coalesced [21] main::ch#5 ← main::ch#1
+Coalesced [22] main::screen#6 ← main::screen#2
+Coalesced [23] main::x#5 ← main::x#1
+Coalesced (already) [24] main::ch#7 ← main::ch#1
+Coalesced [25] main::screen#8 ← main::screen#1
+Coalesced [26] main::y#3 ← main::y#1
+Coalesced [35] memset::dst#4 ← memset::dst#1
 Coalesced down to 5 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @6
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
@@ -568,9 +560,9 @@ main: {
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
+    .label str = SCREEN
     .const c = ' '
     .const num = $3e8
-    .label str = SCREEN
     .label end = str+num
     .label dst = 7
     // [18] phi from memset to memset::@1 [phi:memset->memset::@1]
@@ -766,9 +758,9 @@ main: {
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
+    .label str = SCREEN
     .const c = ' '
     .const num = $3e8
-    .label str = SCREEN
     .label end = str+num
     .label dst = 4
     // [18] phi from memset to memset::@1 [phi:memset->memset::@1]
@@ -998,9 +990,9 @@ main: {
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
+    .label str = SCREEN
     .const c = ' '
     .const num = $3e8
-    .label str = SCREEN
     .label end = str+num
     .label dst = 4
     // [18] phi from memset to memset::@1 [phi:memset->memset::@1]

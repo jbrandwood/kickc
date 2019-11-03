@@ -8,8 +8,6 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) RASTER ← ((byte*)) (number) $d012
   to:@2
 
 (void()) main()
@@ -20,7 +18,7 @@ main::@1: scope:[main]  from main main::@11 main::@8
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (bool~) main::$0 ← *((byte*) RASTER) < (number) $1e
+  (bool~) main::$0 ← *((const byte*) RASTER) < (number) $1e
   if((bool~) main::$0) goto main::@4
   to:main::@8
 main::@4: scope:[main]  from main::@2
@@ -29,7 +27,7 @@ main::@4: scope:[main]  from main::@2
 main::@11: scope:[main]  from main::@4
   to:main::@1
 main::@8: scope:[main]  from main::@2
-  *((byte*) BGCOL) ← (number) 0
+  *((const byte*) BGCOL) ← (number) 0
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -37,7 +35,7 @@ main::@return: scope:[main]  from main::@1
 
 (void()) incScreen()
 incScreen: scope:[incScreen]  from main::@4
-  *((byte*) BGCOL) ← *((byte*) RASTER)
+  *((const byte*) BGCOL) ← *((const byte*) RASTER)
   to:incScreen::@return
 incScreen::@return: scope:[incScreen]  from incScreen
   return 
@@ -54,8 +52,8 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) RASTER
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte*) RASTER = (byte*)(number) $d012
 (void()) incScreen()
 (label) incScreen::@return
 (void()) main()
@@ -67,12 +65,10 @@ SYMBOL TABLE SSA
 (label) main::@8
 (label) main::@return
 
-Adding number conversion cast (unumber) $1e in (bool~) main::$0 ← *((byte*) RASTER) < (number) $1e
-Adding number conversion cast (unumber) 0 in *((byte*) BGCOL) ← (number) 0
+Adding number conversion cast (unumber) $1e in (bool~) main::$0 ← *((const byte*) RASTER) < (number) $1e
+Adding number conversion cast (unumber) 0 in *((const byte*) BGCOL) ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast *((byte*) BGCOL) ← (unumber)(number) 0
+Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53266
@@ -82,12 +78,9 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $1e
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [5] if(*((byte*) RASTER)<(byte) $1e) goto main::@4
+Simple Condition (bool~) main::$0 [3] if(*((const byte*) RASTER)<(byte) $1e) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) RASTER = (byte*) 53266
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [3] if(true) goto main::@2
+if() condition always true - replacing block destination [1] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks

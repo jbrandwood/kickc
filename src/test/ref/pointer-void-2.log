@@ -43,7 +43,6 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) idx#4 ← (number) 0
   to:@2
 
@@ -52,7 +51,7 @@ print: scope:[print]  from main main::@1 main::@2
   (byte) idx#12 ← phi( main/(byte) idx#15 main::@1/(byte) idx#0 main::@2/(byte) idx#1 )
   (void*) print::ptr#3 ← phi( main/(void*) print::ptr#0 main::@1/(void*) print::ptr#1 main::@2/(void*) print::ptr#2 )
   (byte*~) print::$0 ← ((byte*)) (void*) print::ptr#3
-  *((byte*) SCREEN + (byte) idx#12) ← *((byte*~) print::$0)
+  *((const byte*) SCREEN + (byte) idx#12) ← *((byte*~) print::$0)
   (byte) idx#5 ← ++ (byte) idx#12
   to:print::@return
 print::@return: scope:[print]  from print
@@ -76,7 +75,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (byte) idx
 (byte) idx#0
 (byte) idx#1
@@ -129,14 +128,13 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (dword) main::d#0 ← (unumber)(number) $12345678
 Inlining cast (word) main::w#0 ← (unumber)(number) $1234
 Inlining cast (byte) main::b#0 ← (unumber)(number) $12
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) idx#4 ← (unumber)(number) 0
 Inlining cast (byte*~) print::$0 ← (byte*)(void*) print::ptr#3
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $12345678
 Simplifying constant integer cast $1234
 Simplifying constant integer cast $12
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (dword) $12345678
@@ -166,7 +164,6 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$0 = &main::b#0
 Constant (const word*) main::$2 = &main::w#0
 Constant (const dword*) main::$4 = &main::d#0
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) idx#16 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) print::ptr#0 = (void*)main::$0

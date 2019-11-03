@@ -21,6 +21,7 @@ Replacing struct member reference (struct Person) print_person::person.id with m
 Replacing struct member reference (struct Person) print_person::person.name with member unwinding reference (byte[$10]) print_person::person_name
 Replacing struct member reference (struct Person) print_person::person.name with member unwinding reference (byte[$10]) print_person::person_name
 Warning! Adding boolean cast to non-boolean condition *((byte[$10]) print_person::person_name + (byte) print_person::i)
+Identified constant variable (byte) Person::id
 Identified constant variable (byte) main::jesper_id
 Identified constant variable (byte[$10]) main::jesper_name
 Identified constant variable (byte) main::henriette_id
@@ -36,19 +37,15 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte) idx#18 ← phi( @2/(byte) idx#20 )
-  (byte) main::jesper_id ← (number) 4
-  (byte[$10]) main::jesper_name ← (const string) main::$2
-  (byte) print_person::person_id#0 ← (byte) main::jesper_id
-  (byte[$10]) print_person::person_name#0 ← (byte[$10]) main::jesper_name
+  (byte) print_person::person_id#0 ← (const byte) main::jesper_id
+  (byte[$10]) print_person::person_name#0 ← (const byte[$10]) main::jesper_name
   call print_person 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte) idx#10 ← phi( main/(byte) idx#8 )
   (byte) idx#0 ← (byte) idx#10
-  (byte) main::henriette_id ← (number) 7
-  (byte[$10]) main::henriette_name ← (const string) main::$3
-  (byte) print_person::person_id#1 ← (byte) main::henriette_id
-  (byte[$10]) print_person::person_name#1 ← (byte[$10]) main::henriette_name
+  (byte) print_person::person_id#1 ← (const byte) main::henriette_id
+  (byte[$10]) print_person::person_name#1 ← (const byte[$10]) main::henriette_name
   call print_person 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -61,9 +58,7 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
   (byte) idx#3 ← (number) 0
-  (byte[]) DIGIT ← (const string) $0
   to:@2
 
 (void()) print_person((byte) print_person::person_id , (byte[$10]) print_person::person_name)
@@ -71,9 +66,9 @@ print_person: scope:[print_person]  from main main::@1
   (byte[$10]) print_person::person_name#4 ← phi( main/(byte[$10]) print_person::person_name#0 main::@1/(byte[$10]) print_person::person_name#1 )
   (byte) idx#13 ← phi( main/(byte) idx#18 main::@1/(byte) idx#0 )
   (byte) print_person::person_id#2 ← phi( main/(byte) print_person::person_id#0 main::@1/(byte) print_person::person_id#1 )
-  *((byte*) SCREEN + (byte) idx#13) ← *((byte[]) DIGIT + (byte) print_person::person_id#2)
+  *((const byte*) SCREEN + (byte) idx#13) ← *((const byte[]) DIGIT + (byte) print_person::person_id#2)
   (byte) idx#4 ← ++ (byte) idx#13
-  *((byte*) SCREEN + (byte) idx#4) ← (byte) ' '
+  *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' '
   (byte) idx#5 ← ++ (byte) idx#4
   (byte) print_person::i#0 ← (number) 0
   to:print_person::@1
@@ -88,13 +83,13 @@ print_person::@2: scope:[print_person]  from print_person::@1
   (byte) idx#14 ← phi( print_person::@1/(byte) idx#19 )
   (byte) print_person::i#3 ← phi( print_person::@1/(byte) print_person::i#2 )
   (byte[$10]) print_person::person_name#3 ← phi( print_person::@1/(byte[$10]) print_person::person_name#2 )
-  *((byte*) SCREEN + (byte) idx#14) ← *((byte[$10]) print_person::person_name#3 + (byte) print_person::i#3)
+  *((const byte*) SCREEN + (byte) idx#14) ← *((byte[$10]) print_person::person_name#3 + (byte) print_person::i#3)
   (byte) idx#6 ← ++ (byte) idx#14
   (byte) print_person::i#1 ← ++ (byte) print_person::i#3
   to:print_person::@1
 print_person::@3: scope:[print_person]  from print_person::@1
   (byte) idx#15 ← phi( print_person::@1/(byte) idx#19 )
-  *((byte*) SCREEN + (byte) idx#15) ← (byte) ' '
+  *((const byte*) SCREEN + (byte) idx#15) ← (byte) ' '
   (byte) idx#7 ← ++ (byte) idx#15
   to:print_person::@return
 print_person::@return: scope:[print_person]  from print_person::@3
@@ -113,16 +108,13 @@ print_person::@return: scope:[print_person]  from print_person::@3
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "0123456789"
 (label) @1
 (label) @2
 (label) @3
 (label) @begin
 (label) @end
-(byte[]) DIGIT
-(byte) Person::id
-(byte[$10]) Person::name
-(byte*) SCREEN
+(const byte[]) DIGIT = (string) "0123456789"
+(const byte*) SCREEN = (byte*)(number) $400
 (byte) idx
 (byte) idx#0
 (byte) idx#1
@@ -146,15 +138,13 @@ SYMBOL TABLE SSA
 (byte) idx#8
 (byte) idx#9
 (void()) main()
-(const string) main::$2 = (string) "jesper"
-(const string) main::$3 = (string) "henriette"
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte) main::henriette_id
-(byte[$10]) main::henriette_name
-(byte) main::jesper_id
-(byte[$10]) main::jesper_name
+(const byte) main::henriette_id = (number) 7
+(const byte[$10]) main::henriette_name = (string) "henriette"
+(const byte) main::jesper_id = (number) 4
+(const byte[$10]) main::jesper_name = (string) "jesper"
 (void()) print_person((byte) print_person::person_id , (byte[$10]) print_person::person_name)
 (bool~) print_person::$0
 (label) print_person::@1
@@ -178,27 +168,18 @@ SYMBOL TABLE SSA
 (byte[$10]) print_person::person_name#3
 (byte[$10]) print_person::person_name#4
 
-Adding number conversion cast (unumber) 4 in (byte) main::jesper_id ← (number) 4
-Adding number conversion cast (unumber) 7 in (byte) main::henriette_id ← (number) 7
 Adding number conversion cast (unumber) 0 in (byte) idx#3 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) print_person::i#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) print_person::$0 ← (number) 0 != *((byte[$10]) print_person::person_name#2 + (byte) print_person::i#2)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::jesper_id ← (unumber)(number) 4
-Inlining cast (byte) main::henriette_id ← (unumber)(number) 7
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) idx#3 ← (unumber)(number) 0
 Inlining cast (byte) print_person::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 4
-Simplifying constant integer cast 7
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
@@ -218,36 +199,26 @@ Identical Phi Values (byte) idx#1 (byte) idx#16
 Identical Phi Values (byte[$10]) print_person::person_name#2 (byte[$10]) print_person::person_name#4
 Identical Phi Values (byte) idx#17 (byte) idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) print_person::$0 [29] if((byte) 0!=*((byte[$10]) print_person::person_name#4 + (byte) print_person::i#2)) goto print_person::@2
+Simple Condition (bool~) print_person::$0 [23] if((byte) 0!=*((byte[$10]) print_person::person_name#4 + (byte) print_person::i#2)) goto print_person::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::jesper_id = 4
-Constant (const byte[$10]) main::jesper_name = main::$2
-Constant (const byte) main::henriette_id = 7
-Constant (const byte[$10]) main::henriette_name = main::$3
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte) idx#20 = 0
-Constant (const byte[]) DIGIT = $0
-Constant (const byte) print_person::i#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) print_person::person_id#0 = main::jesper_id
 Constant (const byte[$10]) print_person::person_name#0 = main::jesper_name
 Constant (const byte) print_person::person_id#1 = main::henriette_id
 Constant (const byte[$10]) print_person::person_name#1 = main::henriette_name
+Constant (const byte) idx#20 = 0
+Constant (const byte) print_person::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte) print_person::i#0
 Inlining constant with var siblings (const byte) print_person::person_id#0
 Inlining constant with var siblings (const byte[$10]) print_person::person_name#0
 Inlining constant with var siblings (const byte) print_person::person_id#1
 Inlining constant with var siblings (const byte[$10]) print_person::person_name#1
+Inlining constant with var siblings (const byte) print_person::i#0
 Inlining constant with var siblings (const byte) idx#20
+Constant inlined print_person::person_name#1 = (const byte[$10]) main::henriette_name
 Constant inlined idx#20 = (byte) 0
 Constant inlined print_person::person_id#1 = (const byte) main::henriette_id
 Constant inlined print_person::person_id#0 = (const byte) main::jesper_id
-Constant inlined main::$2 = (const byte[$10]) main::jesper_name
 Constant inlined print_person::i#0 = (byte) 0
-Constant inlined print_person::person_name#1 = (const byte[$10]) main::henriette_name
-Constant inlined main::$3 = (const byte[$10]) main::henriette_name
-Constant inlined $0 = (const byte[]) DIGIT
 Constant inlined print_person::person_name#0 = (const byte[$10]) main::jesper_name
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
@@ -331,8 +302,6 @@ print_person::@2: scope:[print_person]  from print_person::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) Person::id
-(byte[$10]) Person::name
 (byte) idx
 (byte) idx#13 3.0
 (byte) idx#14 9.75
@@ -728,8 +697,6 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte[]) DIGIT = (string) "0123456789"
-(byte) Person::id
-(byte[$10]) Person::name
 (const byte*) SCREEN = (byte*) 1024
 (byte) idx
 (byte) idx#13 reg byte y 3.0
@@ -741,9 +708,9 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const byte) main::henriette_id = (byte) 7
+(const byte) main::henriette_id = (number) 7
 (const byte[$10]) main::henriette_name = (string) "henriette"
-(const byte) main::jesper_id = (byte) 4
+(const byte) main::jesper_id = (number) 4
 (const byte[$10]) main::jesper_name = (string) "jesper"
 (void()) print_person((byte) print_person::person_id , (byte[$10]) print_person::person_name)
 (label) print_person::@1

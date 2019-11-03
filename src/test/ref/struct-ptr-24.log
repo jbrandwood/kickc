@@ -1,4 +1,6 @@
 Fixing pointer increment (struct fileentry*) main::file ← ++ (struct fileentry*) main::file
+Identified constant variable (byte) fileentry::bFlag
+Identified constant variable (byte) fileentry::bError
 Identified constant variable (struct fileentry*) filesEnd
 Identified constant variable (struct fileentry*) dir
 Culled Empty Block (label) main::@4
@@ -10,8 +12,6 @@ Culled Empty Block (label) PrintName::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (struct fileentry*) filesEnd ← (struct fileentry*) 0
-  (struct fileentry*) dir ← (struct fileentry*) 0
   to:@2
 
 (void()) main()
@@ -20,7 +20,7 @@ main: scope:[main]  from @2
   to:main::@1
 main::@1: scope:[main]  from main main::@7
   (struct fileentry*) main::file#2 ← phi( main/(struct fileentry*) main::file#0 main::@7/(struct fileentry*) main::file#1 )
-  (bool~) main::$0 ← (struct fileentry*) main::file#2 != (struct fileentry*) filesEnd
+  (bool~) main::$0 ← (struct fileentry*) main::file#2 != (const struct fileentry*) filesEnd
   if((bool~) main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
@@ -39,7 +39,7 @@ main::@return: scope:[main]  from main::@1
 (void()) PrintName((struct fileentry*) PrintName::file)
 PrintName: scope:[PrintName]  from main::@2
   (struct fileentry*) PrintName::file#1 ← phi( main::@2/(struct fileentry*) PrintName::file#0 )
-  (bool~) PrintName::$0 ← (struct fileentry*) PrintName::file#1 == (struct fileentry*) dir
+  (bool~) PrintName::$0 ← (struct fileentry*) PrintName::file#1 == (const struct fileentry*) dir
   (bool~) PrintName::$1 ← ! (bool~) PrintName::$0
   if((bool~) PrintName::$1) goto PrintName::@return
   to:PrintName::@2
@@ -72,10 +72,8 @@ SYMBOL TABLE SSA
 (struct fileentry*) PrintName::file#0
 (struct fileentry*) PrintName::file#1
 (const byte) SIZEOF_STRUCT_FILEENTRY = (byte) 2
-(struct fileentry*) dir
-(byte) fileentry::bError
-(byte) fileentry::bFlag
-(struct fileentry*) filesEnd
+(const struct fileentry*) dir = (struct fileentry*) 0
+(const struct fileentry*) filesEnd = (struct fileentry*) 0
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -99,17 +97,15 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [14] (bool~) PrintName::$1 ← (struct fileentry*) PrintName::file#1 != (struct fileentry*) dir from [13] (bool~) PrintName::$0 ← (struct fileentry*) PrintName::file#1 == (struct fileentry*) dir
+Inversing boolean not [12] (bool~) PrintName::$1 ← (struct fileentry*) PrintName::file#1 != (const struct fileentry*) dir from [11] (bool~) PrintName::$0 ← (struct fileentry*) PrintName::file#1 == (const struct fileentry*) dir
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (struct fileentry*) main::file#2 = (struct fileentry*) main::file#3 (struct fileentry*) main::file#4 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (struct fileentry*) PrintName::file#1 (struct fileentry*) PrintName::file#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [5] if((struct fileentry*) main::file#2!=(struct fileentry*) filesEnd) goto main::@2
-Simple Condition (bool~) PrintName::$1 [15] if((struct fileentry*) PrintName::file#0!=(struct fileentry*) dir) goto PrintName::@return
+Simple Condition (bool~) main::$0 [3] if((struct fileentry*) main::file#2!=(const struct fileentry*) filesEnd) goto main::@2
+Simple Condition (bool~) PrintName::$1 [13] if((struct fileentry*) PrintName::file#0!=(const struct fileentry*) dir) goto PrintName::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const struct fileentry*) filesEnd = (struct fileentry*) 0
-Constant (const struct fileentry*) dir = (struct fileentry*) 0
 Constant (const struct fileentry*) main::file#0 = (struct fileentry*) 0
 Constant (const byte*) PrintName::$2 = (byte*) 199
 Successful SSA optimization Pass2ConstantIdentification
@@ -184,8 +180,6 @@ VARIABLE REGISTER WEIGHTS
 (void()) PrintName((struct fileentry*) PrintName::file)
 (struct fileentry*) PrintName::file
 (struct fileentry*) PrintName::file#0 13.0
-(byte) fileentry::bError
-(byte) fileentry::bFlag
 (void()) main()
 (struct fileentry*) main::file
 (struct fileentry*) main::file#1 22.0
@@ -461,8 +455,6 @@ FINAL SYMBOL TABLE
 (struct fileentry*) PrintName::file#0 file zp[2]:2 13.0
 (const byte) SIZEOF_STRUCT_FILEENTRY = (byte) 2
 (const struct fileentry*) dir = (struct fileentry*) 0
-(byte) fileentry::bError
-(byte) fileentry::bFlag
 (const struct fileentry*) filesEnd = (struct fileentry*) 0
 (void()) main()
 (label) main::@1

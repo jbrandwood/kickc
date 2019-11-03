@@ -9,12 +9,8 @@ Culled Empty Block (label) test::@4
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte[]) ref ← { (number) 3, (number) 4, (number) 3, (number) $12, (number) 9, (number) 1, (number) 4, (number) 2, (number) 4, (number) 5, (number) 1, (number) 0 }
-  (byte*) screen1 ← ((byte*)) (number) $400
-  (byte*~) $0 ← (byte*) screen1 + (number) $28
+  (byte*~) $0 ← (const byte*) screen1 + (number) $28
   (byte*) screen2#0 ← (byte*~) $0
-  (byte*) cols ← ((byte*)) (number) $d800
-  (byte) GREEN ← (number) 5
-  (byte) RED ← (number) 2
   to:@2
 
 (void()) main()
@@ -139,18 +135,18 @@ test: scope:[test]  from main main::@1 main::@10 main::@2 main::@3 main::@4 main
   (byte*) screen2#1 ← phi( main/(byte*) screen2#2 main::@1/(byte*) screen2#3 main::@10/(byte*) screen2#4 main::@2/(byte*) screen2#5 main::@3/(byte*) screen2#6 main::@4/(byte*) screen2#7 main::@5/(byte*) screen2#8 main::@6/(byte*) screen2#9 main::@7/(byte*) screen2#10 main::@8/(byte*) screen2#11 main::@9/(byte*) screen2#12 )
   (byte) test::i#11 ← phi( main/(byte) test::i#0 main::@1/(byte) test::i#1 main::@10/(byte) test::i#10 main::@2/(byte) test::i#2 main::@3/(byte) test::i#3 main::@4/(byte) test::i#4 main::@5/(byte) test::i#5 main::@6/(byte) test::i#6 main::@7/(byte) test::i#7 main::@8/(byte) test::i#8 main::@9/(byte) test::i#9 )
   (byte) test::a#11 ← phi( main/(byte) test::a#0 main::@1/(byte) test::a#1 main::@10/(byte) test::a#10 main::@2/(byte) test::a#2 main::@3/(byte) test::a#3 main::@4/(byte) test::a#4 main::@5/(byte) test::a#5 main::@6/(byte) test::a#6 main::@7/(byte) test::a#7 main::@8/(byte) test::a#8 main::@9/(byte) test::a#9 )
-  *((byte*) screen1 + (byte) test::i#11) ← (byte) test::a#11
+  *((const byte*) screen1 + (byte) test::i#11) ← (byte) test::a#11
   *((byte*) screen2#1 + (byte) test::i#11) ← *((byte[]) ref + (byte) test::i#11)
   (bool~) test::$0 ← *((byte[]) ref + (byte) test::i#11) == (byte) test::a#11
   if((bool~) test::$0) goto test::@1
   to:test::@3
 test::@1: scope:[test]  from test
   (byte) test::i#12 ← phi( test/(byte) test::i#11 )
-  *((byte*) cols + (byte) test::i#12) ← (byte) GREEN
+  *((const byte*) cols + (byte) test::i#12) ← (const byte) GREEN
   to:test::@return
 test::@3: scope:[test]  from test
   (byte) test::i#13 ← phi( test/(byte) test::i#11 )
-  *((byte*) cols + (byte) test::i#13) ← (byte) RED
+  *((const byte*) cols + (byte) test::i#13) ← (const byte) RED
   to:test::@return
 test::@return: scope:[test]  from test::@1 test::@3
   return 
@@ -169,9 +165,9 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte) GREEN
-(byte) RED
-(byte*) cols
+(const byte) GREEN = (number) 5
+(const byte) RED = (number) 2
+(const byte*) cols = (byte*)(number) $d800
 (void()) main()
 (label) main::@1
 (label) main::@10
@@ -232,7 +228,7 @@ SYMBOL TABLE SSA
 (byte) main::i#8
 (byte) main::i#9
 (byte[]) ref
-(byte*) screen1
+(const byte*) screen1 = (byte*)(number) $400
 (byte*) screen2
 (byte*) screen2#0
 (byte*) screen2#1
@@ -282,9 +278,7 @@ SYMBOL TABLE SSA
 (byte) test::i#8
 (byte) test::i#9
 
-Adding number conversion cast (unumber) $28 in (byte*~) $0 ← (byte*) screen1 + (number) $28
-Adding number conversion cast (unumber) 5 in (byte) GREEN ← (number) 5
-Adding number conversion cast (unumber) 2 in (byte) RED ← (number) 2
+Adding number conversion cast (unumber) $28 in (byte*~) $0 ← (const byte*) screen1 + (number) $28
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) 3 in (byte) main::a#0 ← (number) 3
 Adding number conversion cast (unumber) 1 in (byte) main::a#1 ← (byte) main::a#11 + (number) 1
@@ -300,13 +294,11 @@ Adding number conversion cast (unumber) 1 in (byte) main::a#10 ← (byte) main::
 Successful SSA optimization PassNAddNumberTypeConversions
 Added casts to value list in (byte[]) ref ← (byte[]){ (byte)(number) 3, (byte)(number) 4, (byte)(number) 3, (byte)(number) $12, (byte)(number) 9, (byte)(number) 1, (byte)(number) 4, (byte)(number) 2, (byte)(number) 4, (byte)(number) 5, (byte)(number) 1, (byte)(number) 0 }
 Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) screen1 ← (byte*)(number) $400
-Inlining cast (byte*) cols ← (byte*)(number) $d800
-Inlining cast (byte) GREEN ← (unumber)(number) 5
-Inlining cast (byte) RED ← (unumber)(number) 2
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Inlining cast (byte) main::a#0 ← (unumber)(number) 3
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 55296
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Simplifying constant integer cast 3
@@ -319,11 +311,7 @@ Simplifying constant integer cast 4
 Simplifying constant integer cast 5
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $28
-Simplifying constant pointer cast (byte*) 55296
-Simplifying constant integer cast 5
-Simplifying constant integer cast 2
 Simplifying constant integer cast 0
 Simplifying constant integer cast 3
 Simplifying constant integer cast 1
@@ -338,8 +326,6 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 1
@@ -381,28 +367,25 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) screen2#10 (byte*) screen2#0
 Identical Phi Values (byte*) screen2#1 (byte*) screen2#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) test::$0 [80] if(*((byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1
+Simple Condition (bool~) test::$0 [76] if(*((byte[]) ref + (byte) test::i#11)==(byte) test::a#11) goto test::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [1] (byte*) screen2#0 ← (const byte*) screen1 + (byte) $28
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Identified constant from value list (byte[]) { (byte) 3, (byte) 4, (byte) 3, (byte) $12, (byte) 9, (byte) 1, (byte) 4, (byte) 2, (byte) 4, (byte) 5, (byte) 1, (byte) 0 }
 Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte[]) ref = { 3, 4, 3, $12, 9, 1, 4, 2, 4, 5, 1, 0 }
-Constant (const byte*) screen1 = (byte*) 1024
-Constant (const byte*) cols = (byte*) 55296
-Constant (const byte) GREEN = 5
-Constant (const byte) RED = 2
+Constant (const byte*) screen2#0 = screen1+$28
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::a#0 = 3
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) test::i#0 = main::i#0
 Constant (const byte) test::a#0 = main::a#0
 Successful SSA optimization Pass2ConstantIdentification
-Eliminating unused variable (byte) main::i#11 and assignment [52] (byte) main::i#11 ← ++ (byte) main::i#10
+Eliminating unused variable (byte) main::i#11 and assignment [51] (byte) main::i#11 ← ++ (byte) main::i#10
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [0] (byte*) screen2#0 ← (const byte*) screen1 + (byte) $28
-Constant right-side identified [2] (byte) main::i#1 ← ++ (const byte) main::i#0
-Constant right-side identified [3] (byte) main::a#1 ← (const byte) main::a#0 + (byte) 1
+Constant right-side identified [1] (byte) main::i#1 ← ++ (const byte) main::i#0
+Constant right-side identified [2] (byte) main::a#1 ← (const byte) main::a#0 + (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) screen2#0 = screen1+$28
 Constant (const byte) main::i#1 = ++main::i#0
 Constant (const byte) main::a#1 = main::a#0+1
 Successful SSA optimization Pass2ConstantIdentification
@@ -1298,8 +1281,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) GREEN = (byte) 5
-(const byte) RED = (byte) 2
+(const byte) GREEN = (number) 5
+(const byte) RED = (number) 2
 (const byte*) cols = (byte*) 55296
 (void()) main()
 (label) main::@1

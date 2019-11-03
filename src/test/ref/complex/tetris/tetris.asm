@@ -86,6 +86,10 @@
   .label PLAYFIELD_SCREEN_1 = $400
   // Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
+  // Screen Sprite pointers on screen 1
+  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  // Screen Sprite pointers on screen 2
+  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   // Address of the original playscreen chars
   .label PLAYFIELD_SCREEN_ORIGINAL = $1800
   // Address of the original playscreen colors
@@ -99,6 +103,8 @@
   .const PLAYFIELD_COLS = $a
   // The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
+  // The line of the first IRQ
+  .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   // The rate of moving down the current piece fast (number of frames between moves if movedown is not forced)
   .const current_movedown_fast = $a
   // No collision
@@ -111,12 +117,6 @@
   .const COLLISION_LEFT = 4
   // Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
-  // Screen Sprite pointers on screen 1
-  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
-  // Screen Sprite pointers on screen 2
-  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
-  // The line of the first IRQ
-  .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
   .label keyboard_events_size = $13
   .label render_screen_showing = 2
@@ -1645,6 +1645,19 @@ sprites_irq: {
   keyboard_events: .fill 8, 0
   // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
   keyboard_scan_values: .fill 8, 0
+  // The playfield.  0 is empty non-zero is color.
+  // The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
+  playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
+  // The color #1 to use for the pieces for each level
+  PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
+  // The color #2 to use for the pieces for each level
+  PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
+  // Pointers to the screen address for rendering each playfield line
+  // The lines for screen 1 is aligned with 0x80 and screen 2 with 0x40 - so XOR'ing with 0x40 gives screen 2 lines.
+  .align $80
+  screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
+  .align $40
+  screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
   // The T-piece
   .align $40
   PIECE_T: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
@@ -1673,6 +1686,10 @@ sprites_irq: {
   // The initial X/Y for each piece
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
+  // Pointers to the playfield address for each playfield line
+  playfield_lines: .fill 2*PLAYFIELD_LINES, 0
+  // Indixes into the playfield  for each playfield line
+  playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
   // The speed of moving down the piece when soft-drop is not activated
   // This array holds the number of frames per move by level (0-29). For all levels 29+ the value is 1.
   MOVEDOWN_SLOW_SPEEDS: .byte $30, $2b, $26, $21, $1c, $17, $12, $d, 8, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
@@ -1682,25 +1699,8 @@ sprites_irq: {
   // Score values for removing 0-4 lines (in BCD)
   // These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
-  // Pointers to the screen address for rendering each playfield line
-  // The lines for screen 1 is aligned with 0x80 and screen 2 with 0x40 - so XOR'ing with 0x40 gives screen 2 lines.
-  .align $80
-  screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
-  .align $40
-  screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
-  // Pointers to the playfield address for each playfield line
-  playfield_lines: .fill 2*PLAYFIELD_LINES, 0
-  // The color #1 to use for the pieces for each level
-  PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
-  // The color #2 to use for the pieces for each level
-  PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
   // The different pieces
   PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
-  // The playfield.  0 is empty non-zero is color.
-  // The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
-  playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
-  // Indixes into the playfield  for each playfield line
-  playfield_lines_idx: .fill PLAYFIELD_LINES+1, 0
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset
     .import binary "playfield-screen.imap"

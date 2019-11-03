@@ -1,10 +1,12 @@
 Fixing pointer array-indexing *((struct Point[$1f4]) points + (word) main::i)
 Fixing pointer array-indexing *((struct Point[$1f4]) points + (word) main::i1)
-Fixing pointer array-indexing *((struct Point*) main::SCREEN + (word) main::i1)
+Fixing pointer array-indexing *((const struct Point*) main::SCREEN + (word) main::i1)
 Adding struct value list initializer *((byte*) main::$5 + (word~) main::$3) ← (number) 2
 Adding struct value list initializer *((byte*) main::$6 + (word~) main::$3) ← (byte~) main::$0
 Adding struct value member variable copy *((byte*) main::$7 + (word~) main::$4) ← *((byte*) main::$8 + (word~) main::$4)
 Adding struct value member variable copy *((byte*) main::$9 + (word~) main::$4) ← *((byte*) main::$10 + (word~) main::$4)
+Identified constant variable (byte) Point::x
+Identified constant variable (byte) Point::y
 Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
@@ -29,16 +31,15 @@ main::@1: scope:[main]  from main main::@1
   if((bool~) main::$1) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (struct Point*) main::SCREEN ← ((struct Point*)) (number) $400
   (word) main::i1#0 ← (word) 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@3
   (word) main::i1#2 ← phi( main::@2/(word) main::i1#0 main::@3/(word) main::i1#1 )
   (word~) main::$4 ← (word) main::i1#2 * (const byte) SIZEOF_STRUCT_POINT
-  (byte*) main::$7 ← (byte*)(struct Point*) main::SCREEN + (const byte) OFFSET_STRUCT_POINT_X
+  (byte*) main::$7 ← (byte*)(const struct Point*) main::SCREEN + (const byte) OFFSET_STRUCT_POINT_X
   (byte*) main::$8 ← (byte*)(struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_X
   *((byte*) main::$7 + (word~) main::$4) ← *((byte*) main::$8 + (word~) main::$4)
-  (byte*) main::$9 ← (byte*)(struct Point*) main::SCREEN + (const byte) OFFSET_STRUCT_POINT_Y
+  (byte*) main::$9 ← (byte*)(const struct Point*) main::SCREEN + (const byte) OFFSET_STRUCT_POINT_Y
   (byte*) main::$10 ← (byte*)(struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_Y
   *((byte*) main::$9 + (word~) main::$4) ← *((byte*) main::$10 + (word~) main::$4)
   (word) main::i1#1 ← (word) main::i1#2 + rangenext(0,$1f3)
@@ -62,8 +63,6 @@ SYMBOL TABLE SSA
 (label) @end
 (const byte) OFFSET_STRUCT_POINT_X = (byte) 0
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
-(byte) Point::x
-(byte) Point::y
 (const byte) SIZEOF_STRUCT_POINT = (byte) 2
 (void()) main()
 (byte~) main::$0
@@ -81,7 +80,7 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(struct Point*) main::SCREEN
+(const struct Point*) main::SCREEN = (struct Point*)(number) $400
 (word) main::i
 (word) main::i#0
 (word) main::i#1
@@ -96,44 +95,44 @@ Adding number conversion cast (unumber) 2 in *((byte*) main::$5 + (word~) main::
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte~) main::$0 ← (byte)(word) main::i#2
 Inlining cast *((byte*) main::$5 + (word~) main::$3) ← (unumber)(number) 2
-Inlining cast (struct Point*) main::SCREEN ← (struct Point*)(number) $400
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 2
 Simplifying constant pointer cast (struct Point*) 1024
+Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition (bool~) main::$1 [11] if((word) main::i#1!=rangelast(0,$1f3)) goto main::@1
-Simple Condition (bool~) main::$2 [24] if((word) main::i1#1!=rangelast(0,$1f3)) goto main::@3
+Simple Condition (bool~) main::$2 [23] if((word) main::i1#1!=rangelast(0,$1f3)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [0] (struct Point[$1f4]) points ← { fill( $1f4, 0) }
+Constant right-side identified [15] (byte*) main::$7 ← (byte*)(const struct Point*) main::SCREEN + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [18] (byte*) main::$9 ← (byte*)(const struct Point*) main::SCREEN + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const struct Point[$1f4]) points = { fill( $1f4, 0) }
 Constant (const word) main::i#0 = 0
-Constant (const struct Point*) main::SCREEN = (struct Point*) 1024
 Constant (const word) main::i1#0 = 0
+Constant (const byte*) main::$7 = (byte*)main::SCREEN+OFFSET_STRUCT_POINT_X
+Constant (const byte*) main::$9 = (byte*)main::SCREEN+OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (byte*)points in [5] (byte*) main::$5 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_X
 Constant value identified (byte*)points in [7] (byte*) main::$6 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_Y
-Constant value identified (byte*)main::SCREEN in [16] (byte*) main::$7 ← (byte*)(const struct Point*) main::SCREEN + (const byte) OFFSET_STRUCT_POINT_X
-Constant value identified (byte*)points in [17] (byte*) main::$8 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_X
-Constant value identified (byte*)main::SCREEN in [19] (byte*) main::$9 ← (byte*)(const struct Point*) main::SCREEN + (const byte) OFFSET_STRUCT_POINT_Y
-Constant value identified (byte*)points in [20] (byte*) main::$10 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_Y
+Constant value identified (byte*)points in [16] (byte*) main::$8 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_X
+Constant value identified (byte*)points in [19] (byte*) main::$10 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantValues
 Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [11] if(main::i#1!=rangelast(0,$1f3)) goto main::@1 to (number) $1f4
-Resolved ranged next value [22] main::i1#1 ← ++ main::i1#2 to ++
-Resolved ranged comparison value [24] if(main::i1#1!=rangelast(0,$1f3)) goto main::@3 to (number) $1f4
+Resolved ranged next value [21] main::i1#1 ← ++ main::i1#2 to ++
+Resolved ranged comparison value [23] if(main::i1#1!=rangelast(0,$1f3)) goto main::@3 to (number) $1f4
 De-inlining pointer[w] to *(pointer+w)   [6] *((byte*) main::$5 + (word~) main::$3) ← (byte) 2
 De-inlining pointer[w] to *(pointer+w)   [8] *((byte*) main::$6 + (word~) main::$3) ← (byte~) main::$0
-De-inlining pointer[w] to *(pointer+w)   [18] *((byte*) main::$7 + (word~) main::$4) ← *((byte*) main::$8 + (word~) main::$4)
-De-inlining pointer[w] to *(pointer+w)   [18] *((byte*) main::$7 + (word~) main::$4) ← *((byte*~) main::$13)
-De-inlining pointer[w] to *(pointer+w)   [21] *((byte*) main::$9 + (word~) main::$4) ← *((byte*) main::$10 + (word~) main::$4)
-De-inlining pointer[w] to *(pointer+w)   [21] *((byte*) main::$9 + (word~) main::$4) ← *((byte*~) main::$15)
+De-inlining pointer[w] to *(pointer+w)   [17] *((const byte*) main::$7 + (word~) main::$4) ← *((byte*) main::$8 + (word~) main::$4)
+De-inlining pointer[w] to *(pointer+w)   [17] *((const byte*) main::$7 + (word~) main::$4) ← *((byte*~) main::$13)
+De-inlining pointer[w] to *(pointer+w)   [20] *((const byte*) main::$9 + (word~) main::$4) ← *((byte*) main::$10 + (word~) main::$4)
+De-inlining pointer[w] to *(pointer+w)   [20] *((const byte*) main::$9 + (word~) main::$4) ← *((byte*~) main::$15)
 Successful SSA optimization Pass2DeInlineWordDerefIdx
+Simplifying expression containing zero (byte*)main::SCREEN in 
 Simplifying expression containing zero (byte*)points in [5] (byte*) main::$5 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_X
-Simplifying expression containing zero (byte*)main::SCREEN in [16] (byte*) main::$7 ← (byte*)(const struct Point*) main::SCREEN + (const byte) OFFSET_STRUCT_POINT_X
-Simplifying expression containing zero (byte*)points in [17] (byte*) main::$8 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_X
+Simplifying expression containing zero (byte*)points in [16] (byte*) main::$8 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
@@ -147,14 +146,11 @@ Finalized unsigned number type (word) $1f4
 Finalized unsigned number type (word) $1f4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [6] (byte*) main::$6 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [18] (byte*) main::$9 ← (byte*)(const struct Point*) main::SCREEN + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [19] (byte*) main::$10 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [17] (byte*) main::$10 ← (byte*)(const struct Point[$1f4]) points + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$5 = (byte*)points
 Constant (const byte*) main::$6 = (byte*)points+OFFSET_STRUCT_POINT_Y
-Constant (const byte*) main::$7 = (byte*)main::SCREEN
 Constant (const byte*) main::$8 = (byte*)points
-Constant (const byte*) main::$9 = (byte*)main::SCREEN+OFFSET_STRUCT_POINT_Y
 Constant (const byte*) main::$10 = (byte*)points+OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantIdentification
 Rewriting multiplication to use shift [2] (word~) main::$3 ← (word) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
@@ -242,8 +238,6 @@ main::@return: scope:[main]  from main::@2
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) Point::x
-(byte) Point::y
 (void()) main()
 (byte~) main::$0 4.4
 (byte*~) main::$11 22.0
@@ -771,8 +765,6 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
-(byte) Point::x
-(byte) Point::y
 (void()) main()
 (byte~) main::$0 reg byte x 4.4
 (byte*~) main::$11 zp[2]:8 22.0

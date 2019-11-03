@@ -3,7 +3,6 @@ Identified constant variable (byte*) SCREEN
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte[3]) b ← { fill( 3, 0) }
-  (byte[]) c ← { (byte) 'c', (byte) 'm', (byte) 'l' }
   to:@1
 
 (void()) main()
@@ -11,7 +10,7 @@ main: scope:[main]  from @1
   *((byte[3]) b + (number) 0) ← (byte) 'c'
   *((const byte*) SCREEN) ← *((byte[3]) b + (number) 0)
   (byte*~) main::$0 ← (const byte*) SCREEN + (number) 1
-  *((byte*~) main::$0) ← *((byte[]) c + (number) 1)
+  *((byte*~) main::$0) ← *((const byte[]) c + (number) 1)
   (byte*~) main::$1 ← (const byte*) SCREEN + (number) 2
   *((byte*~) main::$1) ← *((const byte[]) d + (number) 2)
   to:main::@return
@@ -32,7 +31,7 @@ SYMBOL TABLE SSA
 (label) @end
 (const byte*) SCREEN = (byte*)(number) $400
 (byte[3]) b
-(byte[]) c
+(const byte[]) c = { (byte) 'c', (byte) 'm', (byte) 'l' }
 (const byte[]) d = (string) "cml"z
 (void()) main()
 (byte*~) main::$0
@@ -42,7 +41,7 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 0 in *((byte[3]) b + (number) 0) ← (byte) 'c'
 Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN) ← *((byte[3]) b + (number) 0)
 Adding number conversion cast (unumber) 1 in (byte*~) main::$0 ← (const byte*) SCREEN + (number) 1
-Adding number conversion cast (unumber) 1 in *((byte*~) main::$0) ← *((byte[]) c + (number) 1)
+Adding number conversion cast (unumber) 1 in *((byte*~) main::$0) ← *((const byte[]) c + (number) 1)
 Adding number conversion cast (unumber) 2 in (byte*~) main::$1 ← (const byte*) SCREEN + (number) 2
 Adding number conversion cast (unumber) 2 in *((byte*~) main::$1) ← *((const byte[]) d + (number) 2)
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -62,18 +61,15 @@ Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [0] (byte[3]) b ← { fill( 3, 0) }
-Constant right-side identified [4] (byte*~) main::$0 ← (const byte*) SCREEN + (byte) 1
-Constant right-side identified [6] (byte*~) main::$1 ← (const byte*) SCREEN + (byte) 2
+Constant right-side identified [3] (byte*~) main::$0 ← (const byte*) SCREEN + (byte) 1
+Constant right-side identified [5] (byte*~) main::$1 ← (const byte*) SCREEN + (byte) 2
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[]) { (byte) 'c', (byte) 'm', (byte) 'l' }
-Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte[3]) b = { fill( 3, 0) }
-Constant (const byte[]) c = { 'c', 'm', 'l' }
 Constant (const byte*) main::$0 = SCREEN+1
 Constant (const byte*) main::$1 = SCREEN+2
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero b in [2] *((const byte[3]) b + (byte) 0) ← (byte) 'c'
-Simplifying expression containing zero b in [3] *((const byte*) SCREEN) ← *((const byte[3]) b + (byte) 0)
+Simplifying expression containing zero b in [1] *((const byte[3]) b + (byte) 0) ← (byte) 'c'
+Simplifying expression containing zero b in [2] *((const byte*) SCREEN) ← *((const byte[3]) b + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant inlined main::$1 = (const byte*) SCREEN+(byte) 2
 Constant inlined main::$0 = (const byte*) SCREEN+(byte) 1
@@ -168,9 +164,9 @@ main: {
     rts
 }
   // File Data
+  c: .byte 'c', 'm', 'l'
   d: .text "cml"
   b: .fill 3, 0
-  c: .byte 'c', 'm', 'l'
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte[3]) b) ← (byte) 'c' [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -228,9 +224,9 @@ main: {
     rts
 }
   // File Data
+  c: .byte 'c', 'm', 'l'
   d: .text "cml"
   b: .fill 3, 0
-  c: .byte 'c', 'm', 'l'
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -305,7 +301,7 @@ main: {
     rts
 }
   // File Data
+  c: .byte 'c', 'm', 'l'
   d: .text "cml"
   b: .fill 3, 0
-  c: .byte 'c', 'm', 'l'
 

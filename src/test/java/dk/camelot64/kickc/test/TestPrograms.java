@@ -39,7 +39,7 @@ public class TestPrograms {
 
    @Test
    public void testConstDeclaration() throws IOException, URISyntaxException {
-      compileAndCompare("const-declaration", log());
+      compileAndCompare("const-declaration");
    }
 
    @Test

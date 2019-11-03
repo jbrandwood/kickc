@@ -2,20 +2,18 @@ Fixing pointer array-indexing *((const word*) SCREEN + (byte) screen_idx)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) msg1 ← { (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd' }
-  (byte[]) msg2 ← { (byte) '1', (byte) '2', (byte) '3', (byte) '4' }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) screen_idx#13 ← phi( @2/(byte) screen_idx#14 )
-  (byte*) print::m#0 ← (byte[]) msg1
+  (byte*) print::m#0 ← (const byte[]) msg1
   call print 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte) screen_idx#7 ← phi( main/(byte) screen_idx#5 )
   (byte) screen_idx#0 ← (byte) screen_idx#7
-  (byte*) print::m#1 ← (byte[]) msg2
+  (byte*) print::m#1 ← (const byte[]) msg2
   call print 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -68,8 +66,8 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte[]) msg1
-(byte[]) msg2
+(const byte[]) msg1 = { (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd' }
+(const byte[]) msg2 = { (byte) '1', (byte) '2', (byte) '3', (byte) '4' }
 (void()) print((byte*) print::m)
 (byte*~) print::$0
 (word*~) print::$1
@@ -120,17 +118,11 @@ Identical Phi Values (byte) screen_idx#0 (byte) screen_idx#11
 Identical Phi Values (byte) screen_idx#1 (byte) screen_idx#11
 Identical Phi Values (byte) screen_idx#12 (byte) screen_idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified constant from value list (byte[]) { (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd' }
-Identified constant from value list (byte[]) { (byte) '1', (byte) '2', (byte) '3', (byte) '4' }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[]) msg1 = { 'a', 'b', 'c', 'd' }
-Constant (const byte[]) msg2 = { '1', '2', '3', '4' }
-Constant (const byte) screen_idx#14 = 0
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print::m#0 = msg1
 Constant (const byte*) print::m#1 = msg2
+Constant (const byte) screen_idx#14 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [19] *((const word*) SCREEN + (byte~) print::$2) ← *((word*~) print::$1)  -- *((word*)print::m#2 + 2)
+Converting *(pointer+n) to pointer[n] [17] *((const word*) SCREEN + (byte~) print::$2) ← *((word*~) print::$1)  -- *((word*)print::m#2 + 2)
 Successful SSA optimization Pass2InlineDerefIdx
 Eliminating unused variable (word*~) print::$1 and assignment [5] (word*~) print::$1 ← (word*)(byte*~) print::$0
 Successful SSA optimization PassNEliminateUnusedVars

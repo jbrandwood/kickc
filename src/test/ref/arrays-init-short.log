@@ -1,5 +1,5 @@
 Warning! Adding boolean cast to non-boolean condition *((const byte[$10]) msg1 + (byte) main::i)
-Warning! Adding boolean cast to non-boolean condition *((byte[$10]) msg2 + (byte) main::i1)
+Warning! Adding boolean cast to non-boolean condition *((const byte[$10]) msg2 + (byte) main::i1)
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
@@ -10,7 +10,6 @@ Culled Empty Block (label) main::@12
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[$10]) msg2 ← { (byte) 'c', (byte) 'm', (byte) 'l' }
   to:@1
 
 (void()) main()
@@ -32,12 +31,12 @@ main::@3: scope:[main]  from main::@1
   to:main::@7
 main::@7: scope:[main]  from main::@3 main::@8
   (byte) main::i1#2 ← phi( main::@3/(byte) main::i1#0 main::@8/(byte) main::i1#1 )
-  (bool~) main::$1 ← (number) 0 != *((byte[$10]) msg2 + (byte) main::i1#2)
+  (bool~) main::$1 ← (number) 0 != *((const byte[$10]) msg2 + (byte) main::i1#2)
   if((bool~) main::$1) goto main::@8
   to:main::@return
 main::@8: scope:[main]  from main::@7
   (byte) main::i1#3 ← phi( main::@7/(byte) main::i1#2 )
-  *((const byte*) SCREEN+(number) $28 + (byte) main::i1#3) ← *((byte[$10]) msg2 + (byte) main::i1#3)
+  *((const byte*) SCREEN+(number) $28 + (byte) main::i1#3) ← *((const byte[$10]) msg2 + (byte) main::i1#3)
   (byte) main::i1#1 ← ++ (byte) main::i1#3
   to:main::@7
 main::@return: scope:[main]  from main::@7
@@ -76,13 +75,13 @@ SYMBOL TABLE SSA
 (byte) main::i1#2
 (byte) main::i1#3
 (const byte[$10]) msg1 = (string) "camelot"
-(byte[$10]) msg2
+(const byte[$10]) msg2 = { (byte) 'c', (byte) 'm', (byte) 'l' }
 
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (number) 0 != *((const byte[$10]) msg1 + (byte) main::i#2)
 Adding number conversion cast (unumber) 0 in (byte) main::i1#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != *((byte[$10]) msg2 + (byte) main::i1#2)
-Adding number conversion cast (unumber) $28 in *((const byte*) SCREEN+(number) $28 + (byte) main::i1#3) ← *((byte[$10]) msg2 + (byte) main::i1#3)
+Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != *((const byte[$10]) msg2 + (byte) main::i1#2)
+Adding number conversion cast (unumber) $28 in *((const byte*) SCREEN+(number) $28 + (byte) main::i1#3) ← *((const byte[$10]) msg2 + (byte) main::i1#3)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Inlining cast (byte) main::i1#0 ← (unumber)(number) 0
@@ -103,12 +102,9 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte) main::i1#2 = (byte) main::i1#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [4] if((byte) 0!=*((const byte[$10]) msg1 + (byte) main::i#2)) goto main::@2
-Simple Condition (bool~) main::$1 [11] if((byte) 0!=*((byte[$10]) msg2 + (byte) main::i1#2)) goto main::@8
+Simple Condition (bool~) main::$0 [3] if((byte) 0!=*((const byte[$10]) msg1 + (byte) main::i#2)) goto main::@2
+Simple Condition (bool~) main::$1 [10] if((byte) 0!=*((const byte[$10]) msg2 + (byte) main::i1#2)) goto main::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Identified constant from value list (byte[$10]) { (byte) 'c', (byte) 'm', (byte) 'l' }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[$10]) msg2 = { 'c', 'm', 'l' }
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::i1#0 = 0
 Successful SSA optimization Pass2ConstantIdentification

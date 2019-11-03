@@ -10,7 +10,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte[]) main::bs ← { (byte) 'c', (byte) 'm' }
   (word) main::w#0 ← ((word)) { (const byte) main::b, (number) 0 }
   (word~) main::$0 ← ((word)) { (number) 1, (number) 1 }
   (word~) main::$1 ← (word~) main::$0 + (word) main::w#0
@@ -18,7 +17,7 @@ main: scope:[main]  from @1
   (word~) main::$3 ← (word~) main::$1 + (word~) main::$2
   (word) main::w2#0 ← (word~) main::$3
   (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
-  *((byte*) main::sc#0) ← *((byte[]) main::bs + (number) 1)
+  *((byte*) main::sc#0) ← *((const byte[]) main::bs + (number) 1)
   (bool~) main::$4 ← *((const byte*) main::pos) == (byte) 'm'
   if((bool~) main::$4) goto main::@1
   to:main::@3
@@ -54,7 +53,7 @@ SYMBOL TABLE SSA
 (label) main::@return
 (const byte) main::b = (byte) 4
 (const byte*) main::bgcol = (byte*)(number) $d021
-(byte[]) main::bs
+(const byte[]) main::bs = { (byte) 'c', (byte) 'm' }
 (const byte*) main::pos = (byte*)(number) $501
 (byte*) main::sc
 (byte*) main::sc#0
@@ -67,7 +66,7 @@ Fixing inline constructor with main::$5 ← (byte)main::b w= (byte)0
 Fixing inline constructor with main::$6 ← (byte)1 w= (byte)1
 Fixing inline constructor with main::$7 ← (byte)0 w= (byte)0
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) 1 in *((byte*) main::sc#0) ← *((byte[]) main::bs + (number) 1)
+Adding number conversion cast (unumber) 1 in *((byte*) main::sc#0) ← *((const byte[]) main::bs + (number) 1)
 Adding number conversion cast (unumber) 5 in *((const byte*) main::bgcol) ← (number) 5
 Adding number conversion cast (unumber) 2 in *((const byte*) main::bgcol) ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -96,19 +95,15 @@ Alias (word~) main::$0 = (word~) main::$6
 Alias (word~) main::$2 = (word~) main::$7 
 Alias (word) main::w2#0 = (word~) main::$3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$4 [13] if(*((const byte*) main::pos)==(byte) 'm') goto main::@1
+Simple Condition (bool~) main::$4 [12] if(*((const byte*) main::pos)==(byte) 'm') goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [1] (word) main::w#0 ← (const byte) main::b w= (byte) 0
-Constant right-side identified [3] (word~) main::$0 ← (byte) 1 w= (byte) 1
-Constant right-side identified [6] (word~) main::$2 ← (byte) 0 w= (byte) 0
+Constant right-side identified [0] (word) main::w#0 ← (const byte) main::b w= (byte) 0
+Constant right-side identified [2] (word~) main::$0 ← (byte) 1 w= (byte) 1
+Constant right-side identified [5] (word~) main::$2 ← (byte) 0 w= (byte) 0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[]) { (byte) 'c', (byte) 'm' }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[]) main::bs = { 'c', 'm' }
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant evaluating to zero (byte) 0*(number) $100+(byte) 0 in [6] (word~) main::$2 ← (byte) 0*(number) $100+(byte) 0
+Simplifying constant evaluating to zero (byte) 0*(number) $100+(byte) 0 in [5] (word~) main::$2 ← (byte) 0*(number) $100+(byte) 0
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero main::b*$100 in [1] (word) main::w#0 ← (const byte) main::b*(number) $100+(byte) 0
+Simplifying expression containing zero main::b*$100 in [0] (word) main::w#0 ← (const byte) main::b*(number) $100+(byte) 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding number conversion cast (unumber) main::b*$100 in (word) main::w#0 ← (const byte) main::b*(number) $100
 Adding number conversion cast (unumber) $100 in (word) main::w#0 ← ((unumber)) (const byte) main::b*(number) $100

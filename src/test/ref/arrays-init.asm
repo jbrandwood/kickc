@@ -12,6 +12,6 @@ main: {
     sta SCREEN+2
     rts
 }
+  c: .byte 'c', 'm', 'l'
   d: .text "cml"
   b: .fill 3, 0
-  c: .byte 'c', 'm', 'l'

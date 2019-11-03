@@ -4,6 +4,7 @@ import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
@@ -1412,8 +1413,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(lValue.isDeclaredConst() && (rValue instanceof ValueList)) {
          SymbolType declaredType = lValue.getType();
          ProgramValue programValue = new ProgramValue.GenericValue(rValue);
-         boolean modified = PassNAddInitializerValueListTypeCasts.addValueCasts(declaredType, programValue, program, statementSource);
-         if(modified && programValue.get() instanceof CastValue) {
+         PassNAddInitializerValueListTypeCasts.addValueCasts(declaredType, programValue, program, statementSource);
+         if(programValue.get() instanceof CastValue) {
             CastValue castValue = (CastValue) programValue.get();
             if(castValue.getValue() instanceof ValueList) {
                // Found value list with cast - look through all elements
@@ -1427,10 +1428,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       }
 
-/*      if(lValue.isDeclaredConst() && !(rValue instanceof ConstantValue)) {
+      /*
+      if(lValue.isDeclaredConst() && !(rValue instanceof ConstantValue)) {
          throw new InternalError("RValue is not constant!");
       }
- */
+       */
+
       if(lValue.isDeclaredConst() && rValue instanceof ConstantValue) {
          Scope scope = lValue.getScope();
          ConstantValue constantValue = (ConstantValue) rValue;

@@ -147,5 +147,5 @@ main: {
     bne __b1
     rts
 }
-  SRCB: .byte $80
   SRCA: .byte 'c', 'a', 'm', 'e', 'l', 'o', 't', '!', ' '
+  SRCB: .byte $80

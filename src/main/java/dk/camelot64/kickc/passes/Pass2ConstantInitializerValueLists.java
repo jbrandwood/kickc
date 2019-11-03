@@ -65,6 +65,21 @@ public class Pass2ConstantInitializerValueLists extends Pass2SsaOptimization {
          if(elmValue instanceof ConstantValue) {
             ConstantValue constantValue = (ConstantValue) elmValue;
             constantValues.add(constantValue);
+         } else if(elmValue instanceof CastValue) {
+            // Recursion may be needed
+            CastValue castValue = (CastValue) elmValue;
+            if(castValue.getValue() instanceof ValueList) {
+               ConstantValue constantValue = getConstantValueFromList(castValue.getToType(), (ValueList) castValue.getValue(), program, source);
+               if(constantValue!=null) {
+                  constantValues.add(constantValue);
+               } else {
+                  // A non-constant was found - exit
+                  return null;
+               }
+            } else {
+               // A non-constant was found - exit
+               return null;
+            }
          } else {
             // A non-constant was found - exit
             return null;

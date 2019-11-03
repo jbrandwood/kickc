@@ -1425,14 +1425,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                }
             }
          }
-
       }
 
-      /*
       if(lValue.isDeclaredConst() && !(rValue instanceof ConstantValue)) {
          throw new InternalError("RValue is not constant!");
       }
-       */
 
       if(lValue.isDeclaredConst() && rValue instanceof ConstantValue) {
          Scope scope = lValue.getScope();
@@ -1808,12 +1805,17 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       RValue child = (RValue) this.visit(ctx.expr());
       SymbolType castType = (SymbolType) this.visit(ctx.typeDecl());
       Operator operator = Operators.getCastUnary(castType);
-      Variable tmpVar = getCurrentScope().addVariableIntermediate();
-      SymbolVariableRef tmpVarRef = tmpVar.getRef();
-      Statement stmt = new StatementAssignment((LValue) tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
-      sequence.addStatement(stmt);
-      consumeExpr(child);
-      return tmpVarRef;
+      if(child instanceof ConstantValue) {
+         consumeExpr(child);
+         return new ConstantCastValue(castType, (ConstantValue) child);
+      }  else {
+         Variable tmpVar = getCurrentScope().addVariableIntermediate();
+         SymbolVariableRef tmpVarRef = tmpVar.getRef();
+         Statement stmt = new StatementAssignment((LValue) tmpVarRef, operator, child, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
+         sequence.addStatement(stmt);
+         consumeExpr(child);
+         return tmpVarRef;
+      }
    }
 
    @Override

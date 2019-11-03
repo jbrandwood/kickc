@@ -280,7 +280,7 @@ menu: {
 mode_8bppchunkybmm: {
     // 8BPP Chunky Bitmap (contains 8bpp pixels)
     .const PLANEB = $20000
-    .label __9 = 9
+    .label __7 = 9
     .label gfxb = $b
     .label x = 4
     .label y = $d
@@ -344,11 +344,11 @@ mode_8bppchunkybmm: {
     lda.z y
     clc
     adc.z x
-    sta.z __9
+    sta.z __7
     lda #0
     adc.z x+1
-    sta.z __9+1
-    lda.z __9
+    sta.z __7+1
+    lda.z __7
     ldy #0
     sta (gfxb),y
     inc.z gfxb
@@ -1135,7 +1135,7 @@ mode_hicolmcchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __22 = 7
+    .label __3 = 7
     .label col = $b
     .label ch = 4
     .label cy = 3
@@ -1200,10 +1200,10 @@ mode_hicolmcchar: {
     asl
     asl
     asl
-    sta.z __22
+    sta.z __3
     txa
     and #$f
-    ora.z __22
+    ora.z __3
     ldy #0
     sta (col),y
     inc.z col
@@ -1244,7 +1244,7 @@ mode_hicolecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __22 = 8
+    .label __3 = 8
     .label col = 4
     .label ch = $b
     .label cy = 6
@@ -1311,10 +1311,10 @@ mode_hicolecmchar: {
     asl
     asl
     asl
-    sta.z __22
+    sta.z __3
     txa
     and #$f
-    ora.z __22
+    ora.z __3
     ldy #0
     sta (col),y
     inc.z col
@@ -1351,7 +1351,7 @@ mode_hicolstdchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __22 = 8
+    .label __3 = 8
     .label col = $b
     .label ch = 9
     .label cy = 7
@@ -1411,10 +1411,10 @@ mode_hicolstdchar: {
     asl
     asl
     asl
-    sta.z __22
+    sta.z __3
     txa
     and #$f
-    ora.z __22
+    ora.z __3
     ldy #0
     sta (col),y
     inc.z col
@@ -1919,7 +1919,7 @@ mode_mcchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __24 = $d
+    .label __5 = $d
     .label col = $b
     .label ch = 4
     .label cy = 7
@@ -1993,10 +1993,10 @@ mode_mcchar: {
     asl
     asl
     asl
-    sta.z __24
+    sta.z __5
     txa
     and #$f
-    ora.z __24
+    ora.z __5
     ldy #0
     sta (ch),y
     inc.z ch
@@ -2031,7 +2031,7 @@ mode_ecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __24 = $d
+    .label __5 = $d
     .label col = $b
     .label ch = 4
     .label cy = 8
@@ -2106,10 +2106,10 @@ mode_ecmchar: {
     asl
     asl
     asl
-    sta.z __24
+    sta.z __5
     txa
     and #$f
-    ora.z __24
+    ora.z __5
     ldy #0
     sta (ch),y
     inc.z ch
@@ -2140,7 +2140,7 @@ mode_stdchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __24 = $e
+    .label __5 = $e
     .label col = $b
     .label ch = 4
     .label cy = 6
@@ -2209,10 +2209,10 @@ mode_stdchar: {
     asl
     asl
     asl
-    sta.z __24
+    sta.z __5
     txa
     and #$f
-    ora.z __24
+    ora.z __5
     ldy #0
     sta (ch),y
     inc.z ch

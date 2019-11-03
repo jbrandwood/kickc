@@ -274,9 +274,9 @@ render_screen_swap: {
 }
 // Show the current score
 render_score: {
-    .const score_offset = $e4
-    .const lines_offset = $3e
-    .const level_offset = $317
+    .const score_offset = $28*5+$1c
+    .const lines_offset = $28*1+$16
+    .const level_offset = $28*$13+$1f
     .label score_bytes = score_bcd
     .label screen = $24
     lda.z render_screen_render
@@ -384,7 +384,7 @@ render_bcd: {
 // Render the next tetromino in the "next" area
 render_next: {
     // Find the screen area
-    .const next_area_offset = $1fc
+    .const next_area_offset = $28*$c+$18+4
     .label next_piece_char = $21
     .label next_piece_gfx = $24
     .label screen_next_area = $22
@@ -1666,6 +1666,8 @@ sprites_irq: {
   // The I-piece
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
+  // The different pieces
+  PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
   // The chars to use for the different pieces - when inside the playing area
   PIECES_CHARS: .byte $65, $66, $a6, $66, $65, $65, $a6
   // The chars to use for the different pieces - when outside the playing area (eg. the next area).
@@ -1699,8 +1701,6 @@ sprites_irq: {
   // Score values for removing 0-4 lines (in BCD)
   // These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
-  // The different pieces
-  PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset
     .import binary "playfield-screen.imap"

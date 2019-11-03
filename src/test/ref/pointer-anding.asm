@@ -4,7 +4,7 @@
 .pc = $80d "Program"
   .const SIZEOF_SIGNED_WORD = 2
 main: {
-    .label __2 = 6
+    .label __0 = 6
     .label vram_ptr = 4
     .label pos_ptr = 2
     ldx #0
@@ -26,12 +26,12 @@ main: {
     ldy #0
     lda (pos_ptr),y
     and #<$aa55
-    sta.z __2
+    sta.z __0
     iny
     lda (pos_ptr),y
     and #>$aa55
-    sta.z __2+1
-    lda.z __2
+    sta.z __0+1
+    lda.z __0
     ldy #0
     sta (vram_ptr),y
     inc.z vram_ptr

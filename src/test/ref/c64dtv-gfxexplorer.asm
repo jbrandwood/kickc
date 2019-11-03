@@ -201,12 +201,12 @@ gfx_mode: {
     .label __34 = 2
     .label __38 = $16
     .label __40 = $18
-    .label __51 = 6
-    .label __52 = 6
-    .label __53 = 6
-    .label __54 = $1f
-    .label __56 = $e
-    .label __57 = $e
+    .label __47 = 6
+    .label __48 = 6
+    .label __49 = 6
+    .label __50 = $1f
+    .label __52 = $e
+    .label __53 = $e
     .label plane_a = 2
     .label plane_b = 2
     .label vic_colors = 6
@@ -393,31 +393,31 @@ gfx_mode: {
     sta CIA2_PORT_A
     lda form_vic_screen
     jsr get_vic_screen
-    lda.z __52
+    lda.z __48
     and #<$3fff
-    sta.z __52
-    lda.z __52+1
+    sta.z __48
+    lda.z __48+1
     and #>$3fff
-    sta.z __52+1
+    sta.z __48+1
     ldy #6
   !:
-    lsr.z __53+1
-    ror.z __53
+    lsr.z __49+1
+    ror.z __49
     dey
     bne !-
-    lda.z __53
-    sta.z __54
+    lda.z __49
+    sta.z __50
     lda form_vic_gfx
     jsr get_vic_charset
-    lda.z __57
+    lda.z __53
     and #<$3fff
-    sta.z __57
-    lda.z __57+1
+    sta.z __53
+    lda.z __53+1
     and #>$3fff
-    sta.z __57+1
+    sta.z __53+1
     lsr
     lsr
-    ora.z __54
+    ora.z __50
     // Set VIC Bank
     // VIC memory
     sta VIC_MEMORY
@@ -1824,6 +1824,7 @@ gfx_init_plane_horisontal: {
 }
 // Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
+    // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     .const gfxbCpuBank = PLANE_CHARSET8/$4000
     .label bits = 8
     .label chargen = 6
@@ -1895,7 +1896,7 @@ gfx_init_plane_charset8: {
 }
 // Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
-    .label __7 = $18
+    .label __5 = $18
     .label gfxb = $e
     .label x = $b
     .label y = $d
@@ -1930,11 +1931,11 @@ gfx_init_plane_8bppchunky: {
     lda.z y
     clc
     adc.z x
-    sta.z __7
+    sta.z __5
     lda #0
     adc.z x+1
-    sta.z __7+1
-    lda.z __7
+    sta.z __5+1
+    lda.z __5
     ldy #0
     sta (gfxb),y
     inc.z gfxb

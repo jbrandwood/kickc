@@ -10,10 +10,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word~) main::$0 ← ((word)) (const byte*) SPRITE
-  (number~) main::$1 ← (word~) main::$0 / (number) $40
-  (byte~) main::$2 ← ((byte)) (number~) main::$1
-  *((const byte*) SCREEN+(number) $3f8) ← (byte~) main::$2
+  *((const byte*) SCREEN+(number) $3f8) ← (byte)(word)(const byte*) SPRITE/(number) $40
   *((const byte*) SPRITES_ENABLE) ← (number) 1
   *((const byte*) SPRITES_XPOS) ← (number) $64
   *((const byte*) SPRITES_YPOS) ← (number) $64
@@ -39,20 +36,14 @@ SYMBOL TABLE SSA
 (const byte*) SPRITES_XPOS = (byte*)(number) $d000
 (const byte*) SPRITES_YPOS = (byte*)(number) $d001
 (void()) main()
-(word~) main::$0
-(number~) main::$1
-(byte~) main::$2
 (label) main::@return
 
-Adding number conversion cast (unumber) $40 in (number~) main::$1 ← (word~) main::$0 / (number) $40
-Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (word~) main::$0 / (unumber)(number) $40
-Adding number conversion cast (unumber) $3f8 in *((const byte*) SCREEN+(number) $3f8) ← (byte~) main::$2
+Adding number conversion cast (unumber) $40 in *((const byte*) SCREEN+(number) $3f8) ← (byte)(word)(const byte*) SPRITE/(number) $40
+Adding number conversion cast (unumber) $3f8 in *((const byte*) SCREEN+(number) $3f8) ← (byte)(word)(const byte*) SPRITE/(unumber)(number) $40
 Adding number conversion cast (unumber) 1 in *((const byte*) SPRITES_ENABLE) ← (number) 1
 Adding number conversion cast (unumber) $64 in *((const byte*) SPRITES_XPOS) ← (number) $64
 Adding number conversion cast (unumber) $64 in *((const byte*) SPRITES_YPOS) ← (number) $64
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word~) main::$0 ← (word)(const byte*) SPRITE
-Inlining cast (byte~) main::$2 ← (byte)(unumber~) main::$1
 Inlining cast *((const byte*) SPRITES_ENABLE) ← (unumber)(number) 1
 Inlining cast *((const byte*) SPRITES_XPOS) ← (unumber)(number) $64
 Inlining cast *((const byte*) SPRITES_YPOS) ← (unumber)(number) $64
@@ -74,21 +65,6 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $64
 Finalized unsigned number type (byte) $64
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to word in (unumber~) main::$1 ← (word~) main::$0 / (byte) $40
-Constant right-side identified [1] (word~) main::$0 ← (word)(const byte*) SPRITE
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::$0 = (word)SPRITE
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [1] (word~) main::$1 ← (const word) main::$0 / (byte) $40
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::$1 = main::$0/$40
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) main::$2 = (byte)main::$1
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$1 = (word)(const byte*) SPRITE/(byte) $40
-Constant inlined main::$2 = (byte)(word)(const byte*) SPRITE/(byte) $40
-Constant inlined main::$0 = (word)(const byte*) SPRITE
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end

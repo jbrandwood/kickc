@@ -218,6 +218,7 @@ gfx_init: {
 }
 // Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
+    // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     .const gfxbCpuBank = $ff&CHARSET8/$4000
     .label bits = 2
     .label chargen = 7

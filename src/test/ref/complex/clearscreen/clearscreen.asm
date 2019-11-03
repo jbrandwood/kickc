@@ -59,6 +59,10 @@
   .const STATUS_FREE = 0
   .const STATUS_NEW = 1
   .const STATUS_PROCESSING = 2
+  .const XPOS_LEFTMOST = BORDER_XPOS_LEFT-8<<4
+  .const XPOS_RIGHTMOST = BORDER_XPOS_RIGHT<<4
+  .const YPOS_TOPMOST = BORDER_YPOS_TOP-8<<4
+  .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
   .const OFFSET_STRUCT_PROCESSINGSPRITE_Y = 2
@@ -71,10 +75,6 @@
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
-  .const XPOS_LEFTMOST = BORDER_XPOS_LEFT-8<<4
-  .const XPOS_RIGHTMOST = BORDER_XPOS_RIGHT<<4
-  .const YPOS_TOPMOST = BORDER_YPOS_TOP-8<<4
-  .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
   .label heap_head = $18
   .label SCREEN_COPY = 7
   .label SCREEN_DIST = 9
@@ -200,7 +200,7 @@ startProcessing: {
     .label __15 = $15
     .label __16 = $15
     .label __17 = $15
-    .label __22 = $18
+    .label __21 = $18
     .label center_x = $1e
     .label center_y = $b
     .label i = 2
@@ -214,8 +214,8 @@ startProcessing: {
     .label spriteY = $15
     .label spritePtr = $17
     .label freeIdx = 2
-    .label __45 = $e
-    .label __46 = $c
+    .label __44 = $e
+    .label __45 = $c
     ldx #$ff
   __b1:
     lda #0
@@ -247,19 +247,19 @@ startProcessing: {
     sta.z __0+1
     lda.z __0
     asl
-    sta.z __45
+    sta.z __44
     lda.z __0+1
     rol
-    sta.z __45+1
-    asl.z __45
-    rol.z __45+1
-    lda.z __46
+    sta.z __44+1
+    asl.z __44
+    rol.z __44+1
+    lda.z __45
     clc
-    adc.z __45
-    sta.z __46
-    lda.z __46+1
-    adc.z __45+1
-    sta.z __46+1
+    adc.z __44
+    sta.z __45
+    lda.z __45+1
+    adc.z __44+1
+    sta.z __45+1
     asl.z __1
     rol.z __1+1
     asl.z __1
@@ -412,9 +412,9 @@ startProcessing: {
     asl
     asl
     asl
-    sta.z __22
+    sta.z __21
     lda #0
-    sta.z __22+1
+    sta.z __21+1
     lda.z freeIdx
     asl
     clc
@@ -432,9 +432,9 @@ startProcessing: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
     lda.z spriteY+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
-    lda.z __22
+    lda.z __21
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
-    lda.z __22+1
+    lda.z __21+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
     lda #$3c
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,x

@@ -445,9 +445,7 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
   (byte*) print_screen#36 ← phi( @17/(byte*) print_screen#0 )
   (byte*) print_char_cursor#181 ← phi( @17/(byte*) print_char_cursor#0 )
   (byte*) print_line_cursor#99 ← phi( @17/(byte*) print_line_cursor#0 )
-  (word~) $0 ← ((word)) (const byte) MAX_FILES
-  (word~) $1 ← (word~) $0 * (const byte) SIZEOF_ENTRY
-  (byte[$1]) files ← { fill( $1, 0) }
+  (byte[(word)MAX_FILES*SIZEOF_ENTRY]) files ← { fill( (word)MAX_FILES*SIZEOF_ENTRY, 0) }
   to:@69
 
 (void()) main()
@@ -479,7 +477,7 @@ main::@16: scope:[main]  from main::fileEntry1
   (byte*) print_screen#27 ← phi( main::fileEntry1/(byte*) print_screen#30 )
   (word) mul8u::return#5 ← phi( main::fileEntry1/(word) mul8u::return#2 )
   (word~) main::fileEntry1_$0 ← (word) mul8u::return#5
-  (byte*~) main::fileEntry1_$1 ← (byte[$1]) files + (word~) main::fileEntry1_$0
+  (byte*~) main::fileEntry1_$1 ← (byte[(word)MAX_FILES*SIZEOF_ENTRY]) files + (word~) main::fileEntry1_$0
   (byte*) main::fileEntry1_return#0 ← (byte*~) main::fileEntry1_$1
   to:main::fileEntry1_@return
 main::fileEntry1_@return: scope:[main]  from main::@16
@@ -516,7 +514,7 @@ main::@17: scope:[main]  from main::fileEntry2
   (byte*) main::entry1#5 ← phi( main::fileEntry2/(byte*) main::entry1#7 )
   (word) mul8u::return#6 ← phi( main::fileEntry2/(word) mul8u::return#3 )
   (word~) main::fileEntry2_$0 ← (word) mul8u::return#6
-  (byte*~) main::fileEntry2_$1 ← (byte[$1]) files + (word~) main::fileEntry2_$0
+  (byte*~) main::fileEntry2_$1 ← (byte[(word)MAX_FILES*SIZEOF_ENTRY]) files + (word~) main::fileEntry2_$0
   (byte*) main::fileEntry2_return#0 ← (byte*~) main::fileEntry2_$1
   to:main::fileEntry2_@return
 main::fileEntry2_@return: scope:[main]  from main::@17
@@ -1700,8 +1698,6 @@ printEntry::@return: scope:[printEntry]  from printEntry::@52
 @end: scope:[]  from @70
 
 SYMBOL TABLE SSA
-(word~) $0
-(word~) $1
 (label) @17
 (label) @52
 (label) @69
@@ -1719,7 +1715,7 @@ SYMBOL TABLE SSA
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
 (const byte) SIZEOF_ENTRY = (number) $12
-(byte[$1]) files
+(byte[(word)MAX_FILES*SIZEOF_ENTRY]) files
 (void()) initEntry((byte*) initEntry::entry , (byte) initEntry::n)
 (byte**~) initEntry::$0
 (number~) initEntry::$1
@@ -3105,7 +3101,6 @@ Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast *((const byte*) CIA1_PORT_A_DDR) ← (unumber)(number) $ff
 Inlining cast *((const byte*) CIA1_PORT_B_DDR) ← (unumber)(number) 0
-Inlining cast (word~) $0 ← (word)(const byte) MAX_FILES
 Inlining cast (byte) main::fileEntry1_idx#0 ← (unumber)(number) 1
 Inlining cast (byte) main::fileEntry2_idx#0 ← (unumber)(number) 2
 Inlining cast (byte) initEntry::n#0 ← (unumber)(number) 0
@@ -3604,16 +3599,16 @@ Simple Condition (bool~) memset::$1 [27] if((word) memset::num#0<=(byte) 0) goto
 Simple Condition (bool~) memset::$4 [37] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str::$0 [50] if((byte) 0!=*((byte*) print_str::str#18)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [63] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#143) goto print_ln::@1
-Simple Condition (bool~) main::$21 [224] if((byte~) main::$20==(byte) 0) goto main::@1
-Simple Condition (bool~) main::$23 [262] if((byte~) main::$22==(byte) 0) goto main::@7
+Simple Condition (bool~) main::$21 [222] if((byte~) main::$20==(byte) 0) goto main::@1
+Simple Condition (bool~) main::$23 [260] if((byte~) main::$22==(byte) 0) goto main::@7
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [144] (word~) $0 ← (word)(const byte) MAX_FILES
+Constant right-side identified [144] (byte[(word)MAX_FILES*SIZEOF_ENTRY]) files ← { fill( (word)MAX_FILES*SIZEOF_ENTRY, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) mul8u::res#0 = 0
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const word) $0 = (word)MAX_FILES
+Constant (const byte[(word)MAX_FILES*SIZEOF_ENTRY]) files = { fill( (word)MAX_FILES*SIZEOF_ENTRY, 0) }
 Constant (const byte) main::fileEntry1_idx#0 = 1
 Constant (const byte) mul8u::b#0 = SIZEOF_ENTRY
 Constant (const byte) main::fileEntry2_idx#0 = 2
@@ -3651,84 +3646,80 @@ Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [27] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
 Successful SSA optimization Pass2ConstantStringConsolidation
-Converting *(pointer+n) to pointer[n] [283] *((byte**) initEntry::entryBufDisk1_return#0) ← (byte*)(word~) initEntry::$1  -- *((byte**)initEntry::entry#10 + 0)
-Converting *(pointer+n) to pointer[n] [294] *((byte**) initEntry::entryBufEdit1_return#0) ← (byte*)(word~) initEntry::$3  -- *((byte**)initEntry::entry#10 + 2)
-Converting *(pointer+n) to pointer[n] [305] *((word*) initEntry::entryTsLen1_return#0) ← (word~) initEntry::$5  -- *((word*)initEntry::entry#10 + 4)
-Converting *(pointer+n) to pointer[n] [316] *((word**) initEntry::entryTsOrder1_return#0) ← (word*)(word~) initEntry::$7  -- *((word**)initEntry::entry#10 + 6)
-Converting *(pointer+n) to pointer[n] [327] *((byte*) initEntry::entryTLastLink1_return#0) ← (byte~) initEntry::$9  -- *(initEntry::entry#10 + 8)
-Converting *(pointer+n) to pointer[n] [338] *((byte*) initEntry::entrySLastLink1_return#0) ← (byte~) initEntry::$11  -- *(initEntry::entry#10 + 9)
-Converting *(pointer+n) to pointer[n] [349] *((byte*) initEntry::entryBFlag1_return#0) ← (byte~) initEntry::$13  -- *(initEntry::entry#10 + $a)
-Converting *(pointer+n) to pointer[n] [359] *((byte*) initEntry::entryBError1_return#0) ← (byte~) initEntry::$15  -- *(initEntry::entry#10 + $b)
-Converting *(pointer+n) to pointer[n] [370] *((word*) initEntry::entryUCross1_return#0) ← (word~) initEntry::$17  -- *((word*)initEntry::entry#10 + $c)
-Converting *(pointer+n) to pointer[n] [381] *((byte*) initEntry::entryBAddrLo1_return#0) ← (byte~) initEntry::$19  -- *(initEntry::entry#10 + $e)
-Converting *(pointer+n) to pointer[n] [392] *((byte*) initEntry::entryBAddrHi1_return#0) ← (byte~) initEntry::$21  -- *(initEntry::entry#10 + $f)
-Converting *(pointer+n) to pointer[n] [403] *((byte*) initEntry::entryTHi1_return#0) ← (byte~) initEntry::$23  -- *(initEntry::entry#10 + $10)
-Converting *(pointer+n) to pointer[n] [414] *((byte*) initEntry::entryTLo1_return#0) ← (byte~) initEntry::$25  -- *(initEntry::entry#10 + $11)
-Converting *(pointer+n) to pointer[n] [430] (word) print_word::w#0 ← (word)*((byte**) printEntry::entryBufDisk1_return#0)  -- *((byte**)printEntry::entry#10 + 0)
-Converting *(pointer+n) to pointer[n] [452] (word) print_word::w#1 ← (word)*((byte**) printEntry::entryBufEdit1_return#0)  -- *((byte**)printEntry::entry#10 + 2)
-Converting *(pointer+n) to pointer[n] [474] (word) print_word::w#2 ← *((word*) printEntry::entryTsLen1_return#0)  -- *((word*)printEntry::entry#10 + 4)
-Converting *(pointer+n) to pointer[n] [495] (word) print_word::w#3 ← (word)*((word**) printEntry::entryTsOrder1_return#0)  -- *((word**)printEntry::entry#10 + 6)
-Converting *(pointer+n) to pointer[n] [517] (byte) print_byte::b#2 ← *((byte*) printEntry::entryTLastLink1_return#0)  -- *(printEntry::entry#10 + 8)
-Converting *(pointer+n) to pointer[n] [538] (byte) print_byte::b#3 ← *((byte*) printEntry::entrySLastLink1_return#0)  -- *(printEntry::entry#10 + 9)
-Converting *(pointer+n) to pointer[n] [559] (byte) print_byte::b#4 ← *((byte*) printEntry::entryBFlag1_return#0)  -- *(printEntry::entry#10 + $a)
-Converting *(pointer+n) to pointer[n] [579] (byte) print_byte::b#5 ← *((byte*) printEntry::entryBError1_return#0)  -- *(printEntry::entry#10 + $b)
-Converting *(pointer+n) to pointer[n] [600] (word) print_word::w#4 ← *((word*) printEntry::entryUCross1_return#0)  -- *((word*)printEntry::entry#10 + $c)
-Converting *(pointer+n) to pointer[n] [621] (byte) print_byte::b#6 ← *((byte*) printEntry::entryBAddrLo1_return#0)  -- *(printEntry::entry#10 + $e)
-Converting *(pointer+n) to pointer[n] [642] (byte) print_byte::b#7 ← *((byte*) printEntry::entryBAddrHi1_return#0)  -- *(printEntry::entry#10 + $f)
-Converting *(pointer+n) to pointer[n] [663] (byte) print_byte::b#8 ← *((byte*) printEntry::entryTHi1_return#0)  -- *(printEntry::entry#10 + $10)
-Converting *(pointer+n) to pointer[n] [684] (byte) print_byte::b#9 ← *((byte*) printEntry::entryTLo1_return#0)  -- *(printEntry::entry#10 + $11)
+Converting *(pointer+n) to pointer[n] [281] *((byte**) initEntry::entryBufDisk1_return#0) ← (byte*)(word~) initEntry::$1  -- *((byte**)initEntry::entry#10 + 0)
+Converting *(pointer+n) to pointer[n] [292] *((byte**) initEntry::entryBufEdit1_return#0) ← (byte*)(word~) initEntry::$3  -- *((byte**)initEntry::entry#10 + 2)
+Converting *(pointer+n) to pointer[n] [303] *((word*) initEntry::entryTsLen1_return#0) ← (word~) initEntry::$5  -- *((word*)initEntry::entry#10 + 4)
+Converting *(pointer+n) to pointer[n] [314] *((word**) initEntry::entryTsOrder1_return#0) ← (word*)(word~) initEntry::$7  -- *((word**)initEntry::entry#10 + 6)
+Converting *(pointer+n) to pointer[n] [325] *((byte*) initEntry::entryTLastLink1_return#0) ← (byte~) initEntry::$9  -- *(initEntry::entry#10 + 8)
+Converting *(pointer+n) to pointer[n] [336] *((byte*) initEntry::entrySLastLink1_return#0) ← (byte~) initEntry::$11  -- *(initEntry::entry#10 + 9)
+Converting *(pointer+n) to pointer[n] [347] *((byte*) initEntry::entryBFlag1_return#0) ← (byte~) initEntry::$13  -- *(initEntry::entry#10 + $a)
+Converting *(pointer+n) to pointer[n] [357] *((byte*) initEntry::entryBError1_return#0) ← (byte~) initEntry::$15  -- *(initEntry::entry#10 + $b)
+Converting *(pointer+n) to pointer[n] [368] *((word*) initEntry::entryUCross1_return#0) ← (word~) initEntry::$17  -- *((word*)initEntry::entry#10 + $c)
+Converting *(pointer+n) to pointer[n] [379] *((byte*) initEntry::entryBAddrLo1_return#0) ← (byte~) initEntry::$19  -- *(initEntry::entry#10 + $e)
+Converting *(pointer+n) to pointer[n] [390] *((byte*) initEntry::entryBAddrHi1_return#0) ← (byte~) initEntry::$21  -- *(initEntry::entry#10 + $f)
+Converting *(pointer+n) to pointer[n] [401] *((byte*) initEntry::entryTHi1_return#0) ← (byte~) initEntry::$23  -- *(initEntry::entry#10 + $10)
+Converting *(pointer+n) to pointer[n] [412] *((byte*) initEntry::entryTLo1_return#0) ← (byte~) initEntry::$25  -- *(initEntry::entry#10 + $11)
+Converting *(pointer+n) to pointer[n] [428] (word) print_word::w#0 ← (word)*((byte**) printEntry::entryBufDisk1_return#0)  -- *((byte**)printEntry::entry#10 + 0)
+Converting *(pointer+n) to pointer[n] [450] (word) print_word::w#1 ← (word)*((byte**) printEntry::entryBufEdit1_return#0)  -- *((byte**)printEntry::entry#10 + 2)
+Converting *(pointer+n) to pointer[n] [472] (word) print_word::w#2 ← *((word*) printEntry::entryTsLen1_return#0)  -- *((word*)printEntry::entry#10 + 4)
+Converting *(pointer+n) to pointer[n] [493] (word) print_word::w#3 ← (word)*((word**) printEntry::entryTsOrder1_return#0)  -- *((word**)printEntry::entry#10 + 6)
+Converting *(pointer+n) to pointer[n] [515] (byte) print_byte::b#2 ← *((byte*) printEntry::entryTLastLink1_return#0)  -- *(printEntry::entry#10 + 8)
+Converting *(pointer+n) to pointer[n] [536] (byte) print_byte::b#3 ← *((byte*) printEntry::entrySLastLink1_return#0)  -- *(printEntry::entry#10 + 9)
+Converting *(pointer+n) to pointer[n] [557] (byte) print_byte::b#4 ← *((byte*) printEntry::entryBFlag1_return#0)  -- *(printEntry::entry#10 + $a)
+Converting *(pointer+n) to pointer[n] [577] (byte) print_byte::b#5 ← *((byte*) printEntry::entryBError1_return#0)  -- *(printEntry::entry#10 + $b)
+Converting *(pointer+n) to pointer[n] [598] (word) print_word::w#4 ← *((word*) printEntry::entryUCross1_return#0)  -- *((word*)printEntry::entry#10 + $c)
+Converting *(pointer+n) to pointer[n] [619] (byte) print_byte::b#6 ← *((byte*) printEntry::entryBAddrLo1_return#0)  -- *(printEntry::entry#10 + $e)
+Converting *(pointer+n) to pointer[n] [640] (byte) print_byte::b#7 ← *((byte*) printEntry::entryBAddrHi1_return#0)  -- *(printEntry::entry#10 + $f)
+Converting *(pointer+n) to pointer[n] [661] (byte) print_byte::b#8 ← *((byte*) printEntry::entryTHi1_return#0)  -- *(printEntry::entry#10 + $10)
+Converting *(pointer+n) to pointer[n] [682] (byte) print_byte::b#9 ← *((byte*) printEntry::entryTLo1_return#0)  -- *(printEntry::entry#10 + $11)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero initEntry::entry#10 in [275] (byte*~) initEntry::entryBufDisk1_$0 ← (byte*) initEntry::entry#10 + (byte) 0
-Simplifying expression containing zero (byte**)initEntry::entry#10 in [283] *((byte**)(byte*) initEntry::entry#10 + (byte) 0) ← (byte*)(word~) initEntry::$1
-Simplifying expression containing zero printEntry::entry#10 in [423] (byte*~) printEntry::entryBufDisk1_$0 ← (byte*) printEntry::entry#10 + (byte) 0
-Simplifying expression containing zero (byte**)printEntry::entry#10 in [430] (word) print_word::w#0 ← (word)*((byte**)(byte*) printEntry::entry#10 + (byte) 0)
+Simplifying expression containing zero initEntry::entry#10 in [273] (byte*~) initEntry::entryBufDisk1_$0 ← (byte*) initEntry::entry#10 + (byte) 0
+Simplifying expression containing zero (byte**)initEntry::entry#10 in [281] *((byte**)(byte*) initEntry::entry#10 + (byte) 0) ← (byte*)(word~) initEntry::$1
+Simplifying expression containing zero printEntry::entry#10 in [421] (byte*~) printEntry::entryBufDisk1_$0 ← (byte*) printEntry::entry#10 + (byte) 0
+Simplifying expression containing zero (byte**)printEntry::entry#10 in [428] (word) print_word::w#0 ← (word)*((byte**)(byte*) printEntry::entry#10 + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte**) initEntry::entryBufDisk1_return#0 and assignment [106] (byte**) initEntry::entryBufDisk1_return#0 ← (byte**)(byte*~) initEntry::entryBufDisk1_$0
-Eliminating unused variable (byte**) initEntry::entryBufEdit1_return#0 and assignment [110] (byte**) initEntry::entryBufEdit1_return#0 ← (byte**)(byte*~) initEntry::entryBufEdit1_$0
-Eliminating unused variable (word*) initEntry::entryTsLen1_return#0 and assignment [114] (word*) initEntry::entryTsLen1_return#0 ← (word*)(byte*~) initEntry::entryTsLen1_$0
-Eliminating unused variable (word**) initEntry::entryTsOrder1_return#0 and assignment [118] (word**) initEntry::entryTsOrder1_return#0 ← (word**)(byte*~) initEntry::entryTsOrder1_$0
-Eliminating unused variable (byte*) initEntry::entryTLastLink1_return#0 and assignment [121] (byte*) initEntry::entryTLastLink1_return#0 ← (byte*) initEntry::entry#10 + (byte) 8
-Eliminating unused variable (byte*) initEntry::entrySLastLink1_return#0 and assignment [124] (byte*) initEntry::entrySLastLink1_return#0 ← (byte*) initEntry::entry#10 + (byte) 9
-Eliminating unused variable (byte*) initEntry::entryBFlag1_return#0 and assignment [127] (byte*) initEntry::entryBFlag1_return#0 ← (byte*) initEntry::entry#10 + (byte) $a
-Eliminating unused variable (byte*) initEntry::entryBError1_return#0 and assignment [130] (byte*) initEntry::entryBError1_return#0 ← (byte*) initEntry::entry#10 + (byte) $b
-Eliminating unused variable (word*) initEntry::entryUCross1_return#0 and assignment [134] (word*) initEntry::entryUCross1_return#0 ← (word*)(byte*~) initEntry::entryUCross1_$0
-Eliminating unused variable (byte*) initEntry::entryBAddrLo1_return#0 and assignment [137] (byte*) initEntry::entryBAddrLo1_return#0 ← (byte*) initEntry::entry#10 + (byte) $e
-Eliminating unused variable (byte*) initEntry::entryBAddrHi1_return#0 and assignment [140] (byte*) initEntry::entryBAddrHi1_return#0 ← (byte*) initEntry::entry#10 + (byte) $f
-Eliminating unused variable (byte*) initEntry::entryTHi1_return#0 and assignment [143] (byte*) initEntry::entryTHi1_return#0 ← (byte*) initEntry::entry#10 + (byte) $10
-Eliminating unused variable (byte*) initEntry::entryTLo1_return#0 and assignment [146] (byte*) initEntry::entryTLo1_return#0 ← (byte*) initEntry::entry#10 + (byte) $11
-Eliminating unused variable (byte**) printEntry::entryBufDisk1_return#0 and assignment [153] (byte**) printEntry::entryBufDisk1_return#0 ← (byte**)(byte*~) printEntry::entryBufDisk1_$0
-Eliminating unused variable (byte**) printEntry::entryBufEdit1_return#0 and assignment [159] (byte**) printEntry::entryBufEdit1_return#0 ← (byte**)(byte*~) printEntry::entryBufEdit1_$0
-Eliminating unused variable (word*) printEntry::entryTsLen1_return#0 and assignment [165] (word*) printEntry::entryTsLen1_return#0 ← (word*)(byte*~) printEntry::entryTsLen1_$0
-Eliminating unused variable (word**) printEntry::entryTsOrder1_return#0 and assignment [171] (word**) printEntry::entryTsOrder1_return#0 ← (word**)(byte*~) printEntry::entryTsOrder1_$0
-Eliminating unused variable (byte*) printEntry::entryTLastLink1_return#0 and assignment [176] (byte*) printEntry::entryTLastLink1_return#0 ← (byte*) printEntry::entry#10 + (byte) 8
-Eliminating unused variable (byte*) printEntry::entrySLastLink1_return#0 and assignment [181] (byte*) printEntry::entrySLastLink1_return#0 ← (byte*) printEntry::entry#10 + (byte) 9
-Eliminating unused variable (byte*) printEntry::entryBFlag1_return#0 and assignment [186] (byte*) printEntry::entryBFlag1_return#0 ← (byte*) printEntry::entry#10 + (byte) $a
-Eliminating unused variable (byte*) printEntry::entryBError1_return#0 and assignment [191] (byte*) printEntry::entryBError1_return#0 ← (byte*) printEntry::entry#10 + (byte) $b
-Eliminating unused variable (word*) printEntry::entryUCross1_return#0 and assignment [197] (word*) printEntry::entryUCross1_return#0 ← (word*)(byte*~) printEntry::entryUCross1_$0
-Eliminating unused variable (byte*) printEntry::entryBAddrLo1_return#0 and assignment [202] (byte*) printEntry::entryBAddrLo1_return#0 ← (byte*) printEntry::entry#10 + (byte) $e
-Eliminating unused variable (byte*) printEntry::entryBAddrHi1_return#0 and assignment [207] (byte*) printEntry::entryBAddrHi1_return#0 ← (byte*) printEntry::entry#10 + (byte) $f
-Eliminating unused variable (byte*) printEntry::entryTHi1_return#0 and assignment [212] (byte*) printEntry::entryTHi1_return#0 ← (byte*) printEntry::entry#10 + (byte) $10
-Eliminating unused variable (byte*) printEntry::entryTLo1_return#0 and assignment [217] (byte*) printEntry::entryTLo1_return#0 ← (byte*) printEntry::entry#10 + (byte) $11
+Eliminating unused variable (byte**) initEntry::entryBufDisk1_return#0 and assignment [104] (byte**) initEntry::entryBufDisk1_return#0 ← (byte**)(byte*~) initEntry::entryBufDisk1_$0
+Eliminating unused variable (byte**) initEntry::entryBufEdit1_return#0 and assignment [108] (byte**) initEntry::entryBufEdit1_return#0 ← (byte**)(byte*~) initEntry::entryBufEdit1_$0
+Eliminating unused variable (word*) initEntry::entryTsLen1_return#0 and assignment [112] (word*) initEntry::entryTsLen1_return#0 ← (word*)(byte*~) initEntry::entryTsLen1_$0
+Eliminating unused variable (word**) initEntry::entryTsOrder1_return#0 and assignment [116] (word**) initEntry::entryTsOrder1_return#0 ← (word**)(byte*~) initEntry::entryTsOrder1_$0
+Eliminating unused variable (byte*) initEntry::entryTLastLink1_return#0 and assignment [119] (byte*) initEntry::entryTLastLink1_return#0 ← (byte*) initEntry::entry#10 + (byte) 8
+Eliminating unused variable (byte*) initEntry::entrySLastLink1_return#0 and assignment [122] (byte*) initEntry::entrySLastLink1_return#0 ← (byte*) initEntry::entry#10 + (byte) 9
+Eliminating unused variable (byte*) initEntry::entryBFlag1_return#0 and assignment [125] (byte*) initEntry::entryBFlag1_return#0 ← (byte*) initEntry::entry#10 + (byte) $a
+Eliminating unused variable (byte*) initEntry::entryBError1_return#0 and assignment [128] (byte*) initEntry::entryBError1_return#0 ← (byte*) initEntry::entry#10 + (byte) $b
+Eliminating unused variable (word*) initEntry::entryUCross1_return#0 and assignment [132] (word*) initEntry::entryUCross1_return#0 ← (word*)(byte*~) initEntry::entryUCross1_$0
+Eliminating unused variable (byte*) initEntry::entryBAddrLo1_return#0 and assignment [135] (byte*) initEntry::entryBAddrLo1_return#0 ← (byte*) initEntry::entry#10 + (byte) $e
+Eliminating unused variable (byte*) initEntry::entryBAddrHi1_return#0 and assignment [138] (byte*) initEntry::entryBAddrHi1_return#0 ← (byte*) initEntry::entry#10 + (byte) $f
+Eliminating unused variable (byte*) initEntry::entryTHi1_return#0 and assignment [141] (byte*) initEntry::entryTHi1_return#0 ← (byte*) initEntry::entry#10 + (byte) $10
+Eliminating unused variable (byte*) initEntry::entryTLo1_return#0 and assignment [144] (byte*) initEntry::entryTLo1_return#0 ← (byte*) initEntry::entry#10 + (byte) $11
+Eliminating unused variable (byte**) printEntry::entryBufDisk1_return#0 and assignment [151] (byte**) printEntry::entryBufDisk1_return#0 ← (byte**)(byte*~) printEntry::entryBufDisk1_$0
+Eliminating unused variable (byte**) printEntry::entryBufEdit1_return#0 and assignment [157] (byte**) printEntry::entryBufEdit1_return#0 ← (byte**)(byte*~) printEntry::entryBufEdit1_$0
+Eliminating unused variable (word*) printEntry::entryTsLen1_return#0 and assignment [163] (word*) printEntry::entryTsLen1_return#0 ← (word*)(byte*~) printEntry::entryTsLen1_$0
+Eliminating unused variable (word**) printEntry::entryTsOrder1_return#0 and assignment [169] (word**) printEntry::entryTsOrder1_return#0 ← (word**)(byte*~) printEntry::entryTsOrder1_$0
+Eliminating unused variable (byte*) printEntry::entryTLastLink1_return#0 and assignment [174] (byte*) printEntry::entryTLastLink1_return#0 ← (byte*) printEntry::entry#10 + (byte) 8
+Eliminating unused variable (byte*) printEntry::entrySLastLink1_return#0 and assignment [179] (byte*) printEntry::entrySLastLink1_return#0 ← (byte*) printEntry::entry#10 + (byte) 9
+Eliminating unused variable (byte*) printEntry::entryBFlag1_return#0 and assignment [184] (byte*) printEntry::entryBFlag1_return#0 ← (byte*) printEntry::entry#10 + (byte) $a
+Eliminating unused variable (byte*) printEntry::entryBError1_return#0 and assignment [189] (byte*) printEntry::entryBError1_return#0 ← (byte*) printEntry::entry#10 + (byte) $b
+Eliminating unused variable (word*) printEntry::entryUCross1_return#0 and assignment [195] (word*) printEntry::entryUCross1_return#0 ← (word*)(byte*~) printEntry::entryUCross1_$0
+Eliminating unused variable (byte*) printEntry::entryBAddrLo1_return#0 and assignment [200] (byte*) printEntry::entryBAddrLo1_return#0 ← (byte*) printEntry::entry#10 + (byte) $e
+Eliminating unused variable (byte*) printEntry::entryBAddrHi1_return#0 and assignment [205] (byte*) printEntry::entryBAddrHi1_return#0 ← (byte*) printEntry::entry#10 + (byte) $f
+Eliminating unused variable (byte*) printEntry::entryTHi1_return#0 and assignment [210] (byte*) printEntry::entryTHi1_return#0 ← (byte*) printEntry::entry#10 + (byte) $10
+Eliminating unused variable (byte*) printEntry::entryTLo1_return#0 and assignment [215] (byte*) printEntry::entryTLo1_return#0 ← (byte*) printEntry::entry#10 + (byte) $11
 Eliminating unused constant (const void*) memset::return#2
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused variable (byte*~) initEntry::entryBufDisk1_$0 and assignment [105] (byte*~) initEntry::entryBufDisk1_$0 ← (byte*) initEntry::entry#10
-Eliminating unused variable (byte*~) initEntry::entryBufEdit1_$0 and assignment [108] (byte*~) initEntry::entryBufEdit1_$0 ← (byte*) initEntry::entry#10 + (byte) 2
-Eliminating unused variable (byte*~) initEntry::entryTsLen1_$0 and assignment [111] (byte*~) initEntry::entryTsLen1_$0 ← (byte*) initEntry::entry#10 + (byte) 4
-Eliminating unused variable (byte*~) initEntry::entryTsOrder1_$0 and assignment [114] (byte*~) initEntry::entryTsOrder1_$0 ← (byte*) initEntry::entry#10 + (byte) 6
-Eliminating unused variable (byte*~) initEntry::entryUCross1_$0 and assignment [125] (byte*~) initEntry::entryUCross1_$0 ← (byte*) initEntry::entry#10 + (byte) $c
-Eliminating unused variable (byte*~) printEntry::entryBufDisk1_$0 and assignment [139] (byte*~) printEntry::entryBufDisk1_$0 ← (byte*) printEntry::entry#10
-Eliminating unused variable (byte*~) printEntry::entryBufEdit1_$0 and assignment [144] (byte*~) printEntry::entryBufEdit1_$0 ← (byte*) printEntry::entry#10 + (byte) 2
-Eliminating unused variable (byte*~) printEntry::entryTsLen1_$0 and assignment [149] (byte*~) printEntry::entryTsLen1_$0 ← (byte*) printEntry::entry#10 + (byte) 4
-Eliminating unused variable (byte*~) printEntry::entryTsOrder1_$0 and assignment [154] (byte*~) printEntry::entryTsOrder1_$0 ← (byte*) printEntry::entry#10 + (byte) 6
-Eliminating unused variable (byte*~) printEntry::entryUCross1_$0 and assignment [175] (byte*~) printEntry::entryUCross1_$0 ← (byte*) printEntry::entry#10 + (byte) $c
+Eliminating unused variable (byte*~) initEntry::entryBufDisk1_$0 and assignment [103] (byte*~) initEntry::entryBufDisk1_$0 ← (byte*) initEntry::entry#10
+Eliminating unused variable (byte*~) initEntry::entryBufEdit1_$0 and assignment [106] (byte*~) initEntry::entryBufEdit1_$0 ← (byte*) initEntry::entry#10 + (byte) 2
+Eliminating unused variable (byte*~) initEntry::entryTsLen1_$0 and assignment [109] (byte*~) initEntry::entryTsLen1_$0 ← (byte*) initEntry::entry#10 + (byte) 4
+Eliminating unused variable (byte*~) initEntry::entryTsOrder1_$0 and assignment [112] (byte*~) initEntry::entryTsOrder1_$0 ← (byte*) initEntry::entry#10 + (byte) 6
+Eliminating unused variable (byte*~) initEntry::entryUCross1_$0 and assignment [123] (byte*~) initEntry::entryUCross1_$0 ← (byte*) initEntry::entry#10 + (byte) $c
+Eliminating unused variable (byte*~) printEntry::entryBufDisk1_$0 and assignment [137] (byte*~) printEntry::entryBufDisk1_$0 ← (byte*) printEntry::entry#10
+Eliminating unused variable (byte*~) printEntry::entryBufEdit1_$0 and assignment [142] (byte*~) printEntry::entryBufEdit1_$0 ← (byte*) printEntry::entry#10 + (byte) 2
+Eliminating unused variable (byte*~) printEntry::entryTsLen1_$0 and assignment [147] (byte*~) printEntry::entryTsLen1_$0 ← (byte*) printEntry::entry#10 + (byte) 4
+Eliminating unused variable (byte*~) printEntry::entryTsOrder1_$0 and assignment [152] (byte*~) printEntry::entryTsOrder1_$0 ← (byte*) printEntry::entry#10 + (byte) 6
+Eliminating unused variable (byte*~) printEntry::entryUCross1_$0 and assignment [173] (byte*~) printEntry::entryUCross1_$0 ← (byte*) printEntry::entry#10 + (byte) $c
 Successful SSA optimization PassNEliminateUnusedVars
 Constant right-side identified [10] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
-Constant right-side identified [63] (word~) $1 ← (const word) $0 * (const byte) SIZEOF_ENTRY
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
-Constant (const word) $1 = $0*SIZEOF_ENTRY
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte[$1]) files = { fill( $1, 0) }
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [131] (word) print_word::w#0 ← (word)*((byte**)(byte*) printEntry::entry#10) keeping *((byte**)printEntry::entry#10)
 Inlining Noop Cast [135] (word) print_word::w#1 ← (word)*((byte**)(byte*) printEntry::entry#10 + (byte) 2) keeping *((byte**)printEntry::entry#10 + 2)
@@ -3766,9 +3757,7 @@ Constant inlined print_str::str#12 = (const string) printEntry::str7
 Constant inlined print_str::str#11 = (const string) printEntry::str6
 Constant inlined print_str::str#10 = (const string) printEntry::str5
 Constant inlined print_str::str#17 = (const string) printEntry::str12
-Constant inlined $0 = (word)(const byte) MAX_FILES
 Constant inlined print_str::str#16 = (const string) printEntry::str11
-Constant inlined $1 = (word)(const byte) MAX_FILES*(const byte) SIZEOF_ENTRY
 Constant inlined print_str::str#15 = (const string) printEntry::str10
 Constant inlined print_str::str#14 = (const string) printEntry::str9
 Constant inlined initEntry::n#1 = (byte) $11

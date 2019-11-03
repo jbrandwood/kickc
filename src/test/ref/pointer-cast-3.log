@@ -1,3 +1,4 @@
+Identified constant variable (signed byte) main::sb
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -5,9 +6,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (signed byte~) main::$0 ← ((signed byte)) (number) $ff
-  (signed byte) main::sb#0 ← (signed byte~) main::$0
-  *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0
+  *((const signed byte*) main::sb_screen) ← (const signed byte) main::sb
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -25,21 +24,13 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(signed byte~) main::$0
 (label) main::@return
-(signed byte) main::sb
-(signed byte) main::sb#0
+(const signed byte) main::sb = (signed byte)(number) $ff
 (const signed byte*) main::sb_screen = (signed byte*)(number) $400
 
-Inlining cast (signed byte~) main::$0 ← (signed byte)(number) $ff
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (signed byte*) 1024
 Simplifying constant integer cast $ff
 Successful SSA optimization PassNCastSimplification
-Alias (signed byte) main::sb#0 = (signed byte~) main::$0 
-Successful SSA optimization Pass2AliasElimination
-Constant (const signed byte) main::sb#0 = $ff
-Successful SSA optimization Pass2ConstantIdentification
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -67,7 +58,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const signed byte*) main::sb_screen) ← (const signed byte) main::sb#0
+  [4] *((const signed byte*) main::sb_screen) ← (const signed byte) main::sb
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -76,7 +67,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(signed byte) main::sb
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -108,7 +98,7 @@ __bend:
 main: {
     .label sb_screen = $400
     .const sb = $ff
-    // [4] *((const signed byte*) main::sb_screen) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
+    // [4] *((const signed byte*) main::sb_screen) ← (const signed byte) main::sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sb_screen
     jmp __breturn
@@ -120,7 +110,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const signed byte*) main::sb_screen) ← (const signed byte) main::sb#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const signed byte*) main::sb_screen) ← (const signed byte) main::sb [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -155,7 +145,7 @@ __bend:
 main: {
     .label sb_screen = $400
     .const sb = $ff
-    // [4] *((const signed byte*) main::sb_screen) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
+    // [4] *((const signed byte*) main::sb_screen) ← (const signed byte) main::sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sb_screen
     jmp __breturn
@@ -191,8 +181,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(signed byte) main::sb
-(const signed byte) main::sb#0 sb = (signed byte) $ff
+(const signed byte) main::sb = (signed byte) $ff
 (const signed byte*) main::sb_screen = (signed byte*) 1024
 
 
@@ -218,7 +207,7 @@ main: {
     .label sb_screen = $400
     .const sb = $ff
     // *sb_screen = sb
-    // [4] *((const signed byte*) main::sb_screen) ← (const signed byte) main::sb#0 -- _deref_pbsc1=vbsc2 
+    // [4] *((const signed byte*) main::sb_screen) ← (const signed byte) main::sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sb_screen
     // main::@return

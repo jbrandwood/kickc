@@ -35,7 +35,7 @@ main: {
     .label toD0181_gfx = $1800
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
     .label __10 = 9
-    .label __13 = $15
+    .label __12 = $15
     .label cyclecount = 9
     .label sec100s = $d
     .label i = $11
@@ -43,7 +43,7 @@ main: {
     .label j = 2
     .label s = 4
     .label i_1 = $d
-    .label __35 = $13
+    .label __34 = $13
     //Show lower case font
     lda #toD0181_return
     sta D018
@@ -124,9 +124,9 @@ main: {
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
     jsr div32u16u
-    lda.z __13
+    lda.z __12
     sta.z sec100s
-    lda.z __13+1
+    lda.z __12+1
     sta.z sec100s+1
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -174,12 +174,12 @@ main: {
     lda.z i_1
     clc
     adc #<sieve
-    sta.z __35
+    sta.z __34
     lda.z i_1+1
     adc #>sieve
-    sta.z __35+1
+    sta.z __34+1
     ldy #0
-    lda (__35),y
+    lda (__34),y
     cmp #0
     bne __b11
     lda.z print_char_cursor_1

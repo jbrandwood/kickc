@@ -101,7 +101,11 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
                SymbolTypeIntegerFixed variableTypeInt = (SymbolTypeIntegerFixed) variableType;
                ConstantInteger valueInt = (ConstantInteger) constantLiteral;
                if(variableTypeInt.contains(valueInt.getInteger())) {
-                  constantValue = new ConstantInteger(valueInt.getInteger(), variableType);
+                  if(constantValue instanceof ConstantInteger) {
+                     ((ConstantInteger) constantValue).setType(variableType);
+                  }  else {
+                     constantValue = new ConstantCastValue(variableType, constantValue);
+                  }
                   typeOk = true;
                }
             }

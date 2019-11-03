@@ -3,7 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label __5 = 4
+    .label __1 = 4
     .label u = 2
     sec
     lda $a0
@@ -19,13 +19,13 @@ main: {
     clc
     lda $d1
     adc #<$d400
-    sta.z __5
+    sta.z __1
     lda $d1+1
     adc #>$d400
-    sta.z __5+1
-    lda.z __5
+    sta.z __1+1
+    lda.z __1
     sta $f3
-    lda.z __5+1
+    lda.z __1+1
     sta $f3+1
     rts
 }

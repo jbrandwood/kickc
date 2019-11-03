@@ -12,6 +12,7 @@ Warning! Adding boolean cast to non-boolean sub-expression (byte) print_str_line
 Identified constant variable (byte*) HEAP_TOP
 Identified constant variable (byte) test_bytes::bb
 Identified constant variable (signed byte) test_sbytes::bb
+Identified constant variable (signed byte) test_sbytes::bf
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) memset::@7
@@ -395,10 +396,8 @@ test_sbytes::@4: scope:[test_sbytes]  from test_sbytes::@3
   (byte*) print_char_cursor#56 ← phi( test_sbytes::@3/(byte*) print_char_cursor#32 )
   (byte*) print_char_cursor#24 ← (byte*) print_char_cursor#56
   (byte*) print_line_cursor#18 ← (byte*) print_line_cursor#41
-  (signed byte~) test_sbytes::$7 ← ((signed byte)) (number) -$7f-(number) $7f
-  (signed byte) test_sbytes::bf#0 ← (signed byte~) test_sbytes::$7
   (byte*) assert_sbyte::msg#4 ← (const string) test_sbytes::msg4
-  (signed byte) assert_sbyte::b#4 ← (signed byte) test_sbytes::bf#0
+  (signed byte) assert_sbyte::b#4 ← (const signed byte) test_sbytes::bf
   (signed byte) assert_sbyte::c#4 ← (number) 2
   call assert_sbyte 
   to:test_sbytes::@5
@@ -837,7 +836,6 @@ SYMBOL TABLE SSA
 (number~) test_sbytes::$1
 (number~) test_sbytes::$3
 (signed byte~) test_sbytes::$5
-(signed byte~) test_sbytes::$7
 (label) test_sbytes::@1
 (label) test_sbytes::@2
 (label) test_sbytes::@3
@@ -853,8 +851,7 @@ SYMBOL TABLE SSA
 (signed byte) test_sbytes::bd#1
 (signed byte) test_sbytes::be
 (signed byte) test_sbytes::be#0
-(signed byte) test_sbytes::bf
-(signed byte) test_sbytes::bf#0
+(const signed byte) test_sbytes::bf = (signed byte)(number) -$7f-(number) $7f
 (const string) test_sbytes::msg = (string) "0=0"
 (const string) test_sbytes::msg1 = (string) "0+2=2"
 (const string) test_sbytes::msg2 = (string) "0+2-4=-2"
@@ -895,7 +892,6 @@ Inlining cast (signed byte) assert_sbyte::c#0 ← (snumber)(number) 0
 Inlining cast (signed byte) assert_sbyte::c#1 ← (snumber)(number) 2
 Inlining cast (signed byte) assert_sbyte::c#2 ← (snumber)(number) -2
 Inlining cast (signed byte) assert_sbyte::c#3 ← (snumber)(number) 2
-Inlining cast (signed byte~) test_sbytes::$7 ← (signed byte)(number) -$7f-(number) $7f
 Inlining cast (signed byte) assert_sbyte::c#4 ← (snumber)(number) 2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
@@ -988,7 +984,6 @@ Alias (byte*) print_line_cursor#17 = (byte*) print_line_cursor#40
 Alias (signed byte) test_sbytes::be#0 = (signed byte~) test_sbytes::$5 
 Alias (byte*) print_char_cursor#24 = (byte*) print_char_cursor#56 
 Alias (byte*) print_line_cursor#18 = (byte*) print_line_cursor#41 
-Alias (signed byte) test_sbytes::bf#0 = (signed byte~) test_sbytes::$7 
 Alias (byte*) print_char_cursor#25 = (byte*) print_char_cursor#57 (byte*) print_char_cursor#58 (byte*) print_char_cursor#26 
 Alias (byte*) print_line_cursor#19 = (byte*) print_line_cursor#42 (byte*) print_line_cursor#43 (byte*) print_line_cursor#20 
 Alias (signed byte) assert_sbyte::b#5 = (signed byte) assert_sbyte::b#6 (signed byte) assert_sbyte::b#7 
@@ -1071,11 +1066,10 @@ Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memse
 Simple Condition (bool~) print_str::$0 [26] if((byte) 0!=*((byte*) print_str::str#10)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [39] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1
 Simple Condition (bool~) assert_byte::$2 [119] if((byte) assert_byte::b#3!=(byte) assert_byte::c#3) goto assert_byte::@1
-Simple Condition (bool~) assert_sbyte::$2 [198] if((signed byte) assert_sbyte::b#5!=(signed byte) assert_sbyte::c#5) goto assert_sbyte::@1
+Simple Condition (bool~) assert_sbyte::$2 [196] if((signed byte) assert_sbyte::b#5!=(signed byte) assert_sbyte::c#5) goto assert_sbyte::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [85] (byte) test_bytes::bc#0 ← (const byte) test_bytes::bb + (byte) 2
 Constant right-side identified [148] (signed byte) test_sbytes::bc#0 ← (const signed byte) test_sbytes::bb + (signed byte) 2
-Constant right-side identified [175] (signed byte) test_sbytes::bf#0 ← (signed byte)(number) -$7f-(number) $7f
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte) memset::c#0 = ' '
@@ -1101,8 +1095,8 @@ Constant (const byte*) assert_sbyte::msg#2 = test_sbytes::msg2
 Constant (const signed byte) assert_sbyte::c#2 = -2
 Constant (const byte*) assert_sbyte::msg#3 = test_sbytes::msg3
 Constant (const signed byte) assert_sbyte::c#3 = 2
-Constant (const signed byte) test_sbytes::bf#0 = (signed byte)-$7f-$7f
 Constant (const byte*) assert_sbyte::msg#4 = test_sbytes::msg4
+Constant (const signed byte) assert_sbyte::b#4 = test_sbytes::bf
 Constant (const signed byte) assert_sbyte::c#4 = 2
 Constant (const byte*) print_str::str#6 = assert_sbyte::str
 Constant (const byte*) print_str::str#7 = assert_sbyte::str1
@@ -1112,7 +1106,6 @@ Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Constant (const byte) assert_byte::b#1 = test_bytes::bc#0
 Constant (const signed byte) test_bytes::$3 = (signed byte)test_bytes::bc#0
 Constant (const signed byte) assert_sbyte::b#1 = test_sbytes::bc#0
-Constant (const signed byte) assert_sbyte::b#4 = test_sbytes::bf#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) memset::$2 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
@@ -1171,9 +1164,9 @@ Inlining constant with var siblings (const signed byte) assert_sbyte::c#2
 Inlining constant with var siblings (const byte*) assert_sbyte::msg#3
 Inlining constant with var siblings (const signed byte) assert_sbyte::c#3
 Inlining constant with var siblings (const byte*) assert_sbyte::msg#4
+Inlining constant with var siblings (const signed byte) assert_sbyte::b#4
 Inlining constant with var siblings (const signed byte) assert_sbyte::c#4
 Inlining constant with var siblings (const signed byte) assert_sbyte::b#1
-Inlining constant with var siblings (const signed byte) assert_sbyte::b#4
 Inlining constant with var siblings (const signed byte) assert_sbyte::b#2
 Inlining constant with var siblings (const signed byte) assert_sbyte::b#3
 Inlining constant with var siblings (const byte*) print_line_cursor#0
@@ -1194,7 +1187,7 @@ Constant inlined assert_byte::c#1 = (byte) 2
 Constant inlined test_bytes::$3 = (signed byte)(const byte) test_bytes::bc#0
 Constant inlined assert_byte::c#2 = (byte) $fe
 Constant inlined assert_sbyte::c#4 = (signed byte) 2
-Constant inlined assert_sbyte::b#4 = (const signed byte) test_sbytes::bf#0
+Constant inlined assert_sbyte::b#4 = (const signed byte) test_sbytes::bf
 Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined test_bytes::$4 = (signed byte)(const byte) test_bytes::bc#0-(signed byte) 4
 Constant inlined assert_sbyte::c#3 = (signed byte) 2
@@ -1385,7 +1378,7 @@ test_sbytes::@return: scope:[test_sbytes]  from test_sbytes::@4
 (void()) assert_sbyte((byte*) assert_sbyte::msg , (signed byte) assert_sbyte::b , (signed byte) assert_sbyte::c)
 assert_sbyte: scope:[assert_sbyte]  from test_sbytes test_sbytes::@1 test_sbytes::@2 test_sbytes::@3 test_sbytes::@4
   [22] (signed byte) assert_sbyte::c#5 ← phi( test_sbytes/(signed byte) 0 test_sbytes::@1/(signed byte) 2 test_sbytes::@2/(signed byte) -2 test_sbytes::@3/(signed byte) 2 test_sbytes::@4/(signed byte) 2 )
-  [22] (signed byte) assert_sbyte::b#5 ← phi( test_sbytes/(const signed byte) test_sbytes::bb test_sbytes::@1/(const signed byte) test_sbytes::bc#0 test_sbytes::@2/(const signed byte) test_sbytes::bd#0 test_sbytes::@3/(const signed byte) test_sbytes::be#0 test_sbytes::@4/(const signed byte) test_sbytes::bf#0 )
+  [22] (signed byte) assert_sbyte::b#5 ← phi( test_sbytes/(const signed byte) test_sbytes::bb test_sbytes::@1/(const signed byte) test_sbytes::bc#0 test_sbytes::@2/(const signed byte) test_sbytes::bd#0 test_sbytes::@3/(const signed byte) test_sbytes::be#0 test_sbytes::@4/(const signed byte) test_sbytes::bf )
   [22] (byte*) assert_sbyte::msg#5 ← phi( test_sbytes/(const string) msg test_sbytes::@1/(const string) msg1 test_sbytes::@2/(const string) test_sbytes::msg2 test_sbytes::@3/(const string) test_sbytes::msg3 test_sbytes::@4/(const string) test_sbytes::msg4 )
   [23] (byte*) print_str::str#5 ← (byte*) assert_sbyte::msg#5
   [24] (byte*~) print_char_cursor#85 ← (byte*) print_line_cursor#1
@@ -1577,7 +1570,6 @@ VARIABLE REGISTER WEIGHTS
 (signed byte) test_sbytes::bc
 (signed byte) test_sbytes::bd
 (signed byte) test_sbytes::be
-(signed byte) test_sbytes::bf
 
 Initial phi equivalence classes
 [ assert_sbyte::msg#5 ]
@@ -1676,8 +1668,8 @@ main: {
 // Test different signed byte constants
 test_sbytes: {
     .const bb = 0
-    .const bc = 2
     .const bf = $ff&-$7f-$7f
+    .const bc = 2
     .const bd = bc-4
     .const be = -bd
     // [12] call assert_sbyte 
@@ -1766,7 +1758,7 @@ test_sbytes: {
     // [22] phi (signed byte) assert_sbyte::c#5 = (signed byte) 2 [phi:test_sbytes::@4->assert_sbyte#0] -- vbsz1=vbsc1 
     lda #2
     sta.z assert_sbyte.c
-    // [22] phi (signed byte) assert_sbyte::b#5 = (const signed byte) test_sbytes::bf#0 [phi:test_sbytes::@4->assert_sbyte#1] -- vbsz1=vbsc1 
+    // [22] phi (signed byte) assert_sbyte::b#5 = (const signed byte) test_sbytes::bf [phi:test_sbytes::@4->assert_sbyte#1] -- vbsz1=vbsc1 
     lda #bf
     sta.z assert_sbyte.b
     // [22] phi (byte*) assert_sbyte::msg#5 = (const string) test_sbytes::msg4 [phi:test_sbytes::@4->assert_sbyte#2] -- pbuz1=pbuc1 
@@ -2349,8 +2341,8 @@ main: {
 // Test different signed byte constants
 test_sbytes: {
     .const bb = 0
-    .const bc = 2
     .const bf = $ff&-$7f-$7f
+    .const bc = 2
     .const bd = bc-4
     .const be = -bd
     // [12] call assert_sbyte 
@@ -2435,7 +2427,7 @@ test_sbytes: {
     // [22] phi (signed byte) assert_sbyte::c#5 = (signed byte) 2 [phi:test_sbytes::@4->assert_sbyte#0] -- vbsz1=vbsc1 
     lda #2
     sta.z assert_sbyte.c
-    // [22] phi (signed byte) assert_sbyte::b#5 = (const signed byte) test_sbytes::bf#0 [phi:test_sbytes::@4->assert_sbyte#1] -- vbsxx=vbsc1 
+    // [22] phi (signed byte) assert_sbyte::b#5 = (const signed byte) test_sbytes::bf [phi:test_sbytes::@4->assert_sbyte#1] -- vbsxx=vbsc1 
     ldx #bf
     // [22] phi (byte*) assert_sbyte::msg#5 = (const string) test_sbytes::msg4 [phi:test_sbytes::@4->assert_sbyte#2] -- pbuz1=pbuc1 
     lda #<msg4
@@ -3085,8 +3077,7 @@ FINAL SYMBOL TABLE
 (const signed byte) test_sbytes::bd#0 bd = (const signed byte) test_sbytes::bc#0-(signed byte) 4
 (signed byte) test_sbytes::be
 (const signed byte) test_sbytes::be#0 be = -(const signed byte) test_sbytes::bd#0
-(signed byte) test_sbytes::bf
-(const signed byte) test_sbytes::bf#0 bf = (signed byte)(number) -$7f-(number) $7f
+(const signed byte) test_sbytes::bf = (signed byte)(number) -$7f-(number) $7f
 (const string) test_sbytes::msg2 = (string) "0+2-4=-2"
 (const string) test_sbytes::msg3 = (string) "-(0+2-4)=2"
 (const string) test_sbytes::msg4 = (string) "-127-127=2"
@@ -3150,8 +3141,8 @@ main: {
 // Test different signed byte constants
 test_sbytes: {
     .const bb = 0
-    .const bc = 2
     .const bf = $ff&-$7f-$7f
+    .const bc = 2
     .const bd = bc-4
     .const be = -bd
     // assert_sbyte("0=0", bb, 0)
@@ -3224,7 +3215,7 @@ test_sbytes: {
     // [22] phi (signed byte) assert_sbyte::c#5 = (signed byte) 2 [phi:test_sbytes::@4->assert_sbyte#0] -- vbsz1=vbsc1 
     lda #2
     sta.z assert_sbyte.c
-    // [22] phi (signed byte) assert_sbyte::b#5 = (const signed byte) test_sbytes::bf#0 [phi:test_sbytes::@4->assert_sbyte#1] -- vbsxx=vbsc1 
+    // [22] phi (signed byte) assert_sbyte::b#5 = (const signed byte) test_sbytes::bf [phi:test_sbytes::@4->assert_sbyte#1] -- vbsxx=vbsc1 
     ldx #bf
     // [22] phi (byte*) assert_sbyte::msg#5 = (const string) test_sbytes::msg4 [phi:test_sbytes::@4->assert_sbyte#2] -- pbuz1=pbuc1 
     lda #<msg4

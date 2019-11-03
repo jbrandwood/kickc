@@ -1,4 +1,4 @@
-Resolved forward reference PIECES to (word[]) PIECES
+Resolved forward reference PIECES to (const word[]) PIECES
 Resolved forward reference next_piece_idx to (byte) next_piece_idx
 Resolved forward reference PIECES_NEXT_CHARS to (const byte[]) PIECES_NEXT_CHARS
 Resolved forward reference next_piece_idx to (byte) next_piece_idx
@@ -12,13 +12,13 @@ Fixing pointer array-indexing *((byte*[PLAYFIELD_LINES]) screen_lines_1 + (byte)
 Fixing pointer array-indexing *((byte*[PLAYFIELD_LINES]) screen_lines_2 + (byte) render_init::i)
 Fixing pointer array-indexing *((byte*[PLAYFIELD_LINES]) screen_lines_1 + (byte~) render_playfield::$0)
 Fixing pointer array-indexing *((byte*[PLAYFIELD_LINES]) screen_lines_1 + (byte~) render_moving::$1)
-Fixing pointer array-indexing *((word[]) PIECES + (byte) next_piece_idx)
+Fixing pointer array-indexing *((const word[]) PIECES + (byte) next_piece_idx)
 Fixing pointer array-indexing *((byte*[PLAYFIELD_LINES]) playfield_lines + (byte) play_init::j)
 Fixing pointer array-indexing *((const dword[]) SCORE_BASE_BCD + (byte) play_init::b)
 Fixing pointer array-indexing *((dword[5]) score_add_bcd + (byte) play_init::b)
 Fixing pointer array-indexing *((byte*[PLAYFIELD_LINES]) playfield_lines + (byte) play_collision::yp)
 Fixing pointer array-indexing *((byte*[PLAYFIELD_LINES]) playfield_lines + (byte) play_lock_current::yp)
-Fixing pointer array-indexing *((word[]) PIECES + (byte) play_spawn_current::current_piece_idx)
+Fixing pointer array-indexing *((const word[]) PIECES + (byte) play_spawn_current::current_piece_idx)
 Fixing pointer array-indexing *((dword[5]) score_add_bcd + (byte) play_update_score::removed)
 Fixing pointer array-indexing *((dword[5]) score_add_bcd + (byte) play_increase_level::b)
 Fixing pointer array-indexing *((const dword[]) SCORE_BASE_BCD + (byte) play_increase_level::b)
@@ -1030,7 +1030,7 @@ render_next::@2: scope:[render_next]  from render_next::@1 render_next::@3
   (byte*) render_next::screen_next_area#11 ← phi( render_next::@1/(byte*) render_next::screen_next_area#1 render_next::@3/(byte*) render_next::screen_next_area#2 )
   (byte) next_piece_idx#12 ← phi( render_next::@1/(byte) next_piece_idx#24 render_next::@3/(byte) next_piece_idx#25 )
   (byte~) render_next::$6 ← (byte) next_piece_idx#12 * (const byte) SIZEOF_WORD
-  (byte*) render_next::next_piece_gfx#0 ← ((byte*)) *((word[]) PIECES + (byte~) render_next::$6)
+  (byte*) render_next::next_piece_gfx#0 ← ((byte*)) *((const word[]) PIECES + (byte~) render_next::$6)
   (byte) render_next::next_piece_char#0 ← *((const byte[]) PIECES_NEXT_CHARS + (byte) next_piece_idx#12)
   (byte) render_next::l#0 ← (byte) 0
   to:render_next::@5
@@ -1420,14 +1420,6 @@ sprites_irq::@return: scope:[sprites_irq]  from sprites_irq::@6
   (byte) render_screen_show#32 ← phi( @38/(byte) render_screen_show#35 )
   (byte) irq_raster_next#17 ← phi( @38/(byte) irq_raster_next#20 )
   (byte) irq_sprite_ypos#14 ← phi( @38/(byte) irq_sprite_ypos#18 )
-  (word~) $2 ← ((word)) (const byte[4*4*4]) PIECE_T
-  (word~) $3 ← ((word)) (const byte[4*4*4]) PIECE_S
-  (word~) $4 ← ((word)) (const byte[4*4*4]) PIECE_Z
-  (word~) $5 ← ((word)) (const byte[4*4*4]) PIECE_J
-  (word~) $6 ← ((word)) (const byte[4*4*4]) PIECE_O
-  (word~) $7 ← ((word)) (const byte[4*4*4]) PIECE_I
-  (word~) $8 ← ((word)) (const byte[4*4*4]) PIECE_L
-  (word[]) PIECES ← { (word)(word~) $2, (word)(word~) $3, (word)(word~) $4, (word)(word~) $5, (word)(word~) $6, (word)(word~) $7, (word)(word~) $8 }
   (byte*[PLAYFIELD_LINES]) playfield_lines ← { fill( PLAYFIELD_LINES, 0) }
   (byte[PLAYFIELD_LINES+1]) playfield_lines_idx ← { fill( PLAYFIELD_LINES+1, 0) }
   (byte) next_piece_idx#0 ← (number) 0
@@ -2459,7 +2451,7 @@ play_spawn_current: scope:[play_spawn_current]  from main::@29 main::@30 play_mo
   (byte) next_piece_idx#17 ← phi( main::@29/(byte) next_piece_idx#32 main::@30/(byte) next_piece_idx#7 play_move_down::@21/(byte) next_piece_idx#29 )
   (byte) play_spawn_current::current_piece_idx#0 ← (byte) next_piece_idx#17
   (byte~) play_spawn_current::$7 ← (byte) play_spawn_current::current_piece_idx#0 * (const byte) SIZEOF_WORD
-  (byte*) current_piece#5 ← ((byte*)) *((word[]) PIECES + (byte~) play_spawn_current::$7)
+  (byte*) current_piece#5 ← ((byte*)) *((const word[]) PIECES + (byte~) play_spawn_current::$7)
   (byte) current_piece_char#5 ← *((const byte[]) PIECES_CHARS + (byte) play_spawn_current::current_piece_idx#0)
   (byte) current_orientation#8 ← (number) 0
   (byte*~) play_spawn_current::$0 ← (byte*) current_piece#5 + (byte) current_orientation#8
@@ -3602,13 +3594,6 @@ main::@return: scope:[main]  from main::@1
 SYMBOL TABLE SSA
 (byte~) $0
 (number~) $1
-(word~) $2
-(word~) $3
-(word~) $4
-(word~) $5
-(word~) $6
-(word~) $7
-(word~) $8
 (label) @13
 (label) @22
 (label) @23
@@ -3666,7 +3651,7 @@ SYMBOL TABLE SSA
 (const byte) LIGHT_GREEN = (number) $d
 (const byte[]) MOVEDOWN_SLOW_SPEEDS = { (byte)(number) $30, (byte)(number) $2b, (byte)(number) $26, (byte)(number) $21, (byte)(number) $1c, (byte)(number) $17, (byte)(number) $12, (byte)(number) $d, (byte)(number) 8, (byte)(number) 6, (byte)(number) 5, (byte)(number) 5, (byte)(number) 5, (byte)(number) 4, (byte)(number) 4, (byte)(number) 4, (byte)(number) 3, (byte)(number) 3, (byte)(number) 3, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 1 }
 (const byte) ORANGE = (number) 8
-(word[]) PIECES
+(const word[]) PIECES = { (word)(const byte[4*4*4]) PIECE_T, (word)(const byte[4*4*4]) PIECE_S, (word)(const byte[4*4*4]) PIECE_Z, (word)(const byte[4*4*4]) PIECE_J, (word)(const byte[4*4*4]) PIECE_O, (word)(const byte[4*4*4]) PIECE_I, (word)(const byte[4*4*4]) PIECE_L }
 (const byte[]) PIECES_CHARS = { (byte)(number) $65, (byte)(number) $66, (byte)(number) $a6, (byte)(number) $66, (byte)(number) $65, (byte)(number) $65, (byte)(number) $a6 }
 (const byte[]) PIECES_COLORS_1 = { (const byte) BLUE, (const byte) GREEN, (const byte) PURPLE, (const byte) BLUE, (const byte) RED, (const byte) LIGHT_GREEN, (const byte) RED, (const byte) BLUE, (const byte) LIGHT_BLUE, (const byte) RED, (const byte) BLUE, (const byte) GREEN, (const byte) PURPLE, (const byte) BLUE, (const byte) RED, (const byte) LIGHT_GREEN, (const byte) RED, (const byte) BLUE, (const byte) LIGHT_BLUE, (const byte) RED, (const byte) BLUE, (const byte) GREEN, (const byte) PURPLE, (const byte) BLUE, (const byte) RED, (const byte) LIGHT_GREEN, (const byte) RED, (const byte) BLUE, (const byte) LIGHT_BLUE, (const byte) RED }
 (const byte[]) PIECES_COLORS_2 = { (const byte) CYAN, (const byte) LIGHT_GREEN, (const byte) PINK, (const byte) LIGHT_GREEN, (const byte) LIGHT_GREEN, (const byte) LIGHT_BLUE, (const byte) DARK_GREY, (const byte) PURPLE, (const byte) RED, (const byte) ORANGE, (const byte) CYAN, (const byte) LIGHT_GREEN, (const byte) PINK, (const byte) LIGHT_GREEN, (const byte) LIGHT_GREEN, (const byte) LIGHT_BLUE, (const byte) DARK_GREY, (const byte) PURPLE, (const byte) RED, (const byte) ORANGE, (const byte) CYAN, (const byte) LIGHT_GREEN, (const byte) PINK, (const byte) LIGHT_GREEN, (const byte) LIGHT_GREEN, (const byte) LIGHT_BLUE, (const byte) DARK_GREY, (const byte) PURPLE, (const byte) RED, (const byte) ORANGE }
@@ -6132,7 +6117,7 @@ SYMBOL TABLE SSA
 (byte) render_next::l#5
 (byte) render_next::l#6
 (byte) render_next::l#7
-(const word) render_next::next_area_offset = (word) $1fc
+(const word) render_next::next_area_offset = (word)(number) $28*(number) $c+(number) $18+(number) 4
 (byte) render_next::next_piece_char
 (byte) render_next::next_piece_char#0
 (byte) render_next::next_piece_char#1
@@ -6211,13 +6196,13 @@ SYMBOL TABLE SSA
 (label) render_score::@8
 (label) render_score::@9
 (label) render_score::@return
-(const word) render_score::level_offset = (word) $317
-(const word) render_score::lines_offset = (word) $3e
+(const word) render_score::level_offset = (word)(number) $28*(number) $13+(number) $1f
+(const word) render_score::lines_offset = (word)(number) $28*(number) 1+(number) $16
 (byte*) render_score::score_bytes
 (byte*) render_score::score_bytes#0
 (byte*) render_score::score_bytes#1
 (byte*) render_score::score_bytes#2
-(const word) render_score::score_offset = (word) $e4
+(const word) render_score::score_offset = (word)(number) $28*(number) 5+(number) $1c
 (byte*) render_score::screen
 (byte*) render_score::screen#0
 (byte*) render_score::screen#1
@@ -6959,7 +6944,7 @@ Inlining cast (byte) render_bcd::only_low#5 ← (unumber)(number) 0
 Inlining cast (byte) render_screen_original::x#0 ← (unumber)(number) 0
 Inlining cast (byte) render_playfield::i#0 ← (unumber)(const byte) PLAYFIELD_COLS*(unumber)(number) 2
 Inlining cast (byte) render_moving::i#0 ← (unumber)(number) 0
-Inlining cast (byte*) render_next::next_piece_gfx#0 ← (byte*)*((word[]) PIECES + (byte~) render_next::$6)
+Inlining cast (byte*) render_next::next_piece_gfx#0 ← (byte*)*((const word[]) PIECES + (byte~) render_next::$6)
 Inlining cast *((byte*) render_next::screen_next_area#6) ← (unumber)(number) 0
 Inlining cast *((const byte*) SPRITES_ENABLE) ← (unumber)(number) $f
 Inlining cast *((const byte*) SPRITES_MC) ← (unumber)(number) 0
@@ -6971,13 +6956,6 @@ Inlining cast (byte) irq_cnt#0 ← (unumber)(number) 0
 Inlining cast (word~) sprites_irq::toSpritePtr2_$0 ← (word)(byte*) sprites_irq::toSpritePtr2_sprite#1
 Inlining cast (byte~) sprites_irq::toSpritePtr2_$2 ← (byte)(unumber~) sprites_irq::toSpritePtr2_$1
 Inlining cast (byte) irq_cnt#2 ← (unumber)(number) 0
-Inlining cast (word~) $2 ← (word)(const byte[4*4*4]) PIECE_T
-Inlining cast (word~) $3 ← (word)(const byte[4*4*4]) PIECE_S
-Inlining cast (word~) $4 ← (word)(const byte[4*4*4]) PIECE_Z
-Inlining cast (word~) $5 ← (word)(const byte[4*4*4]) PIECE_J
-Inlining cast (word~) $6 ← (word)(const byte[4*4*4]) PIECE_O
-Inlining cast (word~) $7 ← (word)(const byte[4*4*4]) PIECE_I
-Inlining cast (word~) $8 ← (word)(const byte[4*4*4]) PIECE_L
 Inlining cast (byte) next_piece_idx#0 ← (unumber)(number) 0
 Inlining cast (byte*) current_piece#0 ← (byte*)(number) 0
 Inlining cast (byte) current_orientation#0 ← (unumber)(number) 0
@@ -6998,7 +6976,7 @@ Inlining cast (byte) play_move_rotate::return#3 ← (unumber)(number) 0
 Inlining cast (byte) play_move_rotate::return#4 ← (unumber)(number) 1
 Inlining cast (byte) play_collision::i#0 ← (unumber)(number) 0
 Inlining cast (byte) play_lock_current::i#0 ← (unumber)(number) 0
-Inlining cast (byte*) current_piece#5 ← (byte*)*((word[]) PIECES + (byte~) play_spawn_current::$7)
+Inlining cast (byte*) current_piece#5 ← (byte*)*((const word[]) PIECES + (byte~) play_spawn_current::$7)
 Inlining cast (byte) current_orientation#8 ← (unumber)(number) 0
 Inlining cast (byte) play_spawn_current::piece_idx#0 ← (unumber)(number) 7
 Inlining cast (byte) game_over#5 ← (unumber)(number) 1
@@ -7694,13 +7672,6 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast $14
 Simplifying constant integer cast $15
 Simplifying constant integer cast 3
-Simplifying constant integer cast (word~) $2
-Simplifying constant integer cast (word~) $3
-Simplifying constant integer cast (word~) $4
-Simplifying constant integer cast (word~) $5
-Simplifying constant integer cast (word~) $6
-Simplifying constant integer cast (word~) $7
-Simplifying constant integer cast (word~) $8
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 0
 Simplifying constant integer cast 0
@@ -7997,29 +7968,29 @@ Inversing boolean not [91] (bool~) keyboard_event_scan::$8 ← (byte~) keyboard_
 Inversing boolean not [103] (bool~) keyboard_event_scan::$11 ← (byte~) keyboard_event_scan::$9 == (byte) 0 from [102] (bool~) keyboard_event_scan::$10 ← (byte~) keyboard_event_scan::$9 != (byte) 0
 Inversing boolean not [316] (bool~) render_bcd::$2 ← (byte) render_bcd::only_low#6 != (byte) 0 from [315] (bool~) render_bcd::$1 ← (byte) render_bcd::only_low#6 == (byte) 0
 Inversing boolean not [411] (bool~) render_moving::$3 ← (byte) render_moving::current_cell#0 == (byte) 0 from [410] (bool~) render_moving::$2 ← (byte) render_moving::current_cell#0 != (byte) 0
-Inversing boolean not [641] (bool~) play_movement::$2 ← (byte) game_over#1 == (byte) 0 from [640] (bool~) play_movement::$1 ← (byte) game_over#1 != (byte) 0
-Inversing boolean not [683] (bool~) play_move_down::$1 ← (byte) play_move_down::key_event#1 != (const byte) KEY_SPACE from [682] (bool~) play_move_down::$0 ← (byte) play_move_down::key_event#1 == (const byte) KEY_SPACE
-Inversing boolean not [692] (bool~) play_move_down::$4 ← (byte~) play_move_down::$2 == (byte) 0 from [691] (bool~) play_move_down::$3 ← (byte~) play_move_down::$2 != (byte) 0
-Inversing boolean not [698] (bool~) play_move_down::$6 ← (byte) current_movedown_counter#12 < (byte) current_movedown_slow#19 from [697] (bool~) play_move_down::$5 ← (byte) current_movedown_counter#12 >= (byte) current_movedown_slow#19
-Inversing boolean not [702] (bool~) play_move_down::$10 ← (byte) current_movedown_counter#13 < (const byte) current_movedown_fast from [701] (bool~) play_move_down::$9 ← (byte) current_movedown_counter#13 >= (const byte) current_movedown_fast
-Inversing boolean not [708] (bool~) play_move_down::$8 ← (byte) play_move_down::movedown#6 == (byte) 0 from [707] (bool~) play_move_down::$7 ← (byte) play_move_down::movedown#6 != (byte) 0
-Inversing boolean not [786] (bool~) play_move_leftright::$10 ← (byte~) play_move_leftright::$8 != (const byte) COLLISION_NONE from [785] (bool~) play_move_leftright::$9 ← (byte~) play_move_leftright::$8 == (const byte) COLLISION_NONE
-Inversing boolean not [790] (bool~) play_move_leftright::$2 ← (byte) play_move_leftright::key_event#2 != (const byte) KEY_DOT from [789] (bool~) play_move_leftright::$1 ← (byte) play_move_leftright::key_event#2 == (const byte) KEY_DOT
-Inversing boolean not [802] (bool~) play_move_leftright::$6 ← (byte~) play_move_leftright::$4 != (const byte) COLLISION_NONE from [801] (bool~) play_move_leftright::$5 ← (byte~) play_move_leftright::$4 == (const byte) COLLISION_NONE
-Inversing boolean not [847] (bool~) play_move_rotate::$4 ← (byte~) play_move_rotate::$2 != (const byte) COLLISION_NONE from [846] (bool~) play_move_rotate::$3 ← (byte~) play_move_rotate::$2 == (const byte) COLLISION_NONE
-Inversing boolean not [869] (bool~) play_collision::$2 ← *((byte*) play_collision::piece_gfx#1 + (byte) play_collision::i#2) == (byte) 0 from [868] (bool~) play_collision::$1 ← *((byte*) play_collision::piece_gfx#1 + (byte) play_collision::i#2) != (byte) 0
-Inversing boolean not [879] (bool~) play_collision::$4 ← (byte) play_collision::yp#3 < (const byte) PLAYFIELD_LINES from [878] (bool~) play_collision::$3 ← (byte) play_collision::yp#3 >= (const byte) PLAYFIELD_LINES
-Inversing boolean not [884] (bool~) play_collision::$7 ← (byte~) play_collision::$5 == (byte) 0 from [883] (bool~) play_collision::$6 ← (byte~) play_collision::$5 != (byte) 0
-Inversing boolean not [892] (bool~) play_collision::$9 ← (byte) play_collision::xp#4 < (const byte) PLAYFIELD_COLS from [891] (bool~) play_collision::$8 ← (byte) play_collision::xp#4 >= (const byte) PLAYFIELD_COLS
-Inversing boolean not [897] (bool~) play_collision::$11 ← *((byte*) play_collision::playfield_line#1 + (byte) play_collision::xp#5) == (byte) 0 from [896] (bool~) play_collision::$10 ← *((byte*) play_collision::playfield_line#1 + (byte) play_collision::xp#5) != (byte) 0
-Inversing boolean not [918] (bool~) play_lock_current::$1 ← *((byte*) current_piece_gfx#22 + (byte) play_lock_current::i#2) == (byte) 0 from [917] (bool~) play_lock_current::$0 ← *((byte*) current_piece_gfx#22 + (byte) play_lock_current::i#2) != (byte) 0
-Inversing boolean not [952] (bool~) play_spawn_current::$3 ← (byte~) play_spawn_current::$1 != (const byte) COLLISION_PLAYFIELD from [951] (bool~) play_spawn_current::$2 ← (byte~) play_spawn_current::$1 == (const byte) COLLISION_PLAYFIELD
-Inversing boolean not [992] (bool~) play_remove_lines::$1 ← (byte) play_remove_lines::c#0 != (byte) 0 from [991] (bool~) play_remove_lines::$0 ← (byte) play_remove_lines::c#0 == (byte) 0
-Inversing boolean not [1004] (bool~) play_remove_lines::$4 ← (byte) play_remove_lines::full#2 != (byte) 1 from [1003] (bool~) play_remove_lines::$3 ← (byte) play_remove_lines::full#2 == (byte) 1
-Inversing boolean not [1027] (bool~) play_update_score::$1 ← (byte) play_update_score::removed#1 == (byte) 0 from [1026] (bool~) play_update_score::$0 ← (byte) play_update_score::removed#1 != (byte) 0
-Inversing boolean not [1043] (bool~) play_update_score::$7 ← (byte) play_update_score::lines_before#0 == (byte) play_update_score::lines_after#0 from [1042] (bool~) play_update_score::$6 ← (byte) play_update_score::lines_before#0 != (byte) play_update_score::lines_after#0
-Inversing boolean not [1070] (bool~) play_increase_level::$3 ← (byte~) play_increase_level::$1 != (byte) $a from [1069] (bool~) play_increase_level::$2 ← (byte~) play_increase_level::$1 == (byte) $a
-Inversing boolean not [1180] (bool~) main::$18 ← (byte) main::render#2 == (byte) 0 from [1179] (bool~) main::$17 ← (byte) main::render#2 != (byte) 0
+Inversing boolean not [633] (bool~) play_movement::$2 ← (byte) game_over#1 == (byte) 0 from [632] (bool~) play_movement::$1 ← (byte) game_over#1 != (byte) 0
+Inversing boolean not [675] (bool~) play_move_down::$1 ← (byte) play_move_down::key_event#1 != (const byte) KEY_SPACE from [674] (bool~) play_move_down::$0 ← (byte) play_move_down::key_event#1 == (const byte) KEY_SPACE
+Inversing boolean not [684] (bool~) play_move_down::$4 ← (byte~) play_move_down::$2 == (byte) 0 from [683] (bool~) play_move_down::$3 ← (byte~) play_move_down::$2 != (byte) 0
+Inversing boolean not [690] (bool~) play_move_down::$6 ← (byte) current_movedown_counter#12 < (byte) current_movedown_slow#19 from [689] (bool~) play_move_down::$5 ← (byte) current_movedown_counter#12 >= (byte) current_movedown_slow#19
+Inversing boolean not [694] (bool~) play_move_down::$10 ← (byte) current_movedown_counter#13 < (const byte) current_movedown_fast from [693] (bool~) play_move_down::$9 ← (byte) current_movedown_counter#13 >= (const byte) current_movedown_fast
+Inversing boolean not [700] (bool~) play_move_down::$8 ← (byte) play_move_down::movedown#6 == (byte) 0 from [699] (bool~) play_move_down::$7 ← (byte) play_move_down::movedown#6 != (byte) 0
+Inversing boolean not [778] (bool~) play_move_leftright::$10 ← (byte~) play_move_leftright::$8 != (const byte) COLLISION_NONE from [777] (bool~) play_move_leftright::$9 ← (byte~) play_move_leftright::$8 == (const byte) COLLISION_NONE
+Inversing boolean not [782] (bool~) play_move_leftright::$2 ← (byte) play_move_leftright::key_event#2 != (const byte) KEY_DOT from [781] (bool~) play_move_leftright::$1 ← (byte) play_move_leftright::key_event#2 == (const byte) KEY_DOT
+Inversing boolean not [794] (bool~) play_move_leftright::$6 ← (byte~) play_move_leftright::$4 != (const byte) COLLISION_NONE from [793] (bool~) play_move_leftright::$5 ← (byte~) play_move_leftright::$4 == (const byte) COLLISION_NONE
+Inversing boolean not [839] (bool~) play_move_rotate::$4 ← (byte~) play_move_rotate::$2 != (const byte) COLLISION_NONE from [838] (bool~) play_move_rotate::$3 ← (byte~) play_move_rotate::$2 == (const byte) COLLISION_NONE
+Inversing boolean not [861] (bool~) play_collision::$2 ← *((byte*) play_collision::piece_gfx#1 + (byte) play_collision::i#2) == (byte) 0 from [860] (bool~) play_collision::$1 ← *((byte*) play_collision::piece_gfx#1 + (byte) play_collision::i#2) != (byte) 0
+Inversing boolean not [871] (bool~) play_collision::$4 ← (byte) play_collision::yp#3 < (const byte) PLAYFIELD_LINES from [870] (bool~) play_collision::$3 ← (byte) play_collision::yp#3 >= (const byte) PLAYFIELD_LINES
+Inversing boolean not [876] (bool~) play_collision::$7 ← (byte~) play_collision::$5 == (byte) 0 from [875] (bool~) play_collision::$6 ← (byte~) play_collision::$5 != (byte) 0
+Inversing boolean not [884] (bool~) play_collision::$9 ← (byte) play_collision::xp#4 < (const byte) PLAYFIELD_COLS from [883] (bool~) play_collision::$8 ← (byte) play_collision::xp#4 >= (const byte) PLAYFIELD_COLS
+Inversing boolean not [889] (bool~) play_collision::$11 ← *((byte*) play_collision::playfield_line#1 + (byte) play_collision::xp#5) == (byte) 0 from [888] (bool~) play_collision::$10 ← *((byte*) play_collision::playfield_line#1 + (byte) play_collision::xp#5) != (byte) 0
+Inversing boolean not [910] (bool~) play_lock_current::$1 ← *((byte*) current_piece_gfx#22 + (byte) play_lock_current::i#2) == (byte) 0 from [909] (bool~) play_lock_current::$0 ← *((byte*) current_piece_gfx#22 + (byte) play_lock_current::i#2) != (byte) 0
+Inversing boolean not [944] (bool~) play_spawn_current::$3 ← (byte~) play_spawn_current::$1 != (const byte) COLLISION_PLAYFIELD from [943] (bool~) play_spawn_current::$2 ← (byte~) play_spawn_current::$1 == (const byte) COLLISION_PLAYFIELD
+Inversing boolean not [984] (bool~) play_remove_lines::$1 ← (byte) play_remove_lines::c#0 != (byte) 0 from [983] (bool~) play_remove_lines::$0 ← (byte) play_remove_lines::c#0 == (byte) 0
+Inversing boolean not [996] (bool~) play_remove_lines::$4 ← (byte) play_remove_lines::full#2 != (byte) 1 from [995] (bool~) play_remove_lines::$3 ← (byte) play_remove_lines::full#2 == (byte) 1
+Inversing boolean not [1019] (bool~) play_update_score::$1 ← (byte) play_update_score::removed#1 == (byte) 0 from [1018] (bool~) play_update_score::$0 ← (byte) play_update_score::removed#1 != (byte) 0
+Inversing boolean not [1035] (bool~) play_update_score::$7 ← (byte) play_update_score::lines_before#0 == (byte) play_update_score::lines_after#0 from [1034] (bool~) play_update_score::$6 ← (byte) play_update_score::lines_before#0 != (byte) play_update_score::lines_after#0
+Inversing boolean not [1062] (bool~) play_increase_level::$3 ← (byte~) play_increase_level::$1 != (byte) $a from [1061] (bool~) play_increase_level::$2 ← (byte~) play_increase_level::$1 == (byte) $a
+Inversing boolean not [1172] (bool~) main::$18 ← (byte) main::render#2 == (byte) 0 from [1171] (bool~) main::$17 ← (byte) main::render#2 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)(byte) render_screen_showing#1 = (byte) render_screen_show#11 (byte) render_screen_showing#6 (byte) render_screen_showing#2 
 Alias candidate removed (volatile)(byte) irq_sprite_ptr#0 = (byte~) $1 (byte) irq_sprite_ptr#17 (byte) irq_sprite_ptr#14 
@@ -9025,47 +8996,47 @@ Simple Condition (bool~) sprites_irq::$4 [517] if(*((const byte*) RASTER)<(byte)
 Simple Condition (bool~) sprites_irq::$1 [521] if((byte) render_screen_showing#0==(byte) 0) goto sprites_irq::@1
 Simple Condition (bool~) sprites_irq::$2 [539] if((byte) irq_cnt#1==(byte) 9) goto sprites_irq::@3
 Simple Condition (bool~) sprites_irq::$3 [556] if((byte) irq_cnt#1==(byte) $a) goto sprites_irq::@4
-Simple Condition (bool~) play_init::$0 [604] if((byte) play_init::j#1!=rangelast(0,PLAYFIELD_LINES-1)) goto play_init::@1
-Simple Condition (bool~) play_init::$1 [614] if((byte) play_init::b#1!=rangelast(0,4)) goto play_init::@3
-Simple Condition (bool~) play_movement::$2 [642] if((byte) game_over#15==(byte) 0) goto play_movement::@1
-Simple Condition (bool~) play_move_down::$1 [684] if((byte) play_move_down::key_event#0!=(const byte) KEY_SPACE) goto play_move_down::@1
-Simple Condition (bool~) play_move_down::$4 [693] if((byte~) play_move_down::$2==(byte) 0) goto play_move_down::@2
-Simple Condition (bool~) play_move_down::$6 [699] if((byte) current_movedown_counter#12<(byte) current_movedown_slow#14) goto play_move_down::@3
-Simple Condition (bool~) play_move_down::$10 [703] if((byte) current_movedown_counter#12<(const byte) current_movedown_fast) goto play_move_down::@2
-Simple Condition (bool~) play_move_down::$8 [709] if((byte) play_move_down::movedown#6==(byte) 0) goto play_move_down::@4
-Simple Condition (bool~) play_move_down::$13 [724] if((byte~) play_move_down::$12==(const byte) COLLISION_NONE) goto play_move_down::@14
-Simple Condition (bool~) play_move_leftright::$0 [775] if((byte) play_move_leftright::key_event#0==(const byte) KEY_COMMA) goto play_move_leftright::@1
-Simple Condition (bool~) play_move_leftright::$10 [787] if((byte~) play_move_leftright::$8!=(const byte) COLLISION_NONE) goto play_move_leftright::@3
-Simple Condition (bool~) play_move_leftright::$2 [791] if((byte) play_move_leftright::key_event#0!=(const byte) KEY_DOT) goto play_move_leftright::@3
-Simple Condition (bool~) play_move_leftright::$6 [803] if((byte~) play_move_leftright::$4!=(const byte) COLLISION_NONE) goto play_move_leftright::@3
-Simple Condition (bool~) play_move_rotate::$0 [819] if((byte) play_move_rotate::key_event#0==(const byte) KEY_Z) goto play_move_rotate::@1
-Simple Condition (bool~) play_move_rotate::$1 [826] if((byte) play_move_rotate::key_event#0==(const byte) KEY_X) goto play_move_rotate::@2
-Simple Condition (bool~) play_move_rotate::$4 [848] if((byte~) play_move_rotate::$2!=(const byte) COLLISION_NONE) goto play_move_rotate::@5
-Simple Condition (bool~) play_collision::$2 [871] if(*((byte*) play_collision::piece_gfx#0 + (byte) play_collision::i#2)==(byte) 0) goto play_collision::@3
-Simple Condition (bool~) play_collision::$12 [876] if((byte) play_collision::c#1!=rangelast(0,3)) goto play_collision::@2
-Simple Condition (bool~) play_collision::$4 [880] if((byte) play_collision::yp#2<(const byte) PLAYFIELD_LINES) goto play_collision::@4
-Simple Condition (bool~) play_collision::$7 [885] if((byte~) play_collision::$5==(byte) 0) goto play_collision::@5
-Simple Condition (bool~) play_collision::$9 [893] if((byte) play_collision::xp#2<(const byte) PLAYFIELD_COLS) goto play_collision::@6
-Simple Condition (bool~) play_collision::$11 [898] if(*((byte*) play_collision::playfield_line#0 + (byte) play_collision::xp#2)==(byte) 0) goto play_collision::@3
-Simple Condition (bool~) play_collision::$13 [905] if((byte) play_collision::l#1!=rangelast(0,3)) goto play_collision::@1
-Simple Condition (bool~) play_lock_current::$1 [920] if(*((byte*) current_piece_gfx#13 + (byte) play_lock_current::i#2)==(byte) 0) goto play_lock_current::@3
-Simple Condition (bool~) play_lock_current::$2 [925] if((byte) play_lock_current::c#1!=rangelast(0,3)) goto play_lock_current::@2
-Simple Condition (bool~) play_lock_current::$3 [932] if((byte) play_lock_current::l#1!=rangelast(0,3)) goto play_lock_current::@1
-Simple Condition (bool~) play_spawn_current::$3 [953] if((byte~) play_spawn_current::$1!=(const byte) COLLISION_PLAYFIELD) goto play_spawn_current::@1
-Simple Condition (bool~) play_spawn_current::$4 [960] if((byte) play_spawn_current::piece_idx#2==(byte) 7) goto play_spawn_current::sid_rnd1
-Simple Condition (bool~) play_remove_lines::$1 [993] if((byte) play_remove_lines::c#0!=(byte) 0) goto play_remove_lines::@3
-Simple Condition (bool~) play_remove_lines::$2 [999] if((byte) play_remove_lines::x#1!=rangelast(0,PLAYFIELD_COLS-1)) goto play_remove_lines::@2
-Simple Condition (bool~) play_remove_lines::$4 [1005] if((byte) play_remove_lines::full#2!=(byte) 1) goto play_remove_lines::@7
-Simple Condition (bool~) play_remove_lines::$6 [1009] if((byte) play_remove_lines::y#1!=rangelast(0,PLAYFIELD_LINES-1)) goto play_remove_lines::@1
-Simple Condition (bool~) play_remove_lines::$7 [1016] if((byte) play_remove_lines::w#6!=(byte) $ff) goto play_remove_lines::@10
-Simple Condition (bool~) play_update_score::$1 [1028] if((byte) play_update_score::removed#0==(byte) 0) goto play_update_score::@return
-Simple Condition (bool~) play_update_score::$7 [1044] if((byte) play_update_score::lines_before#0==(byte) play_update_score::lines_after#0) goto play_update_score::@return
-Simple Condition (bool~) play_increase_level::$0 [1061] if((byte) level#21>(byte) $1d) goto play_increase_level::@1
-Simple Condition (bool~) play_increase_level::$3 [1071] if((byte~) play_increase_level::$1!=(byte) $a) goto play_increase_level::@3
-Simple Condition (bool~) play_increase_level::$4 [1082] if((byte) play_increase_level::b#1!=rangelast(0,4)) goto play_increase_level::@7
-Simple Condition (bool~) main::$10 [1135] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4
-Simple Condition (bool~) main::$14 [1152] if((byte) game_over#10==(byte) 0) goto main::@11
-Simple Condition (bool~) main::$18 [1181] if((byte) main::render#2==(byte) 0) goto main::@1
+Simple Condition (bool~) play_init::$0 [596] if((byte) play_init::j#1!=rangelast(0,PLAYFIELD_LINES-1)) goto play_init::@1
+Simple Condition (bool~) play_init::$1 [606] if((byte) play_init::b#1!=rangelast(0,4)) goto play_init::@3
+Simple Condition (bool~) play_movement::$2 [634] if((byte) game_over#15==(byte) 0) goto play_movement::@1
+Simple Condition (bool~) play_move_down::$1 [676] if((byte) play_move_down::key_event#0!=(const byte) KEY_SPACE) goto play_move_down::@1
+Simple Condition (bool~) play_move_down::$4 [685] if((byte~) play_move_down::$2==(byte) 0) goto play_move_down::@2
+Simple Condition (bool~) play_move_down::$6 [691] if((byte) current_movedown_counter#12<(byte) current_movedown_slow#14) goto play_move_down::@3
+Simple Condition (bool~) play_move_down::$10 [695] if((byte) current_movedown_counter#12<(const byte) current_movedown_fast) goto play_move_down::@2
+Simple Condition (bool~) play_move_down::$8 [701] if((byte) play_move_down::movedown#6==(byte) 0) goto play_move_down::@4
+Simple Condition (bool~) play_move_down::$13 [716] if((byte~) play_move_down::$12==(const byte) COLLISION_NONE) goto play_move_down::@14
+Simple Condition (bool~) play_move_leftright::$0 [767] if((byte) play_move_leftright::key_event#0==(const byte) KEY_COMMA) goto play_move_leftright::@1
+Simple Condition (bool~) play_move_leftright::$10 [779] if((byte~) play_move_leftright::$8!=(const byte) COLLISION_NONE) goto play_move_leftright::@3
+Simple Condition (bool~) play_move_leftright::$2 [783] if((byte) play_move_leftright::key_event#0!=(const byte) KEY_DOT) goto play_move_leftright::@3
+Simple Condition (bool~) play_move_leftright::$6 [795] if((byte~) play_move_leftright::$4!=(const byte) COLLISION_NONE) goto play_move_leftright::@3
+Simple Condition (bool~) play_move_rotate::$0 [811] if((byte) play_move_rotate::key_event#0==(const byte) KEY_Z) goto play_move_rotate::@1
+Simple Condition (bool~) play_move_rotate::$1 [818] if((byte) play_move_rotate::key_event#0==(const byte) KEY_X) goto play_move_rotate::@2
+Simple Condition (bool~) play_move_rotate::$4 [840] if((byte~) play_move_rotate::$2!=(const byte) COLLISION_NONE) goto play_move_rotate::@5
+Simple Condition (bool~) play_collision::$2 [863] if(*((byte*) play_collision::piece_gfx#0 + (byte) play_collision::i#2)==(byte) 0) goto play_collision::@3
+Simple Condition (bool~) play_collision::$12 [868] if((byte) play_collision::c#1!=rangelast(0,3)) goto play_collision::@2
+Simple Condition (bool~) play_collision::$4 [872] if((byte) play_collision::yp#2<(const byte) PLAYFIELD_LINES) goto play_collision::@4
+Simple Condition (bool~) play_collision::$7 [877] if((byte~) play_collision::$5==(byte) 0) goto play_collision::@5
+Simple Condition (bool~) play_collision::$9 [885] if((byte) play_collision::xp#2<(const byte) PLAYFIELD_COLS) goto play_collision::@6
+Simple Condition (bool~) play_collision::$11 [890] if(*((byte*) play_collision::playfield_line#0 + (byte) play_collision::xp#2)==(byte) 0) goto play_collision::@3
+Simple Condition (bool~) play_collision::$13 [897] if((byte) play_collision::l#1!=rangelast(0,3)) goto play_collision::@1
+Simple Condition (bool~) play_lock_current::$1 [912] if(*((byte*) current_piece_gfx#13 + (byte) play_lock_current::i#2)==(byte) 0) goto play_lock_current::@3
+Simple Condition (bool~) play_lock_current::$2 [917] if((byte) play_lock_current::c#1!=rangelast(0,3)) goto play_lock_current::@2
+Simple Condition (bool~) play_lock_current::$3 [924] if((byte) play_lock_current::l#1!=rangelast(0,3)) goto play_lock_current::@1
+Simple Condition (bool~) play_spawn_current::$3 [945] if((byte~) play_spawn_current::$1!=(const byte) COLLISION_PLAYFIELD) goto play_spawn_current::@1
+Simple Condition (bool~) play_spawn_current::$4 [952] if((byte) play_spawn_current::piece_idx#2==(byte) 7) goto play_spawn_current::sid_rnd1
+Simple Condition (bool~) play_remove_lines::$1 [985] if((byte) play_remove_lines::c#0!=(byte) 0) goto play_remove_lines::@3
+Simple Condition (bool~) play_remove_lines::$2 [991] if((byte) play_remove_lines::x#1!=rangelast(0,PLAYFIELD_COLS-1)) goto play_remove_lines::@2
+Simple Condition (bool~) play_remove_lines::$4 [997] if((byte) play_remove_lines::full#2!=(byte) 1) goto play_remove_lines::@7
+Simple Condition (bool~) play_remove_lines::$6 [1001] if((byte) play_remove_lines::y#1!=rangelast(0,PLAYFIELD_LINES-1)) goto play_remove_lines::@1
+Simple Condition (bool~) play_remove_lines::$7 [1008] if((byte) play_remove_lines::w#6!=(byte) $ff) goto play_remove_lines::@10
+Simple Condition (bool~) play_update_score::$1 [1020] if((byte) play_update_score::removed#0==(byte) 0) goto play_update_score::@return
+Simple Condition (bool~) play_update_score::$7 [1036] if((byte) play_update_score::lines_before#0==(byte) play_update_score::lines_after#0) goto play_update_score::@return
+Simple Condition (bool~) play_increase_level::$0 [1053] if((byte) level#21>(byte) $1d) goto play_increase_level::@1
+Simple Condition (bool~) play_increase_level::$3 [1063] if((byte~) play_increase_level::$1!=(byte) $a) goto play_increase_level::@3
+Simple Condition (bool~) play_increase_level::$4 [1074] if((byte) play_increase_level::b#1!=rangelast(0,4)) goto play_increase_level::@7
+Simple Condition (bool~) main::$10 [1127] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4
+Simple Condition (bool~) main::$14 [1144] if((byte) game_over#10==(byte) 0) goto main::@11
+Simple Condition (bool~) main::$18 [1173] if((byte) main::render#2==(byte) 0) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [8] (byte[8]) keyboard_events ← { fill( 8, 0) }
 Constant right-side identified [11] (byte[8]) keyboard_scan_values ← { fill( 8, 0) }
@@ -9080,16 +9051,9 @@ Constant right-side identified [426] (byte*) render_next::screen_next_area#1 ←
 Constant right-side identified [429] (byte*) render_next::screen_next_area#2 ← (const byte*) PLAYFIELD_SCREEN_2 + (const word) render_next::next_area_offset
 Constant right-side identified [464] (byte) sprites_init::xpos#0 ← (unumber)(number) $18+(number) $f*(number) 8
 Constant right-side identified [502] (void()*~) sprites_irq_init::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
-Constant right-side identified [576] (word~) $2 ← (word)(const byte[4*4*4]) PIECE_T
-Constant right-side identified [577] (word~) $3 ← (word)(const byte[4*4*4]) PIECE_S
-Constant right-side identified [578] (word~) $4 ← (word)(const byte[4*4*4]) PIECE_Z
-Constant right-side identified [579] (word~) $5 ← (word)(const byte[4*4*4]) PIECE_J
-Constant right-side identified [580] (word~) $6 ← (word)(const byte[4*4*4]) PIECE_O
-Constant right-side identified [581] (word~) $7 ← (word)(const byte[4*4*4]) PIECE_I
-Constant right-side identified [582] (word~) $8 ← (word)(const byte[4*4*4]) PIECE_L
-Constant right-side identified [584] (byte*[PLAYFIELD_LINES]) playfield_lines ← { fill( PLAYFIELD_LINES, 0) }
-Constant right-side identified [585] (byte[PLAYFIELD_LINES+1]) playfield_lines_idx ← { fill( PLAYFIELD_LINES+1, 0) }
-Constant right-side identified [591] (dword[5]) score_add_bcd ← { fill( 5, 0) }
+Constant right-side identified [576] (byte*[PLAYFIELD_LINES]) playfield_lines ← { fill( PLAYFIELD_LINES, 0) }
+Constant right-side identified [577] (byte[PLAYFIELD_LINES+1]) playfield_lines_idx ← { fill( PLAYFIELD_LINES+1, 0) }
+Constant right-side identified [583] (dword[5]) score_add_bcd ← { fill( 5, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte[8]) keyboard_events = { fill( 8, 0) }
 Constant (const byte) keyboard_events_size#0 = 0
@@ -9167,13 +9131,6 @@ Constant (const byte) sprites_init::s#0 = 0
 Constant (const byte*) toSpritePtr1_sprite#0 = PLAYFIELD_SPRITES
 Constant (const void()*) sprites_irq_init::$0 = &sprites_irq
 Constant (const byte*) sprites_irq::toSpritePtr2_sprite#0 = PLAYFIELD_SPRITES
-Constant (const word) $2 = (word)PIECE_T
-Constant (const word) $3 = (word)PIECE_S
-Constant (const word) $4 = (word)PIECE_Z
-Constant (const word) $5 = (word)PIECE_J
-Constant (const word) $6 = (word)PIECE_O
-Constant (const word) $7 = (word)PIECE_I
-Constant (const word) $8 = (word)PIECE_L
 Constant (const byte*[PLAYFIELD_LINES]) playfield_lines = { fill( PLAYFIELD_LINES, 0) }
 Constant (const byte[PLAYFIELD_LINES+1]) playfield_lines_idx = { fill( PLAYFIELD_LINES+1, 0) }
 Constant (const byte) next_piece_idx#0 = 0
@@ -9234,7 +9191,7 @@ Constant (const word) sprites_irq::toSpritePtr2_$0 = (word)sprites_irq::toSprite
 Constant (const byte*) play_init::pli#0 = playfield
 Constant (const byte) play_collision::orientation#4 = current_orientation#68
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [1132] if(true) goto main::@4
+if() condition always true - replacing block destination [1124] if(true) goto main::@4
 Removing PHI-reference to removed block (main::@12) in block main::@19
 Removing PHI-reference to removed block (main::@12) in block main::@19
 Removing PHI-reference to removed block (main::@12) in block main::@19
@@ -9250,7 +9207,7 @@ Removing PHI-reference to removed block (main::@12) in block main::@19
 Removing PHI-reference to removed block (main::@12) in block main::@19
 Removing PHI-reference to removed block (main::@12) in block main::@19
 Removing PHI-reference to removed block (main::@12) in block main::@19
-if() condition always true - replacing block destination [1175] if(true) goto main::@13
+if() condition always true - replacing block destination [1167] if(true) goto main::@13
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [30] keyboard_event_scan::row#1 ← ++ keyboard_event_scan::row#2 to ++
 Resolved ranged comparison value [32] if(keyboard_event_scan::row#1!=rangelast(0,7)) goto keyboard_event_scan::@8 to (number) 8
@@ -9274,26 +9231,26 @@ Resolved ranged next value [454] render_next::l#1 ← ++ render_next::l#7 to ++
 Resolved ranged comparison value [456] if(render_next::l#1!=rangelast(0,3)) goto render_next::@5 to (number) 4
 Resolved ranged next value [473] sprites_init::s#1 ← ++ sprites_init::s#2 to ++
 Resolved ranged comparison value [475] if(sprites_init::s#1!=rangelast(0,3)) goto sprites_init::@1 to (number) 4
-Resolved ranged next value [602] play_init::j#1 ← ++ play_init::j#2 to ++
-Resolved ranged comparison value [604] if(play_init::j#1!=rangelast(0,PLAYFIELD_LINES-1)) goto play_init::@1 to (const byte) PLAYFIELD_LINES-(byte) 1+(number) 1
-Resolved ranged next value [612] play_init::b#1 ← ++ play_init::b#2 to ++
-Resolved ranged comparison value [614] if(play_init::b#1!=rangelast(0,4)) goto play_init::@3 to (number) 5
-Resolved ranged next value [874] play_collision::c#1 ← ++ play_collision::c#2 to ++
-Resolved ranged comparison value [876] if(play_collision::c#1!=rangelast(0,3)) goto play_collision::@2 to (number) 4
-Resolved ranged next value [903] play_collision::l#1 ← ++ play_collision::l#6 to ++
-Resolved ranged comparison value [905] if(play_collision::l#1!=rangelast(0,3)) goto play_collision::@1 to (number) 4
-Resolved ranged next value [923] play_lock_current::c#1 ← ++ play_lock_current::c#2 to ++
-Resolved ranged comparison value [925] if(play_lock_current::c#1!=rangelast(0,3)) goto play_lock_current::@2 to (number) 4
-Resolved ranged next value [930] play_lock_current::l#1 ← ++ play_lock_current::l#6 to ++
-Resolved ranged comparison value [932] if(play_lock_current::l#1!=rangelast(0,3)) goto play_lock_current::@1 to (number) 4
-Resolved ranged next value [997] play_remove_lines::x#1 ← ++ play_remove_lines::x#2 to ++
-Resolved ranged comparison value [999] if(play_remove_lines::x#1!=rangelast(0,PLAYFIELD_COLS-1)) goto play_remove_lines::@2 to (const byte) PLAYFIELD_COLS-(byte) 1+(number) 1
-Resolved ranged next value [1007] play_remove_lines::y#1 ← ++ play_remove_lines::y#8 to ++
-Resolved ranged comparison value [1009] if(play_remove_lines::y#1!=rangelast(0,PLAYFIELD_LINES-1)) goto play_remove_lines::@1 to (const byte) PLAYFIELD_LINES-(byte) 1+(number) 1
-Resolved ranged next value [1080] play_increase_level::b#1 ← ++ play_increase_level::b#2 to ++
-Resolved ranged comparison value [1082] if(play_increase_level::b#1!=rangelast(0,4)) goto play_increase_level::@7 to (number) 5
+Resolved ranged next value [594] play_init::j#1 ← ++ play_init::j#2 to ++
+Resolved ranged comparison value [596] if(play_init::j#1!=rangelast(0,PLAYFIELD_LINES-1)) goto play_init::@1 to (const byte) PLAYFIELD_LINES-(byte) 1+(number) 1
+Resolved ranged next value [604] play_init::b#1 ← ++ play_init::b#2 to ++
+Resolved ranged comparison value [606] if(play_init::b#1!=rangelast(0,4)) goto play_init::@3 to (number) 5
+Resolved ranged next value [866] play_collision::c#1 ← ++ play_collision::c#2 to ++
+Resolved ranged comparison value [868] if(play_collision::c#1!=rangelast(0,3)) goto play_collision::@2 to (number) 4
+Resolved ranged next value [895] play_collision::l#1 ← ++ play_collision::l#6 to ++
+Resolved ranged comparison value [897] if(play_collision::l#1!=rangelast(0,3)) goto play_collision::@1 to (number) 4
+Resolved ranged next value [915] play_lock_current::c#1 ← ++ play_lock_current::c#2 to ++
+Resolved ranged comparison value [917] if(play_lock_current::c#1!=rangelast(0,3)) goto play_lock_current::@2 to (number) 4
+Resolved ranged next value [922] play_lock_current::l#1 ← ++ play_lock_current::l#6 to ++
+Resolved ranged comparison value [924] if(play_lock_current::l#1!=rangelast(0,3)) goto play_lock_current::@1 to (number) 4
+Resolved ranged next value [989] play_remove_lines::x#1 ← ++ play_remove_lines::x#2 to ++
+Resolved ranged comparison value [991] if(play_remove_lines::x#1!=rangelast(0,PLAYFIELD_COLS-1)) goto play_remove_lines::@2 to (const byte) PLAYFIELD_COLS-(byte) 1+(number) 1
+Resolved ranged next value [999] play_remove_lines::y#1 ← ++ play_remove_lines::y#8 to ++
+Resolved ranged comparison value [1001] if(play_remove_lines::y#1!=rangelast(0,PLAYFIELD_LINES-1)) goto play_remove_lines::@1 to (const byte) PLAYFIELD_LINES-(byte) 1+(number) 1
+Resolved ranged next value [1072] play_increase_level::b#1 ← ++ play_increase_level::b#2 to ++
+Resolved ranged comparison value [1074] if(play_increase_level::b#1!=rangelast(0,4)) goto play_increase_level::@7 to (number) 5
 Rewriting conditional comparison [393] if((byte) render_moving::ypos#2>(byte) 1) goto render_moving::@2
-Rewriting conditional comparison [1061] if((byte) level#21>(byte) $1d) goto play_increase_level::@1
+Rewriting conditional comparison [1053] if((byte) level#21>(byte) $1d) goto play_increase_level::@1
 Simplifying expression containing zero KEY_MODIFIER_LSHIFT in [82] (byte) keyboard_modifiers#2 ← (const byte) keyboard_modifiers#1 | (const byte) KEY_MODIFIER_LSHIFT
 Simplifying expression containing zero PIECES_COLORS_1 in [176] *((const byte*) BGCOL2) ← *((const byte[]) PIECES_COLORS_1 + (byte) 0)
 Simplifying expression containing zero PIECES_COLORS_2 in [177] *((const byte*) BGCOL3) ← *((const byte[]) PIECES_COLORS_2 + (byte) 0)
@@ -9301,9 +9258,9 @@ Simplifying expression containing zero render_score::score_bytes#0 in [287] (byt
 Simplifying expression containing zero SPRITES_YPOS in [509] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) sprites_irq::ypos#0
 Simplifying expression containing zero PLAYFIELD_SPRITE_PTRS_1 in [523] *((const byte*) PLAYFIELD_SPRITE_PTRS_1 + (byte) 0) ← (byte) sprites_irq::ptr#0
 Simplifying expression containing zero PLAYFIELD_SPRITE_PTRS_2 in [530] *((const byte*) PLAYFIELD_SPRITE_PTRS_2 + (byte) 0) ← (byte) sprites_irq::ptr#0
-Simplifying expression containing zero MOVEDOWN_SLOW_SPEEDS in [607] (byte) current_movedown_slow#1 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS + (const byte) level#0)
-Simplifying expression containing zero play_movement::$0 in [639] (byte) play_movement::render#1 ← (const byte) play_movement::render#0 + (byte~) play_movement::$0
-Simplifying expression containing zero current_piece#5 in [940] (byte*) current_piece_gfx#74 ← (byte*) current_piece#5 + (const byte) current_orientation#68
+Simplifying expression containing zero MOVEDOWN_SLOW_SPEEDS in [599] (byte) current_movedown_slow#1 ← *((const byte[]) MOVEDOWN_SLOW_SPEEDS + (const byte) level#0)
+Simplifying expression containing zero play_movement::$0 in [631] (byte) play_movement::render#1 ← (const byte) play_movement::render#0 + (byte~) play_movement::$0
+Simplifying expression containing zero current_piece#5 in [932] (byte*) current_piece_gfx#74 ← (byte*) current_piece#5 + (const byte) current_orientation#68
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*) render_bcd::screen_pos#1 and assignment [150] (byte*) render_bcd::screen_pos#1 ← ++ (byte*) render_bcd::screen_pos#3
 Eliminating unused variable - keeping the phi block (byte) keyboard_modifiers#16
@@ -9467,10 +9424,8 @@ Constant right-side identified [101] (word~) render_show::toD0182_$1 ← (const 
 Constant right-side identified [104] (byte~) render_show::toD0182_$5 ← > (const word) render_show::toD0182_$4
 Constant right-side identified [250] (word~) toSpritePtr1_$1 ← (const word) toSpritePtr1_$0 / (byte) $40
 Constant right-side identified [294] (word~) sprites_irq::toSpritePtr2_$1 ← (const word) sprites_irq::toSpritePtr2_$0 / (byte) $40
-Constant right-side identified [354] (byte) play_move_down::movedown#1 ← ++ (const byte) play_move_down::movedown#0
+Constant right-side identified [353] (byte) play_move_down::movedown#1 ← ++ (const byte) play_move_down::movedown#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (word[]) { (const word) $2, (const word) $3, (const word) $4, (const word) $5, (const word) $6, (const word) $7, (const word) $8 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
 Constant (const byte) render_init::vicSelectGfxBank1_toDd001_$1 = >render_init::vicSelectGfxBank1_toDd001_$0
 Constant (const word) render_show::toD0181_$1 = render_show::toD0181_$0&$3fff
 Constant (const byte) render_show::toD0181_$5 = >render_show::toD0181_$4
@@ -9478,7 +9433,6 @@ Constant (const word) render_show::toD0182_$1 = render_show::toD0182_$0&$3fff
 Constant (const byte) render_show::toD0182_$5 = >render_show::toD0182_$4
 Constant (const word) toSpritePtr1_$1 = toSpritePtr1_$0/$40
 Constant (const word) sprites_irq::toSpritePtr2_$1 = sprites_irq::toSpritePtr2_$0/$40
-Constant (const word[]) PIECES = { $2, $3, $4, $5, $6, $7, $8 }
 Constant (const byte) play_move_down::movedown#1 = ++play_move_down::movedown#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) toSpritePtr1_return#0 = (byte)toSpritePtr1_$1
@@ -9719,15 +9673,8 @@ Constant inlined play_remove_lines::r#0 = (const byte) PLAYFIELD_LINES*(const by
 Constant inlined render_screen_render#1 = (byte) $20
 Constant inlined sprites_init::xpos#0 = (byte)(number) $18+(number) $f*(number) 8
 Constant inlined $1 = (const byte) toSpritePtr1_return#0+(byte) 3
-Constant inlined $2 = (word)(const byte[4*4*4]) PIECE_T
-Constant inlined $3 = (word)(const byte[4*4*4]) PIECE_S
 Constant inlined play_lock_current::l#0 = (byte) 0
-Constant inlined $4 = (word)(const byte[4*4*4]) PIECE_Z
-Constant inlined $5 = (word)(const byte[4*4*4]) PIECE_J
 Constant inlined render_show::toD0181_gfx#0 = (const byte*) PLAYFIELD_CHARSET
-Constant inlined $6 = (word)(const byte[4*4*4]) PIECE_O
-Constant inlined $7 = (word)(const byte[4*4*4]) PIECE_I
-Constant inlined $8 = (word)(const byte[4*4*4]) PIECE_L
 Constant inlined render_playfield::c#0 = (byte) 0
 Constant inlined play_spawn_current::piece_idx#0 = (byte) 7
 Constant inlined play_remove_lines::removed#0 = (byte) 0
@@ -13539,9 +13486,9 @@ render_screen_swap: {
   // render_score
 // Show the current score
 render_score: {
-    .const score_offset = $e4
-    .const lines_offset = $3e
-    .const level_offset = $317
+    .const score_offset = $28*5+$1c
+    .const lines_offset = $28*1+$16
+    .const level_offset = $28*$13+$1f
     .label score_bytes = score_bcd
     .label screen = 6
     // [75] if((byte) render_screen_render#18==(byte) 0) goto render_score::@1 -- vbuz1_eq_0_then_la1 
@@ -13806,7 +13753,7 @@ render_bcd: {
 // Render the next tetromino in the "next" area
 render_next: {
     // Find the screen area
-    .const next_area_offset = $1fc
+    .const next_area_offset = $28*$c+$18+4
     .label __6 = $83
     .label next_piece_char = $84
     .label cell = $85
@@ -16823,6 +16770,8 @@ sprites_irq: {
   // The I-piece
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
+  // The different pieces
+  PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
   // The chars to use for the different pieces - when inside the playing area
   PIECES_CHARS: .byte $65, $66, $a6, $66, $65, $65, $a6
   // The chars to use for the different pieces - when outside the playing area (eg. the next area).
@@ -16856,8 +16805,6 @@ sprites_irq: {
   // Score values for removing 0-4 lines (in BCD)
   // These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
-  // The different pieces
-  PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset
     .import binary "playfield-screen.imap"
@@ -18632,9 +18579,9 @@ render_screen_swap: {
   // render_score
 // Show the current score
 render_score: {
-    .const score_offset = $e4
-    .const lines_offset = $3e
-    .const level_offset = $317
+    .const score_offset = $28*5+$1c
+    .const lines_offset = $28*1+$16
+    .const level_offset = $28*$13+$1f
     .label score_bytes = score_bcd
     .label screen = $24
     // [75] if((byte) render_screen_render#18==(byte) 0) goto render_score::@1 -- vbuz1_eq_0_then_la1 
@@ -18852,7 +18799,7 @@ render_bcd: {
 // Render the next tetromino in the "next" area
 render_next: {
     // Find the screen area
-    .const next_area_offset = $1fc
+    .const next_area_offset = $28*$c+$18+4
     .label next_piece_char = $21
     .label next_piece_gfx = $24
     .label screen_next_area = $22
@@ -21553,6 +21500,8 @@ sprites_irq: {
   // The I-piece
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
+  // The different pieces
+  PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
   // The chars to use for the different pieces - when inside the playing area
   PIECES_CHARS: .byte $65, $66, $a6, $66, $65, $65, $a6
   // The chars to use for the different pieces - when outside the playing area (eg. the next area).
@@ -21586,8 +21535,6 @@ sprites_irq: {
   // Score values for removing 0-4 lines (in BCD)
   // These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
-  // The different pieces
-  PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset
     .import binary "playfield-screen.imap"
@@ -23017,7 +22964,7 @@ FINAL SYMBOL TABLE
 (byte) render_next::l
 (byte) render_next::l#1 l zp[1]:13 151.5
 (byte) render_next::l#7 l zp[1]:13 18.363636363636363
-(const word) render_next::next_area_offset = (word) $1fc
+(const word) render_next::next_area_offset = (word)(number) $28*(number) $c+(number) $18+(number) 4
 (byte) render_next::next_piece_char
 (byte) render_next::next_piece_char#0 next_piece_char zp[1]:33 66.86666666666667
 (byte*) render_next::next_piece_gfx
@@ -23061,11 +23008,11 @@ FINAL SYMBOL TABLE
 (label) render_score::@6
 (label) render_score::@7
 (label) render_score::@return
-(const word) render_score::level_offset = (word) $317
-(const word) render_score::lines_offset = (word) $3e
+(const word) render_score::level_offset = (word)(number) $28*(number) $13+(number) $1f
+(const word) render_score::lines_offset = (word)(number) $28*(number) 1+(number) $16
 (byte*) render_score::score_bytes
 (const byte*) render_score::score_bytes#0 score_bytes = (byte*)&(dword) score_bcd#14
-(const word) render_score::score_offset = (word) $e4
+(const word) render_score::score_offset = (word)(number) $28*(number) 5+(number) $1c
 (byte*) render_score::screen
 (byte*) render_score::screen#3 screen zp[2]:36 0.75
 (void()) render_screen_original((byte*) render_screen_original::screen)
@@ -23843,9 +23790,9 @@ render_screen_swap: {
   // render_score
 // Show the current score
 render_score: {
-    .const score_offset = $e4
-    .const lines_offset = $3e
-    .const level_offset = $317
+    .const score_offset = $28*5+$1c
+    .const lines_offset = $28*1+$16
+    .const level_offset = $28*$13+$1f
     .label score_bytes = score_bcd
     .label screen = $24
     // if(render_screen_render==0)
@@ -24051,7 +23998,7 @@ render_bcd: {
 // Render the next tetromino in the "next" area
 render_next: {
     // Find the screen area
-    .const next_area_offset = $1fc
+    .const next_area_offset = $28*$c+$18+4
     .label next_piece_char = $21
     .label next_piece_gfx = $24
     .label screen_next_area = $22
@@ -26644,6 +26591,8 @@ sprites_irq: {
   // The I-piece
   .align $40
   PIECE_I: .byte 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0
+  // The different pieces
+  PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
   // The chars to use for the different pieces - when inside the playing area
   PIECES_CHARS: .byte $65, $66, $a6, $66, $65, $65, $a6
   // The chars to use for the different pieces - when outside the playing area (eg. the next area).
@@ -26677,8 +26626,6 @@ sprites_irq: {
   // Score values for removing 0-4 lines (in BCD)
   // These values are updated based on the players level and the base values from SCORE_BASE_BCD
   score_add_bcd: .fill 4*5, 0
-  // The different pieces
-  PIECES: .word PIECE_T, PIECE_S, PIECE_Z, PIECE_J, PIECE_O, PIECE_I, PIECE_L
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset
     .import binary "playfield-screen.imap"

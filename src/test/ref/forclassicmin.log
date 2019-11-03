@@ -1,3 +1,4 @@
+Identified constant variable (byte*) SCREEN
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
@@ -5,32 +6,26 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*~) $0 ← ((byte*)) (number) $400
-  (byte*) SCREEN#0 ← (byte*~) $0
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) SCREEN#3 ← phi( @1/(byte*) SCREEN#4 )
   (byte) main::i#0 ← (number) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) SCREEN#2 ← phi( main/(byte*) SCREEN#3 main::@2/(byte*) SCREEN#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
   (bool~) main::$0 ← (byte) main::i#2 != (number) $64
   if((bool~) main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte*) SCREEN#1 ← phi( main::@1/(byte*) SCREEN#2 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) SCREEN#1 + (byte) main::i#3) ← (byte) main::i#3
+  *((const byte*) SCREEN + (byte) main::i#3) ← (byte) main::i#3
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) SCREEN#4 ← phi( @begin/(byte*) SCREEN#0 )
   call main 
   to:@2
 @2: scope:[]  from @1
@@ -38,17 +33,11 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(byte*~) $0
 (label) @1
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte*) SCREEN#0
-(byte*) SCREEN#1
-(byte*) SCREEN#2
-(byte*) SCREEN#3
-(byte*) SCREEN#4
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -63,7 +52,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) $64 in (bool~) main::$0 ← (byte) main::i#2 != (number) $64
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) $0 ← (byte*)(number) $400
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -73,16 +61,10 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $64
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte*) SCREEN#0 = (byte*~) $0 (byte*) SCREEN#4 
 Alias (byte) main::i#2 = (byte) main::i#3 
-Alias (byte*) SCREEN#1 = (byte*) SCREEN#2 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) SCREEN#3 (byte*) SCREEN#0
-Identical Phi Values (byte*) SCREEN#1 (byte*) SCREEN#3
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [6] if((byte) main::i#2!=(byte) $64) goto main::@2
+Simple Condition (bool~) main::$0 [3] if((byte) main::i#2!=(byte) $64) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN#0 = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
@@ -128,13 +110,12 @@ main::@return: scope:[main]  from main::@1
   [7] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2
+  [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) SCREEN
 (void()) main()
 (byte) main::i
 (byte) main::i#1 22.0
@@ -194,7 +175,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta SCREEN,y
@@ -261,7 +242,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -300,8 +281,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(const byte*) SCREEN#0 SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -349,7 +329,7 @@ main: {
     // main::@2
   __b2:
     // SCREEN[i] = i
-    // [8] *((const byte*) SCREEN#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // for(byte i=0; i!=100; i++)

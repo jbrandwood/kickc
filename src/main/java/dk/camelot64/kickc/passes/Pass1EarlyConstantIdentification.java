@@ -35,7 +35,6 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
    public boolean step() {
       HashMap<SymbolRef, RValue> aliases = new HashMap<>();
       List<Statement> removeStmt = new ArrayList<>();
-      Collection<SymbolVariableRef> earlyConstants = new ArrayList<>();
       for(Variable variable : getProgram().getScope().getAllVariables(true)) {
          SymbolVariableRef variableRef = variable.getRef();
          if(!variable.isDeclaredConst() && !variable.isVolatile() && !variableRef.isIntermediate()) {
@@ -53,15 +52,11 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
                      StatementAssignment assign = (StatementAssignment) assignment;
                      if(assign.getrValue1() == null && assign.getOperator() == null && assign.getrValue2() instanceof ConstantValue) {
                         getLog().append("Identified constant variable " + variable.toString(getProgram()));
-                        earlyConstants.add(variableRef);
-                        //variable.setKind(Variable.Kind.CONSTANT);
                         ConstantValue constantValue = (ConstantValue) assign.getrValue2();
                         convertToConst(variable, constantValue, assign, aliases);
                         removeStmt.add(assign);
                      } else if(assign.getrValue1() == null && assign.getOperator() instanceof OperatorCastPtr && assign.getrValue2() instanceof ConstantValue) {
                         getLog().append("Identified constant variable " + variable.toString(getProgram()));
-                        earlyConstants.add(variableRef);
-                        variable.setKind(Variable.Kind.CONSTANT);
                         ConstantValue constantValue = new ConstantCastValue(((OperatorCastPtr) assign.getOperator()).getToType(), (ConstantValue) assign.getrValue2());
                         convertToConst(variable, constantValue, assign, aliases);
                         removeStmt.add(assign);
@@ -77,7 +72,6 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
       }
       // Replace all variable refs with constant refs
       ProgramValueIterator.execute(getProgram(), new AliasReplacer(aliases));
-      getProgram().setEarlyIdentifiedConstants(earlyConstants);
       return false;
    }
 

@@ -1406,12 +1406,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(lValue.isDeclaredConst() && rValue instanceof ForwardVariableRef) {
          throw new CompileError("Variable used before being defined " + rValue.toString(), statementSource);
       }
-      /*
-      if(lValue.isDeclaredConst() && !(rValue instanceof ConstantValue)) {
+/*      if(lValue.isDeclaredConst() && !(rValue instanceof ConstantValue)) {
          throw new InternalError("RValue is not constant!");
       }
-      */
-
+ */
       if(lValue.isDeclaredConst() && rValue instanceof ConstantValue) {
          Scope scope = lValue.getScope();
          ConstantValue constantValue = (ConstantValue) rValue;

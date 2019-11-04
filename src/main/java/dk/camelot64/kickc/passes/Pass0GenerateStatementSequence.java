@@ -2018,6 +2018,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // Special handling of negative literal number
       if(child instanceof ConstantInteger && operator.equals(Operators.NEG)) {
          return new ConstantInteger(-((ConstantInteger) child).getInteger(), ((ConstantInteger) child).getType());
+      } else if(operator.equals(Operators.ADDRESS_OF) && child instanceof SymbolRef) {
+         return new ConstantSymbolPointer((SymbolRef) child);
       } else if(child instanceof ConstantValue) {
          return new ConstantUnary((OperatorUnary) operator, (ConstantValue) child);
       } else {

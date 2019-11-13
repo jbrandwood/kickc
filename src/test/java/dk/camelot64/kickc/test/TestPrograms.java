@@ -2710,8 +2710,7 @@ public class TestPrograms {
 
    @Test
    public void testAddressOf1() throws IOException, URISyntaxException {
-      compileAndCompare("address-of-1", log().verboseCreateSsa());
-      fail("Address-of-not detected!");
+      compileAndCompare("address-of-1");
    }
 
    @Test

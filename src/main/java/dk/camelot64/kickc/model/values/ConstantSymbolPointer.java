@@ -9,6 +9,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
+import java.util.Collection;
 import java.util.Objects;
 
 /** A pointer to a symbol (variable or procedure) */
@@ -42,6 +43,18 @@ public class ConstantSymbolPointer implements ConstantValue {
       if(symbol instanceof Variable) {
          Variable variable = (Variable) symbol;
          if(variable.isVariable()) {
+
+            // Hacky solution to get a version that has an allocation
+            if(variable.isKindPhiMaster()) {
+               Collection<Variable> versions = variable.getScope().getVersions(variable);
+               for(Variable version : versions) {
+                  if(variable.isVariable())
+                     variable = version;
+                     break;
+               }
+            }
+
+
             Registers.Register allocation = variable.getAllocation();
             if(allocation != null && Registers.RegisterType.ZP_MEM.equals(allocation.getType())) {
                int zp = ((Registers.RegisterZpMem) allocation).getZp();

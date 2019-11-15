@@ -8,10 +8,12 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -70,7 +72,18 @@ public class PassNStructAddressOfRewriting extends Pass2SsaOptimization {
    }
 
    private RValue rewriteStructAddressOf(VariableRef toSymbol) {
-      StatementLValue toSymbolAssignment = getGraph().getAssignment(toSymbol);
+      Variable variable = getScope().getVariable(toSymbol);
+      // Hacky way to handle PHI-masters
+      if(variable.isKindPhiMaster()) {
+         Collection<Variable> versions = variable.getScope().getVersions(variable);
+         for(Variable version : versions) {
+            if(variable.isVariable())
+               variable = version;
+            break;
+         }
+      }
+
+      StatementLValue toSymbolAssignment = getGraph().getAssignment(variable.getVariableRef());
       if(toSymbolAssignment instanceof StatementAssignment) {
          StatementAssignment assignment = (StatementAssignment) toSymbolAssignment;
          if(assignment.getrValue2() instanceof StructUnwoundPlaceholder) {

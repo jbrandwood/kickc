@@ -2,7 +2,7 @@ Fixing pointer addition (struct Setting*~) main::$2 ← (const struct Setting[])
 Fixing pointer increment (struct Setting*) main::setting ← ++ (struct Setting*) main::setting
 Rewriting struct pointer member access *((struct Setting*) main::setting).off
 Rewriting struct pointer member access *((struct Setting*) main::setting).id
-Warning! Adding boolean cast to non-boolean sub-expression *((byte*) main::$7)
+Warning! Adding boolean cast to non-boolean sub-expression *((byte*~) main::$7)
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@6
@@ -33,8 +33,8 @@ main::@2: scope:[main]  from main::@1
   (byte) main::len#3 ← phi( main::@1/(byte) main::len#1 )
   (byte) main::idx#3 ← phi( main::@1/(byte) main::idx#4 )
   (struct Setting*) main::setting#3 ← phi( main::@1/(struct Setting*) main::setting#2 )
-  (byte*) main::$7 ← (byte*)(struct Setting*) main::setting#3 + (const byte) OFFSET_STRUCT_SETTING_OFF
-  (bool~) main::$9 ← (number) 0 != *((byte*) main::$7)
+  (byte*~) main::$7 ← (byte*)(struct Setting*) main::setting#3 + (const byte) OFFSET_STRUCT_SETTING_OFF
+  (bool~) main::$9 ← (number) 0 != *((byte*~) main::$7)
   (bool~) main::$4 ← ! (bool~) main::$9
   (bool~) main::$5 ← ! (bool~) main::$4
   if((bool~) main::$5) goto main::@4
@@ -49,8 +49,8 @@ main::@7: scope:[main]  from main::@2
   (byte) main::len#4 ← phi( main::@2/(byte) main::len#3 )
   (byte) main::idx#2 ← phi( main::@2/(byte) main::idx#3 )
   (struct Setting*) main::setting#5 ← phi( main::@2/(struct Setting*) main::setting#3 )
-  (byte*) main::$8 ← (byte*)(struct Setting*) main::setting#5 + (const byte) OFFSET_STRUCT_SETTING_ID
-  *((const byte*) SCREEN + (byte) main::idx#2) ← *((byte*) main::$8)
+  (byte*~) main::$8 ← (byte*)(struct Setting*) main::setting#5 + (const byte) OFFSET_STRUCT_SETTING_ID
+  *((const byte*) SCREEN + (byte) main::idx#2) ← *((byte*~) main::$8)
   (byte) main::idx#1 ← ++ (byte) main::idx#2
   to:main::@4
 main::@return: scope:[main]  from main::@1
@@ -82,8 +82,8 @@ SYMBOL TABLE SSA
 (bool~) main::$4
 (bool~) main::$5
 (byte~) main::$6
-(byte*) main::$7
-(byte*) main::$8
+(byte*~) main::$7
+(byte*~) main::$8
 (bool~) main::$9
 (label) main::@1
 (label) main::@2
@@ -113,7 +113,7 @@ SYMBOL TABLE SSA
 (const struct Setting[]) settings = { { off: (byte)(number) 0, id: (byte) 'a' }, { off: (byte)(number) 1, id: (byte) 'b' }, { off: (byte)(number) 0, id: (byte) 'c' } }
 
 Adding number conversion cast (unumber) 0 in (byte) main::idx#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) main::$9 ← (number) 0 != *((byte*) main::$7)
+Adding number conversion cast (unumber) 0 in (bool~) main::$9 ← (number) 0 != *((byte*~) main::$7)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) main::idx#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
@@ -127,8 +127,8 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [13] (bool~) main::$4 ← (byte) 0 == *((byte*) main::$7) from [12] (bool~) main::$9 ← (byte) 0 != *((byte*) main::$7)
-Inversing boolean not [14] (bool~) main::$5 ← (byte) 0 != *((byte*) main::$7) from [13] (bool~) main::$4 ← (byte) 0 == *((byte*) main::$7)
+Inversing boolean not [13] (bool~) main::$4 ← (byte) 0 == *((byte*~) main::$7) from [12] (bool~) main::$9 ← (byte) 0 != *((byte*~) main::$7)
+Inversing boolean not [14] (bool~) main::$5 ← (byte) 0 != *((byte*~) main::$7) from [13] (bool~) main::$4 ← (byte) 0 == *((byte*~) main::$7)
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::len#0 = (byte~) main::$1 
 Alias (struct Setting*) main::setting#2 = (struct Setting*) main::setting#3 (struct Setting*) main::setting#5 
@@ -141,7 +141,7 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) main::len#1 (byte) main::len#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$3 [9] if((struct Setting*) main::setting#2<(struct Setting*~) main::$2) goto main::@2
-Simple Condition (bool~) main::$5 [15] if((byte) 0!=*((byte*) main::$7)) goto main::@4
+Simple Condition (bool~) main::$5 [15] if((byte) 0!=*((byte*~) main::$7)) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [1] (byte~) main::$0 ← sizeof  (const struct Setting[]) settings
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -149,14 +149,14 @@ Constant (const byte) main::idx#0 = 0
 Constant (const byte) main::$0 = sizeof settings
 Constant (const struct Setting*) main::setting#0 = settings
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [15] if((byte) 0!=*((byte*) main::$7)) goto main::@4  -- *((byte*)main::setting#2 + OFFSET_STRUCT_SETTING_OFF)
-Converting *(pointer+n) to pointer[n] [20] *((const byte*) SCREEN + (byte) main::idx#2) ← *((byte*) main::$8)  -- *((byte*)main::setting#2 + OFFSET_STRUCT_SETTING_ID)
+Converting *(pointer+n) to pointer[n] [15] if((byte) 0!=*((byte*~) main::$7)) goto main::@4  -- *((byte*)main::setting#2 + OFFSET_STRUCT_SETTING_OFF)
+Converting *(pointer+n) to pointer[n] [20] *((const byte*) SCREEN + (byte) main::idx#2) ← *((byte*~) main::$8)  -- *((byte*)main::setting#2 + OFFSET_STRUCT_SETTING_ID)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)main::setting#2 in [11] (byte*) main::$7 ← (byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_OFF
+Simplifying expression containing zero (byte*)main::setting#2 in [11] (byte*~) main::$7 ← (byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_OFF
 Simplifying expression containing zero (byte*)main::setting#2 in [15] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_OFF)) goto main::@4
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte*) main::$7 and assignment [5] (byte*) main::$7 ← (byte*)(struct Setting*) main::setting#2
-Eliminating unused variable (byte*) main::$8 and assignment [9] (byte*) main::$8 ← (byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID
+Eliminating unused variable (byte*~) main::$7 and assignment [5] (byte*~) main::$7 ← (byte*)(struct Setting*) main::setting#2
+Eliminating unused variable (byte*~) main::$8 and assignment [9] (byte*~) main::$8 ← (byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID
 Eliminating unused constant (const byte) OFFSET_STRUCT_SETTING_OFF
 Successful SSA optimization PassNEliminateUnusedVars
 Resolving array sizeof() sizeof (const struct Setting[]) settings

@@ -57,7 +57,6 @@ public class Pass3PhiLifting {
                      }
                      Symbol phiLValue = programScope.getSymbol(phiVariable.getVariable());
                      newVar.setType(phiLValue.getType());
-                     newVar.setInferredType(true);
                      List<Statement> predecessorStatements = predecessorBlock.getStatements();
                      Statement lastPredecessorStatement = null;
                      if(predecessorStatements.size() > 0) {

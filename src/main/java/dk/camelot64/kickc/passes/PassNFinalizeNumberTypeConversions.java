@@ -46,8 +46,8 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
                if(constantCastValue.getValue() instanceof ConstantRef) {
                   ConstantRef constRef = (ConstantRef) constantCastValue.getValue();
                   Variable constant = getScope().getConstant(constRef);
-                  if(constant.isInferredType())
-                     constant.setTypeInferred(toType);
+                  if(constant.isKindIntermediate())
+                     constant.setType(toType);
                   else
                      throw new InternalError("Cannot cast declared type!" + constant.toString());
                } else {
@@ -61,8 +61,8 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
                if(constantCastValue.getValue() instanceof ConstantRef) {
                   ConstantRef constRef = (ConstantRef) constantCastValue.getValue();
                   Variable constant = getScope().getConstant(constRef);
-                  if(constant.isInferredType())
-                     constant.setTypeInferred(toType);
+                  if(constant.isKindIntermediate())
+                     constant.setType(toType);
                   else
                      throw new InternalError("Cannot cast declared type!" + constant.toString());
                } else {

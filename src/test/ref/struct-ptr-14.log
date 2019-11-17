@@ -25,10 +25,10 @@ main: scope:[main]  from @2
   call set 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte*) main::$1 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
-  *((const byte*) main::SCREEN + (number) 0) ← *((byte*) main::$1)
-  (byte*) main::$2 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
-  *((const byte*) main::SCREEN + (number) 1) ← *((byte*) main::$2)
+  (byte*~) main::$1 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
+  *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
+  (byte*~) main::$2 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
+  *((const byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$2)
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -37,10 +37,10 @@ main::@return: scope:[main]  from main::@1
 (void()) set((struct Point*) set::ptr)
 set: scope:[set]  from main
   (struct Point*) set::ptr#1 ← phi( main/(struct Point*) set::ptr#0 )
-  (byte*) set::$0 ← (byte*)(struct Point*) set::ptr#1 + (const byte) OFFSET_STRUCT_POINT_X
-  *((byte*) set::$0) ← (number) 4
-  (byte*) set::$1 ← (byte*)(struct Point*) set::ptr#1 + (const byte) OFFSET_STRUCT_POINT_Y
-  *((byte*) set::$1) ← (number) 5
+  (byte*~) set::$0 ← (byte*)(struct Point*) set::ptr#1 + (const byte) OFFSET_STRUCT_POINT_X
+  *((byte*~) set::$0) ← (number) 4
+  (byte*~) set::$1 ← (byte*)(struct Point*) set::ptr#1 + (const byte) OFFSET_STRUCT_POINT_Y
+  *((byte*~) set::$1) ← (number) 5
   to:set::@return
 set::@return: scope:[set]  from set
   return 
@@ -62,8 +62,8 @@ SYMBOL TABLE SSA
 (byte) Point::x
 (byte) Point::y
 (void()) main()
-(byte*) main::$1
-(byte*) main::$2
+(byte*~) main::$1
+(byte*~) main::$2
 (label) main::@1
 (label) main::@return
 (const byte*) main::SCREEN = (byte*)(number) $400
@@ -75,8 +75,8 @@ SYMBOL TABLE SSA
 (byte) main::p_y#0
 (const struct Point*) main::q = &(struct Point) main::p
 (void()) set((struct Point*) set::ptr)
-(byte*) set::$0
-(byte*) set::$1
+(byte*~) set::$0
+(byte*~) set::$1
 (label) set::@return
 (struct Point*) set::ptr
 (struct Point*) set::ptr#0
@@ -84,15 +84,15 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 2 in (byte) main::p_x#0 ← (number) 2
 Adding number conversion cast (unumber) 3 in (byte) main::p_y#0 ← (number) 3
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte*) main::$1)
-Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte*) main::$2)
-Adding number conversion cast (unumber) 4 in *((byte*) set::$0) ← (number) 4
-Adding number conversion cast (unumber) 5 in *((byte*) set::$1) ← (number) 5
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$2)
+Adding number conversion cast (unumber) 4 in *((byte*~) set::$0) ← (number) 4
+Adding number conversion cast (unumber) 5 in *((byte*~) set::$1) ← (number) 5
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) main::p_x#0 ← (unumber)(number) 2
 Inlining cast (byte) main::p_y#0 ← (unumber)(number) 3
-Inlining cast *((byte*) set::$0) ← (unumber)(number) 4
-Inlining cast *((byte*) set::$1) ← (unumber)(number) 5
+Inlining cast *((byte*~) set::$0) ← (unumber)(number) 4
+Inlining cast *((byte*~) set::$1) ← (unumber)(number) 5
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 2
@@ -113,27 +113,27 @@ Identical Phi Values (struct Point*) set::ptr#1 (struct Point*) set::ptr#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Rewriting struct address-of to first member &(struct Point) main::p
 Successful SSA optimization PassNStructAddressOfRewriting
-Constant right-side identified [5] (byte*) main::$1 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [7] (byte*) main::$2 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [5] (byte*~) main::$1 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [7] (byte*~) main::$2 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const struct Point*) set::ptr#0 = main::q
 Constant (const byte*) main::$1 = (byte*)main::q+OFFSET_STRUCT_POINT_X
 Constant (const byte*) main::$2 = (byte*)main::q+OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)set::ptr#0 in [11] (byte*) set::$0 ← (byte*)(const struct Point*) set::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X
-Constant value identified (byte*)set::ptr#0 in [13] (byte*) set::$1 ← (byte*)(const struct Point*) set::ptr#0 + (const byte) OFFSET_STRUCT_POINT_Y
+Constant value identified (byte*)set::ptr#0 in [11] (byte*~) set::$0 ← (byte*)(const struct Point*) set::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X
+Constant value identified (byte*)set::ptr#0 in [13] (byte*~) set::$1 ← (byte*)(const struct Point*) set::ptr#0 + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantValues
-Converting *(pointer+n) to pointer[n] [12] *((byte*) set::$0) ← (byte) 4  -- *((byte*)set::ptr#0 + OFFSET_STRUCT_POINT_X)
-Converting *(pointer+n) to pointer[n] [14] *((byte*) set::$1) ← (byte) 5  -- *((byte*)set::ptr#0 + OFFSET_STRUCT_POINT_Y)
+Converting *(pointer+n) to pointer[n] [12] *((byte*~) set::$0) ← (byte) 4  -- *((byte*)set::ptr#0 + OFFSET_STRUCT_POINT_X)
+Converting *(pointer+n) to pointer[n] [14] *((byte*~) set::$1) ← (byte) 5  -- *((byte*)set::ptr#0 + OFFSET_STRUCT_POINT_Y)
 Successful SSA optimization Pass2InlineDerefIdx
 Simplifying expression containing zero (byte*)main::q in 
 Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (byte) 0) ← *((const byte*) main::$1)
-Simplifying expression containing zero (byte*)set::ptr#0 in [11] (byte*) set::$0 ← (byte*)(const struct Point*) set::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X
+Simplifying expression containing zero (byte*)set::ptr#0 in [11] (byte*~) set::$0 ← (byte*)(const struct Point*) set::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X
 Simplifying expression containing zero (byte*)set::ptr#0 in [12] *((byte*)(const struct Point*) set::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X) ← (byte) 4
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (struct Point) main::p#0 and assignment [2] (struct Point) main::p#0 ← struct-unwound {(byte) main::p_x#0, (byte) main::p_y#0}
-Eliminating unused variable (byte*) set::$0 and assignment [7] (byte*) set::$0 ← (byte*)(const struct Point*) set::ptr#0
-Eliminating unused variable (byte*) set::$1 and assignment [9] (byte*) set::$1 ← (byte*)(const struct Point*) set::ptr#0 + (const byte) OFFSET_STRUCT_POINT_Y
+Eliminating unused variable (byte*~) set::$0 and assignment [7] (byte*~) set::$0 ← (byte*)(const struct Point*) set::ptr#0
+Eliminating unused variable (byte*~) set::$1 and assignment [9] (byte*~) set::$1 ← (byte*)(const struct Point*) set::ptr#0 + (const byte) OFFSET_STRUCT_POINT_Y
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
 Constant inlined set::ptr#0 = (const struct Point*) main::q

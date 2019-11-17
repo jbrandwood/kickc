@@ -116,7 +116,7 @@ Inlining constant with var siblings (const byte) main::x#0
 Constant inlined main::x#0 = (byte) 5
 Constant inlined main::y#0 = (byte) 5
 Successful SSA optimization Pass2ConstantInlining
-Alias (word~) main::$1 = (word) main::$8 
+Alias (word~) main::$1 = (word~) main::$8 
 Successful SSA optimization Pass2AliasElimination
 Added new block during phi lifting main::@5(between main::@3 and main::@1)
 Added new block during phi lifting main::@6(between main::@2 and main::@2)
@@ -158,9 +158,9 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@3
   [5] (byte) main::y#2 ← phi( main/(byte) 5 main::@3/(byte) main::y#1 )
   [6] (word~) main::$0 ← (word)(byte) main::y#2
-  [7] (word) main::$6 ← (word~) main::$0 << (byte) 2
-  [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0
-  [9] (word~) main::$1 ← (word) main::$7 << (byte) 3
+  [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2
+  [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0
+  [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3
   [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
@@ -184,8 +184,8 @@ VARIABLE REGISTER WEIGHTS
 (word~) main::$0 16.5
 (word~) main::$1 22.0
 (byte~) main::$3 202.0
-(word) main::$6 22.0
-(word) main::$7 22.0
+(word~) main::$6 22.0
+(word~) main::$7 22.0
 (byte*) main::line
 (byte*) main::line#0 18.666666666666664
 (byte) main::x
@@ -275,7 +275,7 @@ main: {
     sta.z __0
     lda #0
     sta.z __0+1
-    // [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    // [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
     lda.z __0
     asl
     sta.z __6
@@ -284,7 +284,7 @@ main: {
     sta.z __6+1
     asl.z __6
     rol.z __6+1
-    // [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz3 
+    // [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz3 
     lda.z __6
     clc
     adc.z __0
@@ -292,7 +292,7 @@ main: {
     lda.z __6+1
     adc.z __0+1
     sta.z __7+1
-    // [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 -- vwuz1=vwuz2_rol_3 
+    // [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3 -- vwuz1=vwuz2_rol_3 
     lda.z __7
     asl
     sta.z __1
@@ -358,16 +358,16 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (word~) main::$0 ← (word)(byte) main::y#2 [ main::y#2 main::$0 ] ( main:2 [ main::y#2 main::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::y#2 main::y#1 ]
-Statement [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
-Statement [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
-Statement [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
+Statement [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
+Statement [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
+Statement [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
 Statement [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1 [ main::y#2 main::line#0 ] ( main:2 [ main::y#2 main::line#0 ] ) always clobbers reg byte a 
 Statement [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ( main:2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::x#2 main::x#1 ]
 Statement [6] (word~) main::$0 ← (word)(byte) main::y#2 [ main::y#2 main::$0 ] ( main:2 [ main::y#2 main::$0 ] ) always clobbers reg byte a 
-Statement [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
-Statement [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
-Statement [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
+Statement [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
+Statement [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
+Statement [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
 Statement [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1 [ main::y#2 main::line#0 ] ( main:2 [ main::y#2 main::line#0 ] ) always clobbers reg byte a 
 Statement [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ( main:2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::y#2 main::y#1 ] : zp[1]:2 , reg byte x , reg byte y , 
@@ -443,7 +443,7 @@ main: {
     sta.z __0
     lda #0
     sta.z __0+1
-    // [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    // [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
     lda.z __0
     asl
     sta.z __6
@@ -452,7 +452,7 @@ main: {
     sta.z __6+1
     asl.z __6
     rol.z __6+1
-    // [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz1 
+    // [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz1 
     lda.z __7
     clc
     adc.z __6
@@ -460,7 +460,7 @@ main: {
     lda.z __7+1
     adc.z __6+1
     sta.z __7+1
-    // [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    // [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl.z __1
     rol.z __1+1
     asl.z __1
@@ -556,8 +556,8 @@ FINAL SYMBOL TABLE
 (word~) main::$0 zp[2]:3 16.5
 (word~) main::$1 zp[2]:3 22.0
 (byte~) main::$3 reg byte a 202.0
-(word) main::$6 zp[2]:5 22.0
-(word) main::$7 zp[2]:3 22.0
+(word~) main::$6 zp[2]:5 22.0
+(word~) main::$7 zp[2]:3 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -619,7 +619,7 @@ main: {
     lda #0
     sta.z __0+1
     // (word)y*40
-    // [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    // [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
     lda.z __0
     asl
     sta.z __6
@@ -628,7 +628,7 @@ main: {
     sta.z __6+1
     asl.z __6
     rol.z __6+1
-    // [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz1 
+    // [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz1 
     lda.z __7
     clc
     adc.z __6
@@ -636,7 +636,7 @@ main: {
     lda.z __7+1
     adc.z __6+1
     sta.z __7+1
-    // [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    // [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl.z __1
     rol.z __1+1
     asl.z __1

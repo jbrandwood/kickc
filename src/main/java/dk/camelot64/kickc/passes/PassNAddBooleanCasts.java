@@ -72,7 +72,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
       Scope currentScope = getScope().getScope(currentBlock.getScope());
       stmtIt.previous();
       Variable tmpVar = currentScope.addVariableIntermediate();
-      tmpVar.setTypeInferred(SymbolType.BOOLEAN);
+      tmpVar.setType(SymbolType.BOOLEAN);
       // Go straight to xxx!=0 instead of casting to bool
       ConstantValue nullValue;
       if(rValueType instanceof SymbolTypePointer) {

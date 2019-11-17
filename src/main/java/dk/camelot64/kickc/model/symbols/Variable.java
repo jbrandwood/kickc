@@ -54,9 +54,6 @@ public class Variable implements Symbol {
    /** The type of the variable. VAR means the type is unknown, and has not been inferred yet. [ALL]*/
    private SymbolType type;
 
-   /** true if the symbol type is inferred (not declared) [kind:INTERMEDIATE] TODO: Collapse with kind==INTERMEDIATE? */
-   private boolean inferredType;
-
    /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. [Only Variables in memory and arrays] */
    private Integer declaredAlignment;
 
@@ -121,7 +118,6 @@ public class Variable implements Symbol {
       this.kind = Kind.CONSTANT;
       this.memoryArea = MemoryArea.MAIN_MEMORY;
       this.constantValue = value;
-      this.inferredType = false;
       this.comments = new ArrayList<>();
       setFullName();
    }
@@ -145,7 +141,6 @@ public class Variable implements Symbol {
       this.memoryArea = memoryArea;
       if(Kind.PHI_MASTER.equals(kind))
          this.nextPhiVersionNumber = 0;
-      this.inferredType = false;
       this.comments = new ArrayList<>();
       setFullName();
    }
@@ -167,7 +162,6 @@ public class Variable implements Symbol {
       this.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
       this.setDeclaredExport(phiMaster.isDeclaredExport());
       this.setInferredVolatile(phiMaster.isInferredVolatile());
-      this.setInferredType(phiMaster.isInferredType());
       this.setComments(phiMaster.getComments());
    }
 
@@ -188,7 +182,6 @@ public class Variable implements Symbol {
       this.setDeclaredExport(original.isDeclaredExport());
       this.setDeclaredRegister(original.getDeclaredRegister());
       this.setInferredVolatile(original.isInferredVolatile());
-      this.setInferredType(original.isInferredType());
       this.setComments(original.getComments());
       this.setConstantValue(original.getConstantValue());
    }
@@ -326,19 +319,6 @@ public class Variable implements Symbol {
 
    public void setType(SymbolType type) {
       this.type = type;
-   }
-
-   public void setTypeInferred(SymbolType type) {
-      this.type = type;
-      this.inferredType = true;
-   }
-
-   public boolean isInferredType() {
-      return inferredType;
-   }
-
-   public void setInferredType(boolean inferredType) {
-      this.inferredType = inferredType;
    }
 
    public String getName() {
@@ -479,7 +459,7 @@ public class Variable implements Symbol {
             .append("(")
             .append((constantValue != null) ? "const " : "")
             .append(getType().getTypeName())
-            .append((constantValue == null && inferredType) ? "~" : "")
+            .append((constantValue == null && isKindIntermediate()) ? "~" : "")
             .append(") ")
             .append(getFullName()).toString();
    }

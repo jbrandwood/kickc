@@ -3079,10 +3079,10 @@ memset: scope:[memset]  from bitmap_clear bitmap_clear::@1
   to:memset::@1
 memset::@1: scope:[memset]  from memset
   [99] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2
-  [100] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3
+  [100] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
   to:memset::@2
 memset::@2: scope:[memset]  from memset::@1 memset::@3
-  [101] (byte*) memset::dst#2 ← phi( memset::@1/(byte*~) memset::dst#4 memset::@3/(byte*) memset::dst#1 )
+  [101] (byte*) memset::dst#2 ← phi( memset::@1/(byte*) memset::dst#4 memset::@3/(byte*) memset::dst#1 )
   [102] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3
   to:memset::@return
 memset::@return: scope:[memset]  from memset memset::@2
@@ -3234,13 +3234,13 @@ sin16s::@6: scope:[sin16s]  from sin16s::@11
   [183] (signed word) sin16s::sinx#1 ← - (signed word)(word) sin16s::usinx#1
   to:sin16s::@3
 sin16s::@3: scope:[sin16s]  from sin16s::@12 sin16s::@6
-  [184] (signed word) sin16s::return#1 ← phi( sin16s::@12/(signed word~) sin16s::return#5 sin16s::@6/(signed word) sin16s::sinx#1 )
+  [184] (signed word) sin16s::return#1 ← phi( sin16s::@12/(signed word) sin16s::return#5 sin16s::@6/(signed word) sin16s::sinx#1 )
   to:sin16s::@return
 sin16s::@return: scope:[sin16s]  from sin16s::@3
   [185] return 
   to:@return
 sin16s::@12: scope:[sin16s]  from sin16s::@11
-  [186] (signed word~) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1
+  [186] (signed word) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1
   to:sin16s::@3
 
 (word()) mulu16_sel((word) mulu16_sel::v1 , (word) mulu16_sel::v2 , (byte) mulu16_sel::select)
@@ -3462,7 +3462,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte*) memset::dst
 (byte*) memset::dst#1 22.0
 (byte*) memset::dst#2 15.333333333333332
-(byte*~) memset::dst#4 4.0
+(byte*) memset::dst#4 4.0
 (byte*) memset::end
 (byte*) memset::end#0 2.1666666666666665
 (word) memset::num
@@ -3549,7 +3549,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (signed word) sin16s::return
 (signed word) sin16s::return#0 22.0
 (signed word) sin16s::return#1 5.0
-(signed word~) sin16s::return#5 4.0
+(signed word) sin16s::return#5 4.0
 (signed word) sin16s::sinx
 (signed word) sin16s::sinx#1 4.0
 (word) sin16s::usinx
@@ -4714,7 +4714,7 @@ memset: {
     lda.z str+1
     adc.z num+1
     sta.z end+1
-    // [100] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
+    // [100] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
     lda.z str
     sta.z dst
     lda.z str+1
@@ -4722,7 +4722,7 @@ memset: {
     // [101] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   __b2_from___b1:
   __b2_from___b3:
-    // [101] phi (byte*) memset::dst#2 = (byte*~) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [101] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     jmp __b2
     // memset::@2
   __b2:
@@ -5410,7 +5410,7 @@ sin16s: {
     // [184] phi from sin16s::@12 sin16s::@6 to sin16s::@3 [phi:sin16s::@12/sin16s::@6->sin16s::@3]
   __b3_from___b12:
   __b3_from___b6:
-    // [184] phi (signed word) sin16s::return#1 = (signed word~) sin16s::return#5 [phi:sin16s::@12/sin16s::@6->sin16s::@3#0] -- register_copy 
+    // [184] phi (signed word) sin16s::return#1 = (signed word) sin16s::return#5 [phi:sin16s::@12/sin16s::@6->sin16s::@3#0] -- register_copy 
     jmp __b3
     // sin16s::@3
   __b3:
@@ -5421,7 +5421,7 @@ sin16s: {
     rts
     // sin16s::@12
   __b12:
-    // [186] (signed word~) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1 -- vwsz1=vwsz2 
+    // [186] (signed word) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1 -- vwsz1=vwsz2 
     lda.z usinx_1
     sta.z return_1
     lda.z usinx_1+1
@@ -5837,7 +5837,7 @@ Statement [89] *((const void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)
 Statement [98] if((word) memset::num#2<=(byte) 0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#4 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#4 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#4 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:32 [ memset::c#4 ]
 Statement [99] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::str#3 memset::c#4 memset::end#0 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::str#3 memset::c#4 memset::end#0 ] ) always clobbers reg byte a 
-Statement [100] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] ) always clobbers reg byte a 
+Statement [100] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] ) always clobbers reg byte a 
 Statement [102] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a 
 Statement [104] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:32 [ memset::c#4 ]
@@ -5884,7 +5884,7 @@ Statement [179] (word) sin16s::x5#0 ← (word) mulu16_sel::return#11 [ sin16s::i
 Statement [180] (word) sin16s::x5_128#0 ← (word) sin16s::x5#0 >> (byte) 4 [ sin16s::isUpper#2 sin16s::usinx#0 sin16s::x5_128#0 ] ( main:3::sin16s_gen2:6::sin16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::usinx#0 sin16s::x5_128#0 ] ) always clobbers reg byte a 
 Statement [181] (word) sin16s::usinx#1 ← (word) sin16s::usinx#0 + (word) sin16s::x5_128#0 [ sin16s::isUpper#2 sin16s::usinx#1 ] ( main:3::sin16s_gen2:6::sin16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::usinx#1 ] ) always clobbers reg byte a 
 Statement [183] (signed word) sin16s::sinx#1 ← - (signed word)(word) sin16s::usinx#1 [ sin16s::sinx#1 ] ( main:3::sin16s_gen2:6::sin16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::sinx#1 ] ) always clobbers reg byte a 
-Statement [186] (signed word~) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1 [ sin16s::return#5 ] ( main:3::sin16s_gen2:6::sin16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::return#5 ] ) always clobbers reg byte a 
+Statement [186] (signed word) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1 [ sin16s::return#5 ] ( main:3::sin16s_gen2:6::sin16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::return#5 ] ) always clobbers reg byte a 
 Statement [188] (word) mul16u::a#2 ← (word) mulu16_sel::v1#5 [ mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] ( main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:157 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:162 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:166 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::x3#0 mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:172 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::usinx#0 mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:177 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::usinx#0 mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] ) always clobbers reg byte a 
 Statement [189] (word) mul16u::b#1 ← (word) mulu16_sel::v2#5 [ mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] ( main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:157 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:162 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:166 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::x3#0 mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:172 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::usinx#0 mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:177 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::usinx#0 mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] ) always clobbers reg byte a 
 Statement [191] (dword) mul16u::return#3 ← (dword) mul16u::res#2 [ mulu16_sel::select#5 mul16u::return#3 ] ( main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:157 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mulu16_sel::select#5 mul16u::return#3 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:162 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mulu16_sel::select#5 mul16u::return#3 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:166 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::x3#0 mulu16_sel::select#5 mul16u::return#3 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:172 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::usinx#0 mulu16_sel::select#5 mul16u::return#3 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:177 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::usinx#0 mulu16_sel::select#5 mul16u::return#3 ] ) always clobbers reg byte a 
@@ -5962,7 +5962,7 @@ Statement [88] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER [ ] ( mai
 Statement [89] *((const void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:3::init_irq:14 [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [98] if((word) memset::num#2<=(byte) 0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#4 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#4 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::num#2 memset::str#3 memset::c#4 ] ) always clobbers reg byte a 
 Statement [99] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::str#3 memset::c#4 memset::end#0 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::str#3 memset::c#4 memset::end#0 ] ) always clobbers reg byte a 
-Statement [100] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] ) always clobbers reg byte a 
+Statement [100] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#4 ] ) always clobbers reg byte a 
 Statement [102] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a 
 Statement [104] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::bitmap_clear:10::memset:93 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] main:3::bitmap_clear:10::memset:95 [ frame_cnt#0 memset::c#4 memset::end#0 memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [116] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$7 ] ( main:3::bitmap_init:8 [ frame_cnt#0 bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$7 ] ) always clobbers reg byte a 
@@ -6008,7 +6008,7 @@ Statement [179] (word) sin16s::x5#0 ← (word) mulu16_sel::return#11 [ sin16s::i
 Statement [180] (word) sin16s::x5_128#0 ← (word) sin16s::x5#0 >> (byte) 4 [ sin16s::isUpper#2 sin16s::usinx#0 sin16s::x5_128#0 ] ( main:3::sin16s_gen2:6::sin16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::usinx#0 sin16s::x5_128#0 ] ) always clobbers reg byte a 
 Statement [181] (word) sin16s::usinx#1 ← (word) sin16s::usinx#0 + (word) sin16s::x5_128#0 [ sin16s::isUpper#2 sin16s::usinx#1 ] ( main:3::sin16s_gen2:6::sin16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::usinx#1 ] ) always clobbers reg byte a 
 Statement [183] (signed word) sin16s::sinx#1 ← - (signed word)(word) sin16s::usinx#1 [ sin16s::sinx#1 ] ( main:3::sin16s_gen2:6::sin16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::sinx#1 ] ) always clobbers reg byte a 
-Statement [186] (signed word~) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1 [ sin16s::return#5 ] ( main:3::sin16s_gen2:6::sin16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::return#5 ] ) always clobbers reg byte a 
+Statement [186] (signed word) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1 [ sin16s::return#5 ] ( main:3::sin16s_gen2:6::sin16s:136 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::return#5 ] ) always clobbers reg byte a 
 Statement [188] (word) mul16u::a#2 ← (word) mulu16_sel::v1#5 [ mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] ( main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:157 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:162 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:166 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::x3#0 mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:172 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::usinx#0 mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:177 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::usinx#0 mul16u::a#2 mulu16_sel::v2#5 mulu16_sel::select#5 ] ) always clobbers reg byte a 
 Statement [189] (word) mul16u::b#1 ← (word) mulu16_sel::v2#5 [ mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] ( main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:157 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:162 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:166 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::x3#0 mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:172 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::usinx#0 mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:177 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::usinx#0 mul16u::b#1 mul16u::a#2 mulu16_sel::select#5 ] ) always clobbers reg byte a 
 Statement [191] (dword) mul16u::return#3 ← (dword) mul16u::res#2 [ mulu16_sel::select#5 mul16u::return#3 ] ( main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:157 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mulu16_sel::select#5 mul16u::return#3 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:162 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 mulu16_sel::select#5 mul16u::return#3 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:166 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::x3#0 mulu16_sel::select#5 mul16u::return#3 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:172 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::x1#0 sin16s::usinx#0 mulu16_sel::select#5 mul16u::return#3 ] main:3::sin16s_gen2:6::sin16s:136::mulu16_sel:177 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 sin16s::isUpper#2 sin16s::usinx#0 mulu16_sel::select#5 mul16u::return#3 ] ) always clobbers reg byte a 
@@ -6973,11 +6973,11 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-    // [100] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3
+    // [100] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
     // [101] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   __b2_from___b1:
   __b2_from___b3:
-    // [101] phi (byte*) memset::dst#2 = (byte*~) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [101] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     jmp __b2
     // memset::@2
   __b2:
@@ -7542,7 +7542,7 @@ sin16s: {
     // [184] phi from sin16s::@12 sin16s::@6 to sin16s::@3 [phi:sin16s::@12/sin16s::@6->sin16s::@3]
   __b3_from___b12:
   __b3_from___b6:
-    // [184] phi (signed word) sin16s::return#1 = (signed word~) sin16s::return#5 [phi:sin16s::@12/sin16s::@6->sin16s::@3#0] -- register_copy 
+    // [184] phi (signed word) sin16s::return#1 = (signed word) sin16s::return#5 [phi:sin16s::@12/sin16s::@6->sin16s::@3#0] -- register_copy 
     jmp __b3
     // sin16s::@3
   __b3:
@@ -7553,7 +7553,7 @@ sin16s: {
     rts
     // sin16s::@12
   __b12:
-    // [186] (signed word~) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1
+    // [186] (signed word) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1
     jmp __b3_from___b12
 }
   // mulu16_sel
@@ -8282,7 +8282,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte*) memset::dst
 (byte*) memset::dst#1 dst zp[2]:19 22.0
 (byte*) memset::dst#2 dst zp[2]:19 15.333333333333332
-(byte*~) memset::dst#4 dst zp[2]:19 4.0
+(byte*) memset::dst#4 dst zp[2]:19 4.0
 (byte*) memset::end
 (byte*) memset::end#0 end zp[2]:14 2.1666666666666665
 (word) memset::num
@@ -8396,7 +8396,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (signed word) sin16s::return
 (signed word) sin16s::return#0 return zp[2]:19 22.0
 (signed word) sin16s::return#1 return zp[2]:19 5.0
-(signed word~) sin16s::return#5 return zp[2]:19 4.0
+(signed word) sin16s::return#5 return zp[2]:19 4.0
 (signed word) sin16s::sinx
 (signed word) sin16s::sinx#1 sinx zp[2]:19 4.0
 (word) sin16s::usinx
@@ -9169,9 +9169,9 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-    // [100] (byte*~) memset::dst#4 ← (byte*)(void*) memset::str#3
+    // [100] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
     // [101] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
-    // [101] phi (byte*) memset::dst#2 = (byte*~) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [101] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     // memset::@2
   __b2:
     // for(char* dst = str; dst!=end; dst++)
@@ -9725,7 +9725,7 @@ sin16s: {
     sbc.z sinx+1
     sta.z sinx+1
     // [184] phi from sin16s::@12 sin16s::@6 to sin16s::@3 [phi:sin16s::@12/sin16s::@6->sin16s::@3]
-    // [184] phi (signed word) sin16s::return#1 = (signed word~) sin16s::return#5 [phi:sin16s::@12/sin16s::@6->sin16s::@3#0] -- register_copy 
+    // [184] phi (signed word) sin16s::return#1 = (signed word) sin16s::return#5 [phi:sin16s::@12/sin16s::@6->sin16s::@3#0] -- register_copy 
     // sin16s::@3
   __b3:
     // sin16s::@return
@@ -9733,7 +9733,7 @@ sin16s: {
     // [185] return 
     rts
     // sin16s::@12
-    // [186] (signed word~) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1
+    // [186] (signed word) sin16s::return#5 ← (signed word)(word) sin16s::usinx#1
 }
   // mulu16_sel
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.

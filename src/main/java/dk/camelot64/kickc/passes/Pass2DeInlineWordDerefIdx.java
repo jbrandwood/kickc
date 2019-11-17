@@ -39,7 +39,7 @@ public class Pass2DeInlineWordDerefIdx extends Pass2SsaOptimization {
                stmtIt.next();
                programValue.set(new PointerDereferenceSimple(tmpVar.getRef()));
                SymbolType pointerType = SymbolTypeInference.inferType(getScope(), new AssignmentRValue(tmpVarAssignment));
-               tmpVar.setTypeInferred(pointerType);
+               tmpVar.setType(pointerType);
                optimized.set(true);
             }
          }

@@ -1178,7 +1178,7 @@ main: scope:[main]  from @1
   [5] call print_person 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1
+  [6] (byte*) print_char_cursor#48 ← (byte*) print_line_cursor#1
   [7] call print_person 
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -1189,7 +1189,7 @@ main::@return: scope:[main]  from main::@1
 print_person: scope:[print_person]  from main main::@1
   [9] (byte*) print_line_cursor#20 ← phi( main/(byte*) 1024 main::@1/(byte*) print_line_cursor#1 )
   [9] (byte[3]) print_person::person_initials#2 ← phi( main/(const byte[3]) jesper_initials main::@1/(const byte[3]) henry_initials )
-  [9] (byte*) print_char_cursor#39 ← phi( main/(byte*) 1024 main::@1/(byte*~) print_char_cursor#48 )
+  [9] (byte*) print_char_cursor#39 ← phi( main/(byte*) 1024 main::@1/(byte*) print_char_cursor#48 )
   [9] (dword) print_person::person_id#2 ← phi( main/(const dword) jesper_id main::@1/(const dword) henry_id )
   [10] (dword) print_dword_decimal::w#0 ← (dword) print_person::person_id#2
   [11] call print_dword_decimal 
@@ -1343,7 +1343,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor#25 1.0
 (byte*) print_char_cursor#39 0.8
 (byte*) print_char_cursor#41 6.0
-(byte*~) print_char_cursor#48 4.0
+(byte*) print_char_cursor#48 4.0
 (void()) print_dword_decimal((dword) print_dword_decimal::w)
 (dword) print_dword_decimal::w
 (dword) print_dword_decimal::w#0 4.0
@@ -1526,7 +1526,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [6] (byte*) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -1540,7 +1540,7 @@ main: {
     sta.z print_person.person_initials
     lda #>henry_initials
     sta.z print_person.person_initials+1
-    // [9] phi (byte*) print_char_cursor#39 = (byte*~) print_char_cursor#48 [phi:main::@1->print_person#2] -- register_copy 
+    // [9] phi (byte*) print_char_cursor#39 = (byte*) print_char_cursor#48 [phi:main::@1->print_person#2] -- register_copy 
     // [9] phi (dword) print_person::person_id#2 = (const dword) henry_id [phi:main::@1->print_person#3] -- vduz1=vduc1 
     lda #<henry_id
     sta.z print_person.person_id
@@ -2022,7 +2022,7 @@ ultoa_append: {
   decimal_digits_long: .fill $b, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ print_char_cursor#48 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [6] (byte*) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ print_char_cursor#48 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [10] (dword) print_dword_decimal::w#0 ← (dword) print_person::person_id#2 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] ( main:2::print_person:5 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] main:2::print_person:7 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] ) always clobbers reg byte a 
 Statement [14] (byte*) print_str::str#2 ← (byte[3]) print_person::person_initials#2 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] ( main:2::print_person:5 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] main:2::print_person:7 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] ) always clobbers reg byte a 
 Statement [21] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 [ print_line_cursor#1 print_char_cursor#18 ] ( main:2::print_person:5::print_ln:17 [ print_line_cursor#1 print_char_cursor#18 ] main:2::print_person:7::print_ln:17 [ print_line_cursor#1 print_char_cursor#18 ] ) always clobbers reg byte a 
@@ -2050,7 +2050,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:26 [ ultoa_
 Statement [63] *((byte*) ultoa_append::buffer#0) ← *((const byte[]) DIGITS + (byte) ultoa_append::digit#2) [ ultoa_append::value#2 ] ( main:2::print_person:5::print_dword_decimal:11::ultoa:35::ultoa_append:56 [ print_person::person_initials#2 print_line_cursor#20 print_char_cursor#39 ultoa::digit#2 ultoa::buffer#11 ultoa_append::value#2 ] main:2::print_person:7::print_dword_decimal:11::ultoa:35::ultoa_append:56 [ print_person::person_initials#2 print_line_cursor#20 print_char_cursor#39 ultoa::digit#2 ultoa::buffer#11 ultoa_append::value#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:14 [ ultoa::digit#2 ultoa::digit#1 ]
 Statement [66] (dword) ultoa_append::value#1 ← (dword) ultoa_append::value#2 - (dword) ultoa_append::sub#0 [ ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#1 ultoa_append::digit#1 ] ( main:2::print_person:5::print_dword_decimal:11::ultoa:35::ultoa_append:56 [ print_person::person_initials#2 print_line_cursor#20 print_char_cursor#39 ultoa::digit#2 ultoa::buffer#11 ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#1 ultoa_append::digit#1 ] main:2::print_person:7::print_dword_decimal:11::ultoa:35::ultoa_append:56 [ print_person::person_initials#2 print_line_cursor#20 print_char_cursor#39 ultoa::digit#2 ultoa::buffer#11 ultoa_append::buffer#0 ultoa_append::sub#0 ultoa_append::value#1 ultoa_append::digit#1 ] ) always clobbers reg byte a 
-Statement [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ print_char_cursor#48 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [6] (byte*) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ print_char_cursor#48 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [10] (dword) print_dword_decimal::w#0 ← (dword) print_person::person_id#2 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] ( main:2::print_person:5 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] main:2::print_person:7 [ print_char_cursor#39 print_person::person_initials#2 print_line_cursor#20 print_dword_decimal::w#0 ] ) always clobbers reg byte a 
 Statement [14] (byte*) print_str::str#2 ← (byte[3]) print_person::person_initials#2 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] ( main:2::print_person:5 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] main:2::print_person:7 [ print_line_cursor#20 print_str::str#2 print_char_cursor#25 ] ) always clobbers reg byte a 
 Statement [21] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#9 + (byte) $28 [ print_line_cursor#1 print_char_cursor#18 ] ( main:2::print_person:5::print_ln:17 [ print_line_cursor#1 print_char_cursor#18 ] main:2::print_person:7::print_ln:17 [ print_line_cursor#1 print_char_cursor#18 ] ) always clobbers reg byte a 
@@ -2194,7 +2194,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [6] (byte*) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -2208,7 +2208,7 @@ main: {
     sta.z print_person.person_initials
     lda #>henry_initials
     sta.z print_person.person_initials+1
-    // [9] phi (byte*) print_char_cursor#39 = (byte*~) print_char_cursor#48 [phi:main::@1->print_person#2] -- register_copy 
+    // [9] phi (byte*) print_char_cursor#39 = (byte*) print_char_cursor#48 [phi:main::@1->print_person#2] -- register_copy 
     // [9] phi (dword) print_person::person_id#2 = (const dword) henry_id [phi:main::@1->print_person#3] -- vduz1=vduc1 
     lda #<henry_id
     sta.z print_person.person_id
@@ -2736,7 +2736,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#25 print_char_cursor zp[2]:10 1.0
 (byte*) print_char_cursor#39 print_char_cursor zp[2]:10 0.8
 (byte*) print_char_cursor#41 print_char_cursor zp[2]:10 6.0
-(byte*~) print_char_cursor#48 print_char_cursor zp[2]:10 4.0
+(byte*) print_char_cursor#48 print_char_cursor zp[2]:10 4.0
 (void()) print_dword_decimal((dword) print_dword_decimal::w)
 (label) print_dword_decimal::@1
 (label) print_dword_decimal::@return
@@ -2886,7 +2886,7 @@ main: {
     sta.z print_person.person_id+3
     jsr print_person
     // main::@1
-    // [6] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [6] (byte*) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -2900,7 +2900,7 @@ main: {
     sta.z print_person.person_initials
     lda #>henry_initials
     sta.z print_person.person_initials+1
-    // [9] phi (byte*) print_char_cursor#39 = (byte*~) print_char_cursor#48 [phi:main::@1->print_person#2] -- register_copy 
+    // [9] phi (byte*) print_char_cursor#39 = (byte*) print_char_cursor#48 [phi:main::@1->print_person#2] -- register_copy 
     // [9] phi (dword) print_person::person_id#2 = (const dword) henry_id [phi:main::@1->print_person#3] -- vduz1=vduc1 
     lda #<henry_id
     sta.z print_person.person_id

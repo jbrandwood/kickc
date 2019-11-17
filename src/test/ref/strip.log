@@ -336,11 +336,11 @@ print::@return: scope:[print]  from print::@1
 strip: scope:[strip]  from main main::@2
   [20] (byte) strip::c#3 ← phi( main/(byte) ' ' main::@2/(byte) 'y' )
   [20] (byte*) strip::dest#0 ← phi( main/(const byte[]) msg1 main::@2/(const byte[]) msg2 )
-  [21] (byte*~) strip::p#7 ← (byte*) strip::dest#0
+  [21] (byte*) strip::p#7 ← (byte*) strip::dest#0
   to:strip::@1
 strip::@1: scope:[strip]  from strip strip::@4
   [22] (byte*) strip::dest#2 ← phi( strip/(byte*) strip::dest#0 strip::@4/(byte*) strip::dest#4 )
-  [22] (byte*) strip::p#4 ← phi( strip/(byte*~) strip::p#7 strip::@4/(byte*~) strip::p#8 )
+  [22] (byte*) strip::p#4 ← phi( strip/(byte*) strip::p#7 strip::@4/(byte*) strip::p#8 )
   [23] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2
   to:strip::@3
 strip::@3: scope:[strip]  from strip::@1
@@ -356,7 +356,7 @@ strip::@return: scope:[strip]  from strip::@2
   [29] return 
   to:@return
 strip::@4: scope:[strip]  from strip::@2
-  [30] (byte*~) strip::p#8 ← (byte*) strip::p#2
+  [30] (byte*) strip::p#8 ← (byte*) strip::p#2
   to:strip::@1
 
 
@@ -382,8 +382,8 @@ VARIABLE REGISTER WEIGHTS
 (byte*) strip::p
 (byte*) strip::p#2 11.0
 (byte*) strip::p#4 9.5
-(byte*~) strip::p#7 4.0
-(byte*~) strip::p#8 22.0
+(byte*) strip::p#7 4.0
+(byte*) strip::p#8 22.0
 
 Initial phi equivalence classes
 [ print::msg#3 print::msg#4 print::msg#2 ]
@@ -548,7 +548,7 @@ strip: {
     .label p = $b
     .label p_1 = 7
     .label c = 6
-    // [21] (byte*~) strip::p#7 ← (byte*) strip::dest#0 -- pbuz1=pbuz2 
+    // [21] (byte*) strip::p#7 ← (byte*) strip::dest#0 -- pbuz1=pbuz2 
     lda.z dest
     sta.z p_1
     lda.z dest+1
@@ -557,7 +557,7 @@ strip: {
   __b1_from_strip:
   __b1_from___b4:
     // [22] phi (byte*) strip::dest#2 = (byte*) strip::dest#0 [phi:strip/strip::@4->strip::@1#0] -- register_copy 
-    // [22] phi (byte*) strip::p#4 = (byte*~) strip::p#7 [phi:strip/strip::@4->strip::@1#1] -- register_copy 
+    // [22] phi (byte*) strip::p#4 = (byte*) strip::p#7 [phi:strip/strip::@4->strip::@1#1] -- register_copy 
     jmp __b1
     // strip::@1
   __b1:
@@ -606,7 +606,7 @@ strip: {
     rts
     // strip::@4
   __b4:
-    // [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
+    // [30] (byte*) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
     lda.z p
     sta.z p_1
     lda.z p+1
@@ -622,22 +622,22 @@ strip: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [15] *((byte*) screen#10) ← *((byte*) print::msg#3) [ print::msg#3 screen#10 ] ( main:2::print:7 [ print::msg#3 screen#10 ] main:2::print:11 [ print::msg#3 screen#10 ] ) always clobbers reg byte a reg byte y 
 Statement [18] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1 [ screen#11 print::msg#2 ] ( main:2::print:7 [ screen#11 print::msg#2 ] main:2::print:11 [ screen#11 print::msg#2 ] ) always clobbers reg byte a reg byte y 
-Statement [21] (byte*~) strip::p#7 ← (byte*) strip::dest#0 [ strip::dest#0 strip::c#3 strip::p#7 ] ( main:2::strip:5 [ strip::dest#0 strip::c#3 strip::p#7 ] main:2::strip:9 [ screen#11 strip::dest#0 strip::c#3 strip::p#7 ] ) always clobbers reg byte a 
+Statement [21] (byte*) strip::p#7 ← (byte*) strip::dest#0 [ strip::dest#0 strip::c#3 strip::p#7 ] ( main:2::strip:5 [ strip::dest#0 strip::c#3 strip::p#7 ] main:2::strip:9 [ screen#11 strip::dest#0 strip::c#3 strip::p#7 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ strip::c#3 ]
 Statement [23] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2 [ strip::c#3 strip::p#4 strip::dest#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:6 [ strip::c#3 ]
 Statement [24] *((byte*) strip::dest#2) ← *((byte*) strip::p#4) [ strip::c#3 strip::p#4 strip::dest#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#2 ] ) always clobbers reg byte a reg byte y 
 Statement [27] (byte*) strip::p#2 ← ++ (byte*) strip::p#4 [ strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] ) always clobbers reg byte a 
 Statement [28] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@4 [ strip::c#3 strip::dest#4 strip::p#2 ] ( main:2::strip:5 [ strip::c#3 strip::dest#4 strip::p#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::dest#4 strip::p#2 ] ) always clobbers reg byte a reg byte y 
-Statement [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 [ strip::c#3 strip::p#8 strip::dest#4 ] ( main:2::strip:5 [ strip::c#3 strip::p#8 strip::dest#4 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#8 strip::dest#4 ] ) always clobbers reg byte a 
+Statement [30] (byte*) strip::p#8 ← (byte*) strip::p#2 [ strip::c#3 strip::p#8 strip::dest#4 ] ( main:2::strip:5 [ strip::c#3 strip::p#8 strip::dest#4 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#8 strip::dest#4 ] ) always clobbers reg byte a 
 Statement [15] *((byte*) screen#10) ← *((byte*) print::msg#3) [ print::msg#3 screen#10 ] ( main:2::print:7 [ print::msg#3 screen#10 ] main:2::print:11 [ print::msg#3 screen#10 ] ) always clobbers reg byte a reg byte y 
 Statement [18] if(*((byte*) print::msg#2)!=(byte) 0) goto print::@1 [ screen#11 print::msg#2 ] ( main:2::print:7 [ screen#11 print::msg#2 ] main:2::print:11 [ screen#11 print::msg#2 ] ) always clobbers reg byte a reg byte y 
-Statement [21] (byte*~) strip::p#7 ← (byte*) strip::dest#0 [ strip::dest#0 strip::c#3 strip::p#7 ] ( main:2::strip:5 [ strip::dest#0 strip::c#3 strip::p#7 ] main:2::strip:9 [ screen#11 strip::dest#0 strip::c#3 strip::p#7 ] ) always clobbers reg byte a 
+Statement [21] (byte*) strip::p#7 ← (byte*) strip::dest#0 [ strip::dest#0 strip::c#3 strip::p#7 ] ( main:2::strip:5 [ strip::dest#0 strip::c#3 strip::p#7 ] main:2::strip:9 [ screen#11 strip::dest#0 strip::c#3 strip::p#7 ] ) always clobbers reg byte a 
 Statement [23] if(*((byte*) strip::p#4)==(byte) strip::c#3) goto strip::@2 [ strip::c#3 strip::p#4 strip::dest#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#2 ] ) always clobbers reg byte a reg byte y 
 Statement [24] *((byte*) strip::dest#2) ← *((byte*) strip::p#4) [ strip::c#3 strip::p#4 strip::dest#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#2 ] ) always clobbers reg byte a reg byte y 
 Statement [27] (byte*) strip::p#2 ← ++ (byte*) strip::p#4 [ strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] ( main:2::strip:5 [ strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#4 strip::dest#4 strip::p#2 ] ) always clobbers reg byte a 
 Statement [28] if(*((byte*) strip::p#4)!=(byte) 0) goto strip::@4 [ strip::c#3 strip::dest#4 strip::p#2 ] ( main:2::strip:5 [ strip::c#3 strip::dest#4 strip::p#2 ] main:2::strip:9 [ screen#11 strip::c#3 strip::dest#4 strip::p#2 ] ) always clobbers reg byte a reg byte y 
-Statement [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 [ strip::c#3 strip::p#8 strip::dest#4 ] ( main:2::strip:5 [ strip::c#3 strip::p#8 strip::dest#4 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#8 strip::dest#4 ] ) always clobbers reg byte a 
+Statement [30] (byte*) strip::p#8 ← (byte*) strip::p#2 [ strip::c#3 strip::p#8 strip::dest#4 ] ( main:2::strip:5 [ strip::c#3 strip::p#8 strip::dest#4 ] main:2::strip:9 [ screen#11 strip::c#3 strip::p#8 strip::dest#4 ] ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ print::msg#3 print::msg#4 print::msg#2 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ screen#10 screen#15 screen#11 ] : zp[2]:4 , 
 Potential registers zp[1]:6 [ strip::c#3 ] : zp[1]:6 , reg byte x , 
@@ -799,7 +799,7 @@ strip: {
     .label dest = 6
     .label p = 8
     .label p_1 = 4
-    // [21] (byte*~) strip::p#7 ← (byte*) strip::dest#0 -- pbuz1=pbuz2 
+    // [21] (byte*) strip::p#7 ← (byte*) strip::dest#0 -- pbuz1=pbuz2 
     lda.z dest
     sta.z p_1
     lda.z dest+1
@@ -808,7 +808,7 @@ strip: {
   __b1_from_strip:
   __b1_from___b4:
     // [22] phi (byte*) strip::dest#2 = (byte*) strip::dest#0 [phi:strip/strip::@4->strip::@1#0] -- register_copy 
-    // [22] phi (byte*) strip::p#4 = (byte*~) strip::p#7 [phi:strip/strip::@4->strip::@1#1] -- register_copy 
+    // [22] phi (byte*) strip::p#4 = (byte*) strip::p#7 [phi:strip/strip::@4->strip::@1#1] -- register_copy 
     jmp __b1
     // strip::@1
   __b1:
@@ -857,7 +857,7 @@ strip: {
     rts
     // strip::@4
   __b4:
-    // [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
+    // [30] (byte*) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
     lda.z p
     sta.z p_1
     lda.z p+1
@@ -964,8 +964,8 @@ FINAL SYMBOL TABLE
 (byte*) strip::p
 (byte*) strip::p#2 p zp[2]:8 11.0
 (byte*) strip::p#4 p_1 zp[2]:4 9.5
-(byte*~) strip::p#7 p_1 zp[2]:4 4.0
-(byte*~) strip::p#8 p_1 zp[2]:4 22.0
+(byte*) strip::p#7 p_1 zp[2]:4 4.0
+(byte*) strip::p#8 p_1 zp[2]:4 22.0
 
 zp[2]:2 [ screen#10 screen#15 screen#11 ]
 reg byte x [ strip::c#3 ]
@@ -1093,14 +1093,14 @@ strip: {
     .label dest = 6
     .label p = 8
     .label p_1 = 4
-    // [21] (byte*~) strip::p#7 ← (byte*) strip::dest#0 -- pbuz1=pbuz2 
+    // [21] (byte*) strip::p#7 ← (byte*) strip::dest#0 -- pbuz1=pbuz2 
     lda.z dest
     sta.z p_1
     lda.z dest+1
     sta.z p_1+1
     // [22] phi from strip strip::@4 to strip::@1 [phi:strip/strip::@4->strip::@1]
     // [22] phi (byte*) strip::dest#2 = (byte*) strip::dest#0 [phi:strip/strip::@4->strip::@1#0] -- register_copy 
-    // [22] phi (byte*) strip::p#4 = (byte*~) strip::p#7 [phi:strip/strip::@4->strip::@1#1] -- register_copy 
+    // [22] phi (byte*) strip::p#4 = (byte*) strip::p#7 [phi:strip/strip::@4->strip::@1#1] -- register_copy 
     // strip::@1
   __b1:
     // if(*p!=c)
@@ -1144,7 +1144,7 @@ strip: {
     rts
     // strip::@4
   __b4:
-    // [30] (byte*~) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
+    // [30] (byte*) strip::p#8 ← (byte*) strip::p#2 -- pbuz1=pbuz2 
     lda.z p
     sta.z p_1
     lda.z p+1

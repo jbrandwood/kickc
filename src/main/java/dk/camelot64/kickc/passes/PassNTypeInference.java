@@ -120,7 +120,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
          if(!SymbolType.VAR.equals(symbol.getType()) && !type.equals(symbol.getType())) {
             program.getLog().append("Inferred type updated to " + type + " for " + symbol.toString(program));
          }
-         symbol.setTypeInferred(type);
+         symbol.setType(type);
       }
    }
 
@@ -140,7 +140,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       if(!SymbolType.VAR.equals(symbol.getType()) && !type.equals(symbol.getType())) {
          program.getLog().append("Inferred type updated to " + type + " in " + statement.toString(program, false));
       }
-      symbol.setTypeInferred(type);
+      symbol.setType(type);
    }
 
 

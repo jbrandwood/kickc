@@ -390,12 +390,12 @@ memcpy: scope:[memcpy]  from main::@3 main::@4
   [22] (void*) memcpy::destination#2 ← phi( main::@3/(void*)(const byte*) SCREEN+(byte) $a main::@4/(void*)(const byte*) SCREEN+(byte) $32 )
   [22] (void*) memcpy::source#2 ← phi( main::@3/(void*)(const byte[]) CAMELOT main::@4/(void*)(const string) main::$5 )
   [23] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2
-  [24] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
-  [25] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
+  [24] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
+  [25] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
   to:memcpy::@1
 memcpy::@1: scope:[memcpy]  from memcpy memcpy::@2
-  [26] (byte*) memcpy::dst#2 ← phi( memcpy/(byte*~) memcpy::dst#4 memcpy::@2/(byte*) memcpy::dst#1 )
-  [26] (byte*) memcpy::src#2 ← phi( memcpy/(byte*~) memcpy::src#4 memcpy::@2/(byte*) memcpy::src#1 )
+  [26] (byte*) memcpy::dst#2 ← phi( memcpy/(byte*) memcpy::dst#4 memcpy::@2/(byte*) memcpy::dst#1 )
+  [26] (byte*) memcpy::src#2 ← phi( memcpy/(byte*) memcpy::src#4 memcpy::@2/(byte*) memcpy::src#1 )
   [27] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
   to:memcpy::@return
 memcpy::@return: scope:[memcpy]  from memcpy::@1
@@ -434,7 +434,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) memcpy::dst
 (byte*) memcpy::dst#1 11.0
 (byte*) memcpy::dst#2 11.666666666666666
-(byte*~) memcpy::dst#4 4.0
+(byte*) memcpy::dst#4 4.0
 (word) memcpy::num
 (word) memcpy::num#2 2.0
 (void*) memcpy::return
@@ -443,7 +443,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) memcpy::src
 (byte*) memcpy::src#1 22.0
 (byte*) memcpy::src#2 11.5
-(byte*~) memcpy::src#4 2.0
+(byte*) memcpy::src#4 2.0
 (byte*) memcpy::src_end
 (byte*) memcpy::src_end#0 1.625
 
@@ -687,12 +687,12 @@ memcpy: {
     lda.z source+1
     adc.z num+1
     sta.z src_end+1
-    // [24] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 -- pbuz1=pbuz2 
+    // [24] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 -- pbuz1=pbuz2 
     lda.z source
     sta.z src
     lda.z source+1
     sta.z src+1
-    // [25] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 -- pbuz1=pbuz2 
+    // [25] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 -- pbuz1=pbuz2 
     lda.z destination
     sta.z dst
     lda.z destination+1
@@ -700,8 +700,8 @@ memcpy: {
     // [26] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
   __b1_from_memcpy:
   __b1_from___b2:
-    // [26] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [26] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [26] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [26] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp __b1
     // memcpy::@1
   __b1:
@@ -748,15 +748,15 @@ Statement [12] *((byte*) main::sc2#2) ← *((byte*) main::reigns#2) [ main::reig
 Removing always clobbered register reg byte a as potential for zp[1]:11 [ main::i1#2 main::i1#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:11 [ main::i1#2 main::i1#1 ]
 Statement [23] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ( main:2::memcpy:18 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] main:2::memcpy:20 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ) always clobbers reg byte a 
-Statement [24] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:2::memcpy:18 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] main:2::memcpy:20 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ) always clobbers reg byte a 
-Statement [25] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( main:2::memcpy:18 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] main:2::memcpy:20 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ) always clobbers reg byte a 
+Statement [24] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:2::memcpy:18 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] main:2::memcpy:20 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ) always clobbers reg byte a 
+Statement [25] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( main:2::memcpy:18 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] main:2::memcpy:20 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ) always clobbers reg byte a 
 Statement [27] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:2::memcpy:18 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] main:2::memcpy:20 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ) always clobbers reg byte a 
 Statement [29] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:2::memcpy:18 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] main:2::memcpy:20 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [6] *((byte*) main::sc#2) ← *((byte*) main::camelot#2) [ main::camelot#2 main::sc#2 main::i#2 ] ( main:2 [ main::camelot#2 main::sc#2 main::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [12] *((byte*) main::sc2#2) ← *((byte*) main::reigns#2) [ main::reigns#2 main::sc2#2 main::i1#2 ] ( main:2 [ main::reigns#2 main::sc2#2 main::i1#2 ] ) always clobbers reg byte a reg byte y 
 Statement [23] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ( main:2::memcpy:18 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] main:2::memcpy:20 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ) always clobbers reg byte a 
-Statement [24] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:2::memcpy:18 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] main:2::memcpy:20 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ) always clobbers reg byte a 
-Statement [25] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( main:2::memcpy:18 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] main:2::memcpy:20 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ) always clobbers reg byte a 
+Statement [24] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:2::memcpy:18 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] main:2::memcpy:20 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ) always clobbers reg byte a 
+Statement [25] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( main:2::memcpy:18 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] main:2::memcpy:20 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ) always clobbers reg byte a 
 Statement [27] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:2::memcpy:18 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] main:2::memcpy:20 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ) always clobbers reg byte a 
 Statement [29] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:2::memcpy:18 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] main:2::memcpy:20 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::camelot#2 main::camelot#1 ] : zp[2]:2 , 
@@ -985,13 +985,13 @@ memcpy: {
     lda.z src_end+1
     adc.z source+1
     sta.z src_end+1
-    // [24] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
-    // [25] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
+    // [24] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
+    // [25] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
     // [26] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
   __b1_from_memcpy:
   __b1_from___b2:
-    // [26] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [26] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [26] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [26] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp __b1
     // memcpy::@1
   __b1:
@@ -1120,7 +1120,7 @@ FINAL SYMBOL TABLE
 (byte*) memcpy::dst
 (byte*) memcpy::dst#1 dst zp[2]:6 11.0
 (byte*) memcpy::dst#2 dst zp[2]:6 11.666666666666666
-(byte*~) memcpy::dst#4 dst zp[2]:6 4.0
+(byte*) memcpy::dst#4 dst zp[2]:6 4.0
 (word) memcpy::num
 (word) memcpy::num#2 num zp[2]:8 2.0
 (void*) memcpy::return
@@ -1129,7 +1129,7 @@ FINAL SYMBOL TABLE
 (byte*) memcpy::src
 (byte*) memcpy::src#1 src zp[2]:4 22.0
 (byte*) memcpy::src#2 src zp[2]:4 11.5
-(byte*~) memcpy::src#4 src zp[2]:4 2.0
+(byte*) memcpy::src#4 src zp[2]:4 2.0
 (byte*) memcpy::src_end
 (byte*) memcpy::src_end#0 src_end zp[2]:8 1.625
 
@@ -1318,11 +1318,11 @@ memcpy: {
     lda.z src_end+1
     adc.z source+1
     sta.z src_end+1
-    // [24] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
-    // [25] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
+    // [24] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
+    // [25] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
     // [26] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
-    // [26] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [26] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [26] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [26] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     // memcpy::@1
   __b1:
     // while(src!=src_end)

@@ -129,7 +129,6 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
       constVar.setDeclaredVolatile(variable.isDeclaredVolatile());
       constVar.setDeclaredExport(variable.isDeclaredExport());
       constVar.setInferredVolatile(variable.isInferredVolatile());
-      constVar.setInferredType(variable.isInferredType());
       constVar.setComments(variable.getComments());
       constVar.getComments().addAll(assignment.getComments());
       SymbolVariableRef constRef = constVar.getRef();

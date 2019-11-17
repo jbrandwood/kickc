@@ -85,8 +85,7 @@ public class SymbolTypeStruct implements SymbolType {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       SymbolTypeStruct that = (SymbolTypeStruct) o;
-      return sizeBytes == that.sizeBytes &&
-            Objects.equals(name, that.name);
+      return Objects.equals(name, that.name);
    }
 
    @Override

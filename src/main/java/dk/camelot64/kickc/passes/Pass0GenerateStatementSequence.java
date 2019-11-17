@@ -2020,6 +2020,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          return new ConstantInteger(-((ConstantInteger) child).getInteger(), ((ConstantInteger) child).getType());
       } else if(operator.equals(Operators.ADDRESS_OF) && child instanceof SymbolRef) {
          return new ConstantSymbolPointer((SymbolRef) child);
+      } else if(operator.equals(Operators.ADDRESS_OF) && child instanceof PointerDereferenceIndexed && ((PointerDereferenceIndexed) child).getPointer() instanceof ConstantValue && ((PointerDereferenceIndexed) child).getIndex() instanceof ConstantValue) {
+         PointerDereferenceIndexed pointerDeref = (PointerDereferenceIndexed) child;
+         return new ConstantBinary((ConstantValue) pointerDeref.getPointer(), Operators.PLUS, (ConstantValue)pointerDeref.getIndex());
       } else if(child instanceof ConstantValue) {
          return new ConstantUnary((OperatorUnary) operator, (ConstantValue) child);
       } else {

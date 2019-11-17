@@ -1,6 +1,5 @@
 Fixing struct type size struct Person to 5
 Fixing struct type size struct Person to 5
-Fixing struct type size struct Person to 5
 Fixing pointer increment (struct Person*) main::person ← ++ (struct Person*) main::person
 Rewriting struct pointer member access *((struct Person*) print_person::person).id
 Rewriting struct pointer member access *((struct Person*) print_person::person).initials
@@ -9,13 +8,12 @@ Rewriting struct pointer member access *((struct Person*) print_person::person).
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (struct Person[]) persons ← { (struct Person){ (byte)(number) 1, (const string) $0 }, (struct Person){ (byte)(number) 8, (const string) $1 } }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) idx#18 ← phi( @2/(byte) idx#19 )
-  (struct Person*) main::person#0 ← (struct Person[]) persons
+  (struct Person*) main::person#0 ← (const struct Person[]) persons
   (struct Person*) print_person::person#0 ← (struct Person*) main::person#0
   call print_person 
   to:main::@1
@@ -78,8 +76,6 @@ print_person::@return: scope:[print_person]  from print_person
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "jgr"
-(const string) $1 = (string) "hbg"
 (label) @1
 (label) @2
 (label) @3
@@ -120,7 +116,7 @@ SYMBOL TABLE SSA
 (struct Person*) main::person#0
 (struct Person*) main::person#1
 (struct Person*) main::person#2
-(struct Person[]) persons
+(const struct Person[]) persons = { { id: (byte)(number) 1, initials: (string) "jgr" }, { id: (byte)(number) 8, initials: (string) "hbg" } }
 (void()) print_person((struct Person*) print_person::person)
 (byte~) print_person::$0
 (byte*) print_person::$1
@@ -140,9 +136,9 @@ Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (byte) idx
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) idx#3 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 8
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -165,23 +161,16 @@ Identical Phi Values (byte) idx#0 (byte) idx#10
 Identical Phi Values (byte) idx#1 (byte) idx#10
 Identical Phi Values (byte) idx#11 (byte) idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified constant from value list (struct Person) { id: (byte) 1, initials: (const string) $0 }
-Identified constant from value list (struct Person) { id: (byte) 8, initials: (const string) $1 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Identified constant from value list (struct Person[]) { { id: (byte) 1, initials: (const string) $0 }, { id: (byte) 8, initials: (const string) $1 } }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const struct Person[]) persons = { { id: 1, initials: $0 }, { id: 8, initials: $1 } }
-Constant (const byte) idx#19 = 0
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const struct Person*) main::person#0 = persons
+Constant (const byte) idx#19 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const struct Person*) print_person::person#0 = main::person#0
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [18] (byte~) print_person::$0 ← (byte) '0' + *((byte*) print_person::$1)  -- *((byte*)print_person::person#2 + OFFSET_STRUCT_PERSON_ID)
+Converting *(pointer+n) to pointer[n] [17] (byte~) print_person::$0 ← (byte) '0' + *((byte*) print_person::$1)  -- *((byte*)print_person::person#2 + OFFSET_STRUCT_PERSON_ID)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)print_person::person#2 in [17] (byte*) print_person::$1 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
-Simplifying expression containing zero (byte*)print_person::person#2 in [18] (byte~) print_person::$0 ← (byte) '0' + *((byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID)
-Simplifying expression containing zero print_person::$2 in [24] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2 + (byte) 0)
+Simplifying expression containing zero (byte*)print_person::person#2 in [16] (byte*) print_person::$1 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
+Simplifying expression containing zero (byte*)print_person::person#2 in [17] (byte~) print_person::$0 ← (byte) '0' + *((byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID)
+Simplifying expression containing zero print_person::$2 in [23] *((const byte*) SCREEN + (byte) idx#5) ← *((byte[4]) print_person::$2 + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*) print_person::$1 and assignment [6] (byte*) print_person::$1 ← (byte*)(struct Person*) print_person::person#2
 Eliminating unused constant (const byte) OFFSET_STRUCT_PERSON_ID
@@ -205,9 +194,6 @@ Constant inlined print_person::person#0 = (const struct Person[]) persons
 Constant inlined main::person#0 = (const struct Person[]) persons
 Constant inlined print_person::person#1 = (const struct Person*) main::person#1
 Successful SSA optimization Pass2ConstantInlining
-Constant array inlined into struct $0 = (string) "jgr"
-Constant array inlined into struct $1 = (string) "hbg"
-Successful SSA optimization Pass2ArrayInStructInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2

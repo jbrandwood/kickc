@@ -15,6 +15,7 @@
   .label BGCOL = $d020
 .segment Code
 main: {
+    // Transfer ZP-code to zeropage
     .label zpCode = zpLoop
     sei
     ldx #0

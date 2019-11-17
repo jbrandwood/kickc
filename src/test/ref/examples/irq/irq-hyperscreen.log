@@ -20,8 +20,7 @@ main: scope:[main]  from @7
   *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
   *((const byte*) RASTER) ← (number) $fa
   *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
-  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-  *((const void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -34,8 +33,7 @@ irq_bottom_1: scope:[irq_bottom_1]  from
   *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $ff^(const byte) VIC_RSEL
   *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
   *((const byte*) RASTER) ← (number) $fd
-  (void()*~) irq_bottom_1::$0 ← & interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-  *((const void()**) KERNEL_IRQ) ← (void()*~) irq_bottom_1::$0
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
   *((const byte*) BORDERCOL) ← (const byte) RED
   to:irq_bottom_1::@return
 irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
@@ -48,8 +46,7 @@ irq_bottom_2: scope:[irq_bottom_2]  from
   *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (const byte) VIC_RSEL
   *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
   *((const byte*) RASTER) ← (number) $fa
-  (void()*~) irq_bottom_2::$0 ← & interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-  *((const void()**) KERNEL_IRQ) ← (void()*~) irq_bottom_2::$0
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
   *((const byte*) BORDERCOL) ← (const byte) RED
   to:irq_bottom_2::@return
 irq_bottom_2::@return: scope:[irq_bottom_2]  from irq_bottom_2
@@ -81,13 +78,10 @@ SYMBOL TABLE SSA
 (const byte) VIC_RSEL = (number) 8
 (const byte) WHITE = (number) 1
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-(void()*~) irq_bottom_1::$0
 (label) irq_bottom_1::@return
 interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-(void()*~) irq_bottom_2::$0
 (label) irq_bottom_2::@return
 (void()) main()
-(void()*~) main::$0
 (label) main::@return
 
 Adding number conversion cast (unumber) 0 in *((const byte*) GHOST_BYTE) ← (number) 0
@@ -126,18 +120,6 @@ Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) $fd
 Finalized unsigned number type (byte) $fa
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [6] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-Constant right-side identified [14] (void()*~) irq_bottom_1::$0 ← & interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-Constant right-side identified [22] (void()*~) irq_bottom_2::$0 ← & interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) main::$0 = &irq_bottom_1
-Constant (const void()*) irq_bottom_1::$0 = &irq_bottom_2
-Constant (const void()*) irq_bottom_2::$0 = &irq_bottom_1
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined irq_bottom_2::$0 = &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-Constant inlined irq_bottom_1::$0 = &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @7
 Adding NOP phi() at start of @8

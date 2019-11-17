@@ -1,4 +1,4 @@
-Setting inferred volatile on symbol affected by address-of (byte**~) main::$0 ← & (byte*) ptr
+Setting inferred volatile on symbol affected by address-of (word) main::w ← (word)&(byte*) ptr
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -8,12 +8,10 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (byte*) ptr#1 ← phi( @1/(byte*) ptr#2 )
-  (byte**~) main::$0 ← & (byte*) ptr#1
-  (word~) main::$1 ← ((word)) (byte**~) main::$0
-  (word) main::w#0 ← (word~) main::$1
+  (word) main::w#0 ← (word)&(byte*) ptr#1
   (word) main::w#1 ← (word) main::w#0 + (number) $32
-  (byte~) main::$2 ← < (word) main::w#1
-  *((const byte*) SCREEN + (number) 0) ← (byte~) main::$2
+  (byte~) main::$0 ← < (word) main::w#1
+  *((const byte*) SCREEN + (number) 0) ← (byte~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -33,9 +31,7 @@ SYMBOL TABLE SSA
 (label) @end
 (const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
-(byte**~) main::$0
-(word~) main::$1
-(byte~) main::$2
+(byte~) main::$0
 (label) main::@return
 (word) main::w
 (word) main::w#0
@@ -46,10 +42,9 @@ SYMBOL TABLE SSA
 (byte*) ptr#2
 
 Adding number conversion cast (unumber) $32 in (word) main::w#1 ← (word) main::w#0 + (number) $32
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte~) main::$2
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte~) main::$0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) ptr#0 ← (byte*)(number) $1000
-Inlining cast (word~) main::$1 ← (word)(byte**~) main::$0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 4096
@@ -59,33 +54,27 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $32
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (word) main::w#0 = (word~) main::$1 
 Alias (byte*) ptr#0 = (byte*) ptr#2 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) ptr#1 (byte*) ptr#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [2] (byte**~) main::$0 ← & (byte*) ptr#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte**) main::$0 = &ptr#0
+Constant (const word) main::w#0 = (word)&ptr#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const word) main::w#0 = (word)main::$0
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [7] *((const byte*) SCREEN + (byte) 0) ← (byte~) main::$2
+Simplifying expression containing zero SCREEN in [5] *((const byte*) SCREEN + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [1] (word) main::w#1 ← (const word) main::w#0 + (byte) $32
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::w#1 = main::w#0+$32
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [1] (byte~) main::$2 ← < (const word) main::w#1
+Constant right-side identified [1] (byte~) main::$0 ← < (const word) main::w#1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = <main::w#1
+Constant (const byte) main::$0 = <main::w#1
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings (const word) main::w#0
 Inlining constant with different constant siblings (const word) main::w#1
-Constant inlined main::w#1 = (word)&(byte*) ptr#0+(byte) $32
-Constant inlined main::$2 = <(word)&(byte*) ptr#0+(byte) $32
 Constant inlined main::w#0 = (word)&(byte*) ptr#0
-Constant inlined main::$0 = &(byte*) ptr#0
+Constant inlined main::w#1 = (word)&(byte*) ptr#0+(byte) $32
+Constant inlined main::$0 = <(word)&(byte*) ptr#0+(byte) $32
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2

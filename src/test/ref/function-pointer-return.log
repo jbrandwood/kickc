@@ -32,19 +32,17 @@ main::@2: scope:[main]  from main::@1
   to:main::@8
 main::@4: scope:[main]  from main::@2
   (byte) main::i#5 ← phi( main::@2/(byte) main::i#1 )
-  (byte()*~) main::$3 ← & (byte()) fn1()
-  (byte()*) main::f#1 ← (byte()*~) main::$3
+  (byte()*) main::f#1 ← &(byte()) fn1()
   to:main::@5
 main::@8: scope:[main]  from main::@2
   (byte) main::i#6 ← phi( main::@2/(byte) main::i#1 )
-  (byte()*~) main::$2 ← & (byte()) fn2()
-  (byte()*) main::f#2 ← (byte()*~) main::$2
+  (byte()*) main::f#2 ← &(byte()) fn2()
   to:main::@5
 main::@5: scope:[main]  from main::@4 main::@8
   (byte) main::i#4 ← phi( main::@4/(byte) main::i#5 main::@8/(byte) main::i#6 )
   (byte()*) main::f#3 ← phi( main::@4/(byte()*) main::f#1 main::@8/(byte()*) main::f#2 )
-  (byte~) main::$4 ← ((byte)) (byte()*) main::f#3
-  *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$4
+  (byte~) main::$2 ← ((byte)) (byte()*) main::f#3
+  *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$2
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -100,9 +98,7 @@ SYMBOL TABLE SSA
 (void()) main()
 (number~) main::$0
 (bool~) main::$1
-(byte()*~) main::$2
-(byte()*~) main::$3
-(byte~) main::$4
+(byte~) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@4
@@ -128,10 +124,10 @@ Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::i#1 & (number) 1
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::i#1 & (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (unumber~) main::$0 == (number) 0
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$4
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Inlining cast (byte~) main::$4 ← (byte)(byte()*) main::f#3
+Inlining cast (byte~) main::$2 ← (byte)(byte()*) main::f#3
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 53280
@@ -149,8 +145,6 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::i#1 & (byte) 1
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte) main::i#1 = (byte) main::i#5 (byte) main::i#6 
-Alias (byte()*) main::f#1 = (byte()*~) main::$3 
-Alias (byte()*) main::f#2 = (byte()*~) main::$2 
 Alias (byte) fn1::return#0 = (byte) fn1::return#2 (byte) fn1::return#1 
 Alias (byte) fn2::return#0 = (byte) fn2::return#2 (byte) fn2::return#1 
 Successful SSA optimization Pass2AliasElimination
@@ -158,9 +152,6 @@ Alias (byte) main::i#1 = (byte) main::i#4
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$1 [8] if((byte~) main::$0==(byte) 0) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [10] (byte()*) main::f#1 ← & (byte()) fn1()
-Constant right-side identified [13] (byte()*) main::f#2 ← & (byte()) fn2()
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte()*) main::f#0 = (byte()*) 0
 Constant (const byte) main::i#0 = 0
 Constant (const byte()*) main::f#1 = &fn1
@@ -168,7 +159,7 @@ Constant (const byte()*) main::f#2 = &fn2
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [3] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero main::SCREEN in [17] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$4
+Simplifying expression containing zero main::SCREEN in [15] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$2
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) fn1::return#0 and assignment [9] (byte) fn1::return#0 ← *((const byte*) fn1::BORDERCOL)
 Eliminating unused variable (byte) fn2::return#0 and assignment [12] (byte) fn2::return#0 ← *((const byte*) fn2::BGCOL)
@@ -235,8 +226,8 @@ main::@3: scope:[main]  from main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2 main::@3
   [10] (byte()*) main::f#3 ← phi( main::@3/&(byte()) fn1() main::@2/&(byte()) fn2() )
-  [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3
-  [12] *((const byte*) main::SCREEN) ← (byte~) main::$4
+  [11] (byte~) main::$2 ← (byte)(byte()*) main::f#3
+  [12] *((const byte*) main::SCREEN) ← (byte~) main::$2
   to:main::@1
 
 (byte()) fn2()
@@ -263,7 +254,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) fn2::return
 (void()) main()
 (byte~) main::$0 22.0
-(byte~) main::$4 22.0
+(byte~) main::$2 22.0
 (byte()*) main::f
 (byte()*) main::f#3
 (byte) main::i
@@ -274,16 +265,16 @@ Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::f#3 ]
 Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable main::$4 to zero page equivalence class [ main::$4 ]
+Added variable main::$2 to zero page equivalence class [ main::$2 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::f#3 ]
 [ main::$0 ]
-[ main::$4 ]
+[ main::$2 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[2]:3 [ main::f#3 ]
 Allocated zp[1]:5 [ main::$0 ]
-Allocated zp[1]:6 [ main::$4 ]
+Allocated zp[1]:6 [ main::$2 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -314,7 +305,7 @@ __bend:
 main: {
     .label SCREEN = $400
     .label __0 = 5
-    .label __4 = 6
+    .label __2 = 6
     .label i = 2
     .label f = 3
     // [5] phi from main to main::@1 [phi:main->main::@1]
@@ -361,11 +352,11 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuz1=_byte_pprz2 
+    // [11] (byte~) main::$2 ← (byte)(byte()*) main::f#3 -- vbuz1=_byte_pprz2 
     lda.z f
-    sta.z __4
-    // [12] *((const byte*) main::SCREEN) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
-    lda.z __4
+    sta.z __2
+    // [12] *((const byte*) main::SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
+    lda.z __2
     sta SCREEN
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
@@ -397,22 +388,22 @@ fn1: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 [ main::i#1 main::$4 ] ( main:2 [ main::i#1 main::$4 ] ) always clobbers reg byte a 
+Statement [11] (byte~) main::$2 ← (byte)(byte()*) main::f#3 [ main::i#1 main::$2 ] ( main:2 [ main::i#1 main::$2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 [ main::i#1 main::$0 ] ( main:2 [ main::i#1 main::$0 ] ) always clobbers reg byte a 
-Statement [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 [ main::i#1 main::$4 ] ( main:2 [ main::i#1 main::$4 ] ) always clobbers reg byte a 
+Statement [11] (byte~) main::$2 ← (byte)(byte()*) main::f#3 [ main::i#1 main::$2 ] ( main:2 [ main::i#1 main::$2 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ main::f#3 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ main::$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:6 [ main::$4 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::$2 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 26.71: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:5 [ main::$0 ] 22: zp[1]:6 [ main::$4 ] 0: zp[2]:3 [ main::f#3 ] 
+Uplift Scope [main] 26.71: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:5 [ main::$0 ] 22: zp[1]:6 [ main::$2 ] 0: zp[2]:3 [ main::f#3 ] 
 Uplift Scope [fn1] 
 Uplift Scope [fn2] 
 Uplift Scope [] 
 
-Uplifting [main] best 617 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] reg byte a [ main::$4 ] zp[2]:3 [ main::f#3 ] 
+Uplifting [main] best 617 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] reg byte a [ main::$2 ] zp[2]:3 [ main::f#3 ] 
 Uplifting [fn1] best 617 combination 
 Uplifting [fn2] best 617 combination 
 Uplifting [] best 617 combination 
@@ -487,9 +478,9 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuaa=_byte_pprz1 
+    // [11] (byte~) main::$2 ← (byte)(byte()*) main::f#3 -- vbuaa=_byte_pprz1 
     lda.z f
-    // [12] *((const byte*) main::SCREEN) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [12] *((const byte*) main::SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
@@ -568,7 +559,7 @@ FINAL SYMBOL TABLE
 (byte) fn2::return
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
-(byte~) main::$4 reg byte a 22.0
+(byte~) main::$2 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -583,7 +574,7 @@ FINAL SYMBOL TABLE
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:2 [ main::f#3 ]
 reg byte a [ main::$0 ]
-reg byte a [ main::$4 ]
+reg byte a [ main::$2 ]
 
 
 FINAL ASSEMBLER
@@ -643,10 +634,10 @@ main: {
     // main::@4
   __b4:
     // (byte)f
-    // [11] (byte~) main::$4 ← (byte)(byte()*) main::f#3 -- vbuaa=_byte_pprz1 
+    // [11] (byte~) main::$2 ← (byte)(byte()*) main::f#3 -- vbuaa=_byte_pprz1 
     lda.z f
     // SCREEN[0] = (byte)f
-    // [12] *((const byte*) main::SCREEN) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [12] *((const byte*) main::SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 

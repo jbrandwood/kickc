@@ -400,8 +400,7 @@ init_irq: scope:[init_irq]  from main::@11
   *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (number) $80
   *((const byte*) RASTER) ← (number) 0
   *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
-  (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
-  *((const void()**) HARDWARE_IRQ) ← (void()*~) init_irq::$0
+  *((const void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq()
   asm { cli  }
   to:init_irq::@return
 init_irq::@return: scope:[init_irq]  from init_irq
@@ -655,7 +654,6 @@ SYMBOL TABLE SSA
 (byte) frame_cnt#8
 (byte) frame_cnt#9
 (void()) init_irq()
-(void()*~) init_irq::$0
 (label) init_irq::@return
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 (bool~) irq::$0
@@ -948,7 +946,7 @@ Successful SSA optimization PassNAddTypeConversionAssignment
 Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
 Inversing boolean not [34] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [33] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
 Inversing boolean not [54] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [53] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
-Inversing boolean not [178] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [177] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
+Inversing boolean not [177] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [176] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#0 = (void*) memset::str#2 (void*) memset::return#4 (void*) memset::return#1 
 Alias (void*) memset::str#3 = (void*) memset::str#4 
@@ -1061,7 +1059,7 @@ Simple Condition (bool~) bitmap_init::$1 [35] if((byte) bitmap_init::bits#1!=(by
 Simple Condition (bool~) bitmap_init::$2 [39] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
 Simple Condition (bool~) bitmap_init::$9 [55] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
 Simple Condition (bool~) bitmap_init::$11 [59] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) irq::$0 [179] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
+Simple Condition (bool~) irq::$0 [178] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Rewriting ! if()-condition to reversed if() [142] (bool~) main::$8 ← ! (bool~) main::$7
 Rewriting || if()-condition to two if()s [141] (bool~) main::$7 ← (bool~) main::$5 || (bool~) main::$6
@@ -1072,7 +1070,6 @@ Constant right-side identified [22] (byte[$100]) bitmap_plot_ylo ← { fill( $10
 Constant right-side identified [23] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
 Constant right-side identified [24] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
 Constant right-side identified [93] (byte[$100]) plots_per_frame ← { fill( $100, 0) }
-Constant right-side identified [171] (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) bitmap_screen#0 = (byte*) 0
 Constant (const byte*) bitmap_gfx#0 = (byte*) 0
@@ -1097,7 +1094,6 @@ Constant (const word) main::x#0 = 0
 Constant (const byte) main::y#0 = 0
 Constant (const word) main::vx#0 = 1
 Constant (const byte) main::vy#0 = 1
-Constant (const void()*) init_irq::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) bitmap_gfx#1 = bitmap_init::gfx#0
 Constant (const byte*) bitmap_screen#1 = bitmap_init::screen#0
@@ -1198,7 +1194,6 @@ Constant inlined memset::num#1 = (word) $1f40
 Constant inlined memset::num#0 = (word) $3e8
 Constant inlined bitmap_init::bits#0 = (byte) $80
 Constant inlined bitmap_init::bits#2 = (byte) $80
-Constant inlined init_irq::$0 = &interrupt(HARDWARE_CLOBBER)(void()) irq()
 Constant inlined memset::str#1 = (void*)(const byte*) BITMAP
 Constant inlined memset::str#0 = (void*)(const byte*) SCREEN
 Constant inlined main::toD0181_$7 = >(word)(const byte*) BITMAP/(byte) 4&(byte) $f

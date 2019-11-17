@@ -1,4 +1,5 @@
 Resolved forward reference fn1 to (void()) fn1()
+Identified constant variable (void()*) main::f
 Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
@@ -9,11 +10,9 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte) idx#3 ← phi( @2/(byte) idx#6 )
-  (void()*~) main::$0 ← & (void()) fn1()
-  (void()*) main::f#0 ← (void()*~) main::$0
-  call *((void()*) main::f#0) 
+  call *((const void()*) main::f) 
   *((const byte*) SCREEN + (byte) idx#3) ← (byte) 'a'
-  call *((void()*) main::f#0) 
+  call *((const void()*) main::f) 
   *((const byte*) SCREEN + (byte) idx#3) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
@@ -55,10 +54,8 @@ SYMBOL TABLE SSA
 (byte) idx#5
 (byte) idx#6
 (void()) main()
-(void()*~) main::$0
 (label) main::@return
-(void()*) main::f
-(void()*) main::f#0
+(const void()*) main::f = &(void()) fn1()
 
 Adding number conversion cast (unumber) 0 in (byte) idx#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -69,21 +66,16 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (void()*) main::f#0 = (void()*~) main::$0 
 Alias (byte) idx#1 = (byte) idx#5 (byte) idx#2 
 Alias (byte) idx#0 = (byte) idx#6 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) idx#3 (byte) idx#0
 Identical Phi Values (byte) idx#4 (byte) idx#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [2] (void()*) main::f#0 ← & (void()) fn1()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) main::f#0 = &fn1
-Successful SSA optimization Pass2ConstantIdentification
+Replacing constant pointer function [2] call fn1 
 Replacing constant pointer function [4] call fn1 
-Replacing constant pointer function [6] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
-Eliminating unused constant (const void()*) main::f#0
+Eliminating unused constant (const void()*) main::f
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
@@ -139,7 +131,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) idx#0 1.0
 (byte) idx#1 20.0
 (void()) main()
-(void()*) main::f
 
 Initial phi equivalence classes
 Coalescing volatile variable equivalence classes [ idx#0 ] and [ idx#1 ]
@@ -317,7 +308,6 @@ FINAL SYMBOL TABLE
 (byte) idx#1 idx zp[1]:2 20.0
 (void()) main()
 (label) main::@return
-(void()*) main::f
 
 zp[1]:2 [ idx#0 idx#1 ]
 

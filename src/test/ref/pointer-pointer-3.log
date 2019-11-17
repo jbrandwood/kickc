@@ -1,5 +1,5 @@
-Setting inferred volatile on symbol affected by address-of (byte**~) main::$0 ← & (byte*) screen
-Setting inferred volatile on symbol affected by address-of (byte**~) main::$2 ← & (byte*) screen
+Setting inferred volatile on symbol affected by address-of (void~) main::$0 ← call setscreen &(byte*) screen (byte*) screen1 
+Setting inferred volatile on symbol affected by address-of (void~) main::$1 ← call setscreen &(byte*) screen (byte*) screen2 
 Identified constant variable (byte*) screen1
 Identified constant variable (byte*) screen2
 Culled Empty Block (label) @1
@@ -12,16 +12,14 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte*) screen#1 ← phi( @2/(byte*) screen#4 )
-  (byte**~) main::$0 ← & (byte*) screen#1
-  (byte**) setscreen::screen#0 ← (byte**~) main::$0
+  (byte**) setscreen::screen#0 ← &(byte*) screen#1
   (byte*) setscreen::val#0 ← (const byte*) screen1
   call setscreen 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte*) screen#2 ← phi( main/(byte*) screen#1 )
   *((byte*) screen#2 + (number) 0) ← (byte) 'a'
-  (byte**~) main::$2 ← & (byte*) screen#2
-  (byte**) setscreen::screen#1 ← (byte**~) main::$2
+  (byte**) setscreen::screen#1 ← &(byte*) screen#2
   (byte*) setscreen::val#1 ← (const byte*) screen2
   call setscreen 
   to:main::@2
@@ -56,8 +54,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte**~) main::$0
-(byte**~) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@return
@@ -93,23 +89,18 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte**) setscreen::screen#0 = (byte**~) main::$0 
 Alias (byte*) screen#1 = (byte*) screen#2 (byte*) screen#3 
-Alias (byte**) setscreen::screen#1 = (byte**~) main::$2 
 Alias (byte*) screen#0 = (byte*) screen#4 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) screen#1 (byte*) screen#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [2] (byte**) setscreen::screen#0 ← & (byte*) screen#0
-Constant right-side identified [8] (byte**) setscreen::screen#1 ← & (byte*) screen#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte**) setscreen::screen#0 = &screen#0
 Constant (const byte*) setscreen::val#0 = screen1
 Constant (const byte**) setscreen::screen#1 = &screen#0
 Constant (const byte*) setscreen::val#1 = screen2
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero screen#0 in [7] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
-Simplifying expression containing zero screen#0 in [13] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero screen#0 in [6] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero screen#0 in [11] *((byte*) screen#0 + (byte) 0) ← (byte) 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte**) setscreen::screen#0
 Inlining constant with var siblings (const byte*) setscreen::val#0

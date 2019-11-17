@@ -1,4 +1,4 @@
-Fixing pointer array-indexing *((const signed word[]) VALS + (number) 1)
+Fixing constant pointer addition (const signed word[]) VALS+(number) 1
 Fixing pointer array-indexing *((const signed word[]) VALS + (byte) main::i)
 Fixing pointer array-indexing *((const signed word*) SCREEN + (byte) idx)
 Culled Empty Block (label) main::@2
@@ -16,9 +16,7 @@ main: scope:[main]  from @2
 main::@3: scope:[main]  from main
   (byte) idx#8 ← phi( main/(byte) idx#6 )
   (byte) idx#0 ← (byte) idx#8
-  (number~) main::$6 ← (number) 1 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word*~) main::$1 ← & *((const signed word[]) VALS + (number~) main::$6)
-  (signed word*) print::p#1 ← (signed word*~) main::$1
+  (signed word*) print::p#1 ← (const signed word[]) VALS+(number) 1*(const byte) SIZEOF_SIGNED_WORD
   call print 
   to:main::@4
 main::@4: scope:[main]  from main::@3
@@ -29,9 +27,9 @@ main::@4: scope:[main]  from main::@3
 main::@1: scope:[main]  from main::@4 main::@5
   (byte) idx#16 ← phi( main::@4/(byte) idx#1 main::@5/(byte) idx#2 )
   (byte) main::i#2 ← phi( main::@4/(byte) main::i#0 main::@5/(byte) main::i#1 )
-  (byte~) main::$7 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word*~) main::$3 ← & *((const signed word[]) VALS + (byte~) main::$7)
-  (signed word*) print::p#2 ← (signed word*~) main::$3
+  (byte~) main::$5 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
+  (signed word*~) main::$2 ← & *((const signed word[]) VALS + (byte~) main::$5)
+  (signed word*) print::p#2 ← (signed word*~) main::$2
   call print 
   to:main::@5
 main::@5: scope:[main]  from main::@1
@@ -39,8 +37,8 @@ main::@5: scope:[main]  from main::@1
   (byte) idx#10 ← phi( main::@1/(byte) idx#6 )
   (byte) idx#2 ← (byte) idx#10
   (byte) main::i#1 ← (byte) main::i#3 + rangenext(2,3)
-  (bool~) main::$5 ← (byte) main::i#1 != rangelast(2,3)
-  if((bool~) main::$5) goto main::@1
+  (bool~) main::$4 ← (byte) main::i#1 != rangelast(2,3)
+  if((bool~) main::$4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@5
   (byte) idx#11 ← phi( main::@5/(byte) idx#2 )
@@ -103,11 +101,9 @@ SYMBOL TABLE SSA
 (byte) idx#8
 (byte) idx#9
 (void()) main()
-(signed word*~) main::$1
-(signed word*~) main::$3
-(bool~) main::$5
-(number~) main::$6
-(byte~) main::$7
+(signed word*~) main::$2
+(bool~) main::$4
+(byte~) main::$5
 (label) main::@1
 (label) main::@3
 (label) main::@4
@@ -127,8 +123,8 @@ SYMBOL TABLE SSA
 (signed word*) print::p#2
 (signed word*) print::p#3
 
-Adding number conversion cast (unumber) 1 in (number~) main::$6 ← (number) 1 * (const byte) SIZEOF_SIGNED_WORD
-Adding number conversion cast (unumber) main::$6 in (number~) main::$6 ← (unumber)(number) 1 * (const byte) SIZEOF_SIGNED_WORD
+Adding number conversion cast (unumber) 1*SIZEOF_SIGNED_WORD in (signed word*) print::p#1 ← (const signed word[]) VALS+(number) 1*(const byte) SIZEOF_SIGNED_WORD
+Adding number conversion cast (unumber) 1 in (signed word*) print::p#1 ← (const signed word[]) VALS+(unumber)(number) 1*(const byte) SIZEOF_SIGNED_WORD
 Adding number conversion cast (unumber) 0 in (byte) idx#4 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) idx#4 ← (unumber)(number) 0
@@ -138,17 +134,16 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Simplifying constant pointer cast (signed word*) 1024
+Simplifying constant integer cast (unumber)(number) 1*(const byte) SIZEOF_SIGNED_WORD
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$6 ← (byte) 1 * (const byte) SIZEOF_SIGNED_WORD
 Alias (byte) idx#0 = (byte) idx#8 
-Alias (signed word*) print::p#1 = (signed word*~) main::$1 
 Alias (byte) idx#1 = (byte) idx#9 
-Alias (signed word*) print::p#2 = (signed word*~) main::$3 
+Alias (signed word*) print::p#2 = (signed word*~) main::$2 
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte) idx#10 = (byte) idx#2 (byte) idx#11 (byte) idx#3 
 Alias (byte) idx#13 = (byte) idx#5 (byte) idx#6 
@@ -163,31 +158,24 @@ Identical Phi Values (byte) idx#14 (byte) idx#10
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte) idx#16 (byte) idx#13
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$5 [21] if((byte) main::i#1!=rangelast(2,3)) goto main::@1
+Simple Condition (bool~) main::$4 [19] if((byte) main::i#1!=rangelast(2,3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting array member address-of to pointer addition [6] (signed word*) print::p#1 ← (const signed word[]) VALS + (byte~) main::$6
-Rewriting array member address-of to pointer addition [14] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$7
+Rewriting array member address-of to pointer addition [12] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5
 Successful SSA optimization PassNArrayElementAddressOfRewriting
-Constant right-side identified [5] (byte~) main::$6 ← (byte) 1 * (const byte) SIZEOF_SIGNED_WORD
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const signed word*) print::p#0 = VALS
-Constant (const byte) main::$6 = 1*SIZEOF_SIGNED_WORD
+Constant (const signed word*) print::p#1 = VALS+1*SIZEOF_SIGNED_WORD
 Constant (const byte) main::i#0 = 2
 Constant (const byte) idx#17 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [19] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [21] if(main::i#1!=rangelast(2,3)) goto main::@1 to (number) 4
+Resolved ranged next value [17] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [19] if(main::i#1!=rangelast(2,3)) goto main::@1 to (number) 4
 Adding number conversion cast (unumber) 4 in if((byte) main::i#1!=(number) 4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [1] (signed word*) print::p#1 ← (const signed word[]) VALS + (const byte) main::$6
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const signed word*) print::p#1 = VALS+main::$6
-Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift [3] (byte~) main::$7 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
+Rewriting multiplication to use shift [3] (byte~) main::$5 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
 Rewriting multiplication to use shift [10] (byte~) print::$0 ← (byte) idx#12 * (const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::i#0
@@ -195,7 +183,6 @@ Inlining constant with var siblings (const signed word*) print::p#0
 Inlining constant with var siblings (const signed word*) print::p#1
 Inlining constant with var siblings (const byte) idx#17
 Constant inlined main::i#0 = (byte) 2
-Constant inlined main::$6 = (byte) 1*(const byte) SIZEOF_SIGNED_WORD
 Constant inlined idx#17 = (byte) 0
 Constant inlined print::p#1 = (const signed word[]) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD
 Constant inlined print::p#0 = (const signed word[]) VALS
@@ -253,8 +240,8 @@ main::@2: scope:[main]  from main
   to:main::@1
 main::@1: scope:[main]  from main::@2 main::@3
   [8] (byte) main::i#2 ← phi( main::@2/(byte) 2 main::@3/(byte) main::i#1 )
-  [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1
-  [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$7
+  [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1
+  [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5
   [11] call print 
   to:main::@3
 main::@3: scope:[main]  from main::@1
@@ -283,7 +270,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) idx#12 5.666666666666667
 (byte) idx#13 1.3636363636363638
 (void()) main()
-(byte~) main::$7 22.0
+(byte~) main::$5 22.0
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 8.25
@@ -297,18 +284,18 @@ Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 [ idx#12 idx#13 ]
 [ print::p#3 print::p#2 ]
-Added variable main::$7 to zero page equivalence class [ main::$7 ]
+Added variable main::$5 to zero page equivalence class [ main::$5 ]
 Added variable print::$0 to zero page equivalence class [ print::$0 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ idx#12 idx#13 ]
 [ print::p#3 print::p#2 ]
-[ main::$7 ]
+[ main::$5 ]
 [ print::$0 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[1]:3 [ idx#12 idx#13 ]
 Allocated zp[2]:4 [ print::p#3 print::p#2 ]
-Allocated zp[1]:6 [ main::$7 ]
+Allocated zp[1]:6 [ main::$5 ]
 Allocated zp[1]:7 [ print::$0 ]
 
 INITIAL ASM
@@ -341,7 +328,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label __7 = 6
+    .label __5 = 6
     .label i = 2
     // [5] call print 
     // [15] phi from main to print [phi:main->print]
@@ -382,12 +369,12 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z __7
-    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$7 -- pwsz1=pwsc1_plus_vbuz2 
-    lda.z __7
+    sta.z __5
+    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5 -- pwsz1=pwsc1_plus_vbuz2 
+    lda.z __5
     clc
     adc #<VALS
     sta.z print.p
@@ -444,30 +431,30 @@ print: {
   VALS: .word 1, 2, 3, 4
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$7 idx#13 ] ( main:2 [ main::i#2 main::$7 idx#13 ] ) always clobbers reg byte a 
+Statement [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$5 idx#13 ] ( main:2 [ main::i#2 main::$5 idx#13 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ idx#12 idx#13 ]
-Statement [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$7 [ main::i#2 print::p#2 idx#13 ] ( main:2 [ main::i#2 print::p#2 idx#13 ] ) always clobbers reg byte a 
+Statement [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5 [ main::i#2 print::p#2 idx#13 ] ( main:2 [ main::i#2 print::p#2 idx#13 ] ) always clobbers reg byte a 
 Statement [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 [ idx#12 print::p#3 print::$0 ] ( main:2::print:5 [ idx#12 print::p#3 print::$0 ] main:2::print:7 [ idx#12 print::p#3 print::$0 ] main:2::print:11 [ main::i#2 idx#12 print::p#3 print::$0 ] ) always clobbers reg byte a 
 Statement [17] *((const signed word*) SCREEN + (byte~) print::$0) ← *((signed word*) print::p#3) [ idx#12 ] ( main:2::print:5 [ idx#12 ] main:2::print:7 [ idx#12 ] main:2::print:11 [ main::i#2 idx#12 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ idx#12 idx#13 ]
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$7 idx#13 ] ( main:2 [ main::i#2 main::$7 idx#13 ] ) always clobbers reg byte a 
-Statement [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$7 [ main::i#2 print::p#2 idx#13 ] ( main:2 [ main::i#2 print::p#2 idx#13 ] ) always clobbers reg byte a 
+Statement [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$5 idx#13 ] ( main:2 [ main::i#2 main::$5 idx#13 ] ) always clobbers reg byte a 
+Statement [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5 [ main::i#2 print::p#2 idx#13 ] ( main:2 [ main::i#2 print::p#2 idx#13 ] ) always clobbers reg byte a 
 Statement [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 [ idx#12 print::p#3 print::$0 ] ( main:2::print:5 [ idx#12 print::p#3 print::$0 ] main:2::print:7 [ idx#12 print::p#3 print::$0 ] main:2::print:11 [ main::i#2 idx#12 print::p#3 print::$0 ] ) always clobbers reg byte a 
 Statement [17] *((const signed word*) SCREEN + (byte~) print::$0) ← *((signed word*) print::p#3) [ idx#12 ] ( main:2::print:5 [ idx#12 ] main:2::print:7 [ idx#12 ] main:2::print:11 [ main::i#2 idx#12 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[1]:3 [ idx#12 idx#13 ] : zp[1]:3 , reg byte x , 
 Potential registers zp[2]:4 [ print::p#3 print::p#2 ] : zp[2]:4 , 
-Potential registers zp[1]:6 [ main::$7 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::$5 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:7 [ print::$0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 24.75: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:6 [ main::$7 ] 
+Uplift Scope [main] 24.75: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:6 [ main::$5 ] 
 Uplift Scope [print] 28.5: zp[2]:4 [ print::p#3 print::p#2 ] 4: zp[1]:7 [ print::$0 ] 
 Uplift Scope [] 7.03: zp[1]:3 [ idx#12 idx#13 ] 
 
-Uplifting [main] best 572 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$7 ] 
+Uplifting [main] best 572 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$5 ] 
 Uplifting [print] best 568 combination zp[2]:4 [ print::p#3 print::p#2 ] reg byte a [ print::$0 ] 
 Uplifting [] best 568 combination zp[1]:3 [ idx#12 idx#13 ] 
 Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
@@ -544,10 +531,10 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
-    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$7 -- pwsz1=pwsc1_plus_vbuaa 
+    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5 -- pwsz1=pwsc1_plus_vbuaa 
     clc
     adc #<VALS
     sta.z print.p
@@ -648,7 +635,7 @@ FINAL SYMBOL TABLE
 (byte) idx#12 idx zp[1]:3 5.666666666666667
 (byte) idx#13 idx zp[1]:3 1.3636363636363638
 (void()) main()
-(byte~) main::$7 reg byte a 22.0
+(byte~) main::$5 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -666,7 +653,7 @@ FINAL SYMBOL TABLE
 zp[1]:2 [ main::i#2 main::i#1 ]
 zp[1]:3 [ idx#12 idx#13 ]
 zp[2]:4 [ print::p#3 print::p#2 ]
-reg byte a [ main::$7 ]
+reg byte a [ main::$5 ]
 reg byte a [ print::$0 ]
 
 
@@ -726,11 +713,11 @@ main: {
     // main::@1
   __b1:
     // &VALS[i]
-    // [9] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
     // print(&VALS[i])
-    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$7 -- pwsz1=pwsc1_plus_vbuaa 
+    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5 -- pwsz1=pwsc1_plus_vbuaa 
     clc
     adc #<VALS
     sta.z print.p

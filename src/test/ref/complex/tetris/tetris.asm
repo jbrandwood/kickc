@@ -274,10 +274,10 @@ render_screen_swap: {
 }
 // Show the current score
 render_score: {
+    .label score_bytes = score_bcd
     .const score_offset = $28*5+$1c
     .const lines_offset = $28*1+$16
     .const level_offset = $28*$13+$1f
-    .label score_bytes = score_bcd
     .label screen = $24
     lda.z render_screen_render
     cmp #0

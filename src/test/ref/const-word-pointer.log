@@ -1,5 +1,6 @@
-Setting inferred volatile on symbol affected by address-of (word*~) main::$0 ← & (word) main::w
+Setting inferred volatile on symbol affected by address-of (word*) main::wp ← &(word) main::w
 Identified constant variable (byte*) main::screen
+Identified constant variable (word*) main::wp
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -8,17 +9,15 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (word) main::w#0 ← (number) $d03
-  (word*~) main::$0 ← & (word) main::w#0
-  (word*) main::wp#0 ← (word*~) main::$0
-  (byte~) main::$1 ← < *((word*) main::wp#0)
-  *((const byte*) main::screen + (number) 0) ← (byte~) main::$1
-  (byte~) main::$2 ← > *((word*) main::wp#0)
-  *((const byte*) main::screen + (number) 1) ← (byte~) main::$2
-  *((word*) main::wp#0) ← (number) $210c
-  (byte~) main::$3 ← < *((word*) main::wp#0)
-  *((const byte*) main::screen + (number) 2) ← (byte~) main::$3
-  (byte~) main::$4 ← > *((word*) main::wp#0)
-  *((const byte*) main::screen + (number) 3) ← (byte~) main::$4
+  (byte~) main::$0 ← < *((const word*) main::wp)
+  *((const byte*) main::screen + (number) 0) ← (byte~) main::$0
+  (byte~) main::$1 ← > *((const word*) main::wp)
+  *((const byte*) main::screen + (number) 1) ← (byte~) main::$1
+  *((const word*) main::wp) ← (number) $210c
+  (byte~) main::$2 ← < *((const word*) main::wp)
+  *((const byte*) main::screen + (number) 2) ← (byte~) main::$2
+  (byte~) main::$3 ← > *((const word*) main::wp)
+  *((const byte*) main::screen + (number) 3) ← (byte~) main::$3
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -36,27 +35,25 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(word*~) main::$0
+(byte~) main::$0
 (byte~) main::$1
 (byte~) main::$2
 (byte~) main::$3
-(byte~) main::$4
 (label) main::@return
 (const byte*) main::screen = (byte*)(number) $400
 (word) main::w
 (word) main::w#0
-(word*) main::wp
-(word*) main::wp#0
+(const word*) main::wp = &(word) main::w
 
 Adding number conversion cast (unumber) $d03 in (word) main::w#0 ← (number) $d03
-Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte~) main::$1
-Adding number conversion cast (unumber) 1 in *((const byte*) main::screen + (number) 1) ← (byte~) main::$2
-Adding number conversion cast (unumber) $210c in *((word*) main::wp#0) ← (number) $210c
-Adding number conversion cast (unumber) 2 in *((const byte*) main::screen + (number) 2) ← (byte~) main::$3
-Adding number conversion cast (unumber) 3 in *((const byte*) main::screen + (number) 3) ← (byte~) main::$4
+Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte~) main::$0
+Adding number conversion cast (unumber) 1 in *((const byte*) main::screen + (number) 1) ← (byte~) main::$1
+Adding number conversion cast (unumber) $210c in *((const word*) main::wp) ← (number) $210c
+Adding number conversion cast (unumber) 2 in *((const byte*) main::screen + (number) 2) ← (byte~) main::$2
+Adding number conversion cast (unumber) 3 in *((const byte*) main::screen + (number) 3) ← (byte~) main::$3
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (word) main::w#0 ← (unumber)(number) $d03
-Inlining cast *((word*) main::wp#0) ← (unumber)(number) $210c
+Inlining cast *((const word*) main::wp) ← (unumber)(number) $210c
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $d03
@@ -73,13 +70,7 @@ Finalized unsigned number type (word) $210c
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (word*) main::wp#0 = (word*~) main::$0 
-Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [1] (word*) main::wp#0 ← & (word) main::w#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word*) main::wp#0 = &main::w#0
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen in [4] *((const byte*) main::screen + (byte) 0) ← (byte~) main::$1
+Simplifying expression containing zero main::screen in [2] *((const byte*) main::screen + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Consolidated array index constant in *(main::screen+1)
 Consolidated array index constant in *(main::screen+2)
@@ -113,15 +104,15 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   [4] (word) main::w#0 ← (word) $d03
-  [5] (byte~) main::$1 ← < *((const word*) main::wp#0)
-  [6] *((const byte*) main::screen) ← (byte~) main::$1
-  [7] (byte~) main::$2 ← > *((const word*) main::wp#0)
-  [8] *((const byte*) main::screen+(byte) 1) ← (byte~) main::$2
-  [9] *((const word*) main::wp#0) ← (word) $210c
-  [10] (byte~) main::$3 ← < *((const word*) main::wp#0)
-  [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$3
-  [12] (byte~) main::$4 ← > *((const word*) main::wp#0)
-  [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$4
+  [5] (byte~) main::$0 ← < *((const word*) main::wp)
+  [6] *((const byte*) main::screen) ← (byte~) main::$0
+  [7] (byte~) main::$1 ← > *((const word*) main::wp)
+  [8] *((const byte*) main::screen+(byte) 1) ← (byte~) main::$1
+  [9] *((const word*) main::wp) ← (word) $210c
+  [10] (byte~) main::$2 ← < *((const word*) main::wp)
+  [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$2
+  [12] (byte~) main::$3 ← > *((const word*) main::wp)
+  [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$3
   to:main::@return
 main::@return: scope:[main]  from main
   [14] return 
@@ -130,30 +121,29 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
+(byte~) main::$0 4.0
 (byte~) main::$1 4.0
 (byte~) main::$2 4.0
 (byte~) main::$3 4.0
-(byte~) main::$4 4.0
 (word) main::w
 (word) main::w#0 20.0
-(word*) main::wp
 
 Initial phi equivalence classes
+Added variable main::$0 to zero page equivalence class [ main::$0 ]
 Added variable main::$1 to zero page equivalence class [ main::$1 ]
 Added variable main::$2 to zero page equivalence class [ main::$2 ]
 Added variable main::$3 to zero page equivalence class [ main::$3 ]
-Added variable main::$4 to zero page equivalence class [ main::$4 ]
 Complete equivalence classes
 [ main::w#0 ]
+[ main::$0 ]
 [ main::$1 ]
 [ main::$2 ]
 [ main::$3 ]
-[ main::$4 ]
 Allocated zp[2]:2 [ main::w#0 ]
-Allocated zp[1]:4 [ main::$1 ]
-Allocated zp[1]:5 [ main::$2 ]
-Allocated zp[1]:6 [ main::$3 ]
-Allocated zp[1]:7 [ main::$4 ]
+Allocated zp[1]:4 [ main::$0 ]
+Allocated zp[1]:5 [ main::$1 ]
+Allocated zp[1]:6 [ main::$2 ]
+Allocated zp[1]:7 [ main::$3 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -183,44 +173,44 @@ __bend:
 main: {
     .label screen = $400
     .label wp = w
-    .label __1 = 4
-    .label __2 = 5
-    .label __3 = 6
-    .label __4 = 7
+    .label __0 = 4
+    .label __1 = 5
+    .label __2 = 6
+    .label __3 = 7
     .label w = 2
     // [4] (word) main::w#0 ← (word) $d03 -- vwuz1=vwuc1 
     lda #<$d03
     sta.z w
     lda #>$d03
     sta.z w+1
-    // [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
+    // [5] (byte~) main::$0 ← < *((const word*) main::wp) -- vbuz1=_lo__deref_pwuc1 
     lda.z wp
-    sta.z __1
-    // [6] *((const byte*) main::screen) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
-    lda.z __1
+    sta.z __0
+    // [6] *((const byte*) main::screen) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
+    lda.z __0
     sta screen
-    // [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
+    // [7] (byte~) main::$1 ← > *((const word*) main::wp) -- vbuz1=_hi__deref_pwuc1 
     lda.z wp+1
-    sta.z __2
-    // [8] *((const byte*) main::screen+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
-    lda.z __2
+    sta.z __1
+    // [8] *((const byte*) main::screen+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
+    lda.z __1
     sta screen+1
-    // [9] *((const word*) main::wp#0) ← (word) $210c -- _deref_pwuc1=vwuc2 
+    // [9] *((const word*) main::wp) ← (word) $210c -- _deref_pwuc1=vwuc2 
     lda #<$210c
     sta.z wp
     lda #>$210c
     sta.z wp+1
-    // [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuz1=_lo__deref_pwuc1 
+    // [10] (byte~) main::$2 ← < *((const word*) main::wp) -- vbuz1=_lo__deref_pwuc1 
     lda.z wp
-    sta.z __3
-    // [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
-    lda.z __3
+    sta.z __2
+    // [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
+    lda.z __2
     sta screen+2
-    // [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuz1=_hi__deref_pwuc1 
+    // [12] (byte~) main::$3 ← > *((const word*) main::wp) -- vbuz1=_hi__deref_pwuc1 
     lda.z wp+1
-    sta.z __4
-    // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
-    lda.z __4
+    sta.z __3
+    // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
+    lda.z __3
     sta screen+3
     jmp __breturn
     // main::@return
@@ -232,18 +222,18 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (word) main::w#0 ← (word) $d03 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [9] *((const word*) main::wp#0) ← (word) $210c [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [9] *((const word*) main::wp) ← (word) $210c [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::w#0 ] : zp[2]:2 , 
-Potential registers zp[1]:4 [ main::$1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:5 [ main::$2 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:6 [ main::$3 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:7 [ main::$4 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ main::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::$1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::$2 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ main::$3 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 20: zp[2]:2 [ main::w#0 ] 4: zp[1]:4 [ main::$1 ] 4: zp[1]:5 [ main::$2 ] 4: zp[1]:6 [ main::$3 ] 4: zp[1]:7 [ main::$4 ] 
+Uplift Scope [main] 20: zp[2]:2 [ main::w#0 ] 4: zp[1]:4 [ main::$0 ] 4: zp[1]:5 [ main::$1 ] 4: zp[1]:6 [ main::$2 ] 4: zp[1]:7 [ main::$3 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 69 combination zp[2]:2 [ main::w#0 ] reg byte a [ main::$1 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] reg byte a [ main::$4 ] 
+Uplifting [main] best 69 combination zp[2]:2 [ main::w#0 ] reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] 
 Limited combination testing to 100 combinations of 256 possible.
 Uplifting [] best 69 combination 
 
@@ -280,26 +270,26 @@ main: {
     sta.z w
     lda #>$d03
     sta.z w+1
-    // [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+    // [5] (byte~) main::$0 ← < *((const word*) main::wp) -- vbuaa=_lo__deref_pwuc1 
     lda.z wp
-    // [6] *((const byte*) main::screen) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [6] *((const byte*) main::screen) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta screen
-    // [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+    // [7] (byte~) main::$1 ← > *((const word*) main::wp) -- vbuaa=_hi__deref_pwuc1 
     lda.z wp+1
-    // [8] *((const byte*) main::screen+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // [8] *((const byte*) main::screen+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta screen+1
-    // [9] *((const word*) main::wp#0) ← (word) $210c -- _deref_pwuc1=vwuc2 
+    // [9] *((const word*) main::wp) ← (word) $210c -- _deref_pwuc1=vwuc2 
     lda #<$210c
     sta.z wp
     lda #>$210c
     sta.z wp+1
-    // [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+    // [10] (byte~) main::$2 ← < *((const word*) main::wp) -- vbuaa=_lo__deref_pwuc1 
     lda.z wp
-    // [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+2
-    // [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+    // [12] (byte~) main::$3 ← > *((const word*) main::wp) -- vbuaa=_hi__deref_pwuc1 
     lda.z wp+1
-    // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta screen+3
     jmp __breturn
     // main::@return
@@ -333,22 +323,21 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (void()) main()
+(byte~) main::$0 reg byte a 4.0
 (byte~) main::$1 reg byte a 4.0
 (byte~) main::$2 reg byte a 4.0
 (byte~) main::$3 reg byte a 4.0
-(byte~) main::$4 reg byte a 4.0
 (label) main::@return
 (const byte*) main::screen = (byte*) 1024
 (word) main::w
 (word) main::w#0 w zp[2]:2 20.0
-(word*) main::wp
-(const word*) main::wp#0 wp = &(word) main::w#0
+(const word*) main::wp = &(word) main::w
 
 zp[2]:2 [ main::w#0 ]
+reg byte a [ main::$0 ]
 reg byte a [ main::$1 ]
 reg byte a [ main::$2 ]
 reg byte a [ main::$3 ]
-reg byte a [ main::$4 ]
 
 
 FINAL ASSEMBLER
@@ -380,34 +369,34 @@ main: {
     lda #>$d03
     sta.z w+1
     // <*wp
-    // [5] (byte~) main::$1 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+    // [5] (byte~) main::$0 ← < *((const word*) main::wp) -- vbuaa=_lo__deref_pwuc1 
     lda.z wp
     // screen[0] = <*wp
-    // [6] *((const byte*) main::screen) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [6] *((const byte*) main::screen) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta screen
     // >*wp
-    // [7] (byte~) main::$2 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+    // [7] (byte~) main::$1 ← > *((const word*) main::wp) -- vbuaa=_hi__deref_pwuc1 
     lda.z wp+1
     // screen[1] = >*wp
-    // [8] *((const byte*) main::screen+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // [8] *((const byte*) main::screen+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta screen+1
     // *wp = $210c
-    // [9] *((const word*) main::wp#0) ← (word) $210c -- _deref_pwuc1=vwuc2 
+    // [9] *((const word*) main::wp) ← (word) $210c -- _deref_pwuc1=vwuc2 
     lda #<$210c
     sta.z wp
     lda #>$210c
     sta.z wp+1
     // <*wp
-    // [10] (byte~) main::$3 ← < *((const word*) main::wp#0) -- vbuaa=_lo__deref_pwuc1 
+    // [10] (byte~) main::$2 ← < *((const word*) main::wp) -- vbuaa=_lo__deref_pwuc1 
     lda.z wp
     // screen[2] = <*wp
-    // [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+2
     // >*wp
-    // [12] (byte~) main::$4 ← > *((const word*) main::wp#0) -- vbuaa=_hi__deref_pwuc1 
+    // [12] (byte~) main::$3 ← > *((const word*) main::wp) -- vbuaa=_hi__deref_pwuc1 
     lda.z wp+1
     // screen[3] = >*wp
-    // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta screen+3
     // main::@return
     // }

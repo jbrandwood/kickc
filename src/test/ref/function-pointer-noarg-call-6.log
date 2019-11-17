@@ -1,4 +1,5 @@
 Resolved forward reference fn1 to (void()) fn1()
+Identified constant variable (void()*) main::cls
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
@@ -15,20 +16,16 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (void()*~) main::$0 ← & (void()) fn1()
-  (void()*) main::cls#0 ← (void()*~) main::$0
   (byte*) main::cols#0 ← ((byte*)) (number) $d800
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (void()*) main::cls#2 ← phi( main/(void()*) main::cls#0 main::@2/(void()*) main::cls#1 )
   (byte*) main::cols#2 ← phi( main/(byte*) main::cols#0 main::@2/(byte*) main::cols#1 )
-  (bool~) main::$1 ← (byte*) main::cols#2 < (number) $d800+(number) $3e8
-  if((bool~) main::$1) goto main::@2
+  (bool~) main::$0 ← (byte*) main::cols#2 < (number) $d800+(number) $3e8
+  if((bool~) main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte*) main::cols#3 ← phi( main::@1/(byte*) main::cols#2 )
-  (void()*) main::cls#1 ← phi( main::@1/(void()*) main::cls#2 )
-  call *((void()*) main::cls#1) 
+  call *((const void()*) main::cls) 
   *((byte*) main::cols#3) ← ++ *((byte*) main::cols#3)
   (byte*) main::cols#1 ← ++ (byte*) main::cols#3
   to:main::@1
@@ -76,22 +73,18 @@ SYMBOL TABLE SSA
 (byte*) fn1::screen#2
 (byte*) fn1::screen#3
 (void()) main()
-(void()*~) main::$0
-(bool~) main::$1
+(bool~) main::$0
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(void()*) main::cls
-(void()*) main::cls#0
-(void()*) main::cls#1
-(void()*) main::cls#2
+(const void()*) main::cls = &(void()) fn1()
 (byte*) main::cols
 (byte*) main::cols#0
 (byte*) main::cols#1
 (byte*) main::cols#2
 (byte*) main::cols#3
 
-Adding number conversion cast (unumber) $d800+$3e8 in (bool~) main::$1 ← (byte*) main::cols#2 < (number) $d800+(number) $3e8
+Adding number conversion cast (unumber) $d800+$3e8 in (bool~) main::$0 ← (byte*) main::cols#2 < (number) $d800+(number) $3e8
 Adding number conversion cast (unumber) $400+$3e8 in (bool~) fn1::$0 ← (byte*) fn1::screen#2 < (number) $400+(number) $3e8
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) main::cols#0 ← (byte*)(number) $d800
@@ -100,25 +93,18 @@ Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Alias (void()*) main::cls#0 = (void()*~) main::$0 
-Alias (void()*) main::cls#1 = (void()*) main::cls#2 
 Alias (byte*) main::cols#2 = (byte*) main::cols#3 
 Alias (byte*) fn1::screen#2 = (byte*) fn1::screen#3 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (void()*) main::cls#1 (void()*) main::cls#0
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [5] if((byte*) main::cols#2<(word)(number) $d800+(number) $3e8) goto main::@2
-Simple Condition (bool~) fn1::$0 [14] if((byte*) fn1::screen#2<(word)(number) $400+(number) $3e8) goto fn1::@2
+Simple Condition (bool~) main::$0 [3] if((byte*) main::cols#2<(word)(number) $d800+(number) $3e8) goto main::@2
+Simple Condition (bool~) fn1::$0 [12] if((byte*) fn1::screen#2<(word)(number) $400+(number) $3e8) goto fn1::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (void()*) main::cls#0 ← & (void()) fn1()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) main::cls#0 = &fn1
 Constant (const byte*) main::cols#0 = (byte*) 55296
 Constant (const byte*) fn1::screen#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function [7] call fn1 
+Replacing constant pointer function [5] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
-Eliminating unused constant (const void()*) main::cls#0
+Eliminating unused constant (const void()*) main::cls
 Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte*) main::cols#0
 Inlining constant with var siblings (const byte*) fn1::screen#0
@@ -201,7 +187,6 @@ VARIABLE REGISTER WEIGHTS
 (byte*) fn1::screen#1 202.0
 (byte*) fn1::screen#2 168.33333333333331
 (void()) main()
-(void()*) main::cls
 (byte*) main::cols
 (byte*) main::cols#1 22.0
 (byte*) main::cols#2 11.0
@@ -534,7 +519,6 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(void()*) main::cls
 (byte*) main::cols
 (byte*) main::cols#1 cols zp[2]:2 22.0
 (byte*) main::cols#2 cols zp[2]:2 11.0

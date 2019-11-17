@@ -1041,8 +1041,7 @@ init_irq: scope:[init_irq]  from main::@23
   *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (number) $80
   *((const byte*) RASTER) ← (number) 0
   *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
-  (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
-  *((const void()**) HARDWARE_IRQ) ← (void()*~) init_irq::$0
+  *((const void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq()
   asm { cli  }
   to:init_irq::@return
 init_irq::@return: scope:[init_irq]  from init_irq
@@ -1432,7 +1431,6 @@ SYMBOL TABLE SSA
 (byte) frame_cnt#8
 (byte) frame_cnt#9
 (void()) init_irq()
-(void()*~) init_irq::$0
 (label) init_irq::@return
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 (bool~) irq::$0
@@ -2320,7 +2318,7 @@ Inversing boolean not [315] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 
 Inversing boolean not [440] (bool~) main::$21 ← (word) main::idx_x#1 < (word) $200 from [439] (bool~) main::$20 ← (word) main::idx_x#1 >= (word) $200
 Inversing boolean not [445] (bool~) main::$23 ← (word) main::idx_y#1 < (word) $200 from [444] (bool~) main::$22 ← (word) main::idx_y#1 >= (word) $200
 Inversing boolean not [460] (bool~) main::$29 ← (signed word) main::r#5 < (signed word)(number) $200*(number) $c+(number) $100 from [459] (bool~) main::$28 ← (signed word) main::r#5 >= (signed word)(number) $200*(number) $c+(number) $100
-Inversing boolean not [489] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [488] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
+Inversing boolean not [488] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [487] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -2594,7 +2592,7 @@ Simple Condition (bool~) bitmap_init::$11 [320] if((byte) bitmap_init::y#1!=rang
 Simple Condition (bool~) main::$21 [441] if((word) main::idx_x#1<(word) $200) goto main::@4
 Simple Condition (bool~) main::$23 [446] if((word) main::idx_y#1<(word) $200) goto main::@5
 Simple Condition (bool~) main::$29 [461] if((signed word) main::r#1<(signed word)(number) $200*(number) $c+(number) $100) goto main::@1
-Simple Condition (bool~) irq::$0 [490] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
+Simple Condition (bool~) irq::$0 [489] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Rewriting ! if()-condition to reversed if() [454] (bool~) main::$27 ← ! (bool~) main::$26
 Rewriting && if()-condition to two if()s [453] (bool~) main::$26 ← (bool~) main::$24 && (bool~) main::$25
@@ -2606,7 +2604,6 @@ Constant right-side identified [284] (byte[$100]) bitmap_plot_yhi ← { fill( $1
 Constant right-side identified [285] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
 Constant right-side identified [354] (byte[$100]) plots_per_frame ← { fill( $100, 0) }
 Constant right-side identified [355] (signed word[$200]) SINUS ← { fill( $200, 0) }
-Constant right-side identified [482] (void()*~) init_irq::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
@@ -2653,7 +2650,6 @@ Constant (const signed word) main::r#0 = 0
 Constant (const byte) main::r_add#0 = $20
 Constant (const word) main::idx_x#2 = 0
 Constant (const word) main::idx_y#2 = 0
-Constant (const void()*) init_irq::$0 = &irq
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) div32u16u::divisor#0 = sin16s_gen2::wavelength#0
 Constant (const byte*) bitmap_gfx#1 = bitmap_init::gfx#0
@@ -2826,7 +2822,6 @@ Constant inlined mulu16_sel::select#3 = (byte) 0
 Constant inlined mulu16_sel::select#0 = (byte) 0
 Constant inlined sin16s::isUpper#1 = (byte) 1
 Constant inlined mulu16_sel::select#1 = (byte) 1
-Constant inlined init_irq::$0 = &interrupt(HARDWARE_CLOBBER)(void()) irq()
 Constant inlined main::idx_y#2 = (byte) 0
 Constant inlined main::idx_y#0 = (byte) $80
 Constant inlined mul16s::b#0 = (const signed word) sin16s_gen2::ampl#0

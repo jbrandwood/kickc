@@ -16,8 +16,7 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_MIN)(void()) irq1()
 irq1: scope:[irq1]  from
-  (void()*~) irq1::$0 ← & interrupt(KERNEL_MIN)(void()) irq2()
-  *((const void()**) HARDWARE_IRQ) ← (void()*~) irq1::$0
+  *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2()
   to:irq1::@return
 irq1::@return: scope:[irq1]  from irq1
   return 
@@ -25,8 +24,7 @@ irq1::@return: scope:[irq1]  from irq1
 
 interrupt(KERNEL_MIN)(void()) irq2()
 irq2: scope:[irq2]  from
-  (void()*~) irq2::$0 ← & interrupt(KERNEL_MIN)(void()) irq1()
-  *((const void()**) HARDWARE_IRQ) ← (void()*~) irq2::$0
+  *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1()
   to:irq2::@return
 irq2::@return: scope:[irq2]  from irq2
   return 
@@ -46,10 +44,8 @@ SYMBOL TABLE SSA
 (const void()**) HARDWARE_IRQ = (void()**)(number) $fffe
 (const byte*) SCREEN = (byte*)(number) $400
 interrupt(KERNEL_MIN)(void()) irq1()
-(void()*~) irq1::$0
 (label) irq1::@return
 interrupt(KERNEL_MIN)(void()) irq2()
-(void()*~) irq2::$0
 (label) irq2::@return
 (void()) main()
 (label) main::@return
@@ -57,15 +53,6 @@ interrupt(KERNEL_MIN)(void()) irq2()
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (void()**) 65534
 Successful SSA optimization PassNCastSimplification
-Constant right-side identified [2] (void()*~) irq1::$0 ← & interrupt(KERNEL_MIN)(void()) irq2()
-Constant right-side identified [5] (void()*~) irq2::$0 ← & interrupt(KERNEL_MIN)(void()) irq1()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) irq1::$0 = &irq2
-Constant (const void()*) irq2::$0 = &irq1
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined irq1::$0 = &interrupt(KERNEL_MIN)(void()) irq2()
-Constant inlined irq2::$0 = &interrupt(KERNEL_MIN)(void()) irq1()
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4

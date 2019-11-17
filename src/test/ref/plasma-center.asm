@@ -25,13 +25,11 @@
   .label HEAP_TOP = $a000
   .label print_line_cursor = $400
   .const NUM_SQUARES = $30
-  // Screen containing distance to center
-  .label SCREEN_DIST = $b
-  // Screen containing angle to center
-  .label SCREEN_ANGLE = $d
   .label heap_head = $18
   .label SQUARES = 9
   .label print_char_cursor = 7
+  .label SCREEN_DIST = $b
+  .label SCREEN_ANGLE = $d
   .label sin_offset_x = 2
   .label sin_offset_y = $f
 __b1:

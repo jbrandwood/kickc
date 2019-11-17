@@ -1,5 +1,6 @@
-Setting inferred volatile on symbol affected by address-of (byte*~) main::$0 ← & (byte) main::b
+Setting inferred volatile on symbol affected by address-of (byte*) main::bp ← &(byte) main::b
 Identified constant variable (byte*) main::SCREEN
+Identified constant variable (byte*) main::bp
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
@@ -12,14 +13,12 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@1/(byte) main::b#1 )
-  (byte*~) main::$0 ← & (byte) main::b#2
-  (byte*) main::bp#0 ← (byte*~) main::$0
-  (number~) main::$1 ← *((byte*) main::bp#0) + (number) 1
-  (byte) main::c#0 ← (number~) main::$1
+  (number~) main::$0 ← *((const byte*) main::bp) + (number) 1
+  (byte) main::c#0 ← (number~) main::$0
   *((const byte*) main::SCREEN + (byte) main::b#2) ← (byte) main::c#0
   (byte) main::b#1 ← (byte) main::b#2 + rangenext(0,$a)
-  (bool~) main::$2 ← (byte) main::b#1 != rangelast(0,$a)
-  if((bool~) main::$2) goto main::@1
+  (bool~) main::$1 ← (byte) main::b#1 != rangelast(0,$a)
+  if((bool~) main::$1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -37,9 +36,8 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte*~) main::$0
-(number~) main::$1
-(bool~) main::$2
+(number~) main::$0
+(bool~) main::$1
 (label) main::@1
 (label) main::@return
 (const byte*) main::SCREEN = (byte*)(number) $400
@@ -47,31 +45,25 @@ SYMBOL TABLE SSA
 (byte) main::b#0
 (byte) main::b#1
 (byte) main::b#2
-(byte*) main::bp
-(byte*) main::bp#0
+(const byte*) main::bp = &(byte) main::b
 (byte) main::c
 (byte) main::c#0
 
-Adding number conversion cast (unumber) 1 in (number~) main::$1 ← *((byte*) main::bp#0) + (number) 1
-Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← *((byte*) main::bp#0) + (unumber)(number) 1
+Adding number conversion cast (unumber) 1 in (number~) main::$0 ← *((const byte*) main::bp) + (number) 1
+Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← *((const byte*) main::bp) + (unumber)(number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$1 ← *((byte*) main::bp#0) + (byte) 1
-Alias (byte*) main::bp#0 = (byte*~) main::$0 
-Alias (byte) main::c#0 = (byte~) main::$1 
+Inferred type updated to byte in (unumber~) main::$0 ← *((const byte*) main::bp) + (byte) 1
+Alias (byte) main::c#0 = (byte~) main::$0 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$2 [9] if((byte) main::b#1!=rangelast(0,$a)) goto main::@1
+Simple Condition (bool~) main::$1 [7] if((byte) main::b#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [2] (byte*) main::bp#0 ← & (byte) main::b#2
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::bp#0 = &main::b#2
-Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [7] main::b#1 ← ++ main::b#2 to ++
-Resolved ranged comparison value [9] if(main::b#1!=rangelast(0,$a)) goto main::@1 to (number) $b
+Resolved ranged next value [5] main::b#1 ← ++ main::b#2 to ++
+Resolved ranged comparison value [7] if(main::b#1!=rangelast(0,$a)) goto main::@1 to (number) $b
 Adding number conversion cast (unumber) $b in if((byte) main::b#1!=(number) $b) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
@@ -113,7 +105,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@1/(byte) main::b#1 )
-  [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1
+  [6] (byte) main::c#0 ← *((const byte*) main::bp) + (byte) 1
   [7] *((const byte*) main::SCREEN + (byte) main::b#2) ← (byte) main::c#0
   [8] (byte) main::b#1 ← ++ (byte) main::b#2
   [9] if((byte) main::b#1!=(byte) $b) goto main::@1
@@ -129,7 +121,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::b#0 4.0
 (byte) main::b#1 16.5
 (byte) main::b#2 11.666666666666666
-(byte*) main::bp
 (byte) main::c
 (byte) main::c#0 22.0
 
@@ -181,7 +172,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuz1=_deref_pbuc1_plus_1 
+    // [6] (byte) main::c#0 ← *((const byte*) main::bp) + (byte) 1 -- vbuz1=_deref_pbuc1_plus_1 
     ldy.z bp
     iny
     sty.z c
@@ -256,7 +247,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
+    // [6] (byte) main::c#0 ← *((const byte*) main::bp) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
     lda.z bp
     clc
     adc #1
@@ -312,8 +303,7 @@ FINAL SYMBOL TABLE
 (byte) main::b#0 b zp[1]:2 4.0
 (byte) main::b#1 b zp[1]:2 16.5
 (byte) main::b#2 b zp[1]:2 11.666666666666666
-(byte*) main::bp
-(const byte*) main::bp#0 bp = &(byte) main::b#2
+(const byte*) main::bp = &(byte) main::b
 (byte) main::c
 (byte) main::c#0 reg byte a 22.0
 
@@ -351,7 +341,7 @@ main: {
     // main::@1
   __b1:
     // c = *bp +1
-    // [6] (byte) main::c#0 ← *((const byte*) main::bp#0) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
+    // [6] (byte) main::c#0 ← *((const byte*) main::bp) + (byte) 1 -- vbuaa=_deref_pbuc1_plus_1 
     lda.z bp
     clc
     adc #1

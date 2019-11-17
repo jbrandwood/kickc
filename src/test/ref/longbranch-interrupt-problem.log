@@ -15,8 +15,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte) col#14 ← phi( @2/(byte) col#13 )
-  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-  *((const void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@7
   (byte) col#12 ← phi( main/(byte) col#14 main::@2/(byte) col#6 main::@7/(byte) col#1 )
@@ -24,9 +23,9 @@ main::@1: scope:[main]  from main main::@2 main::@7
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) col#6 ← phi( main::@1/(byte) col#12 )
-  (bool~) main::$1 ← (byte) col#6 > (number) $a
-  (bool~) main::$2 ← ! (bool~) main::$1
-  if((bool~) main::$2) goto main::@1
+  (bool~) main::$0 ← (byte) col#6 > (number) $a
+  (bool~) main::$1 ← ! (bool~) main::$0
+  if((bool~) main::$1) goto main::@1
   to:main::@7
 main::@7: scope:[main]  from main::@2
   (byte) col#1 ← (number) 0
@@ -94,16 +93,15 @@ interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@2
 (label) irq::@return
 (void()) main()
-(void()*~) main::$0
+(bool~) main::$0
 (bool~) main::$1
-(bool~) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@7
 (label) main::@return
 
 Adding number conversion cast (unumber) 0 in (byte) col#0 ← (number) 0
-Adding number conversion cast (unumber) $a in (bool~) main::$1 ← (byte) col#6 > (number) $a
+Adding number conversion cast (unumber) $a in (bool~) main::$0 ← (byte) col#6 > (number) $a
 Adding number conversion cast (unumber) 0 in (byte) col#1 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) irq::$0 ← (byte) col#8 != (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -122,8 +120,8 @@ Finalized unsigned number type (byte) $a
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [8] (bool~) main::$2 ← (byte) col#6 <= (byte) $a from [7] (bool~) main::$1 ← (byte) col#6 > (byte) $a
-Inversing boolean not [18] (bool~) irq::$1 ← (byte) col#8 == (byte) 0 from [17] (bool~) irq::$0 ← (byte) col#8 != (byte) 0
+Inversing boolean not [7] (bool~) main::$1 ← (byte) col#6 <= (byte) $a from [6] (bool~) main::$0 ← (byte) col#6 > (byte) $a
+Inversing boolean not [17] (bool~) irq::$1 ← (byte) col#8 == (byte) 0 from [16] (bool~) irq::$0 ← (byte) col#8 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) col#12 = (byte) col#6 (byte) col#7 (byte) col#2 
 Alias (byte) col#8 = (byte) col#9 
@@ -135,16 +133,12 @@ Identical Phi Values (byte) col#14 (byte) col#0
 Identical Phi Values (byte) col#8 (byte) col#0
 Identical Phi Values (byte) col#11 (byte) col#12
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [9] if((byte) col#12<=(byte) $a) goto main::@1
-Simple Condition (bool~) irq::$1 [19] if((byte) col#0==(byte) 0) goto irq::@return
+Simple Condition (bool~) main::$1 [8] if((byte) col#12<=(byte) $a) goto main::@1
+Simple Condition (bool~) irq::$1 [18] if((byte) col#0==(byte) 0) goto irq::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [2] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) main::$0 = &irq
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [5] if(true) goto main::@2
+if() condition always true - replacing block destination [4] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Rewriting conditional comparison [9] if((byte) col#12<=(byte) $a) goto main::@1
+Rewriting conditional comparison [8] if((byte) col#12<=(byte) $a) goto main::@1
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $a+1 in if((byte) col#12<(byte) $a+(number) 1) goto main::@1
@@ -155,8 +149,6 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
-Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@9(between main::@2 and main::@1)
 Added new block during phi lifting irq::@3(between irq and irq::@return)
 Adding NOP phi() at start of @2

@@ -13,8 +13,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-  *((const void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@8
   if(true) goto main::@2
@@ -35,24 +34,24 @@ main::@6: scope:[main]  from main::@5 main::@6
   (byte) main::x#2 ← phi( main::@5/(byte) main::x#4 main::@6/(byte) main::x#2 )
   (byte) main::y#2 ← phi( main::@5/(byte) main::y#4 main::@6/(byte) main::y#2 )
   (byte) main::a#2 ← phi( main::@5/(byte) main::a#0 main::@6/(byte) main::a#1 )
-  (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#2
-  *((const byte*) SCREEN + (byte) main::x#2) ← (byte~) main::$1
+  (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#2
+  *((const byte*) SCREEN + (byte) main::x#2) ← (byte~) main::$0
   (byte) main::a#1 ← (byte) main::a#2 + rangenext(0,$a)
-  (bool~) main::$2 ← (byte) main::a#1 != rangelast(0,$a)
-  if((bool~) main::$2) goto main::@6
+  (bool~) main::$1 ← (byte) main::a#1 != rangelast(0,$a)
+  if((bool~) main::$1) goto main::@6
   to:main::@7
 main::@7: scope:[main]  from main::@6
   (byte) main::x#5 ← phi( main::@6/(byte) main::x#2 )
   (byte) main::y#3 ← phi( main::@6/(byte) main::y#2 )
   (byte) main::y#1 ← (byte) main::y#3 + rangenext(0,$a)
-  (bool~) main::$3 ← (byte) main::y#1 != rangelast(0,$a)
-  if((bool~) main::$3) goto main::@5
+  (bool~) main::$2 ← (byte) main::y#1 != rangelast(0,$a)
+  if((bool~) main::$2) goto main::@5
   to:main::@8
 main::@8: scope:[main]  from main::@7
   (byte) main::x#3 ← phi( main::@7/(byte) main::x#5 )
   (byte) main::x#1 ← (byte) main::x#3 + rangenext(0,$a)
-  (bool~) main::$4 ← (byte) main::x#1 != rangelast(0,$a)
-  if((bool~) main::$4) goto main::@4
+  (bool~) main::$3 ← (byte) main::x#1 != rangelast(0,$a)
+  if((bool~) main::$3) goto main::@4
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -97,11 +96,10 @@ SYMBOL TABLE SSA
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
-(void()*~) main::$0
-(byte~) main::$1
+(byte~) main::$0
+(bool~) main::$1
 (bool~) main::$2
 (bool~) main::$3
-(bool~) main::$4
 (label) main::@1
 (label) main::@2
 (label) main::@4
@@ -158,25 +156,22 @@ Identical Phi Values (byte) col1#3 (byte) col1#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte) main::x#4 (byte) main::x#6
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [14] if((byte) main::a#1!=rangelast(0,$a)) goto main::@6
-Simple Condition (bool~) main::$3 [18] if((byte) main::y#1!=rangelast(0,$a)) goto main::@5
-Simple Condition (bool~) main::$4 [22] if((byte) main::x#1!=rangelast(0,$a)) goto main::@4
+Simple Condition (bool~) main::$1 [13] if((byte) main::a#1!=rangelast(0,$a)) goto main::@6
+Simple Condition (bool~) main::$2 [17] if((byte) main::y#1!=rangelast(0,$a)) goto main::@5
+Simple Condition (bool~) main::$3 [21] if((byte) main::x#1!=rangelast(0,$a)) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [1] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) main::$0 = &irq
 Constant (const byte) main::x#0 = 0
 Constant (const byte) main::y#0 = 0
 Constant (const byte) main::a#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [3] if(true) goto main::@2
+if() condition always true - replacing block destination [2] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [12] main::a#1 ← ++ main::a#2 to ++
-Resolved ranged comparison value [14] if(main::a#1!=rangelast(0,$a)) goto main::@6 to (number) $b
-Resolved ranged next value [16] main::y#1 ← ++ main::y#4 to ++
-Resolved ranged comparison value [18] if(main::y#1!=rangelast(0,$a)) goto main::@5 to (number) $b
-Resolved ranged next value [20] main::x#1 ← ++ main::x#6 to ++
-Resolved ranged comparison value [22] if(main::x#1!=rangelast(0,$a)) goto main::@4 to (number) $b
+Resolved ranged next value [11] main::a#1 ← ++ main::a#2 to ++
+Resolved ranged comparison value [13] if(main::a#1!=rangelast(0,$a)) goto main::@6 to (number) $b
+Resolved ranged next value [15] main::y#1 ← ++ main::y#4 to ++
+Resolved ranged comparison value [17] if(main::y#1!=rangelast(0,$a)) goto main::@5 to (number) $b
+Resolved ranged next value [19] main::x#1 ← ++ main::x#6 to ++
+Resolved ranged comparison value [21] if(main::x#1!=rangelast(0,$a)) goto main::@4 to (number) $b
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $b in if((byte) main::a#1!=(number) $b) goto main::@6
@@ -197,7 +192,6 @@ Inlining constant with var siblings (const byte) main::a#0
 Constant inlined main::a#0 = (byte) 0
 Constant inlined main::x#0 = (byte) 0
 Constant inlined main::y#0 = (byte) 0
-Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+$28)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -256,8 +250,8 @@ main::@2: scope:[main]  from main::@1 main::@4
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@3
   [7] (byte) main::a#2 ← phi( main::@2/(byte) 0 main::@3/(byte) main::a#1 )
-  [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4
-  [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$1
+  [8] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4
+  [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0
   [10] (byte) main::a#1 ← ++ (byte) main::a#2
   [11] if((byte) main::a#1!=(byte) $b) goto main::@3
   to:main::@4
@@ -291,7 +285,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) col1#1 20.0
 interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
-(byte~) main::$1 20002.0
+(byte~) main::$0 20002.0
 (byte) main::a
 (byte) main::a#1 15001.5
 (byte) main::a#2 10001.0
@@ -307,18 +301,18 @@ Initial phi equivalence classes
 [ main::y#4 main::y#1 ]
 [ main::a#2 main::a#1 ]
 Coalescing volatile variable equivalence classes [ col1#0 ] and [ col1#1 ]
-Added variable main::$1 to zero page equivalence class [ main::$1 ]
+Added variable main::$0 to zero page equivalence class [ main::$0 ]
 Complete equivalence classes
 [ main::x#6 main::x#1 ]
 [ main::y#4 main::y#1 ]
 [ main::a#2 main::a#1 ]
 [ col1#0 col1#1 ]
-[ main::$1 ]
+[ main::$0 ]
 Allocated zp[1]:2 [ main::x#6 main::x#1 ]
 Allocated zp[1]:3 [ main::y#4 main::y#1 ]
 Allocated zp[1]:4 [ main::a#2 main::a#1 ]
 Allocated zp[1]:5 [ col1#0 col1#1 ]
-Allocated zp[1]:6 [ main::$1 ]
+Allocated zp[1]:6 [ main::$0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -352,7 +346,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label __1 = 6
+    .label __0 = 6
     .label a = 4
     .label y = 3
     .label x = 2
@@ -394,13 +388,13 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuz1=vbuz2_plus_vbuz3 
+    // [8] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z a
     clc
     adc.z y
-    sta.z __1
-    // [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z __1
+    sta.z __0
+    // [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    lda.z __0
     ldy.z x
     sta SCREEN,y
     // [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
@@ -463,7 +457,7 @@ irq: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) col1#0 ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 [ main::x#6 main::y#4 main::a#2 main::$1 ] ( main:2 [ main::x#6 main::y#4 main::a#2 main::$1 ] ) always clobbers reg byte a 
+Statement [8] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 [ main::x#6 main::y#4 main::a#2 main::$0 ] ( main:2 [ main::x#6 main::y#4 main::a#2 main::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::x#6 main::x#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::y#4 main::y#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::a#2 main::a#1 ]
@@ -472,7 +466,7 @@ Statement asm { lda$dc0d  } always clobbers reg byte a
 Statement [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1#0 [ col1#0 ] (  [ col1#0 ] ) always clobbers reg byte a 
 Statement [0] (byte) col1#0 ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 [ main::x#6 main::y#4 main::a#2 main::$1 ] ( main:2 [ main::x#6 main::y#4 main::a#2 main::$1 ] ) always clobbers reg byte a 
+Statement [8] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 [ main::x#6 main::y#4 main::a#2 main::$0 ] ( main:2 [ main::x#6 main::y#4 main::a#2 main::$0 ] ) always clobbers reg byte a 
 Statement [17] *((const byte*) IRQ_STATUS) ← (byte) 1 [ col1#0 ] (  [ col1#0 ] ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
 Statement [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1#0 [ col1#0 ] (  [ col1#0 ] ) always clobbers reg byte a 
@@ -480,14 +474,14 @@ Potential registers zp[1]:2 [ main::x#6 main::x#1 ] : zp[1]:2 , reg byte x , reg
 Potential registers zp[1]:3 [ main::y#4 main::y#1 ] : zp[1]:3 , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::a#2 main::a#1 ] : zp[1]:4 , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ col1#0 col1#1 ] : zp[1]:5 , 
-Potential registers zp[1]:6 [ main::$1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::$0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 25,002.5: zp[1]:4 [ main::a#2 main::a#1 ] 20,002: zp[1]:6 [ main::$1 ] 3,502: zp[1]:3 [ main::y#4 main::y#1 ] 1,194.67: zp[1]:2 [ main::x#6 main::x#1 ] 
+Uplift Scope [main] 25,002.5: zp[1]:4 [ main::a#2 main::a#1 ] 20,002: zp[1]:6 [ main::$0 ] 3,502: zp[1]:3 [ main::y#4 main::y#1 ] 1,194.67: zp[1]:2 [ main::x#6 main::x#1 ] 
 Uplift Scope [] 22: zp[1]:5 [ col1#0 col1#1 ] 
 Uplift Scope [irq] 
 
-Uplifting [main] best 323337 combination reg byte y [ main::a#2 main::a#1 ] reg byte a [ main::$1 ] zp[1]:3 [ main::y#4 main::y#1 ] reg byte x [ main::x#6 main::x#1 ] 
+Uplifting [main] best 323337 combination reg byte y [ main::a#2 main::a#1 ] reg byte a [ main::$0 ] zp[1]:3 [ main::y#4 main::y#1 ] reg byte x [ main::x#6 main::x#1 ] 
 Limited combination testing to 100 combinations of 108 possible.
 Uplifting [] best 323337 combination zp[1]:5 [ col1#0 col1#1 ] 
 Uplifting [irq] best 323337 combination 
@@ -566,11 +560,11 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
+    // [8] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
     tya
     clc
     adc.z y
-    // [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
     iny
@@ -684,7 +678,7 @@ FINAL SYMBOL TABLE
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
-(byte~) main::$1 reg byte a 20002.0
+(byte~) main::$0 reg byte a 20002.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -705,7 +699,7 @@ reg byte x [ main::x#6 main::x#1 ]
 zp[1]:2 [ main::y#4 main::y#1 ]
 reg byte y [ main::a#2 main::a#1 ]
 zp[1]:3 [ col1#0 col1#1 ]
-reg byte a [ main::$1 ]
+reg byte a [ main::$0 ]
 
 
 FINAL ASSEMBLER
@@ -766,12 +760,12 @@ main: {
     // main::@3
   __b3:
     // a+y
-    // [8] (byte~) main::$1 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
+    // [8] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
     tya
     clc
     adc.z y
     // SCREEN[x] = a+y
-    // [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // for (byte a:0..10)
     // [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 

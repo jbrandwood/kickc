@@ -1,4 +1,5 @@
-Setting inferred volatile on symbol affected by address-of (byte**~) main::$0 ← & (byte*) main::screen
+Setting inferred volatile on symbol affected by address-of (byte**) main::pscreen ← &(byte*) main::screen
+Identified constant variable (byte**) main::pscreen
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -7,11 +8,9 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (byte*) main::screen#0 ← ((byte*)) (number) $400
-  (byte**~) main::$0 ← & (byte*) main::screen#0
-  (byte**) main::pscreen#0 ← (byte**~) main::$0
-  *(*((byte**) main::pscreen#0)) ← (byte) 'a'
-  *((byte**) main::pscreen#0) ← ++ *((byte**) main::pscreen#0)
-  *(*((byte**) main::pscreen#0)) ← (byte) 'b'
+  *(*((const byte**) main::pscreen)) ← (byte) 'a'
+  *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen)
+  *(*((const byte**) main::pscreen)) ← (byte) 'b'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,10 +28,8 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte**~) main::$0
 (label) main::@return
-(byte**) main::pscreen
-(byte**) main::pscreen#0
+(const byte**) main::pscreen = &(byte*) main::screen
 (byte*) main::screen
 (byte*) main::screen#0
 
@@ -40,12 +37,6 @@ Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Alias (byte**) main::pscreen#0 = (byte**~) main::$0 
-Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [1] (byte**) main::pscreen#0 ← & (byte*) main::screen#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte**) main::pscreen#0 = &main::screen#0
-Successful SSA optimization Pass2ConstantIdentification
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -74,9 +65,9 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   [4] (byte*) main::screen#0 ← (byte*) 1024
-  [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a'
-  [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0)
-  [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b'
+  [5] *(*((const byte**) main::pscreen)) ← (byte) 'a'
+  [6] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen)
+  [7] *(*((const byte**) main::pscreen)) ← (byte) 'b'
   to:main::@return
 main::@return: scope:[main]  from main
   [8] return 
@@ -85,7 +76,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte**) main::pscreen
 (byte*) main::screen
 (byte*) main::screen#0 20.0
 
@@ -126,7 +116,7 @@ main: {
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref_(_deref_pptc1)=vbuc2 
+    // [5] *(*((const byte**) main::pscreen)) ← (byte) 'a' -- _deref_(_deref_pptc1)=vbuc2 
     lda #'a'
     ldy.z pscreen
     sty.z $fe
@@ -134,12 +124,12 @@ main: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
+    // [6] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z pscreen
     bne !+
     inc.z pscreen+1
   !:
-    // [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref_(_deref_pptc1)=vbuc2 
+    // [7] *(*((const byte**) main::pscreen)) ← (byte) 'b' -- _deref_(_deref_pptc1)=vbuc2 
     lda #'b'
     ldy.z pscreen
     sty.z $fe
@@ -157,8 +147,8 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte*) main::screen#0 ← (byte*) 1024 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
-Statement [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Statement [5] *(*((const byte**) main::pscreen)) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Statement [7] *(*((const byte**) main::pscreen)) ← (byte) 'b' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::screen#0 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -199,7 +189,7 @@ main: {
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref_(_deref_pptc1)=vbuc2 
+    // [5] *(*((const byte**) main::pscreen)) ← (byte) 'a' -- _deref_(_deref_pptc1)=vbuc2 
     lda #'a'
     ldy.z pscreen
     sty.z $fe
@@ -207,12 +197,12 @@ main: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
+    // [6] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z pscreen
     bne !+
     inc.z pscreen+1
   !:
-    // [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref_(_deref_pptc1)=vbuc2 
+    // [7] *(*((const byte**) main::pscreen)) ← (byte) 'b' -- _deref_(_deref_pptc1)=vbuc2 
     lda #'b'
     ldy.z pscreen
     sty.z $fe
@@ -253,8 +243,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(byte**) main::pscreen
-(const byte**) main::pscreen#0 pscreen = &(byte*) main::screen#0
+(const byte**) main::pscreen = &(byte*) main::screen
 (byte*) main::screen
 (byte*) main::screen#0 screen zp[2]:2 20.0
 
@@ -288,7 +277,7 @@ main: {
     lda #>$400
     sta.z screen+1
     // **pscreen = 'a'
-    // [5] *(*((const byte**) main::pscreen#0)) ← (byte) 'a' -- _deref_(_deref_pptc1)=vbuc2 
+    // [5] *(*((const byte**) main::pscreen)) ← (byte) 'a' -- _deref_(_deref_pptc1)=vbuc2 
     lda #'a'
     ldy.z pscreen
     sty.z $fe
@@ -297,13 +286,13 @@ main: {
     ldy #0
     sta ($fe),y
     // (*pscreen)++;
-    // [6] *((const byte**) main::pscreen#0) ← ++ *((const byte**) main::pscreen#0) -- _deref_pptc1=_inc__deref_pptc1 
+    // [6] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z pscreen
     bne !+
     inc.z pscreen+1
   !:
     // **pscreen = 'b'
-    // [7] *(*((const byte**) main::pscreen#0)) ← (byte) 'b' -- _deref_(_deref_pptc1)=vbuc2 
+    // [7] *(*((const byte**) main::pscreen)) ← (byte) 'b' -- _deref_(_deref_pptc1)=vbuc2 
     lda #'b'
     ldy.z pscreen
     sty.z $fe

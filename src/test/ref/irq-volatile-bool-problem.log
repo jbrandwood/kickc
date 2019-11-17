@@ -18,8 +18,7 @@ main: scope:[main]  from @2
   *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
   *((const byte*) RASTER) ← (number) $fd
   *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
-  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-  *((const void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   asm { cli  }
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@7
@@ -28,9 +27,9 @@ main::@1: scope:[main]  from main main::@2 main::@7
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (bool) framedone#13 ← phi( main::@1/(bool) framedone#9 )
-  (bool~) main::$1 ← *((const byte*) RASTER) < (number) $14
-  (bool~) main::$2 ← ! (bool~) main::$1
-  if((bool~) main::$2) goto main::@1
+  (bool~) main::$0 ← *((const byte*) RASTER) < (number) $14
+  (bool~) main::$1 ← ! (bool~) main::$0
+  if((bool~) main::$1) goto main::@1
   to:main::@7
 main::@7: scope:[main]  from main::@2
   (bool) framedone#0 ← true
@@ -113,9 +112,8 @@ interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@2
 (label) irq::@return
 (void()) main()
-(void()*~) main::$0
+(bool~) main::$0
 (bool~) main::$1
-(bool~) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@7
@@ -123,7 +121,7 @@ interrupt(KERNEL_MIN)(void()) irq()
 
 Adding number conversion cast (unumber) $7f in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
 Adding number conversion cast (unumber) $fd in *((const byte*) RASTER) ← (number) $fd
-Adding number conversion cast (unumber) $14 in (bool~) main::$1 ← *((const byte*) RASTER) < (number) $14
+Adding number conversion cast (unumber) $14 in (bool~) main::$0 ← *((const byte*) RASTER) < (number) $14
 Adding number conversion cast (unumber) $32 in (bool~) irq::$1 ← *((const byte*) RASTER) > (number) $32
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((const byte*) RASTER) ← (unumber)(number) $fd
@@ -145,8 +143,8 @@ Finalized unsigned number type (byte) $fd
 Finalized unsigned number type (byte) $14
 Finalized unsigned number type (byte) $32
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [13] (bool~) main::$2 ← *((const byte*) RASTER) >= (byte) $14 from [12] (bool~) main::$1 ← *((const byte*) RASTER) < (byte) $14
-Inversing boolean not [24] (bool~) irq::$2 ← *((const byte*) RASTER) <= (byte) $32 from [23] (bool~) irq::$1 ← *((const byte*) RASTER) > (byte) $32
+Inversing boolean not [12] (bool~) main::$1 ← *((const byte*) RASTER) >= (byte) $14 from [11] (bool~) main::$0 ← *((const byte*) RASTER) < (byte) $14
+Inversing boolean not [23] (bool~) irq::$2 ← *((const byte*) RASTER) <= (byte) $32 from [22] (bool~) irq::$1 ← *((const byte*) RASTER) > (byte) $32
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (bool) framedone#1 = (bool) framedone#13 (bool) framedone#9 (bool) framedone#6 
 Alias (bool) framedone#10 = (bool) framedone#7 (bool) framedone#4 
@@ -157,16 +155,12 @@ Identical Phi Values (bool) framedone#12 (bool) framedone#11
 Identical Phi Values (bool) framedone#14 (bool) framedone#11
 Identical Phi Values (bool) framedone#5 (bool) framedone#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [14] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1
-Simple Condition (bool~) irq::$2 [25] if(*((const byte*) RASTER)<=(byte) $32) goto irq::@1
+Simple Condition (bool~) main::$1 [13] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1
+Simple Condition (bool~) irq::$2 [24] if(*((const byte*) RASTER)<=(byte) $32) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [6] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) main::$0 = &irq
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [10] if(true) goto main::@2
+if() condition always true - replacing block destination [9] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Rewriting conditional comparison [25] if(*((const byte*) RASTER)<=(byte) $32) goto irq::@1
+Rewriting conditional comparison [24] if(*((const byte*) RASTER)<=(byte) $32) goto irq::@1
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $32+1 in if(*((const byte*) RASTER)<(byte) $32+(number) 1) goto irq::@1
@@ -177,8 +171,6 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
-Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@9(between main::@2 and main::@1)
 Added new block during phi lifting irq::@3(between irq and irq::@1)
 Adding NOP phi() at start of @begin

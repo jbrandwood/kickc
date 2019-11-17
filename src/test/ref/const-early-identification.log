@@ -1,6 +1,7 @@
-Setting inferred volatile on symbol affected by address-of (byte*~) main::$0 ← & (byte) A
+Setting inferred volatile on symbol affected by address-of (byte*) main::addrA ← &(byte) A
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte) main::B
+Identified constant variable (byte*) main::addrA
 Identified constant variable (byte) sub::C
 Culled Empty Block (label) @1
 
@@ -14,9 +15,7 @@ main: scope:[main]  from @2
   (byte) A#1 ← phi( @2/(byte) A#3 )
   *((const byte*) SCREEN + (number) 0) ← (byte) A#1
   *((const byte*) SCREEN + (number) 1) ← (const byte) main::B
-  (byte*~) main::$0 ← & (byte) A#1
-  (byte*) main::addrA#0 ← (byte*~) main::$0
-  *((const byte*) SCREEN + (number) 2) ← *((byte*) main::addrA#0)
+  *((const byte*) SCREEN + (number) 2) ← *((const byte*) main::addrA)
   call sub 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -56,12 +55,10 @@ SYMBOL TABLE SSA
 (byte) A#3
 (const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
-(byte*~) main::$0
 (label) main::@1
 (label) main::@return
 (const byte) main::B = (byte) 'b'
-(byte*) main::addrA
-(byte*) main::addrA#0
+(const byte*) main::addrA = &(byte) A
 (void()) sub()
 (number~) sub::$0
 (label) sub::@return
@@ -71,7 +68,7 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) A#1
 Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (const byte) main::B
-Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (number) 2) ← *((byte*) main::addrA#0)
+Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (number) 2) ← *((const byte*) main::addrA)
 Adding number conversion cast (unumber) 3 in *((const byte*) SCREEN + (number) 3) ← (const byte) sub::C
 Adding number conversion cast (unumber) 1 in (number~) sub::$0 ← (byte) A#2 + (number) 1
 Adding number conversion cast (unumber) sub::$0 in (number~) sub::$0 ← (byte) A#2 + (unumber)(number) 1
@@ -93,17 +90,12 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) sub::$0 ← (byte) A#2 + (byte) 1
-Alias (byte*) main::addrA#0 = (byte*~) main::$0 
 Alias (byte) sub::D#0 = (byte~) sub::$0 
 Alias (byte) A#0 = (byte) A#3 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) A#1 (byte) A#0
 Identical Phi Values (byte) A#2 (byte) A#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [4] (byte*) main::addrA#0 ← & (byte) A#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::addrA#0 = &A#0
-Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero SCREEN in [2] *((const byte*) SCREEN + (byte) 0) ← (byte) A#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Consolidated array index constant in *(SCREEN+1)
@@ -142,7 +134,7 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] *((const byte*) SCREEN) ← (byte) A#0
   [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B
-  [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA#0)
+  [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA)
   [7] call sub 
   to:main::@return
 main::@return: scope:[main]  from main
@@ -164,7 +156,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) A
 (byte) A#0 1.0
 (void()) main()
-(byte*) main::addrA
 (void()) sub()
 (byte) sub::D
 (byte) sub::D#0 4.0
@@ -216,7 +207,7 @@ main: {
     // [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN+1
-    // [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA) -- _deref_pbuc1=_deref_pbuc2 
     lda.z addrA
     sta SCREEN+2
     // [7] call sub 
@@ -253,7 +244,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) A#0 ← (byte) 'a' [ A#0 ] (  [ A#0 ] ) always clobbers reg byte a 
 Statement [4] *((const byte*) SCREEN) ← (byte) A#0 [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
 Statement [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA#0) [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA) [ A#0 ] ( main:2 [ A#0 ] ) always clobbers reg byte a 
 Statement [9] *((const byte*) SCREEN+(byte) 3) ← (const byte) sub::C [ A#0 ] ( main:2::sub:7 [ A#0 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ A#0 ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ sub::D#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
@@ -307,7 +298,7 @@ main: {
     // [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN+1
-    // [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA) -- _deref_pbuc1=_deref_pbuc2 
     lda.z addrA
     sta SCREEN+2
     // [7] call sub 
@@ -364,8 +355,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (const byte) main::B = (byte) 'b'
-(byte*) main::addrA
-(const byte*) main::addrA#0 addrA = &(byte) A#0
+(const byte*) main::addrA = &(byte) A
 (void()) sub()
 (label) sub::@return
 (const byte) sub::C = (byte) 'c'
@@ -415,7 +405,7 @@ main: {
     lda #B
     sta SCREEN+1
     // SCREEN[2] = *addrA
-    // [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA) -- _deref_pbuc1=_deref_pbuc2 
     lda.z addrA
     sta SCREEN+2
     // sub()

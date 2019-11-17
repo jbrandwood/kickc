@@ -1339,25 +1339,6 @@ mulf_init: {
   !:
     jmp __b1
 }
-  // Array filled with spline segment points by splinePlot_8()
-  SPLINE_8SEG: .fill 4*9, 0
-  // Tables for the plotter - initialized by calling bitmap_init();
-  bitmap_plot_ylo: .fill $100, 0
-  bitmap_plot_yhi: .fill $100, 0
-  bitmap_plot_bit: .fill $100, 0
-  // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
-  // <f(x) = <(( x * x )/4)
-  .align $100
-  mulf_sqr1_lo: .fill $200, 0
-  // >f(x) = >(( x * x )/4)
-  .align $100
-  mulf_sqr1_hi: .fill $200, 0
-  // <g(x) =  <((( x - 255) * ( x - 255 ))/4)
-  .align $100
-  mulf_sqr2_lo: .fill $200, 0
-  // >g(x) = >((( x - 255) * ( x - 255 ))/4)
-  .align $100
-  mulf_sqr2_hi: .fill $200, 0
   // True type letter c
   letter_c: .byte MOVE_TO
   .word $6c, $92, 0, 0
@@ -1403,6 +1384,25 @@ mulf_init: {
   .word $68, $90, $62, $a0
   .byte LINE_TO
   .word $6c, $92, 0, 0
+  // Array filled with spline segment points by splinePlot_8()
+  SPLINE_8SEG: .fill 4*9, 0
+  // Tables for the plotter - initialized by calling bitmap_init();
+  bitmap_plot_ylo: .fill $100, 0
+  bitmap_plot_yhi: .fill $100, 0
+  bitmap_plot_bit: .fill $100, 0
+  // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
+  // <f(x) = <(( x * x )/4)
+  .align $100
+  mulf_sqr1_lo: .fill $200, 0
+  // >f(x) = >(( x * x )/4)
+  .align $100
+  mulf_sqr1_hi: .fill $200, 0
+  // <g(x) =  <((( x - 255) * ( x - 255 ))/4)
+  .align $100
+  mulf_sqr2_lo: .fill $200, 0
+  // >g(x) = >((( x - 255) * ( x - 255 ))/4)
+  .align $100
+  mulf_sqr2_hi: .fill $200, 0
   // Sine and Cosine tables
   // Angles: $00=0, $80=PI,$100=2*PI
   // Sine/Cosine: signed fixed [-$7f,$7f]

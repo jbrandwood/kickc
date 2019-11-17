@@ -12,12 +12,10 @@
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .const NUM_SQUARES = $30
-  // Screen containing distance to center
-  .label SCREEN_DIST = $b
-  // Screen containing angle to center
-  .label SCREEN_ANGLE = $d
   .label heap_head = $f
   .label SQUARES = $11
+  .label SCREEN_DIST = $b
+  .label SCREEN_ANGLE = $d
 __b1:
   lda #<$3e8
   sta.z malloc.size

@@ -22,8 +22,7 @@ main: scope:[main]  from @6
   *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
   *((const byte*) RASTER) ← (number) $fd
   *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
-  (void()*~) main::$0 ← & interrupt(KERNEL_KEYBOARD)(void()) irq_play()
-  *((const void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_play()
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -66,7 +65,6 @@ SYMBOL TABLE SSA
 interrupt(KERNEL_KEYBOARD)(void()) irq_play()
 (label) irq_play::@return
 (void()) main()
-(void()*~) main::$0
 (label) main::@return
 
 Adding number conversion cast (unumber) $7f in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
@@ -88,12 +86,6 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $fd
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [7] (void()*~) main::$0 ← & interrupt(KERNEL_KEYBOARD)(void()) irq_play()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) main::$0 = &irq_play
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$0 = &interrupt(KERNEL_KEYBOARD)(void()) irq_play()
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @7

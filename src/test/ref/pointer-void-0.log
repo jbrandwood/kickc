@@ -1,4 +1,5 @@
-Setting inferred volatile on symbol affected by address-of (word*~) main::$0 ← & (word) main::w
+Setting inferred volatile on symbol affected by address-of (word*) main::wp ← &(word) main::w
+Identified constant variable (word*) main::wp
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -7,9 +8,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (word) main::w#0 ← (number) $4d2
-  (word*~) main::$0 ← & (word) main::w#0
-  (word*) main::wp#0 ← (word*~) main::$0
-  (void*) main::vp#0 ← ((void*)) (word*) main::wp#0
+  (void*) main::vp#0 ← ((void*)) (const word*) main::wp
   (byte*) main::bp#0 ← ((byte*)) (void*) main::vp#0
   *((const byte*) main::SCREEN) ← *((byte*) main::bp#0)
   to:main::@return
@@ -29,7 +28,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(word*~) main::$0
 (label) main::@return
 (const byte*) main::SCREEN = (byte*)(number) $400
 (byte*) main::bp
@@ -38,13 +36,12 @@ SYMBOL TABLE SSA
 (void*) main::vp#0
 (word) main::w
 (word) main::w#0
-(word*) main::wp
-(word*) main::wp#0
+(const word*) main::wp = &(word) main::w
 
 Adding number conversion cast (unumber) $4d2 in (word) main::w#0 ← (number) $4d2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (word) main::w#0 ← (unumber)(number) $4d2
-Inlining cast (void*) main::vp#0 ← (void*)(word*) main::wp#0
+Inlining cast (void*) main::vp#0 ← (void*)(const word*) main::wp
 Inlining cast (byte*) main::bp#0 ← (byte*)(void*) main::vp#0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -52,13 +49,9 @@ Simplifying constant integer cast $4d2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $4d2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (word*) main::wp#0 = (word*~) main::$0 
-Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [1] (word*) main::wp#0 ← & (word) main::w#0
+Constant right-side identified [1] (void*) main::vp#0 ← (void*)(const word*) main::wp
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word*) main::wp#0 = &main::w#0
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const void*) main::vp#0 = (void*)main::wp#0
+Constant (const void*) main::vp#0 = (void*)main::wp
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::bp#0 = (byte*)main::vp#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -103,7 +96,6 @@ VARIABLE REGISTER WEIGHTS
 (void*) main::vp
 (word) main::w
 (word) main::w#0 20.0
-(word*) main::wp
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -242,11 +234,10 @@ FINAL SYMBOL TABLE
 (byte*) main::bp
 (const byte*) main::bp#0 bp = (byte*)(const void*) main::vp#0
 (void*) main::vp
-(const void*) main::vp#0 vp = (void*)(const word*) main::wp#0
+(const void*) main::vp#0 vp = (void*)(const word*) main::wp
 (word) main::w
 (word) main::w#0 w zp[2]:2 20.0
-(word*) main::wp
-(const word*) main::wp#0 wp = &(word) main::w#0
+(const word*) main::wp = &(word) main::w
 
 zp[2]:2 [ main::w#0 ]
 

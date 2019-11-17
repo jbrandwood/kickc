@@ -131,8 +131,7 @@ sprites_irq_init: scope:[sprites_irq_init]  from main::@2
   *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
   *((const byte*) RASTER) ← (const byte) IRQ_RASTER_FIRST
   *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
-  (void()*~) sprites_irq_init::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
-  *((const void()**) HARDWARE_IRQ) ← (void()*~) sprites_irq_init::$0
+  *((const void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
   asm { cli  }
   to:sprites_irq_init::@return
 sprites_irq_init::@return: scope:[sprites_irq_init]  from sprites_irq_init
@@ -842,7 +841,6 @@ interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
 (byte) sprites_irq::ypos
 (byte) sprites_irq::ypos#0
 (void()) sprites_irq_init()
-(void()*~) sprites_irq_init::$0
 (label) sprites_irq_init::@return
 (label) toSpritePtr1
 (word~) toSpritePtr1_$0
@@ -1190,21 +1188,19 @@ Identical Phi Values (byte) irq_sprite_ptr#14 (byte) irq_sprite_ptr#17
 Identical Phi Values (byte) sin_idx#11 (byte) sin_idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) sprites_init::$2 [17] if((byte) sprites_init::s#1!=rangelast(0,3)) goto sprites_init::@1
-Simple Condition (bool~) sprites_irq::$4 [59] if(*((const byte*) RASTER)<(byte) sprites_irq::raster_sprite_gfx_modify#0) goto sprites_irq::@11
-Simple Condition (bool~) sprites_irq::$1 [63] if((byte) render_screen_showing#0==(byte) 0) goto sprites_irq::@1
-Simple Condition (bool~) sprites_irq::$2 [81] if((byte) irq_cnt#1==(byte) 9) goto sprites_irq::@3
-Simple Condition (bool~) sprites_irq::$3 [98] if((byte) irq_cnt#1==(byte) $a) goto sprites_irq::@4
-Simple Condition (bool~) main::$8 [184] if((byte) main::s#1!=rangelast(4,7)) goto main::@1
-Simple Condition (bool~) loop::$0 [199] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@4
-Simple Condition (bool~) loop::$2 [209] if((byte) loop::s#1!=rangelast(4,7)) goto loop::@6
+Simple Condition (bool~) sprites_irq::$4 [58] if(*((const byte*) RASTER)<(byte) sprites_irq::raster_sprite_gfx_modify#0) goto sprites_irq::@11
+Simple Condition (bool~) sprites_irq::$1 [62] if((byte) render_screen_showing#0==(byte) 0) goto sprites_irq::@1
+Simple Condition (bool~) sprites_irq::$2 [80] if((byte) irq_cnt#1==(byte) 9) goto sprites_irq::@3
+Simple Condition (bool~) sprites_irq::$3 [97] if((byte) irq_cnt#1==(byte) $a) goto sprites_irq::@4
+Simple Condition (bool~) main::$8 [183] if((byte) main::s#1!=rangelast(4,7)) goto main::@1
+Simple Condition (bool~) loop::$0 [198] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@4
+Simple Condition (bool~) loop::$2 [208] if((byte) loop::s#1!=rangelast(4,7)) goto loop::@6
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [6] (byte) sprites_init::xpos#0 ← (unumber)(number) $18+(number) $f*(number) 8
-Constant right-side identified [44] (void()*~) sprites_irq_init::$0 ← & interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) sprites_init::xpos#0 = (unumber)$18+$f*8
 Constant (const byte) sprites_init::s#0 = 0
 Constant (const byte*) toSpritePtr1_sprite#0 = PLAYFIELD_SPRITES
-Constant (const void()*) sprites_irq_init::$0 = &sprites_irq
 Constant (const byte*) sprites_irq::toSpritePtr2_sprite#0 = PLAYFIELD_SPRITES
 Constant (const byte[$100]) SIN = kickasm {{ .var AMPL = 200-21
     .for(var i=0; i<256; i++) {
@@ -1228,17 +1224,17 @@ Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
 Constant (const word) main::toSpritePtr2_$0 = (word)main::toSpritePtr2_sprite#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [196] if(true) goto loop::@4
+if() condition always true - replacing block destination [195] if(true) goto loop::@4
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [15] sprites_init::s#1 ← ++ sprites_init::s#2 to ++
 Resolved ranged comparison value [17] if(sprites_init::s#1!=rangelast(0,3)) goto sprites_init::@1 to (number) 4
-Resolved ranged next value [182] main::s#1 ← ++ main::s#2 to ++
-Resolved ranged comparison value [184] if(main::s#1!=rangelast(4,7)) goto main::@1 to (number) 8
-Resolved ranged next value [207] loop::s#1 ← ++ loop::s#2 to ++
-Resolved ranged comparison value [209] if(loop::s#1!=rangelast(4,7)) goto loop::@6 to (number) 8
-Simplifying expression containing zero SPRITES_YPOS in [51] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) sprites_irq::ypos#0
-Simplifying expression containing zero PLAYFIELD_SPRITE_PTRS_1 in [65] *((const byte*) PLAYFIELD_SPRITE_PTRS_1 + (byte) 0) ← (byte) sprites_irq::ptr#0
-Simplifying expression containing zero PLAYFIELD_SPRITE_PTRS_2 in [72] *((const byte*) PLAYFIELD_SPRITE_PTRS_2 + (byte) 0) ← (byte) sprites_irq::ptr#0
+Resolved ranged next value [181] main::s#1 ← ++ main::s#2 to ++
+Resolved ranged comparison value [183] if(main::s#1!=rangelast(4,7)) goto main::@1 to (number) 8
+Resolved ranged next value [206] loop::s#1 ← ++ loop::s#2 to ++
+Resolved ranged comparison value [208] if(loop::s#1!=rangelast(4,7)) goto loop::@6 to (number) 8
+Simplifying expression containing zero SPRITES_YPOS in [50] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) sprites_irq::ypos#0
+Simplifying expression containing zero PLAYFIELD_SPRITE_PTRS_1 in [64] *((const byte*) PLAYFIELD_SPRITE_PTRS_1 + (byte) 0) ← (byte) sprites_irq::ptr#0
+Simplifying expression containing zero PLAYFIELD_SPRITE_PTRS_2 in [71] *((const byte*) PLAYFIELD_SPRITE_PTRS_2 + (byte) 0) ← (byte) sprites_irq::ptr#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block loop::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -1348,7 +1344,6 @@ Constant inlined main::xpos#0 = (byte) $18
 Constant inlined main::s#0 = (byte) 4
 Constant inlined main::toD0181_$7 = >(word)(const byte*) PLAYFIELD_CHARSET/(byte) 4&(byte) $f
 Constant inlined main::toSpritePtr2_$1 = (word)(const byte*) SIN_SPRITE/(byte) $40
-Constant inlined sprites_irq_init::$0 = &interrupt(HARDWARE_CLOBBER)(void()) sprites_irq()
 Constant inlined main::toSpritePtr2_$0 = (word)(const byte*) SIN_SPRITE
 Constant inlined main::toD0181_$2 = (word)(const byte*) PLAYFIELD_SCREEN_1&(word) $3fff*(byte) 4
 Constant inlined main::toD0181_$1 = (word)(const byte*) PLAYFIELD_SCREEN_1&(word) $3fff

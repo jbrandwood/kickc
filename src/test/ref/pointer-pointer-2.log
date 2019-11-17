@@ -1,4 +1,4 @@
-Setting inferred volatile on symbol affected by address-of (byte**~) main::$0 ← & (byte*) main::text
+Setting inferred volatile on symbol affected by address-of (void~) main::$0 ← call nexttext &(byte*) main::text 
 Warning! Adding boolean cast to non-boolean condition *((byte*) main::text)
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
@@ -23,8 +23,7 @@ main::@1: scope:[main]  from main main::@4
   (byte*) main::screen#5 ← phi( main/(byte*) main::screen#0 main::@4/(byte*) main::screen#6 )
   (byte) textid#11 ← phi( main/(byte) textid#16 main::@4/(byte) textid#12 )
   (byte*) main::text#2 ← phi( main/(byte*) main::text#0 main::@4/(byte*) main::text#5 )
-  (byte**~) main::$0 ← & (byte*) main::text#2
-  (byte**) nexttext::textp#0 ← (byte**~) main::$0
+  (byte**) nexttext::textp#0 ← &(byte*) main::text#2
   call nexttext 
   to:main::@9
 main::@9: scope:[main]  from main::@1
@@ -39,8 +38,8 @@ main::@2: scope:[main]  from main::@3 main::@9
   (byte) main::i#3 ← phi( main::@3/(byte) main::i#4 main::@9/(byte) main::i#5 )
   (byte*) main::screen#3 ← phi( main::@3/(byte*) main::screen#1 main::@9/(byte*) main::screen#4 )
   (byte*) main::text#3 ← phi( main::@3/(byte*) main::text#1 main::@9/(byte*) main::text#6 )
-  (bool~) main::$3 ← (number) 0 != *((byte*) main::text#3)
-  if((bool~) main::$3) goto main::@3
+  (bool~) main::$2 ← (number) 0 != *((byte*) main::text#3)
+  if((bool~) main::$2) goto main::@3
   to:main::@4
 main::@3: scope:[main]  from main::@2
   (byte) textid#18 ← phi( main::@2/(byte) textid#17 )
@@ -57,8 +56,8 @@ main::@4: scope:[main]  from main::@2
   (byte*) main::text#5 ← phi( main::@2/(byte*) main::text#3 )
   (byte) main::i#2 ← phi( main::@2/(byte) main::i#3 )
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$14)
-  (bool~) main::$2 ← (byte) main::i#1 != rangelast(0,$14)
-  if((bool~) main::$2) goto main::@1
+  (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,$14)
+  if((bool~) main::$1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@4
   (byte) textid#7 ← phi( main::@4/(byte) textid#12 )
@@ -110,9 +109,8 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte**~) main::$0
+(bool~) main::$1
 (bool~) main::$2
-(bool~) main::$3
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -177,7 +175,7 @@ SYMBOL TABLE SSA
 (byte) textid#8
 (byte) textid#9
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$3 ← (number) 0 != *((byte*) main::text#3)
+Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (number) 0 != *((byte*) main::text#3)
 Adding number conversion cast (unumber) 0 in (byte) textid#2 ← (number) 0
 Adding number conversion cast (unumber) 1 in (number~) nexttext::$0 ← (byte) textid#8 & (number) 1
 Adding number conversion cast (unumber) nexttext::$0 in (number~) nexttext::$0 ← (byte) textid#8 & (unumber)(number) 1
@@ -198,7 +196,6 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) nexttext::$0 ← (byte) textid#8 & (byte) 1
-Alias (byte**) nexttext::textp#0 = (byte**~) main::$0 
 Alias (byte*) main::text#2 = (byte*) main::text#6 
 Alias (byte*) main::screen#4 = (byte*) main::screen#5 
 Alias (byte) main::i#5 = (byte) main::i#6 
@@ -223,19 +220,17 @@ Identical Phi Values (byte) textid#8 (byte) textid#11
 Identical Phi Values (byte**) nexttext::textp#1 (byte**) nexttext::textp#0
 Identical Phi Values (byte) textid#10 (byte) textid#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [12] if((byte) 0!=*((byte*) main::text#3)) goto main::@3
-Simple Condition (bool~) main::$2 [20] if((byte) main::i#1!=rangelast(0,$14)) goto main::@1
-Simple Condition (bool~) nexttext::$1 [29] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1
+Simple Condition (bool~) main::$2 [11] if((byte) 0!=*((byte*) main::text#3)) goto main::@3
+Simple Condition (bool~) main::$1 [19] if((byte) main::i#1!=rangelast(0,$14)) goto main::@1
+Simple Condition (bool~) nexttext::$1 [28] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [5] (byte**) nexttext::textp#0 ← & (byte*) main::text#2
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte**) nexttext::textp#0 = &main::text#2
 Constant (const byte) textid#15 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [18] main::i#1 ← ++ main::i#5 to ++
-Resolved ranged comparison value [20] if(main::i#1!=rangelast(0,$14)) goto main::@1 to (number) $15
+Resolved ranged next value [17] main::i#1 ← ++ main::i#5 to ++
+Resolved ranged comparison value [19] if(main::i#1!=rangelast(0,$14)) goto main::@1 to (number) $15
 Adding number conversion cast (unumber) $15 in if((byte) main::i#1!=(number) $15) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $15

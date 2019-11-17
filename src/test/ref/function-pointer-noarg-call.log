@@ -1,4 +1,5 @@
 Resolved forward reference fn1 to (void()) fn1()
+Identified constant variable (void()*) main::f
 Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
@@ -7,9 +8,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (void()*~) main::$0 ← & (void()) fn1()
-  (void()*) main::f#0 ← (void()*~) main::$0
-  call *((void()*) main::f#0) 
+  call *((const void()*) main::f) 
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -38,22 +37,14 @@ SYMBOL TABLE SSA
 (label) fn1::@return
 (const byte*) fn1::BORDERCOL = (byte*)(number) $d020
 (void()) main()
-(void()*~) main::$0
 (label) main::@return
-(void()*) main::f
-(void()*) main::f#0
+(const void()*) main::f = &(void()) fn1()
 
 Simplifying constant pointer cast (byte*) 53280
 Successful SSA optimization PassNCastSimplification
-Alias (void()*) main::f#0 = (void()*~) main::$0 
-Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] (void()*) main::f#0 ← & (void()) fn1()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) main::f#0 = &fn1
-Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function [2] call fn1 
+Replacing constant pointer function [0] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
-Eliminating unused constant (const void()*) main::f#0
+Eliminating unused constant (const void()*) main::f
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -105,7 +96,6 @@ fn1::@return: scope:[fn1]  from fn1
 VARIABLE REGISTER WEIGHTS
 (void()) fn1()
 (void()) main()
-(void()*) main::f
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -247,7 +237,6 @@ FINAL SYMBOL TABLE
 (const byte*) fn1::BORDERCOL = (byte*) 53280
 (void()) main()
 (label) main::@return
-(void()*) main::f
 
 
 

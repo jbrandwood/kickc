@@ -1,6 +1,6 @@
-Setting inferred volatile on symbol affected by address-of (byte*~) main::$0 ← & (byte) main::b
-Setting inferred volatile on symbol affected by address-of (word*~) main::$2 ← & (word) main::w
-Setting inferred volatile on symbol affected by address-of (dword*~) main::$4 ← & (dword) main::d
+Setting inferred volatile on symbol affected by address-of (void~) main::$0 ← call print &(byte) main::b 
+Setting inferred volatile on symbol affected by address-of (void~) main::$1 ← call print &(word) main::w 
+Setting inferred volatile on symbol affected by address-of (void~) main::$2 ← call print &(dword) main::d 
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -12,8 +12,7 @@ main: scope:[main]  from @2
   (dword) main::d#0 ← (number) $12345678
   (word) main::w#0 ← (number) $1234
   (byte) main::b#0 ← (number) $12
-  (byte*~) main::$0 ← & (byte) main::b#0
-  (void*) print::ptr#0 ← (void*)(byte*~) main::$0
+  (void*) print::ptr#0 ← (void*)&(byte) main::b#0
   call print 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -21,16 +20,14 @@ main::@1: scope:[main]  from main
   (word) main::w#1 ← phi( main/(word) main::w#0 )
   (byte) idx#8 ← phi( main/(byte) idx#6 )
   (byte) idx#0 ← (byte) idx#8
-  (word*~) main::$2 ← & (word) main::w#1
-  (void*) print::ptr#1 ← (void*)(word*~) main::$2
+  (void*) print::ptr#1 ← (void*)&(word) main::w#1
   call print 
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (dword) main::d#1 ← phi( main::@1/(dword) main::d#2 )
   (byte) idx#9 ← phi( main::@1/(byte) idx#6 )
   (byte) idx#1 ← (byte) idx#9
-  (dword*~) main::$4 ← & (dword) main::d#1
-  (void*) print::ptr#2 ← (void*)(dword*~) main::$4
+  (void*) print::ptr#2 ← (void*)&(dword) main::d#1
   call print 
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -95,9 +92,6 @@ SYMBOL TABLE SSA
 (byte) idx#8
 (byte) idx#9
 (void()) main()
-(byte*~) main::$0
-(word*~) main::$2
-(dword*~) main::$4
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -157,18 +151,10 @@ Identical Phi Values (byte) idx#1 (byte) idx#13
 Identical Phi Values (byte) idx#10 (byte) idx#13
 Identical Phi Values (byte) idx#14 (byte) idx#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [4] (byte*~) main::$0 ← & (byte) main::b#0
-Constant right-side identified [9] (word*~) main::$2 ← & (word) main::w#0
-Constant right-side identified [14] (dword*~) main::$4 ← & (dword) main::d#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = &main::b#0
-Constant (const word*) main::$2 = &main::w#0
-Constant (const dword*) main::$4 = &main::d#0
+Constant (const void*) print::ptr#0 = (void*)&main::b#0
+Constant (const void*) print::ptr#1 = (void*)&main::w#0
+Constant (const void*) print::ptr#2 = (void*)&main::d#0
 Constant (const byte) idx#16 = 0
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const void*) print::ptr#0 = (void*)main::$0
-Constant (const void*) print::ptr#1 = (void*)main::$2
-Constant (const void*) print::ptr#2 = (void*)main::$4
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [8] (byte*~) print::$0 ← (byte*)(void*) print::ptr#3 keeping print::ptr#3
 Successful SSA optimization Pass2NopCastInlining
@@ -177,9 +163,6 @@ Inlining constant with var siblings (const void*) print::ptr#1
 Inlining constant with var siblings (const void*) print::ptr#2
 Inlining constant with var siblings (const byte) idx#16
 Constant inlined print::ptr#2 = (void*)&(dword) main::d#0
-Constant inlined main::$2 = &(word) main::w#0
-Constant inlined main::$0 = &(byte) main::b#0
-Constant inlined main::$4 = &(dword) main::d#0
 Constant inlined print::ptr#0 = (void*)&(byte) main::b#0
 Constant inlined print::ptr#1 = (void*)&(word) main::w#0
 Constant inlined idx#16 = (byte) 0

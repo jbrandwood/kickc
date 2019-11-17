@@ -51,7 +51,17 @@ public class Pass1PointerSizeofFix extends Pass1Base {
       // For each statement maps RValues used as index to the new *sizeof() variable created
       Map<Statement, Map<RValue, SymbolVariableRef>> handled = new LinkedHashMap<>();
       ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
-         if(programValue.get() instanceof PointerDereferenceIndexed) {
+         if(programValue.get() instanceof ConstantBinary) {
+            ConstantBinary binary = (ConstantBinary) programValue.get();
+            if(Operators.PLUS.equals(binary.getOperator()) || Operators.MINUS.equals(binary.getOperator())) {
+               SymbolTypePointer pointerType = getPointerType(binary.getLeft());
+               if(pointerType!=null && pointerType.getElementType().getSizeBytes() > 1) {
+                  getLog().append("Fixing constant pointer addition " + binary.toString(getProgram()));
+                  ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
+                  binary.setRight(new ConstantBinary(binary.getRight(), Operators.MULTIPLY, sizeOfTargetType));
+               }
+            }
+         } else if(programValue.get() instanceof PointerDereferenceIndexed) {
             PointerDereferenceIndexed deref = (PointerDereferenceIndexed) programValue.get();
             SymbolTypePointer pointerType = getPointerType(deref.getPointer());
             if(pointerType != null) {

@@ -1,9 +1,10 @@
-Setting inferred volatile on symbol affected by address-of (struct A*~) main::$0 ← & (struct A) aa
+Setting inferred volatile on symbol affected by address-of (struct A*) main::a ← &(struct A) aa
 Created struct value member variable (byte) aa_b
 Converted struct value to member variables (struct A) aa
 Adding struct value list initializer (byte) aa_b ← (number) 1
 Rewriting struct pointer member access *((struct A*) main::a).b
-Warning! Adding boolean cast to non-boolean sub-expression *((byte*) main::$3)
+Warning! Adding boolean cast to non-boolean sub-expression *((byte*) main::$2)
+Identified constant variable (struct A*) main::a
 Adding versioned struct unwinding for (struct A) aa#0
 
 CONTROL FLOW GRAPH SSA
@@ -14,14 +15,11 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (struct A) aa#1 ← phi( @1/(struct A) aa#2 )
-  (struct A*~) main::$0 ← & (struct A) aa#1
-  (struct A*) main::a#0 ← (struct A*~) main::$0
-  (byte*) main::$3 ← (byte*)(struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B
-  (bool~) main::$4 ← (number) 0 != *((byte*) main::$3)
-  (bool~) main::$1 ← ! (bool~) main::$4
-  (bool~) main::$2 ← ! (bool~) main::$1
-  if((bool~) main::$2) goto main::@1
+  (byte*) main::$2 ← (byte*)(const struct A*) main::a + (const byte) OFFSET_STRUCT_A_B
+  (bool~) main::$3 ← (number) 0 != *((byte*) main::$2)
+  (bool~) main::$0 ← ! (bool~) main::$3
+  (bool~) main::$1 ← ! (bool~) main::$0
+  if((bool~) main::$1) goto main::@1
   to:main::@2
 main::@1: scope:[main]  from main main::@2
   asm { jmp!a+ !a:  }
@@ -33,7 +31,6 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 @1: scope:[]  from @begin
-  (struct A) aa#2 ← phi( @begin/(struct A) aa#0 )
   call main 
   to:@2
 @2: scope:[]  from @1
@@ -49,25 +46,21 @@ SYMBOL TABLE SSA
 (const byte) OFFSET_STRUCT_A_B = (byte) 0
 (struct A) aa
 (struct A) aa#0
-(struct A) aa#1
-(struct A) aa#2
 (byte) aa_b
 (byte) aa_b#0
 (void()) main()
-(struct A*~) main::$0
+(bool~) main::$0
 (bool~) main::$1
-(bool~) main::$2
-(byte*) main::$3
-(bool~) main::$4
+(byte*) main::$2
+(bool~) main::$3
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (const byte*) main::SCREEN = (byte*)(number) $400
-(struct A*) main::a
-(struct A*) main::a#0
+(const struct A*) main::a = &(struct A) aa
 
 Adding number conversion cast (unumber) 1 in (byte) aa_b#0 ← (number) 1
-Adding number conversion cast (unumber) 0 in (bool~) main::$4 ← (number) 0 != *((byte*) main::$3)
+Adding number conversion cast (unumber) 0 in (bool~) main::$3 ← (number) 0 != *((byte*) main::$2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) aa_b#0 ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
@@ -78,31 +71,24 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [7] (bool~) main::$1 ← (byte) 0 == *((byte*) main::$3) from [6] (bool~) main::$4 ← (byte) 0 != *((byte*) main::$3)
-Inversing boolean not [8] (bool~) main::$2 ← (byte) 0 != *((byte*) main::$3) from [7] (bool~) main::$1 ← (byte) 0 == *((byte*) main::$3)
+Inversing boolean not [4] (bool~) main::$0 ← (byte) 0 == *((byte*) main::$2) from [3] (bool~) main::$3 ← (byte) 0 != *((byte*) main::$2)
+Inversing boolean not [5] (bool~) main::$1 ← (byte) 0 != *((byte*) main::$2) from [4] (bool~) main::$0 ← (byte) 0 == *((byte*) main::$2)
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (struct A*) main::a#0 = (struct A*~) main::$0 
-Alias (struct A) aa#0 = (struct A) aa#2 
-Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (struct A) aa#1 (struct A) aa#0
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [9] if((byte) 0!=*((byte*) main::$3)) goto main::@1
+Simple Condition (bool~) main::$1 [6] if((byte) 0!=*((byte*) main::$2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting struct address-of to first member [3] (struct A*) main::a#0 ← (struct A*)&(byte) aa_b#0
+Rewriting struct address-of to first member &(struct A) aa
 Successful SSA optimization PassNStructAddressOfRewriting
-Constant (const struct A*) main::a#0 = (struct A*)&aa_b#0
+Constant right-side identified [2] (byte*) main::$2 ← (byte*)(const struct A*) main::a + (const byte) OFFSET_STRUCT_A_B
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) main::$2 = (byte*)main::a+OFFSET_STRUCT_A_B
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)main::a#0 in [5] (byte*) main::$3 ← (byte*)(const struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B
-Successful SSA optimization Pass2ConstantValues
-Converting *(pointer+n) to pointer[n] [9] if((byte) 0!=*((byte*) main::$3)) goto main::@1  -- *((byte*)main::a#0 + OFFSET_STRUCT_A_B)
-Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)main::a#0 in [5] (byte*) main::$3 ← (byte*)(const struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B
-Simplifying expression containing zero (byte*)main::a#0 in [9] if((byte) 0!=*((byte*)(const struct A*) main::a#0 + (const byte) OFFSET_STRUCT_A_B)) goto main::@1
+Simplifying expression containing zero (byte*)main::a in 
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (struct A) aa#0 and assignment [1] (struct A) aa#0 ← struct-unwound {(byte) aa_b#0}
-Eliminating unused variable (byte*) main::$3 and assignment [2] (byte*) main::$3 ← (byte*)(const struct A*) main::a#0
 Eliminating unused constant (const byte) OFFSET_STRUCT_A_B
 Successful SSA optimization PassNEliminateUnusedVars
+Constant inlined main::$2 = (byte*)(const struct A*) main::a
+Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -128,7 +114,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] if((byte) 0!=*((byte*)(const struct A*) main::a#0)) goto main::@1
+  [4] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main
   [5] *((const byte*) main::SCREEN) ← (byte) 'a'
@@ -147,7 +133,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) aa_b
 (byte) aa_b#0 20.0
 (void()) main()
-(struct A*) main::a
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -186,7 +171,7 @@ __bend:
 main: {
     .label SCREEN = $400
     .label a = aa_b
-    // [4] if((byte) 0!=*((byte*)(const struct A*) main::a#0)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
+    // [4] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
     lda #0
     cmp.z a
     bne __b1
@@ -213,7 +198,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) aa_b#0 ← (byte) 1 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [4] if((byte) 0!=*((byte*)(const struct A*) main::a#0)) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [5] *((const byte*) main::SCREEN) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ aa_b#0 ] : zp[1]:2 , 
 
@@ -259,7 +244,7 @@ __bend:
 main: {
     .label SCREEN = $400
     .label a = aa_b
-    // [4] if((byte) 0!=*((byte*)(const struct A*) main::a#0)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
+    // [4] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
     lda #0
     cmp.z a
     bne __b1
@@ -319,8 +304,7 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (const byte*) main::SCREEN = (byte*) 1024
-(struct A*) main::a
-(const struct A*) main::a#0 a = (struct A*)&(byte) aa_b#0
+(const struct A*) main::a = (struct A*)&(byte) aa_b#0
 
 zp[1]:2 [ aa_b#0 ]
 
@@ -355,7 +339,7 @@ main: {
     .label SCREEN = $400
     .label a = aa_b
     // if(!a->b)
-    // [4] if((byte) 0!=*((byte*)(const struct A*) main::a#0)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
+    // [4] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
     lda #0
     cmp.z a
     bne !a+

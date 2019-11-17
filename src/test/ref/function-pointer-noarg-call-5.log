@@ -1,39 +1,14 @@
-Resolved forward reference fn1 to (void()) fn1()
-Resolved forward reference fn2 to (void()) fn2()
-Fixing pointer array-indexing *((void()*[2]) fns + (number~) main::$0)
+Fixing pointer array-indexing *((const void()*[2]) fns + (number~) main::$0)
+Culled Empty Block (label) @1
+Culled Empty Block (label) @2
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
-Culled Empty Block (label) @1
-Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (void()*~) $0 ← & (void()) fn1()
-  (void()*~) $1 ← & (void()) fn2()
-  (void()*[2]) fns ← { (void()*)(void()*~) $0, (void()*)(void()*~) $1 }
   to:@3
-
-(void()) main()
-main: scope:[main]  from @3
-  (byte) main::i#0 ← (number) 0
-  to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  if(true) goto main::@2
-  to:main::@return
-main::@2: scope:[main]  from main::@1
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (number~) main::$0 ← (byte) main::i#1 & (number) 1
-  (number~) main::$2 ← (number~) main::$0 * (const byte) SIZEOF_POINTER
-  (void()*) main::f#0 ← *((void()*[2]) fns + (number~) main::$2)
-  call *((void()*) main::f#0) 
-  to:main::@1
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
 
 (void()) fn1()
 fn1: scope:[fn1]  from
@@ -50,6 +25,26 @@ fn2: scope:[fn2]  from
 fn2::@return: scope:[fn2]  from fn2
   return 
   to:@return
+
+(void()) main()
+main: scope:[main]  from @3
+  (byte) main::i#0 ← (number) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  if(true) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
+  (byte) main::i#1 ← ++ (byte) main::i#2
+  (number~) main::$0 ← (byte) main::i#1 & (number) 1
+  (number~) main::$2 ← (number~) main::$0 * (const byte) SIZEOF_POINTER
+  (void()*) main::f#0 ← *((const void()*[2]) fns + (number~) main::$2)
+  call *((void()*) main::f#0) 
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
 @3: scope:[]  from @begin
   call main 
   to:@4
@@ -58,8 +53,6 @@ fn2::@return: scope:[fn2]  from fn2
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(void()*~) $0
-(void()*~) $1
 (label) @3
 (label) @4
 (label) @begin
@@ -71,7 +64,7 @@ SYMBOL TABLE SSA
 (void()) fn2()
 (label) fn2::@return
 (const byte*) fn2::BGCOL = (byte*)(number) $d021
-(void()*[2]) fns
+(const void()*[2]) fns = { &(void()) fn1(), &(void()) fn2() }
 (void()) main()
 (number~) main::$0
 (number~) main::$2
@@ -95,8 +88,6 @@ Inlining cast (byte) main::i#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
-Simplifying constant integer cast (void()*~) $0
-Simplifying constant integer cast (void()*~) $1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
@@ -107,27 +98,16 @@ Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::i#1 & (byt
 Inferred type updated to byte in (unumber~) main::$2 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] (void()*~) $0 ← & (void()) fn1()
-Constant right-side identified [1] (void()*~) $1 ← & (void()) fn2()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) $0 = &fn1
-Constant (const void()*) $1 = &fn2
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [5] if(true) goto main::@2
+if() condition always true - replacing block destination [6] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Identified constant from value list (void()*[2]) { (const void()*) $0, (const void()*) $1 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const void()*[2]) fns = { $0, $1 }
-Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift [3] (byte~) main::$2 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
+Rewriting multiplication to use shift [7] (byte~) main::$2 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::i#0
-Constant inlined $0 = &(void()) fn1()
 Constant inlined main::i#0 = (byte) 0
-Constant inlined $1 = &(void()) fn2()
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant (const byte) SIZEOF_POINTER
 Successful SSA optimization PassNEliminateUnusedVars

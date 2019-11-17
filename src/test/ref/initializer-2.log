@@ -1,12 +1,11 @@
-Fixing pointer array-indexing *((struct Point[]) points + (byte) main::i)
-Fixing pointer array-indexing *((struct Point[]) points + (byte) main::i)
-Rewriting struct pointer member access *((struct Point[]) points + (byte~) main::$1).x
-Rewriting struct pointer member access *((struct Point[]) points + (byte~) main::$2).y
+Fixing pointer array-indexing *((const struct Point[]) points + (byte) main::i)
+Fixing pointer array-indexing *((const struct Point[]) points + (byte) main::i)
+Rewriting struct pointer member access *((const struct Point[]) points + (byte~) main::$1).x
+Rewriting struct pointer member access *((const struct Point[]) points + (byte~) main::$2).y
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (struct Point[]) points ← { (struct Point){ (byte)(number) 1, (byte)(number) 2 }, (struct Point){ (byte)(number) 3, (byte)(number) 4 }, (struct Point){ (byte)(number) 5, (byte)(number) 6 } }
   to:@1
 
 (void()) main()
@@ -18,11 +17,11 @@ main::@1: scope:[main]  from main main::@1
   (byte) main::idx#3 ← phi( main/(byte) main::idx#0 main::@1/(byte) main::idx#2 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$1 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
-  (byte*) main::$3 ← (byte*)(struct Point[]) points + (const byte) OFFSET_STRUCT_POINT_X
+  (byte*) main::$3 ← (byte*)(const struct Point[]) points + (const byte) OFFSET_STRUCT_POINT_X
   *((const byte*) main::SCREEN + (byte) main::idx#3) ← *((byte*) main::$3 + (byte~) main::$1)
   (byte) main::idx#1 ← ++ (byte) main::idx#3
   (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
-  (byte*) main::$4 ← (byte*)(struct Point[]) points + (const byte) OFFSET_STRUCT_POINT_Y
+  (byte*) main::$4 ← (byte*)(const struct Point[]) points + (const byte) OFFSET_STRUCT_POINT_Y
   *((const byte*) main::SCREEN + (byte) main::idx#1) ← *((byte*) main::$4 + (byte~) main::$2)
   (byte) main::idx#2 ← ++ (byte) main::idx#1
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,2)
@@ -67,43 +66,38 @@ SYMBOL TABLE SSA
 (byte) main::idx#1
 (byte) main::idx#2
 (byte) main::idx#3
-(struct Point[]) points
+(const struct Point[]) points = { { x: (byte)(number) 1, y: (byte)(number) 2 }, { x: (byte)(number) 3, y: (byte)(number) 4 }, { x: (byte)(number) 5, y: (byte)(number) 6 } }
 
 Adding number conversion cast (unumber) 0 in (byte) main::idx#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) main::idx#0 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Simplifying constant integer cast 5
 Simplifying constant integer cast 6
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Identified duplicate assignment right side [8] (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
+Identified duplicate assignment right side [7] (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) main::$0 [14] if((byte) main::i#1!=rangelast(0,2)) goto main::@1
+Simple Condition (bool~) main::$0 [13] if((byte) main::i#1!=rangelast(0,2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Identified constant from value list (struct Point) { x: (byte) 1, y: (byte) 2 }
-Identified constant from value list (struct Point) { x: (byte) 3, y: (byte) 4 }
-Identified constant from value list (struct Point) { x: (byte) 5, y: (byte) 6 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Identified constant from value list (struct Point[]) { { x: (byte) 1, y: (byte) 2 }, { x: (byte) 3, y: (byte) 4 }, { x: (byte) 5, y: (byte) 6 } }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const struct Point[]) points = { { x: 1, y: 2 }, { x: 3, y: 4 }, { x: 5, y: 6 } }
+Constant right-side identified [4] (byte*) main::$3 ← (byte*)(const struct Point[]) points + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [8] (byte*) main::$4 ← (byte*)(const struct Point[]) points + (const byte) OFFSET_STRUCT_POINT_Y
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::idx#0 = 0
 Constant (const byte) main::i#0 = 0
+Constant (const byte*) main::$3 = (byte*)points+OFFSET_STRUCT_POINT_X
+Constant (const byte*) main::$4 = (byte*)points+OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)points in [5] (byte*) main::$3 ← (byte*)(const struct Point[]) points + (const byte) OFFSET_STRUCT_POINT_X
-Constant value identified (byte*)points in [9] (byte*) main::$4 ← (byte*)(const struct Point[]) points + (const byte) OFFSET_STRUCT_POINT_Y
-Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [12] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [14] if(main::i#1!=rangelast(0,2)) goto main::@1 to (number) 3
-Simplifying expression containing zero (byte*)points in [5] (byte*) main::$3 ← (byte*)(const struct Point[]) points + (const byte) OFFSET_STRUCT_POINT_X
+Resolved ranged next value [11] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [13] if(main::i#1!=rangelast(0,2)) goto main::@1 to (number) 3
+Simplifying expression containing zero (byte*)points in 
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
@@ -115,11 +109,6 @@ Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte~) main::$2 = (byte~) main::$1 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [6] (byte*) main::$4 ← (byte*)(const struct Point[]) points + (const byte) OFFSET_STRUCT_POINT_Y
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$3 = (byte*)points
-Constant (const byte*) main::$4 = (byte*)points+OFFSET_STRUCT_POINT_Y
-Successful SSA optimization Pass2ConstantIdentification
 Rewriting multiplication to use shift [1] (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::idx#0

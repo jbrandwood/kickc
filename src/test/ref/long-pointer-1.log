@@ -1,4 +1,5 @@
-Setting inferred volatile on symbol affected by address-of (dword*~) main::$0 ← & (dword) main::long_ptr
+Setting inferred volatile on symbol affected by address-of (byte) main::long_ptr_zp ← (byte)&(dword) main::long_ptr
+Identified constant variable (byte) main::long_ptr_zp
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -7,9 +8,6 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (dword) main::long_ptr#0 ← (number) $12345678
-  (dword*~) main::$0 ← & (dword) main::long_ptr#0
-  (byte~) main::$1 ← ((byte)) (dword*~) main::$0
-  (byte) main::long_ptr_zp#0 ← (byte~) main::$1
   asm { nop lda(long_ptr_zp),y sta$ff  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -28,33 +26,19 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(dword*~) main::$0
-(byte~) main::$1
 (label) main::@return
 (dword) main::long_ptr
 (dword) main::long_ptr#0
-(byte) main::long_ptr_zp
-(byte) main::long_ptr_zp#0
+(const byte) main::long_ptr_zp = (byte)&(dword) main::long_ptr
 
 Adding number conversion cast (unumber) $12345678 in (dword) main::long_ptr#0 ← (number) $12345678
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (dword) main::long_ptr#0 ← (unumber)(number) $12345678
-Inlining cast (byte~) main::$1 ← (byte)(dword*~) main::$0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $12345678
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (dword) $12345678
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte) main::long_ptr_zp#0 = (byte~) main::$1 
-Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [1] (dword*~) main::$0 ← & (dword) main::long_ptr#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const dword*) main::$0 = &main::long_ptr#0
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) main::long_ptr_zp#0 = (byte)main::$0
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$0 = &(dword) main::long_ptr#0
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -94,7 +78,6 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (dword) main::long_ptr
 (dword) main::long_ptr#0 20.0
-(byte) main::long_ptr_zp
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -235,8 +218,7 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (dword) main::long_ptr
 (dword) main::long_ptr#0 long_ptr zp[4]:2 20.0
-(byte) main::long_ptr_zp
-(const byte) main::long_ptr_zp#0 long_ptr_zp = (byte)&(dword) main::long_ptr#0
+(const byte) main::long_ptr_zp = (byte)&(dword) main::long_ptr
 
 zp[4]:2 [ main::long_ptr#0 ]
 

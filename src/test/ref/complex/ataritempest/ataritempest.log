@@ -39,9 +39,6 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 @3: scope:[]  from @begin
-  (void()*~) $0 ← & interrupt(HARDWARE_ALL)(void()) nmiHandler()
-  (void()*~) $1 ← & (void()) entryPoint()
-  (void()*[]) VECTORS ← { (void()*)(void()*~) $0, (void()*)(void()*~) $1 }
   call main 
   to:@4
 @4: scope:[]  from @3
@@ -49,8 +46,6 @@ main::@return: scope:[main]  from main
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(void()*~) $0
-(void()*~) $1
 (label) @3
 (label) @4
 (label) @begin
@@ -58,7 +53,7 @@ SYMBOL TABLE SSA
 (const byte*) BGCOL = (byte*)(number) $c01a
 (const byte[]) MESSAGE = (string) "hello world"
 (byte[$32]) SCREEN
-(void()*[]) VECTORS
+(const void()*[]) VECTORS = { &interrupt(HARDWARE_ALL)(void()) nmiHandler(), &(void()) entryPoint() }
 (void()) entryPoint()
 (bool~) entryPoint::$0
 (label) entryPoint::@1
@@ -73,19 +68,13 @@ interrupt(HARDWARE_ALL)(void()) nmiHandler()
 (label) nmiHandler::@return
 
 Simplifying constant pointer cast (byte*) 49178
-Simplifying constant integer cast (void()*~) $0
-Simplifying constant integer cast (void()*~) $1
 Successful SSA optimization PassNCastSimplification
 Simple Condition (bool~) entryPoint::$0 [6] if((byte) entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [0] (byte[$32]) SCREEN ← { fill( $32, 0) }
-Constant right-side identified [12] (void()*~) $0 ← & interrupt(HARDWARE_ALL)(void()) nmiHandler()
-Constant right-side identified [13] (void()*~) $1 ← & (void()) entryPoint()
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte[$32]) SCREEN = { fill( $32, 0) }
 Constant (const byte) entryPoint::i#0 = 0
-Constant (const void()*) $0 = &nmiHandler
-Constant (const void()*) $1 = &entryPoint
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [4] entryPoint::i#1 ← ++ entryPoint::i#2 to ++
 Resolved ranged comparison value [6] if(entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1 to (number) $32
@@ -95,14 +84,8 @@ Simplifying constant integer cast $32
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $32
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Identified constant from value list (void()*[]) { (const void()*) $0, (const void()*) $1 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const void()*[]) VECTORS = { $0, $1 }
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) entryPoint::i#0
-Constant inlined $0 = &interrupt(HARDWARE_ALL)(void()) nmiHandler()
 Constant inlined entryPoint::i#0 = (byte) 0
-Constant inlined $1 = &(void()) entryPoint()
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting entryPoint::@3(between entryPoint::@1 and entryPoint::@1)
 Adding NOP phi() at start of @begin
@@ -277,10 +260,10 @@ entryPoint: {
 .segment RomData
   MESSAGE: .text "hello world"
   .byte 0
-.segment RamData
-  SCREEN: .fill $32, 0
 .segment Vectors
   VECTORS: .word nmiHandler, entryPoint
+.segment RamData
+  SCREEN: .fill $32, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
@@ -393,10 +376,10 @@ entryPoint: {
 .segment RomData
   MESSAGE: .text "hello world"
   .byte 0
-.segment RamData
-  SCREEN: .fill $32, 0
 .segment Vectors
   VECTORS: .word nmiHandler, entryPoint
+.segment RamData
+  SCREEN: .fill $32, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -529,8 +512,8 @@ entryPoint: {
 .segment RomData
   MESSAGE: .text "hello world"
   .byte 0
-.segment RamData
-  SCREEN: .fill $32, 0
 .segment Vectors
   VECTORS: .word nmiHandler, entryPoint
+.segment RamData
+  SCREEN: .fill $32, 0
 

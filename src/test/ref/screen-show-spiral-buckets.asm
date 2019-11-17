@@ -21,20 +21,13 @@
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .const NUM_SQUARES = $30
-  // Screen containing distance to center
-  .label SCREEN_DIST = $16
-  // Screen containing angle to center
-  .label SCREEN_ANGLE = $e
-  // Array containing the bucket size for each of the distance buckets
-  .label BUCKET_SIZES = $10
-  // Buckets containing screen indices for each distance from the center.
-  // BUCKETS[dist] is an array of words containing screen indices.
-  // The size of the array BUCKETS[dist] is BUCKET_SIZES[dist]
-  .label BUCKETS = $12
-  // Current index into each bucket. Used while populating the buckets. (After population the end the values will be equal to the bucket sizes)
-  .label BUCKET_IDX = $18
   .label heap_head = 2
   .label SQUARES = 5
+  .label SCREEN_DIST = $16
+  .label SCREEN_ANGLE = $e
+  .label BUCKET_SIZES = $10
+  .label BUCKETS = $12
+  .label BUCKET_IDX = $18
 __b1:
   lda #<$3e8
   sta.z malloc.size

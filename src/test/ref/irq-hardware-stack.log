@@ -18,8 +18,7 @@ main: scope:[main]  from @2
   *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (number) $80
   *((const byte*) RASTER) ← (number) 0
   *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
-  (void()*~) main::$0 ← & interrupt(HARDWARE_STACK)(void()) irq()
-  *((const void()**) HARDWARE_IRQ) ← (void()*~) main::$0
+  *((const void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq()
   asm { cli  }
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -72,7 +71,6 @@ SYMBOL TABLE SSA
 interrupt(HARDWARE_STACK)(void()) irq()
 (label) irq::@return
 (void()) main()
-(void()*~) main::$0
 (label) main::@1
 (label) main::@2
 (label) main::@return
@@ -98,16 +96,10 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $80
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [7] (void()*~) main::$0 ← & interrupt(HARDWARE_STACK)(void()) irq()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) main::$0 = &irq
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [10] if(true) goto main::@2
+if() condition always true - replacing block destination [9] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant inlined main::$0 = &interrupt(HARDWARE_STACK)(void()) irq()
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3

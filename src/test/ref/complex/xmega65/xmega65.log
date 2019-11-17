@@ -139,11 +139,6 @@ syscall2::@return: scope:[syscall2]  from syscall2
   return 
   to:@return
 @7: scope:[]  from @begin
-  (void()*~) $0 ← & (void()) syscall1()
-  (void()*~) $1 ← & (void()) syscall2()
-  (struct SysCall[]) SYSCALLS ← { (struct SysCall){ (const byte) JMP, (void()*)(void()*~) $0, (const byte) NOP }, (struct SysCall){ (const byte) JMP, (void()*)(void()*~) $1, (const byte) NOP } }
-  (void()*~) $2 ← & (void()) main()
-  (struct SysCall[]) SYSCALL_RESET ← { (struct SysCall){ (const byte) JMP, (void()*)(void()*~) $2, (const byte) NOP } }
   call main 
   to:@8
 @8: scope:[]  from @7
@@ -151,9 +146,6 @@ syscall2::@return: scope:[syscall2]  from syscall2
 @end: scope:[]  from @8
 
 SYMBOL TABLE SSA
-(void()*~) $0
-(void()*~) $1
-(void()*~) $2
 (label) @7
 (label) @8
 (label) @begin
@@ -166,8 +158,8 @@ SYMBOL TABLE SSA
 (const byte) NOP = (number) $ea
 (const byte*) RASTER = (byte*)(number) $d012
 (const byte*) SCREEN = (byte*)(number) $400
-(struct SysCall[]) SYSCALLS
-(struct SysCall[]) SYSCALL_RESET
+(const struct SysCall[]) SYSCALLS = { { xjmp: (const byte) JMP, syscall: &(void()) syscall1(), xnop: (const byte) NOP }, { xjmp: (const byte) JMP, syscall: &(void()) syscall2(), xnop: (const byte) NOP } }
+(const struct SysCall[]) SYSCALL_RESET = { { xjmp: (const byte) JMP, syscall: &(void()) main(), xnop: (const byte) NOP } }
 (void()*) SysCall::syscall
 (byte) SysCall::xjmp
 (byte) SysCall::xnop
@@ -278,9 +270,6 @@ Simplifying constant integer cast $36
 Simplifying constant integer cast $42
 Simplifying constant integer cast $4f
 Simplifying constant integer cast $4e
-Simplifying constant integer cast (void()*~) $0
-Simplifying constant integer cast (void()*~) $1
-Simplifying constant integer cast (void()*~) $2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $14
@@ -319,9 +308,6 @@ Rewriting || if()-condition to two if()s [43] (bool~) main::$4 ← (bool~) main:
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 Constant right-side identified [23] (word) memset::num#0 ← (unumber)(number) $28*(number) $19
 Constant right-side identified [28] (word) memset::num#1 ← (unumber)(number) $28*(number) $19
-Constant right-side identified [52] (void()*~) $0 ← & (void()) syscall1()
-Constant right-side identified [53] (void()*~) $1 ← & (void()) syscall2()
-Constant right-side identified [55] (void()*~) $2 ← & (void()) main()
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const void*) memset::str#0 = (void*)SCREEN
 Constant (const byte) memset::c#0 = ' '
@@ -331,9 +317,6 @@ Constant (const byte) memset::c#1 = WHITE
 Constant (const word) memset::num#1 = (unumber)$28*$19
 Constant (const byte*) main::sc#0 = SCREEN+$28
 Constant (const byte*) main::msg#0 = MESSAGE
-Constant (const void()*) $0 = &syscall1
-Constant (const void()*) $1 = &syscall2
-Constant (const void()*) $2 = &main
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [40] if(true) goto main::@8
 Successful SSA optimization Pass2ConstantIfs
@@ -343,18 +326,8 @@ Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Simple Condition (bool~) main::$2 [20] if(*((const byte*) RASTER)==(byte) $36) goto main::@10
-Simple Condition (bool~) main::$3 [30] if(*((const byte*) RASTER)==(byte) $42) goto main::@10
+Simple Condition (bool~) main::$3 [28] if(*((const byte*) RASTER)==(byte) $42) goto main::@10
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Identified constant from value list (struct SysCall) { xjmp: (const byte) JMP, syscall: (const void()*) $0, xnop: (const byte) NOP }
-Identified constant from value list (struct SysCall) { xjmp: (const byte) JMP, syscall: (const void()*) $1, xnop: (const byte) NOP }
-Identified constant from value list (struct SysCall) { xjmp: (const byte) JMP, syscall: (const void()*) $2, xnop: (const byte) NOP }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Identified constant from value list (struct SysCall[]) { { xjmp: (const byte) JMP, syscall: (const void()*) $0, xnop: (const byte) NOP }, { xjmp: (const byte) JMP, syscall: (const void()*) $1, xnop: (const byte) NOP } }
-Identified constant from value list (struct SysCall[]) { { xjmp: (const byte) JMP, syscall: (const void()*) $2, xnop: (const byte) NOP } }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const struct SysCall[]) SYSCALLS = { { xjmp: JMP, syscall: $0, xnop: NOP }, { xjmp: JMP, syscall: $1, xnop: NOP } }
-Constant (const struct SysCall[]) SYSCALL_RESET = { { xjmp: JMP, syscall: $2, xnop: NOP } }
-Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [2] (byte*~) memset::$2 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Inlining Noop Cast [4] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Successful SSA optimization Pass2NopCastInlining
@@ -374,9 +347,6 @@ Constant inlined main::sc#0 = (const byte*) SCREEN+(byte) $28
 Constant inlined memset::c#0 = (byte) ' '
 Constant inlined memset::num#0 = (word)(number) $28*(number) $19
 Constant inlined memset::c#1 = (const byte) WHITE
-Constant inlined $0 = &(void()) syscall1()
-Constant inlined $1 = &(void()) syscall2()
-Constant inlined $2 = &(void()) main()
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @7

@@ -1,5 +1,5 @@
-Setting inferred volatile on symbol affected by address-of (byte**~) main::$0 ← & (byte*) main::screen
-Setting inferred volatile on symbol affected by address-of (byte**~) main::$2 ← & (byte*) main::screen
+Setting inferred volatile on symbol affected by address-of (void~) main::$0 ← call sub (byte) 'a' &(byte*) main::screen 
+Setting inferred volatile on symbol affected by address-of (void~) main::$1 ← call sub (byte) 'b' &(byte*) main::screen 
 Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
@@ -9,16 +9,14 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte*) main::screen#0 ← ((byte*)) (number) $400
-  (byte**~) main::$0 ← & (byte*) main::screen#0
   (byte) sub::ch#0 ← (byte) 'a'
-  (byte**) sub::dst#0 ← (byte**~) main::$0
+  (byte**) sub::dst#0 ← &(byte*) main::screen#0
   call sub 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte*) main::screen#1 ← phi( main/(byte*) main::screen#0 )
-  (byte**~) main::$2 ← & (byte*) main::screen#1
   (byte) sub::ch#1 ← (byte) 'b'
-  (byte**) sub::dst#1 ← (byte**~) main::$2
+  (byte**) sub::dst#1 ← &(byte*) main::screen#1
   call sub 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -50,8 +48,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte**~) main::$0
-(byte**~) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@return
@@ -73,22 +69,17 @@ Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Alias (byte**) sub::dst#0 = (byte**~) main::$0 
 Alias (byte*) main::screen#0 = (byte*) main::screen#1 
-Alias (byte**) sub::dst#1 = (byte**~) main::$2 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [1] (byte**) sub::dst#0 ← & (byte*) main::screen#0
-Constant right-side identified [6] (byte**) sub::dst#1 ← & (byte*) main::screen#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte**) sub::dst#0 = &main::screen#0
 Constant (const byte) sub::ch#0 = 'a'
-Constant (const byte**) sub::dst#1 = &main::screen#0
+Constant (const byte**) sub::dst#0 = &main::screen#0
 Constant (const byte) sub::ch#1 = 'b'
+Constant (const byte**) sub::dst#1 = &main::screen#0
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte**) sub::dst#0
 Inlining constant with var siblings (const byte) sub::ch#0
-Inlining constant with var siblings (const byte**) sub::dst#1
+Inlining constant with var siblings (const byte**) sub::dst#0
 Inlining constant with var siblings (const byte) sub::ch#1
+Inlining constant with var siblings (const byte**) sub::dst#1
 Constant inlined sub::ch#1 = (byte) 'b'
 Constant inlined sub::ch#0 = (byte) 'a'
 Constant inlined sub::dst#1 = &(byte*) main::screen#0

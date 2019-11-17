@@ -96,7 +96,6 @@ globalDirective
 
 directive
     : CONST #directiveConst
-    | NOTCONST #directiveNotConst
     | ALIGN PAR_BEGIN NUMBER PAR_END #directiveAlign
     | REGISTER ( PAR_BEGIN ( NAME ) PAR_END)? #directiveRegister
     | ADDRESS_ZEROPAGE #directiveMemoryAreaZp

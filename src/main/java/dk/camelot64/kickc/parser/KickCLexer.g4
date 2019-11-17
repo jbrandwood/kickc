@@ -84,7 +84,6 @@ REGISTER: 'register' ;
 ADDRESS: '__address' ;
 ADDRESS_ZEROPAGE: '__zp' ;
 ADDRESS_MAINMEM: '__mem' ;
-NOTCONST: '__notconst' ;
 FORM_SSA: '__ssa' ;
 FORM_MA: '__ma' ;
 CALLING: 'calling';

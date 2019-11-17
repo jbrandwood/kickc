@@ -51,7 +51,7 @@ public class Variable implements Symbol {
    /** The scope containing the variable. [ALL] */
    private Scope scope;
 
-   /** The type of the variable. VAR means tha type is unknown, and has not been inferred yet. [ALL]*/
+   /** The type of the variable. VAR means the type is unknown, and has not been inferred yet. [ALL]*/
    private SymbolType type;
 
    /** true if the symbol type is inferred (not declared) [kind:INTERMEDIATE] TODO: Collapse with kind==INTERMEDIATE? */
@@ -65,9 +65,6 @@ public class Variable implements Symbol {
 
    /** Specifies that the variable is declared as const */
    private boolean declaredConst;
-
-   /** Specifies that the variable is declared as __notconst */
-   private boolean declaredNotConst;
 
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only Variables]*/
    private boolean declaredVolatile;
@@ -166,7 +163,6 @@ public class Variable implements Symbol {
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       this.setDeclaredNotRegister(phiMaster.isDeclaredAsNotRegister());
       this.setDeclaredConst(phiMaster.isDeclaredConst());
-      this.setDeclaredNotConst(phiMaster.isDeclaredNotConst());
       this.setDeclaredRegister(phiMaster.getDeclaredRegister());
       this.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
       this.setDeclaredExport(phiMaster.isDeclaredExport());
@@ -188,7 +184,6 @@ public class Variable implements Symbol {
       this.setDeclaredAsRegister(original.isDeclaredAsRegister());
       this.setDeclaredNotRegister(original.isDeclaredAsNotRegister());
       this.setDeclaredConst(original.isDeclaredConst());
-      this.setDeclaredNotConst(original.isDeclaredNotConst());
       this.setDeclaredVolatile(original.isDeclaredVolatile());
       this.setDeclaredExport(original.isDeclaredExport());
       this.setDeclaredRegister(original.getDeclaredRegister());
@@ -387,14 +382,6 @@ public class Variable implements Symbol {
 
    public void setDeclaredConst(boolean declaredConst) {
       this.declaredConst = declaredConst;
-   }
-
-   public boolean isDeclaredNotConst() {
-      return declaredNotConst;
-   }
-
-   public void setDeclaredNotConst(boolean declaredNotConst) {
-      this.declaredNotConst = declaredNotConst;
    }
 
    public Integer getDeclaredAlignment() {

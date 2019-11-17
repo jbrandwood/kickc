@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCLexer.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCLexer.g4 by ANTLR 4.7.2
 package dk.camelot64.kickc.parser;
 
 
@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class KickCLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -55,74 +55,84 @@ public class KickCLexer extends Lexer {
 		"DEFAULT_MODE", "ASM_MODE"
 	};
 
-	public static final String[] ruleNames = {
-		"CURLY_BEGIN", "CURLY_END", "BRACKET_BEGIN", "BRACKET_END", "PAR_BEGIN", 
-		"PAR_END", "SEMICOLON", "COLON", "COMMA", "RANGE", "CONDITION", "DOT", 
-		"ARROW", "PLUS", "MINUS", "ASTERISK", "DIVIDE", "MODULO", "INC", "DEC", 
-		"AND", "BIT_NOT", "BIT_XOR", "BIT_OR", "SHIFT_LEFT", "SHIFT_RIGHT", "EQUAL", 
-		"NOT_EQUAL", "LESS_THAN", "LESS_THAN_EQUAL", "GREATER_THAN_EQUAL", "GREATER_THAN", 
-		"LOGIC_AND", "LOGIC_OR", "ASSIGN", "ASSIGN_COMPOUND", "IMPORT", "TYPEDEF", 
-		"PRAGMA", "RESERVE", "PC", "TARGET", "LINK", "CPU", "CODESEG", "DATASEG", 
-		"ENCODING", "CONST", "EXTERN", "EXPORT", "ALIGN", "INLINE", "VOLATILE", 
-		"INTERRUPT", "REGISTER", "ADDRESS", "ADDRESS_ZEROPAGE", "ADDRESS_MAINMEM", 
-		"NOTCONST", "FORM_SSA", "FORM_MA", "CALLING", "CALLINGCONVENTION", "IF", 
-		"ELSE", "WHILE", "DO", "FOR", "SWITCH", "RETURN", "BREAK", "CONTINUE", 
-		"ASM", "DEFAULT", "CASE", "STRUCT", "ENUM", "SIZEOF", "TYPEID", "KICKASM", 
-		"RESOURCE", "USES", "CLOBBERS", "BYTES", "CYCLES", "LOGIC_NOT", "SIGNEDNESS", 
-		"SIMPLETYPE", "BOOLEAN", "KICKASM_BODY", "STRING", "CHAR", "NUMBER", "NUMFLOAT", 
-		"BINFLOAT", "DECFLOAT", "HEXFLOAT", "NUMINT", "BININTEGER", "DECINTEGER", 
-		"HEXINTEGER", "BINDIGIT", "DECDIGIT", "HEXDIGIT", "NAME", "NAME_START", 
-		"NAME_CHAR", "WS", "COMMENT_LINE", "COMMENT_BLOCK", "ASM_BYTE", "ASM_MNEMONIC", 
-		"ASM_IMM", "ASM_COLON", "ASM_COMMA", "ASM_PAR_BEGIN", "ASM_PAR_END", "ASM_BRACKET_BEGIN", 
-		"ASM_BRACKET_END", "ASM_DOT", "ASM_SHIFT_LEFT", "ASM_SHIFT_RIGHT", "ASM_PLUS", 
-		"ASM_MINUS", "ASM_LESS_THAN", "ASM_GREATER_THAN", "ASM_MULTIPLY", "ASM_DIVIDE", 
-		"ASM_CURLY_BEGIN", "ASM_CURLY_END", "ASM_NUMBER", "ASM_NUMFLOAT", "ASM_BINFLOAT", 
-		"ASM_DECFLOAT", "ASM_HEXFLOAT", "ASM_NUMINT", "ASM_BININTEGER", "ASM_DECINTEGER", 
-		"ASM_HEXINTEGER", "ASM_BINDIGIT", "ASM_DECDIGIT", "ASM_HEXDIGIT", "ASM_CHAR", 
-		"ASM_MULTI_REL", "ASM_MULTI_NAME", "ASM_NAME", "ASM_NAME_START", "ASM_NAME_CHAR", 
-		"ASM_WS", "ASM_COMMENT_LINE", "ASM_COMMENT_BLOCK"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"CURLY_BEGIN", "CURLY_END", "BRACKET_BEGIN", "BRACKET_END", "PAR_BEGIN", 
+			"PAR_END", "SEMICOLON", "COLON", "COMMA", "RANGE", "CONDITION", "DOT", 
+			"ARROW", "PLUS", "MINUS", "ASTERISK", "DIVIDE", "MODULO", "INC", "DEC", 
+			"AND", "BIT_NOT", "BIT_XOR", "BIT_OR", "SHIFT_LEFT", "SHIFT_RIGHT", "EQUAL", 
+			"NOT_EQUAL", "LESS_THAN", "LESS_THAN_EQUAL", "GREATER_THAN_EQUAL", "GREATER_THAN", 
+			"LOGIC_AND", "LOGIC_OR", "ASSIGN", "ASSIGN_COMPOUND", "IMPORT", "TYPEDEF", 
+			"PRAGMA", "RESERVE", "PC", "TARGET", "LINK", "CPU", "CODESEG", "DATASEG", 
+			"ENCODING", "CONST", "EXTERN", "EXPORT", "ALIGN", "INLINE", "VOLATILE", 
+			"INTERRUPT", "REGISTER", "ADDRESS", "ADDRESS_ZEROPAGE", "ADDRESS_MAINMEM", 
+			"NOTCONST", "FORM_SSA", "FORM_MA", "CALLING", "CALLINGCONVENTION", "IF", 
+			"ELSE", "WHILE", "DO", "FOR", "SWITCH", "RETURN", "BREAK", "CONTINUE", 
+			"ASM", "DEFAULT", "CASE", "STRUCT", "ENUM", "SIZEOF", "TYPEID", "KICKASM", 
+			"RESOURCE", "USES", "CLOBBERS", "BYTES", "CYCLES", "LOGIC_NOT", "SIGNEDNESS", 
+			"SIMPLETYPE", "BOOLEAN", "KICKASM_BODY", "STRING", "CHAR", "NUMBER", 
+			"NUMFLOAT", "BINFLOAT", "DECFLOAT", "HEXFLOAT", "NUMINT", "BININTEGER", 
+			"DECINTEGER", "HEXINTEGER", "BINDIGIT", "DECDIGIT", "HEXDIGIT", "NAME", 
+			"NAME_START", "NAME_CHAR", "WS", "COMMENT_LINE", "COMMENT_BLOCK", "ASM_BYTE", 
+			"ASM_MNEMONIC", "ASM_IMM", "ASM_COLON", "ASM_COMMA", "ASM_PAR_BEGIN", 
+			"ASM_PAR_END", "ASM_BRACKET_BEGIN", "ASM_BRACKET_END", "ASM_DOT", "ASM_SHIFT_LEFT", 
+			"ASM_SHIFT_RIGHT", "ASM_PLUS", "ASM_MINUS", "ASM_LESS_THAN", "ASM_GREATER_THAN", 
+			"ASM_MULTIPLY", "ASM_DIVIDE", "ASM_CURLY_BEGIN", "ASM_CURLY_END", "ASM_NUMBER", 
+			"ASM_NUMFLOAT", "ASM_BINFLOAT", "ASM_DECFLOAT", "ASM_HEXFLOAT", "ASM_NUMINT", 
+			"ASM_BININTEGER", "ASM_DECINTEGER", "ASM_HEXINTEGER", "ASM_BINDIGIT", 
+			"ASM_DECDIGIT", "ASM_HEXDIGIT", "ASM_CHAR", "ASM_MULTI_REL", "ASM_MULTI_NAME", 
+			"ASM_NAME", "ASM_NAME_START", "ASM_NAME_CHAR", "ASM_WS", "ASM_COMMENT_LINE", 
+			"ASM_COMMENT_BLOCK"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, null, null, null, null, null, null, null, "';'", null, null, "'..'", 
-		"'?'", null, "'->'", null, null, null, null, "'%'", "'++'", "'--'", "'&'", 
-		"'~'", "'^'", "'|'", null, null, "'=='", "'!='", null, "'<='", "'>='", 
-		null, "'&&'", "'||'", "'='", null, "'import'", "'typedef'", "'#pragma'", 
-		"'reserve'", "'pc'", "'target'", "'link'", "'cpu'", "'code_seg'", "'data_seg'", 
-		"'encoding'", "'const'", "'extern'", "'export'", "'align'", "'inline'", 
-		"'volatile'", "'interrupt'", "'register'", "'__address'", "'__zp'", "'__mem'", 
-		"'__notconst'", "'__ssa'", "'__ma'", "'calling'", null, "'if'", "'else'", 
-		"'while'", "'do'", "'for'", "'switch'", "'return'", "'break'", "'continue'", 
-		"'asm'", "'default'", "'case'", "'struct'", "'enum'", "'sizeof'", "'typeid'", 
-		"'kickasm'", "'resource'", "'uses'", "'clobbers'", "'bytes'", "'cycles'", 
-		"'!'", null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, "'.byte'", null, "'#'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, "TYPEDEFNAME", "CURLY_BEGIN", "CURLY_END", "BRACKET_BEGIN", "BRACKET_END", 
-		"PAR_BEGIN", "PAR_END", "SEMICOLON", "COLON", "COMMA", "RANGE", "CONDITION", 
-		"DOT", "ARROW", "PLUS", "MINUS", "ASTERISK", "DIVIDE", "MODULO", "INC", 
-		"DEC", "AND", "BIT_NOT", "BIT_XOR", "BIT_OR", "SHIFT_LEFT", "SHIFT_RIGHT", 
-		"EQUAL", "NOT_EQUAL", "LESS_THAN", "LESS_THAN_EQUAL", "GREATER_THAN_EQUAL", 
-		"GREATER_THAN", "LOGIC_AND", "LOGIC_OR", "ASSIGN", "ASSIGN_COMPOUND", 
-		"IMPORT", "TYPEDEF", "PRAGMA", "RESERVE", "PC", "TARGET", "LINK", "CPU", 
-		"CODESEG", "DATASEG", "ENCODING", "CONST", "EXTERN", "EXPORT", "ALIGN", 
-		"INLINE", "VOLATILE", "INTERRUPT", "REGISTER", "ADDRESS", "ADDRESS_ZEROPAGE", 
-		"ADDRESS_MAINMEM", "NOTCONST", "FORM_SSA", "FORM_MA", "CALLING", "CALLINGCONVENTION", 
-		"IF", "ELSE", "WHILE", "DO", "FOR", "SWITCH", "RETURN", "BREAK", "CONTINUE", 
-		"ASM", "DEFAULT", "CASE", "STRUCT", "ENUM", "SIZEOF", "TYPEID", "KICKASM", 
-		"RESOURCE", "USES", "CLOBBERS", "BYTES", "CYCLES", "LOGIC_NOT", "SIGNEDNESS", 
-		"SIMPLETYPE", "BOOLEAN", "KICKASM_BODY", "STRING", "CHAR", "NUMBER", "NUMFLOAT", 
-		"BINFLOAT", "DECFLOAT", "HEXFLOAT", "NUMINT", "BININTEGER", "DECINTEGER", 
-		"HEXINTEGER", "NAME", "WS", "COMMENT_LINE", "COMMENT_BLOCK", "ASM_BYTE", 
-		"ASM_MNEMONIC", "ASM_IMM", "ASM_COLON", "ASM_COMMA", "ASM_PAR_BEGIN", 
-		"ASM_PAR_END", "ASM_BRACKET_BEGIN", "ASM_BRACKET_END", "ASM_DOT", "ASM_SHIFT_LEFT", 
-		"ASM_SHIFT_RIGHT", "ASM_PLUS", "ASM_MINUS", "ASM_LESS_THAN", "ASM_GREATER_THAN", 
-		"ASM_MULTIPLY", "ASM_DIVIDE", "ASM_CURLY_BEGIN", "ASM_CURLY_END", "ASM_NUMBER", 
-		"ASM_NUMFLOAT", "ASM_BINFLOAT", "ASM_DECFLOAT", "ASM_HEXFLOAT", "ASM_NUMINT", 
-		"ASM_BININTEGER", "ASM_DECINTEGER", "ASM_HEXINTEGER", "ASM_CHAR", "ASM_MULTI_REL", 
-		"ASM_MULTI_NAME", "ASM_NAME", "ASM_WS", "ASM_COMMENT_LINE", "ASM_COMMENT_BLOCK"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, null, null, null, null, null, null, null, "';'", null, null, "'..'", 
+			"'?'", null, "'->'", null, null, null, null, "'%'", "'++'", "'--'", "'&'", 
+			"'~'", "'^'", "'|'", null, null, "'=='", "'!='", null, "'<='", "'>='", 
+			null, "'&&'", "'||'", "'='", null, "'import'", "'typedef'", "'#pragma'", 
+			"'reserve'", "'pc'", "'target'", "'link'", "'cpu'", "'code_seg'", "'data_seg'", 
+			"'encoding'", "'const'", "'extern'", "'export'", "'align'", "'inline'", 
+			"'volatile'", "'interrupt'", "'register'", "'__address'", "'__zp'", "'__mem'", 
+			"'__notconst'", "'__ssa'", "'__ma'", "'calling'", null, "'if'", "'else'", 
+			"'while'", "'do'", "'for'", "'switch'", "'return'", "'break'", "'continue'", 
+			"'asm'", "'default'", "'case'", "'struct'", "'enum'", "'sizeof'", "'typeid'", 
+			"'kickasm'", "'resource'", "'uses'", "'clobbers'", "'bytes'", "'cycles'", 
+			"'!'", null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, "'.byte'", null, "'#'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, "TYPEDEFNAME", "CURLY_BEGIN", "CURLY_END", "BRACKET_BEGIN", "BRACKET_END", 
+			"PAR_BEGIN", "PAR_END", "SEMICOLON", "COLON", "COMMA", "RANGE", "CONDITION", 
+			"DOT", "ARROW", "PLUS", "MINUS", "ASTERISK", "DIVIDE", "MODULO", "INC", 
+			"DEC", "AND", "BIT_NOT", "BIT_XOR", "BIT_OR", "SHIFT_LEFT", "SHIFT_RIGHT", 
+			"EQUAL", "NOT_EQUAL", "LESS_THAN", "LESS_THAN_EQUAL", "GREATER_THAN_EQUAL", 
+			"GREATER_THAN", "LOGIC_AND", "LOGIC_OR", "ASSIGN", "ASSIGN_COMPOUND", 
+			"IMPORT", "TYPEDEF", "PRAGMA", "RESERVE", "PC", "TARGET", "LINK", "CPU", 
+			"CODESEG", "DATASEG", "ENCODING", "CONST", "EXTERN", "EXPORT", "ALIGN", 
+			"INLINE", "VOLATILE", "INTERRUPT", "REGISTER", "ADDRESS", "ADDRESS_ZEROPAGE", 
+			"ADDRESS_MAINMEM", "NOTCONST", "FORM_SSA", "FORM_MA", "CALLING", "CALLINGCONVENTION", 
+			"IF", "ELSE", "WHILE", "DO", "FOR", "SWITCH", "RETURN", "BREAK", "CONTINUE", 
+			"ASM", "DEFAULT", "CASE", "STRUCT", "ENUM", "SIZEOF", "TYPEID", "KICKASM", 
+			"RESOURCE", "USES", "CLOBBERS", "BYTES", "CYCLES", "LOGIC_NOT", "SIGNEDNESS", 
+			"SIMPLETYPE", "BOOLEAN", "KICKASM_BODY", "STRING", "CHAR", "NUMBER", 
+			"NUMFLOAT", "BINFLOAT", "DECFLOAT", "HEXFLOAT", "NUMINT", "BININTEGER", 
+			"DECINTEGER", "HEXINTEGER", "NAME", "WS", "COMMENT_LINE", "COMMENT_BLOCK", 
+			"ASM_BYTE", "ASM_MNEMONIC", "ASM_IMM", "ASM_COLON", "ASM_COMMA", "ASM_PAR_BEGIN", 
+			"ASM_PAR_END", "ASM_BRACKET_BEGIN", "ASM_BRACKET_END", "ASM_DOT", "ASM_SHIFT_LEFT", 
+			"ASM_SHIFT_RIGHT", "ASM_PLUS", "ASM_MINUS", "ASM_LESS_THAN", "ASM_GREATER_THAN", 
+			"ASM_MULTIPLY", "ASM_DIVIDE", "ASM_CURLY_BEGIN", "ASM_CURLY_END", "ASM_NUMBER", 
+			"ASM_NUMFLOAT", "ASM_BINFLOAT", "ASM_DECFLOAT", "ASM_HEXFLOAT", "ASM_NUMINT", 
+			"ASM_BININTEGER", "ASM_DECINTEGER", "ASM_HEXINTEGER", "ASM_CHAR", "ASM_MULTI_REL", 
+			"ASM_MULTI_NAME", "ASM_NAME", "ASM_WS", "ASM_COMMENT_LINE", "ASM_COMMENT_BLOCK"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**

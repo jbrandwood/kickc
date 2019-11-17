@@ -14,54 +14,32 @@ main: {
     .const default_zp_abs = '.'
     .const default_mem_flex = '.'
     .const default_mem_abs = '.'
-    .label notreg_zp_flex = 2
-    .label notreg_zp_abs = $10
-    .label notreg_mem_abs = $1000
-    .label notreg_default = 3
-    lda #'.'
-    sta.z notreg_zp_flex
-    sta.z notreg_zp_abs
-    sta notreg_mem_flex
-    sta notreg_mem_abs
-    sta.z notreg_default
-    ldy #0
-    ldx #reg_zp_flex
+    ldx #0
+    lda #reg_zp_flex
     jsr out
-    ldx #reg_zp_abs
+    lda #reg_zp_abs
     jsr out
-    ldx #reg_mem_flex
+    lda #reg_mem_flex
     jsr out
-    ldx #reg_mem_abs
+    lda #reg_mem_abs
     jsr out
-    ldx.z notreg_zp_flex
+    lda #default_default
     jsr out
-    ldx.z notreg_zp_abs
+    lda #reg_default
     jsr out
-    ldx notreg_mem_flex
+    lda #default_zp_flex
     jsr out
-    ldx notreg_mem_abs
+    lda #default_zp_abs
     jsr out
-    ldx #default_default
+    lda #default_mem_flex
     jsr out
-    ldx #reg_default
-    jsr out
-    ldx.z notreg_default
-    jsr out
-    ldx #default_zp_flex
-    jsr out
-    ldx #default_zp_abs
-    jsr out
-    ldx #default_mem_flex
-    jsr out
-    ldx #default_mem_abs
+    lda #default_mem_abs
     jsr out
     rts
-    notreg_mem_flex: .byte 0
 }
-// out(byte register(X) c)
+// out(byte register(A) c)
 out: {
-    txa
-    sta SCREEN,y
-    iny
+    sta SCREEN,x
+    inx
     rts
 }

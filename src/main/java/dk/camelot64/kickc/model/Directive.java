@@ -31,10 +31,6 @@ public interface Directive {
    class Export implements Directive {
    }
 
-   /** Variable declared __notconst */
-   class NotConst implements Directive {
-   }
-
    /** Variable __ssa */
    class FormSsa implements Directive {
    }

@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7.2
 package dk.camelot64.kickc.parser;
 
 
@@ -325,18 +325,6 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDirectiveConst(KickCParser.DirectiveConstContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7.2
 package dk.camelot64.kickc.parser;
 
 
@@ -297,18 +297,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDirectiveConst(KickCParser.DirectiveConstContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code directiveNotConst}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code directiveNotConst}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveAlign}
 	 * labeled alternative in {@link KickCParser#directive}.

@@ -116,8 +116,6 @@ public class DirectiveParserContext {
          lValue.setDeclaredConst(true);
       if(directiveType.equals(DirectiveType.ARRAY))
          lValue.setDeclaredConst(true);
-      if(hasDirective(Directive.NotConst.class, sourceDirectives))
-         lValue.setDeclaredNotConst(true);
       if(hasDirective(Directive.Volatile.class, sourceDirectives))
          lValue.setDeclaredVolatile(true);
       if(hasDirective(Directive.Export.class, sourceDirectives))

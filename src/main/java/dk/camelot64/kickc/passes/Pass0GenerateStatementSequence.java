@@ -734,11 +734,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public Object visitDirectiveNotConst(KickCParser.DirectiveNotConstContext ctx) {
-      return new Directive.NotConst();
-   }
-
-   @Override
    public Object visitDirectiveInline(KickCParser.DirectiveInlineContext ctx) {
       return new Directive.Inline();
    }
@@ -1442,7 +1437,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          Variable constVar = new Variable(lValue.getName(), scope, lValue.getType(), lValue.getDataSegment(), constantValue);
          scope.add(constVar);
          constVar.setDeclaredConst(lValue.isDeclaredConst());
-         constVar.setDeclaredNotConst(lValue.isDeclaredNotConst());
          constVar.setDeclaredRegister(lValue.getDeclaredRegister());
          constVar.setMemoryArea(lValue.getMemoryArea());
          constVar.setDeclaredAsRegister(lValue.isDeclaredAsRegister());

@@ -216,7 +216,6 @@ public class Pass1UnwindStructValues extends Pass1Base {
                      memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
                      memberVariable.setInferredVolatile(variable.isInferredVolatile());
                      memberVariable.setDeclaredConst(variable.isDeclaredConst());
-                     memberVariable.setDeclaredNotConst(variable.isDeclaredNotConst());
                      memberVariable.setDeclaredExport(variable.isDeclaredExport());
                      variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
                      getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));

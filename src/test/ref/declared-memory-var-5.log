@@ -5,19 +5,19 @@ Adding struct value list initializer (byte) bar_thing1 ← (byte) 'a'
 Adding struct value list initializer (byte) bar_thing2 ← (byte) 'b'
 Replacing struct member reference (struct foo) bar.thing1 with member unwinding reference (byte) bar_thing1
 Replacing struct member reference (struct foo) bar.thing2 with member unwinding reference (byte) bar_thing2
+Identified constant variable (byte) bar_thing1
+Identified constant variable (byte) bar_thing2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) bar_thing1 ← (byte) 'a'
-  (byte) bar_thing2 ← (byte) 'b'
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
   (byte) main::i#0 ← (number) 0
-  *((const byte*) main::SCREEN + (byte) main::i#0) ← (byte) bar_thing1
+  *((const byte*) main::SCREEN + (byte) main::i#0) ← (const byte) bar_thing1
   (byte) main::i#1 ← ++ (byte) main::i#0
-  *((const byte*) main::SCREEN + (byte) main::i#1) ← (byte) bar_thing2
+  *((const byte*) main::SCREEN + (byte) main::i#1) ← (const byte) bar_thing2
   (byte) main::i#2 ← ++ (byte) main::i#1
   to:main::@return
 main::@return: scope:[main]  from main
@@ -35,8 +35,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte) bar_thing1 notregister
-(byte) bar_thing2 notregister
+(const byte) bar_thing1 = (byte) 'a'
+(const byte) bar_thing2 = (byte) 'b'
 (byte) foo::thing1
 (byte) foo::thing2
 (void()) main()
@@ -58,11 +58,11 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [3] *((const byte*) main::SCREEN + (const byte) main::i#0) ← (byte) bar_thing1
+Simplifying expression containing zero main::SCREEN in [1] *((const byte*) main::SCREEN + (const byte) main::i#0) ← (const byte) bar_thing1
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) main::i#2 and assignment [5] (byte) main::i#2 ← ++ (byte) main::i#1
+Eliminating unused variable (byte) main::i#2 and assignment [3] (byte) main::i#2 ← ++ (byte) main::i#1
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [3] (byte) main::i#1 ← ++ (const byte) main::i#0
+Constant right-side identified [1] (byte) main::i#1 ← ++ (const byte) main::i#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::i#1 = ++main::i#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -75,56 +75,49 @@ Consolidated array index constant in *(main::SCREEN+++0)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Simplifying constant integer increment ++0
 Successful SSA optimization Pass2ConstantSimplification
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:3 
+Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) bar_thing1 ← (byte) 'a'
-  [1] (byte) bar_thing2 ← (byte) 'b'
+  [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  [2] phi()
-  [3] call main 
+  [1] phi()
+  [2] call main 
   to:@end
 @end: scope:[]  from @1
-  [4] phi()
+  [3] phi()
 
 (void()) main()
 main: scope:[main]  from @1
-  [5] *((const byte*) main::SCREEN) ← (byte) bar_thing1
-  [6] *((const byte*) main::SCREEN+(byte) 1) ← (byte) bar_thing2
+  [4] *((const byte*) main::SCREEN) ← (const byte) bar_thing1
+  [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) bar_thing2
   to:main::@return
 main::@return: scope:[main]  from main
-  [7] return 
+  [6] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) bar_thing1 notregister 1.3333333333333333
-(byte) bar_thing2 notregister 1.3333333333333333
 (byte) foo::thing1
 (byte) foo::thing2
 (void()) main()
 (byte) main::i
 
 Initial phi equivalence classes
-Added variable bar_thing1 to zero page equivalence class [ bar_thing1 ]
-Added variable bar_thing2 to zero page equivalence class [ bar_thing2 ]
 Complete equivalence classes
-[ bar_thing1 ]
-[ bar_thing2 ]
-Allocated mem[1] [ bar_thing1 ]
-Allocated mem[1] [ bar_thing2 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -136,22 +129,18 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const bar_thing1 = 'a'
+  .const bar_thing2 = 'b'
   // @begin
 __bbegin:
-  // [0] (byte) bar_thing1 ← (byte) 'a' -- vbum1=vbuc1 
-  lda #'a'
-  sta bar_thing1
-  // [1] (byte) bar_thing2 ← (byte) 'b' -- vbum1=vbuc1 
-  lda #'b'
-  sta bar_thing2
-  // [2] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
   // @1
 __b1:
-  // [3] call main 
+  // [2] call main 
   jsr main
-  // [4] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 __bend_from___b1:
   jmp __bend
   // @end
@@ -159,42 +148,32 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [5] *((const byte*) main::SCREEN) ← (byte) bar_thing1 -- _deref_pbuc1=vbum1 
-    lda bar_thing1
+    // [4] *((const byte*) main::SCREEN) ← (const byte) bar_thing1 -- _deref_pbuc1=vbuc2 
+    lda #bar_thing1
     sta SCREEN
-    // [6] *((const byte*) main::SCREEN+(byte) 1) ← (byte) bar_thing2 -- _deref_pbuc1=vbum1 
-    lda bar_thing2
+    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) bar_thing2 -- _deref_pbuc1=vbuc2 
+    lda #bar_thing2
     sta SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [6] return 
     rts
 }
   // File Data
-  bar_thing1: .byte 0
-  bar_thing2: .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) bar_thing1 ← (byte) 'a' [ bar_thing1 ] (  [ bar_thing1 ] ) always clobbers reg byte a 
-Statement [1] (byte) bar_thing2 ← (byte) 'b' [ bar_thing1 bar_thing2 ] (  [ bar_thing1 bar_thing2 ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::SCREEN) ← (byte) bar_thing1 [ bar_thing2 ] ( main:3 [ bar_thing2 ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::SCREEN+(byte) 1) ← (byte) bar_thing2 [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Potential registers mem[1] [ bar_thing1 ] : mem[1] , 
-Potential registers mem[1] [ bar_thing2 ] : mem[1] , 
+Statement [4] *((const byte*) main::SCREEN) ← (const byte) bar_thing1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) bar_thing2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 1.33: mem[1] [ bar_thing1 ] 1.33: mem[1] [ bar_thing2 ] 
 Uplift Scope [foo] 
 Uplift Scope [main] 
+Uplift Scope [] 
 
-Uplifting [] best 49 combination mem[1] [ bar_thing1 ] mem[1] [ bar_thing2 ] 
-Uplifting [foo] best 49 combination 
-Uplifting [main] best 49 combination 
-Attempting to uplift remaining variables inmem[1] [ bar_thing1 ]
-Uplifting [] best 49 combination mem[1] [ bar_thing1 ] 
-Attempting to uplift remaining variables inmem[1] [ bar_thing2 ]
-Uplifting [] best 49 combination mem[1] [ bar_thing2 ] 
+Uplifting [foo] best 33 combination 
+Uplifting [main] best 33 combination 
+Uplifting [] best 33 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -205,22 +184,18 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const bar_thing1 = 'a'
+  .const bar_thing2 = 'b'
   // @begin
 __bbegin:
-  // [0] (byte) bar_thing1 ← (byte) 'a' -- vbum1=vbuc1 
-  lda #'a'
-  sta bar_thing1
-  // [1] (byte) bar_thing2 ← (byte) 'b' -- vbum1=vbuc1 
-  lda #'b'
-  sta bar_thing2
-  // [2] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
   // @1
 __b1:
-  // [3] call main 
+  // [2] call main 
   jsr main
-  // [4] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 __bend_from___b1:
   jmp __bend
   // @end
@@ -228,43 +203,45 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [5] *((const byte*) main::SCREEN) ← (byte) bar_thing1 -- _deref_pbuc1=vbum1 
-    lda bar_thing1
+    // [4] *((const byte*) main::SCREEN) ← (const byte) bar_thing1 -- _deref_pbuc1=vbuc2 
+    lda #bar_thing1
     sta SCREEN
-    // [6] *((const byte*) main::SCREEN+(byte) 1) ← (byte) bar_thing2 -- _deref_pbuc1=vbum1 
-    lda bar_thing2
+    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) bar_thing2 -- _deref_pbuc1=vbuc2 
+    lda #bar_thing2
     sta SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [6] return 
     rts
 }
   // File Data
-  bar_thing1: .byte 0
-  bar_thing2: .byte 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
 Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
 Removing instruction __b1_from___bbegin:
 Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b1:
 Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte) bar_thing1 notregister mem[1] 1.3333333333333333
-(byte) bar_thing2 notregister mem[1] 1.3333333333333333
+(const byte) bar_thing1 = (byte) 'a'
+(const byte) bar_thing2 = (byte) 'b'
 (byte) foo::thing1
 (byte) foo::thing2
 (void()) main()
@@ -272,54 +249,42 @@ FINAL SYMBOL TABLE
 (const byte*) main::SCREEN = (byte*) 1024
 (byte) main::i
 
-mem[1] [ bar_thing1 ]
-mem[1] [ bar_thing2 ]
 
 
 FINAL ASSEMBLER
-Score: 46
+Score: 18
 
   // File Comments
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 // Test a memory variable struct value
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const bar_thing1 = 'a'
+  .const bar_thing2 = 'b'
   // @begin
-__bbegin:
-  // bar = { 'a', 'b' }
-  // [0] (byte) bar_thing1 ← (byte) 'a' -- vbum1=vbuc1 
-  lda #'a'
-  sta bar_thing1
-  // [1] (byte) bar_thing2 ← (byte) 'b' -- vbum1=vbuc1 
-  lda #'b'
-  sta bar_thing2
-  // [2] phi from @begin to @1 [phi:@begin->@1]
+  // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
-  // [3] call main 
-  jsr main
-  rts
-  // [4] phi from @1 to @end [phi:@1->@end]
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
   // @end
   // main
 main: {
     .label SCREEN = $400
     // SCREEN[i++] = bar.thing1
-    // [5] *((const byte*) main::SCREEN) ← (byte) bar_thing1 -- _deref_pbuc1=vbum1 
-    lda bar_thing1
+    // [4] *((const byte*) main::SCREEN) ← (const byte) bar_thing1 -- _deref_pbuc1=vbuc2 
+    lda #bar_thing1
     sta SCREEN
     // SCREEN[i++] = bar.thing2
-    // [6] *((const byte*) main::SCREEN+(byte) 1) ← (byte) bar_thing2 -- _deref_pbuc1=vbum1 
-    lda bar_thing2
+    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) bar_thing2 -- _deref_pbuc1=vbuc2 
+    lda #bar_thing2
     sta SCREEN+1
     // main::@return
     // }
-    // [7] return 
+    // [6] return 
     rts
 }
   // File Data
-  bar_thing1: .byte 0
-  bar_thing2: .byte 0
 

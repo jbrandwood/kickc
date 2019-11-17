@@ -38,9 +38,6 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
       for(Variable variable : getProgram().getScope().getAllVariables(true)) {
          SymbolVariableRef variableRef = variable.getRef();
          if(!variable.isDeclaredConst() && !variable.isVolatile() && !variableRef.isIntermediate()) {
-            if(variable.isDeclaredNotConst())
-               // Skip explicit non-constants
-               continue;
             if(variable.getScope() instanceof StructDefinition)
                // Skip structs
                continue;
@@ -128,7 +125,6 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
       constVar.setDeclaredAsRegister(variable.isDeclaredAsRegister());
       constVar.setDeclaredNotRegister(variable.isDeclaredAsNotRegister());
       constVar.setDeclaredConst(variable.isDeclaredConst());
-      constVar.setDeclaredNotConst(variable.isDeclaredNotConst());
       constVar.setDeclaredRegister(variable.getDeclaredRegister());
       constVar.setDeclaredVolatile(variable.isDeclaredVolatile());
       constVar.setDeclaredExport(variable.isDeclaredExport());

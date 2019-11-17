@@ -1443,7 +1443,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          constVar.setDeclaredExport(lValue.isDeclaredExport());
          constVar.setDeclaredAlignment(lValue.getDeclaredAlignment());
          constVar.setDeclaredVolatile(lValue.isDeclaredVolatile());
-         constVar.setDeclaredNotRegister(lValue.isDeclaredAsNotRegister());
          constVar.setComments(lValue.getComments());
          lValue.getComments().addAll(ensureUnusedComments(comments));
       } else {

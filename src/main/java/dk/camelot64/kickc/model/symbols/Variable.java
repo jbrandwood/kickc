@@ -75,9 +75,6 @@ public class Variable implements Symbol {
    /** Specifies that the variable must live in a register if possible (CPU register or ZP-address). */
    private boolean declaredAsRegister;
 
-   /** Specifies that the variable must live in memory. TODO: Remove this */
-   private boolean declaredAsNotRegister;
-
    /** The memory area where the variable lives (if stored in memory). [Only variables] */
    private MemoryArea memoryArea;
 
@@ -156,7 +153,6 @@ public class Variable implements Symbol {
       this(false, phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), Kind.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
-      this.setDeclaredNotRegister(phiMaster.isDeclaredAsNotRegister());
       this.setDeclaredConst(phiMaster.isDeclaredConst());
       this.setDeclaredRegister(phiMaster.getDeclaredRegister());
       this.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
@@ -176,7 +172,6 @@ public class Variable implements Symbol {
       this(original.isConstant(), name, scope, original.getType(), original.getKind(), original.getMemoryArea(), original.getDataSegment());
       this.setDeclaredAlignment(original.getDeclaredAlignment());
       this.setDeclaredAsRegister(original.isDeclaredAsRegister());
-      this.setDeclaredNotRegister(original.isDeclaredAsNotRegister());
       this.setDeclaredConst(original.isDeclaredConst());
       this.setDeclaredVolatile(original.isDeclaredVolatile());
       this.setDeclaredExport(original.isDeclaredExport());
@@ -414,14 +409,6 @@ public class Variable implements Symbol {
 
    public void setDeclaredAsRegister(boolean declaredAsRegister) {
       this.declaredAsRegister = declaredAsRegister;
-   }
-
-   public boolean isDeclaredAsNotRegister() {
-      return declaredAsNotRegister;
-   }
-
-   public void setDeclaredNotRegister(boolean declaredAsMemory) {
-      this.declaredAsNotRegister = declaredAsMemory;
    }
 
    public MemoryArea getMemoryArea() {

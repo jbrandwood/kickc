@@ -123,7 +123,6 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
       Variable constVar = new Variable(variable.getName(), scope, variable.getType(), variable.getDataSegment(), constantValue);
       constVar.setDeclaredAlignment(variable.getDeclaredAlignment());
       constVar.setDeclaredAsRegister(variable.isDeclaredAsRegister());
-      constVar.setDeclaredNotRegister(variable.isDeclaredAsNotRegister());
       constVar.setDeclaredConst(variable.isDeclaredConst());
       constVar.setDeclaredRegister(variable.getDeclaredRegister());
       constVar.setDeclaredVolatile(variable.isDeclaredVolatile());

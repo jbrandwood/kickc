@@ -378,7 +378,7 @@ public abstract class Scope implements Symbol, Serializable {
                   res.append(" " + symVar.getAsmName());
                }
                if(symVar.isKindLoadStore()) {
-                  res.append(" notregister");
+                  res.append(" loadstore");
                }
                Registers.Register declRegister = symVar.getDeclaredRegister();
                if(declRegister != null) {

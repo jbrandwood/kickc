@@ -1,0 +1,31 @@
+(label) @1
+(label) @begin
+(label) @end
+(const byte[]) LOGO256 = kickasm {{ #import "xmega65graphics.asm"
+    .var logo256 = LoadPicture("mega65-256.png")
+    .var palette256 = getPalette(logo256)
+    .print "width: "+logo256.width + " height: "+logo256.height + " colors: "+palette256.keys().size()
+    // Output the graphics
+    .for (var x=0; x<logo256.width; x++)
+	    .for (var y=0; y<logo256.height; y++)
+		    .byte getFullcolourByte(logo256, palette256, x, y)
+    // Output the RGB-values of the palette
+    .fill 256, getPaletteRed(palette256,i)
+    .fill 256, getPaletteGreen(palette256,i)
+    .fill 256, getPaletteBlue(palette256,i)
+ }}
+(byte*) LOGO256_BLUE
+(const byte*) LOGO256_BLUE#0 LOGO256_BLUE = (const byte*) LOGO256_GREEN#0+(word) $100
+(byte*) LOGO256_GREEN
+(const byte*) LOGO256_GREEN#0 LOGO256_GREEN = (const byte*) LOGO256_RED#0+(word) $100
+(byte*) LOGO256_RED
+(const byte*) LOGO256_RED#0 LOGO256_RED = (const byte[]) LOGO256+(word)(number) $80*(number) $80
+(void()) main()
+(label) main::@1
+(label) main::@return
+(const byte*) main::SCREEN = (byte*) 1024
+(byte) main::i
+(byte) main::i#1 reg byte x 16.5
+(byte) main::i#2 reg byte x 22.0
+
+reg byte x [ main::i#2 main::i#1 ]

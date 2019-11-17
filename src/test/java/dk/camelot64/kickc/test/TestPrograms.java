@@ -406,6 +406,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testXMega65Logo() throws IOException, URISyntaxException {
+      compileAndCompare("complex/xmega65/xmega65logo");
+   }
+
+   @Test
    public void testXMega65() throws IOException, URISyntaxException {
       compileAndCompare("complex/xmega65/xmega65");
    }

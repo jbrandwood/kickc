@@ -38,8 +38,9 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                StructDefinition structDefinition = ((SymbolTypeStruct) structType).getStructDefinition(getScope());
                ConstantRef memberOffsetConstant = getMemberOffsetConstant(getScope(), structDefinition, structMemberRef.getMemberName());
                SymbolType memberType = SymbolTypeInference.inferType(getScope(), structMemberRef);
+               Variable memberVar = structDefinition.getMember(structMemberRef.getMemberName());
                getLog().append("Rewriting struct pointer member access " + programValue.get().toString(getProgram()));
-               if(memberType instanceof SymbolTypeArray && ((SymbolTypeArray) memberType).getSize()!=null) {
+               if(memberVar.isArray() && memberVar.getArraySize()!=null) {
                   // Cast struct pointer to the type of the member
                   CastValue structTypedPointer = new CastValue(memberType, structPointer);
                   // Create temporary variable to hold pointer to member ($1)
@@ -77,8 +78,9 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                StructDefinition structDefinition = ((SymbolTypeStruct) structType).getStructDefinition(getScope());
                ConstantRef memberOffsetConstant = getMemberOffsetConstant(getScope(), structDefinition, structMemberRef.getMemberName());
                SymbolType memberType = SymbolTypeInference.inferType(getScope(), structMemberRef);
+               Variable memberVar = structDefinition.getMember(structMemberRef.getMemberName());
                getLog().append("Rewriting struct pointer member access " + programValue.get().toString(getProgram()));
-               if(memberType instanceof SymbolTypeArray && ((SymbolTypeArray) memberType).getSize()!=null) {
+               if(memberVar.isArray() && memberVar.getArraySize()!=null) {
                   // Cast struct pointer to the type of the member
                   CastValue structTypedPointer = new CastValue(memberType, structPointer);
                   // Create temporary variable to hold pointer to member ($1)

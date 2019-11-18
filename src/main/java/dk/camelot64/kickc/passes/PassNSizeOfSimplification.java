@@ -12,7 +12,6 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.*;
 
@@ -40,7 +39,7 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
                      SymbolVariableRef symbolRef = (SymbolVariableRef) assignment.getrValue2();
                      Variable symbolVar = (Variable) getScope().getSymbol(symbolRef);
                      SymbolType symbolType = symbolVar.getType();
-                     if(!(symbolType instanceof SymbolTypeArray)) {
+                     if(!(symbolVar.isArray())) {
                         getLog().append("Resolving sizeof() " + assignment.toString(getProgram(), false));
                         ConstantRef sizeOfConstantVar = OperatorSizeOf.getSizeOfConstantVar(getScope(), symbolType);
                         assignment.setrValue2(sizeOfConstantVar);
@@ -71,9 +70,9 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
       if(operand instanceof ConstantRef) {
          Variable constant = getScope().getConstant((ConstantRef) operand);
          SymbolType symbolType = constant.getType();
-         if(symbolType instanceof SymbolTypeArray) {
-            SymbolTypeArray arrayType = (SymbolTypeArray) symbolType;
-            RValue arraySize = arrayType.getSize();
+         if(constant.isArray() && symbolType instanceof SymbolTypePointer) {
+            SymbolTypePointer arrayType = (SymbolTypePointer) symbolType;
+            RValue arraySize = constant.getArraySize();
             if(arraySize instanceof ConstantValue) {
                getLog().append("Resolving array sizeof() " + unary.toString(getProgram()));
                ConstantRef sizeOfConstantVar = OperatorSizeOf.getSizeOfConstantVar(getScope(), arrayType.getElementType());

@@ -165,7 +165,7 @@ print_byte: scope:[print_byte]  from main::@3 main::@6
   (byte*) print_char_cursor#42 ← phi( main::@3/(byte*) print_char_cursor#13 main::@6/(byte*) print_char_cursor#16 )
   (byte) print_byte::b#2 ← phi( main::@3/(byte) print_byte::b#0 main::@6/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
-  (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -173,7 +173,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#25 ← phi( print_byte/(byte*) print_char_cursor#9 )
   (byte*) print_char_cursor#5 ← (byte*) print_char_cursor#25
   (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
-  (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#1 ← *((const byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -224,7 +224,6 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   (byte*) print_screen#5 ← phi( @12/(byte*) print_screen#0 )
   (byte*) print_char_cursor#46 ← phi( @12/(byte*) print_char_cursor#0 )
   (byte*) print_line_cursor#26 ← phi( @12/(byte*) print_line_cursor#0 )
-  (struct fileentry[$a]) files ← { fill( $a, 0) }
   (struct fileentry*) file#0 ← (struct fileentry*) 0
   to:@37
 
@@ -233,7 +232,7 @@ main: scope:[main]  from @37
   (byte*) print_char_cursor#43 ← phi( @37/(byte*) print_char_cursor#44 )
   (byte*) print_line_cursor#20 ← phi( @37/(byte*) print_line_cursor#23 )
   (byte*) print_screen#3 ← phi( @37/(byte*) print_screen#4 )
-  (struct fileentry*) file#1 ← (struct fileentry[$a]) files
+  (struct fileentry*) file#1 ← (const struct fileentry*) files
   (byte**~) main::$8 ← (byte**)(struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
   *((byte**~) main::$8) ← ((byte*)) (number) $4000
   (byte**~) main::$9 ← (byte**)(struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
@@ -356,7 +355,7 @@ SYMBOL TABLE SSA
 (struct fileentry*) file#8
 (struct fileentry*) file#9
 (byte*) fileentry::bufEdit
-(struct fileentry[$a]) files
+(const struct fileentry*) files = { fill( $a, 0) }
 (signed word()) main()
 (byte*~) main::$0
 (byte**~) main::$10
@@ -487,7 +486,7 @@ SYMBOL TABLE SSA
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -668,41 +667,38 @@ Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memse
 Simple Condition (bool~) print_str::$0 [26] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [39] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [80] (struct fileentry[$a]) files ← { fill( $a, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const struct fileentry[$a]) files = { fill( $a, 0) }
 Constant (const struct fileentry*) file#0 = (struct fileentry*) 0
+Constant (const struct fileentry*) file#1 = files
 Constant (const byte*) print_str::str#1 = main::str
 Constant (const byte*) print_str::str#2 = main::str1
 Constant (const signed word) main::return#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
-Constant (const struct fileentry*) file#1 = files
 Constant (const signed word) main::return#2 = main::return#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) memset::$2 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte**)file#1 in [84] (byte**~) main::$8 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Constant value identified (byte**)file#1 in [86] (byte**~) main::$9 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Constant value identified (byte**)file#1 in [88] (byte**~) main::$10 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Constant value identified (byte**)file#1 in [83] (byte**~) main::$8 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Constant value identified (byte**)file#1 in [85] (byte**~) main::$9 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Constant value identified (byte**)file#1 in [87] (byte**~) main::$10 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
 Successful SSA optimization Pass2ConstantValues
 if() condition always false - eliminating [3] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
-Converting *(pointer+n) to pointer[n] [85] *((byte**~) main::$8) ← (byte*) 16384  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
-Converting *(pointer+n) to pointer[n] [87] *(*((byte**~) main::$9) + (byte) 3) ← (byte) $aa  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
-Converting *(pointer+n) to pointer[n] [89] (byte*~) main::$0 ← *((byte**~) main::$10)  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Converting *(pointer+n) to pointer[n] [84] *((byte**~) main::$8) ← (byte*) 16384  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Converting *(pointer+n) to pointer[n] [86] *(*((byte**~) main::$9) + (byte) 3) ← (byte) $aa  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Converting *(pointer+n) to pointer[n] [88] (byte*~) main::$0 ← *((byte**~) main::$10)  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte**)file#1 in [84] (byte**~) main::$8 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Simplifying expression containing zero (byte**)file#1 in [85] *((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) ← (byte*) 16384
-Simplifying expression containing zero (byte**)file#1 in [86] (byte**~) main::$9 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Simplifying expression containing zero (byte**)file#1 in [87] *(*((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) 3) ← (byte) $aa
-Simplifying expression containing zero (byte**)file#1 in [88] (byte**~) main::$10 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Simplifying expression containing zero (byte**)file#1 in [89] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Simplifying expression containing zero (byte**)file#1 in [83] (byte**~) main::$8 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Simplifying expression containing zero (byte**)file#1 in [84] *((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) ← (byte*) 16384
+Simplifying expression containing zero (byte**)file#1 in [85] (byte**~) main::$9 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Simplifying expression containing zero (byte**)file#1 in [86] *(*((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) 3) ← (byte) $aa
+Simplifying expression containing zero (byte**)file#1 in [87] (byte**~) main::$10 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Simplifying expression containing zero (byte**)file#1 in [88] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte**~) main::$8 and assignment [32] (byte**~) main::$8 ← (byte**)(const struct fileentry*) file#1
 Eliminating unused variable (byte**~) main::$9 and assignment [34] (byte**~) main::$9 ← (byte**)(const struct fileentry*) file#1
@@ -722,7 +718,7 @@ Inlining constant with var siblings (const byte*) memset::dst#0
 Inlining constant with var siblings (const byte*) print_str::str#1
 Inlining constant with var siblings (const byte*) print_str::str#2
 Inlining constant with var siblings (const byte*) print_line_cursor#0
-Constant inlined file#1 = (const struct fileentry[$a]) files
+Constant inlined file#1 = (const struct fileentry*) files
 Constant inlined print_str::str#2 = (const string) main::str1
 Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
@@ -810,9 +806,9 @@ FINAL CONTROL FLOW GRAPH
 
 (signed word()) main()
 main: scope:[main]  from @1
-  [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384
-  [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa
-  [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files)
+  [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384
+  [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa
+  [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files)
   [7] *((byte*~) main::$0 + (byte) 4) ← (byte) $cc
   [8] call print_cls 
   to:main::@1
@@ -861,12 +857,12 @@ print_ln::@return: scope:[print_ln]  from print_ln::@1
 print_byte: scope:[print_byte]  from main::@2 main::@5
   [27] (byte) print_byte::b#2 ← phi( main::@2/(byte) print_byte::b#0 main::@5/(byte) print_byte::b#1 )
   [28] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4
-  [29] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  [29] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   [30] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [31] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f
-  [32] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2)
+  [32] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
   [33] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -1035,12 +1031,12 @@ __bend:
   // main
 main: {
     .label __0 = $c
-    // [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
+    // [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
     lda #<$4000
     sta files
     lda #>$4000
     sta files+1
-    // [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
+    // [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
     lda #$aa
     ldy #3
     ldx files
@@ -1048,7 +1044,7 @@ main: {
     ldx files+1
     stx.z $ff
     sta ($fe),y
-    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files) -- pbuz1=_deref_pptc1 
+    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files) -- pbuz1=_deref_pptc1 
     lda files
     sta.z __0
     lda files+1
@@ -1202,7 +1198,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [29] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [29] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -1219,7 +1215,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [32] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [32] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -1361,9 +1357,9 @@ memset: {
   files: .fill 2*$a, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte x reg byte y 
-Statement [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files) [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
+Statement [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files) [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
 Statement [7] *((byte*~) main::$0 + (byte) 4) ← (byte) $cc [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
 Statement [15] (byte*) print_char_cursor#47 ← (byte*) print_line_cursor#1 [ print_char_cursor#47 print_line_cursor#1 ] ( main:2 [ print_char_cursor#47 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [24] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#10 + (byte) $28 [ print_line_cursor#1 print_char_cursor#29 ] ( main:2::print_ln:14 [ print_line_cursor#1 print_char_cursor#29 ] main:2::print_ln:20 [ print_line_cursor#1 print_char_cursor#29 ] ) always clobbers reg byte a 
@@ -1377,9 +1373,9 @@ Statement [41] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2 [ pr
 Statement [43] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#3) [ print_char_cursor#2 print_str::str#3 ] ( main:2::print_str:10 [ print_char_cursor#2 print_str::str#3 ] main:2::print_str:16 [ print_line_cursor#1 print_char_cursor#2 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [51] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:8::memset:47 [ memset::dst#2 ] ) always clobbers reg byte a 
 Statement [53] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:8::memset:47 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte x reg byte y 
-Statement [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files) [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
+Statement [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files) [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
 Statement [7] *((byte*~) main::$0 + (byte) 4) ← (byte) $cc [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
 Statement [15] (byte*) print_char_cursor#47 ← (byte*) print_line_cursor#1 [ print_char_cursor#47 print_line_cursor#1 ] ( main:2 [ print_char_cursor#47 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [24] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#10 + (byte) $28 [ print_line_cursor#1 print_char_cursor#29 ] ( main:2::print_ln:14 [ print_line_cursor#1 print_char_cursor#29 ] main:2::print_ln:20 [ print_line_cursor#1 print_char_cursor#29 ] ) always clobbers reg byte a 
@@ -1457,12 +1453,12 @@ __bend:
   // main
 main: {
     .label __0 = 6
-    // [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
+    // [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
     lda #<$4000
     sta files
     lda #>$4000
     sta files+1
-    // [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
+    // [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
     lda #$aa
     ldy #3
     ldx files
@@ -1470,7 +1466,7 @@ main: {
     ldx files+1
     stx.z $ff
     sta ($fe),y
-    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files) -- pbuz1=_deref_pptc1 
+    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files) -- pbuz1=_deref_pptc1 
     lda files
     sta.z __0
     lda files+1
@@ -1618,7 +1614,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [29] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [29] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [30] call print_char 
@@ -1633,7 +1629,7 @@ print_byte: {
     // [31] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuxx=vbuxx_band_vbuc1 
     lda #$f
     axs #0
-    // [32] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [32] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [33] call print_char 
     // [35] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -1852,7 +1848,7 @@ FINAL SYMBOL TABLE
 (const byte) RADIX::OCTAL = (number) 8
 (struct fileentry*) file
 (byte*) fileentry::bufEdit
-(const struct fileentry[$a]) files = { fill( $a, 0) }
+(const struct fileentry*) files = { fill( $a, 0) }
 (signed word()) main()
 (byte*~) main::$0 zp[2]:6 4.0
 (label) main::@1
@@ -1905,7 +1901,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#47 print_char_cursor zp[2]:6 4.0
 (void()) print_cls()
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp[2]:4 4.111111111111112
 (byte*) print_line_cursor#10 print_line_cursor zp[2]:4 24.0
@@ -1955,13 +1951,13 @@ Score: 1676
 main: {
     .label __0 = 6
     // file->bufEdit = 0x4000
-    // [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
+    // [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
     lda #<$4000
     sta files
     lda #>$4000
     sta files+1
     // file->bufEdit[3] = 0xAA
-    // [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
+    // [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
     lda #$aa
     ldy #3
     ldx files
@@ -1970,7 +1966,7 @@ main: {
     stx.z $ff
     sta ($fe),y
     // (char *)file->bufEdit
-    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files) -- pbuz1=_deref_pptc1 
+    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files) -- pbuz1=_deref_pptc1 
     lda files
     sta.z __0
     lda files+1
@@ -2103,7 +2099,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [29] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [29] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [30] call print_char 
@@ -2117,7 +2113,7 @@ print_byte: {
     lda #$f
     axs #0
     // print_char(print_hextab[b&$f])
-    // [32] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [32] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [33] call print_char 
     // [35] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]

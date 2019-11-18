@@ -1,6 +1,6 @@
 Fixing pointer increment (signed word*) sin16s_gen::sintab ← ++ (signed word*) sin16s_gen::sintab
 Fixing pointer increment (signed word*) sin16s_gen2::sintab ← ++ (signed word*) sin16s_gen2::sintab
-Fixing pointer addition (signed word*~) loop::$2 ← (signed word[XSIN_SIZE]) xsin + (word) xsin_idx
+Fixing pointer addition (signed word*~) loop::$2 ← (const signed word*) xsin + (word) xsin_idx
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) LOGO
@@ -613,7 +613,6 @@ memset::@return: scope:[memset]  from memset::@1
             .for(var cp=0; cp<8; cp++)
                 .byte logoPic.getMulticolorByte(x,cp+y*8)
  }}
-  (signed word[XSIN_SIZE]) xsin ← { fill( XSIN_SIZE, 0) }
   to:@29
 
 (void()) main()
@@ -689,7 +688,7 @@ main::@1: scope:[main]  from main::@1 main::@5
 main::@2: scope:[main]  from main::@1
   (word) xsin_idx#17 ← phi( main::@1/(word) xsin_idx#20 )
   (word) rem16u#23 ← phi( main::@1/(word) rem16u#27 )
-  (signed word*) sin16s_gen2::sintab#1 ← (signed word[XSIN_SIZE]) xsin
+  (signed word*) sin16s_gen2::sintab#1 ← (const signed word*) xsin
   (word) sin16s_gen2::wavelength#0 ← (const word) XSIN_SIZE
   (signed word) sin16s_gen2::min#0 ← (number) -$140
   (signed word) sin16s_gen2::max#0 ← (number) $140
@@ -735,7 +734,7 @@ loop::@6: scope:[loop]  from loop::@4
   (word) xsin_idx#9 ← phi( loop::@4/(word) xsin_idx#14 )
   *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   (word~) loop::$7 ← (word) xsin_idx#9 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word*~) loop::$2 ← (signed word[XSIN_SIZE]) xsin + (word~) loop::$7
+  (signed word*~) loop::$2 ← (const signed word*) xsin + (word~) loop::$7
   (signed word) loop::xpos#0 ← *((signed word*~) loop::$2)
   (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0
   call render_logo 
@@ -1612,7 +1611,7 @@ SYMBOL TABLE SSA
 (dword) sin16s_gen2::x#3
 (dword) sin16s_gen2::x#4
 (dword) sin16s_gen2::x#5
-(signed word[XSIN_SIZE]) xsin
+(const signed word*) xsin = { fill( XSIN_SIZE, 0) }
 (word) xsin_idx
 (word) xsin_idx#0
 (word) xsin_idx#1
@@ -1954,7 +1953,7 @@ Inversing boolean not [170] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (const 
 Inversing boolean not [174] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (const dword) PI_HALF_u4f28 from [173] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (const dword) PI_HALF_u4f28
 Inversing boolean not [233] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 == (byte) 0 from [232] (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (byte) 0
 Inversing boolean not [262] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [261] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [359] (bool~) loop::$5 ← (word) xsin_idx#3 != (const word) XSIN_SIZE from [358] (bool~) loop::$4 ← (word) xsin_idx#3 == (const word) XSIN_SIZE
+Inversing boolean not [358] (bool~) loop::$5 ← (word) xsin_idx#3 != (const word) XSIN_SIZE from [357] (bool~) loop::$4 ← (word) xsin_idx#3 == (const word) XSIN_SIZE
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -2143,8 +2142,8 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Identical Phi Values (byte) render_logo::logo_start#1 (byte) render_logo::logo_start#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [413] (byte~) render_logo::$14 ← (byte) $28 * (byte) render_logo::line#10
-Identified duplicate assignment right side [430] (byte~) render_logo::$22 ← (byte) $28 * (byte) render_logo::line#11
+Identified duplicate assignment right side [412] (byte~) render_logo::$14 ← (byte) $28 * (byte) render_logo::line#10
+Identified duplicate assignment right side [429] (byte~) render_logo::$22 ← (byte) $28 * (byte) render_logo::line#11
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) divr16u::$4 [11] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
 Simple Condition (bool~) divr16u::$9 [19] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
@@ -2159,22 +2158,21 @@ Simple Condition (bool~) sin16s::$3 [175] if((dword) sin16s::x#4<(const dword) P
 Simple Condition (bool~) sin16s::$16 [234] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@3
 Simple Condition (bool~) memset::$1 [263] if((word) memset::num#2<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$4 [273] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) main::$5 [325] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
-Simple Condition (bool~) loop::$0 [348] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@4
-Simple Condition (bool~) loop::$5 [360] if((word) xsin_idx#3!=(const word) XSIN_SIZE) goto loop::@11
-Simple Condition (bool~) render_logo::$5 [379] if((signed word) render_logo::xpos#0<(signed byte) 0) goto render_logo::@1
-Simple Condition (bool~) render_logo::$7 [391] if((byte) render_logo::screen_idx#18!=(byte) render_logo::logo_start#0) goto render_logo::@5
-Simple Condition (bool~) render_logo::$10 [402] unroll if((byte) render_logo::line#2!=rangelast(0,5)) goto render_logo::@7
-Simple Condition (bool~) render_logo::$11 [407] if((byte) render_logo::screen_idx#10!=(byte) $28) goto render_logo::@13
-Simple Condition (bool~) render_logo::$16 [418] unroll if((byte) render_logo::line#4!=rangelast(0,5)) goto render_logo::@15
-Simple Condition (bool~) render_logo::$19 [424] if((byte) render_logo::logo_idx#11!=(byte) $28) goto render_logo::@22
-Simple Condition (bool~) render_logo::$24 [435] unroll if((byte) render_logo::line#6!=rangelast(0,5)) goto render_logo::@24
-Simple Condition (bool~) render_logo::$25 [441] if((byte) render_logo::screen_idx#15!=(byte) $28) goto render_logo::@30
-Simple Condition (bool~) render_logo::$28 [450] unroll if((byte) render_logo::line#8!=rangelast(0,5)) goto render_logo::@32
+Simple Condition (bool~) main::$5 [324] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
+Simple Condition (bool~) loop::$0 [347] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@4
+Simple Condition (bool~) loop::$5 [359] if((word) xsin_idx#3!=(const word) XSIN_SIZE) goto loop::@11
+Simple Condition (bool~) render_logo::$5 [378] if((signed word) render_logo::xpos#0<(signed byte) 0) goto render_logo::@1
+Simple Condition (bool~) render_logo::$7 [390] if((byte) render_logo::screen_idx#18!=(byte) render_logo::logo_start#0) goto render_logo::@5
+Simple Condition (bool~) render_logo::$10 [401] unroll if((byte) render_logo::line#2!=rangelast(0,5)) goto render_logo::@7
+Simple Condition (bool~) render_logo::$11 [406] if((byte) render_logo::screen_idx#10!=(byte) $28) goto render_logo::@13
+Simple Condition (bool~) render_logo::$16 [417] unroll if((byte) render_logo::line#4!=rangelast(0,5)) goto render_logo::@15
+Simple Condition (bool~) render_logo::$19 [423] if((byte) render_logo::logo_idx#11!=(byte) $28) goto render_logo::@22
+Simple Condition (bool~) render_logo::$24 [434] unroll if((byte) render_logo::line#6!=rangelast(0,5)) goto render_logo::@24
+Simple Condition (bool~) render_logo::$25 [440] if((byte) render_logo::screen_idx#15!=(byte) $28) goto render_logo::@30
+Simple Condition (bool~) render_logo::$28 [449] unroll if((byte) render_logo::line#8!=rangelast(0,5)) goto render_logo::@32
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [201] (word) mulu16_sel::v2#2 ← (unumber)(number) $10000/(number) 6
-Constant right-side identified [282] (signed word[XSIN_SIZE]) xsin ← { fill( XSIN_SIZE, 0) }
-Constant right-side identified [308] (void*) memset::str#0 ← (void*)(const byte*) SCREEN
+Constant right-side identified [307] (void*) memset::str#0 ← (void*)(const byte*) SCREEN
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
@@ -2192,7 +2190,6 @@ Constant (const word) mulu16_sel::v2#2 = (unumber)$10000/6
 Constant (const byte) mulu16_sel::select#2 = 1
 Constant (const byte) mulu16_sel::select#3 = 0
 Constant (const byte) mulu16_sel::select#4 = 0
-Constant (const signed word[XSIN_SIZE]) xsin = { fill( XSIN_SIZE, 0) }
 Constant (const byte*) main::toD0181_screen#0 = SCREEN
 Constant (const byte*) main::toD0181_gfx#0 = LOGO
 Constant (const void*) memset::str#0 = (void*)SCREEN
@@ -2202,6 +2199,7 @@ Constant (const void*) memset::str#1 = (void*)COLS
 Constant (const byte) memset::c#1 = WHITE|8
 Constant (const word) memset::num#1 = $3e8
 Constant (const byte) main::ch#0 = 0
+Constant (const signed word*) sin16s_gen2::sintab#1 = xsin
 Constant (const word) sin16s_gen2::wavelength#0 = XSIN_SIZE
 Constant (const signed word) sin16s_gen2::min#0 = -$140
 Constant (const signed word) sin16s_gen2::max#0 = $140
@@ -2221,25 +2219,24 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) div32u16u::divisor#0 = sin16s_gen2::wavelength#0
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
-Constant (const signed word*) sin16s_gen2::sintab#1 = xsin
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::divisor#0 = div32u16u::divisor#0
 Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [345] if(true) goto loop::@4
+if() condition always true - replacing block destination [344] if(true) goto loop::@4
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [24] divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value [26] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
-Resolved ranged next value [323] main::ch#1 ← ++ main::ch#2 to ++
-Resolved ranged comparison value [325] if(main::ch#1!=rangelast(0,$ef)) goto main::@1 to (number) $f0
-Resolved ranged next value [400] render_logo::line#2 ← ++ render_logo::line#9 to ++
-Resolved ranged comparison value [402] unroll if(render_logo::line#2!=rangelast(0,5)) goto render_logo::@7 to (number) 6
-Resolved ranged next value [416] render_logo::line#4 ← ++ render_logo::line#10 to ++
-Resolved ranged comparison value [418] unroll if(render_logo::line#4!=rangelast(0,5)) goto render_logo::@15 to (number) 6
-Resolved ranged next value [433] render_logo::line#6 ← ++ render_logo::line#11 to ++
-Resolved ranged comparison value [435] unroll if(render_logo::line#6!=rangelast(0,5)) goto render_logo::@24 to (number) 6
-Resolved ranged next value [448] render_logo::line#8 ← ++ render_logo::line#12 to ++
-Resolved ranged comparison value [450] unroll if(render_logo::line#8!=rangelast(0,5)) goto render_logo::@32 to (number) 6
+Resolved ranged next value [322] main::ch#1 ← ++ main::ch#2 to ++
+Resolved ranged comparison value [324] if(main::ch#1!=rangelast(0,$ef)) goto main::@1 to (number) $f0
+Resolved ranged next value [399] render_logo::line#2 ← ++ render_logo::line#9 to ++
+Resolved ranged comparison value [401] unroll if(render_logo::line#2!=rangelast(0,5)) goto render_logo::@7 to (number) 6
+Resolved ranged next value [415] render_logo::line#4 ← ++ render_logo::line#10 to ++
+Resolved ranged comparison value [417] unroll if(render_logo::line#4!=rangelast(0,5)) goto render_logo::@15 to (number) 6
+Resolved ranged next value [432] render_logo::line#6 ← ++ render_logo::line#11 to ++
+Resolved ranged comparison value [434] unroll if(render_logo::line#6!=rangelast(0,5)) goto render_logo::@24 to (number) 6
+Resolved ranged next value [447] render_logo::line#8 ← ++ render_logo::line#12 to ++
+Resolved ranged comparison value [449] unroll if(render_logo::line#8!=rangelast(0,5)) goto render_logo::@32 to (number) 6
 Eliminating unused variable (void*) memset::return#2 and assignment [158] (void*) memset::return#2 ← (void*) memset::str#3
 Eliminating unused variable (void*) memset::return#3 and assignment [160] (void*) memset::return#3 ← (void*) memset::str#3
 Eliminating unused constant (const byte) render_logo::logo_idx#0
@@ -2923,7 +2920,7 @@ Constant inlined main::toD0181_$5 = >(word)(const byte*) LOGO
 Constant inlined main::toD0181_$4 = (word)(const byte*) LOGO
 Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4
 Constant inlined xsin_idx#16 = (byte) 0
-Constant inlined sin16s_gen2::sintab#1 = (const signed word[XSIN_SIZE]) xsin
+Constant inlined sin16s_gen2::sintab#1 = (const signed word*) xsin
 Constant inlined render_logo::$44 = (const byte*) SCREEN+(byte) $28*++++++++++(byte) 0
 Constant inlined memset::c#0 = (const byte) BLACK
 Constant inlined render_logo::$49 = (byte) $28*++++(byte) 0
@@ -3295,7 +3292,7 @@ loop::@2: scope:[loop]  from loop::@1 loop::@2
 loop::@3: scope:[loop]  from loop::@2
   [28] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1
-  [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE]) xsin + (word~) loop::$7
+  [30] (signed word*~) loop::$2 ← (const signed word*) xsin + (word~) loop::$7
   [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2)
   [32] (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0
   [33] call render_logo 
@@ -3454,7 +3451,7 @@ sin16s_gen2::@3: scope:[sin16s_gen2]  from sin16s_gen2
   [100] (dword) sin16s_gen2::step#0 ← (dword) div32u16u::return#2
   to:sin16s_gen2::@1
 sin16s_gen2::@1: scope:[sin16s_gen2]  from sin16s_gen2::@3 sin16s_gen2::@5
-  [101] (signed word*) sin16s_gen2::sintab#2 ← phi( sin16s_gen2::@3/(const signed word[XSIN_SIZE]) xsin sin16s_gen2::@5/(signed word*) sin16s_gen2::sintab#0 )
+  [101] (signed word*) sin16s_gen2::sintab#2 ← phi( sin16s_gen2::@3/(const signed word*) xsin sin16s_gen2::@5/(signed word*) sin16s_gen2::sintab#0 )
   [101] (dword) sin16s_gen2::x#2 ← phi( sin16s_gen2::@3/(byte) 0 sin16s_gen2::@5/(dword) sin16s_gen2::x#1 )
   [101] (word) sin16s_gen2::i#2 ← phi( sin16s_gen2::@3/(byte) 0 sin16s_gen2::@5/(word) sin16s_gen2::i#1 )
   [102] if((word) sin16s_gen2::i#2<(const word) XSIN_SIZE) goto sin16s_gen2::@2
@@ -4385,7 +4382,7 @@ loop: {
     lda.z xsin_idx+1
     rol
     sta.z __7+1
-    // [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE]) xsin + (word~) loop::$7 -- pwsz1=pwsc1_plus_vwuz2 
+    // [30] (signed word*~) loop::$2 ← (const signed word*) xsin + (word~) loop::$7 -- pwsz1=pwsc1_plus_vwuz2 
     lda.z __7
     clc
     adc #<xsin
@@ -4860,7 +4857,7 @@ sin16s_gen2: {
     sta.z step+3
     // [101] phi from sin16s_gen2::@3 to sin16s_gen2::@1 [phi:sin16s_gen2::@3->sin16s_gen2::@1]
   __b1_from___b3:
-    // [101] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[XSIN_SIZE]) xsin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
+    // [101] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word*) xsin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
     lda #<xsin
     sta.z sintab
     lda #>xsin
@@ -5905,7 +5902,7 @@ Statement [11] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ]
 Statement [12] *((const byte*) D016) ← (const byte) VIC_MCM [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [27] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@2 [ xsin_idx#11 ] ( main:3::loop:23 [ xsin_idx#11 ] ) always clobbers reg byte a 
 Statement [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 [ xsin_idx#11 loop::$7 ] ( main:3::loop:23 [ xsin_idx#11 loop::$7 ] ) always clobbers reg byte a 
-Statement [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE]) xsin + (word~) loop::$7 [ xsin_idx#11 loop::$2 ] ( main:3::loop:23 [ xsin_idx#11 loop::$2 ] ) always clobbers reg byte a 
+Statement [30] (signed word*~) loop::$2 ← (const signed word*) xsin + (word~) loop::$7 [ xsin_idx#11 loop::$2 ] ( main:3::loop:23 [ xsin_idx#11 loop::$2 ] ) always clobbers reg byte a 
 Statement [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2) [ xsin_idx#11 loop::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 loop::xpos#0 ] ) always clobbers reg byte a reg byte y 
 Statement [32] (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0 [ xsin_idx#11 render_logo::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 render_logo::xpos#0 ] ) always clobbers reg byte a 
 Statement [35] if((word) xsin_idx#3!=(const word) XSIN_SIZE) goto loop::@6 [ xsin_idx#3 ] ( main:3::loop:23 [ xsin_idx#3 ] ) always clobbers reg byte a 
@@ -6017,7 +6014,7 @@ Statement [11] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ]
 Statement [12] *((const byte*) D016) ← (const byte) VIC_MCM [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [27] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@2 [ xsin_idx#11 ] ( main:3::loop:23 [ xsin_idx#11 ] ) always clobbers reg byte a 
 Statement [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 [ xsin_idx#11 loop::$7 ] ( main:3::loop:23 [ xsin_idx#11 loop::$7 ] ) always clobbers reg byte a 
-Statement [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE]) xsin + (word~) loop::$7 [ xsin_idx#11 loop::$2 ] ( main:3::loop:23 [ xsin_idx#11 loop::$2 ] ) always clobbers reg byte a 
+Statement [30] (signed word*~) loop::$2 ← (const signed word*) xsin + (word~) loop::$7 [ xsin_idx#11 loop::$2 ] ( main:3::loop:23 [ xsin_idx#11 loop::$2 ] ) always clobbers reg byte a 
 Statement [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2) [ xsin_idx#11 loop::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 loop::xpos#0 ] ) always clobbers reg byte a reg byte y 
 Statement [32] (signed word) render_logo::xpos#0 ← (signed word) loop::xpos#0 [ xsin_idx#11 render_logo::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 render_logo::xpos#0 ] ) always clobbers reg byte a 
 Statement [35] if((word) xsin_idx#3!=(const word) XSIN_SIZE) goto loop::@6 [ xsin_idx#3 ] ( main:3::loop:23 [ xsin_idx#3 ] ) always clobbers reg byte a 
@@ -6515,7 +6512,7 @@ loop: {
     lda.z xsin_idx+1
     rol
     sta.z __7+1
-    // [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE]) xsin + (word~) loop::$7 -- pwsz1=pwsc1_plus_vwuz1 
+    // [30] (signed word*~) loop::$2 ← (const signed word*) xsin + (word~) loop::$7 -- pwsz1=pwsc1_plus_vwuz1 
     clc
     lda.z __2
     adc #<xsin
@@ -6909,7 +6906,7 @@ sin16s_gen2: {
     // [100] (dword) sin16s_gen2::step#0 ← (dword) div32u16u::return#2
     // [101] phi from sin16s_gen2::@3 to sin16s_gen2::@1 [phi:sin16s_gen2::@3->sin16s_gen2::@1]
   __b1_from___b3:
-    // [101] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[XSIN_SIZE]) xsin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
+    // [101] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word*) xsin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
     lda #<xsin
     sta.z sintab
     lda #>xsin
@@ -8364,7 +8361,7 @@ FINAL SYMBOL TABLE
 (dword) sin16s_gen2::x
 (dword) sin16s_gen2::x#1 x zp[4]:4 11.0
 (dword) sin16s_gen2::x#2 x zp[4]:4 2.75
-(const signed word[XSIN_SIZE]) xsin = { fill( XSIN_SIZE, 0) }
+(const signed word*) xsin = { fill( XSIN_SIZE, 0) }
 (word) xsin_idx
 (word) xsin_idx#11 xsin_idx zp[2]:35 4.125
 (word) xsin_idx#19 xsin_idx zp[2]:35 11.0
@@ -8577,7 +8574,7 @@ loop: {
     lda.z xsin_idx+1
     rol
     sta.z __7+1
-    // [30] (signed word*~) loop::$2 ← (const signed word[XSIN_SIZE]) xsin + (word~) loop::$7 -- pwsz1=pwsc1_plus_vwuz1 
+    // [30] (signed word*~) loop::$2 ← (const signed word*) xsin + (word~) loop::$7 -- pwsz1=pwsc1_plus_vwuz1 
     clc
     lda.z __2
     adc #<xsin
@@ -8934,7 +8931,7 @@ sin16s_gen2: {
     // step = div32u16u(PI2_u4f28, wavelength)
     // [100] (dword) sin16s_gen2::step#0 ← (dword) div32u16u::return#2
     // [101] phi from sin16s_gen2::@3 to sin16s_gen2::@1 [phi:sin16s_gen2::@3->sin16s_gen2::@1]
-    // [101] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[XSIN_SIZE]) xsin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
+    // [101] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word*) xsin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
     lda #<xsin
     sta.z sintab
     lda #>xsin

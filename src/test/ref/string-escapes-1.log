@@ -16,7 +16,7 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @1
   (byte*) main::line#0 ← ((byte*)) (number) $400
   (byte*) main::cursor#0 ← (byte*) main::line#0
-  (byte*) main::msg#0 ← (const byte[]) MESSAGE
+  (byte*) main::msg#0 ← (const byte*) MESSAGE
   to:main::@1
 main::@1: scope:[main]  from main main::@6
   (byte*) main::cursor#5 ← phi( main/(byte*) main::cursor#0 main::@6/(byte*) main::cursor#6 )
@@ -66,7 +66,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte[]) MESSAGE = (string) "hello
+(const byte*) MESSAGE = (string) "hello
 world"
 (void()) main()
 (bool~) main::$0
@@ -129,7 +129,7 @@ Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) main::cursor#0
 Inlining constant with var siblings (const byte*) main::msg#0
 Constant inlined main::cursor#0 = (byte*) 1024
-Constant inlined main::msg#0 = (const byte[]) MESSAGE
+Constant inlined main::msg#0 = (const byte*) MESSAGE
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -175,7 +175,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@5
   [5] (byte*) main::cursor#3 ← phi( main/(byte*) 1024 main::@5/(byte*) main::cursor#6 )
   [5] (byte*) main::line#2 ← phi( main/(byte*) 1024 main::@5/(byte*) main::line#5 )
-  [5] (byte*) main::msg#2 ← phi( main/(const byte[]) MESSAGE main::@5/(byte*) main::msg#1 )
+  [5] (byte*) main::msg#2 ← phi( main/(const byte*) MESSAGE main::@5/(byte*) main::msg#1 )
   [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -269,7 +269,7 @@ main: {
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -406,7 +406,7 @@ main: {
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -521,7 +521,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte[]) MESSAGE = (string) "hello
+(const byte*) MESSAGE = (string) "hello
 world"
 (void()) main()
 (label) main::@1
@@ -581,7 +581,7 @@ main: {
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE

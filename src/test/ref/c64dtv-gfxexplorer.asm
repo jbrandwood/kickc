@@ -2582,6 +2582,16 @@ keyboard_init: {
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
+  // Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
+  keyboard_events: .fill 8, 0
+  // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
+  keyboard_scan_values: .fill 8, 0
+  // Tables for the plotter - initialized by calling bitmap_draw_init();
+  bitmap_plot_xlo: .fill $100, 0
+  bitmap_plot_xhi: .fill $100, 0
+  bitmap_plot_ylo: .fill $100, 0
+  bitmap_plot_yhi: .fill $100, 0
+  bitmap_plot_bit: .fill $100, 0
   // Charset ROM
   FORM_TEXT: .text " C64 DTV Graphics Mode Explorer         @                                        @ PRESET 0 Standard Charset              @                                        @ CONTROL        PLANE  A     VIC II     @ bmm        0   pattern p0   screen s0  @ mcm        0   start   00   gfx    g0  @ ecm        0   step    00   colors c0  @ hicolor    0   modulo  00              @ linear     0                COLORS     @ color off  0   PLANE  B     palet   0  @ chunky     0   pattern p0   bgcol0 00  @ border off 0   start   00   bgcol1 00  @ overscan   0   step    00   bgcol2 00  @                modulo  00   bgcol3 00  @"
   .byte 0
@@ -2616,16 +2626,6 @@ keyboard_init: {
   preset_sixsfred2: .byte 9, 1, 1, 1, 0, 1, 0, 0, 0, 0, 9, 0, 0, 0, 1, 0, 0, $a, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
   // Preset: 8bpp Pixel Cell
   preset_8bpppixelcell: .byte $a, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, $b, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
-  // Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
-  keyboard_events: .fill 8, 0
-  // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
-  keyboard_scan_values: .fill 8, 0
-  // Tables for the plotter - initialized by calling bitmap_draw_init();
-  bitmap_plot_xlo: .fill $100, 0
-  bitmap_plot_xhi: .fill $100, 0
-  bitmap_plot_ylo: .fill $100, 0
-  bitmap_plot_yhi: .fill $100, 0
-  bitmap_plot_bit: .fill $100, 0
   // Table with addresses of the y-lines of the form. The first line contains the address of the form screen.
   form_line_lo: .fill $19, 0
   form_line_hi: .fill $19, 0

@@ -1,5 +1,5 @@
-Fixing constant pointer addition (const word[]) seq+(number) 0
-Fixing constant pointer addition (const struct Setting[]) settings+(number) 0
+Fixing constant pointer addition (const word*) seq+(number) 0
+Fixing constant pointer addition (const struct Setting*) settings+(number) 0
 Fixing pointer array-indexing *(*((struct Setting*) main::setting).buf + (byte) main::i)
 Fixing pointer array-indexing *((const word*) SCREEN + (byte) main::i)
 Rewriting struct pointer member access *((struct Setting*) main::setting).len
@@ -67,9 +67,9 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 (byte) main::i#3
-(const struct Setting*) main::setting = (const struct Setting[]) settings+(number) 0*(const byte) SIZEOF_STRUCT_SETTING
-(const word[]) seq = { (word)(number) 1, (word)(number) 2, (word)(number) 3 }
-(const struct Setting[]) settings = { { len: (byte)(number) 3, buf: (const word[]) seq+(number) 0*(const byte) SIZEOF_WORD } }
+(const struct Setting*) main::setting = (const struct Setting*) settings+(number) 0*(const byte) SIZEOF_STRUCT_SETTING
+(const word*) seq = { (word)(number) 1, (word)(number) 2, (word)(number) 3 }
+(const struct Setting*) settings = { { len: (byte)(number) 3, buf: (const word*) seq+(number) 0*(const byte) SIZEOF_WORD } }
 
 Adding number conversion cast (unumber) 0*SIZEOF_WORD in 
 Adding number conversion cast (unumber) 0 in 
@@ -119,9 +119,9 @@ Rewriting multiplication to use shift [2] (byte~) main::$1 ← (byte) main::i#2 
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
-Constant inlined main::$3 = (word**)(const struct Setting[]) settings+(const byte) OFFSET_STRUCT_SETTING_BUF
-Constant inlined main::$2 = (byte*)(const struct Setting[]) settings
-Constant inlined main::setting = (const struct Setting[]) settings
+Constant inlined main::$3 = (word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF
+Constant inlined main::$2 = (byte*)(const struct Setting*) settings
+Constant inlined main::setting = (const struct Setting*) settings
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant (const byte) SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
@@ -159,14 +159,14 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
-  [6] if((byte) main::i#2<*((byte*)(const struct Setting[]) settings)) goto main::@2
+  [6] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [7] return 
   to:@return
 main::@2: scope:[main]  from main::@1
   [8] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1
-  [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting[]) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1)
+  [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1)
   [10] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
@@ -228,7 +228,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) main::i#2<*((byte*)(const struct Setting[]) settings)) goto main::@2 -- vbuz1_lt__deref_pbuc1_then_la1 
+    // [6] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2 -- vbuz1_lt__deref_pbuc1_then_la1 
     lda.z i
     cmp settings
     bcc __b2
@@ -243,7 +243,7 @@ main: {
     lda.z i
     asl
     sta.z __1
-    // [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting[]) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuz1=(_deref_pptc2)_derefidx_vbuz1 
+    // [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuz1=(_deref_pptc2)_derefidx_vbuz1 
     ldy.z __1
     lda settings+OFFSET_STRUCT_SETTING_BUF
     sta.z $fe
@@ -269,10 +269,10 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting[]) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [8] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
-Statement [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting[]) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[1]:3 [ main::$1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -320,7 +320,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) main::i#2<*((byte*)(const struct Setting[]) settings)) goto main::@2 -- vbuxx_lt__deref_pbuc1_then_la1 
+    // [6] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2 -- vbuxx_lt__deref_pbuc1_then_la1 
     cpx settings
     bcc __b2
     jmp __breturn
@@ -333,7 +333,7 @@ main: {
     // [8] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting[]) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuaa=(_deref_pptc2)_derefidx_vbuaa 
+    // [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuaa=(_deref_pptc2)_derefidx_vbuaa 
     tay
     lda settings+OFFSET_STRUCT_SETTING_BUF
     sta.z $fe
@@ -395,8 +395,8 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 22.0
 (byte) main::i#2 reg byte x 11.0
-(const word[]) seq = { (word) 1, (word) 2, (word) 3 }
-(const struct Setting[]) settings = { { len: (byte) 3, buf: (const word[]) seq } }
+(const word*) seq = { (word) 1, (word) 2, (word) 3 }
+(const struct Setting*) settings = { { len: (byte) 3, buf: (const word*) seq } }
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte a [ main::$1 ]
@@ -429,7 +429,7 @@ main: {
     // main::@1
   __b1:
     // for( char i=0;i<setting->len;i++)
-    // [6] if((byte) main::i#2<*((byte*)(const struct Setting[]) settings)) goto main::@2 -- vbuxx_lt__deref_pbuc1_then_la1 
+    // [6] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2 -- vbuxx_lt__deref_pbuc1_then_la1 
     cpx settings
     bcc __b2
     // main::@return
@@ -442,7 +442,7 @@ main: {
     // [8] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting[]) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuaa=(_deref_pptc2)_derefidx_vbuaa 
+    // [9] *((const word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuaa=(_deref_pptc2)_derefidx_vbuaa 
     tay
     lda settings+OFFSET_STRUCT_SETTING_BUF
     sta.z $fe

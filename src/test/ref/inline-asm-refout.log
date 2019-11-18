@@ -5,7 +5,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  *((const byte*) main::SCREEN+(number) $28) ← *((const byte[]) table + (number) 0)
+  *((const byte*) main::SCREEN+(number) $28) ← *((const byte*) table + (number) 0)
   asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -26,10 +26,10 @@ SYMBOL TABLE SSA
 (void()) main()
 (label) main::@return
 (const byte*) main::SCREEN = (byte*)(number) $400
-(const byte[]) table = (string) "cml!"z
+(const byte*) table = (string) "cml!"z
 
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN+(number) $28) ← *((const byte[]) table + (number) 0)
-Adding number conversion cast (unumber) $28 in *((const byte*) main::SCREEN+(number) $28) ← *((const byte[]) table + (unumber)(number) 0)
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN+(number) $28) ← *((const byte*) table + (number) 0)
+Adding number conversion cast (unumber) $28 in *((const byte*) main::SCREEN+(number) $28) ← *((const byte*) table + (unumber)(number) 0)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -38,7 +38,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero table in [0] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte[]) table + (byte) 0)
+Simplifying expression containing zero table in [0] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte*) table + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -67,7 +67,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte[]) table)
+  [4] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte*) table)
   asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -107,7 +107,7 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte[]) table) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte*) table) -- _deref_pbuc1=_deref_pbuc2 
     lda table
     sta SCREEN+$28
     // asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
@@ -128,7 +128,7 @@ main: {
   table: .text "cml!"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte[]) table) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte*) table) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  } always clobbers reg byte a reg byte x 
 
 REGISTER UPLIFT SCOPES
@@ -163,7 +163,7 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte[]) table) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte*) table) -- _deref_pbuc1=_deref_pbuc2 
     lda table
     sta SCREEN+$28
     // asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
@@ -209,7 +209,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (const byte*) main::SCREEN = (byte*) 1024
-(const byte[]) table = (string) "cml!"z
+(const byte*) table = (string) "cml!"z
 
 
 
@@ -233,7 +233,7 @@ Score: 32
 main: {
     .label SCREEN = $400
     // *(SCREEN+40) = table[0]
-    // [4] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte[]) table) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const byte*) main::SCREEN+(byte) $28) ← *((const byte*) table) -- _deref_pbuc1=_deref_pbuc2 
     lda table
     sta SCREEN+$28
     // asm

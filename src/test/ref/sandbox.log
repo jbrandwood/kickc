@@ -7,6 +7,7 @@ Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
 Culled Empty Block (label) @7
+Culled Empty Block (label) @8
 Culled Empty Block (label) append::@4
 Culled Empty Block (label) append::@5
 Culled Empty Block (label) append::@6
@@ -72,7 +73,7 @@ Culled Empty Block (label) main::@25
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@8
+  to:@14
 
 (word()) divr16u((word) divr16u::dividend , (word) divr16u::divisor , (word) divr16u::rem)
 divr16u: scope:[divr16u]  from div16u
@@ -169,9 +170,6 @@ div16u::@return: scope:[div16u]  from div16u::@2
   (word) div16u::return#1 ← (word) div16u::return#3
   return 
   to:@return
-@8: scope:[]  from @begin
-  (byte[$64]) strTemp ← { fill( $64, 0) }
-  to:@14
 
 (word()) append((byte*) append::dst , (word) append::value , (word) append::sub)
 append: scope:[append]  from utoa::@5 utoa::@6 utoa::@7 utoa::@8
@@ -341,7 +339,6 @@ myprintf: scope:[myprintf]  from main::@18 main::@6
   (byte) myprintf::bTrailing#0 ← (byte) 0
   (byte) myprintf::b#0 ← (byte) 0
   (byte) myprintf::digit#0 ← (byte) 0
-  (byte[6]) myprintf::buf6 ← { fill( 6, 0) }
   (word) myprintf::w#0 ← (word) 0
   to:myprintf::@1
 myprintf::@1: scope:[myprintf]  from myprintf myprintf::@66
@@ -578,7 +575,7 @@ myprintf::@9: scope:[myprintf]  from myprintf::@59
   (byte) myprintf::bTrailing#11 ← phi( myprintf::@59/(byte) myprintf::bTrailing#13 )
   (word) myprintf::w#5 ← phi( myprintf::@59/(word) myprintf::w#9 )
   (word) utoa::value#4 ← (word) myprintf::w#5
-  (byte*) utoa::dst#5 ← (byte[6]) myprintf::buf6
+  (byte*) utoa::dst#5 ← (const byte*) myprintf::buf6
   call utoa 
   to:myprintf::@87
 myprintf::@87: scope:[myprintf]  from myprintf::@9
@@ -747,7 +744,7 @@ myprintf::@21: scope:[myprintf]  from myprintf::@22 myprintf::@87
   (byte) myprintf::bDigits#11 ← phi( myprintf::@22/(byte) myprintf::bDigits#15 myprintf::@87/(byte) myprintf::bDigits#16 )
   (byte) myprintf::bTrailing#5 ← phi( myprintf::@22/(byte) myprintf::bTrailing#7 myprintf::@87/(byte) myprintf::bTrailing#8 )
   (byte) myprintf::b#17 ← phi( myprintf::@22/(byte) myprintf::b#5 myprintf::@87/(byte) myprintf::b#2 )
-  (bool~) myprintf::$34 ← *((byte[6]) myprintf::buf6 + (byte) myprintf::b#17) != (number) 0
+  (bool~) myprintf::$34 ← *((const byte*) myprintf::buf6 + (byte) myprintf::b#17) != (number) 0
   if((bool~) myprintf::$34) goto myprintf::@22
   to:myprintf::@23
 myprintf::@22: scope:[myprintf]  from myprintf::@21
@@ -910,7 +907,7 @@ myprintf::@41: scope:[myprintf]  from myprintf::@40
   (byte) myprintf::bLen#13 ← phi( myprintf::@40/(byte) myprintf::bLen#24 )
   (byte*) myprintf::dst#7 ← phi( myprintf::@40/(byte*) myprintf::dst#18 )
   (byte) myprintf::digit#4 ← phi( myprintf::@40/(byte) myprintf::digit#3 )
-  *((byte*) myprintf::dst#7 + (byte) myprintf::bLen#13) ← *((byte[6]) myprintf::buf6 + (byte) myprintf::digit#4)
+  *((byte*) myprintf::dst#7 + (byte) myprintf::bLen#13) ← *((const byte*) myprintf::buf6 + (byte) myprintf::digit#4)
   (byte) myprintf::bLen#5 ← ++ (byte) myprintf::bLen#13
   (byte) myprintf::digit#2 ← ++ (byte) myprintf::digit#4
   to:myprintf::@40
@@ -1208,7 +1205,7 @@ main::@6: scope:[main]  from main::@4
   (word~) main::$4 ← (word~) main::$3 << (number) 8
   (word~) main::$5 ← ((word)) *((const byte*) TIMELO)
   (word~) main::$6 ← (word~) main::$4 + (word~) main::$5
-  (byte*) myprintf::dst#0 ← (byte[$64]) strTemp
+  (byte*) myprintf::dst#0 ← (const byte*) strTemp
   (byte*) myprintf::str#1 ← (const string) main::str
   (word) myprintf::w1#0 ← (word) main::u#6
   (word) myprintf::w2#0 ← (word) main::v#3
@@ -1269,7 +1266,7 @@ main::@18: scope:[main]  from main::@16
   (word~) main::$13 ← (word~) main::$12 << (number) 8
   (word~) main::$14 ← ((word)) *((const byte*) TIMELO)
   (word~) main::$15 ← (word~) main::$13 + (word~) main::$14
-  (byte*) myprintf::dst#1 ← (byte[$64]) strTemp
+  (byte*) myprintf::dst#1 ← (const byte*) strTemp
   (byte*) myprintf::str#2 ← (const string) main::str1
   (word) myprintf::w1#1 ← (word) main::u#9
   (word) myprintf::w2#1 ← (word) main::v#4
@@ -1293,7 +1290,7 @@ main::@return: scope:[main]  from main::@15
   (signed word) main::return#1 ← (signed word) main::return#3
   return 
   to:@return
-@14: scope:[]  from @8
+@14: scope:[]  from @begin
   call main 
   (signed word) main::return#2 ← (signed word) main::return#1
   to:@15
@@ -1304,7 +1301,6 @@ main::@return: scope:[main]  from main::@15
 SYMBOL TABLE SSA
 (label) @14
 (label) @15
-(label) @8
 (label) @begin
 (label) @end
 (void()) Print()
@@ -1970,7 +1966,7 @@ SYMBOL TABLE SSA
 (byte) myprintf::bTrailing#7
 (byte) myprintf::bTrailing#8
 (byte) myprintf::bTrailing#9
-(byte[6]) myprintf::buf6
+(const byte*) myprintf::buf6 = { fill( 6, 0) }
 (byte) myprintf::digit
 (byte) myprintf::digit#0
 (byte) myprintf::digit#1
@@ -2287,7 +2283,7 @@ SYMBOL TABLE SSA
 (word) myprintf::w3#7
 (word) myprintf::w3#8
 (word) myprintf::w3#9
-(byte[$64]) strTemp
+(const byte*) strTemp = { fill( $64, 0) }
 (void()) utoa((word) utoa::value , (byte*) utoa::dst)
 (bool~) utoa::$0
 (bool~) utoa::$1
@@ -2469,7 +2465,7 @@ Adding number conversion cast (unumber) myprintf::$29 in (byte) myprintf::bLeadZ
   (byte) myprintf::b#16 ← phi( myprintf::@14/(byte) myprintf::b#29 myprintf::@15/(byte) myprintf::b#30 )
   (unumber~) myprintf::$31 ← phi( myprintf::@14/(byte~) myprintf::$30 myprintf::@15/(number~) myprintf::$29 )
 Adding number conversion cast (unumber) myprintf::$32 in (number~) myprintf::$32 ← (unumber~) myprintf::$31 + (byte) myprintf::b#16
-Adding number conversion cast (unumber) 0 in (bool~) myprintf::$34 ← *((byte[6]) myprintf::buf6 + (byte) myprintf::b#17) != (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) myprintf::$34 ← *((const byte*) myprintf::buf6 + (byte) myprintf::b#17) != (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) myprintf::$35 ← (byte) myprintf::bTrailing#3 == (number) 0
 Adding number conversion cast (unumber) 0 in (byte) myprintf::digit#1 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) myprintf::$40 ← (byte) myprintf::bLeadZero#3 == (number) 0
@@ -2753,10 +2749,10 @@ Inferred type updated to byte in (unumber~) myprintf::$32 ← (byte~) myprintf::
 Inferred type updated to word in (unumber~) div10::$1 ← (word~) div10::$0 + (byte) 1
 Inversing boolean not [9] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [8] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
 Inversing boolean not [17] (bool~) divr16u::$9 ← (word) divr16u::rem#5 < (word) divr16u::divisor#1 from [16] (bool~) divr16u::$8 ← (word) divr16u::rem#5 >= (word) divr16u::divisor#1
-Inversing boolean not [154] (bool~) myprintf::$2 ← (byte) myprintf::bFormat#3 == (byte) 0 from [153] (bool~) myprintf::$1 ← (byte) myprintf::bFormat#3 != (byte) 0
-Inversing boolean not [161] (bool~) myprintf::$52 ← (byte) myprintf::b#7 != (byte) '%' from [160] (bool~) myprintf::$51 ← (byte) myprintf::b#7 == (byte) '%'
-Inversing boolean not [165] (bool~) myprintf::$4 ← (byte) myprintf::b#8 != (byte) '0' from [164] (bool~) myprintf::$3 ← (byte) myprintf::b#8 == (byte) '0'
-Inversing boolean not [179] (bool~) myprintf::$11 ← (byte) myprintf::b#10 != (byte) '-' from [178] (bool~) myprintf::$10 ← (byte) myprintf::b#10 == (byte) '-'
+Inversing boolean not [152] (bool~) myprintf::$2 ← (byte) myprintf::bFormat#3 == (byte) 0 from [151] (bool~) myprintf::$1 ← (byte) myprintf::bFormat#3 != (byte) 0
+Inversing boolean not [159] (bool~) myprintf::$52 ← (byte) myprintf::b#7 != (byte) '%' from [158] (bool~) myprintf::$51 ← (byte) myprintf::b#7 == (byte) '%'
+Inversing boolean not [163] (bool~) myprintf::$4 ← (byte) myprintf::b#8 != (byte) '0' from [162] (bool~) myprintf::$3 ← (byte) myprintf::b#8 == (byte) '0'
+Inversing boolean not [177] (bool~) myprintf::$11 ← (byte) myprintf::b#10 != (byte) '-' from [176] (bool~) myprintf::$10 ← (byte) myprintf::b#10 == (byte) '-'
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#6 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#7 
@@ -3033,54 +3029,50 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) divr16u::$4 [10] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
 Simple Condition (bool~) divr16u::$9 [18] if((word) divr16u::rem#5<(word) divr16u::divisor#0) goto divr16u::@3
 Simple Condition (bool~) divr16u::$11 [25] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
-Simple Condition (bool~) append::$0 [52] if((word) append::value#5>=(word) append::sub#6) goto append::@2
-Simple Condition (bool~) myprintf::$0 [150] if(*((byte*) myprintf::str#10)!=(byte) 0) goto myprintf::@2
-Simple Condition (bool~) myprintf::$2 [155] if((byte) myprintf::bFormat#10==(byte) 0) goto myprintf::@4
-Simple Condition (bool~) myprintf::$52 [162] if((byte) myprintf::b#1!=(byte) '%') goto myprintf::@67
-Simple Condition (bool~) myprintf::$4 [166] if((byte) myprintf::b#1!=(byte) '0') goto myprintf::@5
-Simple Condition (bool~) myprintf::$11 [180] if((byte) myprintf::b#1!=(byte) '-') goto myprintf::@7
-Simple Condition (bool~) myprintf::$12 [186] if((byte) myprintf::b#1==(byte) 'c') goto myprintf::@8
-Simple Condition (bool~) myprintf::$13 [195] if((byte) myprintf::b#1==(byte) 'd') goto myprintf::@9
-Simple Condition (bool~) myprintf::$21 [214] if((byte) myprintf::b#15<(byte) $a) goto myprintf::@11
-Simple Condition (bool~) myprintf::$28 [227] if((byte) myprintf::b#16<(byte) $a) goto myprintf::@14
-Simple Condition (bool~) myprintf::$34 [238] if(*((byte[6]) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@22
-Simple Condition (bool~) myprintf::$39 [251] if((byte) myprintf::bDigits#12>(byte) myprintf::b#17) goto myprintf::@30
-Simple Condition (bool~) myprintf::$40 [254] if((byte) myprintf::bLeadZero#11==(byte) 0) goto myprintf::@32
-Simple Condition (bool~) myprintf::$44 [265] if((byte) myprintf::digit#3<(byte) myprintf::b#17) goto myprintf::@41
-Simple Condition (bool~) myprintf::$49 [278] if((byte) myprintf::bDigits#10>(byte) myprintf::b#17) goto myprintf::@49
-Simple Condition (bool~) myprintf::$53 [297] if((byte) myprintf::bArg#10==(byte) 0) goto myprintf::@68
-Simple Condition (bool~) myprintf::$54 [302] if((byte) myprintf::bArg#10==(byte) 1) goto myprintf::@69
-Simple Condition (bool~) main::$0 [341] if(*((const byte*) zp1)<(byte) $a) goto main::@2
-Simple Condition (bool~) main::$1 [351] if(*((const byte*) zp2)<(byte) $c8) goto main::@5
-Simple Condition (bool~) main::$9 [380] if(*((const byte*) zp1)<(byte) $a) goto main::@14
-Simple Condition (bool~) main::$10 [388] if(*((const byte*) zp2)<(byte) $c8) goto main::@17
+Simple Condition (bool~) append::$0 [51] if((word) append::value#5>=(word) append::sub#6) goto append::@2
+Simple Condition (bool~) myprintf::$0 [148] if(*((byte*) myprintf::str#10)!=(byte) 0) goto myprintf::@2
+Simple Condition (bool~) myprintf::$2 [153] if((byte) myprintf::bFormat#10==(byte) 0) goto myprintf::@4
+Simple Condition (bool~) myprintf::$52 [160] if((byte) myprintf::b#1!=(byte) '%') goto myprintf::@67
+Simple Condition (bool~) myprintf::$4 [164] if((byte) myprintf::b#1!=(byte) '0') goto myprintf::@5
+Simple Condition (bool~) myprintf::$11 [178] if((byte) myprintf::b#1!=(byte) '-') goto myprintf::@7
+Simple Condition (bool~) myprintf::$12 [184] if((byte) myprintf::b#1==(byte) 'c') goto myprintf::@8
+Simple Condition (bool~) myprintf::$13 [193] if((byte) myprintf::b#1==(byte) 'd') goto myprintf::@9
+Simple Condition (bool~) myprintf::$21 [212] if((byte) myprintf::b#15<(byte) $a) goto myprintf::@11
+Simple Condition (bool~) myprintf::$28 [225] if((byte) myprintf::b#16<(byte) $a) goto myprintf::@14
+Simple Condition (bool~) myprintf::$34 [236] if(*((const byte*) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@22
+Simple Condition (bool~) myprintf::$39 [249] if((byte) myprintf::bDigits#12>(byte) myprintf::b#17) goto myprintf::@30
+Simple Condition (bool~) myprintf::$40 [252] if((byte) myprintf::bLeadZero#11==(byte) 0) goto myprintf::@32
+Simple Condition (bool~) myprintf::$44 [263] if((byte) myprintf::digit#3<(byte) myprintf::b#17) goto myprintf::@41
+Simple Condition (bool~) myprintf::$49 [276] if((byte) myprintf::bDigits#10>(byte) myprintf::b#17) goto myprintf::@49
+Simple Condition (bool~) myprintf::$53 [295] if((byte) myprintf::bArg#10==(byte) 0) goto myprintf::@68
+Simple Condition (bool~) myprintf::$54 [300] if((byte) myprintf::bArg#10==(byte) 1) goto myprintf::@69
+Simple Condition (bool~) main::$0 [339] if(*((const byte*) zp1)<(byte) $a) goto main::@2
+Simple Condition (bool~) main::$1 [349] if(*((const byte*) zp2)<(byte) $c8) goto main::@5
+Simple Condition (bool~) main::$9 [378] if(*((const byte*) zp1)<(byte) $a) goto main::@14
+Simple Condition (bool~) main::$10 [386] if(*((const byte*) zp2)<(byte) $c8) goto main::@17
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [66] (bool~) utoa::$3 ← ! (bool~) utoa::$2
-Rewriting || if()-condition to two if()s [65] (bool~) utoa::$2 ← (bool~) utoa::$0 || (bool~) utoa::$1
-Rewriting ! if()-condition to reversed if() [72] (bool~) utoa::$7 ← ! (bool~) utoa::$6
-Rewriting || if()-condition to two if()s [71] (bool~) utoa::$6 ← (bool~) utoa::$4 || (bool~) utoa::$5
-Rewriting ! if()-condition to reversed if() [89] (bool~) utoa::$11 ← ! (bool~) utoa::$10
-Rewriting || if()-condition to two if()s [88] (bool~) utoa::$10 ← (bool~) utoa::$8 || (bool~) utoa::$9
-Rewriting ! if()-condition to reversed if() [106] (bool~) utoa::$15 ← ! (bool~) utoa::$14
-Rewriting || if()-condition to two if()s [105] (bool~) utoa::$14 ← (bool~) utoa::$12 || (bool~) utoa::$13
-Rewriting ! if()-condition to reversed if() [171] (bool~) myprintf::$8 ← ! (bool~) myprintf::$7
-Rewriting && if()-condition to two if()s [170] (bool~) myprintf::$7 ← (bool~) myprintf::$5 && (bool~) myprintf::$6
-Rewriting ! if()-condition to reversed if() [206] (bool~) myprintf::$17 ← ! (bool~) myprintf::$16
-Rewriting || if()-condition to two if()s [205] (bool~) myprintf::$16 ← (bool~) myprintf::$14 || (bool~) myprintf::$15
-Rewriting ! if()-condition to reversed if() [245] (bool~) myprintf::$38 ← ! (bool~) myprintf::$37
-Rewriting && if()-condition to two if()s [244] (bool~) myprintf::$37 ← (bool~) myprintf::$35 && (bool~) myprintf::$36
-Rewriting ! if()-condition to reversed if() [274] (bool~) myprintf::$48 ← ! (bool~) myprintf::$47
-Rewriting && if()-condition to two if()s [273] (bool~) myprintf::$47 ← (bool~) myprintf::$45 && (bool~) myprintf::$46
-Rewriting ! if()-condition to reversed if() [289] (bool~) myprintf::$58 ← ! (bool~) myprintf::$57
-Rewriting && if()-condition to two if()s [288] (bool~) myprintf::$57 ← (bool~) myprintf::$55 && (bool~) myprintf::$56
+Rewriting ! if()-condition to reversed if() [65] (bool~) utoa::$3 ← ! (bool~) utoa::$2
+Rewriting || if()-condition to two if()s [64] (bool~) utoa::$2 ← (bool~) utoa::$0 || (bool~) utoa::$1
+Rewriting ! if()-condition to reversed if() [71] (bool~) utoa::$7 ← ! (bool~) utoa::$6
+Rewriting || if()-condition to two if()s [70] (bool~) utoa::$6 ← (bool~) utoa::$4 || (bool~) utoa::$5
+Rewriting ! if()-condition to reversed if() [88] (bool~) utoa::$11 ← ! (bool~) utoa::$10
+Rewriting || if()-condition to two if()s [87] (bool~) utoa::$10 ← (bool~) utoa::$8 || (bool~) utoa::$9
+Rewriting ! if()-condition to reversed if() [105] (bool~) utoa::$15 ← ! (bool~) utoa::$14
+Rewriting || if()-condition to two if()s [104] (bool~) utoa::$14 ← (bool~) utoa::$12 || (bool~) utoa::$13
+Rewriting ! if()-condition to reversed if() [169] (bool~) myprintf::$8 ← ! (bool~) myprintf::$7
+Rewriting && if()-condition to two if()s [168] (bool~) myprintf::$7 ← (bool~) myprintf::$5 && (bool~) myprintf::$6
+Rewriting ! if()-condition to reversed if() [204] (bool~) myprintf::$17 ← ! (bool~) myprintf::$16
+Rewriting || if()-condition to two if()s [203] (bool~) myprintf::$16 ← (bool~) myprintf::$14 || (bool~) myprintf::$15
+Rewriting ! if()-condition to reversed if() [243] (bool~) myprintf::$38 ← ! (bool~) myprintf::$37
+Rewriting && if()-condition to two if()s [242] (bool~) myprintf::$37 ← (bool~) myprintf::$35 && (bool~) myprintf::$36
+Rewriting ! if()-condition to reversed if() [272] (bool~) myprintf::$48 ← ! (bool~) myprintf::$47
+Rewriting && if()-condition to two if()s [271] (bool~) myprintf::$47 ← (bool~) myprintf::$45 && (bool~) myprintf::$46
+Rewriting ! if()-condition to reversed if() [287] (bool~) myprintf::$58 ← ! (bool~) myprintf::$57
+Rewriting && if()-condition to two if()s [286] (bool~) myprintf::$57 ← (bool~) myprintf::$55 && (bool~) myprintf::$56
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant right-side identified [47] (byte[$64]) strTemp ← { fill( $64, 0) }
-Constant right-side identified [146] (byte[6]) myprintf::buf6 ← { fill( 6, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
 Constant (const word) divr16u::rem#3 = 0
-Constant (const byte[$64]) strTemp = { fill( $64, 0) }
 Constant (const byte) utoa::bStarted#0 = 0
 Constant (const word) append::sub#0 = $2710
 Constant (const byte) utoa::bStarted#1 = 1
@@ -3098,10 +3090,10 @@ Constant (const byte) myprintf::bDigits#0 = 0
 Constant (const byte) myprintf::bTrailing#0 = 0
 Constant (const byte) myprintf::b#0 = 0
 Constant (const byte) myprintf::digit#0 = 0
-Constant (const byte[6]) myprintf::buf6 = { fill( 6, 0) }
 Constant (const word) myprintf::w#0 = 0
 Constant (const byte) myprintf::bLeadZero#1 = 1
 Constant (const byte) myprintf::bTrailing#1 = 1
+Constant (const byte*) utoa::dst#5 = myprintf::buf6
 Constant (const byte) myprintf::b#2 = 1
 Constant (const byte) myprintf::$23 = '0'
 Constant (const byte) myprintf::$22 = $57
@@ -3120,17 +3112,15 @@ Constant (const word) main::v#0 = 0
 Constant (const word) main::u#1 = $6e85
 Constant (const word) main::u#2 = $6e85
 Constant (const word) div16u::divisor#0 = $a
+Constant (const byte*) myprintf::dst#0 = strTemp
 Constant (const byte*) myprintf::str#1 = main::str
 Constant (const signed word) main::return#0 = 0
+Constant (const byte*) myprintf::dst#1 = strTemp
 Constant (const byte*) myprintf::str#2 = main::str1
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::divisor#0 = div16u::divisor#0
-Constant (const byte*) utoa::dst#5 = myprintf::buf6
-Constant (const byte*) myprintf::dst#0 = strTemp
-Constant (const byte*) myprintf::dst#1 = strTemp
-Constant (const signed word) main::return#2 = main::return#0
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) append::dst#0 = utoa::dst#5
+Constant (const signed word) main::return#2 = main::return#0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [23] divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value [25] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
@@ -3222,30 +3212,30 @@ Inlining constant with var siblings (const byte) myprintf::bFormat#14
 Inlining constant with var siblings (const byte) myprintf::bLeadZero#2
 Inlining constant with var siblings (const byte) myprintf::bDigits#31
 Inlining constant with var siblings (const byte) myprintf::bTrailing#2
-Inlining constant with var siblings (const byte*) myprintf::str#1
-Inlining constant with var siblings (const byte*) myprintf::str#2
 Inlining constant with var siblings (const byte*) myprintf::dst#0
+Inlining constant with var siblings (const byte*) myprintf::str#1
 Inlining constant with var siblings (const byte*) myprintf::dst#1
+Inlining constant with var siblings (const byte*) myprintf::str#2
 Inlining constant with var siblings (const word) main::v#0
 Inlining constant with var siblings (const word) main::u#1
 Inlining constant with var siblings (const word) main::u#2
 Constant inlined divr16u::rem#3 = (byte) 0
-Constant inlined utoa::dst#5 = (const byte[6]) myprintf::buf6
+Constant inlined utoa::dst#5 = (const byte*) myprintf::buf6
 Constant inlined utoa::bStarted#3 = (byte) 1
 Constant inlined myprintf::$23 = (byte) '0'
-Constant inlined append::dst#0 = (const byte[6]) myprintf::buf6
+Constant inlined append::dst#0 = (const byte*) myprintf::buf6
 Constant inlined divr16u::i#0 = (byte) 0
 Constant inlined myprintf::$29 = (byte) $57
-Constant inlined utoa::dst#0 = ++(const byte[6]) myprintf::buf6
+Constant inlined utoa::dst#0 = ++(const byte*) myprintf::buf6
 Constant inlined myprintf::str#1 = (const string) main::str
 Constant inlined myprintf::bLeadZero#0 = (byte) 0
 Constant inlined myprintf::str#2 = (const string) main::str1
 Constant inlined myprintf::bLeadZero#1 = (byte) 1
 Constant inlined myprintf::digit#1 = (byte) 0
 Constant inlined myprintf::bDigits#31 = (byte) 1
-Constant inlined myprintf::dst#1 = (const byte[$64]) strTemp
+Constant inlined myprintf::dst#1 = (const byte*) strTemp
 Constant inlined divr16u::quotient#0 = (byte) 0
-Constant inlined myprintf::dst#0 = (const byte[$64]) strTemp
+Constant inlined myprintf::dst#0 = (const byte*) strTemp
 Constant inlined myprintf::bArg#0 = (byte) 0
 Constant inlined myprintf::bLeadZero#2 = (byte) 0
 Constant inlined divr16u::divisor#0 = (const word) div16u::divisor#0
@@ -3274,7 +3264,7 @@ Constant inlined myprintf::$41 = (byte) '0'
 Constant inlined utoa::bStarted#0 = (byte) 0
 Constant inlined myprintf::bTrailing#1 = (byte) 1
 Successful SSA optimization Pass2ConstantInlining
-Identical Phi Values (byte*) myprintf::dst#22 (const byte[$64]) strTemp
+Identical Phi Values (byte*) myprintf::dst#22 (const byte*) strTemp
 Successful SSA optimization Pass2IdenticalPhiElimination
 Added new block during phi lifting divr16u::@8(between divr16u::@3 and divr16u::@1)
 Added new block during phi lifting divr16u::@9(between divr16u::@1 and divr16u::@2)
@@ -3294,7 +3284,6 @@ Added new block during phi lifting myprintf::@98(between myprintf::@48 and mypri
 Added new block during phi lifting myprintf::@99(between myprintf::@89 and myprintf::@54)
 Added new block during phi lifting myprintf::@100(between myprintf::@67 and myprintf::@74)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @8
 Adding NOP phi() at start of @14
 Adding NOP phi() at start of @15
 Adding NOP phi() at start of @end
@@ -3312,141 +3301,140 @@ Adding NOP phi() at start of myprintf::@32
 Adding NOP phi() at start of utoa
 Adding NOP phi() at start of append::@3
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to myprintf:31 Print:33 div10:39 myprintf:59 Print:61 div16u:67 
-Calls in [div16u] to divr16u:73 
-Calls in [myprintf] to utoa:176 
-Calls in [utoa] to append:295 append:305 append:315 append:323 
+Calls in [] to main:2 
+Calls in [main] to myprintf:30 Print:32 div10:38 myprintf:58 Print:60 div16u:66 
+Calls in [div16u] to divr16u:72 
+Calls in [myprintf] to utoa:175 
+Calls in [utoa] to append:294 append:304 append:314 append:322 
 
 Created 63 initial phi equivalence classes
-Coalesced [11] main::v#19 ← main::v#12
-Coalesced [19] main::v#21 ← main::v#10
-Coalesced [28] myprintf::w1#50 ← myprintf::w1#1
-Coalesced [29] myprintf::w2#50 ← myprintf::w2#1
-Coalesced [30] myprintf::w3#50 ← myprintf::w3#1
-Coalesced [36] main::u#22 ← main::u#4
-Coalesced (already) [37] main::v#20 ← main::v#13
-Coalesced [43] main::v#22 ← main::v#2
-Coalesced [47] main::v#17 ← main::v#12
-Coalesced [56] myprintf::w1#51 ← myprintf::w1#0
-Coalesced [57] myprintf::w2#51 ← myprintf::w2#0
-Coalesced [58] myprintf::w3#51 ← myprintf::w3#0
-Coalesced [64] main::u#21 ← main::u#3
-Coalesced (already) [65] main::v#16 ← main::v#11
-Coalesced [71] main::v#18 ← main::v#1
-Coalesced [77] divr16u::dividend#8 ← divr16u::dividend#1
-Coalesced [84] divr16u::rem#12 ← divr16u::rem#1
-Coalesced [91] divr16u::rem#14 ← divr16u::rem#2
-Coalesced [92] divr16u::return#6 ← divr16u::quotient#2
-Coalesced [98] divr16u::rem#10 ← divr16u::rem#9
-Coalesced [99] divr16u::dividend#9 ← divr16u::dividend#0
-Coalesced [100] divr16u::quotient#9 ← divr16u::return#0
-Coalesced [101] divr16u::i#7 ← divr16u::i#1
-Coalesced [102] divr16u::rem#13 ← divr16u::rem#5
-Coalesced [103] divr16u::return#5 ← divr16u::quotient#1
-Coalesced [104] divr16u::rem#11 ← divr16u::rem#0
-Coalesced [108] myprintf::str#51 ← myprintf::str#6
-Coalesced [116] myprintf::bFormat#25 ← myprintf::bFormat#10
-Coalesced [117] myprintf::bLen#62 ← myprintf::bLen#10
-Coalesced [118] myprintf::bArg#55 ← myprintf::bArg#10
-Coalesced [119] myprintf::w#52 ← myprintf::w#10
-Coalesced [120] myprintf::bTrailing#52 ← myprintf::bTrailing#11
-Coalesced [121] myprintf::bDigits#55 ← myprintf::bDigits#16
-Coalesced [124] myprintf::str#52 ← myprintf::str#0
-Coalesced (already) [125] myprintf::bFormat#21 ← myprintf::bFormat#5
-Coalesced (already) [126] myprintf::bLen#56 ← myprintf::bLen#28
-Coalesced (already) [127] myprintf::bArg#49 ← myprintf::bArg#11
-Coalesced (already) [128] myprintf::w#46 ← myprintf::w#18
-Coalesced (already) [129] myprintf::bTrailing#48 ← myprintf::bTrailing#24
-Coalesced (already) [130] myprintf::bDigits#50 ← myprintf::bDigits#28
-Coalesced [131] myprintf::bLeadZero#48 ← myprintf::bLeadZero#20
-Coalesced (already) [135] myprintf::bFormat#23 ← myprintf::bFormat#10
-Coalesced (already) [136] myprintf::bLen#59 ← myprintf::bLen#10
-Coalesced (already) [137] myprintf::bArg#52 ← myprintf::bArg#10
-Coalesced (already) [138] myprintf::w#49 ← myprintf::w#10
-Coalesced (already) [139] myprintf::bDigits#53 ← myprintf::bDigits#16
-Coalesced (already) [140] myprintf::bLeadZero#51 ← myprintf::bLeadZero#11
-Coalesced [145] myprintf::bLen#74 ← myprintf::bLen#10
-Coalesced [146] myprintf::bDigits#65 ← myprintf::bDigits#16
-Coalesced (already) [148] myprintf::bLen#57 ← myprintf::bLen#36
-Coalesced (already) [149] myprintf::bArg#50 ← myprintf::bArg#10
-Coalesced (already) [150] myprintf::w#47 ← myprintf::w#10
-Coalesced (already) [151] myprintf::bTrailing#49 ← myprintf::bTrailing#11
-Coalesced (already) [152] myprintf::bDigits#51 ← myprintf::bDigits#29
-Coalesced (already) [153] myprintf::bLeadZero#49 ← myprintf::bLeadZero#11
-Coalesced [171] myprintf::bLen#71 ← myprintf::bLen#3
-Coalesced (already) [172] myprintf::bDigits#62 ← myprintf::bDigits#16
-Coalesced [182] myprintf::bDigits#58 ← myprintf::bDigits#16
-Coalesced [183] myprintf::bLen#65 ← myprintf::bLen#10
-Coalesced [186] myprintf::bLen#64 ← myprintf::bLen#12
-Coalesced [187] myprintf::bDigits#57 ← myprintf::bDigits#12
-Coalesced [189] myprintf::bLen#67 ← myprintf::bLen#32
-Coalesced [194] myprintf::bDigits#60 ← myprintf::bDigits#18
-Coalesced [195] myprintf::bLen#69 ← myprintf::bLen#13
-Coalesced (already) [198] myprintf::bLen#73 ← myprintf::bLen#14
-Coalesced (already) [199] myprintf::bDigits#64 ← myprintf::bDigits#10
-Coalesced [203] myprintf::bDigits#61 ← myprintf::bDigits#3
-Coalesced [204] myprintf::bLen#70 ← myprintf::bLen#6
-Coalesced (already) [205] myprintf::bLen#72 ← myprintf::bLen#13
-Coalesced (already) [206] myprintf::bDigits#63 ← myprintf::bDigits#18
-Coalesced [210] myprintf::digit#5 ← myprintf::digit#2
-Coalesced [211] myprintf::bLen#68 ← myprintf::bLen#5
-Coalesced [218] myprintf::bDigits#59 ← myprintf::bDigits#2
-Coalesced [219] myprintf::bLen#66 ← myprintf::bLen#4
-Coalesced (already) [221] myprintf::bLen#63 ← myprintf::bLen#10
-Coalesced (already) [222] myprintf::bDigits#56 ← myprintf::bDigits#16
-Coalesced [224] myprintf::b#38 ← myprintf::b#5
-Coalesced [228] myprintf::bLen#75 ← myprintf::bLen#1
-Coalesced (already) [229] myprintf::bDigits#66 ← myprintf::bDigits#16
-Coalesced (already) [231] myprintf::bFormat#22 ← myprintf::bFormat#10
-Coalesced (already) [232] myprintf::bLen#58 ← myprintf::bLen#10
-Coalesced (already) [233] myprintf::bArg#51 ← myprintf::bArg#10
-Coalesced (already) [234] myprintf::w#48 ← myprintf::w#10
-Coalesced (already) [235] myprintf::bTrailing#50 ← myprintf::bTrailing#11
-Coalesced [236] myprintf::bDigits#52 ← myprintf::bDigits#1
-Coalesced (already) [237] myprintf::bLeadZero#50 ← myprintf::bLeadZero#11
-Not coalescing [241] myprintf::w#55 ← myprintf::w3#8
-Coalesced (already) [244] myprintf::bLen#60 ← myprintf::bLen#10
-Coalesced [245] myprintf::bArg#53 ← myprintf::bArg#1
-Coalesced [246] myprintf::w#50 ← myprintf::w#22
-Not coalescing [247] myprintf::w#54 ← myprintf::w2#8
-Not coalescing [248] myprintf::w#53 ← myprintf::w1#7
-Coalesced [252] myprintf::b#40 ← myprintf::b#6
-Coalesced (already) [256] myprintf::bFormat#24 ← myprintf::bFormat#10
-Coalesced [257] myprintf::bLen#61 ← myprintf::bLen#7
-Coalesced (already) [258] myprintf::bArg#54 ← myprintf::bArg#10
-Coalesced (already) [259] myprintf::w#51 ← myprintf::w#10
-Coalesced (already) [260] myprintf::bTrailing#51 ← myprintf::bTrailing#11
-Coalesced (already) [261] myprintf::bDigits#54 ← myprintf::bDigits#16
-Coalesced (already) [262] myprintf::bLeadZero#52 ← myprintf::bLeadZero#11
-Coalesced [263] myprintf::b#39 ← myprintf::b#1
-Coalesced [266] utoa::value#14 ← utoa::value#4
-Coalesced [270] utoa::bStarted#8 ← utoa::bStarted#5
-Coalesced [271] utoa::value#16 ← utoa::value#6
-Coalesced [272] utoa::dst#19 ← utoa::dst#16
-Coalesced [276] utoa::bStarted#9 ← utoa::bStarted#6
-Coalesced [277] utoa::value#19 ← utoa::value#11
-Coalesced [278] utoa::dst#22 ← utoa::dst#10
-Coalesced [282] utoa::value#21 ← utoa::value#10
-Coalesced [283] utoa::dst#24 ← utoa::dst#13
-Coalesced [293] append::dst#9 ← append::dst#3
-Coalesced [294] append::value#12 ← append::value#4
-Coalesced [299] utoa::value#20 ← utoa::value#3
-Coalesced [300] utoa::dst#23 ← utoa::dst#4
-Coalesced [303] append::dst#8 ← append::dst#2
-Coalesced [304] append::value#11 ← append::value#3
-Coalesced [309] utoa::value#18 ← utoa::value#2
-Coalesced [310] utoa::dst#21 ← utoa::dst#2
-Coalesced [313] append::dst#7 ← append::dst#1
-Coalesced [314] append::value#10 ← append::value#2
-Coalesced [319] utoa::value#17 ← utoa::value#1
-Coalesced [320] utoa::dst#20 ← utoa::dst#1
-Coalesced [322] append::value#9 ← append::value#1
-Coalesced [326] utoa::value#15 ← utoa::value#0
-Coalesced [329] append::value#13 ← append::value#8
-Coalesced [336] append::value#14 ← append::value#0
+Coalesced [10] main::v#19 ← main::v#12
+Coalesced [18] main::v#21 ← main::v#10
+Coalesced [27] myprintf::w1#50 ← myprintf::w1#1
+Coalesced [28] myprintf::w2#50 ← myprintf::w2#1
+Coalesced [29] myprintf::w3#50 ← myprintf::w3#1
+Coalesced [35] main::u#22 ← main::u#4
+Coalesced (already) [36] main::v#20 ← main::v#13
+Coalesced [42] main::v#22 ← main::v#2
+Coalesced [46] main::v#17 ← main::v#12
+Coalesced [55] myprintf::w1#51 ← myprintf::w1#0
+Coalesced [56] myprintf::w2#51 ← myprintf::w2#0
+Coalesced [57] myprintf::w3#51 ← myprintf::w3#0
+Coalesced [63] main::u#21 ← main::u#3
+Coalesced (already) [64] main::v#16 ← main::v#11
+Coalesced [70] main::v#18 ← main::v#1
+Coalesced [76] divr16u::dividend#8 ← divr16u::dividend#1
+Coalesced [83] divr16u::rem#12 ← divr16u::rem#1
+Coalesced [90] divr16u::rem#14 ← divr16u::rem#2
+Coalesced [91] divr16u::return#6 ← divr16u::quotient#2
+Coalesced [97] divr16u::rem#10 ← divr16u::rem#9
+Coalesced [98] divr16u::dividend#9 ← divr16u::dividend#0
+Coalesced [99] divr16u::quotient#9 ← divr16u::return#0
+Coalesced [100] divr16u::i#7 ← divr16u::i#1
+Coalesced [101] divr16u::rem#13 ← divr16u::rem#5
+Coalesced [102] divr16u::return#5 ← divr16u::quotient#1
+Coalesced [103] divr16u::rem#11 ← divr16u::rem#0
+Coalesced [107] myprintf::str#51 ← myprintf::str#6
+Coalesced [115] myprintf::bFormat#25 ← myprintf::bFormat#10
+Coalesced [116] myprintf::bLen#62 ← myprintf::bLen#10
+Coalesced [117] myprintf::bArg#55 ← myprintf::bArg#10
+Coalesced [118] myprintf::w#52 ← myprintf::w#10
+Coalesced [119] myprintf::bTrailing#52 ← myprintf::bTrailing#11
+Coalesced [120] myprintf::bDigits#55 ← myprintf::bDigits#16
+Coalesced [123] myprintf::str#52 ← myprintf::str#0
+Coalesced (already) [124] myprintf::bFormat#21 ← myprintf::bFormat#5
+Coalesced (already) [125] myprintf::bLen#56 ← myprintf::bLen#28
+Coalesced (already) [126] myprintf::bArg#49 ← myprintf::bArg#11
+Coalesced (already) [127] myprintf::w#46 ← myprintf::w#18
+Coalesced (already) [128] myprintf::bTrailing#48 ← myprintf::bTrailing#24
+Coalesced (already) [129] myprintf::bDigits#50 ← myprintf::bDigits#28
+Coalesced [130] myprintf::bLeadZero#48 ← myprintf::bLeadZero#20
+Coalesced (already) [134] myprintf::bFormat#23 ← myprintf::bFormat#10
+Coalesced (already) [135] myprintf::bLen#59 ← myprintf::bLen#10
+Coalesced (already) [136] myprintf::bArg#52 ← myprintf::bArg#10
+Coalesced (already) [137] myprintf::w#49 ← myprintf::w#10
+Coalesced (already) [138] myprintf::bDigits#53 ← myprintf::bDigits#16
+Coalesced (already) [139] myprintf::bLeadZero#51 ← myprintf::bLeadZero#11
+Coalesced [144] myprintf::bLen#74 ← myprintf::bLen#10
+Coalesced [145] myprintf::bDigits#65 ← myprintf::bDigits#16
+Coalesced (already) [147] myprintf::bLen#57 ← myprintf::bLen#36
+Coalesced (already) [148] myprintf::bArg#50 ← myprintf::bArg#10
+Coalesced (already) [149] myprintf::w#47 ← myprintf::w#10
+Coalesced (already) [150] myprintf::bTrailing#49 ← myprintf::bTrailing#11
+Coalesced (already) [151] myprintf::bDigits#51 ← myprintf::bDigits#29
+Coalesced (already) [152] myprintf::bLeadZero#49 ← myprintf::bLeadZero#11
+Coalesced [170] myprintf::bLen#71 ← myprintf::bLen#3
+Coalesced (already) [171] myprintf::bDigits#62 ← myprintf::bDigits#16
+Coalesced [181] myprintf::bDigits#58 ← myprintf::bDigits#16
+Coalesced [182] myprintf::bLen#65 ← myprintf::bLen#10
+Coalesced [185] myprintf::bLen#64 ← myprintf::bLen#12
+Coalesced [186] myprintf::bDigits#57 ← myprintf::bDigits#12
+Coalesced [188] myprintf::bLen#67 ← myprintf::bLen#32
+Coalesced [193] myprintf::bDigits#60 ← myprintf::bDigits#18
+Coalesced [194] myprintf::bLen#69 ← myprintf::bLen#13
+Coalesced (already) [197] myprintf::bLen#73 ← myprintf::bLen#14
+Coalesced (already) [198] myprintf::bDigits#64 ← myprintf::bDigits#10
+Coalesced [202] myprintf::bDigits#61 ← myprintf::bDigits#3
+Coalesced [203] myprintf::bLen#70 ← myprintf::bLen#6
+Coalesced (already) [204] myprintf::bLen#72 ← myprintf::bLen#13
+Coalesced (already) [205] myprintf::bDigits#63 ← myprintf::bDigits#18
+Coalesced [209] myprintf::digit#5 ← myprintf::digit#2
+Coalesced [210] myprintf::bLen#68 ← myprintf::bLen#5
+Coalesced [217] myprintf::bDigits#59 ← myprintf::bDigits#2
+Coalesced [218] myprintf::bLen#66 ← myprintf::bLen#4
+Coalesced (already) [220] myprintf::bLen#63 ← myprintf::bLen#10
+Coalesced (already) [221] myprintf::bDigits#56 ← myprintf::bDigits#16
+Coalesced [223] myprintf::b#38 ← myprintf::b#5
+Coalesced [227] myprintf::bLen#75 ← myprintf::bLen#1
+Coalesced (already) [228] myprintf::bDigits#66 ← myprintf::bDigits#16
+Coalesced (already) [230] myprintf::bFormat#22 ← myprintf::bFormat#10
+Coalesced (already) [231] myprintf::bLen#58 ← myprintf::bLen#10
+Coalesced (already) [232] myprintf::bArg#51 ← myprintf::bArg#10
+Coalesced (already) [233] myprintf::w#48 ← myprintf::w#10
+Coalesced (already) [234] myprintf::bTrailing#50 ← myprintf::bTrailing#11
+Coalesced [235] myprintf::bDigits#52 ← myprintf::bDigits#1
+Coalesced (already) [236] myprintf::bLeadZero#50 ← myprintf::bLeadZero#11
+Not coalescing [240] myprintf::w#55 ← myprintf::w3#8
+Coalesced (already) [243] myprintf::bLen#60 ← myprintf::bLen#10
+Coalesced [244] myprintf::bArg#53 ← myprintf::bArg#1
+Coalesced [245] myprintf::w#50 ← myprintf::w#22
+Not coalescing [246] myprintf::w#54 ← myprintf::w2#8
+Not coalescing [247] myprintf::w#53 ← myprintf::w1#7
+Coalesced [251] myprintf::b#40 ← myprintf::b#6
+Coalesced (already) [255] myprintf::bFormat#24 ← myprintf::bFormat#10
+Coalesced [256] myprintf::bLen#61 ← myprintf::bLen#7
+Coalesced (already) [257] myprintf::bArg#54 ← myprintf::bArg#10
+Coalesced (already) [258] myprintf::w#51 ← myprintf::w#10
+Coalesced (already) [259] myprintf::bTrailing#51 ← myprintf::bTrailing#11
+Coalesced (already) [260] myprintf::bDigits#54 ← myprintf::bDigits#16
+Coalesced (already) [261] myprintf::bLeadZero#52 ← myprintf::bLeadZero#11
+Coalesced [262] myprintf::b#39 ← myprintf::b#1
+Coalesced [265] utoa::value#14 ← utoa::value#4
+Coalesced [269] utoa::bStarted#8 ← utoa::bStarted#5
+Coalesced [270] utoa::value#16 ← utoa::value#6
+Coalesced [271] utoa::dst#19 ← utoa::dst#16
+Coalesced [275] utoa::bStarted#9 ← utoa::bStarted#6
+Coalesced [276] utoa::value#19 ← utoa::value#11
+Coalesced [277] utoa::dst#22 ← utoa::dst#10
+Coalesced [281] utoa::value#21 ← utoa::value#10
+Coalesced [282] utoa::dst#24 ← utoa::dst#13
+Coalesced [292] append::dst#9 ← append::dst#3
+Coalesced [293] append::value#12 ← append::value#4
+Coalesced [298] utoa::value#20 ← utoa::value#3
+Coalesced [299] utoa::dst#23 ← utoa::dst#4
+Coalesced [302] append::dst#8 ← append::dst#2
+Coalesced [303] append::value#11 ← append::value#3
+Coalesced [308] utoa::value#18 ← utoa::value#2
+Coalesced [309] utoa::dst#21 ← utoa::dst#2
+Coalesced [312] append::dst#7 ← append::dst#1
+Coalesced [313] append::value#10 ← append::value#2
+Coalesced [318] utoa::value#17 ← utoa::value#1
+Coalesced [319] utoa::dst#20 ← utoa::dst#1
+Coalesced [321] append::value#9 ← append::value#1
+Coalesced [325] utoa::value#15 ← utoa::value#0
+Coalesced [328] append::value#13 ← append::value#8
+Coalesced [335] append::value#14 ← append::value#0
 Coalesced down to 30 phi equivalence classes
-Culled Empty Block (label) @8
 Culled Empty Block (label) @15
 Culled Empty Block (label) main::@15
 Culled Empty Block (label) divr16u::@6
@@ -3714,7 +3702,7 @@ myprintf::@1: scope:[myprintf]  from myprintf myprintf::@32
   [80] if(*((byte*) myprintf::str#10)!=(byte) 0) goto myprintf::@2
   to:myprintf::@3
 myprintf::@3: scope:[myprintf]  from myprintf::@1
-  [81] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte) 0
+  [81] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte) 0
   to:myprintf::@return
 myprintf::@return: scope:[myprintf]  from myprintf::@3
   [82] return 
@@ -3773,7 +3761,7 @@ myprintf::@10: scope:[myprintf]  from myprintf::@31
 myprintf::@11: scope:[myprintf]  from myprintf::@10 myprintf::@31
   [101] (byte~) myprintf::$24 ← phi( myprintf::@10/(byte) '0' myprintf::@31/(byte) $57 )
   [102] (byte~) myprintf::$25 ← (byte~) myprintf::$24 + (byte) myprintf::b#15
-  [103] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$25
+  [103] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$25
   [104] (byte) myprintf::bLen#11 ← ++ (byte) myprintf::bLen#10
   [105] (byte~) myprintf::$26 ← (byte)(word) myprintf::w#10
   [106] (byte) myprintf::b#16 ← (byte~) myprintf::$26 & (byte) $f
@@ -3785,7 +3773,7 @@ myprintf::@12: scope:[myprintf]  from myprintf::@11
 myprintf::@13: scope:[myprintf]  from myprintf::@11 myprintf::@12
   [109] (byte~) myprintf::$31 ← phi( myprintf::@12/(byte) '0' myprintf::@11/(byte) $57 )
   [110] (byte~) myprintf::$32 ← (byte~) myprintf::$31 + (byte) myprintf::b#16
-  [111] *((const byte[$64]) strTemp + (byte) myprintf::bLen#11) ← (byte~) myprintf::$32
+  [111] *((const byte*) strTemp + (byte) myprintf::bLen#11) ← (byte~) myprintf::$32
   [112] (byte) myprintf::bLen#3 ← ++ (byte) myprintf::bLen#11
   to:myprintf::@27
 myprintf::@9: scope:[myprintf]  from myprintf::@29
@@ -3794,7 +3782,7 @@ myprintf::@9: scope:[myprintf]  from myprintf::@29
   to:myprintf::@14
 myprintf::@14: scope:[myprintf]  from myprintf::@15 myprintf::@9
   [115] (byte) myprintf::b#17 ← phi( myprintf::@15/(byte) myprintf::b#5 myprintf::@9/(byte) 1 )
-  [116] if(*((const byte[6]) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15
+  [116] if(*((const byte*) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15
   to:myprintf::@16
 myprintf::@16: scope:[myprintf]  from myprintf::@14
   [117] if((byte) myprintf::bTrailing#11!=(byte) 0) goto myprintf::@17
@@ -3828,12 +3816,12 @@ myprintf::@25: scope:[myprintf]  from myprintf::@26 myprintf::@46
   [127] if((byte) myprintf::bDigits#10>(byte) myprintf::b#17) goto myprintf::@26
   to:myprintf::@27
 myprintf::@26: scope:[myprintf]  from myprintf::@25
-  [128] *((const byte[$64]) strTemp + (byte) myprintf::bLen#14) ← (byte) ' '
+  [128] *((const byte*) strTemp + (byte) myprintf::bLen#14) ← (byte) ' '
   [129] (byte) myprintf::bLen#6 ← ++ (byte) myprintf::bLen#14
   [130] (byte) myprintf::bDigits#3 ← -- (byte) myprintf::bDigits#10
   to:myprintf::@25
 myprintf::@23: scope:[myprintf]  from myprintf::@22
-  [131] *((const byte[$64]) strTemp + (byte) myprintf::bLen#13) ← *((const byte[6]) myprintf::buf6 + (byte) myprintf::digit#3)
+  [131] *((const byte*) strTemp + (byte) myprintf::bLen#13) ← *((const byte*) myprintf::buf6 + (byte) myprintf::digit#3)
   [132] (byte) myprintf::bLen#5 ← ++ (byte) myprintf::bLen#13
   [133] (byte) myprintf::digit#2 ← ++ (byte) myprintf::digit#3
   to:myprintf::@22
@@ -3845,7 +3833,7 @@ myprintf::@20: scope:[myprintf]  from myprintf::@19
   to:myprintf::@21
 myprintf::@21: scope:[myprintf]  from myprintf::@19 myprintf::@20
   [136] (byte~) myprintf::$43 ← phi( myprintf::@20/(byte) ' ' myprintf::@19/(byte) '0' )
-  [137] *((const byte[$64]) strTemp + (byte) myprintf::bLen#12) ← (byte~) myprintf::$43
+  [137] *((const byte*) strTemp + (byte) myprintf::bLen#12) ← (byte~) myprintf::$43
   [138] (byte) myprintf::bLen#4 ← ++ (byte) myprintf::bLen#12
   [139] (byte) myprintf::bDigits#2 ← -- (byte) myprintf::bDigits#12
   to:myprintf::@18
@@ -3854,7 +3842,7 @@ myprintf::@15: scope:[myprintf]  from myprintf::@14
   to:myprintf::@14
 myprintf::@8: scope:[myprintf]  from myprintf::@7
   [141] (byte~) myprintf::$50 ← (byte)(word) myprintf::w#10
-  [142] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$50
+  [142] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$50
   [143] (byte) myprintf::bLen#1 ← ++ (byte) myprintf::bLen#10
   to:myprintf::@27
 myprintf::@28: scope:[myprintf]  from myprintf::@43
@@ -3893,7 +3881,7 @@ myprintf::@42: scope:[myprintf]  from myprintf::@47
   to:myprintf::@37
 myprintf::@37: scope:[myprintf]  from myprintf::@33 myprintf::@42 myprintf::@47
   [156] (byte) myprintf::b#25 ← phi( myprintf::@33/(byte) myprintf::b#1 myprintf::@42/(byte) myprintf::b#6 )
-  [157] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte) myprintf::b#25
+  [157] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte) myprintf::b#25
   [158] (byte) myprintf::bLen#7 ← ++ (byte) myprintf::bLen#10
   to:myprintf::@32
 
@@ -3905,7 +3893,7 @@ utoa::@13: scope:[utoa]  from utoa
   [160] if((word) utoa::value#4>=(word) $2710) goto utoa::@5
   to:utoa::@1
 utoa::@1: scope:[utoa]  from utoa::@13 utoa::@9
-  [161] (byte*) utoa::dst#16 ← phi( utoa::@13/(const byte[6]) myprintf::buf6 utoa::@9/++(const byte[6]) myprintf::buf6 )
+  [161] (byte*) utoa::dst#16 ← phi( utoa::@13/(const byte*) myprintf::buf6 utoa::@9/++(const byte*) myprintf::buf6 )
   [161] (word) utoa::value#6 ← phi( utoa::@13/(word) utoa::value#4 utoa::@9/(word) utoa::value#0 )
   [161] (byte) utoa::bStarted#5 ← phi( utoa::@13/(byte) 0 utoa::@9/(byte) 1 )
   [162] if((byte) utoa::bStarted#5==(byte) 1) goto utoa::@6
@@ -3986,7 +3974,7 @@ utoa::@9: scope:[utoa]  from utoa::@5
 append: scope:[append]  from utoa::@5 utoa::@6 utoa::@7 utoa::@8
   [199] (word) append::sub#6 ← phi( utoa::@5/(word) $2710 utoa::@6/(word) $3e8 utoa::@7/(byte) $64 utoa::@8/(byte) $a )
   [199] (word) append::value#8 ← phi( utoa::@5/(word) append::value#1 utoa::@6/(word) append::value#2 utoa::@7/(word) append::value#3 utoa::@8/(word) append::value#4 )
-  [199] (byte*) append::dst#4 ← phi( utoa::@5/(const byte[6]) myprintf::buf6 utoa::@6/(byte*) append::dst#1 utoa::@7/(byte*) append::dst#2 utoa::@8/(byte*) append::dst#3 )
+  [199] (byte*) append::dst#4 ← phi( utoa::@5/(const byte*) myprintf::buf6 utoa::@6/(byte*) append::dst#1 utoa::@7/(byte*) append::dst#2 utoa::@8/(byte*) append::dst#3 )
   [200] *((byte*) append::dst#4) ← (byte) '0'
   to:append::@1
 append::@1: scope:[append]  from append append::@2
@@ -5006,7 +4994,7 @@ myprintf: {
     jmp __b3
     // myprintf::@3
   __b3:
-    // [81] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [81] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z bLen
     sta strTemp,y
@@ -5191,7 +5179,7 @@ myprintf: {
     clc
     adc.z b_2
     sta.z __25
-    // [103] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$25 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [103] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$25 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __25
     ldy.z bLen
     sta strTemp,y
@@ -5234,7 +5222,7 @@ myprintf: {
     clc
     adc.z b_3
     sta.z __32
-    // [111] *((const byte[$64]) strTemp + (byte) myprintf::bLen#11) ← (byte~) myprintf::$32 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [111] *((const byte*) strTemp + (byte) myprintf::bLen#11) ← (byte~) myprintf::$32 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __32
     ldy.z bLen_1
     sta strTemp,y
@@ -5262,7 +5250,7 @@ myprintf: {
     jmp __b14
     // myprintf::@14
   __b14:
-    // [116] if(*((const byte[6]) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
+    // [116] if(*((const byte*) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
     ldy.z b_1
     lda buf6,y
     cmp #0
@@ -5346,7 +5334,7 @@ myprintf: {
     jmp __b27_from___b25
     // myprintf::@26
   __b26:
-    // [128] *((const byte[$64]) strTemp + (byte) myprintf::bLen#14) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [128] *((const byte*) strTemp + (byte) myprintf::bLen#14) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z bLen
     sta strTemp,y
@@ -5357,7 +5345,7 @@ myprintf: {
     jmp __b25_from___b26
     // myprintf::@23
   __b23:
-    // [131] *((const byte[$64]) strTemp + (byte) myprintf::bLen#13) ← *((const byte[6]) myprintf::buf6 + (byte) myprintf::digit#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [131] *((const byte*) strTemp + (byte) myprintf::bLen#13) ← *((const byte*) myprintf::buf6 + (byte) myprintf::digit#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z digit
     lda buf6,y
     ldy.z bLen
@@ -5396,7 +5384,7 @@ myprintf: {
     jmp __b21
     // myprintf::@21
   __b21:
-    // [137] *((const byte[$64]) strTemp + (byte) myprintf::bLen#12) ← (byte~) myprintf::$43 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [137] *((const byte*) strTemp + (byte) myprintf::bLen#12) ← (byte~) myprintf::$43 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __43
     ldy.z bLen
     sta strTemp,y
@@ -5418,7 +5406,7 @@ myprintf: {
     // [141] (byte~) myprintf::$50 ← (byte)(word) myprintf::w#10 -- vbuz1=_byte_vwuz2 
     lda.z w
     sta.z __50
-    // [142] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$50 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [142] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$50 -- pbuc1_derefidx_vbuz1=vbuz2 
     // "switch" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/170
     lda.z __50
     ldy.z bLen
@@ -5547,7 +5535,7 @@ myprintf: {
     jmp __b37
     // myprintf::@37
   __b37:
-    // [157] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte) myprintf::b#25 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [157] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte) myprintf::b#25 -- pbuc1_derefidx_vbuz1=vbuz2 
     // swap 0x41 / 0x61 when in lower case mode
     lda.z b
     ldy.z bLen
@@ -5580,7 +5568,7 @@ utoa: {
   !:
     // [161] phi from utoa::@13 to utoa::@1 [phi:utoa::@13->utoa::@1]
   __b1_from___b13:
-    // [161] phi (byte*) utoa::dst#16 = (const byte[6]) myprintf::buf6 [phi:utoa::@13->utoa::@1#0] -- pbuz1=pbuc1 
+    // [161] phi (byte*) utoa::dst#16 = (const byte*) myprintf::buf6 [phi:utoa::@13->utoa::@1#0] -- pbuz1=pbuc1 
     lda #<myprintf.buf6
     sta.z dst
     lda #>myprintf.buf6
@@ -5844,7 +5832,7 @@ utoa: {
     lda #>$2710
     sta.z append.sub+1
     // [199] phi (word) append::value#8 = (word) append::value#1 [phi:utoa::@5->append#1] -- register_copy 
-    // [199] phi (byte*) append::dst#4 = (const byte[6]) myprintf::buf6 [phi:utoa::@5->append#2] -- pbuz1=pbuc1 
+    // [199] phi (byte*) append::dst#4 = (const byte*) myprintf::buf6 [phi:utoa::@5->append#2] -- pbuz1=pbuc1 
     lda #<myprintf.buf6
     sta.z append.dst
     lda #>myprintf.buf6
@@ -5865,7 +5853,7 @@ utoa: {
     sta.z value+1
     // [161] phi from utoa::@9 to utoa::@1 [phi:utoa::@9->utoa::@1]
   __b1_from___b9:
-    // [161] phi (byte*) utoa::dst#16 = ++(const byte[6]) myprintf::buf6 [phi:utoa::@9->utoa::@1#0] -- pbuz1=pbuc1 
+    // [161] phi (byte*) utoa::dst#16 = ++(const byte*) myprintf::buf6 [phi:utoa::@9->utoa::@1#0] -- pbuz1=pbuc1 
     lda #<myprintf.buf6+1
     sta.z dst
     lda #>myprintf.buf6+1
@@ -6088,7 +6076,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:32 [ myprin
 Removing always clobbered register reg byte y as potential for zp[1]:32 [ myprintf::bDigits#12 myprintf::bDigits#16 myprintf::bDigits#28 myprintf::bDigits#29 myprintf::bDigits#1 myprintf::bDigits#18 myprintf::bDigits#10 myprintf::bDigits#2 myprintf::bDigits#3 ]
 Removing always clobbered register reg byte a as potential for zp[1]:28 [ myprintf::bLeadZero#11 myprintf::bLeadZero#20 ]
 Removing always clobbered register reg byte y as potential for zp[1]:28 [ myprintf::bLeadZero#11 myprintf::bLeadZero#20 ]
-Statement [81] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte) 0 [ ] ( main:2::myprintf:23 [ main::u#17 main::v#13 ] main:2::myprintf:44 [ main::u#15 main::v#11 ] ) always clobbers reg byte a 
+Statement [81] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte) 0 [ ] ( main:2::myprintf:23 [ main::u#17 main::v#13 ] main:2::myprintf:44 [ main::u#15 main::v#11 ] ) always clobbers reg byte a 
 Statement [83] (byte) myprintf::b#1 ← *((byte*) myprintf::str#10) [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bFormat#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#1 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bFormat#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#1 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bFormat#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#1 ] ) always clobbers reg byte a reg byte y 
 Statement [96] (byte~) myprintf::$18 ← (byte)(word) myprintf::w#10 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$18 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$18 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$18 ] ) always clobbers reg byte a 
 Statement [97] (byte~) myprintf::$19 ← (byte~) myprintf::$18 >> (byte) 4 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$19 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$19 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$19 ] ) always clobbers reg byte a 
@@ -6097,10 +6085,10 @@ Statement [105] (byte~) myprintf::$26 ← (byte)(word) myprintf::w#10 [ myprintf
 Removing always clobbered register reg byte a as potential for zp[1]:78 [ myprintf::bLen#11 ]
 Statement [110] (byte~) myprintf::$32 ← (byte~) myprintf::$31 + (byte) myprintf::b#16 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::bLen#11 myprintf::$32 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::bLen#11 myprintf::$32 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::bLen#11 myprintf::$32 ] ) always clobbers reg byte a 
 Statement [113] (word) utoa::value#4 ← (word) myprintf::w#10 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 utoa::value#4 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 utoa::value#4 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 utoa::value#4 ] ) always clobbers reg byte a 
-Statement [116] if(*((const byte[6]) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] ) always clobbers reg byte a 
+Statement [116] if(*((const byte*) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:31 [ myprintf::b#17 myprintf::b#5 ]
-Statement [128] *((const byte[$64]) strTemp + (byte) myprintf::bLen#14) ← (byte) ' ' [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] ) always clobbers reg byte a 
-Statement [131] *((const byte[$64]) strTemp + (byte) myprintf::bLen#13) ← *((const byte[6]) myprintf::buf6 + (byte) myprintf::digit#3) [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] ) always clobbers reg byte a 
+Statement [128] *((const byte*) strTemp + (byte) myprintf::bLen#14) ← (byte) ' ' [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] ) always clobbers reg byte a 
+Statement [131] *((const byte*) strTemp + (byte) myprintf::bLen#13) ← *((const byte*) myprintf::buf6 + (byte) myprintf::digit#3) [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:34 [ myprintf::digit#3 myprintf::digit#2 ]
 Statement [141] (byte~) myprintf::$50 ← (byte)(word) myprintf::w#10 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$50 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$50 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$50 ] ) always clobbers reg byte a 
 Statement [148] (word) myprintf::w#55 ← (word) myprintf::w3#8 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#55 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#55 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#55 ] ) always clobbers reg byte a 
@@ -6186,7 +6174,7 @@ Statement [69] if((word) divr16u::rem#5<(const word) div16u::divisor#0) goto div
 Statement [71] (word) divr16u::rem#2 ← (word) divr16u::rem#5 - (const word) div16u::divisor#0 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::div16u:50::divr16u:55 [ main::u#15 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
 Statement asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  } always clobbers reg byte a reg byte x reg byte y 
 Statement [80] if(*((byte*) myprintf::str#10)!=(byte) 0) goto myprintf::@2 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bFormat#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bFormat#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bFormat#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 ] ) always clobbers reg byte a reg byte y 
-Statement [81] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte) 0 [ ] ( main:2::myprintf:23 [ main::u#17 main::v#13 ] main:2::myprintf:44 [ main::u#15 main::v#11 ] ) always clobbers reg byte a 
+Statement [81] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte) 0 [ ] ( main:2::myprintf:23 [ main::u#17 main::v#13 ] main:2::myprintf:44 [ main::u#15 main::v#11 ] ) always clobbers reg byte a 
 Statement [83] (byte) myprintf::b#1 ← *((byte*) myprintf::str#10) [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bFormat#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#1 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bFormat#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#1 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bFormat#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#1 ] ) always clobbers reg byte a reg byte y 
 Statement [96] (byte~) myprintf::$18 ← (byte)(word) myprintf::w#10 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$18 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$18 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$18 ] ) always clobbers reg byte a 
 Statement [97] (byte~) myprintf::$19 ← (byte~) myprintf::$18 >> (byte) 4 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$19 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$19 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$19 ] ) always clobbers reg byte a 
@@ -6194,9 +6182,9 @@ Statement [102] (byte~) myprintf::$25 ← (byte~) myprintf::$24 + (byte) myprint
 Statement [105] (byte~) myprintf::$26 ← (byte)(word) myprintf::w#10 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::bLen#11 myprintf::$26 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::bLen#11 myprintf::$26 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::bLen#11 myprintf::$26 ] ) always clobbers reg byte a 
 Statement [110] (byte~) myprintf::$32 ← (byte~) myprintf::$31 + (byte) myprintf::b#16 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::bLen#11 myprintf::$32 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::bLen#11 myprintf::$32 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::bLen#11 myprintf::$32 ] ) always clobbers reg byte a 
 Statement [113] (word) utoa::value#4 ← (word) myprintf::w#10 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 utoa::value#4 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 utoa::value#4 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 utoa::value#4 ] ) always clobbers reg byte a 
-Statement [116] if(*((const byte[6]) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] ) always clobbers reg byte a 
-Statement [128] *((const byte[$64]) strTemp + (byte) myprintf::bLen#14) ← (byte) ' ' [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] ) always clobbers reg byte a 
-Statement [131] *((const byte[$64]) strTemp + (byte) myprintf::bLen#13) ← *((const byte[6]) myprintf::buf6 + (byte) myprintf::digit#3) [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] ) always clobbers reg byte a 
+Statement [116] if(*((const byte*) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::b#17 ] ) always clobbers reg byte a 
+Statement [128] *((const byte*) strTemp + (byte) myprintf::bLen#14) ← (byte) ' ' [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#14 myprintf::bDigits#10 myprintf::b#17 ] ) always clobbers reg byte a 
+Statement [131] *((const byte*) strTemp + (byte) myprintf::bLen#13) ← *((const byte*) myprintf::buf6 + (byte) myprintf::digit#3) [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bLeadZero#11 myprintf::bLen#13 myprintf::bDigits#18 myprintf::b#17 myprintf::digit#3 ] ) always clobbers reg byte a 
 Statement [141] (byte~) myprintf::$50 ← (byte)(word) myprintf::w#10 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$50 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$50 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#10 myprintf::bTrailing#11 myprintf::bDigits#16 myprintf::bLeadZero#11 myprintf::$50 ] ) always clobbers reg byte a 
 Statement [148] (word) myprintf::w#55 ← (word) myprintf::w3#8 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#55 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#55 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#55 ] ) always clobbers reg byte a 
 Statement [151] (word) myprintf::w#54 ← (word) myprintf::w2#8 [ myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#54 ] ( main:2::myprintf:23 [ main::u#17 main::v#13 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#54 ] main:2::myprintf:44 [ main::u#15 main::v#11 myprintf::w1#7 myprintf::w2#8 myprintf::w3#8 myprintf::str#10 myprintf::bLen#10 myprintf::bArg#10 myprintf::w#54 ] ) always clobbers reg byte a 
@@ -6921,7 +6909,7 @@ myprintf: {
     jmp __b3
     // myprintf::@3
   __b3:
-    // [81] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [81] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #0
     ldy.z bLen
     sta strTemp,y
@@ -7091,7 +7079,7 @@ myprintf: {
     stx.z $ff
     clc
     adc.z $ff
-    // [103] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$25 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [103] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$25 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z bLen
     sta strTemp,y
     // [104] (byte) myprintf::bLen#11 ← ++ (byte) myprintf::bLen#10 -- vbuyy=_inc_vbuz1 
@@ -7126,7 +7114,7 @@ myprintf: {
     stx.z $ff
     clc
     adc.z $ff
-    // [111] *((const byte[$64]) strTemp + (byte) myprintf::bLen#11) ← (byte~) myprintf::$32 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [111] *((const byte*) strTemp + (byte) myprintf::bLen#11) ← (byte~) myprintf::$32 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta strTemp,y
     // [112] (byte) myprintf::bLen#3 ← ++ (byte) myprintf::bLen#11 -- vbuz1=_inc_vbuyy 
     iny
@@ -7151,7 +7139,7 @@ myprintf: {
     jmp __b14
     // myprintf::@14
   __b14:
-    // [116] if(*((const byte[6]) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
+    // [116] if(*((const byte*) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
     ldy.z b
     lda buf6,y
     cmp #0
@@ -7233,7 +7221,7 @@ myprintf: {
     jmp __b27_from___b25
     // myprintf::@26
   __b26:
-    // [128] *((const byte[$64]) strTemp + (byte) myprintf::bLen#14) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [128] *((const byte*) strTemp + (byte) myprintf::bLen#14) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z bLen
     sta strTemp,y
@@ -7244,7 +7232,7 @@ myprintf: {
     jmp __b25_from___b26
     // myprintf::@23
   __b23:
-    // [131] *((const byte[$64]) strTemp + (byte) myprintf::bLen#13) ← *((const byte[6]) myprintf::buf6 + (byte) myprintf::digit#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
+    // [131] *((const byte*) strTemp + (byte) myprintf::bLen#13) ← *((const byte*) myprintf::buf6 + (byte) myprintf::digit#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
     lda buf6,x
     ldy.z bLen
     sta strTemp,y
@@ -7280,7 +7268,7 @@ myprintf: {
     jmp __b21
     // myprintf::@21
   __b21:
-    // [137] *((const byte[$64]) strTemp + (byte) myprintf::bLen#12) ← (byte~) myprintf::$43 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [137] *((const byte*) strTemp + (byte) myprintf::bLen#12) ← (byte~) myprintf::$43 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z bLen
     sta strTemp,y
     // [138] (byte) myprintf::bLen#4 ← ++ (byte) myprintf::bLen#12 -- vbuz1=_inc_vbuz1 
@@ -7300,7 +7288,7 @@ myprintf: {
   __b8:
     // [141] (byte~) myprintf::$50 ← (byte)(word) myprintf::w#10 -- vbuaa=_byte_vwuz1 
     lda.z w
-    // [142] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$50 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [142] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$50 -- pbuc1_derefidx_vbuz1=vbuaa 
     // "switch" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/170
     ldy.z bLen
     sta strTemp,y
@@ -7424,7 +7412,7 @@ myprintf: {
     jmp __b37
     // myprintf::@37
   __b37:
-    // [157] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte) myprintf::b#25 -- pbuc1_derefidx_vbuz1=vbuxx 
+    // [157] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte) myprintf::b#25 -- pbuc1_derefidx_vbuz1=vbuxx 
     // swap 0x41 / 0x61 when in lower case mode
     ldy.z bLen
     txa
@@ -7453,7 +7441,7 @@ utoa: {
   !:
     // [161] phi from utoa::@13 to utoa::@1 [phi:utoa::@13->utoa::@1]
   __b1_from___b13:
-    // [161] phi (byte*) utoa::dst#16 = (const byte[6]) myprintf::buf6 [phi:utoa::@13->utoa::@1#0] -- pbuz1=pbuc1 
+    // [161] phi (byte*) utoa::dst#16 = (const byte*) myprintf::buf6 [phi:utoa::@13->utoa::@1#0] -- pbuz1=pbuc1 
     lda #<myprintf.buf6
     sta.z dst
     lda #>myprintf.buf6
@@ -7653,7 +7641,7 @@ utoa: {
     lda #>$2710
     sta.z append.sub+1
     // [199] phi (word) append::value#8 = (word) append::value#1 [phi:utoa::@5->append#1] -- register_copy 
-    // [199] phi (byte*) append::dst#4 = (const byte[6]) myprintf::buf6 [phi:utoa::@5->append#2] -- pbuz1=pbuc1 
+    // [199] phi (byte*) append::dst#4 = (const byte*) myprintf::buf6 [phi:utoa::@5->append#2] -- pbuz1=pbuc1 
     lda #<myprintf.buf6
     sta.z append.dst
     lda #>myprintf.buf6
@@ -7666,7 +7654,7 @@ utoa: {
     // [198] (word) utoa::value#0 ← (word) append::return#2
     // [161] phi from utoa::@9 to utoa::@1 [phi:utoa::@9->utoa::@1]
   __b1_from___b9:
-    // [161] phi (byte*) utoa::dst#16 = ++(const byte[6]) myprintf::buf6 [phi:utoa::@9->utoa::@1#0] -- pbuz1=pbuc1 
+    // [161] phi (byte*) utoa::dst#16 = ++(const byte*) myprintf::buf6 [phi:utoa::@9->utoa::@1#0] -- pbuz1=pbuc1 
     lda #<myprintf.buf6+1
     sta.z dst
     lda #>myprintf.buf6+1
@@ -8344,7 +8332,7 @@ FINAL SYMBOL TABLE
 (byte) myprintf::bTrailing
 (byte) myprintf::bTrailing#11 bTrailing zp[1]:10 10.246376811594203
 (byte) myprintf::bTrailing#24 bTrailing zp[1]:10 252.5
-(const byte[6]) myprintf::buf6 = { fill( 6, 0) }
+(const byte*) myprintf::buf6 = { fill( 6, 0) }
 (byte) myprintf::digit
 (byte) myprintf::digit#2 reg byte x 2002.0
 (byte) myprintf::digit#3 reg byte x 1001.0
@@ -8373,7 +8361,7 @@ FINAL SYMBOL TABLE
 (word) myprintf::w3#0 w3 zp[2]:23 7.333333333333333
 (word) myprintf::w3#1 w3 zp[2]:23 7.333333333333333
 (word) myprintf::w3#8 w3 zp[2]:23 1.5569620253164556
-(const byte[$64]) strTemp = { fill( $64, 0) }
+(const byte*) strTemp = { fill( $64, 0) }
 (void()) utoa((word) utoa::value , (byte*) utoa::dst)
 (byte~) utoa::$16 reg byte a 4.0
 (byte~) utoa::$17 reg byte a 4.0
@@ -8928,7 +8916,7 @@ myprintf: {
     bne __b2
     // myprintf::@3
     // dst[bLen] = 0
-    // [81] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [81] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
     tya
     ldy.z bLen
     sta strTemp,y
@@ -9091,7 +9079,7 @@ myprintf: {
     clc
     adc.z $ff
     // dst[bLen++] = (b < 10 ? '0' : 0x57) + b
-    // [103] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$25 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [103] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$25 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z bLen
     sta strTemp,y
     // dst[bLen++] = (b < 10 ? '0' : 0x57) + b;
@@ -9126,7 +9114,7 @@ myprintf: {
     clc
     adc.z $ff
     // dst[bLen++] = (b < 10 ? '0' : 0x57) + b
-    // [111] *((const byte[$64]) strTemp + (byte) myprintf::bLen#11) ← (byte~) myprintf::$32 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [111] *((const byte*) strTemp + (byte) myprintf::bLen#11) ← (byte~) myprintf::$32 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta strTemp,y
     // dst[bLen++] = (b < 10 ? '0' : 0x57) + b;
     // [112] (byte) myprintf::bLen#3 ← ++ (byte) myprintf::bLen#11 -- vbuz1=_inc_vbuyy 
@@ -9151,7 +9139,7 @@ myprintf: {
     // myprintf::@14
   __b14:
     // while(buf6[b] != 0)
-    // [116] if(*((const byte[6]) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
+    // [116] if(*((const byte*) myprintf::buf6 + (byte) myprintf::b#17)!=(byte) 0) goto myprintf::@15 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
     ldy.z b
     lda buf6,y
     cmp #0
@@ -9220,7 +9208,7 @@ myprintf: {
     // myprintf::@26
   __b26:
     // dst[bLen++] = ' '
-    // [128] *((const byte[$64]) strTemp + (byte) myprintf::bLen#14) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [128] *((const byte*) strTemp + (byte) myprintf::bLen#14) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z bLen
     sta strTemp,y
@@ -9234,7 +9222,7 @@ myprintf: {
     // myprintf::@23
   __b23:
     // dst[bLen++] = buf6[digit]
-    // [131] *((const byte[$64]) strTemp + (byte) myprintf::bLen#13) ← *((const byte[6]) myprintf::buf6 + (byte) myprintf::digit#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
+    // [131] *((const byte*) strTemp + (byte) myprintf::bLen#13) ← *((const byte*) myprintf::buf6 + (byte) myprintf::digit#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
     lda buf6,x
     ldy.z bLen
     sta strTemp,y
@@ -9268,7 +9256,7 @@ myprintf: {
     // myprintf::@21
   __b21:
     // dst[bLen++] = (bLeadZero == 0) ? ' ' : '0'
-    // [137] *((const byte[$64]) strTemp + (byte) myprintf::bLen#12) ← (byte~) myprintf::$43 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [137] *((const byte*) strTemp + (byte) myprintf::bLen#12) ← (byte~) myprintf::$43 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z bLen
     sta strTemp,y
     // dst[bLen++] = (bLeadZero == 0) ? ' ' : '0';
@@ -9292,7 +9280,7 @@ myprintf: {
     // [141] (byte~) myprintf::$50 ← (byte)(word) myprintf::w#10 -- vbuaa=_byte_vwuz1 
     lda.z w
     // dst[bLen++] = (byte)w
-    // [142] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$50 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [142] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte~) myprintf::$50 -- pbuc1_derefidx_vbuz1=vbuaa 
     // "switch" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/170
     ldy.z bLen
     sta strTemp,y
@@ -9403,7 +9391,7 @@ myprintf: {
     // [156] phi from myprintf::@47 to myprintf::@37 [phi:myprintf::@47->myprintf::@37]
     // myprintf::@37
     // dst[bLen++] = b
-    // [157] *((const byte[$64]) strTemp + (byte) myprintf::bLen#10) ← (byte) myprintf::b#25 -- pbuc1_derefidx_vbuz1=vbuxx 
+    // [157] *((const byte*) strTemp + (byte) myprintf::bLen#10) ← (byte) myprintf::b#25 -- pbuc1_derefidx_vbuz1=vbuxx 
     // swap 0x41 / 0x61 when in lower case mode
     ldy.z bLen
     txa
@@ -9435,7 +9423,7 @@ utoa: {
   !__b5:
   !:
     // [161] phi from utoa::@13 to utoa::@1 [phi:utoa::@13->utoa::@1]
-    // [161] phi (byte*) utoa::dst#16 = (const byte[6]) myprintf::buf6 [phi:utoa::@13->utoa::@1#0] -- pbuz1=pbuc1 
+    // [161] phi (byte*) utoa::dst#16 = (const byte*) myprintf::buf6 [phi:utoa::@13->utoa::@1#0] -- pbuz1=pbuc1 
     lda #<myprintf.buf6
     sta.z dst
     lda #>myprintf.buf6
@@ -9629,7 +9617,7 @@ utoa: {
     lda #>$2710
     sta.z append.sub+1
     // [199] phi (word) append::value#8 = (word) append::value#1 [phi:utoa::@5->append#1] -- register_copy 
-    // [199] phi (byte*) append::dst#4 = (const byte[6]) myprintf::buf6 [phi:utoa::@5->append#2] -- pbuz1=pbuc1 
+    // [199] phi (byte*) append::dst#4 = (const byte*) myprintf::buf6 [phi:utoa::@5->append#2] -- pbuz1=pbuc1 
     lda #<myprintf.buf6
     sta.z append.dst
     lda #>myprintf.buf6
@@ -9641,7 +9629,7 @@ utoa: {
     // value = append(dst++, value, 10000)
     // [198] (word) utoa::value#0 ← (word) append::return#2
     // [161] phi from utoa::@9 to utoa::@1 [phi:utoa::@9->utoa::@1]
-    // [161] phi (byte*) utoa::dst#16 = ++(const byte[6]) myprintf::buf6 [phi:utoa::@9->utoa::@1#0] -- pbuz1=pbuc1 
+    // [161] phi (byte*) utoa::dst#16 = ++(const byte*) myprintf::buf6 [phi:utoa::@9->utoa::@1#0] -- pbuz1=pbuc1 
     lda #<myprintf.buf6+1
     sta.z dst
     lda #>myprintf.buf6+1

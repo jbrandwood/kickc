@@ -28,7 +28,7 @@ main: {
     .byte 0
     .fill $36, 0
 }
-// print_person(byte register(X) person_id, byte[$40] zeropage(2) person_name)
+// print_person(byte register(X) person_id, byte* zeropage(2) person_name)
 print_person: {
     .label person_name = 2
     lda DIGIT,x

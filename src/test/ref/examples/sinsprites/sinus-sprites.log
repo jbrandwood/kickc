@@ -94,6 +94,7 @@ Culled Empty Block (label) @63
 Culled Empty Block (label) @64
 Culled Empty Block (label) @65
 Culled Empty Block (label) @66
+Culled Empty Block (label) @67
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) @68
@@ -116,7 +117,7 @@ Culled Empty Block (label) gen_sintab::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@67
+  to:@70
 
 (void()) setFAC((word) setFAC::w)
 setFAC: scope:[setFAC]  from gen_sintab gen_sintab::@12 gen_sintab::@2 gen_sintab::@20 gen_sintab::@8
@@ -252,10 +253,6 @@ sinFAC: scope:[sinFAC]  from gen_sintab::@22
 sinFAC::@return: scope:[sinFAC]  from sinFAC
   return 
   to:@return
-@67: scope:[]  from @begin
-  (byte[$dd]) sintab_x ← { fill( $dd, 0) }
-  (byte[$c5]) sintab_y ← { fill( $c5, 0) }
-  to:@70
 
 (void()) main()
 main: scope:[main]  from @77
@@ -352,7 +349,7 @@ init::@6: scope:[init]  from init::@5
   (byte*) progress_cursor#17 ← phi( init::@5/(byte*) progress_cursor#9 )
   (byte*) progress_cursor#2 ← (byte*) progress_cursor#17
   (byte) progress_idx#2 ← (byte) progress_idx#18
-  (byte*) gen_sintab::sintab#0 ← (byte[$dd]) sintab_x
+  (byte*) gen_sintab::sintab#0 ← (const byte*) sintab_x
   (byte) gen_sintab::length#0 ← (const byte) sinlen_x
   (byte) gen_sintab::min#0 ← (number) 0
   (byte) gen_sintab::max#0 ← (number) $ff
@@ -371,7 +368,7 @@ init::@8: scope:[init]  from init::@7
   (byte*) progress_cursor#19 ← phi( init::@7/(byte*) progress_cursor#9 )
   (byte*) progress_cursor#4 ← (byte*) progress_cursor#19
   (byte) progress_idx#4 ← (byte) progress_idx#20
-  (byte*) gen_sintab::sintab#1 ← (byte[$c5]) sintab_y
+  (byte*) gen_sintab::sintab#1 ← (const byte*) sintab_y
   (byte) gen_sintab::length#1 ← (const byte) sinlen_y
   (byte) gen_sintab::min#1 ← (number) $32
   (byte) gen_sintab::max#1 ← (number) $d0
@@ -413,7 +410,7 @@ clear_screen::@2: scope:[clear_screen]  from clear_screen::@1
 clear_screen::@return: scope:[clear_screen]  from clear_screen::@1
   return 
   to:@return
-@70: scope:[]  from @67
+@70: scope:[]  from @begin
   (byte*) progress_cursor#7 ← (const byte*) SCREEN
   (byte) progress_idx#7 ← (number) 0
   to:@72
@@ -444,11 +441,11 @@ progress_inc: scope:[progress_inc]  from gen_sintab::@26
 progress_inc::@1: scope:[progress_inc]  from progress_inc progress_inc::@2
   (byte*) progress_cursor#23 ← phi( progress_inc/(byte*) progress_cursor#33 progress_inc::@2/(byte*) progress_cursor#10 )
   (byte) progress_idx#25 ← phi( progress_inc/(byte) progress_idx#10 progress_inc::@2/(byte) progress_idx#11 )
-  *((byte*) progress_cursor#23) ← *((const byte[]) progress_inc::progress_chars + (byte) progress_idx#25)
+  *((byte*) progress_cursor#23) ← *((const byte*) progress_inc::progress_chars + (byte) progress_idx#25)
   to:progress_inc::@return
 progress_inc::@2: scope:[progress_inc]  from progress_inc
   (byte*) progress_cursor#24 ← phi( progress_inc/(byte*) progress_cursor#33 )
-  *((byte*) progress_cursor#24) ← *((const byte[]) progress_inc::progress_chars + (number) 8)
+  *((byte*) progress_cursor#24) ← *((const byte*) progress_inc::progress_chars + (number) 8)
   (byte*) progress_cursor#10 ← ++ (byte*) progress_cursor#24
   (byte) progress_idx#11 ← (number) 0
   to:progress_inc::@1
@@ -485,7 +482,7 @@ anim::@4: scope:[anim]  from anim anim::@6
   (byte) anim::j2#2 ← phi( anim/(byte) anim::j2#0 anim::@6/(byte) anim::j2#1 )
   (byte) anim::x_msb#2 ← phi( anim/(byte) anim::x_msb#0 anim::@6/(byte) anim::x_msb#4 )
   (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@6/(byte) anim::xidx#5 )
-  (word~) anim::$6 ← (word)(number) $1e + *((byte[$dd]) sintab_x + (byte) anim::xidx#3)
+  (word~) anim::$6 ← (word)(number) $1e + *((const byte*) sintab_x + (byte) anim::xidx#3)
   (word) anim::x#0 ← (word~) anim::$6
   (number~) anim::$7 ← (byte) anim::x_msb#2 * (number) 2
   (byte~) anim::$8 ← > (word) anim::x#0
@@ -493,7 +490,7 @@ anim::@4: scope:[anim]  from anim anim::@6
   (byte) anim::x_msb#1 ← (number~) anim::$9
   (byte~) anim::$10 ← < (word) anim::x#0
   *((const byte*) SPRITES_XPOS + (byte) anim::j2#2) ← (byte~) anim::$10
-  *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((byte[$c5]) sintab_y + (byte) anim::yidx#3)
+  *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte*) sintab_y + (byte) anim::yidx#3)
   (number~) anim::$11 ← (byte) anim::xidx#3 + (number) $a
   (byte) anim::xidx#1 ← (number~) anim::$11
   (bool~) anim::$12 ← (byte) anim::xidx#1 >= (const byte) sinlen_x
@@ -633,7 +630,7 @@ gen_sprites: scope:[gen_sprites]  from init::@4
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@3
   (byte*) gen_sprites::spr#2 ← phi( gen_sprites/(byte*) gen_sprites::spr#0 gen_sprites::@3/(byte*) gen_sprites::spr#1 )
   (byte) gen_sprites::i#2 ← phi( gen_sprites/(byte) gen_sprites::i#0 gen_sprites::@3/(byte) gen_sprites::i#1 )
-  (byte) gen_chargen_sprite::ch#0 ← *((const byte[]) gen_sprites::cml + (byte) gen_sprites::i#2)
+  (byte) gen_chargen_sprite::ch#0 ← *((const byte*) gen_sprites::cml + (byte) gen_sprites::i#2)
   (byte*) gen_chargen_sprite::sprite#0 ← (byte*) gen_sprites::spr#2
   call gen_chargen_sprite 
   to:gen_sprites::@3
@@ -821,7 +818,7 @@ gen_sintab::@9: scope:[gen_sintab]  from gen_sintab::@8
   (byte*) progress_cursor#61 ← phi( gen_sintab::@8/(byte*) progress_cursor#63 )
   (byte) progress_idx#61 ← phi( gen_sintab::@8/(byte) progress_idx#63 )
   (byte) gen_sintab::length#22 ← phi( gen_sintab::@8/(byte) gen_sintab::length#23 )
-  (byte*) setMEMtoFAC::mem#0 ← (const byte[]) gen_sintab::f_min
+  (byte*) setMEMtoFAC::mem#0 ← (const byte*) gen_sintab::f_min
   call setMEMtoFAC 
   to:gen_sintab::@10
 gen_sintab::@10: scope:[gen_sintab]  from gen_sintab::@9
@@ -836,7 +833,7 @@ gen_sintab::@11: scope:[gen_sintab]  from gen_sintab::@10
   (byte*) progress_cursor#57 ← phi( gen_sintab::@10/(byte*) progress_cursor#59 )
   (byte) progress_idx#57 ← phi( gen_sintab::@10/(byte) progress_idx#59 )
   (byte) gen_sintab::length#19 ← phi( gen_sintab::@10/(byte) gen_sintab::length#21 )
-  (byte*) setMEMtoFAC::mem#1 ← (const byte[]) gen_sintab::f_amp
+  (byte*) setMEMtoFAC::mem#1 ← (const byte*) gen_sintab::f_amp
   call setMEMtoFAC 
   to:gen_sintab::@12
 gen_sintab::@12: scope:[gen_sintab]  from gen_sintab::@11
@@ -852,7 +849,7 @@ gen_sintab::@13: scope:[gen_sintab]  from gen_sintab::@12
   (byte*) progress_cursor#53 ← phi( gen_sintab::@12/(byte*) progress_cursor#55 )
   (byte) progress_idx#53 ← phi( gen_sintab::@12/(byte) progress_idx#55 )
   (byte) gen_sintab::length#15 ← phi( gen_sintab::@12/(byte) gen_sintab::length#17 )
-  (byte*) divMEMbyFAC::mem#0 ← (const byte[]) gen_sintab::f_amp
+  (byte*) divMEMbyFAC::mem#0 ← (const byte*) gen_sintab::f_amp
   call divMEMbyFAC 
   to:gen_sintab::@14
 gen_sintab::@14: scope:[gen_sintab]  from gen_sintab::@13
@@ -860,7 +857,7 @@ gen_sintab::@14: scope:[gen_sintab]  from gen_sintab::@13
   (byte*) progress_cursor#50 ← phi( gen_sintab::@13/(byte*) progress_cursor#53 )
   (byte) progress_idx#50 ← phi( gen_sintab::@13/(byte) progress_idx#53 )
   (byte) gen_sintab::length#13 ← phi( gen_sintab::@13/(byte) gen_sintab::length#15 )
-  (byte*) setMEMtoFAC::mem#2 ← (const byte[]) gen_sintab::f_amp
+  (byte*) setMEMtoFAC::mem#2 ← (const byte*) gen_sintab::f_amp
   call setMEMtoFAC 
   to:gen_sintab::@15
 gen_sintab::@15: scope:[gen_sintab]  from gen_sintab::@14
@@ -868,7 +865,7 @@ gen_sintab::@15: scope:[gen_sintab]  from gen_sintab::@14
   (byte*) progress_cursor#47 ← phi( gen_sintab::@14/(byte*) progress_cursor#50 )
   (byte) progress_idx#47 ← phi( gen_sintab::@14/(byte) progress_idx#50 )
   (byte) gen_sintab::length#10 ← phi( gen_sintab::@14/(byte) gen_sintab::length#13 )
-  (byte*) addMEMtoFAC::mem#0 ← (const byte[]) gen_sintab::f_min
+  (byte*) addMEMtoFAC::mem#0 ← (const byte*) gen_sintab::f_min
   call addMEMtoFAC 
   to:gen_sintab::@16
 gen_sintab::@16: scope:[gen_sintab]  from gen_sintab::@15
@@ -876,7 +873,7 @@ gen_sintab::@16: scope:[gen_sintab]  from gen_sintab::@15
   (byte*) progress_cursor#44 ← phi( gen_sintab::@15/(byte*) progress_cursor#47 )
   (byte) progress_idx#44 ← phi( gen_sintab::@15/(byte) progress_idx#47 )
   (byte) gen_sintab::length#7 ← phi( gen_sintab::@15/(byte) gen_sintab::length#10 )
-  (byte*) setMEMtoFAC::mem#3 ← (const byte[]) gen_sintab::f_min
+  (byte*) setMEMtoFAC::mem#3 ← (const byte*) gen_sintab::f_min
   call setMEMtoFAC 
   to:gen_sintab::@17
 gen_sintab::@17: scope:[gen_sintab]  from gen_sintab::@16
@@ -920,7 +917,7 @@ gen_sintab::@19: scope:[gen_sintab]  from gen_sintab::@18
   (byte) gen_sintab::i#12 ← phi( gen_sintab::@18/(byte) gen_sintab::i#13 )
   (byte*) gen_sintab::sintab#9 ← phi( gen_sintab::@18/(byte*) gen_sintab::sintab#10 )
   (byte) gen_sintab::length#6 ← phi( gen_sintab::@18/(byte) gen_sintab::length#8 )
-  (byte*) setMEMtoFAC::mem#4 ← (const byte[]) gen_sintab::f_i
+  (byte*) setMEMtoFAC::mem#4 ← (const byte*) gen_sintab::f_i
   call setMEMtoFAC 
   to:gen_sintab::@20
 gen_sintab::@20: scope:[gen_sintab]  from gen_sintab::@19
@@ -939,7 +936,7 @@ gen_sintab::@21: scope:[gen_sintab]  from gen_sintab::@20
   (byte) progress_idx#54 ← phi( gen_sintab::@20/(byte) progress_idx#56 )
   (byte) gen_sintab::i#10 ← phi( gen_sintab::@20/(byte) gen_sintab::i#11 )
   (byte*) gen_sintab::sintab#7 ← phi( gen_sintab::@20/(byte*) gen_sintab::sintab#8 )
-  (byte*) divMEMbyFAC::mem#1 ← (const byte[]) gen_sintab::f_i
+  (byte*) divMEMbyFAC::mem#1 ← (const byte*) gen_sintab::f_i
   call divMEMbyFAC 
   to:gen_sintab::@22
 gen_sintab::@22: scope:[gen_sintab]  from gen_sintab::@21
@@ -956,7 +953,7 @@ gen_sintab::@23: scope:[gen_sintab]  from gen_sintab::@22
   (byte) progress_idx#48 ← phi( gen_sintab::@22/(byte) progress_idx#51 )
   (byte) gen_sintab::i#8 ← phi( gen_sintab::@22/(byte) gen_sintab::i#9 )
   (byte*) gen_sintab::sintab#5 ← phi( gen_sintab::@22/(byte*) gen_sintab::sintab#6 )
-  (byte*) mulFACbyMEM::mem#1 ← (const byte[]) gen_sintab::f_amp
+  (byte*) mulFACbyMEM::mem#1 ← (const byte*) gen_sintab::f_amp
   call mulFACbyMEM 
   to:gen_sintab::@24
 gen_sintab::@24: scope:[gen_sintab]  from gen_sintab::@23
@@ -965,7 +962,7 @@ gen_sintab::@24: scope:[gen_sintab]  from gen_sintab::@23
   (byte) progress_idx#45 ← phi( gen_sintab::@23/(byte) progress_idx#48 )
   (byte) gen_sintab::i#7 ← phi( gen_sintab::@23/(byte) gen_sintab::i#8 )
   (byte*) gen_sintab::sintab#4 ← phi( gen_sintab::@23/(byte*) gen_sintab::sintab#5 )
-  (byte*) addMEMtoFAC::mem#1 ← (const byte[]) gen_sintab::f_min
+  (byte*) addMEMtoFAC::mem#1 ← (const byte*) gen_sintab::f_min
   call addMEMtoFAC 
   to:gen_sintab::@25
 gen_sintab::@25: scope:[gen_sintab]  from gen_sintab::@24
@@ -1026,7 +1023,6 @@ gen_sintab::@return: scope:[gen_sintab]  from gen_sintab::@1
 @end: scope:[]  from @78
 
 SYMBOL TABLE SSA
-(label) @67
 (label) @70
 (label) @72
 (label) @77
@@ -1318,9 +1314,9 @@ SYMBOL TABLE SSA
 (label) gen_sintab::@9
 (label) gen_sintab::@return
 (const byte*) gen_sintab::f_2pi = (byte*)(number) $e2e5
-(const byte[]) gen_sintab::f_amp = { (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0 }
-(const byte[]) gen_sintab::f_i = { (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0 }
-(const byte[]) gen_sintab::f_min = { (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0 }
+(const byte*) gen_sintab::f_amp = { (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0 }
+(const byte*) gen_sintab::f_i = { (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0 }
+(const byte*) gen_sintab::f_min = { (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0, (byte)(number) 0 }
 (byte) gen_sintab::i
 (byte) gen_sintab::i#0
 (byte) gen_sintab::i#1
@@ -1406,7 +1402,7 @@ SYMBOL TABLE SSA
 (label) gen_sprites::@1
 (label) gen_sprites::@3
 (label) gen_sprites::@return
-(const byte[]) gen_sprites::cml = (string) "camelot"z
+(const byte*) gen_sprites::cml = (string) "camelot"z
 (byte) gen_sprites::i
 (byte) gen_sprites::i#0
 (byte) gen_sprites::i#1
@@ -1636,7 +1632,7 @@ SYMBOL TABLE SSA
 (label) progress_inc::@1
 (label) progress_inc::@2
 (label) progress_inc::@return
-(const byte[]) progress_inc::progress_chars = { (byte)(number) $20, (byte)(number) $65, (byte)(number) $74, (byte)(number) $75, (byte)(number) $61, (byte)(number) $f6, (byte)(number) $e7, (byte)(number) $ea, (byte)(number) $e0 }
+(const byte*) progress_inc::progress_chars = { (byte)(number) $20, (byte)(number) $65, (byte)(number) $74, (byte)(number) $75, (byte)(number) $61, (byte)(number) $f6, (byte)(number) $e7, (byte)(number) $ea, (byte)(number) $e0 }
 (void()) progress_init((byte*) progress_init::line)
 (label) progress_init::@return
 (byte*) progress_init::line
@@ -1736,8 +1732,8 @@ SYMBOL TABLE SSA
 (byte) sin_idx_y#9
 (const byte) sinlen_x = (number) $dd
 (const byte) sinlen_y = (number) $c5
-(byte[$dd]) sintab_x
-(byte[$c5]) sintab_y
+(const byte*) sintab_x = { fill( $dd, 0) }
+(const byte*) sintab_y = { fill( $c5, 0) }
 (const byte*) sprites = (byte*)(number) $2000
 (void()) subFACfromARG()
 (label) subFACfromARG::@return
@@ -1759,7 +1755,7 @@ Adding number conversion cast (unumber) $3e8 in (bool~) clear_screen::$0 ← (by
 Adding number conversion cast (unumber) 0 in (byte) progress_idx#7 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) progress_idx#8 ← (number) 0
 Adding number conversion cast (unumber) 8 in (bool~) progress_inc::$0 ← (byte) progress_idx#10 == (number) 8
-Adding number conversion cast (unumber) 8 in *((byte*) progress_cursor#24) ← *((const byte[]) progress_inc::progress_chars + (number) 8)
+Adding number conversion cast (unumber) 8 in *((byte*) progress_cursor#24) ← *((const byte*) progress_inc::progress_chars + (number) 8)
 Adding number conversion cast (unumber) 0 in (byte) progress_idx#11 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) sin_idx_x#2 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) sin_idx_y#2 ← (number) 0
@@ -2029,13 +2025,13 @@ Inferred type updated to byte in (unumber~) gen_chargen_sprite::$3 ← (byte) ge
 Inferred type updated to byte in (unumber~) gen_chargen_sprite::$6 ← (byte) gen_chargen_sprite::s_gen#3 * (byte) 2
 Inferred type updated to byte in (unumber~) gen_chargen_sprite::$7 ← (byte~) gen_chargen_sprite::$6 | (byte) gen_chargen_sprite::c#2
 Inferred type updated to byte in (unumber~) gen_chargen_sprite::$11 ← (byte) gen_chargen_sprite::bits#3 * (byte) 2
-Inversing boolean not [152] (bool~) progress_inc::$1 ← (byte) progress_idx#10 != (byte) 8 from [151] (bool~) progress_inc::$0 ← (byte) progress_idx#10 == (byte) 8
-Inversing boolean not [187] (bool~) anim::$13 ← (byte) anim::xidx#1 < (const byte) sinlen_x from [186] (bool~) anim::$12 ← (byte) anim::xidx#1 >= (const byte) sinlen_x
-Inversing boolean not [193] (bool~) anim::$17 ← (byte) anim::yidx#1 < (const byte) sinlen_y from [192] (bool~) anim::$16 ← (byte) anim::yidx#1 >= (const byte) sinlen_y
-Inversing boolean not [211] (bool~) anim::$2 ← (byte) sin_idx_x#3 < (const byte) sinlen_x from [210] (bool~) anim::$1 ← (byte) sin_idx_x#3 >= (const byte) sinlen_x
-Inversing boolean not [216] (bool~) anim::$4 ← (byte) sin_idx_y#3 < (const byte) sinlen_y from [215] (bool~) anim::$3 ← (byte) sin_idx_y#3 >= (const byte) sinlen_y
-Inversing boolean not [282] (bool~) gen_chargen_sprite::$5 ← (byte~) gen_chargen_sprite::$3 == (byte) 0 from [281] (bool~) gen_chargen_sprite::$4 ← (byte~) gen_chargen_sprite::$3 != (byte) 0
-Inversing boolean not [294] (bool~) gen_chargen_sprite::$9 ← (byte) gen_chargen_sprite::s_gen_cnt#1 != (byte) 8 from [293] (bool~) gen_chargen_sprite::$8 ← (byte) gen_chargen_sprite::s_gen_cnt#1 == (byte) 8
+Inversing boolean not [150] (bool~) progress_inc::$1 ← (byte) progress_idx#10 != (byte) 8 from [149] (bool~) progress_inc::$0 ← (byte) progress_idx#10 == (byte) 8
+Inversing boolean not [185] (bool~) anim::$13 ← (byte) anim::xidx#1 < (const byte) sinlen_x from [184] (bool~) anim::$12 ← (byte) anim::xidx#1 >= (const byte) sinlen_x
+Inversing boolean not [191] (bool~) anim::$17 ← (byte) anim::yidx#1 < (const byte) sinlen_y from [190] (bool~) anim::$16 ← (byte) anim::yidx#1 >= (const byte) sinlen_y
+Inversing boolean not [209] (bool~) anim::$2 ← (byte) sin_idx_x#3 < (const byte) sinlen_x from [208] (bool~) anim::$1 ← (byte) sin_idx_x#3 >= (const byte) sinlen_x
+Inversing boolean not [214] (bool~) anim::$4 ← (byte) sin_idx_y#3 < (const byte) sinlen_y from [213] (bool~) anim::$3 ← (byte) sin_idx_y#3 >= (const byte) sinlen_y
+Inversing boolean not [280] (bool~) gen_chargen_sprite::$5 ← (byte~) gen_chargen_sprite::$3 == (byte) 0 from [279] (bool~) gen_chargen_sprite::$4 ← (byte~) gen_chargen_sprite::$3 != (byte) 0
+Inversing boolean not [292] (bool~) gen_chargen_sprite::$9 ← (byte) gen_chargen_sprite::s_gen_cnt#1 != (byte) 8 from [291] (bool~) gen_chargen_sprite::$8 ← (byte) gen_chargen_sprite::s_gen_cnt#1 == (byte) 8
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) setFAC::prepareMEM1_mem#0 = (word) setFAC::w#5 (word) setFAC::prepareMEM1_mem#1 
 Alias (word) getFAC::return#0 = (word) getFAC::w#0 (word~) getFAC::$0 (word) getFAC::return#3 (word) getFAC::return#1 
@@ -2224,35 +2220,32 @@ Identical Phi Values (byte*) progress_cursor#39 (byte*) progress_cursor#22
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) gen_chargen_sprite::chargen#1 (byte*) gen_chargen_sprite::chargen#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [71] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
-Simple Condition (bool~) init::$9 [94] if((byte) init::i#1!=rangelast(0,$27)) goto init::@1
-Simple Condition (bool~) clear_screen::$0 [135] if((byte*) clear_screen::sc#2<(const byte*) SCREEN+(word) $3e8) goto clear_screen::@2
-Simple Condition (bool~) progress_inc::$1 [153] if((byte) progress_idx#10!=(byte) 8) goto progress_inc::@1
-Simple Condition (bool~) anim::$13 [188] if((byte) anim::xidx#1<(const byte) sinlen_x) goto anim::@5
-Simple Condition (bool~) anim::$17 [194] if((byte) anim::yidx#1<(const byte) sinlen_y) goto anim::@6
-Simple Condition (bool~) anim::$20 [203] if((byte) anim::j#1!=rangelast(0,6)) goto anim::@4
-Simple Condition (bool~) anim::$2 [212] if((byte) sin_idx_x#3<(const byte) sinlen_x) goto anim::@1
-Simple Condition (bool~) anim::$4 [217] if((byte) sin_idx_y#3<(const byte) sinlen_y) goto anim::@2
-Simple Condition (bool~) place_sprites::$2 [250] if((byte) place_sprites::j#1!=rangelast(0,6)) goto place_sprites::@1
-Simple Condition (bool~) gen_sprites::$2 [263] if((byte) gen_sprites::i#1!=rangelast(0,6)) goto gen_sprites::@1
-Simple Condition (bool~) gen_chargen_sprite::$5 [283] if((byte~) gen_chargen_sprite::$3==(byte) 0) goto gen_chargen_sprite::@3
-Simple Condition (bool~) gen_chargen_sprite::$9 [295] if((byte) gen_chargen_sprite::s_gen_cnt#1!=(byte) 8) goto gen_chargen_sprite::@5
-Simple Condition (bool~) gen_chargen_sprite::$10 [299] if((byte) gen_chargen_sprite::b#1!=rangelast(0,2)) goto gen_chargen_sprite::@4
-Simple Condition (bool~) gen_chargen_sprite::$12 [312] if((byte) gen_chargen_sprite::x#1!=rangelast(0,7)) goto gen_chargen_sprite::@2
-Simple Condition (bool~) gen_chargen_sprite::$14 [318] if((byte) gen_chargen_sprite::y#1!=rangelast(0,7)) goto gen_chargen_sprite::@1
-Simple Condition (bool~) gen_sintab::$13 [359] if((byte) gen_sintab::i#10<(byte) gen_sintab::length#10) goto gen_sintab::@2
+Simple Condition (bool~) main::$1 [69] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
+Simple Condition (bool~) init::$9 [92] if((byte) init::i#1!=rangelast(0,$27)) goto init::@1
+Simple Condition (bool~) clear_screen::$0 [133] if((byte*) clear_screen::sc#2<(const byte*) SCREEN+(word) $3e8) goto clear_screen::@2
+Simple Condition (bool~) progress_inc::$1 [151] if((byte) progress_idx#10!=(byte) 8) goto progress_inc::@1
+Simple Condition (bool~) anim::$13 [186] if((byte) anim::xidx#1<(const byte) sinlen_x) goto anim::@5
+Simple Condition (bool~) anim::$17 [192] if((byte) anim::yidx#1<(const byte) sinlen_y) goto anim::@6
+Simple Condition (bool~) anim::$20 [201] if((byte) anim::j#1!=rangelast(0,6)) goto anim::@4
+Simple Condition (bool~) anim::$2 [210] if((byte) sin_idx_x#3<(const byte) sinlen_x) goto anim::@1
+Simple Condition (bool~) anim::$4 [215] if((byte) sin_idx_y#3<(const byte) sinlen_y) goto anim::@2
+Simple Condition (bool~) place_sprites::$2 [248] if((byte) place_sprites::j#1!=rangelast(0,6)) goto place_sprites::@1
+Simple Condition (bool~) gen_sprites::$2 [261] if((byte) gen_sprites::i#1!=rangelast(0,6)) goto gen_sprites::@1
+Simple Condition (bool~) gen_chargen_sprite::$5 [281] if((byte~) gen_chargen_sprite::$3==(byte) 0) goto gen_chargen_sprite::@3
+Simple Condition (bool~) gen_chargen_sprite::$9 [293] if((byte) gen_chargen_sprite::s_gen_cnt#1!=(byte) 8) goto gen_chargen_sprite::@5
+Simple Condition (bool~) gen_chargen_sprite::$10 [297] if((byte) gen_chargen_sprite::b#1!=rangelast(0,2)) goto gen_chargen_sprite::@4
+Simple Condition (bool~) gen_chargen_sprite::$12 [310] if((byte) gen_chargen_sprite::x#1!=rangelast(0,7)) goto gen_chargen_sprite::@2
+Simple Condition (bool~) gen_chargen_sprite::$14 [316] if((byte) gen_chargen_sprite::y#1!=rangelast(0,7)) goto gen_chargen_sprite::@1
+Simple Condition (bool~) gen_sintab::$13 [357] if((byte) gen_sintab::i#10<(byte) gen_sintab::length#10) goto gen_sintab::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [62] (byte[$dd]) sintab_x ← { fill( $dd, 0) }
-Constant right-side identified [63] (byte[$c5]) sintab_y ← { fill( $c5, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte[$dd]) sintab_x = { fill( $dd, 0) }
-Constant (const byte[$c5]) sintab_y = { fill( $c5, 0) }
 Constant (const byte) init::i#0 = 0
 Constant (const byte*) progress_init::line#0 = SCREEN
+Constant (const byte*) gen_sintab::sintab#0 = sintab_x
 Constant (const byte) gen_sintab::length#0 = sinlen_x
 Constant (const byte) gen_sintab::min#0 = 0
 Constant (const byte) gen_sintab::max#0 = $ff
 Constant (const byte*) progress_init::line#1 = SCREEN+$28
+Constant (const byte*) gen_sintab::sintab#1 = sintab_y
 Constant (const byte) gen_sintab::length#1 = sinlen_y
 Constant (const byte) gen_sintab::min#1 = $32
 Constant (const byte) gen_sintab::max#1 = $d0
@@ -2298,26 +2291,23 @@ Constant (const byte*) divMEMbyFAC::mem#1 = gen_sintab::f_i
 Constant (const byte*) mulFACbyMEM::mem#1 = gen_sintab::f_amp
 Constant (const byte*) addMEMtoFAC::mem#1 = gen_sintab::f_min
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) gen_sintab::sintab#0 = sintab_x
-Constant (const byte*) gen_sintab::sintab#1 = sintab_y
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [77] if(true) goto main::@2
+if() condition always true - replacing block destination [75] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [92] init::i#1 ← ++ init::i#2 to ++
-Resolved ranged comparison value [94] if(init::i#1!=rangelast(0,$27)) goto init::@1 to (number) $28
-Resolved ranged next value [201] anim::j#1 ← ++ anim::j#2 to ++
-Resolved ranged comparison value [203] if(anim::j#1!=rangelast(0,6)) goto anim::@4 to (number) 7
-Resolved ranged next value [248] place_sprites::j#1 ← ++ place_sprites::j#2 to ++
-Resolved ranged comparison value [250] if(place_sprites::j#1!=rangelast(0,6)) goto place_sprites::@1 to (number) 7
-Resolved ranged next value [261] gen_sprites::i#1 ← ++ gen_sprites::i#2 to ++
-Resolved ranged comparison value [263] if(gen_sprites::i#1!=rangelast(0,6)) goto gen_sprites::@1 to (number) 7
-Resolved ranged next value [297] gen_chargen_sprite::b#1 ← ++ gen_chargen_sprite::b#2 to ++
-Resolved ranged comparison value [299] if(gen_chargen_sprite::b#1!=rangelast(0,2)) goto gen_chargen_sprite::@4 to (number) 3
-Resolved ranged next value [310] gen_chargen_sprite::x#1 ← ++ gen_chargen_sprite::x#6 to ++
-Resolved ranged comparison value [312] if(gen_chargen_sprite::x#1!=rangelast(0,7)) goto gen_chargen_sprite::@2 to (number) 8
-Resolved ranged next value [316] gen_chargen_sprite::y#1 ← ++ gen_chargen_sprite::y#2 to ++
-Resolved ranged comparison value [318] if(gen_chargen_sprite::y#1!=rangelast(0,7)) goto gen_chargen_sprite::@1 to (number) 8
-Simplifying expression containing zero gen_chargen_sprite::sprite#3 in [301] *((byte*) gen_chargen_sprite::sprite#3 + (byte) 0) ← (byte) gen_chargen_sprite::s_gen#1
+Resolved ranged next value [90] init::i#1 ← ++ init::i#2 to ++
+Resolved ranged comparison value [92] if(init::i#1!=rangelast(0,$27)) goto init::@1 to (number) $28
+Resolved ranged next value [199] anim::j#1 ← ++ anim::j#2 to ++
+Resolved ranged comparison value [201] if(anim::j#1!=rangelast(0,6)) goto anim::@4 to (number) 7
+Resolved ranged next value [246] place_sprites::j#1 ← ++ place_sprites::j#2 to ++
+Resolved ranged comparison value [248] if(place_sprites::j#1!=rangelast(0,6)) goto place_sprites::@1 to (number) 7
+Resolved ranged next value [259] gen_sprites::i#1 ← ++ gen_sprites::i#2 to ++
+Resolved ranged comparison value [261] if(gen_sprites::i#1!=rangelast(0,6)) goto gen_sprites::@1 to (number) 7
+Resolved ranged next value [295] gen_chargen_sprite::b#1 ← ++ gen_chargen_sprite::b#2 to ++
+Resolved ranged comparison value [297] if(gen_chargen_sprite::b#1!=rangelast(0,2)) goto gen_chargen_sprite::@4 to (number) 3
+Resolved ranged next value [308] gen_chargen_sprite::x#1 ← ++ gen_chargen_sprite::x#6 to ++
+Resolved ranged comparison value [310] if(gen_chargen_sprite::x#1!=rangelast(0,7)) goto gen_chargen_sprite::@2 to (number) 8
+Resolved ranged next value [314] gen_chargen_sprite::y#1 ← ++ gen_chargen_sprite::y#2 to ++
+Resolved ranged comparison value [316] if(gen_chargen_sprite::y#1!=rangelast(0,7)) goto gen_chargen_sprite::@1 to (number) 8
+Simplifying expression containing zero gen_chargen_sprite::sprite#3 in [299] *((byte*) gen_chargen_sprite::sprite#3 + (byte) 0) ← (byte) gen_chargen_sprite::s_gen#1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte*) progress_cursor#36
 Eliminating unused constant (const byte) progress_idx#36
@@ -2393,15 +2383,15 @@ Inlining constant with var siblings (const byte) gen_chargen_sprite::b#0
 Inlining constant with var siblings (const byte) gen_chargen_sprite::c#1
 Inlining constant with var siblings (const byte) gen_chargen_sprite::s_gen#2
 Inlining constant with var siblings (const byte) gen_chargen_sprite::s_gen_cnt#2
+Inlining constant with var siblings (const byte*) gen_sintab::sintab#0
 Inlining constant with var siblings (const byte) gen_sintab::length#0
 Inlining constant with var siblings (const byte) gen_sintab::min#0
 Inlining constant with var siblings (const byte) gen_sintab::max#0
+Inlining constant with var siblings (const byte*) gen_sintab::sintab#1
 Inlining constant with var siblings (const byte) gen_sintab::length#1
 Inlining constant with var siblings (const byte) gen_sintab::min#1
 Inlining constant with var siblings (const byte) gen_sintab::max#1
 Inlining constant with var siblings (const byte) gen_sintab::i#0
-Inlining constant with var siblings (const byte*) gen_sintab::sintab#0
-Inlining constant with var siblings (const byte*) gen_sintab::sintab#1
 Inlining constant with var siblings (const byte) progress_idx#23
 Inlining constant with var siblings (const byte) progress_idx#11
 Inlining constant with var siblings (const byte) sin_idx_x#16
@@ -2414,29 +2404,29 @@ Constant inlined gen_sintab::length#1 = (const byte) sinlen_y
 Constant inlined progress_idx#23 = (byte) 0
 Constant inlined gen_chargen_sprite::c#0 = (byte) 0
 Constant inlined place_sprites::spr_id#0 = (byte)(word)(const byte*) sprites/(byte) $40
-Constant inlined divMEMbyFAC::mem#1 = (const byte[]) gen_sintab::f_i
-Constant inlined divMEMbyFAC::mem#0 = (const byte[]) gen_sintab::f_amp
-Constant inlined setMEMtoFAC::mem#3 = (const byte[]) gen_sintab::f_min
-Constant inlined setMEMtoFAC::mem#2 = (const byte[]) gen_sintab::f_amp
-Constant inlined setMEMtoFAC::mem#1 = (const byte[]) gen_sintab::f_amp
-Constant inlined setMEMtoFAC::mem#0 = (const byte[]) gen_sintab::f_min
+Constant inlined divMEMbyFAC::mem#1 = (const byte*) gen_sintab::f_i
+Constant inlined divMEMbyFAC::mem#0 = (const byte*) gen_sintab::f_amp
+Constant inlined setMEMtoFAC::mem#3 = (const byte*) gen_sintab::f_min
+Constant inlined setMEMtoFAC::mem#2 = (const byte*) gen_sintab::f_amp
+Constant inlined setMEMtoFAC::mem#1 = (const byte*) gen_sintab::f_amp
+Constant inlined setMEMtoFAC::mem#0 = (const byte*) gen_sintab::f_min
 Constant inlined gen_chargen_sprite::c#1 = (byte) 1
-Constant inlined setMEMtoFAC::mem#4 = (const byte[]) gen_sintab::f_i
-Constant inlined addMEMtoFAC::mem#0 = (const byte[]) gen_sintab::f_min
-Constant inlined addMEMtoFAC::mem#1 = (const byte[]) gen_sintab::f_min
+Constant inlined setMEMtoFAC::mem#4 = (const byte*) gen_sintab::f_i
+Constant inlined addMEMtoFAC::mem#0 = (const byte*) gen_sintab::f_min
+Constant inlined addMEMtoFAC::mem#1 = (const byte*) gen_sintab::f_min
 Constant inlined gen_sprites::spr#0 = (const byte*) sprites
 Constant inlined clear_screen::sc#0 = (const byte*) SCREEN
 Constant inlined sin_idx_y#17 = (byte) 0
 Constant inlined gen_chargen_sprite::x#0 = (byte) 0
-Constant inlined gen_sintab::sintab#0 = (const byte[$dd]) sintab_x
+Constant inlined gen_sintab::sintab#0 = (const byte*) sintab_x
 Constant inlined place_sprites::j2#0 = (byte) 0
-Constant inlined gen_sintab::sintab#1 = (const byte[$c5]) sintab_y
+Constant inlined gen_sintab::sintab#1 = (const byte*) sintab_y
 Constant inlined sin_idx_x#4 = (byte) 0
 Constant inlined gen_sintab::length#0 = (const byte) sinlen_x
 Constant inlined gen_sintab::max#0 = (byte) $ff
 Constant inlined gen_sintab::max#1 = (byte) $d0
 Constant inlined mulFACbyMEM::mem#0 = (const byte*) gen_sintab::f_2pi
-Constant inlined mulFACbyMEM::mem#1 = (const byte[]) gen_sintab::f_amp
+Constant inlined mulFACbyMEM::mem#1 = (const byte*) gen_sintab::f_amp
 Constant inlined gen_sintab::min#1 = (byte) $32
 Constant inlined init::i#0 = (byte) 0
 Constant inlined gen_sintab::min#0 = (byte) 0
@@ -2464,16 +2454,16 @@ Consolidated array index constant in *(progress_inc::progress_chars+8)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias (byte) init::i#2 = (byte~) init::$8 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) addMEMtoFAC::mem#2 (const byte[]) gen_sintab::f_min
+Identical Phi Values (byte*) addMEMtoFAC::mem#2 (const byte*) gen_sintab::f_min
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [20] (byte~) addMEMtoFAC::prepareMEM1_$0 ← < (word)(const byte[]) gen_sintab::f_min
-Constant right-side identified [22] (byte~) addMEMtoFAC::prepareMEM1_$1 ← > (word)(const byte[]) gen_sintab::f_min
+Constant right-side identified [20] (byte~) addMEMtoFAC::prepareMEM1_$0 ← < (word)(const byte*) gen_sintab::f_min
+Constant right-side identified [22] (byte~) addMEMtoFAC::prepareMEM1_$1 ← > (word)(const byte*) gen_sintab::f_min
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) addMEMtoFAC::prepareMEM1_$0 = <(word)gen_sintab::f_min
 Constant (const byte) addMEMtoFAC::prepareMEM1_$1 = >(word)gen_sintab::f_min
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined addMEMtoFAC::prepareMEM1_$0 = <(word)(const byte[]) gen_sintab::f_min
-Constant inlined addMEMtoFAC::prepareMEM1_$1 = >(word)(const byte[]) gen_sintab::f_min
+Constant inlined addMEMtoFAC::prepareMEM1_$0 = <(word)(const byte*) gen_sintab::f_min
+Constant inlined addMEMtoFAC::prepareMEM1_$1 = >(word)(const byte*) gen_sintab::f_min
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@7(between main::@2 and main::@2)
 Added new block during phi lifting init::@11(between init::@1 and init::@1)
@@ -2490,7 +2480,6 @@ Added new block during phi lifting gen_chargen_sprite::@12(between gen_chargen_s
 Added new block during phi lifting gen_chargen_sprite::@13(between gen_chargen_sprite::@5 and gen_chargen_sprite::@4)
 Added new block during phi lifting gen_chargen_sprite::@14(between gen_chargen_sprite::@4 and gen_chargen_sprite::@5)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @67
 Adding NOP phi() at start of @70
 Adding NOP phi() at start of @72
 Adding NOP phi() at start of @77
@@ -2532,74 +2521,73 @@ Adding NOP phi() at start of addMEMtoFAC
 Adding NOP phi() at start of gen_sprites
 Adding NOP phi() at start of gen_chargen_sprite::@10
 CALL GRAPH
-Calls in [] to main:5 
-Calls in [main] to init:9 anim:14 
-Calls in [init] to clear_screen:66 place_sprites:74 gen_sprites:76 progress_init:78 gen_sintab:80 progress_init:82 gen_sintab:84 clear_screen:86 
-Calls in [gen_sintab] to setFAC:100 setARGtoFAC:102 setFAC:105 setMEMtoFAC:107 subFACfromARG:109 setMEMtoFAC:111 setFAC:113 divMEMbyFAC:115 setMEMtoFAC:117 addMEMtoFAC:119 setMEMtoFAC:121 setFAC:128 mulFACbyMEM:130 setMEMtoFAC:132 setFAC:135 divMEMbyFAC:137 sinFAC:139 mulFACbyMEM:141 addMEMtoFAC:143 getFAC:145 progress_inc:150 
-Calls in [gen_sprites] to gen_chargen_sprite:214 
+Calls in [] to main:4 
+Calls in [main] to init:8 anim:13 
+Calls in [init] to clear_screen:65 place_sprites:73 gen_sprites:75 progress_init:77 gen_sintab:79 progress_init:81 gen_sintab:83 clear_screen:85 
+Calls in [gen_sintab] to setFAC:99 setARGtoFAC:101 setFAC:104 setMEMtoFAC:106 subFACfromARG:108 setMEMtoFAC:110 setFAC:112 divMEMbyFAC:114 setMEMtoFAC:116 addMEMtoFAC:118 setMEMtoFAC:120 setFAC:127 mulFACbyMEM:129 setMEMtoFAC:131 setFAC:134 divMEMbyFAC:136 sinFAC:138 mulFACbyMEM:140 addMEMtoFAC:142 getFAC:144 progress_inc:149 
+Calls in [gen_sprites] to gen_chargen_sprite:213 
 
 Created 49 initial phi equivalence classes
-Coalesced [15] sin_idx_x#27 ← sin_idx_x#11
-Coalesced [16] sin_idx_y#27 ← sin_idx_y#11
-Coalesced (already) [17] sin_idx_x#26 ← sin_idx_x#13
-Coalesced (already) [18] sin_idx_y#26 ← sin_idx_y#13
-Coalesced [22] anim::xidx#8 ← anim::xidx#0
-Coalesced [23] anim::yidx#8 ← anim::yidx#0
-Coalesced [35] anim::xidx#11 ← anim::xidx#2
-Coalesced [40] anim::yidx#11 ← anim::yidx#2
-Coalesced [56] sin_idx_y#28 ← sin_idx_y#3
-Coalesced [57] sin_idx_x#28 ← sin_idx_x#3
-Coalesced [58] anim::xidx#9 ← anim::xidx#5
-Coalesced [59] anim::x_msb#8 ← anim::x_msb#1
-Coalesced [60] anim::j2#7 ← anim::j2#1
-Coalesced [61] anim::yidx#9 ← anim::yidx#6
-Coalesced [62] anim::j#7 ← anim::j#1
-Coalesced [63] anim::yidx#10 ← anim::yidx#1
-Coalesced [64] anim::xidx#10 ← anim::xidx#1
-Coalesced [89] init::i#3 ← init::i#1
-Coalesced [96] clear_screen::sc#4 ← clear_screen::sc#1
-Coalesced [99] setFAC::prepareMEM1_mem#2 ← setFAC::w#0
-Coalesced [104] setFAC::prepareMEM1_mem#5 ← setFAC::w#1
-Coalesced [122] progress_cursor#68 ← progress_cursor#22
-Coalesced [127] setFAC::prepareMEM1_mem#3 ← setFAC::w#3
-Coalesced [134] setFAC::prepareMEM1_mem#4 ← setFAC::w#4
-Coalesced [152] gen_sintab::i#14 ← gen_sintab::i#1
-Coalesced [153] progress_idx#67 ← progress_idx#12
-Coalesced [154] progress_cursor#69 ← progress_cursor#11
-Coalesced [159] progress_cursor#67 ← progress_cursor#10
-Coalesced [163] progress_idx#66 ← progress_idx#10
-Coalesced (already) [164] progress_cursor#66 ← progress_cursor#13
-Coalesced [208] progress_cursor#22 ← progress_init::line#2
-Coalesced [219] gen_sprites::i#4 ← gen_sprites::i#1
-Coalesced [220] gen_sprites::spr#4 ← gen_sprites::spr#1
-Coalesced [226] gen_chargen_sprite::sprite#13 ← gen_chargen_sprite::sprite#0
-Coalesced [229] gen_chargen_sprite::bits#9 ← gen_chargen_sprite::bits#0
-Coalesced [230] gen_chargen_sprite::sprite#15 ← gen_chargen_sprite::sprite#11
-Coalesced [236] gen_chargen_sprite::s_gen#11 ← gen_chargen_sprite::s_gen#5
-Coalesced [237] gen_chargen_sprite::s_gen_cnt#10 ← gen_chargen_sprite::s_gen_cnt#4
-Coalesced [238] gen_chargen_sprite::sprite#17 ← gen_chargen_sprite::sprite#10
-Coalesced [248] gen_chargen_sprite::sprite#20 ← gen_chargen_sprite::sprite#1
-Coalesced [261] gen_chargen_sprite::y#11 ← gen_chargen_sprite::y#1
-Coalesced [262] gen_chargen_sprite::sprite#14 ← gen_chargen_sprite::sprite#2
-Coalesced [263] gen_chargen_sprite::bits#10 ← gen_chargen_sprite::bits#1
-Coalesced [264] gen_chargen_sprite::s_gen#10 ← gen_chargen_sprite::s_gen#6
-Coalesced [265] gen_chargen_sprite::s_gen_cnt#9 ← gen_chargen_sprite::s_gen_cnt#5
-Coalesced [266] gen_chargen_sprite::sprite#16 ← gen_chargen_sprite::sprite#4
-Coalesced [267] gen_chargen_sprite::x#9 ← gen_chargen_sprite::x#1
-Coalesced (already) [268] gen_chargen_sprite::s_gen#12 ← gen_chargen_sprite::s_gen#6
-Coalesced (already) [269] gen_chargen_sprite::s_gen_cnt#11 ← gen_chargen_sprite::s_gen_cnt#5
-Coalesced [270] gen_chargen_sprite::b#5 ← gen_chargen_sprite::b#1
-Coalesced (already) [271] gen_chargen_sprite::sprite#18 ← gen_chargen_sprite::sprite#4
-Coalesced [272] gen_chargen_sprite::s_gen#13 ← gen_chargen_sprite::s_gen#1
-Coalesced [273] gen_chargen_sprite::s_gen_cnt#12 ← gen_chargen_sprite::s_gen_cnt#1
-Coalesced (already) [274] gen_chargen_sprite::sprite#19 ← gen_chargen_sprite::sprite#3
-Coalesced [291] place_sprites::spr_id#3 ← place_sprites::spr_id#1
-Coalesced [292] place_sprites::j#3 ← place_sprites::j#1
-Coalesced [293] place_sprites::spr_x#3 ← place_sprites::spr_x#1
-Coalesced [294] place_sprites::j2#4 ← place_sprites::j2#2
-Coalesced [295] place_sprites::col#3 ← place_sprites::col#1
+Coalesced [14] sin_idx_x#27 ← sin_idx_x#11
+Coalesced [15] sin_idx_y#27 ← sin_idx_y#11
+Coalesced (already) [16] sin_idx_x#26 ← sin_idx_x#13
+Coalesced (already) [17] sin_idx_y#26 ← sin_idx_y#13
+Coalesced [21] anim::xidx#8 ← anim::xidx#0
+Coalesced [22] anim::yidx#8 ← anim::yidx#0
+Coalesced [34] anim::xidx#11 ← anim::xidx#2
+Coalesced [39] anim::yidx#11 ← anim::yidx#2
+Coalesced [55] sin_idx_y#28 ← sin_idx_y#3
+Coalesced [56] sin_idx_x#28 ← sin_idx_x#3
+Coalesced [57] anim::xidx#9 ← anim::xidx#5
+Coalesced [58] anim::x_msb#8 ← anim::x_msb#1
+Coalesced [59] anim::j2#7 ← anim::j2#1
+Coalesced [60] anim::yidx#9 ← anim::yidx#6
+Coalesced [61] anim::j#7 ← anim::j#1
+Coalesced [62] anim::yidx#10 ← anim::yidx#1
+Coalesced [63] anim::xidx#10 ← anim::xidx#1
+Coalesced [88] init::i#3 ← init::i#1
+Coalesced [95] clear_screen::sc#4 ← clear_screen::sc#1
+Coalesced [98] setFAC::prepareMEM1_mem#2 ← setFAC::w#0
+Coalesced [103] setFAC::prepareMEM1_mem#5 ← setFAC::w#1
+Coalesced [121] progress_cursor#68 ← progress_cursor#22
+Coalesced [126] setFAC::prepareMEM1_mem#3 ← setFAC::w#3
+Coalesced [133] setFAC::prepareMEM1_mem#4 ← setFAC::w#4
+Coalesced [151] gen_sintab::i#14 ← gen_sintab::i#1
+Coalesced [152] progress_idx#67 ← progress_idx#12
+Coalesced [153] progress_cursor#69 ← progress_cursor#11
+Coalesced [158] progress_cursor#67 ← progress_cursor#10
+Coalesced [162] progress_idx#66 ← progress_idx#10
+Coalesced (already) [163] progress_cursor#66 ← progress_cursor#13
+Coalesced [207] progress_cursor#22 ← progress_init::line#2
+Coalesced [218] gen_sprites::i#4 ← gen_sprites::i#1
+Coalesced [219] gen_sprites::spr#4 ← gen_sprites::spr#1
+Coalesced [225] gen_chargen_sprite::sprite#13 ← gen_chargen_sprite::sprite#0
+Coalesced [228] gen_chargen_sprite::bits#9 ← gen_chargen_sprite::bits#0
+Coalesced [229] gen_chargen_sprite::sprite#15 ← gen_chargen_sprite::sprite#11
+Coalesced [235] gen_chargen_sprite::s_gen#11 ← gen_chargen_sprite::s_gen#5
+Coalesced [236] gen_chargen_sprite::s_gen_cnt#10 ← gen_chargen_sprite::s_gen_cnt#4
+Coalesced [237] gen_chargen_sprite::sprite#17 ← gen_chargen_sprite::sprite#10
+Coalesced [247] gen_chargen_sprite::sprite#20 ← gen_chargen_sprite::sprite#1
+Coalesced [260] gen_chargen_sprite::y#11 ← gen_chargen_sprite::y#1
+Coalesced [261] gen_chargen_sprite::sprite#14 ← gen_chargen_sprite::sprite#2
+Coalesced [262] gen_chargen_sprite::bits#10 ← gen_chargen_sprite::bits#1
+Coalesced [263] gen_chargen_sprite::s_gen#10 ← gen_chargen_sprite::s_gen#6
+Coalesced [264] gen_chargen_sprite::s_gen_cnt#9 ← gen_chargen_sprite::s_gen_cnt#5
+Coalesced [265] gen_chargen_sprite::sprite#16 ← gen_chargen_sprite::sprite#4
+Coalesced [266] gen_chargen_sprite::x#9 ← gen_chargen_sprite::x#1
+Coalesced (already) [267] gen_chargen_sprite::s_gen#12 ← gen_chargen_sprite::s_gen#6
+Coalesced (already) [268] gen_chargen_sprite::s_gen_cnt#11 ← gen_chargen_sprite::s_gen_cnt#5
+Coalesced [269] gen_chargen_sprite::b#5 ← gen_chargen_sprite::b#1
+Coalesced (already) [270] gen_chargen_sprite::sprite#18 ← gen_chargen_sprite::sprite#4
+Coalesced [271] gen_chargen_sprite::s_gen#13 ← gen_chargen_sprite::s_gen#1
+Coalesced [272] gen_chargen_sprite::s_gen_cnt#12 ← gen_chargen_sprite::s_gen_cnt#1
+Coalesced (already) [273] gen_chargen_sprite::sprite#19 ← gen_chargen_sprite::sprite#3
+Coalesced [290] place_sprites::spr_id#3 ← place_sprites::spr_id#1
+Coalesced [291] place_sprites::j#3 ← place_sprites::j#1
+Coalesced [292] place_sprites::spr_x#3 ← place_sprites::spr_x#1
+Coalesced [293] place_sprites::j2#4 ← place_sprites::j2#2
+Coalesced [294] place_sprites::col#3 ← place_sprites::col#1
 Coalesced down to 35 phi equivalence classes
-Culled Empty Block (label) @67
 Culled Empty Block (label) @70
 Culled Empty Block (label) @72
 Culled Empty Block (label) @78
@@ -2734,13 +2722,13 @@ anim::@3: scope:[anim]  from anim anim::@5
   [13] (byte) anim::j2#2 ← phi( anim/(byte) $c anim::@5/(byte) anim::j2#1 )
   [13] (byte) anim::x_msb#2 ← phi( anim/(byte) 0 anim::@5/(byte) anim::x_msb#1 )
   [13] (byte) anim::xidx#3 ← phi( anim/(byte) anim::xidx#0 anim::@5/(byte) anim::xidx#5 )
-  [14] (word) anim::x#0 ← (word) $1e + *((const byte[$dd]) sintab_x + (byte) anim::xidx#3)
+  [14] (word) anim::x#0 ← (word) $1e + *((const byte*) sintab_x + (byte) anim::xidx#3)
   [15] (byte~) anim::$7 ← (byte) anim::x_msb#2 << (byte) 1
   [16] (byte~) anim::$8 ← > (word) anim::x#0
   [17] (byte) anim::x_msb#1 ← (byte~) anim::$7 | (byte~) anim::$8
   [18] (byte~) anim::$10 ← < (word) anim::x#0
   [19] *((const byte*) SPRITES_XPOS + (byte) anim::j2#2) ← (byte~) anim::$10
-  [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte[$c5]) sintab_y + (byte) anim::yidx#3)
+  [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte*) sintab_y + (byte) anim::yidx#3)
   [21] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte) $a
   [22] if((byte) anim::xidx#1<(const byte) sinlen_x) goto anim::@4
   to:anim::@6
@@ -2847,7 +2835,7 @@ clear_screen::@2: scope:[clear_screen]  from clear_screen::@1
 
 (void()) gen_sintab((byte*) gen_sintab::sintab , (byte) gen_sintab::length , (byte) gen_sintab::min , (byte) gen_sintab::max)
 gen_sintab: scope:[gen_sintab]  from init::@5 init::@7
-  [71] (byte*) gen_sintab::sintab#13 ← phi( init::@5/(const byte[$dd]) sintab_x init::@7/(const byte[$c5]) sintab_y )
+  [71] (byte*) gen_sintab::sintab#13 ← phi( init::@5/(const byte*) sintab_x init::@7/(const byte*) sintab_y )
   [71] (byte) gen_sintab::length#10 ← phi( init::@5/(const byte) sinlen_x init::@7/(const byte) sinlen_y )
   [71] (byte) gen_sintab::min#2 ← phi( init::@5/(byte) 0 init::@7/(byte) $32 )
   [71] (byte) gen_sintab::max#2 ← phi( init::@5/(byte) $ff init::@7/(byte) $d0 )
@@ -2956,13 +2944,13 @@ progress_inc: scope:[progress_inc]  from gen_sintab::@21
   [122] if((byte) progress_idx#10!=(byte) 8) goto progress_inc::@1
   to:progress_inc::@2
 progress_inc::@2: scope:[progress_inc]  from progress_inc
-  [123] *((byte*) progress_cursor#13) ← *((const byte[]) progress_inc::progress_chars+(byte) 8)
+  [123] *((byte*) progress_cursor#13) ← *((const byte*) progress_inc::progress_chars+(byte) 8)
   [124] (byte*) progress_cursor#10 ← ++ (byte*) progress_cursor#13
   to:progress_inc::@1
 progress_inc::@1: scope:[progress_inc]  from progress_inc progress_inc::@2
   [125] (byte*) progress_cursor#11 ← phi( progress_inc/(byte*) progress_cursor#13 progress_inc::@2/(byte*) progress_cursor#10 )
   [125] (byte) progress_idx#12 ← phi( progress_inc/(byte) progress_idx#10 progress_inc::@2/(byte) 0 )
-  [126] *((byte*) progress_cursor#11) ← *((const byte[]) progress_inc::progress_chars + (byte) progress_idx#12)
+  [126] *((byte*) progress_cursor#11) ← *((const byte*) progress_inc::progress_chars + (byte) progress_idx#12)
   to:progress_inc::@return
 progress_inc::@return: scope:[progress_inc]  from progress_inc::@1
   [127] return 
@@ -2982,8 +2970,8 @@ addMEMtoFAC: scope:[addMEMtoFAC]  from gen_sintab::@11 gen_sintab::@19
   [131] phi()
   to:addMEMtoFAC::prepareMEM1
 addMEMtoFAC::prepareMEM1: scope:[addMEMtoFAC]  from addMEMtoFAC
-  [132] *((const byte*) memLo) ← <(word)(const byte[]) gen_sintab::f_min
-  [133] *((const byte*) memHi) ← >(word)(const byte[]) gen_sintab::f_min
+  [132] *((const byte*) memLo) ← <(word)(const byte*) gen_sintab::f_min
+  [133] *((const byte*) memHi) ← >(word)(const byte*) gen_sintab::f_min
   to:addMEMtoFAC::@1
 addMEMtoFAC::@1: scope:[addMEMtoFAC]  from addMEMtoFAC::prepareMEM1
   asm { ldamemLo ldymemHi jsr$b867  }
@@ -2994,7 +2982,7 @@ addMEMtoFAC::@return: scope:[addMEMtoFAC]  from addMEMtoFAC::@1
 
 (void()) mulFACbyMEM((byte*) mulFACbyMEM::mem)
 mulFACbyMEM: scope:[mulFACbyMEM]  from gen_sintab::@13 gen_sintab::@18
-  [136] (byte*) mulFACbyMEM::mem#2 ← phi( gen_sintab::@13/(const byte*) gen_sintab::f_2pi gen_sintab::@18/(const byte[]) gen_sintab::f_amp )
+  [136] (byte*) mulFACbyMEM::mem#2 ← phi( gen_sintab::@13/(const byte*) gen_sintab::f_2pi gen_sintab::@18/(const byte*) gen_sintab::f_amp )
   to:mulFACbyMEM::prepareMEM1
 mulFACbyMEM::prepareMEM1: scope:[mulFACbyMEM]  from mulFACbyMEM
   [137] (byte~) mulFACbyMEM::prepareMEM1_$0 ← < (word)(byte*) mulFACbyMEM::mem#2
@@ -3019,7 +3007,7 @@ sinFAC::@return: scope:[sinFAC]  from sinFAC
 
 (void()) divMEMbyFAC((byte*) divMEMbyFAC::mem)
 divMEMbyFAC: scope:[divMEMbyFAC]  from gen_sintab::@16 gen_sintab::@9
-  [145] (byte*) divMEMbyFAC::mem#2 ← phi( gen_sintab::@9/(const byte[]) gen_sintab::f_amp gen_sintab::@16/(const byte[]) gen_sintab::f_i )
+  [145] (byte*) divMEMbyFAC::mem#2 ← phi( gen_sintab::@9/(const byte*) gen_sintab::f_amp gen_sintab::@16/(const byte*) gen_sintab::f_i )
   to:divMEMbyFAC::prepareMEM1
 divMEMbyFAC::prepareMEM1: scope:[divMEMbyFAC]  from divMEMbyFAC
   [146] (byte~) divMEMbyFAC::prepareMEM1_$0 ← < (word)(byte*) divMEMbyFAC::mem#2
@@ -3053,7 +3041,7 @@ setFAC::@return: scope:[setFAC]  from setFAC::@1
 
 (void()) setMEMtoFAC((byte*) setMEMtoFAC::mem)
 setMEMtoFAC: scope:[setMEMtoFAC]  from gen_sintab::@10 gen_sintab::@12 gen_sintab::@14 gen_sintab::@5 gen_sintab::@7
-  [159] (byte*) setMEMtoFAC::mem#5 ← phi( gen_sintab::@7/(const byte[]) gen_sintab::f_amp gen_sintab::@10/(const byte[]) gen_sintab::f_amp gen_sintab::@12/(const byte[]) gen_sintab::f_min gen_sintab::@14/(const byte[]) gen_sintab::f_i gen_sintab::@5/(const byte[]) gen_sintab::f_min )
+  [159] (byte*) setMEMtoFAC::mem#5 ← phi( gen_sintab::@7/(const byte*) gen_sintab::f_amp gen_sintab::@10/(const byte*) gen_sintab::f_amp gen_sintab::@12/(const byte*) gen_sintab::f_min gen_sintab::@14/(const byte*) gen_sintab::f_i gen_sintab::@5/(const byte*) gen_sintab::f_min )
   to:setMEMtoFAC::prepareMEM1
 setMEMtoFAC::prepareMEM1: scope:[setMEMtoFAC]  from setMEMtoFAC
   [160] (byte~) setMEMtoFAC::prepareMEM1_$0 ← < (word)(byte*) setMEMtoFAC::mem#5
@@ -3099,7 +3087,7 @@ gen_sprites: scope:[gen_sprites]  from init::@3
 gen_sprites::@1: scope:[gen_sprites]  from gen_sprites gen_sprites::@2
   [173] (byte*) gen_sprites::spr#2 ← phi( gen_sprites/(const byte*) sprites gen_sprites::@2/(byte*) gen_sprites::spr#1 )
   [173] (byte) gen_sprites::i#2 ← phi( gen_sprites/(byte) 0 gen_sprites::@2/(byte) gen_sprites::i#1 )
-  [174] (byte) gen_chargen_sprite::ch#0 ← *((const byte[]) gen_sprites::cml + (byte) gen_sprites::i#2)
+  [174] (byte) gen_chargen_sprite::ch#0 ← *((const byte*) gen_sprites::cml + (byte) gen_sprites::i#2)
   [175] (byte*) gen_chargen_sprite::sprite#0 ← (byte*) gen_sprites::spr#2
   [176] call gen_chargen_sprite 
   to:gen_sprites::@2
@@ -3693,7 +3681,7 @@ anim: {
     jmp __b3
     // anim::@3
   __b3:
-    // [14] (word) anim::x#0 ← (word) $1e + *((const byte[$dd]) sintab_x + (byte) anim::xidx#3) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
+    // [14] (word) anim::x#0 ← (word) $1e + *((const byte*) sintab_x + (byte) anim::xidx#3) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
     ldy.z xidx
     lda sintab_x,y
     clc
@@ -3720,7 +3708,7 @@ anim: {
     lda.z __10
     ldy.z j2
     sta SPRITES_XPOS,y
-    // [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte[$c5]) sintab_y + (byte) anim::yidx#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte*) sintab_y + (byte) anim::yidx#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z yidx
     lda sintab_y,y
     ldy.z j2
@@ -3909,7 +3897,7 @@ init: {
     // [57] call gen_sintab 
     // [71] phi from init::@5 to gen_sintab [phi:init::@5->gen_sintab]
   gen_sintab_from___b5:
-    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$dd]) sintab_x [phi:init::@5->gen_sintab#0] -- pbuz1=pbuc1 
+    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte*) sintab_x [phi:init::@5->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_x
     sta.z gen_sintab.sintab
     lda #>sintab_x
@@ -3946,7 +3934,7 @@ init: {
     // [61] call gen_sintab 
     // [71] phi from init::@7 to gen_sintab [phi:init::@7->gen_sintab]
   gen_sintab_from___b7:
-    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$c5]) sintab_y [phi:init::@7->gen_sintab#0] -- pbuz1=pbuc1 
+    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte*) sintab_y [phi:init::@7->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_y
     sta.z gen_sintab.sintab
     lda #>sintab_y
@@ -4074,7 +4062,7 @@ gen_sintab: {
     // [79] call setMEMtoFAC 
     // [159] phi from gen_sintab::@5 to setMEMtoFAC [phi:gen_sintab::@5->setMEMtoFAC]
   setMEMtoFAC_from___b5:
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min [phi:gen_sintab::@5->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_min [phi:gen_sintab::@5->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
     sta.z setMEMtoFAC.mem
     lda #>f_min
@@ -4095,7 +4083,7 @@ gen_sintab: {
     // [83] call setMEMtoFAC 
     // [159] phi from gen_sintab::@7 to setMEMtoFAC [phi:gen_sintab::@7->setMEMtoFAC]
   setMEMtoFAC_from___b7:
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@7->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@7->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z setMEMtoFAC.mem
     lda #>f_amp
@@ -4123,7 +4111,7 @@ gen_sintab: {
     // [87] call divMEMbyFAC 
     // [145] phi from gen_sintab::@9 to divMEMbyFAC [phi:gen_sintab::@9->divMEMbyFAC]
   divMEMbyFAC_from___b9:
-    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@9->divMEMbyFAC#0] -- pbuz1=pbuc1 
+    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@9->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z divMEMbyFAC.mem
     lda #>f_amp
@@ -4137,7 +4125,7 @@ gen_sintab: {
     // [89] call setMEMtoFAC 
     // [159] phi from gen_sintab::@10 to setMEMtoFAC [phi:gen_sintab::@10->setMEMtoFAC]
   setMEMtoFAC_from___b10:
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@10->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@10->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z setMEMtoFAC.mem
     lda #>f_amp
@@ -4160,7 +4148,7 @@ gen_sintab: {
     // [93] call setMEMtoFAC 
     // [159] phi from gen_sintab::@12 to setMEMtoFAC [phi:gen_sintab::@12->setMEMtoFAC]
   setMEMtoFAC_from___b12:
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min [phi:gen_sintab::@12->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_min [phi:gen_sintab::@12->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
     sta.z setMEMtoFAC.mem
     lda #>f_min
@@ -4222,7 +4210,7 @@ gen_sintab: {
     // [102] call setMEMtoFAC 
     // [159] phi from gen_sintab::@14 to setMEMtoFAC [phi:gen_sintab::@14->setMEMtoFAC]
   setMEMtoFAC_from___b14:
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_i [phi:gen_sintab::@14->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_i [phi:gen_sintab::@14->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
     sta.z setMEMtoFAC.mem
     lda #>f_i
@@ -4249,7 +4237,7 @@ gen_sintab: {
     // [106] call divMEMbyFAC 
     // [145] phi from gen_sintab::@16 to divMEMbyFAC [phi:gen_sintab::@16->divMEMbyFAC]
   divMEMbyFAC_from___b16:
-    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_i [phi:gen_sintab::@16->divMEMbyFAC#0] -- pbuz1=pbuc1 
+    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte*) gen_sintab::f_i [phi:gen_sintab::@16->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
     sta.z divMEMbyFAC.mem
     lda #>f_i
@@ -4270,7 +4258,7 @@ gen_sintab: {
     // [110] call mulFACbyMEM 
     // [136] phi from gen_sintab::@18 to mulFACbyMEM [phi:gen_sintab::@18->mulFACbyMEM]
   mulFACbyMEM_from___b18:
-    // [136] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@18->mulFACbyMEM#0] -- pbuz1=pbuc1 
+    // [136] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@18->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z mulFACbyMEM.mem
     lda #>f_amp
@@ -4345,7 +4333,7 @@ progress_inc: {
     jmp __b2
     // progress_inc::@2
   __b2:
-    // [123] *((byte*) progress_cursor#13) ← *((const byte[]) progress_inc::progress_chars+(byte) 8) -- _deref_pbuz1=_deref_pbuc1 
+    // [123] *((byte*) progress_cursor#13) ← *((const byte*) progress_inc::progress_chars+(byte) 8) -- _deref_pbuz1=_deref_pbuc1 
     lda progress_chars+8
     ldy #0
     sta (progress_cursor),y
@@ -4368,7 +4356,7 @@ progress_inc: {
     jmp __b1
     // progress_inc::@1
   __b1:
-    // [126] *((byte*) progress_cursor#11) ← *((const byte[]) progress_inc::progress_chars + (byte) progress_idx#12) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [126] *((byte*) progress_cursor#11) ← *((const byte*) progress_inc::progress_chars + (byte) progress_idx#12) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z progress_idx
     lda progress_chars,y
     ldy #0
@@ -4412,10 +4400,10 @@ addMEMtoFAC: {
     jmp prepareMEM1
     // addMEMtoFAC::prepareMEM1
   prepareMEM1:
-    // [132] *((const byte*) memLo) ← <(word)(const byte[]) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
+    // [132] *((const byte*) memLo) ← <(word)(const byte*) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
     lda #<gen_sintab.f_min
     sta memLo
-    // [133] *((const byte*) memHi) ← >(word)(const byte[]) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
+    // [133] *((const byte*) memHi) ← >(word)(const byte*) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
     lda #>gen_sintab.f_min
     sta memHi
     jmp __b1
@@ -4650,7 +4638,7 @@ gen_sprites: {
     jmp __b1
     // gen_sprites::@1
   __b1:
-    // [174] (byte) gen_chargen_sprite::ch#0 ← *((const byte[]) gen_sprites::cml + (byte) gen_sprites::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [174] (byte) gen_chargen_sprite::ch#0 ← *((const byte*) gen_sprites::cml + (byte) gen_sprites::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda cml,y
     sta.z gen_chargen_sprite.ch
@@ -5025,7 +5013,7 @@ Equivalence Class zp[1]:53 [ anim::$8 ] has ALU potential.
 Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 [ sin_idx_x#13 sin_idx_y#13 ] ( main:2 [ sin_idx_x#13 sin_idx_y#13 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ sin_idx_x#13 sin_idx_x#11 sin_idx_x#3 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ sin_idx_y#13 sin_idx_y#11 sin_idx_y#3 ]
-Statement [14] (word) anim::x#0 ← (word) $1e + *((const byte[$dd]) sintab_x + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ) always clobbers reg byte a 
+Statement [14] (word) anim::x#0 ← (word) $1e + *((const byte*) sintab_x + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ anim::xidx#3 anim::xidx#0 anim::xidx#5 anim::xidx#1 anim::xidx#2 ]
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ anim::x_msb#2 anim::x_msb#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ anim::j2#2 anim::j2#1 ]
@@ -5033,7 +5021,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:8 [ anim::y
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ anim::j#2 anim::j#1 ]
 Statement [15] (byte~) anim::$7 ← (byte) anim::x_msb#2 << (byte) 1 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 anim::$7 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 anim::$7 ] ) always clobbers reg byte a 
 Statement [18] (byte~) anim::$10 ← < (word) anim::x#0 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$10 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$10 ] ) always clobbers reg byte a 
-Statement [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte[$c5]) sintab_y + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) always clobbers reg byte a 
+Statement [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte*) sintab_y + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) always clobbers reg byte a 
 Statement [21] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte) $a [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ) always clobbers reg byte a 
 Statement [23] (byte) anim::xidx#2 ← (byte) anim::xidx#1 - (const byte) sinlen_x [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#2 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#2 ] ) always clobbers reg byte a 
 Statement [25] (byte) anim::yidx#1 ← (byte) anim::yidx#3 + (byte) 8 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::j#2 anim::xidx#5 anim::x_msb#1 anim::yidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::j#2 anim::xidx#5 anim::x_msb#1 anim::yidx#1 ] ) always clobbers reg byte a 
@@ -5054,18 +5042,18 @@ Statement [103] (word) setFAC::w#4 ← (word)(byte) gen_sintab::length#10 [ gen_
 Statement [115] (word) getFAC::return#2 ← (word) getFAC::return#0 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 getFAC::return#2 ] ( main:2::init:5::gen_sintab:57 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 getFAC::return#2 ] main:2::init:5::gen_sintab:61 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 getFAC::return#2 ] ) always clobbers reg byte a 
 Statement [116] (word~) gen_sintab::$24 ← (word) getFAC::return#2 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$24 ] ( main:2::init:5::gen_sintab:57 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$24 ] main:2::init:5::gen_sintab:61 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$24 ] ) always clobbers reg byte a 
 Statement [117] (byte~) gen_sintab::$25 ← (byte)(word~) gen_sintab::$24 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$25 ] ( main:2::init:5::gen_sintab:57 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$25 ] main:2::init:5::gen_sintab:61 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$25 ] ) always clobbers reg byte a 
-Statement [123] *((byte*) progress_cursor#13) ← *((const byte[]) progress_inc::progress_chars+(byte) 8) [ progress_cursor#13 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] ) always clobbers reg byte a reg byte y 
+Statement [123] *((byte*) progress_cursor#13) ← *((const byte*) progress_inc::progress_chars+(byte) 8) [ progress_cursor#13 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:17 [ gen_sintab::length#10 ]
 Removing always clobbered register reg byte y as potential for zp[1]:21 [ gen_sintab::i#10 gen_sintab::i#1 ]
-Statement [126] *((byte*) progress_cursor#11) ← *((const byte[]) progress_inc::progress_chars + (byte) progress_idx#12) [ progress_idx#12 progress_cursor#11 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] ) always clobbers reg byte a reg byte y 
+Statement [126] *((byte*) progress_cursor#11) ← *((const byte*) progress_inc::progress_chars + (byte) progress_idx#12) [ progress_idx#12 progress_cursor#11 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:22 [ progress_idx#14 progress_idx#12 progress_idx#10 ]
 Statement asm { jsr$b1aa stymemLo stamemHi  } always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp[1]:17 [ gen_sintab::length#10 ]
 Removing always clobbered register reg byte x as potential for zp[1]:21 [ gen_sintab::i#10 gen_sintab::i#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:22 [ progress_idx#14 progress_idx#12 progress_idx#10 ]
 Statement [129] (word) getFAC::return#0 ← *((const byte*) memHi) w= *((const byte*) memLo) [ getFAC::return#0 ] ( main:2::init:5::gen_sintab:57::getFAC:114 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 getFAC::return#0 ] main:2::init:5::gen_sintab:61::getFAC:114 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 getFAC::return#0 ] ) always clobbers reg byte a 
-Statement [132] *((const byte*) memLo) ← <(word)(const byte[]) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
-Statement [133] *((const byte*) memHi) ← >(word)(const byte[]) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
+Statement [132] *((const byte*) memLo) ← <(word)(const byte*) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
+Statement [133] *((const byte*) memHi) ← >(word)(const byte*) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
 Statement asm { ldamemLo ldymemHi jsr$b867  } always clobbers reg byte a reg byte x reg byte y 
 Statement [137] (byte~) mulFACbyMEM::prepareMEM1_$0 ← < (word)(byte*) mulFACbyMEM::mem#2 [ mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] ( main:2::init:5::gen_sintab:57::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] main:2::init:5::gen_sintab:57::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] ) always clobbers reg byte a 
 Statement [139] (byte~) mulFACbyMEM::prepareMEM1_$1 ← > (word)(byte*) mulFACbyMEM::mem#2 [ mulFACbyMEM::prepareMEM1_$1 ] ( main:2::init:5::gen_sintab:57::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] main:2::init:5::gen_sintab:57::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] ) always clobbers reg byte a 
@@ -5125,10 +5113,10 @@ Statement [222] *((const byte*) SPRITES_COLS + (byte) place_sprites::j#2) ← (b
 Statement [223] (byte) place_sprites::spr_x#1 ← (byte) place_sprites::spr_x#2 + (byte) $20 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 place_sprites::spr_x#1 ] ( main:2::init:5::place_sprites:51 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 place_sprites::spr_x#1 ] ) always clobbers reg byte a 
 Statement [224] (byte) place_sprites::col#1 ← (byte) place_sprites::col#2 ^ (byte)(number) 7^(number) 5 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::spr_id#1 place_sprites::spr_x#1 place_sprites::col#1 ] ( main:2::init:5::place_sprites:51 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::spr_id#1 place_sprites::spr_x#1 place_sprites::col#1 ] ) always clobbers reg byte a 
 Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 [ sin_idx_x#13 sin_idx_y#13 ] ( main:2 [ sin_idx_x#13 sin_idx_y#13 ] ) always clobbers reg byte a 
-Statement [14] (word) anim::x#0 ← (word) $1e + *((const byte[$dd]) sintab_x + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ) always clobbers reg byte a 
+Statement [14] (word) anim::x#0 ← (word) $1e + *((const byte*) sintab_x + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ) always clobbers reg byte a 
 Statement [15] (byte~) anim::$7 ← (byte) anim::x_msb#2 << (byte) 1 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 anim::$7 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 anim::$7 ] ) always clobbers reg byte a 
 Statement [18] (byte~) anim::$10 ← < (word) anim::x#0 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$10 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$10 ] ) always clobbers reg byte a 
-Statement [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte[$c5]) sintab_y + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) always clobbers reg byte a 
+Statement [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte*) sintab_y + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) always clobbers reg byte a 
 Statement [21] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte) $a [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ) always clobbers reg byte a 
 Statement [23] (byte) anim::xidx#2 ← (byte) anim::xidx#1 - (const byte) sinlen_x [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#2 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#2 ] ) always clobbers reg byte a 
 Statement [25] (byte) anim::yidx#1 ← (byte) anim::yidx#3 + (byte) 8 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::j#2 anim::xidx#5 anim::x_msb#1 anim::yidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::j#2 anim::xidx#5 anim::x_msb#1 anim::yidx#1 ] ) always clobbers reg byte a 
@@ -5147,12 +5135,12 @@ Statement [116] (word~) gen_sintab::$24 ← (word) getFAC::return#2 [ gen_sintab
 Statement [117] (byte~) gen_sintab::$25 ← (byte)(word~) gen_sintab::$24 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$25 ] ( main:2::init:5::gen_sintab:57 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$25 ] main:2::init:5::gen_sintab:61 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$25 ] ) always clobbers reg byte a 
 Statement [118] *((byte*) gen_sintab::sintab#13 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$25 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ( main:2::init:5::gen_sintab:57 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte y 
 Statement [122] if((byte) progress_idx#10!=(byte) 8) goto progress_inc::@1 [ progress_cursor#13 progress_idx#10 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 progress_idx#10 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 progress_idx#10 ] ) always clobbers reg byte a 
-Statement [123] *((byte*) progress_cursor#13) ← *((const byte[]) progress_inc::progress_chars+(byte) 8) [ progress_cursor#13 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] ) always clobbers reg byte a reg byte y 
-Statement [126] *((byte*) progress_cursor#11) ← *((const byte[]) progress_inc::progress_chars + (byte) progress_idx#12) [ progress_idx#12 progress_cursor#11 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] ) always clobbers reg byte a reg byte y 
+Statement [123] *((byte*) progress_cursor#13) ← *((const byte*) progress_inc::progress_chars+(byte) 8) [ progress_cursor#13 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] ) always clobbers reg byte a reg byte y 
+Statement [126] *((byte*) progress_cursor#11) ← *((const byte*) progress_inc::progress_chars + (byte) progress_idx#12) [ progress_idx#12 progress_cursor#11 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] ) always clobbers reg byte a reg byte y 
 Statement asm { jsr$b1aa stymemLo stamemHi  } always clobbers reg byte a reg byte x reg byte y 
 Statement [129] (word) getFAC::return#0 ← *((const byte*) memHi) w= *((const byte*) memLo) [ getFAC::return#0 ] ( main:2::init:5::gen_sintab:57::getFAC:114 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 getFAC::return#0 ] main:2::init:5::gen_sintab:61::getFAC:114 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 getFAC::return#0 ] ) always clobbers reg byte a 
-Statement [132] *((const byte*) memLo) ← <(word)(const byte[]) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
-Statement [133] *((const byte*) memHi) ← >(word)(const byte[]) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
+Statement [132] *((const byte*) memLo) ← <(word)(const byte*) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
+Statement [133] *((const byte*) memHi) ← >(word)(const byte*) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
 Statement asm { ldamemLo ldymemHi jsr$b867  } always clobbers reg byte a reg byte x reg byte y 
 Statement [137] (byte~) mulFACbyMEM::prepareMEM1_$0 ← < (word)(byte*) mulFACbyMEM::mem#2 [ mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] ( main:2::init:5::gen_sintab:57::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] main:2::init:5::gen_sintab:57::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] ) always clobbers reg byte a 
 Statement [139] (byte~) mulFACbyMEM::prepareMEM1_$1 ← > (word)(byte*) mulFACbyMEM::mem#2 [ mulFACbyMEM::prepareMEM1_$1 ] ( main:2::init:5::gen_sintab:57::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] main:2::init:5::gen_sintab:57::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] ) always clobbers reg byte a 
@@ -5194,10 +5182,10 @@ Statement [222] *((const byte*) SPRITES_COLS + (byte) place_sprites::j#2) ← (b
 Statement [223] (byte) place_sprites::spr_x#1 ← (byte) place_sprites::spr_x#2 + (byte) $20 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 place_sprites::spr_x#1 ] ( main:2::init:5::place_sprites:51 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::col#2 place_sprites::spr_id#1 place_sprites::spr_x#1 ] ) always clobbers reg byte a 
 Statement [224] (byte) place_sprites::col#1 ← (byte) place_sprites::col#2 ^ (byte)(number) 7^(number) 5 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::spr_id#1 place_sprites::spr_x#1 place_sprites::col#1 ] ( main:2::init:5::place_sprites:51 [ place_sprites::j#2 place_sprites::j2#3 place_sprites::spr_id#1 place_sprites::spr_x#1 place_sprites::col#1 ] ) always clobbers reg byte a 
 Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 [ sin_idx_x#13 sin_idx_y#13 ] ( main:2 [ sin_idx_x#13 sin_idx_y#13 ] ) always clobbers reg byte a 
-Statement [14] (word) anim::x#0 ← (word) $1e + *((const byte[$dd]) sintab_x + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ) always clobbers reg byte a 
+Statement [14] (word) anim::x#0 ← (word) $1e + *((const byte*) sintab_x + (byte) anim::xidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::x_msb#2 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 ] ) always clobbers reg byte a 
 Statement [15] (byte~) anim::$7 ← (byte) anim::x_msb#2 << (byte) 1 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 anim::$7 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x#0 anim::$7 ] ) always clobbers reg byte a 
 Statement [18] (byte~) anim::$10 ← < (word) anim::x#0 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$10 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::$10 ] ) always clobbers reg byte a 
-Statement [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte[$c5]) sintab_y + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) always clobbers reg byte a 
+Statement [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte*) sintab_y + (byte) anim::yidx#3) [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::xidx#3 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 ] ) always clobbers reg byte a 
 Statement [21] (byte) anim::xidx#1 ← (byte) anim::xidx#3 + (byte) $a [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#1 ] ) always clobbers reg byte a 
 Statement [23] (byte) anim::xidx#2 ← (byte) anim::xidx#1 - (const byte) sinlen_x [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#2 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::yidx#3 anim::j#2 anim::x_msb#1 anim::xidx#2 ] ) always clobbers reg byte a 
 Statement [25] (byte) anim::yidx#1 ← (byte) anim::yidx#3 + (byte) 8 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::j#2 anim::xidx#5 anim::x_msb#1 anim::yidx#1 ] ( main:2::anim:9 [ sin_idx_x#13 sin_idx_y#13 anim::j2#2 anim::j#2 anim::xidx#5 anim::x_msb#1 anim::yidx#1 ] ) always clobbers reg byte a 
@@ -5216,12 +5204,12 @@ Statement [116] (word~) gen_sintab::$24 ← (word) getFAC::return#2 [ gen_sintab
 Statement [117] (byte~) gen_sintab::$25 ← (byte)(word~) gen_sintab::$24 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$25 ] ( main:2::init:5::gen_sintab:57 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$25 ] main:2::init:5::gen_sintab:61 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 gen_sintab::$25 ] ) always clobbers reg byte a 
 Statement [118] *((byte*) gen_sintab::sintab#13 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$25 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ( main:2::init:5::gen_sintab:57 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte y 
 Statement [122] if((byte) progress_idx#10!=(byte) 8) goto progress_inc::@1 [ progress_cursor#13 progress_idx#10 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 progress_idx#10 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 progress_idx#10 ] ) always clobbers reg byte a 
-Statement [123] *((byte*) progress_cursor#13) ← *((const byte[]) progress_inc::progress_chars+(byte) 8) [ progress_cursor#13 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] ) always clobbers reg byte a reg byte y 
-Statement [126] *((byte*) progress_cursor#11) ← *((const byte[]) progress_inc::progress_chars + (byte) progress_idx#12) [ progress_idx#12 progress_cursor#11 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] ) always clobbers reg byte a reg byte y 
+Statement [123] *((byte*) progress_cursor#13) ← *((const byte*) progress_inc::progress_chars+(byte) 8) [ progress_cursor#13 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_cursor#13 ] ) always clobbers reg byte a reg byte y 
+Statement [126] *((byte*) progress_cursor#11) ← *((const byte*) progress_inc::progress_chars + (byte) progress_idx#12) [ progress_idx#12 progress_cursor#11 ] ( main:2::init:5::gen_sintab:57::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] main:2::init:5::gen_sintab:61::progress_inc:119 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#12 progress_cursor#11 ] ) always clobbers reg byte a reg byte y 
 Statement asm { jsr$b1aa stymemLo stamemHi  } always clobbers reg byte a reg byte x reg byte y 
 Statement [129] (word) getFAC::return#0 ← *((const byte*) memHi) w= *((const byte*) memLo) [ getFAC::return#0 ] ( main:2::init:5::gen_sintab:57::getFAC:114 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 getFAC::return#0 ] main:2::init:5::gen_sintab:61::getFAC:114 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 getFAC::return#0 ] ) always clobbers reg byte a 
-Statement [132] *((const byte*) memLo) ← <(word)(const byte[]) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
-Statement [133] *((const byte*) memHi) ← >(word)(const byte[]) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
+Statement [132] *((const byte*) memLo) ← <(word)(const byte*) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
+Statement [133] *((const byte*) memHi) ← >(word)(const byte*) gen_sintab::f_min [ ] ( main:2::init:5::gen_sintab:57::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:91 [ gen_sintab::length#10 gen_sintab::sintab#13 progress_init::line#2 ] main:2::init:5::gen_sintab:57::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] main:2::init:5::gen_sintab:61::addMEMtoFAC:112 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 ] ) always clobbers reg byte a 
 Statement asm { ldamemLo ldymemHi jsr$b867  } always clobbers reg byte a reg byte x reg byte y 
 Statement [137] (byte~) mulFACbyMEM::prepareMEM1_$0 ← < (word)(byte*) mulFACbyMEM::mem#2 [ mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] ( main:2::init:5::gen_sintab:57::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] main:2::init:5::gen_sintab:57::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::mem#2 mulFACbyMEM::prepareMEM1_$0 ] ) always clobbers reg byte a 
 Statement [139] (byte~) mulFACbyMEM::prepareMEM1_$1 ← > (word)(byte*) mulFACbyMEM::mem#2 [ mulFACbyMEM::prepareMEM1_$1 ] ( main:2::init:5::gen_sintab:57::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:100 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] main:2::init:5::gen_sintab:57::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] main:2::init:5::gen_sintab:61::mulFACbyMEM:110 [ gen_sintab::length#10 gen_sintab::sintab#13 gen_sintab::i#10 progress_idx#14 progress_cursor#13 mulFACbyMEM::prepareMEM1_$1 ] ) always clobbers reg byte a 
@@ -5581,7 +5569,7 @@ anim: {
     jmp __b3
     // anim::@3
   __b3:
-    // [14] (word) anim::x#0 ← (word) $1e + *((const byte[$dd]) sintab_x + (byte) anim::xidx#3) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
+    // [14] (word) anim::x#0 ← (word) $1e + *((const byte*) sintab_x + (byte) anim::xidx#3) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
     ldy.z xidx
     lda sintab_x,y
     clc
@@ -5602,7 +5590,7 @@ anim: {
     // [19] *((const byte*) SPRITES_XPOS + (byte) anim::j2#2) ← (byte~) anim::$10 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z j2
     sta SPRITES_XPOS,y
-    // [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte[$c5]) sintab_y + (byte) anim::yidx#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte*) sintab_y + (byte) anim::yidx#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z yidx
     lda sintab_y,y
     ldy.z j2
@@ -5786,7 +5774,7 @@ init: {
     // [57] call gen_sintab 
     // [71] phi from init::@5 to gen_sintab [phi:init::@5->gen_sintab]
   gen_sintab_from___b5:
-    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$dd]) sintab_x [phi:init::@5->gen_sintab#0] -- pbuz1=pbuc1 
+    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte*) sintab_x [phi:init::@5->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_x
     sta.z gen_sintab.sintab
     lda #>sintab_x
@@ -5822,7 +5810,7 @@ init: {
     // [61] call gen_sintab 
     // [71] phi from init::@7 to gen_sintab [phi:init::@7->gen_sintab]
   gen_sintab_from___b7:
-    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$c5]) sintab_y [phi:init::@7->gen_sintab#0] -- pbuz1=pbuc1 
+    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte*) sintab_y [phi:init::@7->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_y
     sta.z gen_sintab.sintab
     lda #>sintab_y
@@ -5947,7 +5935,7 @@ gen_sintab: {
     // [79] call setMEMtoFAC 
     // [159] phi from gen_sintab::@5 to setMEMtoFAC [phi:gen_sintab::@5->setMEMtoFAC]
   setMEMtoFAC_from___b5:
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min [phi:gen_sintab::@5->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_min [phi:gen_sintab::@5->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
     sta.z setMEMtoFAC.mem
     lda #>f_min
@@ -5968,7 +5956,7 @@ gen_sintab: {
     // [83] call setMEMtoFAC 
     // [159] phi from gen_sintab::@7 to setMEMtoFAC [phi:gen_sintab::@7->setMEMtoFAC]
   setMEMtoFAC_from___b7:
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@7->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@7->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z setMEMtoFAC.mem
     lda #>f_amp
@@ -5996,7 +5984,7 @@ gen_sintab: {
     // [87] call divMEMbyFAC 
     // [145] phi from gen_sintab::@9 to divMEMbyFAC [phi:gen_sintab::@9->divMEMbyFAC]
   divMEMbyFAC_from___b9:
-    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@9->divMEMbyFAC#0] -- pbuz1=pbuc1 
+    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@9->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z divMEMbyFAC.mem
     lda #>f_amp
@@ -6010,7 +5998,7 @@ gen_sintab: {
     // [89] call setMEMtoFAC 
     // [159] phi from gen_sintab::@10 to setMEMtoFAC [phi:gen_sintab::@10->setMEMtoFAC]
   setMEMtoFAC_from___b10:
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@10->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@10->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z setMEMtoFAC.mem
     lda #>f_amp
@@ -6033,7 +6021,7 @@ gen_sintab: {
     // [93] call setMEMtoFAC 
     // [159] phi from gen_sintab::@12 to setMEMtoFAC [phi:gen_sintab::@12->setMEMtoFAC]
   setMEMtoFAC_from___b12:
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min [phi:gen_sintab::@12->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_min [phi:gen_sintab::@12->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
     sta.z setMEMtoFAC.mem
     lda #>f_min
@@ -6095,7 +6083,7 @@ gen_sintab: {
     // [102] call setMEMtoFAC 
     // [159] phi from gen_sintab::@14 to setMEMtoFAC [phi:gen_sintab::@14->setMEMtoFAC]
   setMEMtoFAC_from___b14:
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_i [phi:gen_sintab::@14->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_i [phi:gen_sintab::@14->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
     sta.z setMEMtoFAC.mem
     lda #>f_i
@@ -6122,7 +6110,7 @@ gen_sintab: {
     // [106] call divMEMbyFAC 
     // [145] phi from gen_sintab::@16 to divMEMbyFAC [phi:gen_sintab::@16->divMEMbyFAC]
   divMEMbyFAC_from___b16:
-    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_i [phi:gen_sintab::@16->divMEMbyFAC#0] -- pbuz1=pbuc1 
+    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte*) gen_sintab::f_i [phi:gen_sintab::@16->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
     sta.z divMEMbyFAC.mem
     lda #>f_i
@@ -6143,7 +6131,7 @@ gen_sintab: {
     // [110] call mulFACbyMEM 
     // [136] phi from gen_sintab::@18 to mulFACbyMEM [phi:gen_sintab::@18->mulFACbyMEM]
   mulFACbyMEM_from___b18:
-    // [136] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@18->mulFACbyMEM#0] -- pbuz1=pbuc1 
+    // [136] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@18->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z mulFACbyMEM.mem
     lda #>f_amp
@@ -6208,7 +6196,7 @@ progress_inc: {
     jmp __b2
     // progress_inc::@2
   __b2:
-    // [123] *((byte*) progress_cursor#13) ← *((const byte[]) progress_inc::progress_chars+(byte) 8) -- _deref_pbuz1=_deref_pbuc1 
+    // [123] *((byte*) progress_cursor#13) ← *((const byte*) progress_inc::progress_chars+(byte) 8) -- _deref_pbuz1=_deref_pbuc1 
     lda progress_chars+8
     ldy #0
     sta (progress_cursor),y
@@ -6231,7 +6219,7 @@ progress_inc: {
     jmp __b1
     // progress_inc::@1
   __b1:
-    // [126] *((byte*) progress_cursor#11) ← *((const byte[]) progress_inc::progress_chars + (byte) progress_idx#12) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [126] *((byte*) progress_cursor#11) ← *((const byte*) progress_inc::progress_chars + (byte) progress_idx#12) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z progress_idx
     lda progress_chars,y
     ldy #0
@@ -6274,10 +6262,10 @@ addMEMtoFAC: {
     jmp prepareMEM1
     // addMEMtoFAC::prepareMEM1
   prepareMEM1:
-    // [132] *((const byte*) memLo) ← <(word)(const byte[]) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
+    // [132] *((const byte*) memLo) ← <(word)(const byte*) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
     lda #<gen_sintab.f_min
     sta memLo
-    // [133] *((const byte*) memHi) ← >(word)(const byte[]) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
+    // [133] *((const byte*) memHi) ← >(word)(const byte*) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
     lda #>gen_sintab.f_min
     sta memHi
     jmp __b1
@@ -6488,7 +6476,7 @@ gen_sprites: {
     jmp __b1
     // gen_sprites::@1
   __b1:
-    // [174] (byte) gen_chargen_sprite::ch#0 ← *((const byte[]) gen_sprites::cml + (byte) gen_sprites::i#2) -- vbuxx=pbuc1_derefidx_vbuz1 
+    // [174] (byte) gen_chargen_sprite::ch#0 ← *((const byte*) gen_sprites::cml + (byte) gen_sprites::i#2) -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy.z i
     ldx cml,y
     // [175] (byte*) gen_chargen_sprite::sprite#0 ← (byte*) gen_sprites::spr#2 -- pbuz1=pbuz2 
@@ -7302,9 +7290,9 @@ FINAL SYMBOL TABLE
 (label) gen_sintab::@9
 (label) gen_sintab::@return
 (const byte*) gen_sintab::f_2pi = (byte*) 58085
-(const byte[]) gen_sintab::f_amp = { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
-(const byte[]) gen_sintab::f_i = { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
-(const byte[]) gen_sintab::f_min = { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
+(const byte*) gen_sintab::f_amp = { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
+(const byte*) gen_sintab::f_i = { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
+(const byte*) gen_sintab::f_min = { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
 (byte) gen_sintab::i
 (byte) gen_sintab::i#1 i zp[1]:9 22.0
 (byte) gen_sintab::i#10 i zp[1]:9 1.76
@@ -7320,7 +7308,7 @@ FINAL SYMBOL TABLE
 (label) gen_sprites::@1
 (label) gen_sprites::@2
 (label) gen_sprites::@return
-(const byte[]) gen_sprites::cml = (string) "camelot"z
+(const byte*) gen_sprites::cml = (string) "camelot"z
 (byte) gen_sprites::i
 (byte) gen_sprites::i#1 i zp[1]:11 16.5
 (byte) gen_sprites::i#2 i zp[1]:11 6.6000000000000005
@@ -7392,7 +7380,7 @@ FINAL SYMBOL TABLE
 (label) progress_inc::@1
 (label) progress_inc::@2
 (label) progress_inc::@return
-(const byte[]) progress_inc::progress_chars = { (byte) $20, (byte) $65, (byte) $74, (byte) $75, (byte) $61, (byte) $f6, (byte) $e7, (byte) $ea, (byte) $e0 }
+(const byte*) progress_inc::progress_chars = { (byte) $20, (byte) $65, (byte) $74, (byte) $75, (byte) $61, (byte) $f6, (byte) $e7, (byte) $ea, (byte) $e0 }
 (void()) progress_init((byte*) progress_init::line)
 (label) progress_init::@return
 (byte*) progress_init::line
@@ -7433,8 +7421,8 @@ FINAL SYMBOL TABLE
 (byte) sin_idx_y#3 sin_idx_y zp[1]:8 2.0
 (const byte) sinlen_x = (number) $dd
 (const byte) sinlen_y = (number) $c5
-(const byte[$dd]) sintab_x = { fill( $dd, 0) }
-(const byte[$c5]) sintab_y = { fill( $c5, 0) }
+(const byte*) sintab_x = { fill( $dd, 0) }
+(const byte*) sintab_y = { fill( $c5, 0) }
 (const byte*) sprites = (byte*) 8192
 (void()) subFACfromARG()
 (label) subFACfromARG::@return
@@ -7582,7 +7570,7 @@ anim: {
     // anim::@3
   __b3:
     // x = (word)$1e + sintab_x[xidx]
-    // [14] (word) anim::x#0 ← (word) $1e + *((const byte[$dd]) sintab_x + (byte) anim::xidx#3) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
+    // [14] (word) anim::x#0 ← (word) $1e + *((const byte*) sintab_x + (byte) anim::xidx#3) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
     ldy.z xidx
     lda sintab_x,y
     clc
@@ -7608,7 +7596,7 @@ anim: {
     ldy.z j2
     sta SPRITES_XPOS,y
     // SPRITES_YPOS[j2] = sintab_y[yidx]
-    // [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte[$c5]) sintab_y + (byte) anim::yidx#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [20] *((const byte*) SPRITES_YPOS + (byte) anim::j2#2) ← *((const byte*) sintab_y + (byte) anim::yidx#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z yidx
     lda sintab_y,y
     ldy.z j2
@@ -7765,7 +7753,7 @@ init: {
     // gen_sintab(sintab_x, sinlen_x, $00, $ff)
     // [57] call gen_sintab 
     // [71] phi from init::@5 to gen_sintab [phi:init::@5->gen_sintab]
-    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$dd]) sintab_x [phi:init::@5->gen_sintab#0] -- pbuz1=pbuc1 
+    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte*) sintab_x [phi:init::@5->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_x
     sta.z gen_sintab.sintab
     lda #>sintab_x
@@ -7795,7 +7783,7 @@ init: {
     // gen_sintab(sintab_y, sinlen_y, $32, $d0)
     // [61] call gen_sintab 
     // [71] phi from init::@7 to gen_sintab [phi:init::@7->gen_sintab]
-    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte[$c5]) sintab_y [phi:init::@7->gen_sintab#0] -- pbuz1=pbuc1 
+    // [71] phi (byte*) gen_sintab::sintab#13 = (const byte*) sintab_y [phi:init::@7->gen_sintab#0] -- pbuz1=pbuc1 
     lda #<sintab_y
     sta.z gen_sintab.sintab
     lda #>sintab_y
@@ -7908,7 +7896,7 @@ gen_sintab: {
     // setMEMtoFAC(f_min)
     // [79] call setMEMtoFAC 
     // [159] phi from gen_sintab::@5 to setMEMtoFAC [phi:gen_sintab::@5->setMEMtoFAC]
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min [phi:gen_sintab::@5->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_min [phi:gen_sintab::@5->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
     sta.z setMEMtoFAC.mem
     lda #>f_min
@@ -7924,7 +7912,7 @@ gen_sintab: {
     // setMEMtoFAC(f_amp)
     // [83] call setMEMtoFAC 
     // [159] phi from gen_sintab::@7 to setMEMtoFAC [phi:gen_sintab::@7->setMEMtoFAC]
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@7->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@7->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z setMEMtoFAC.mem
     lda #>f_amp
@@ -7946,7 +7934,7 @@ gen_sintab: {
     // divMEMbyFAC(f_amp)
     // [87] call divMEMbyFAC 
     // [145] phi from gen_sintab::@9 to divMEMbyFAC [phi:gen_sintab::@9->divMEMbyFAC]
-    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@9->divMEMbyFAC#0] -- pbuz1=pbuc1 
+    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@9->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z divMEMbyFAC.mem
     lda #>f_amp
@@ -7957,7 +7945,7 @@ gen_sintab: {
     // setMEMtoFAC(f_amp)
     // [89] call setMEMtoFAC 
     // [159] phi from gen_sintab::@10 to setMEMtoFAC [phi:gen_sintab::@10->setMEMtoFAC]
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@10->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@10->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z setMEMtoFAC.mem
     lda #>f_amp
@@ -7974,7 +7962,7 @@ gen_sintab: {
     // setMEMtoFAC(f_min)
     // [93] call setMEMtoFAC 
     // [159] phi from gen_sintab::@12 to setMEMtoFAC [phi:gen_sintab::@12->setMEMtoFAC]
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_min [phi:gen_sintab::@12->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_min [phi:gen_sintab::@12->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_min
     sta.z setMEMtoFAC.mem
     lda #>f_min
@@ -8027,7 +8015,7 @@ gen_sintab: {
     // setMEMtoFAC(f_i)
     // [102] call setMEMtoFAC 
     // [159] phi from gen_sintab::@14 to setMEMtoFAC [phi:gen_sintab::@14->setMEMtoFAC]
-    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte[]) gen_sintab::f_i [phi:gen_sintab::@14->setMEMtoFAC#0] -- pbuz1=pbuc1 
+    // [159] phi (byte*) setMEMtoFAC::mem#5 = (const byte*) gen_sintab::f_i [phi:gen_sintab::@14->setMEMtoFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
     sta.z setMEMtoFAC.mem
     lda #>f_i
@@ -8049,7 +8037,7 @@ gen_sintab: {
     // divMEMbyFAC(f_i)
     // [106] call divMEMbyFAC 
     // [145] phi from gen_sintab::@16 to divMEMbyFAC [phi:gen_sintab::@16->divMEMbyFAC]
-    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte[]) gen_sintab::f_i [phi:gen_sintab::@16->divMEMbyFAC#0] -- pbuz1=pbuc1 
+    // [145] phi (byte*) divMEMbyFAC::mem#2 = (const byte*) gen_sintab::f_i [phi:gen_sintab::@16->divMEMbyFAC#0] -- pbuz1=pbuc1 
     lda #<f_i
     sta.z divMEMbyFAC.mem
     lda #>f_i
@@ -8065,7 +8053,7 @@ gen_sintab: {
     // mulFACbyMEM(f_amp)
     // [110] call mulFACbyMEM 
     // [136] phi from gen_sintab::@18 to mulFACbyMEM [phi:gen_sintab::@18->mulFACbyMEM]
-    // [136] phi (byte*) mulFACbyMEM::mem#2 = (const byte[]) gen_sintab::f_amp [phi:gen_sintab::@18->mulFACbyMEM#0] -- pbuz1=pbuc1 
+    // [136] phi (byte*) mulFACbyMEM::mem#2 = (const byte*) gen_sintab::f_amp [phi:gen_sintab::@18->mulFACbyMEM#0] -- pbuz1=pbuc1 
     lda #<f_amp
     sta.z mulFACbyMEM.mem
     lda #>f_amp
@@ -8124,7 +8112,7 @@ progress_inc: {
     bne __b1
     // progress_inc::@2
     // *progress_cursor = progress_chars[8]
-    // [123] *((byte*) progress_cursor#13) ← *((const byte[]) progress_inc::progress_chars+(byte) 8) -- _deref_pbuz1=_deref_pbuc1 
+    // [123] *((byte*) progress_cursor#13) ← *((const byte*) progress_inc::progress_chars+(byte) 8) -- _deref_pbuz1=_deref_pbuc1 
     lda progress_chars+8
     ldy #0
     sta (progress_cursor),y
@@ -8145,7 +8133,7 @@ progress_inc: {
     // progress_inc::@1
   __b1:
     // *progress_cursor = progress_chars[progress_idx]
-    // [126] *((byte*) progress_cursor#11) ← *((const byte[]) progress_inc::progress_chars + (byte) progress_idx#12) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [126] *((byte*) progress_cursor#11) ← *((const byte*) progress_inc::progress_chars + (byte) progress_idx#12) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z progress_idx
     lda progress_chars,y
     ldy #0
@@ -8187,11 +8175,11 @@ getFAC: {
 addMEMtoFAC: {
     // addMEMtoFAC::prepareMEM1
     // *memLo = <mem
-    // [132] *((const byte*) memLo) ← <(word)(const byte[]) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
+    // [132] *((const byte*) memLo) ← <(word)(const byte*) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
     lda #<gen_sintab.f_min
     sta memLo
     // *memHi = >mem
-    // [133] *((const byte*) memHi) ← >(word)(const byte[]) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
+    // [133] *((const byte*) memHi) ← >(word)(const byte*) gen_sintab::f_min -- _deref_pbuc1=vbuc2 
     lda #>gen_sintab.f_min
     sta memHi
     // addMEMtoFAC::@1
@@ -8394,7 +8382,7 @@ gen_sprites: {
     // gen_sprites::@1
   __b1:
     // gen_chargen_sprite(cml[i], spr)
-    // [174] (byte) gen_chargen_sprite::ch#0 ← *((const byte[]) gen_sprites::cml + (byte) gen_sprites::i#2) -- vbuxx=pbuc1_derefidx_vbuz1 
+    // [174] (byte) gen_chargen_sprite::ch#0 ← *((const byte*) gen_sprites::cml + (byte) gen_sprites::i#2) -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy.z i
     ldx cml,y
     // [175] (byte*) gen_chargen_sprite::sprite#0 ← (byte*) gen_sprites::spr#2 -- pbuz1=pbuz2 

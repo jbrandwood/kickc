@@ -89,6 +89,7 @@ Culled Empty Block (label) @52
 Culled Empty Block (label) @53
 Culled Empty Block (label) @54
 Culled Empty Block (label) @55
+Culled Empty Block (label) @56
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
@@ -501,7 +502,7 @@ memset::@return: scope:[memset]  from memset::@1
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@56
+  to:@57
 
 (void()) print_str((byte*) print_str::str)
 print_str: scope:[print_str]  from main::@5
@@ -580,7 +581,7 @@ print_byte: scope:[print_byte]  from print_sbyte::@2
   (byte*) print_char_cursor#40 ← phi( print_sbyte::@2/(byte*) print_char_cursor#39 )
   (byte) print_byte::b#1 ← phi( print_sbyte::@2/(byte) print_byte::b#0 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#1 >> (number) 4
-  (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -588,7 +589,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#25 ← phi( print_byte/(byte*) print_char_cursor#11 )
   (byte*) print_char_cursor#7 ← (byte*) print_char_cursor#25
   (number~) print_byte::$2 ← (byte) print_byte::b#2 & (number) $f
-  (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#3 ← *((const byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -635,19 +636,13 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   (byte*) print_char_cursor#13 ← (byte*) print_char_cursor#30
   return 
   to:@return
-@56: scope:[]  from @32
-  (byte*) print_screen#6 ← phi( @32/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#47 ← phi( @32/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#15 ← phi( @32/(byte*) print_line_cursor#0 )
-  (signed byte[$c0]) sintab2 ← { fill( $c0, 0) }
-  to:@57
 
 (void()) main()
 main: scope:[main]  from @57
   (byte*) print_char_cursor#46 ← phi( @57/(byte*) print_char_cursor#43 )
   (byte*) print_line_cursor#13 ← phi( @57/(byte*) print_line_cursor#12 )
   (byte*) print_screen#4 ← phi( @57/(byte*) print_screen#5 )
-  (signed byte*) sin8s_gen::sintab#1 ← (signed byte[$c0]) sintab2
+  (signed byte*) sin8s_gen::sintab#1 ← (const signed byte*) sintab2
   (word) sin8s_gen::wavelength#0 ← (const word) wavelength
   call sin8s_gen 
   to:main::@3
@@ -665,17 +660,17 @@ main::@4: scope:[main]  from main::@3
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main::@4 main::@6
-  (byte*) print_line_cursor#16 ← phi( main::@4/(byte*) print_line_cursor#3 main::@6/(byte*) print_line_cursor#11 )
+  (byte*) print_line_cursor#15 ← phi( main::@4/(byte*) print_line_cursor#3 main::@6/(byte*) print_line_cursor#11 )
   (byte*) print_char_cursor#42 ← phi( main::@4/(byte*) print_char_cursor#14 main::@6/(byte*) print_char_cursor#16 )
   (byte) main::i#2 ← phi( main::@4/(byte) main::i#0 main::@6/(byte) main::i#1 )
-  (signed byte~) main::$2 ← ((signed byte)) *((const byte[]) sintabref + (byte) main::i#2)
-  (signed byte~) main::$3 ← *((signed byte[$c0]) sintab2 + (byte) main::i#2) - (signed byte~) main::$2
+  (signed byte~) main::$2 ← ((signed byte)) *((const byte*) sintabref + (byte) main::i#2)
+  (signed byte~) main::$3 ← *((const signed byte*) sintab2 + (byte) main::i#2) - (signed byte~) main::$2
   (signed byte) main::sb#0 ← (signed byte~) main::$3
   (signed byte) print_sbyte::b#1 ← (signed byte) main::sb#0
   call print_sbyte 
   to:main::@5
 main::@5: scope:[main]  from main::@1
-  (byte*) print_line_cursor#14 ← phi( main::@1/(byte*) print_line_cursor#16 )
+  (byte*) print_line_cursor#14 ← phi( main::@1/(byte*) print_line_cursor#15 )
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#2 )
   (byte*) print_char_cursor#32 ← phi( main::@1/(byte*) print_char_cursor#6 )
   (byte*) print_char_cursor#15 ← (byte*) print_char_cursor#32
@@ -698,10 +693,10 @@ main::@return: scope:[main]  from main::@6
   (byte*) print_char_cursor#17 ← (byte*) print_char_cursor#34
   return 
   to:@return
-@57: scope:[]  from @56
-  (byte*) print_screen#5 ← phi( @56/(byte*) print_screen#6 )
-  (byte*) print_char_cursor#43 ← phi( @56/(byte*) print_char_cursor#47 )
-  (byte*) print_line_cursor#12 ← phi( @56/(byte*) print_line_cursor#15 )
+@57: scope:[]  from @32
+  (byte*) print_screen#5 ← phi( @32/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#43 ← phi( @32/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#12 ← phi( @32/(byte*) print_line_cursor#0 )
   call main 
   to:@58
 @58: scope:[]  from @57
@@ -714,7 +709,6 @@ main::@return: scope:[main]  from main::@6
 
 SYMBOL TABLE SSA
 (label) @32
-(label) @56
 (label) @57
 (label) @58
 (label) @begin
@@ -1024,7 +1018,6 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#44
 (byte*) print_char_cursor#45
 (byte*) print_char_cursor#46
-(byte*) print_char_cursor#47
 (byte*) print_char_cursor#5
 (byte*) print_char_cursor#6
 (byte*) print_char_cursor#7
@@ -1033,7 +1026,7 @@ SYMBOL TABLE SSA
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -1043,7 +1036,6 @@ SYMBOL TABLE SSA
 (byte*) print_line_cursor#13
 (byte*) print_line_cursor#14
 (byte*) print_line_cursor#15
-(byte*) print_line_cursor#16
 (byte*) print_line_cursor#2
 (byte*) print_line_cursor#3
 (byte*) print_line_cursor#4
@@ -1079,7 +1071,6 @@ SYMBOL TABLE SSA
 (byte*) print_screen#3
 (byte*) print_screen#4
 (byte*) print_screen#5
-(byte*) print_screen#6
 (void()) print_str((byte*) print_str::str)
 (bool~) print_str::$0
 (label) print_str::@1
@@ -1232,8 +1223,8 @@ SYMBOL TABLE SSA
 (word) sin8s_gen::x#2
 (word) sin8s_gen::x#3
 (word) sin8s_gen::x#4
-(signed byte[$c0]) sintab2
-(const byte[]) sintabref = { (byte)(number) 0, (byte)(number) 4, (byte)(number) 8, (byte)(number) $c, (byte)(number) $11, (byte)(number) $15, (byte)(number) $19, (byte)(number) $1d, (byte)(number) $21, (byte)(number) $25, (byte)(number) $29, (byte)(number) $2d, (byte)(number) $31, (byte)(number) $35, (byte)(number) $38, (byte)(number) $3c, (byte)(number) $40, (byte)(number) $43, (byte)(number) $47, (byte)(number) $4a, (byte)(number) $4e, (byte)(number) $51, (byte)(number) $54, (byte)(number) $57, (byte)(number) $5a, (byte)(number) $5d, (byte)(number) $60, (byte)(number) $63, (byte)(number) $65, (byte)(number) $68, (byte)(number) $6a, (byte)(number) $6c, (byte)(number) $6e, (byte)(number) $70, (byte)(number) $72, (byte)(number) $74, (byte)(number) $76, (byte)(number) $77, (byte)(number) $79, (byte)(number) $7a, (byte)(number) $7b, (byte)(number) $7c, (byte)(number) $7d, (byte)(number) $7e, (byte)(number) $7e, (byte)(number) $7f, (byte)(number) $7f, (byte)(number) $7f, (byte)(number) $80, (byte)(number) $7f, (byte)(number) $7f, (byte)(number) $7f, (byte)(number) $7e, (byte)(number) $7e, (byte)(number) $7d, (byte)(number) $7c, (byte)(number) $7b, (byte)(number) $7a, (byte)(number) $79, (byte)(number) $77, (byte)(number) $76, (byte)(number) $74, (byte)(number) $72, (byte)(number) $70, (byte)(number) $6e, (byte)(number) $6c, (byte)(number) $6a, (byte)(number) $68, (byte)(number) $65, (byte)(number) $63, (byte)(number) $60, (byte)(number) $5d, (byte)(number) $5a, (byte)(number) $57, (byte)(number) $54, (byte)(number) $51, (byte)(number) $4e, (byte)(number) $4a, (byte)(number) $47, (byte)(number) $43, (byte)(number) $40, (byte)(number) $3c, (byte)(number) $38, (byte)(number) $35, (byte)(number) $31, (byte)(number) $2d, (byte)(number) $29, (byte)(number) $25, (byte)(number) $21, (byte)(number) $1d, (byte)(number) $19, (byte)(number) $15, (byte)(number) $11, (byte)(number) $c, (byte)(number) 8, (byte)(number) 4, (byte)(number) 0, (byte)(number) $fc, (byte)(number) $f8, (byte)(number) $f4, (byte)(number) $ef, (byte)(number) $eb, (byte)(number) $e7, (byte)(number) $e3, (byte)(number) $df, (byte)(number) $db, (byte)(number) $d7, (byte)(number) $d3, (byte)(number) $cf, (byte)(number) $cb, (byte)(number) $c8, (byte)(number) $c4, (byte)(number) $c0, (byte)(number) $bd, (byte)(number) $b9, (byte)(number) $b6, (byte)(number) $b2, (byte)(number) $af, (byte)(number) $ac, (byte)(number) $a9, (byte)(number) $a6, (byte)(number) $a3, (byte)(number) $a0, (byte)(number) $9d, (byte)(number) $9b, (byte)(number) $98, (byte)(number) $96, (byte)(number) $94, (byte)(number) $92, (byte)(number) $90, (byte)(number) $8e, (byte)(number) $8c, (byte)(number) $8a, (byte)(number) $89, (byte)(number) $87, (byte)(number) $86, (byte)(number) $85, (byte)(number) $84, (byte)(number) $83, (byte)(number) $82, (byte)(number) $82, (byte)(number) $81, (byte)(number) $81, (byte)(number) $81, (byte)(number) $81, (byte)(number) $81, (byte)(number) $81, (byte)(number) $81, (byte)(number) $82, (byte)(number) $82, (byte)(number) $83, (byte)(number) $84, (byte)(number) $85, (byte)(number) $86, (byte)(number) $87, (byte)(number) $89, (byte)(number) $8a, (byte)(number) $8c, (byte)(number) $8e, (byte)(number) $90, (byte)(number) $92, (byte)(number) $94, (byte)(number) $96, (byte)(number) $98, (byte)(number) $9b, (byte)(number) $9d, (byte)(number) $a0, (byte)(number) $a3, (byte)(number) $a6, (byte)(number) $a9, (byte)(number) $ac, (byte)(number) $af, (byte)(number) $b2, (byte)(number) $b6, (byte)(number) $b9, (byte)(number) $bd, (byte)(number) $c0, (byte)(number) $c4, (byte)(number) $c8, (byte)(number) $cb, (byte)(number) $cf, (byte)(number) $d3, (byte)(number) $d7, (byte)(number) $db, (byte)(number) $df, (byte)(number) $e3, (byte)(number) $e7, (byte)(number) $eb, (byte)(number) $ef, (byte)(number) $f4, (byte)(number) $f8, (byte)(number) $fc }
+(const signed byte*) sintab2 = { fill( $c0, 0) }
+(const byte*) sintabref = { (byte)(number) 0, (byte)(number) 4, (byte)(number) 8, (byte)(number) $c, (byte)(number) $11, (byte)(number) $15, (byte)(number) $19, (byte)(number) $1d, (byte)(number) $21, (byte)(number) $25, (byte)(number) $29, (byte)(number) $2d, (byte)(number) $31, (byte)(number) $35, (byte)(number) $38, (byte)(number) $3c, (byte)(number) $40, (byte)(number) $43, (byte)(number) $47, (byte)(number) $4a, (byte)(number) $4e, (byte)(number) $51, (byte)(number) $54, (byte)(number) $57, (byte)(number) $5a, (byte)(number) $5d, (byte)(number) $60, (byte)(number) $63, (byte)(number) $65, (byte)(number) $68, (byte)(number) $6a, (byte)(number) $6c, (byte)(number) $6e, (byte)(number) $70, (byte)(number) $72, (byte)(number) $74, (byte)(number) $76, (byte)(number) $77, (byte)(number) $79, (byte)(number) $7a, (byte)(number) $7b, (byte)(number) $7c, (byte)(number) $7d, (byte)(number) $7e, (byte)(number) $7e, (byte)(number) $7f, (byte)(number) $7f, (byte)(number) $7f, (byte)(number) $80, (byte)(number) $7f, (byte)(number) $7f, (byte)(number) $7f, (byte)(number) $7e, (byte)(number) $7e, (byte)(number) $7d, (byte)(number) $7c, (byte)(number) $7b, (byte)(number) $7a, (byte)(number) $79, (byte)(number) $77, (byte)(number) $76, (byte)(number) $74, (byte)(number) $72, (byte)(number) $70, (byte)(number) $6e, (byte)(number) $6c, (byte)(number) $6a, (byte)(number) $68, (byte)(number) $65, (byte)(number) $63, (byte)(number) $60, (byte)(number) $5d, (byte)(number) $5a, (byte)(number) $57, (byte)(number) $54, (byte)(number) $51, (byte)(number) $4e, (byte)(number) $4a, (byte)(number) $47, (byte)(number) $43, (byte)(number) $40, (byte)(number) $3c, (byte)(number) $38, (byte)(number) $35, (byte)(number) $31, (byte)(number) $2d, (byte)(number) $29, (byte)(number) $25, (byte)(number) $21, (byte)(number) $1d, (byte)(number) $19, (byte)(number) $15, (byte)(number) $11, (byte)(number) $c, (byte)(number) 8, (byte)(number) 4, (byte)(number) 0, (byte)(number) $fc, (byte)(number) $f8, (byte)(number) $f4, (byte)(number) $ef, (byte)(number) $eb, (byte)(number) $e7, (byte)(number) $e3, (byte)(number) $df, (byte)(number) $db, (byte)(number) $d7, (byte)(number) $d3, (byte)(number) $cf, (byte)(number) $cb, (byte)(number) $c8, (byte)(number) $c4, (byte)(number) $c0, (byte)(number) $bd, (byte)(number) $b9, (byte)(number) $b6, (byte)(number) $b2, (byte)(number) $af, (byte)(number) $ac, (byte)(number) $a9, (byte)(number) $a6, (byte)(number) $a3, (byte)(number) $a0, (byte)(number) $9d, (byte)(number) $9b, (byte)(number) $98, (byte)(number) $96, (byte)(number) $94, (byte)(number) $92, (byte)(number) $90, (byte)(number) $8e, (byte)(number) $8c, (byte)(number) $8a, (byte)(number) $89, (byte)(number) $87, (byte)(number) $86, (byte)(number) $85, (byte)(number) $84, (byte)(number) $83, (byte)(number) $82, (byte)(number) $82, (byte)(number) $81, (byte)(number) $81, (byte)(number) $81, (byte)(number) $81, (byte)(number) $81, (byte)(number) $81, (byte)(number) $81, (byte)(number) $82, (byte)(number) $82, (byte)(number) $83, (byte)(number) $84, (byte)(number) $85, (byte)(number) $86, (byte)(number) $87, (byte)(number) $89, (byte)(number) $8a, (byte)(number) $8c, (byte)(number) $8e, (byte)(number) $90, (byte)(number) $92, (byte)(number) $94, (byte)(number) $96, (byte)(number) $98, (byte)(number) $9b, (byte)(number) $9d, (byte)(number) $a0, (byte)(number) $a3, (byte)(number) $a6, (byte)(number) $a9, (byte)(number) $ac, (byte)(number) $af, (byte)(number) $b2, (byte)(number) $b6, (byte)(number) $b9, (byte)(number) $bd, (byte)(number) $c0, (byte)(number) $c4, (byte)(number) $c8, (byte)(number) $cb, (byte)(number) $cf, (byte)(number) $d3, (byte)(number) $d7, (byte)(number) $db, (byte)(number) $df, (byte)(number) $e3, (byte)(number) $e7, (byte)(number) $eb, (byte)(number) $ef, (byte)(number) $f4, (byte)(number) $f8, (byte)(number) $fc }
 (const word) wavelength = (word) $c0
 
 Adding number conversion cast (unumber) 0 in (word) divr16u::quotient#0 ← (number) 0
@@ -1293,7 +1284,7 @@ Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
 Inlining cast (byte~) print_sbyte::$1 ← (byte)(signed byte) print_sbyte::b#4
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
-Inlining cast (signed byte~) main::$2 ← (signed byte)*((const byte[]) sintabref + (byte) main::i#2)
+Inlining cast (signed byte~) main::$2 ← (signed byte)*((const byte*) sintabref + (byte) main::i#2)
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
 Simplifying constant integer cast 4
@@ -1638,7 +1629,7 @@ Alias (byte) memset::c#1 = (byte) memset::c#2
 Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
 Alias (byte*) memset::end#1 = (byte*) memset::end#2 
 Alias (void*) memset::str#4 = (void*) memset::str#5 
-Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#15 (byte*) print_char_cursor#47 (byte*) print_screen#6 (byte*) print_line_cursor#12 (byte*) print_char_cursor#43 (byte*) print_screen#5 
+Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#12 (byte*) print_char_cursor#43 (byte*) print_screen#5 
 Alias (byte*) print_str::str#2 = (byte*) print_str::str#3 
 Alias (byte*) print_char_cursor#19 = (byte*) print_char_cursor#36 (byte*) print_char_cursor#20 (byte*) print_char_cursor#2 
 Alias (byte*) print_char_cursor#37 = (byte*) print_char_cursor#45 (byte*) print_char_cursor#38 
@@ -1660,7 +1651,7 @@ Alias (byte*) print_line_cursor#3 = (byte*) print_line_cursor#7
 Alias (byte*) print_char_cursor#14 = (byte*) print_char_cursor#31 
 Alias (signed byte) main::sb#0 = (signed byte~) main::$3 
 Alias (byte) main::i#2 = (byte) main::i#4 (byte) main::i#3 
-Alias (byte*) print_line_cursor#11 = (byte*) print_line_cursor#14 (byte*) print_line_cursor#16 (byte*) print_line_cursor#8 (byte*) print_line_cursor#4 
+Alias (byte*) print_line_cursor#11 = (byte*) print_line_cursor#14 (byte*) print_line_cursor#15 (byte*) print_line_cursor#8 (byte*) print_line_cursor#4 
 Alias (byte*) print_char_cursor#15 = (byte*) print_char_cursor#32 
 Alias (byte*) print_char_cursor#16 = (byte*) print_char_cursor#33 (byte*) print_char_cursor#34 (byte*) print_char_cursor#17 
 Alias (byte*) print_line_cursor#5 = (byte*) print_line_cursor#9 
@@ -1734,10 +1725,8 @@ Simple Condition (bool~) memset::$1 [198] if((word) memset::num#0<=(byte) 0) got
 Simple Condition (bool~) memset::$4 [208] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str::$0 [221] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
 Simple Condition (bool~) print_sbyte::$0 [231] if((signed byte) print_sbyte::b#1<(signed byte) 0) goto print_sbyte::@1
-Simple Condition (bool~) main::$6 [312] if((byte) main::i#1!=rangelast(0,$bf)) goto main::@1
+Simple Condition (bool~) main::$6 [310] if((byte) main::i#1!=rangelast(0,$bf)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [287] (signed byte[$c0]) sintab2 ← { fill( $c0, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
 Constant (const word) divr16u::rem#3 = 0
@@ -1758,7 +1747,7 @@ Constant (const byte) print_char::ch#0 = '-'
 Constant (const byte) print_char::ch#1 = ' '
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const signed byte[$c0]) sintab2 = { fill( $c0, 0) }
+Constant (const signed byte*) sin8s_gen::sintab#1 = sintab2
 Constant (const word) sin8s_gen::wavelength#0 = wavelength
 Constant (const byte) main::i#0 = 0
 Constant (const byte*) print_str::str#1 = main::str
@@ -1766,7 +1755,6 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::dividend#1 = div16u::dividend#0
 Constant (const word) div16u::divisor#0 = sin8s_gen::wavelength#0
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
-Constant (const signed byte*) sin8s_gen::sintab#1 = sintab2
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::divisor#0 = div16u::divisor#0
 Constant (const byte*) memset::$2 = (byte*)memset::str#0
@@ -1777,8 +1765,8 @@ if() condition always false - eliminating [198] if((const word) memset::num#0<=(
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [23] divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value [25] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
-Resolved ranged next value [310] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [312] if(main::i#1!=rangelast(0,$bf)) goto main::@1 to (number) $c0
+Resolved ranged next value [308] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [310] if(main::i#1!=rangelast(0,$bf)) goto main::@1 to (number) $c0
 Eliminating unused constant (const void*) memset::return#2
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) $10 in if((byte) divr16u::i#1!=(number) $10) goto divr16u::@1
@@ -1796,7 +1784,7 @@ Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [80] (signed byte) sin8s::sinx#0 ← (signed byte)(byte) sin8s::usinx#4 keeping sin8s::usinx#4
 Inlining Noop Cast [84] (signed byte~) sin8s::$21 ← (signed byte)(byte) sin8s::usinx#4 keeping sin8s::usinx#4
-Inlining Noop Cast [131] (signed byte~) main::$2 ← (signed byte)*((const byte[]) sintabref + (byte) main::i#2) keeping *(sintabref + main::i#2)
+Inlining Noop Cast [131] (signed byte~) main::$2 ← (signed byte)*((const byte*) sintabref + (byte) main::i#2) keeping *(sintabref + main::i#2)
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const word) divr16u::quotient#0
 Inlining constant with var siblings (const byte) divr16u::i#0
@@ -1840,7 +1828,7 @@ Constant inlined mulu8_sel::v2#2 = (const byte) sin8s::DIV_6
 Constant inlined mul8u::res#0 = (byte) 0
 Constant inlined print_char::ch#1 = (byte) ' '
 Constant inlined print_char::ch#0 = (byte) '-'
-Constant inlined sin8s_gen::sintab#1 = (const signed byte[$c0]) sintab2
+Constant inlined sin8s_gen::sintab#1 = (const signed byte*) sintab2
 Constant inlined sin8s_gen::wavelength#0 = (const word) wavelength
 Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
 Constant inlined print_str::str#1 = (const string) main::str
@@ -1858,7 +1846,6 @@ Added new block during phi lifting sin8s::@18(between sin8s::@3 and sin8s::@4)
 Added new block during phi lifting main::@7(between main::@6 and main::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @32
-Adding NOP phi() at start of @56
 Adding NOP phi() at start of @57
 Adding NOP phi() at start of @58
 Adding NOP phi() at start of @end
@@ -1879,70 +1866,69 @@ Adding NOP phi() at start of div16u
 Adding NOP phi() at start of divr16u
 Adding NOP phi() at start of divr16u::@6
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to sin8s_gen:8 print_cls:10 print_sbyte:15 print_str:17 
-Calls in [print_sbyte] to print_char:34 print_byte:38 print_char:42 
-Calls in [print_byte] to print_char:53 print_char:58 
-Calls in [print_cls] to memset:62 
-Calls in [sin8s_gen] to div16u:75 sin8s:82 
-Calls in [sin8s] to mulu8_sel:106 mulu8_sel:113 mulu8_sel:118 mulu8_sel:126 mulu8_sel:133 
-Calls in [mulu8_sel] to mul8u:154 
-Calls in [div16u] to divr16u:178 
+Calls in [] to main:3 
+Calls in [main] to sin8s_gen:7 print_cls:9 print_sbyte:14 print_str:16 
+Calls in [print_sbyte] to print_char:33 print_byte:37 print_char:41 
+Calls in [print_byte] to print_char:52 print_char:57 
+Calls in [print_cls] to memset:61 
+Calls in [sin8s_gen] to div16u:74 sin8s:81 
+Calls in [sin8s] to mulu8_sel:105 mulu8_sel:112 mulu8_sel:117 mulu8_sel:125 mulu8_sel:132 
+Calls in [mulu8_sel] to mul8u:153 
+Calls in [div16u] to divr16u:177 
 
 Created 30 initial phi equivalence classes
-Coalesced [21] main::i#5 ← main::i#1
-Coalesced [22] print_char_cursor#54 ← print_char_cursor#19
-Coalesced [23] print_char_cursor#48 ← print_char_cursor#10
-Coalesced [30] print_str::str#5 ← print_str::str#0
-Coalesced [31] print_char_cursor#49 ← print_char_cursor#1
-Coalesced [33] print_char_cursor#53 ← print_char_cursor#42
-Coalesced [35] print_sbyte::b#9 ← print_sbyte::b#1
-Coalesced (already) [41] print_char_cursor#52 ← print_char_cursor#42
-Coalesced [44] print_sbyte::b#8 ← print_sbyte::b#0
-Coalesced [51] print_char::ch#5 ← print_char::ch#2
-Coalesced (already) [52] print_char_cursor#50 ← print_char_cursor#10
-Coalesced [56] print_char::ch#6 ← print_char::ch#3
-Coalesced (already) [57] print_char_cursor#51 ← print_char_cursor#10
-Coalesced [73] memset::dst#4 ← memset::dst#1
-Coalesced [89] sin8s_gen::i#5 ← sin8s_gen::i#1
-Coalesced [90] sin8s_gen::x#5 ← sin8s_gen::x#1
-Coalesced [91] sin8s_gen::sintab#7 ← sin8s_gen::sintab#0
-Coalesced [94] sin8s::x#9 ← sin8s::x#1
-Coalesced [98] sin8s::x#11 ← sin8s::x#2
-Coalesced [104] mulu8_sel::v1#10 ← mulu8_sel::v1#0
-Coalesced [105] mulu8_sel::v2#9 ← mulu8_sel::v2#0
-Coalesced [111] mulu8_sel::v1#6 ← mulu8_sel::v1#1
-Coalesced [112] mulu8_sel::v2#6 ← mulu8_sel::v2#1
-Coalesced [117] mulu8_sel::v1#7 ← mulu8_sel::v1#2
-Coalesced [124] mulu8_sel::v1#8 ← mulu8_sel::v1#3
-Coalesced [125] mulu8_sel::v2#7 ← mulu8_sel::v2#3
-Coalesced [131] mulu8_sel::v1#9 ← mulu8_sel::v1#4
-Coalesced [132] mulu8_sel::v2#8 ← mulu8_sel::v2#4
-Coalesced [140] sin8s::usinx#9 ← sin8s::usinx#2
-Coalesced [144] sin8s::return#6 ← sin8s::sinx#1
-Coalesced [148] sin8s::usinx#8 ← sin8s::usinx#1
-Coalesced [149] sin8s::x#10 ← sin8s::x#4
-Coalesced [150] sin8s::x#8 ← sin8s::x#0
-Coalesced [160] mul8u::a#7 ← mul8u::a#1
-Coalesced [161] mul8u::mb#6 ← mul8u::b#0
-Coalesced [169] mul8u::res#9 ← mul8u::res#1
-Coalesced [173] mul8u::a#8 ← mul8u::a#0
-Coalesced [174] mul8u::res#7 ← mul8u::res#6
-Coalesced [175] mul8u::mb#7 ← mul8u::mb#1
-Coalesced (already) [176] mul8u::res#8 ← mul8u::res#2
-Coalesced [189] divr16u::rem#12 ← divr16u::rem#1
-Coalesced [196] divr16u::rem#14 ← divr16u::rem#2
-Coalesced [197] divr16u::return#6 ← divr16u::quotient#2
-Coalesced [203] divr16u::rem#10 ← divr16u::rem#9
-Coalesced [204] divr16u::dividend#8 ← divr16u::dividend#0
-Coalesced [205] divr16u::quotient#9 ← divr16u::return#0
-Coalesced [206] divr16u::i#7 ← divr16u::i#1
-Coalesced [207] divr16u::rem#13 ← divr16u::rem#5
-Coalesced [208] divr16u::return#5 ← divr16u::quotient#1
-Coalesced [209] divr16u::rem#11 ← divr16u::rem#0
+Coalesced [20] main::i#5 ← main::i#1
+Coalesced [21] print_char_cursor#53 ← print_char_cursor#19
+Coalesced [22] print_char_cursor#47 ← print_char_cursor#10
+Coalesced [29] print_str::str#5 ← print_str::str#0
+Coalesced [30] print_char_cursor#48 ← print_char_cursor#1
+Coalesced [32] print_char_cursor#52 ← print_char_cursor#42
+Coalesced [34] print_sbyte::b#9 ← print_sbyte::b#1
+Coalesced (already) [40] print_char_cursor#51 ← print_char_cursor#42
+Coalesced [43] print_sbyte::b#8 ← print_sbyte::b#0
+Coalesced [50] print_char::ch#5 ← print_char::ch#2
+Coalesced (already) [51] print_char_cursor#49 ← print_char_cursor#10
+Coalesced [55] print_char::ch#6 ← print_char::ch#3
+Coalesced (already) [56] print_char_cursor#50 ← print_char_cursor#10
+Coalesced [72] memset::dst#4 ← memset::dst#1
+Coalesced [88] sin8s_gen::i#5 ← sin8s_gen::i#1
+Coalesced [89] sin8s_gen::x#5 ← sin8s_gen::x#1
+Coalesced [90] sin8s_gen::sintab#7 ← sin8s_gen::sintab#0
+Coalesced [93] sin8s::x#9 ← sin8s::x#1
+Coalesced [97] sin8s::x#11 ← sin8s::x#2
+Coalesced [103] mulu8_sel::v1#10 ← mulu8_sel::v1#0
+Coalesced [104] mulu8_sel::v2#9 ← mulu8_sel::v2#0
+Coalesced [110] mulu8_sel::v1#6 ← mulu8_sel::v1#1
+Coalesced [111] mulu8_sel::v2#6 ← mulu8_sel::v2#1
+Coalesced [116] mulu8_sel::v1#7 ← mulu8_sel::v1#2
+Coalesced [123] mulu8_sel::v1#8 ← mulu8_sel::v1#3
+Coalesced [124] mulu8_sel::v2#7 ← mulu8_sel::v2#3
+Coalesced [130] mulu8_sel::v1#9 ← mulu8_sel::v1#4
+Coalesced [131] mulu8_sel::v2#8 ← mulu8_sel::v2#4
+Coalesced [139] sin8s::usinx#9 ← sin8s::usinx#2
+Coalesced [143] sin8s::return#6 ← sin8s::sinx#1
+Coalesced [147] sin8s::usinx#8 ← sin8s::usinx#1
+Coalesced [148] sin8s::x#10 ← sin8s::x#4
+Coalesced [149] sin8s::x#8 ← sin8s::x#0
+Coalesced [159] mul8u::a#7 ← mul8u::a#1
+Coalesced [160] mul8u::mb#6 ← mul8u::b#0
+Coalesced [168] mul8u::res#9 ← mul8u::res#1
+Coalesced [172] mul8u::a#8 ← mul8u::a#0
+Coalesced [173] mul8u::res#7 ← mul8u::res#6
+Coalesced [174] mul8u::mb#7 ← mul8u::mb#1
+Coalesced (already) [175] mul8u::res#8 ← mul8u::res#2
+Coalesced [188] divr16u::rem#12 ← divr16u::rem#1
+Coalesced [195] divr16u::rem#14 ← divr16u::rem#2
+Coalesced [196] divr16u::return#6 ← divr16u::quotient#2
+Coalesced [202] divr16u::rem#10 ← divr16u::rem#9
+Coalesced [203] divr16u::dividend#8 ← divr16u::dividend#0
+Coalesced [204] divr16u::quotient#9 ← divr16u::return#0
+Coalesced [205] divr16u::i#7 ← divr16u::i#1
+Coalesced [206] divr16u::rem#13 ← divr16u::rem#5
+Coalesced [207] divr16u::return#5 ← divr16u::quotient#1
+Coalesced [208] divr16u::rem#11 ← divr16u::rem#0
 Coalesced down to 23 phi equivalence classes
 Culled Empty Block (label) @32
-Culled Empty Block (label) @56
 Culled Empty Block (label) @58
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@7
@@ -2019,7 +2005,7 @@ main::@2: scope:[main]  from main
 main::@1: scope:[main]  from main::@2 main::@4
   [8] (byte*) print_char_cursor#42 ← phi( main::@2/(const byte*) print_line_cursor#0 main::@4/(byte*) print_char_cursor#19 )
   [8] (byte) main::i#2 ← phi( main::@2/(byte) 0 main::@4/(byte) main::i#1 )
-  [9] (signed byte) main::sb#0 ← *((const signed byte[$c0]) sintab2 + (byte) main::i#2) - (signed byte)*((const byte[]) sintabref + (byte) main::i#2)
+  [9] (signed byte) main::sb#0 ← *((const signed byte*) sintab2 + (byte) main::i#2) - (signed byte)*((const byte*) sintabref + (byte) main::i#2)
   [10] (signed byte) print_sbyte::b#1 ← (signed byte) main::sb#0
   [11] call print_sbyte 
   to:main::@3
@@ -2091,12 +2077,12 @@ print_char::@return: scope:[print_char]  from print_char
 (void()) print_byte((byte) print_byte::b)
 print_byte: scope:[print_byte]  from print_sbyte::@2
   [38] (byte~) print_byte::$0 ← (byte) print_byte::b#0 >> (byte) 4
-  [39] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  [39] (byte) print_char::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   [40] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [41] (byte~) print_byte::$2 ← (byte) print_byte::b#0 & (byte) $f
-  [42] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2)
+  [42] (byte) print_char::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
   [43] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -2138,7 +2124,7 @@ sin8s_gen::@3: scope:[sin8s_gen]  from sin8s_gen
   [57] (word) sin8s_gen::step#0 ← (word) div16u::return#2
   to:sin8s_gen::@1
 sin8s_gen::@1: scope:[sin8s_gen]  from sin8s_gen::@3 sin8s_gen::@4
-  [58] (signed byte*) sin8s_gen::sintab#2 ← phi( sin8s_gen::@3/(const signed byte[$c0]) sintab2 sin8s_gen::@4/(signed byte*) sin8s_gen::sintab#0 )
+  [58] (signed byte*) sin8s_gen::sintab#2 ← phi( sin8s_gen::@3/(const signed byte*) sintab2 sin8s_gen::@4/(signed byte*) sin8s_gen::sintab#0 )
   [58] (word) sin8s_gen::x#2 ← phi( sin8s_gen::@3/(byte) 0 sin8s_gen::@4/(word) sin8s_gen::x#1 )
   [58] (word) sin8s_gen::i#2 ← phi( sin8s_gen::@3/(byte) 0 sin8s_gen::@4/(word) sin8s_gen::i#1 )
   [59] if((word) sin8s_gen::i#2<(const word) wavelength) goto sin8s_gen::@2
@@ -2736,7 +2722,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [9] (signed byte) main::sb#0 ← *((const signed byte[$c0]) sintab2 + (byte) main::i#2) - (signed byte)*((const byte[]) sintabref + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2_minus_pbsc2_derefidx_vbuz2 
+    // [9] (signed byte) main::sb#0 ← *((const signed byte*) sintab2 + (byte) main::i#2) - (signed byte)*((const byte*) sintabref + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2_minus_pbsc2_derefidx_vbuz2 
     ldy.z i
     lda sintab2,y
     sec
@@ -2918,7 +2904,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [39] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [39] (byte) print_char::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -2935,7 +2921,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [42] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [42] (byte) print_char::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -3040,7 +3026,7 @@ sin8s_gen: {
     sta.z step+1
     // [58] phi from sin8s_gen::@3 to sin8s_gen::@1 [phi:sin8s_gen::@3->sin8s_gen::@1]
   __b1_from___b3:
-    // [58] phi (signed byte*) sin8s_gen::sintab#2 = (const signed byte[$c0]) sintab2 [phi:sin8s_gen::@3->sin8s_gen::@1#0] -- pbsz1=pbsc1 
+    // [58] phi (signed byte*) sin8s_gen::sintab#2 = (const signed byte*) sintab2 [phi:sin8s_gen::@3->sin8s_gen::@1#0] -- pbsz1=pbsc1 
     lda #<sintab2
     sta.z sintab
     lda #>sintab2
@@ -3697,12 +3683,12 @@ divr16u: {
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
+  sintab2: .fill $c0, 0
   // .fill $c0, round(127.5*sin(i*2*PI/$c0))
   sintabref: .byte 0, 4, 8, $c, $11, $15, $19, $1d, $21, $25, $29, $2d, $31, $35, $38, $3c, $40, $43, $47, $4a, $4e, $51, $54, $57, $5a, $5d, $60, $63, $65, $68, $6a, $6c, $6e, $70, $72, $74, $76, $77, $79, $7a, $7b, $7c, $7d, $7e, $7e, $7f, $7f, $7f, $80, $7f, $7f, $7f, $7e, $7e, $7d, $7c, $7b, $7a, $79, $77, $76, $74, $72, $70, $6e, $6c, $6a, $68, $65, $63, $60, $5d, $5a, $57, $54, $51, $4e, $4a, $47, $43, $40, $3c, $38, $35, $31, $2d, $29, $25, $21, $1d, $19, $15, $11, $c, 8, 4, 0, $fc, $f8, $f4, $ef, $eb, $e7, $e3, $df, $db, $d7, $d3, $cf, $cb, $c8, $c4, $c0, $bd, $b9, $b6, $b2, $af, $ac, $a9, $a6, $a3, $a0, $9d, $9b, $98, $96, $94, $92, $90, $8e, $8c, $8a, $89, $87, $86, $85, $84, $83, $82, $82, $81, $81, $81, $81, $81, $81, $81, $82, $82, $83, $84, $85, $86, $87, $89, $8a, $8c, $8e, $90, $92, $94, $96, $98, $9b, $9d, $a0, $a3, $a6, $a9, $ac, $af, $b2, $b6, $b9, $bd, $c0, $c4, $c8, $cb, $cf, $d3, $d7, $db, $df, $e3, $e7, $eb, $ef, $f4, $f8, $fc
-  sintab2: .fill $c0, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] (signed byte) main::sb#0 ← *((const signed byte[$c0]) sintab2 + (byte) main::i#2) - (signed byte)*((const byte[]) sintabref + (byte) main::i#2) [ main::i#2 print_char_cursor#42 main::sb#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 ] ) always clobbers reg byte a 
+Statement [9] (signed byte) main::sb#0 ← *((const signed byte*) sintab2 + (byte) main::i#2) - (signed byte)*((const byte*) sintabref + (byte) main::i#2) [ main::i#2 print_char_cursor#42 main::sb#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [19] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:13 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
@@ -3750,7 +3736,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:37 [ divr16
 Statement [142] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ( main:2::sin8s_gen:5::div16u:55::divr16u:132 [ divr16u::dividend#2 divr16u::quotient#3 divr16u::i#2 divr16u::rem#1 ] ) always clobbers reg byte a 
 Statement [146] if((word) divr16u::rem#5<(const word) wavelength) goto divr16u::@3 [ divr16u::i#2 divr16u::dividend#0 divr16u::rem#5 divr16u::quotient#1 ] ( main:2::sin8s_gen:5::div16u:55::divr16u:132 [ divr16u::i#2 divr16u::dividend#0 divr16u::rem#5 divr16u::quotient#1 ] ) always clobbers reg byte a 
 Statement [148] (word) divr16u::rem#2 ← (word) divr16u::rem#5 - (const word) wavelength [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::sin8s_gen:5::div16u:55::divr16u:132 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
-Statement [9] (signed byte) main::sb#0 ← *((const signed byte[$c0]) sintab2 + (byte) main::i#2) - (signed byte)*((const byte[]) sintabref + (byte) main::i#2) [ main::i#2 print_char_cursor#42 main::sb#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 ] ) always clobbers reg byte a 
+Statement [9] (signed byte) main::sb#0 ← *((const signed byte*) sintab2 + (byte) main::i#2) - (signed byte)*((const byte*) sintabref + (byte) main::i#2) [ main::i#2 print_char_cursor#42 main::sb#0 ] ( main:2 [ main::i#2 print_char_cursor#42 main::sb#0 ] ) always clobbers reg byte a 
 Statement [19] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:13 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [21] *((byte*) print_char_cursor#19) ← *((byte*) print_str::str#2) [ print_char_cursor#19 print_str::str#2 ] ( main:2::print_str:13 [ main::i#2 print_char_cursor#19 print_str::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [33] (signed byte) print_sbyte::b#0 ← - (signed byte) print_sbyte::b#1 [ print_char_cursor#10 print_sbyte::b#0 ] ( main:2::print_sbyte:11 [ main::i#2 print_char_cursor#10 print_sbyte::b#0 ] ) always clobbers reg byte a 
@@ -4001,7 +3987,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [9] (signed byte) main::sb#0 ← *((const signed byte[$c0]) sintab2 + (byte) main::i#2) - (signed byte)*((const byte[]) sintabref + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuxx_minus_pbsc2_derefidx_vbuxx 
+    // [9] (signed byte) main::sb#0 ← *((const signed byte*) sintab2 + (byte) main::i#2) - (signed byte)*((const byte*) sintabref + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuxx_minus_pbsc2_derefidx_vbuxx 
     lda sintab2,x
     sec
     sbc sintabref,x
@@ -4170,7 +4156,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [39] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [39] (byte) print_char::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [40] call print_char 
@@ -4185,7 +4171,7 @@ print_byte: {
     // [41] (byte~) print_byte::$2 ← (byte) print_byte::b#0 & (byte) $f -- vbuaa=vbuz1_band_vbuc1 
     lda #$f
     and.z b
-    // [42] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [42] (byte) print_char::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [43] call print_char 
@@ -4280,7 +4266,7 @@ sin8s_gen: {
     // [57] (word) sin8s_gen::step#0 ← (word) div16u::return#2
     // [58] phi from sin8s_gen::@3 to sin8s_gen::@1 [phi:sin8s_gen::@3->sin8s_gen::@1]
   __b1_from___b3:
-    // [58] phi (signed byte*) sin8s_gen::sintab#2 = (const signed byte[$c0]) sintab2 [phi:sin8s_gen::@3->sin8s_gen::@1#0] -- pbsz1=pbsc1 
+    // [58] phi (signed byte*) sin8s_gen::sintab#2 = (const signed byte*) sintab2 [phi:sin8s_gen::@3->sin8s_gen::@1#0] -- pbsz1=pbsc1 
     lda #<sintab2
     sta.z sintab
     lda #>sintab2
@@ -4836,9 +4822,9 @@ divr16u: {
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
+  sintab2: .fill $c0, 0
   // .fill $c0, round(127.5*sin(i*2*PI/$c0))
   sintabref: .byte 0, 4, 8, $c, $11, $15, $19, $1d, $21, $25, $29, $2d, $31, $35, $38, $3c, $40, $43, $47, $4a, $4e, $51, $54, $57, $5a, $5d, $60, $63, $65, $68, $6a, $6c, $6e, $70, $72, $74, $76, $77, $79, $7a, $7b, $7c, $7d, $7e, $7e, $7f, $7f, $7f, $80, $7f, $7f, $7f, $7e, $7e, $7d, $7c, $7b, $7a, $79, $77, $76, $74, $72, $70, $6e, $6c, $6a, $68, $65, $63, $60, $5d, $5a, $57, $54, $51, $4e, $4a, $47, $43, $40, $3c, $38, $35, $31, $2d, $29, $25, $21, $1d, $19, $15, $11, $c, 8, 4, 0, $fc, $f8, $f4, $ef, $eb, $e7, $e3, $df, $db, $d7, $d3, $cf, $cb, $c8, $c4, $c0, $bd, $b9, $b6, $b2, $af, $ac, $a9, $a6, $a3, $a0, $9d, $9b, $98, $96, $94, $92, $90, $8e, $8c, $8a, $89, $87, $86, $85, $84, $83, $82, $82, $81, $81, $81, $81, $81, $81, $81, $82, $82, $83, $84, $85, $86, $87, $89, $8a, $8c, $8e, $90, $92, $94, $96, $98, $9b, $9d, $a0, $a3, $a6, $a9, $ac, $af, $b2, $b6, $b9, $bd, $c0, $c4, $c8, $cb, $cf, $d3, $d7, $db, $df, $e3, $e7, $eb, $ef, $f4, $f8, $fc
-  sintab2: .fill $c0, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -5171,7 +5157,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#42 print_char_cursor zp[2]:2 2.5
 (void()) print_cls()
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (const byte*) print_line_cursor#0 print_line_cursor = (byte*) 1024
 (void()) print_sbyte((signed byte) print_sbyte::b)
@@ -5262,8 +5248,8 @@ FINAL SYMBOL TABLE
 (word) sin8s_gen::x
 (word) sin8s_gen::x#1 x zp[2]:10 11.0
 (word) sin8s_gen::x#2 x zp[2]:10 4.125
-(const signed byte[$c0]) sintab2 = { fill( $c0, 0) }
-(const byte[]) sintabref = { (byte) 0, (byte) 4, (byte) 8, (byte) $c, (byte) $11, (byte) $15, (byte) $19, (byte) $1d, (byte) $21, (byte) $25, (byte) $29, (byte) $2d, (byte) $31, (byte) $35, (byte) $38, (byte) $3c, (byte) $40, (byte) $43, (byte) $47, (byte) $4a, (byte) $4e, (byte) $51, (byte) $54, (byte) $57, (byte) $5a, (byte) $5d, (byte) $60, (byte) $63, (byte) $65, (byte) $68, (byte) $6a, (byte) $6c, (byte) $6e, (byte) $70, (byte) $72, (byte) $74, (byte) $76, (byte) $77, (byte) $79, (byte) $7a, (byte) $7b, (byte) $7c, (byte) $7d, (byte) $7e, (byte) $7e, (byte) $7f, (byte) $7f, (byte) $7f, (byte) $80, (byte) $7f, (byte) $7f, (byte) $7f, (byte) $7e, (byte) $7e, (byte) $7d, (byte) $7c, (byte) $7b, (byte) $7a, (byte) $79, (byte) $77, (byte) $76, (byte) $74, (byte) $72, (byte) $70, (byte) $6e, (byte) $6c, (byte) $6a, (byte) $68, (byte) $65, (byte) $63, (byte) $60, (byte) $5d, (byte) $5a, (byte) $57, (byte) $54, (byte) $51, (byte) $4e, (byte) $4a, (byte) $47, (byte) $43, (byte) $40, (byte) $3c, (byte) $38, (byte) $35, (byte) $31, (byte) $2d, (byte) $29, (byte) $25, (byte) $21, (byte) $1d, (byte) $19, (byte) $15, (byte) $11, (byte) $c, (byte) 8, (byte) 4, (byte) 0, (byte) $fc, (byte) $f8, (byte) $f4, (byte) $ef, (byte) $eb, (byte) $e7, (byte) $e3, (byte) $df, (byte) $db, (byte) $d7, (byte) $d3, (byte) $cf, (byte) $cb, (byte) $c8, (byte) $c4, (byte) $c0, (byte) $bd, (byte) $b9, (byte) $b6, (byte) $b2, (byte) $af, (byte) $ac, (byte) $a9, (byte) $a6, (byte) $a3, (byte) $a0, (byte) $9d, (byte) $9b, (byte) $98, (byte) $96, (byte) $94, (byte) $92, (byte) $90, (byte) $8e, (byte) $8c, (byte) $8a, (byte) $89, (byte) $87, (byte) $86, (byte) $85, (byte) $84, (byte) $83, (byte) $82, (byte) $82, (byte) $81, (byte) $81, (byte) $81, (byte) $81, (byte) $81, (byte) $81, (byte) $81, (byte) $82, (byte) $82, (byte) $83, (byte) $84, (byte) $85, (byte) $86, (byte) $87, (byte) $89, (byte) $8a, (byte) $8c, (byte) $8e, (byte) $90, (byte) $92, (byte) $94, (byte) $96, (byte) $98, (byte) $9b, (byte) $9d, (byte) $a0, (byte) $a3, (byte) $a6, (byte) $a9, (byte) $ac, (byte) $af, (byte) $b2, (byte) $b6, (byte) $b9, (byte) $bd, (byte) $c0, (byte) $c4, (byte) $c8, (byte) $cb, (byte) $cf, (byte) $d3, (byte) $d7, (byte) $db, (byte) $df, (byte) $e3, (byte) $e7, (byte) $eb, (byte) $ef, (byte) $f4, (byte) $f8, (byte) $fc }
+(const signed byte*) sintab2 = { fill( $c0, 0) }
+(const byte*) sintabref = { (byte) 0, (byte) 4, (byte) 8, (byte) $c, (byte) $11, (byte) $15, (byte) $19, (byte) $1d, (byte) $21, (byte) $25, (byte) $29, (byte) $2d, (byte) $31, (byte) $35, (byte) $38, (byte) $3c, (byte) $40, (byte) $43, (byte) $47, (byte) $4a, (byte) $4e, (byte) $51, (byte) $54, (byte) $57, (byte) $5a, (byte) $5d, (byte) $60, (byte) $63, (byte) $65, (byte) $68, (byte) $6a, (byte) $6c, (byte) $6e, (byte) $70, (byte) $72, (byte) $74, (byte) $76, (byte) $77, (byte) $79, (byte) $7a, (byte) $7b, (byte) $7c, (byte) $7d, (byte) $7e, (byte) $7e, (byte) $7f, (byte) $7f, (byte) $7f, (byte) $80, (byte) $7f, (byte) $7f, (byte) $7f, (byte) $7e, (byte) $7e, (byte) $7d, (byte) $7c, (byte) $7b, (byte) $7a, (byte) $79, (byte) $77, (byte) $76, (byte) $74, (byte) $72, (byte) $70, (byte) $6e, (byte) $6c, (byte) $6a, (byte) $68, (byte) $65, (byte) $63, (byte) $60, (byte) $5d, (byte) $5a, (byte) $57, (byte) $54, (byte) $51, (byte) $4e, (byte) $4a, (byte) $47, (byte) $43, (byte) $40, (byte) $3c, (byte) $38, (byte) $35, (byte) $31, (byte) $2d, (byte) $29, (byte) $25, (byte) $21, (byte) $1d, (byte) $19, (byte) $15, (byte) $11, (byte) $c, (byte) 8, (byte) 4, (byte) 0, (byte) $fc, (byte) $f8, (byte) $f4, (byte) $ef, (byte) $eb, (byte) $e7, (byte) $e3, (byte) $df, (byte) $db, (byte) $d7, (byte) $d3, (byte) $cf, (byte) $cb, (byte) $c8, (byte) $c4, (byte) $c0, (byte) $bd, (byte) $b9, (byte) $b6, (byte) $b2, (byte) $af, (byte) $ac, (byte) $a9, (byte) $a6, (byte) $a3, (byte) $a0, (byte) $9d, (byte) $9b, (byte) $98, (byte) $96, (byte) $94, (byte) $92, (byte) $90, (byte) $8e, (byte) $8c, (byte) $8a, (byte) $89, (byte) $87, (byte) $86, (byte) $85, (byte) $84, (byte) $83, (byte) $82, (byte) $82, (byte) $81, (byte) $81, (byte) $81, (byte) $81, (byte) $81, (byte) $81, (byte) $81, (byte) $82, (byte) $82, (byte) $83, (byte) $84, (byte) $85, (byte) $86, (byte) $87, (byte) $89, (byte) $8a, (byte) $8c, (byte) $8e, (byte) $90, (byte) $92, (byte) $94, (byte) $96, (byte) $98, (byte) $9b, (byte) $9d, (byte) $a0, (byte) $a3, (byte) $a6, (byte) $a9, (byte) $ac, (byte) $af, (byte) $b2, (byte) $b6, (byte) $b9, (byte) $bd, (byte) $c0, (byte) $c4, (byte) $c8, (byte) $cb, (byte) $cf, (byte) $d3, (byte) $d7, (byte) $db, (byte) $df, (byte) $e3, (byte) $e7, (byte) $eb, (byte) $ef, (byte) $f4, (byte) $f8, (byte) $fc }
 (const word) wavelength = (word) $c0
 
 reg byte x [ main::i#2 main::i#1 ]
@@ -5358,7 +5344,7 @@ main: {
     // main::@1
   __b1:
     // sb = sintab2[i]-(signed byte)sintabref[i]
-    // [9] (signed byte) main::sb#0 ← *((const signed byte[$c0]) sintab2 + (byte) main::i#2) - (signed byte)*((const byte[]) sintabref + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuxx_minus_pbsc2_derefidx_vbuxx 
+    // [9] (signed byte) main::sb#0 ← *((const signed byte*) sintab2 + (byte) main::i#2) - (signed byte)*((const byte*) sintabref + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuxx_minus_pbsc2_derefidx_vbuxx 
     lda sintab2,x
     sec
     sbc sintabref,x
@@ -5516,7 +5502,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [39] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [39] (byte) print_char::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [40] call print_char 
@@ -5530,7 +5516,7 @@ print_byte: {
     lda #$f
     and.z b
     // print_char(print_hextab[b&$f])
-    // [42] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [42] (byte) print_char::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [43] call print_char 
@@ -5620,7 +5606,7 @@ sin8s_gen: {
     // step = div16u(PI2_u4f12, wavelength)
     // [57] (word) sin8s_gen::step#0 ← (word) div16u::return#2
     // [58] phi from sin8s_gen::@3 to sin8s_gen::@1 [phi:sin8s_gen::@3->sin8s_gen::@1]
-    // [58] phi (signed byte*) sin8s_gen::sintab#2 = (const signed byte[$c0]) sintab2 [phi:sin8s_gen::@3->sin8s_gen::@1#0] -- pbsz1=pbsc1 
+    // [58] phi (signed byte*) sin8s_gen::sintab#2 = (const signed byte*) sintab2 [phi:sin8s_gen::@3->sin8s_gen::@1#0] -- pbsz1=pbsc1 
     lda #<sintab2
     sta.z sintab
     lda #>sintab2
@@ -6153,7 +6139,7 @@ divr16u: {
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
+  sintab2: .fill $c0, 0
   // .fill $c0, round(127.5*sin(i*2*PI/$c0))
   sintabref: .byte 0, 4, 8, $c, $11, $15, $19, $1d, $21, $25, $29, $2d, $31, $35, $38, $3c, $40, $43, $47, $4a, $4e, $51, $54, $57, $5a, $5d, $60, $63, $65, $68, $6a, $6c, $6e, $70, $72, $74, $76, $77, $79, $7a, $7b, $7c, $7d, $7e, $7e, $7f, $7f, $7f, $80, $7f, $7f, $7f, $7e, $7e, $7d, $7c, $7b, $7a, $79, $77, $76, $74, $72, $70, $6e, $6c, $6a, $68, $65, $63, $60, $5d, $5a, $57, $54, $51, $4e, $4a, $47, $43, $40, $3c, $38, $35, $31, $2d, $29, $25, $21, $1d, $19, $15, $11, $c, 8, 4, 0, $fc, $f8, $f4, $ef, $eb, $e7, $e3, $df, $db, $d7, $d3, $cf, $cb, $c8, $c4, $c0, $bd, $b9, $b6, $b2, $af, $ac, $a9, $a6, $a3, $a0, $9d, $9b, $98, $96, $94, $92, $90, $8e, $8c, $8a, $89, $87, $86, $85, $84, $83, $82, $82, $81, $81, $81, $81, $81, $81, $81, $82, $82, $83, $84, $85, $86, $87, $89, $8a, $8c, $8e, $90, $92, $94, $96, $98, $9b, $9d, $a0, $a3, $a6, $a9, $ac, $af, $b2, $b6, $b9, $bd, $c0, $c4, $c8, $cb, $cf, $d3, $d7, $db, $df, $e3, $e7, $eb, $ef, $f4, $f8, $fc
-  sintab2: .fill $c0, 0
 

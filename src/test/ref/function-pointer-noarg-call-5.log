@@ -1,4 +1,4 @@
-Fixing pointer array-indexing *((const void()*[2]) fns + (number~) main::$0)
+Fixing pointer array-indexing *((const void()**) fns + (number~) main::$0)
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) main::@4
@@ -39,7 +39,7 @@ main::@2: scope:[main]  from main::@1
   (byte) main::i#1 ← ++ (byte) main::i#2
   (number~) main::$0 ← (byte) main::i#1 & (number) 1
   (number~) main::$2 ← (number~) main::$0 * (const byte) SIZEOF_POINTER
-  (void()*) main::f#0 ← *((const void()*[2]) fns + (number~) main::$2)
+  (void()*) main::f#0 ← *((const void()**) fns + (number~) main::$2)
   call *((void()*) main::f#0) 
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -64,7 +64,7 @@ SYMBOL TABLE SSA
 (void()) fn2()
 (label) fn2::@return
 (const byte*) fn2::BGCOL = (byte*)(number) $d021
-(const void()*[2]) fns = { &(void()) fn1(), &(void()) fn2() }
+(const void()**) fns = { &(void()) fn1(), &(void()) fn2() }
 (void()) main()
 (number~) main::$0
 (number~) main::$2
@@ -151,7 +151,7 @@ main::@2: scope:[main]  from main::@1
   [6] (byte) main::i#1 ← ++ (byte) main::i#2
   [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1
   [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1
-  [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2)
+  [9] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2)
   [10] call *((void()*) main::f#0) 
   to:main::@1
 
@@ -251,7 +251,7 @@ main: {
     lda.z __0
     asl
     sta.z __2
-    // [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuz2 
+    // [9] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuz2 
     ldy.z __2
     lda fns,y
     sta.z f
@@ -294,13 +294,13 @@ fn1: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 [ main::i#1 main::$2 ] ( main:2 [ main::i#1 main::$2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
+Statement [9] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
 Statement [10] call *((void()*) main::f#0)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 [ main::i#1 main::$0 ] ( main:2 [ main::i#1 main::$0 ] ) always clobbers reg byte a 
 Statement [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 [ main::i#1 main::$2 ] ( main:2 [ main::i#1 main::$2 ] ) always clobbers reg byte a 
-Statement [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
+Statement [9] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2) [ main::i#1 main::f#0 ] ( main:2 [ main::i#1 main::f#0 ] ) always clobbers reg byte a 
 Statement [10] call *((void()*) main::f#0)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ main::$0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
@@ -367,7 +367,7 @@ main: {
     and.z i
     // [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
+    // [9] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
     tay
     lda fns,y
     sta.z f
@@ -445,7 +445,7 @@ FINAL SYMBOL TABLE
 (void()) fn2()
 (label) fn2::@return
 (const byte*) fn2::BGCOL = (byte*) 53281
-(const void()*[2]) fns = { &(void()) fn1(), &(void()) fn2() }
+(const void()**) fns = { &(void()) fn1(), &(void()) fn2() }
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
 (byte~) main::$2 reg byte a 22.0
@@ -501,7 +501,7 @@ main: {
     // f = fns[++i&1]
     // [8] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [9] (void()*) main::f#0 ← *((const void()*[2]) fns + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
+    // [9] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2) -- pprz1=pptc1_derefidx_vbuaa 
     tay
     lda fns,y
     sta.z f

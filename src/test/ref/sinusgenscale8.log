@@ -668,7 +668,7 @@ print_byte: scope:[print_byte]  from print_sbyte::@2 print_word print_word::@1 s
   (byte*) print_char_cursor#103 ← phi( print_sbyte::@2/(byte*) print_char_cursor#101 print_word/(byte*) print_char_cursor#102 print_word::@1/(byte*) print_char_cursor#13 sin8u_table::@10/(byte*) print_char_cursor#28 sin8u_table::@12/(byte*) print_char_cursor#30 sin8u_table::@14/(byte*) print_char_cursor#32 sin8u_table::@16/(byte*) print_char_cursor#34 sin8u_table::@27/(byte*) print_char_cursor#43 )
   (byte) print_byte::b#8 ← phi( print_sbyte::@2/(byte) print_byte::b#0 print_word/(byte) print_byte::b#1 print_word::@1/(byte) print_byte::b#2 sin8u_table::@10/(byte) print_byte::b#3 sin8u_table::@12/(byte) print_byte::b#4 sin8u_table::@14/(byte) print_byte::b#5 sin8u_table::@16/(byte) print_byte::b#6 sin8u_table::@27/(byte) print_byte::b#7 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#8 >> (number) 4
-  (byte) print_char::ch#4 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#4 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -676,7 +676,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#63 ← phi( print_byte/(byte*) print_char_cursor#20 )
   (byte*) print_char_cursor#16 ← (byte*) print_char_cursor#63
   (number~) print_byte::$2 ← (byte) print_byte::b#9 & (number) $f
-  (byte) print_char::ch#5 ← *((const byte[]) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#5 ← *((const byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -729,7 +729,6 @@ main: scope:[main]  from @58
   (byte*) print_char_cursor#104 ← phi( @58/(byte*) print_char_cursor#108 )
   (byte*) print_line_cursor#24 ← phi( @58/(byte*) print_line_cursor#28 )
   (byte*) print_screen#3 ← phi( @58/(byte*) print_screen#4 )
-  (byte[$14]) main::sintab ← { fill( $14, 0) }
   call print_cls 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -737,7 +736,7 @@ main::@1: scope:[main]  from main
   (byte*) print_line_cursor#16 ← phi( main/(byte*) print_line_cursor#4 )
   (byte*) print_line_cursor#5 ← (byte*) print_line_cursor#16
   (byte*) print_char_cursor#23 ← (byte*) print_char_cursor#69
-  (byte*) sin8u_table::sintab#0 ← (byte[$14]) main::sintab
+  (byte*) sin8u_table::sintab#0 ← (const byte*) main::sintab
   (word) sin8u_table::tabsize#0 ← (const word) main::tabsize
   (byte) sin8u_table::min#0 ← (number) $a
   (byte) sin8u_table::max#0 ← (number) $ff
@@ -1270,7 +1269,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte[$14]) main::sintab
+(const byte*) main::sintab = { fill( $14, 0) }
 (const word) main::tabsize = (word) $14
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (bool~) memset::$0
@@ -1587,7 +1586,7 @@ SYMBOL TABLE SSA
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -2518,10 +2517,8 @@ Simple Condition (bool~) print_str::$0 [221] if((byte) 0!=*((byte*) print_str::s
 Simple Condition (bool~) print_ln::$1 [234] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#19) goto print_ln::@1
 Simple Condition (bool~) print_sword::$0 [243] if((signed word) print_sword::w#1<(signed byte) 0) goto print_sword::@1
 Simple Condition (bool~) print_sbyte::$0 [267] if((signed byte) print_sbyte::b#1<(signed byte) 0) goto print_sbyte::@1
-Simple Condition (bool~) sin8u_table::$18 [419] if((word) sin8u_table::i#10<(word) sin8u_table::tabsize#0) goto sin8u_table::@2
+Simple Condition (bool~) sin8u_table::$18 [418] if((word) sin8u_table::i#10<(word) sin8u_table::tabsize#0) goto sin8u_table::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [337] (byte[$14]) main::sintab ← { fill( $14, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
 Constant (const word) divr16u::rem#3 = 0
@@ -2541,7 +2538,7 @@ Constant (const byte) print_char::ch#2 = '-'
 Constant (const byte) print_char::ch#3 = ' '
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const byte[$14]) main::sintab = { fill( $14, 0) }
+Constant (const byte*) sin8u_table::sintab#0 = main::sintab
 Constant (const word) sin8u_table::tabsize#0 = main::tabsize
 Constant (const byte) sin8u_table::min#0 = $a
 Constant (const byte) sin8u_table::max#0 = $ff
@@ -2560,7 +2557,6 @@ Constant (const byte*) print_str::str#9 = sin8u_table::str8
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::dividend#1 = div16u::dividend#0
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
-Constant (const byte*) sin8u_table::sintab#0 = main::sintab
 Constant (const word) sin8u_table::$1 = (word)sin8u_table::min#0
 Constant (const word) div16u::divisor#0 = sin8u_table::tabsize#0
 Constant (const byte) print_byte::b#3 = sin8u_table::min#0
@@ -2644,14 +2640,14 @@ Inlining constant with var siblings (const byte) print_char::ch#0
 Inlining constant with var siblings (const byte) print_char::ch#1
 Inlining constant with var siblings (const byte) print_char::ch#2
 Inlining constant with var siblings (const byte) print_char::ch#3
+Inlining constant with var siblings (const byte*) sin8u_table::sintab#0
 Inlining constant with var siblings (const word) sin8u_table::x#0
 Inlining constant with var siblings (const word) sin8u_table::i#0
-Inlining constant with var siblings (const byte*) sin8u_table::sintab#0
 Inlining constant with var siblings (const byte*) print_line_cursor#0
 Constant inlined divr16u::rem#3 = (byte) 0
 Constant inlined divr16u::i#0 = (byte) 0
 Constant inlined sin8u_table::i#0 = (byte) 0
-Constant inlined sin8u_table::sintab#0 = (const byte[$14]) main::sintab
+Constant inlined sin8u_table::sintab#0 = (const byte*) main::sintab
 Constant inlined sin8s::isUpper#1 = (byte) 1
 Constant inlined sin8s::isUpper#0 = (byte) 0
 Constant inlined sin8u_table::$4 = (const word) sin8u_table::sum#0/(byte) 2+(byte) 1
@@ -2997,7 +2993,7 @@ sin8u_table::@13: scope:[sin8u_table]  from sin8u_table::@12
   [33] call print_ln 
   to:sin8u_table::@1
 sin8u_table::@1: scope:[sin8u_table]  from sin8u_table::@13 sin8u_table::@24
-  [34] (byte*) sin8u_table::sintab#2 ← phi( sin8u_table::@13/(const byte[$14]) main::sintab sin8u_table::@24/(byte*) sin8u_table::sintab#1 )
+  [34] (byte*) sin8u_table::sintab#2 ← phi( sin8u_table::@13/(const byte*) main::sintab sin8u_table::@24/(byte*) sin8u_table::sintab#1 )
   [34] (word) sin8u_table::x#10 ← phi( sin8u_table::@13/(byte) 0 sin8u_table::@24/(word) sin8u_table::x#1 )
   [34] (word) sin8u_table::i#10 ← phi( sin8u_table::@13/(byte) 0 sin8u_table::@24/(word) sin8u_table::i#1 )
   [35] if((word) sin8u_table::i#10<(const word) main::tabsize) goto sin8u_table::@2
@@ -3079,12 +3075,12 @@ print_byte: scope:[print_byte]  from print_sbyte::@2 print_word print_word::@1 s
   [73] (byte*) print_char_cursor#103 ← phi( print_sbyte::@2/(byte*) print_char_cursor#19 print_word/(byte*) print_char_cursor#102 print_word::@1/(byte*) print_char_cursor#19 sin8u_table::@6/(byte*) print_char_cursor#2 sin8u_table::@8/(byte*) print_char_cursor#2 sin8u_table::@10/(byte*) print_char_cursor#2 sin8u_table::@12/(byte*) print_char_cursor#2 sin8u_table::@22/(byte*) print_char_cursor#2 )
   [73] (byte) print_byte::b#8 ← phi( print_sbyte::@2/(byte) print_byte::b#0 print_word/(byte) print_byte::b#1 print_word::@1/(byte) print_byte::b#2 sin8u_table::@6/(const byte) sin8u_table::min#0 sin8u_table::@8/(const byte) sin8u_table::max#0 sin8u_table::@10/(const byte) sin8u_table::amplitude#0 sin8u_table::@12/(const byte) sin8u_table::mid#0 sin8u_table::@22/(byte) print_byte::b#7 )
   [74] (byte~) print_byte::$0 ← (byte) print_byte::b#8 >> (byte) 4
-  [75] (byte) print_char::ch#4 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  [75] (byte) print_char::ch#4 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   [76] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [77] (byte~) print_byte::$2 ← (byte) print_byte::b#8 & (byte) $f
-  [78] (byte) print_char::ch#5 ← *((const byte[]) print_hextab + (byte~) print_byte::$2)
+  [78] (byte) print_char::ch#5 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
   [79] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -4061,7 +4057,7 @@ sin8u_table: {
     jsr print_ln
     // [34] phi from sin8u_table::@13 to sin8u_table::@1 [phi:sin8u_table::@13->sin8u_table::@1]
   __b1_from___b13:
-    // [34] phi (byte*) sin8u_table::sintab#2 = (const byte[$14]) main::sintab [phi:sin8u_table::@13->sin8u_table::@1#0] -- pbuz1=pbuc1 
+    // [34] phi (byte*) sin8u_table::sintab#2 = (const byte*) main::sintab [phi:sin8u_table::@13->sin8u_table::@1#0] -- pbuz1=pbuc1 
     lda #<main.sintab
     sta.z sintab
     lda #>main.sintab
@@ -4343,7 +4339,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [75] (byte) print_char::ch#4 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [75] (byte) print_char::ch#4 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -4360,7 +4356,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [78] (byte) print_char::ch#5 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [78] (byte) print_char::ch#5 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -5844,7 +5840,7 @@ sin8u_table: {
     jsr print_ln
     // [34] phi from sin8u_table::@13 to sin8u_table::@1 [phi:sin8u_table::@13->sin8u_table::@1]
   __b1_from___b13:
-    // [34] phi (byte*) sin8u_table::sintab#2 = (const byte[$14]) main::sintab [phi:sin8u_table::@13->sin8u_table::@1#0] -- pbuz1=pbuc1 
+    // [34] phi (byte*) sin8u_table::sintab#2 = (const byte*) main::sintab [phi:sin8u_table::@13->sin8u_table::@1#0] -- pbuz1=pbuc1 
     lda #<main.sintab
     sta.z sintab
     lda #>main.sintab
@@ -6112,7 +6108,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [75] (byte) print_char::ch#4 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [75] (byte) print_char::ch#4 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [76] call print_char 
@@ -6127,7 +6123,7 @@ print_byte: {
     // [77] (byte~) print_byte::$2 ← (byte) print_byte::b#8 & (byte) $f -- vbuaa=vbuz1_band_vbuc1 
     lda #$f
     and.z b
-    // [78] (byte) print_char::ch#5 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [78] (byte) print_char::ch#5 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [79] call print_char 
@@ -7293,7 +7289,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const byte[$14]) main::sintab = { fill( $14, 0) }
+(const byte*) main::sintab = { fill( $14, 0) }
 (const word) main::tabsize = (word) $14
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
@@ -7408,7 +7404,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#66 print_char_cursor zp[2]:6 8.0
 (void()) print_cls()
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp[2]:2 8.783783783783784
 (byte*) print_line_cursor#12 print_line_cursor zp[2]:2 204.0
@@ -7811,7 +7807,7 @@ sin8u_table: {
     sta.z print_line_cursor+1
     jsr print_ln
     // [34] phi from sin8u_table::@13 to sin8u_table::@1 [phi:sin8u_table::@13->sin8u_table::@1]
-    // [34] phi (byte*) sin8u_table::sintab#2 = (const byte[$14]) main::sintab [phi:sin8u_table::@13->sin8u_table::@1#0] -- pbuz1=pbuc1 
+    // [34] phi (byte*) sin8u_table::sintab#2 = (const byte*) main::sintab [phi:sin8u_table::@13->sin8u_table::@1#0] -- pbuz1=pbuc1 
     lda #<main.sintab
     sta.z sintab
     lda #>main.sintab
@@ -8060,7 +8056,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [75] (byte) print_char::ch#4 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [75] (byte) print_char::ch#4 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [76] call print_char 
@@ -8074,7 +8070,7 @@ print_byte: {
     lda #$f
     and.z b
     // print_char(print_hextab[b&$f])
-    // [78] (byte) print_char::ch#5 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [78] (byte) print_char::ch#5 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [79] call print_char 

@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) first::msg#0 ← (const byte[]) msg1
+  (byte*) first::msg#0 ← (const byte*) msg1
   call first 
   (byte*) first::return#0 ← (byte*) first::return#3
   to:main::@1
@@ -16,7 +16,7 @@ main::@1: scope:[main]  from main
   (byte*~) main::$0 ← (byte*) first::return#4
   (byte*~) main::$1 ← (byte*~) main::$0 + (number) 0
   *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
-  (byte*) first::msg#1 ← (const byte[]) msg2
+  (byte*) first::msg#1 ← (const byte*) msg2
   call first 
   (byte*) first::return#1 ← (byte*) first::return#3
   to:main::@2
@@ -79,8 +79,8 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 (const byte*) main::SCREEN = (byte*)(number) $400
-(const byte[]) msg1 = (string) "hello world!"
-(const byte[]) msg2 = (string) "goodbye sky?"
+(const byte*) msg1 = (string) "hello world!"
+(const byte*) msg2 = (string) "goodbye sky?"
 
 Adding number conversion cast (unumber) 0 in (byte*~) main::$1 ← (byte*~) main::$0 + (number) 0
 Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
@@ -126,8 +126,8 @@ Eliminating unused variable (byte*~) main::$3 and assignment [8] (byte*~) main::
 Successful SSA optimization PassNEliminateUnusedVars
 Alias (byte*) first::return#2 = (byte*) first::msg#2 
 Successful SSA optimization Pass2AliasElimination
-Constant inlined first::msg#0 = (const byte[]) msg1
-Constant inlined first::msg#1 = (const byte[]) msg2
+Constant inlined first::msg#0 = (const byte*) msg1
+Constant inlined first::msg#1 = (const byte*) msg2
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -182,7 +182,7 @@ main::@return: scope:[main]  from main::@2
 
 (byte*()) first((byte*) first::msg)
 first: scope:[first]  from main main::@1
-  [14] (byte*) first::return#2 ← phi( main/(const byte[]) msg1 main::@1/(const byte[]) msg2 )
+  [14] (byte*) first::return#2 ← phi( main/(const byte*) msg1 main::@1/(const byte*) msg2 )
   to:first::@return
 first::@return: scope:[first]  from first
   [15] return 
@@ -251,7 +251,7 @@ main: {
     // [5] call first 
     // [14] phi from main to first [phi:main->first]
   first_from_main:
-    // [14] phi (byte*) first::return#2 = (const byte[]) msg1 [phi:main->first#0] -- pbuz1=pbuc1 
+    // [14] phi (byte*) first::return#2 = (const byte*) msg1 [phi:main->first#0] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z first.return_2
     lda #>msg1
@@ -277,7 +277,7 @@ main: {
     // [9] call first 
     // [14] phi from main::@1 to first [phi:main::@1->first]
   first_from___b1:
-    // [14] phi (byte*) first::return#2 = (const byte[]) msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
+    // [14] phi (byte*) first::return#2 = (const byte*) msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z first.return_2
     lda #>msg2
@@ -381,7 +381,7 @@ main: {
     // [5] call first 
     // [14] phi from main to first [phi:main->first]
   first_from_main:
-    // [14] phi (byte*) first::return#2 = (const byte[]) msg1 [phi:main->first#0] -- pbuz1=pbuc1 
+    // [14] phi (byte*) first::return#2 = (const byte*) msg1 [phi:main->first#0] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z first.return
     lda #>msg1
@@ -399,7 +399,7 @@ main: {
     // [9] call first 
     // [14] phi from main::@1 to first [phi:main::@1->first]
   first_from___b1:
-    // [14] phi (byte*) first::return#2 = (const byte[]) msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
+    // [14] phi (byte*) first::return#2 = (const byte*) msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z first.return
     lda #>msg2
@@ -481,8 +481,8 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (const byte*) main::SCREEN = (byte*) 1024
-(const byte[]) msg1 = (string) "hello world!"
-(const byte[]) msg2 = (string) "goodbye sky?"
+(const byte*) msg1 = (string) "hello world!"
+(const byte*) msg2 = (string) "goodbye sky?"
 
 zp[2]:2 [ first::return#2 first::return#0 first::return#1 main::$0 main::$2 ]
 
@@ -512,7 +512,7 @@ main: {
     // first(msg1)
     // [5] call first 
     // [14] phi from main to first [phi:main->first]
-    // [14] phi (byte*) first::return#2 = (const byte[]) msg1 [phi:main->first#0] -- pbuz1=pbuc1 
+    // [14] phi (byte*) first::return#2 = (const byte*) msg1 [phi:main->first#0] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z first.return
     lda #>msg1
@@ -530,7 +530,7 @@ main: {
     // first(msg2)
     // [9] call first 
     // [14] phi from main::@1 to first [phi:main::@1->first]
-    // [14] phi (byte*) first::return#2 = (const byte[]) msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
+    // [14] phi (byte*) first::return#2 = (const byte*) msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z first.return
     lda #>msg2

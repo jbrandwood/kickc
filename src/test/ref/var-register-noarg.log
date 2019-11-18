@@ -20,7 +20,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
   (number~) main::$1 ← (byte) main::i#3 & (number) 7
-  *((const byte*) SCREEN + (byte) main::i#3) ← *((const byte[]) MSG + (number~) main::$1)
+  *((const byte*) SCREEN + (byte) main::i#3) ← *((const byte*) MSG + (number~) main::$1)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -38,7 +38,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte[]) MSG = (string) "CAMELOT!"su
+(const byte*) MSG = (string) "CAMELOT!"su
 (const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$0
@@ -117,7 +117,7 @@ main::@return: scope:[main]  from main::@1
   to:@return
 main::@2: scope:[main]  from main::@1
   [8] (byte~) main::$1 ← (byte) main::i#2 & (byte) 7
-  [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1)
+  [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte~) main::$1)
   [10] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
@@ -191,7 +191,7 @@ main: {
     lda #7
     and.z i
     sta.z __1
-    // [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte~) main::$1) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z __1
     lda MSG,y
     ldy.z i
@@ -209,10 +209,10 @@ main: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [8] (byte~) main::$1 ← (byte) main::i#2 & (byte) 7 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::$1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -270,7 +270,7 @@ main: {
     // [8] (byte~) main::$1 ← (byte) main::i#2 & (byte) 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
-    // [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuaa 
+    // [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte~) main::$1) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuaa 
     tay
     lda MSG,y
     sta SCREEN,x
@@ -313,7 +313,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte[]) MSG = (string) "CAMELOT!"su
+(const byte*) MSG = (string) "CAMELOT!"su
 (const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (byte~) main::$1 reg byte a 22.0
@@ -368,7 +368,7 @@ main: {
     txa
     and #7
     // SCREEN[i++] = MSG[i&7]
-    // [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) MSG + (byte~) main::$1) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuaa 
+    // [9] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte~) main::$1) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuaa 
     tay
     lda MSG,y
     sta SCREEN,x

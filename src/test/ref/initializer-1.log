@@ -1,5 +1,5 @@
-Fixing pointer array-indexing *((const word[]) words + (byte) main::i)
-Fixing pointer array-indexing *((const word[]) words + (byte) main::i)
+Fixing pointer array-indexing *((const word*) words + (byte) main::i)
+Fixing pointer array-indexing *((const word*) words + (byte) main::i)
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
@@ -15,11 +15,11 @@ main::@1: scope:[main]  from main main::@1
   (byte) main::idx#3 ← phi( main/(byte) main::idx#0 main::@1/(byte) main::idx#2 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$3 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
-  (byte~) main::$0 ← < *((const word[]) words + (byte~) main::$3)
+  (byte~) main::$0 ← < *((const word*) words + (byte~) main::$3)
   *((const byte*) main::SCREEN + (byte) main::idx#3) ← (byte~) main::$0
   (byte) main::idx#1 ← ++ (byte) main::idx#3
   (byte~) main::$4 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
-  (byte~) main::$1 ← > *((const word[]) words + (byte~) main::$4)
+  (byte~) main::$1 ← > *((const word*) words + (byte~) main::$4)
   *((const byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$1
   (byte) main::idx#2 ← ++ (byte) main::idx#1
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,2)
@@ -60,7 +60,7 @@ SYMBOL TABLE SSA
 (byte) main::idx#1
 (byte) main::idx#2
 (byte) main::idx#3
-(const word[]) words = { (word)(number) 1, (word)(number) 2, (word)(number) 3 }
+(const word*) words = { (word)(number) 1, (word)(number) 2, (word)(number) 3 }
 
 Adding number conversion cast (unumber) 0 in (byte) main::idx#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -139,10 +139,10 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte) main::idx#3 ← phi( main/(byte) 0 main::@1/(byte) main::idx#2 )
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
   [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1
-  [7] (byte~) main::$0 ← < *((const word[]) words + (byte~) main::$4)
+  [7] (byte~) main::$0 ← < *((const word*) words + (byte~) main::$4)
   [8] *((const byte*) main::SCREEN + (byte) main::idx#3) ← (byte~) main::$0
   [9] (byte) main::idx#1 ← ++ (byte) main::idx#3
-  [10] (byte~) main::$1 ← > *((const word[]) words + (byte~) main::$4)
+  [10] (byte~) main::$1 ← > *((const word*) words + (byte~) main::$4)
   [11] *((const byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$1
   [12] (byte) main::idx#2 ← ++ (byte) main::idx#1
   [13] (byte) main::i#1 ← ++ (byte) main::i#2
@@ -242,7 +242,7 @@ main: {
     lda.z i
     asl
     sta.z __4
-    // [7] (byte~) main::$0 ← < *((const word[]) words + (byte~) main::$4) -- vbuz1=_lo_pwuc1_derefidx_vbuz2 
+    // [7] (byte~) main::$0 ← < *((const word*) words + (byte~) main::$4) -- vbuz1=_lo_pwuc1_derefidx_vbuz2 
     ldy.z __4
     lda words,y
     sta.z __0
@@ -254,7 +254,7 @@ main: {
     ldy.z idx_1
     iny
     sty.z idx
-    // [10] (byte~) main::$1 ← > *((const word[]) words + (byte~) main::$4) -- vbuz1=_hi_pwuc1_derefidx_vbuz2 
+    // [10] (byte~) main::$1 ← > *((const word*) words + (byte~) main::$4) -- vbuz1=_hi_pwuc1_derefidx_vbuz2 
     ldy.z __4
     lda words+1,y
     sta.z __1
@@ -285,13 +285,13 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::idx#3 main::$4 ] ( main:2 [ main::i#2 main::idx#3 main::$4 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::idx#3 main::idx#2 ]
-Statement [7] (byte~) main::$0 ← < *((const word[]) words + (byte~) main::$4) [ main::i#2 main::idx#3 main::$4 main::$0 ] ( main:2 [ main::i#2 main::idx#3 main::$4 main::$0 ] ) always clobbers reg byte a 
+Statement [7] (byte~) main::$0 ← < *((const word*) words + (byte~) main::$4) [ main::i#2 main::idx#3 main::$4 main::$0 ] ( main:2 [ main::i#2 main::idx#3 main::$4 main::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::$4 ]
-Statement [10] (byte~) main::$1 ← > *((const word[]) words + (byte~) main::$4) [ main::i#2 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::idx#1 main::$1 ] ) always clobbers reg byte a 
+Statement [10] (byte~) main::$1 ← > *((const word*) words + (byte~) main::$4) [ main::i#2 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::idx#1 main::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ main::idx#1 ]
 Statement [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::idx#3 main::$4 ] ( main:2 [ main::i#2 main::idx#3 main::$4 ] ) always clobbers reg byte a 
-Statement [7] (byte~) main::$0 ← < *((const word[]) words + (byte~) main::$4) [ main::i#2 main::idx#3 main::$4 main::$0 ] ( main:2 [ main::i#2 main::idx#3 main::$4 main::$0 ] ) always clobbers reg byte a 
-Statement [10] (byte~) main::$1 ← > *((const word[]) words + (byte~) main::$4) [ main::i#2 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::idx#1 main::$1 ] ) always clobbers reg byte a 
+Statement [7] (byte~) main::$0 ← < *((const word*) words + (byte~) main::$4) [ main::i#2 main::idx#3 main::$4 main::$0 ] ( main:2 [ main::i#2 main::idx#3 main::$4 main::$0 ] ) always clobbers reg byte a 
+Statement [10] (byte~) main::$1 ← > *((const word*) words + (byte~) main::$4) [ main::i#2 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::idx#1 main::$1 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::idx#3 main::idx#2 ] : zp[1]:3 , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::$4 ] : zp[1]:4 , reg byte x , reg byte y , 
@@ -361,13 +361,13 @@ main: {
     lda.z i
     asl
     tay
-    // [7] (byte~) main::$0 ← < *((const word[]) words + (byte~) main::$4) -- vbuaa=_lo_pwuc1_derefidx_vbuyy 
+    // [7] (byte~) main::$0 ← < *((const word*) words + (byte~) main::$4) -- vbuaa=_lo_pwuc1_derefidx_vbuyy 
     lda words,y
     // [8] *((const byte*) main::SCREEN + (byte) main::idx#3) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [9] (byte) main::idx#1 ← ++ (byte) main::idx#3 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] (byte~) main::$1 ← > *((const word[]) words + (byte~) main::$4) -- vbuaa=_hi_pwuc1_derefidx_vbuyy 
+    // [10] (byte~) main::$1 ← > *((const word*) words + (byte~) main::$4) -- vbuaa=_hi_pwuc1_derefidx_vbuyy 
     lda words+1,y
     // [11] *((const byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
@@ -433,7 +433,7 @@ FINAL SYMBOL TABLE
 (byte) main::idx#1 reg byte x 11.0
 (byte) main::idx#2 reg byte x 7.333333333333333
 (byte) main::idx#3 reg byte x 8.25
-(const word[]) words = { (word) 1, (word) 2, (word) 3 }
+(const word*) words = { (word) 1, (word) 2, (word) 3 }
 
 zp[1]:2 [ main::i#2 main::i#1 ]
 reg byte x [ main::idx#3 main::idx#2 ]
@@ -481,7 +481,7 @@ main: {
     lda.z i
     asl
     tay
-    // [7] (byte~) main::$0 ← < *((const word[]) words + (byte~) main::$4) -- vbuaa=_lo_pwuc1_derefidx_vbuyy 
+    // [7] (byte~) main::$0 ← < *((const word*) words + (byte~) main::$4) -- vbuaa=_lo_pwuc1_derefidx_vbuyy 
     lda words,y
     // SCREEN[idx++] = <words[i]
     // [8] *((const byte*) main::SCREEN + (byte) main::idx#3) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
@@ -490,7 +490,7 @@ main: {
     // [9] (byte) main::idx#1 ← ++ (byte) main::idx#3 -- vbuxx=_inc_vbuxx 
     inx
     // >words[i]
-    // [10] (byte~) main::$1 ← > *((const word[]) words + (byte~) main::$4) -- vbuaa=_hi_pwuc1_derefidx_vbuyy 
+    // [10] (byte~) main::$1 ← > *((const word*) words + (byte~) main::$4) -- vbuaa=_hi_pwuc1_derefidx_vbuyy 
     lda words+1,y
     // SCREEN[idx++] = >words[i]
     // [11] *((const byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 

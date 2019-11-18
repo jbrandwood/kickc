@@ -81,14 +81,14 @@ public class DirectiveParserContext {
     * @param source The source line (for exceptions)
     * @return The variable kind
     */
-   public Variable.Kind getKind(SymbolType type, Scope scope, boolean isParameter, List<Directive> sourceDirectives, StatementSource source) {
+   public Variable.Kind getKind(SymbolType type, Scope scope, boolean isParameter, boolean isArray, List<Directive> sourceDirectives, StatementSource source) {
       // Look for const without volatile
       if(hasDirective(Directive.Const.class, sourceDirectives))
          if(!hasDirective(Directive.Volatile.class, sourceDirectives))
             return Variable.Kind.CONSTANT;
       // Look for array (which is implicitly const
       DirectiveType directiveType = DirectiveType.getFor(type);
-      if(DirectiveType.ARRAY.equals(directiveType))
+      if(isArray)
          return Variable.Kind.CONSTANT;
       // It is not a constant - determine PHI_MASTER vs LOAD_STORE
       if(hasDirective(Directive.FormSsa.class, sourceDirectives))
@@ -110,11 +110,11 @@ public class DirectiveParserContext {
     * @param sourceDirectives The directives found in the source code
     * @param source The source line (for exceptions)
     */
-   public void applyDirectives(Variable lValue, boolean isParameter, List<Directive> sourceDirectives, StatementSource source) {
+   public void applyDirectives(Variable lValue, boolean isParameter, boolean isArray, List<Directive> sourceDirectives, StatementSource source) {
       DirectiveType directiveType = DirectiveType.getFor(lValue.getType());
       if(hasDirective(Directive.Const.class, sourceDirectives))
          lValue.setDeclaredConst(true);
-      if(directiveType.equals(DirectiveType.ARRAY))
+      if(isArray)
          lValue.setDeclaredConst(true);
       if(hasDirective(Directive.Volatile.class, sourceDirectives))
          lValue.setDeclaredVolatile(true);
@@ -124,7 +124,7 @@ public class DirectiveParserContext {
          lValue.setMemoryArea(Variable.MemoryArea.ZEROPAGE_MEMORY);
          lValue.setDeclaredAsRegister(true);
       }
-      if(directiveType.equals(DirectiveType.ARRAY))
+      if(isArray)
          lValue.setMemoryArea(Variable.MemoryArea.MAIN_MEMORY);
       if(hasDirective(Directive.MemZp.class, sourceDirectives))
          lValue.setMemoryArea(Variable.MemoryArea.ZEROPAGE_MEMORY);
@@ -156,7 +156,7 @@ public class DirectiveParserContext {
 
       Directive.Align alignDirective = findDirective(Directive.Align.class, sourceDirectives);
       if(alignDirective != null) {
-         if(directiveType.equals(DirectiveType.ARRAY)) {
+         if(isArray) {
             lValue.setDeclaredAlignment(alignDirective.alignment);
          } else {
             throw new CompileError("Error! Cannot align variable that is not a string or an array " + lValue.toString(), source);

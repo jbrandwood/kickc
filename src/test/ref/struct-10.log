@@ -1,10 +1,10 @@
 Fixing pointer array-indexing *((struct RadixInfo) main::info.values + (number) 1)
 Fixing pointer array-indexing *((const word*) main::SCREEN + (number) 0)
-Fixing pointer array-indexing *((const word[]) RADIX_DECIMAL_VALUES + (number) 1)
+Fixing pointer array-indexing *((const word*) RADIX_DECIMAL_VALUES + (number) 1)
 Fixing pointer array-indexing *((const word*) main::SCREEN + (number) 1)
 Created struct value member variable (word*) main::info_values
 Converted struct value to member variables (struct RadixInfo) main::info
-Adding struct value list initializer (word*) main::info_values ← (const word[]) RADIX_DECIMAL_VALUES
+Adding struct value list initializer (word*) main::info_values ← (const word*) RADIX_DECIMAL_VALUES
 Replacing struct member reference (struct RadixInfo) main::info.values with member unwinding reference (word*) main::info_values
 Identified constant variable (word*) main::info_values
 
@@ -18,7 +18,7 @@ main: scope:[main]  from @1
   (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_WORD
   *((const word*) main::SCREEN + (number~) main::$1) ← *((const word*) main::info_values + (number~) main::$0)
   (number~) main::$2 ← (number) 1 * (const byte) SIZEOF_WORD
-  *((const word*) main::SCREEN + (number~) main::$2) ← *((const word[]) RADIX_DECIMAL_VALUES + (number~) main::$2)
+  *((const word*) main::SCREEN + (number~) main::$2) ← *((const word*) RADIX_DECIMAL_VALUES + (number~) main::$2)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -35,7 +35,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const word[]) RADIX_DECIMAL_VALUES = { (word)(number) $2710, (word)(number) $3e8, (word)(number) $64, (word)(number) $a }
+(const word*) RADIX_DECIMAL_VALUES = { (word)(number) $2710, (word)(number) $3e8, (word)(number) $64, (word)(number) $a }
 (word*) RadixInfo::values
 (const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
@@ -44,7 +44,7 @@ SYMBOL TABLE SSA
 (number~) main::$2
 (label) main::@return
 (const word*) main::SCREEN = (word*)(number) $400
-(const word*) main::info_values = (const word[]) RADIX_DECIMAL_VALUES
+(const word*) main::info_values = (const word*) RADIX_DECIMAL_VALUES
 
 Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (number) 1 * (const byte) SIZEOF_WORD
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) 1 * (const byte) SIZEOF_WORD
@@ -83,7 +83,7 @@ Simplifying expression containing zero main::SCREEN in [2] *((const word*) main:
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$1
 Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined main::info_values = (const word[]) RADIX_DECIMAL_VALUES
+Constant inlined main::info_values = (const word*) RADIX_DECIMAL_VALUES
 Constant inlined main::$2 = (byte) 1*(const byte) SIZEOF_WORD
 Constant inlined main::$0 = (byte) 1*(const byte) SIZEOF_WORD
 Successful SSA optimization Pass2ConstantInlining
@@ -118,8 +118,8 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const word*) main::SCREEN) ← *((const word[]) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD)
-  [5] *((const word*) main::SCREEN+(byte) 1*(const byte) SIZEOF_WORD) ← *((const word[]) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD)
+  [4] *((const word*) main::SCREEN) ← *((const word*) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD)
+  [5] *((const word*) main::SCREEN+(byte) 1*(const byte) SIZEOF_WORD) ← *((const word*) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD)
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -160,12 +160,12 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const word*) main::SCREEN) ← *((const word[]) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // [4] *((const word*) main::SCREEN) ← *((const word*) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD
     sta SCREEN
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD+1
     sta SCREEN+1
-    // [5] *((const word*) main::SCREEN+(byte) 1*(const byte) SIZEOF_WORD) ← *((const word[]) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // [5] *((const word*) main::SCREEN+(byte) 1*(const byte) SIZEOF_WORD) ← *((const word*) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD
     sta SCREEN+1*SIZEOF_WORD
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD+1
@@ -180,8 +180,8 @@ main: {
   RADIX_DECIMAL_VALUES: .word $2710, $3e8, $64, $a
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const word*) main::SCREEN) ← *((const word[]) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const word*) main::SCREEN+(byte) 1*(const byte) SIZEOF_WORD) ← *((const word[]) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const word*) main::SCREEN) ← *((const word*) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const word*) main::SCREEN+(byte) 1*(const byte) SIZEOF_WORD) ← *((const word*) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [RadixInfo] 
@@ -218,12 +218,12 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const word*) main::SCREEN) ← *((const word[]) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // [4] *((const word*) main::SCREEN) ← *((const word*) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD
     sta SCREEN
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD+1
     sta SCREEN+1
-    // [5] *((const word*) main::SCREEN+(byte) 1*(const byte) SIZEOF_WORD) ← *((const word[]) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // [5] *((const word*) main::SCREEN+(byte) 1*(const byte) SIZEOF_WORD) ← *((const word*) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD
     sta SCREEN+1*SIZEOF_WORD
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD+1
@@ -260,7 +260,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const word[]) RADIX_DECIMAL_VALUES = { (word) $2710, (word) $3e8, (word) $64, (word) $a }
+(const word*) RADIX_DECIMAL_VALUES = { (word) $2710, (word) $3e8, (word) $64, (word) $a }
 (word*) RadixInfo::values
 (const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
@@ -290,13 +290,13 @@ Score: 38
 main: {
     .label SCREEN = $400
     // SCREEN[0] = info.values[1]
-    // [4] *((const word*) main::SCREEN) ← *((const word[]) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // [4] *((const word*) main::SCREEN) ← *((const word*) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD
     sta SCREEN
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD+1
     sta SCREEN+1
     // SCREEN[1] = RADIX_DECIMAL_VALUES[1]
-    // [5] *((const word*) main::SCREEN+(byte) 1*(const byte) SIZEOF_WORD) ← *((const word[]) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
+    // [5] *((const word*) main::SCREEN+(byte) 1*(const byte) SIZEOF_WORD) ← *((const word*) RADIX_DECIMAL_VALUES+(byte) 1*(const byte) SIZEOF_WORD) -- _deref_pwuc1=_deref_pwuc2 
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD
     sta SCREEN+1*SIZEOF_WORD
     lda RADIX_DECIMAL_VALUES+1*SIZEOF_WORD+1

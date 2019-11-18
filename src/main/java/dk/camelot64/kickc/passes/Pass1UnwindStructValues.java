@@ -213,6 +213,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
                      String name = variable.getLocalName() + "_" + member.getLocalName();
                      Variable.MemoryArea memoryArea = (member.getType() instanceof SymbolTypePointer)?Variable.MemoryArea.ZEROPAGE_MEMORY:variable.getMemoryArea();
                      Variable memberVariable = scope.add(new Variable( false, name, scope, member.getType(), variable.getKind(), memoryArea, variable.getDataSegment()));
+                     memberVariable.setArray(member.isArray());
+                     memberVariable.setArraySize(member.getArraySize());
                      memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
                      memberVariable.setInferredVolatile(variable.isInferredVolatile());
                      memberVariable.setDeclaredConst(variable.isDeclaredConst());
@@ -254,7 +256,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                VariableRef memberVarRef = (VariableRef) memberUnwinding.getMemberUnwinding(memberName);
                membersUnwound.add(memberVarRef);
                Variable memberVar = getScope().getVariable(memberVarRef);
-               Statement initStmt = Pass0GenerateStatementSequence.createDefaultInitializationStatement(memberVarRef, memberVar.getType(), assignment.getSource(), Comment.NO_COMMENTS);
+               Statement initStmt = Pass0GenerateStatementSequence.createZeroInitStatement(memberVarRef, memberVar.getType(), assignment.getSource(), Comment.NO_COMMENTS);
                stmtIt.add(initStmt);
                getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));
             }

@@ -967,6 +967,27 @@ public interface ProgramValue {
 
    }
 
+   /** Size inside a fixed size array. */
+   class ProgramValueArraySize implements ProgramValue {
+      private final Variable variable;
+
+      ProgramValueArraySize(Variable variable) {
+         this.variable = variable;
+      }
+
+      @Override
+      public Value get() {
+         return variable.getArraySize();
+      }
+
+      @Override
+      public void set(Value val) {
+         variable.setArraySize((ConstantValue) val);
+      }
+
+   }
+
+
    /** Uses inside a constant array initialized using inline kickasm. */
    class ProgramValueConstantArrayKickAsmUses implements ProgramValue {
       private final ConstantArrayKickAsm constantArrayKickAsm;

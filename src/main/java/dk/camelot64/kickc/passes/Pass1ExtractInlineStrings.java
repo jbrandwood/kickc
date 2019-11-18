@@ -73,7 +73,7 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
             name = nameHint + nameHintIdx++;
          }
       }
-      Variable strConst = new Variable(name, blockScope, SymbolType.STRING, blockScope.getSegmentData(), constantString);
+      Variable strConst = new Variable(name, blockScope, SymbolType.STRING, true, blockScope.getSegmentData(), constantString);
       blockScope.add(strConst);
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("Creating constant string variable for inline " + strConst.toString(getProgram()) + " \"" + constantString.getValue() + "\"");

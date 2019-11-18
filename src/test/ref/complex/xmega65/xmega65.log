@@ -89,7 +89,7 @@ main::@17: scope:[main]  from main
   to:main::@18
 main::@18: scope:[main]  from main::@17
   (byte*) main::sc#0 ← (const byte*) SCREEN+(number) $28
-  (byte*) main::msg#0 ← (const byte[]) MESSAGE
+  (byte*) main::msg#0 ← (const byte*) MESSAGE
   to:main::@1
 main::@1: scope:[main]  from main::@18 main::@2
   (byte*) main::sc#3 ← phi( main::@18/(byte*) main::sc#0 main::@2/(byte*) main::sc#1 )
@@ -154,12 +154,12 @@ SYMBOL TABLE SSA
 (const byte) BLACK = (number) 0
 (const byte*) COLS = (byte*)(number) $d800
 (const byte) JMP = (number) $4c
-(const byte[]) MESSAGE = (string) "hello world!"
+(const byte*) MESSAGE = (string) "hello world!"
 (const byte) NOP = (number) $ea
 (const byte*) RASTER = (byte*)(number) $d012
 (const byte*) SCREEN = (byte*)(number) $400
-(const struct SysCall[]) SYSCALLS = { { xjmp: (const byte) JMP, syscall: &(void()) syscall1(), xnop: (const byte) NOP }, { xjmp: (const byte) JMP, syscall: &(void()) syscall2(), xnop: (const byte) NOP } }
-(const struct SysCall[]) SYSCALL_RESET = { { xjmp: (const byte) JMP, syscall: &(void()) main(), xnop: (const byte) NOP } }
+(const struct SysCall*) SYSCALLS = { { xjmp: (const byte) JMP, syscall: &(void()) syscall1(), xnop: (const byte) NOP }, { xjmp: (const byte) JMP, syscall: &(void()) syscall2(), xnop: (const byte) NOP } }
+(const struct SysCall*) SYSCALL_RESET = { { xjmp: (const byte) JMP, syscall: &(void()) main(), xnop: (const byte) NOP } }
 (void()*) SysCall::syscall
 (byte) SysCall::xjmp
 (byte) SysCall::xnop
@@ -341,7 +341,7 @@ Inlining constant with var siblings (const byte*) main::sc#0
 Inlining constant with var siblings (const byte*) main::msg#0
 Constant inlined memset::str#1 = (void*)(const byte*) COLS
 Constant inlined memset::str#0 = (void*)(const byte*) SCREEN
-Constant inlined main::msg#0 = (const byte[]) MESSAGE
+Constant inlined main::msg#0 = (const byte*) MESSAGE
 Constant inlined memset::num#1 = (word)(number) $28*(number) $19
 Constant inlined main::sc#0 = (const byte*) SCREEN+(byte) $28
 Constant inlined memset::c#0 = (byte) ' '
@@ -405,7 +405,7 @@ main::@6: scope:[main]  from main
   to:main::@1
 main::@1: scope:[main]  from main::@2 main::@6
   [8] (byte*) main::sc#2 ← phi( main::@6/(const byte*) SCREEN+(byte) $28 main::@2/(byte*) main::sc#1 )
-  [8] (byte*) main::msg#2 ← phi( main::@6/(const byte[]) MESSAGE main::@2/(byte*) main::msg#1 )
+  [8] (byte*) main::msg#2 ← phi( main::@6/(const byte*) MESSAGE main::@2/(byte*) main::msg#1 )
   [9] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@4 main::@5
@@ -611,7 +611,7 @@ main: {
     sta.z sc
     lda #>SCREEN+$28
     sta.z sc+1
-    // [8] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main::@6->main::@1#1] -- pbuz1=pbuc1 
+    // [8] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main::@6->main::@1#1] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -924,7 +924,7 @@ main: {
     sta.z sc
     lda #>SCREEN+$28
     sta.z sc+1
-    // [8] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main::@6->main::@1#1] -- pbuz1=pbuc1 
+    // [8] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main::@6->main::@1#1] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -1130,12 +1130,12 @@ FINAL SYMBOL TABLE
 (const byte) BLACK = (number) 0
 (const byte*) COLS = (byte*) 55296
 (const byte) JMP = (number) $4c
-(const byte[]) MESSAGE = (string) "hello world!"
+(const byte*) MESSAGE = (string) "hello world!"
 (const byte) NOP = (number) $ea
 (const byte*) RASTER = (byte*) 53266
 (const byte*) SCREEN = (byte*) 1024
-(const struct SysCall[]) SYSCALLS = { { xjmp: (const byte) JMP, syscall: &(void()) syscall1(), xnop: (const byte) NOP }, { xjmp: (const byte) JMP, syscall: &(void()) syscall2(), xnop: (const byte) NOP } }
-(const struct SysCall[]) SYSCALL_RESET = { { xjmp: (const byte) JMP, syscall: &(void()) main(), xnop: (const byte) NOP } }
+(const struct SysCall*) SYSCALLS = { { xjmp: (const byte) JMP, syscall: &(void()) syscall1(), xnop: (const byte) NOP }, { xjmp: (const byte) JMP, syscall: &(void()) syscall2(), xnop: (const byte) NOP } }
+(const struct SysCall*) SYSCALL_RESET = { { xjmp: (const byte) JMP, syscall: &(void()) main(), xnop: (const byte) NOP } }
 (void()*) SysCall::syscall
 (byte) SysCall::xjmp
 (byte) SysCall::xnop
@@ -1264,7 +1264,7 @@ main: {
     sta.z sc
     lda #>SCREEN+$28
     sta.z sc+1
-    // [8] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main::@6->main::@1#1] -- pbuz1=pbuc1 
+    // [8] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main::@6->main::@1#1] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE

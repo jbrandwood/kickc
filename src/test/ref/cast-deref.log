@@ -11,7 +11,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte~) main::$0 ← ((byte)) *((const signed byte[]) main::sbs + (byte) main::i#2)
+  (byte~) main::$0 ← ((byte)) *((const signed byte*) main::sbs + (byte) main::i#2)
   *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,3)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,3)
@@ -42,9 +42,9 @@ SYMBOL TABLE SSA
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
-(const signed byte[]) main::sbs = { (signed byte)(number) -1, (signed byte)(number) -2, (signed byte)(number) -3, (signed byte)(number) -4 }
+(const signed byte*) main::sbs = { (signed byte)(number) -1, (signed byte)(number) -2, (signed byte)(number) -3, (signed byte)(number) -4 }
 
-Inlining cast (byte~) main::$0 ← (byte)*((const signed byte[]) main::sbs + (byte) main::i#2)
+Inlining cast (byte~) main::$0 ← (byte)*((const signed byte*) main::sbs + (byte) main::i#2)
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast -1
 Simplifying constant integer cast -2
@@ -64,7 +64,7 @@ Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining Noop Cast [1] (byte~) main::$0 ← (byte)*((const signed byte[]) main::sbs + (byte) main::i#2) keeping *(main::sbs + main::i#2)
+Inlining Noop Cast [1] (byte~) main::$0 ← (byte)*((const signed byte*) main::sbs + (byte) main::i#2) keeping *(main::sbs + main::i#2)
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
@@ -105,7 +105,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte[]) main::sbs + (byte) main::i#2)
+  [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte*) main::sbs + (byte) main::i#2)
   [7] (byte) main::i#1 ← ++ (byte) main::i#2
   [8] if((byte) main::i#1!=(byte) 4) goto main::@1
   to:main::@return
@@ -167,7 +167,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte[]) main::sbs + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte*) main::sbs + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda sbs,y
     sta SCREEN,y
@@ -187,9 +187,9 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte[]) main::sbs + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte*) main::sbs + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte[]) main::sbs + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte*) main::sbs + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -237,7 +237,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte[]) main::sbs + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte*) main::sbs + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda sbs,x
     sta SCREEN,x
     // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -291,7 +291,7 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 16.5
-(const signed byte[]) main::sbs = { (signed byte) -1, (signed byte) -2, (signed byte) -3, (signed byte) -4 }
+(const signed byte*) main::sbs = { (signed byte) -1, (signed byte) -2, (signed byte) -3, (signed byte) -4 }
 
 reg byte x [ main::i#2 main::i#1 ]
 
@@ -324,7 +324,7 @@ main: {
     // main::@1
   __b1:
     // SCREEN[i] = (byte) sbs[i]
-    // [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte[]) main::sbs + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [6] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte*) main::sbs + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda sbs,x
     sta SCREEN,x
     // for(byte i : 0..3)

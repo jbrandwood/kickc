@@ -59,6 +59,7 @@ Culled Empty Block (label) @32
 Culled Empty Block (label) @33
 Culled Empty Block (label) @34
 Culled Empty Block (label) @35
+Culled Empty Block (label) @36
 Culled Empty Block (label) @37
 Culled Empty Block (label) @38
 Culled Empty Block (label) @39
@@ -124,7 +125,7 @@ memset::@return: scope:[memset]  from memset::@1
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@36
+  to:@42
 
 (void()) print_str((byte*) print_str::str)
 print_str: scope:[print_str]  from print_points::@7
@@ -180,7 +181,7 @@ print_byte: scope:[print_byte]  from print_points::@4 print_points::@5
   (byte*) print_char_cursor#42 ← phi( print_points::@4/(byte*) print_char_cursor#45 print_points::@5/(byte*) print_char_cursor#46 )
   (byte) print_byte::b#2 ← phi( print_points::@4/(byte) print_byte::b#0 print_points::@5/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
-  (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -188,7 +189,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#25 ← phi( print_byte/(byte*) print_char_cursor#9 )
   (byte*) print_char_cursor#5 ← (byte*) print_char_cursor#25
   (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
-  (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#1 ← *((const byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -235,12 +236,6 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   (byte*) print_char_cursor#11 ← (byte*) print_char_cursor#30
   return 
   to:@return
-@36: scope:[]  from @12
-  (byte*) print_screen#7 ← phi( @12/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#52 ← phi( @12/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#28 ← phi( @12/(byte*) print_line_cursor#0 )
-  (byte[NUM_POINTS*SIZEOF_POINT]) points ← { fill( NUM_POINTS*SIZEOF_POINT, 0) }
-  to:@42
 
 (void()) main()
 main: scope:[main]  from @42
@@ -284,7 +279,7 @@ init_points::getPoint1: scope:[init_points]  from init_points::@1
   (byte) init_points::pos#11 ← phi( init_points::@1/(byte) init_points::pos#12 )
   (byte) init_points::getPoint1_idx#1 ← phi( init_points::@1/(byte) init_points::getPoint1_idx#0 )
   (byte~) init_points::getPoint1_$0 ← (byte) init_points::getPoint1_idx#1 * (const byte) SIZEOF_POINT
-  (byte*~) init_points::getPoint1_$1 ← (byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0
+  (byte*~) init_points::getPoint1_$1 ← (const byte*) points + (byte~) init_points::getPoint1_$0
   (byte*) init_points::getPoint1_return#0 ← (byte*~) init_points::getPoint1_$1
   to:init_points::getPoint1_@return
 init_points::getPoint1_@return: scope:[init_points]  from init_points::getPoint1
@@ -371,31 +366,31 @@ print_points::@6: scope:[print_points]  from print_points
   (byte) print_points::i#0 ← (byte) 0
   to:print_points::@1
 print_points::@1: scope:[print_points]  from print_points::@10 print_points::@6
-  (byte*) print_line_cursor#39 ← phi( print_points::@10/(byte*) print_line_cursor#8 print_points::@6/(byte*) print_line_cursor#7 )
-  (byte*) print_char_cursor#58 ← phi( print_points::@10/(byte*) print_char_cursor#18 print_points::@6/(byte*) print_char_cursor#14 )
+  (byte*) print_line_cursor#38 ← phi( print_points::@10/(byte*) print_line_cursor#8 print_points::@6/(byte*) print_line_cursor#7 )
+  (byte*) print_char_cursor#57 ← phi( print_points::@10/(byte*) print_char_cursor#18 print_points::@6/(byte*) print_char_cursor#14 )
   (byte) print_points::i#2 ← phi( print_points::@10/(byte) print_points::i#1 print_points::@6/(byte) print_points::i#0 )
   (byte) print_points::getPoint1_idx#0 ← (byte) print_points::i#2
   to:print_points::getPoint1
 print_points::getPoint1: scope:[print_points]  from print_points::@1
   (byte) print_points::i#15 ← phi( print_points::@1/(byte) print_points::i#2 )
-  (byte*) print_line_cursor#38 ← phi( print_points::@1/(byte*) print_line_cursor#39 )
-  (byte*) print_char_cursor#57 ← phi( print_points::@1/(byte*) print_char_cursor#58 )
+  (byte*) print_line_cursor#37 ← phi( print_points::@1/(byte*) print_line_cursor#38 )
+  (byte*) print_char_cursor#56 ← phi( print_points::@1/(byte*) print_char_cursor#57 )
   (byte) print_points::getPoint1_idx#1 ← phi( print_points::@1/(byte) print_points::getPoint1_idx#0 )
   (byte~) print_points::getPoint1_$0 ← (byte) print_points::getPoint1_idx#1 * (const byte) SIZEOF_POINT
-  (byte*~) print_points::getPoint1_$1 ← (byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0
+  (byte*~) print_points::getPoint1_$1 ← (const byte*) points + (byte~) print_points::getPoint1_$0
   (byte*) print_points::getPoint1_return#0 ← (byte*~) print_points::getPoint1_$1
   to:print_points::getPoint1_@return
 print_points::getPoint1_@return: scope:[print_points]  from print_points::getPoint1
   (byte) print_points::i#14 ← phi( print_points::getPoint1/(byte) print_points::i#15 )
-  (byte*) print_line_cursor#37 ← phi( print_points::getPoint1/(byte*) print_line_cursor#38 )
-  (byte*) print_char_cursor#56 ← phi( print_points::getPoint1/(byte*) print_char_cursor#57 )
+  (byte*) print_line_cursor#36 ← phi( print_points::getPoint1/(byte*) print_line_cursor#37 )
+  (byte*) print_char_cursor#55 ← phi( print_points::getPoint1/(byte*) print_char_cursor#56 )
   (byte*) print_points::getPoint1_return#2 ← phi( print_points::getPoint1/(byte*) print_points::getPoint1_return#0 )
   (byte*) print_points::getPoint1_return#1 ← (byte*) print_points::getPoint1_return#2
   to:print_points::@3
 print_points::@3: scope:[print_points]  from print_points::getPoint1_@return
   (byte) print_points::i#13 ← phi( print_points::getPoint1_@return/(byte) print_points::i#14 )
-  (byte*) print_line_cursor#36 ← phi( print_points::getPoint1_@return/(byte*) print_line_cursor#37 )
-  (byte*) print_char_cursor#55 ← phi( print_points::getPoint1_@return/(byte*) print_char_cursor#56 )
+  (byte*) print_line_cursor#35 ← phi( print_points::getPoint1_@return/(byte*) print_line_cursor#36 )
+  (byte*) print_char_cursor#54 ← phi( print_points::getPoint1_@return/(byte*) print_char_cursor#55 )
   (byte*) print_points::getPoint1_return#3 ← phi( print_points::getPoint1_@return/(byte*) print_points::getPoint1_return#1 )
   (byte*~) print_points::$1 ← (byte*) print_points::getPoint1_return#3
   (byte*) print_points::point#0 ← (byte*~) print_points::$1
@@ -403,9 +398,9 @@ print_points::@3: scope:[print_points]  from print_points::getPoint1_@return
   to:print_points::pointXpos1
 print_points::pointXpos1: scope:[print_points]  from print_points::@3
   (byte) print_points::i#12 ← phi( print_points::@3/(byte) print_points::i#13 )
-  (byte*) print_line_cursor#35 ← phi( print_points::@3/(byte*) print_line_cursor#36 )
+  (byte*) print_line_cursor#34 ← phi( print_points::@3/(byte*) print_line_cursor#35 )
   (byte*) print_points::point#5 ← phi( print_points::@3/(byte*) print_points::point#0 )
-  (byte*) print_char_cursor#53 ← phi( print_points::@3/(byte*) print_char_cursor#55 )
+  (byte*) print_char_cursor#52 ← phi( print_points::@3/(byte*) print_char_cursor#54 )
   (byte*) print_points::pointXpos1_point#1 ← phi( print_points::@3/(byte*) print_points::pointXpos1_point#0 )
   (byte*~) print_points::pointXpos1_$0 ← (byte*) print_points::pointXpos1_point#1 + (number) 0
   (byte*~) print_points::pointXpos1_$1 ← ((byte*)) (byte*~) print_points::pointXpos1_$0
@@ -413,15 +408,15 @@ print_points::pointXpos1: scope:[print_points]  from print_points::@3
   to:print_points::pointXpos1_@return
 print_points::pointXpos1_@return: scope:[print_points]  from print_points::pointXpos1
   (byte) print_points::i#11 ← phi( print_points::pointXpos1/(byte) print_points::i#12 )
-  (byte*) print_line_cursor#34 ← phi( print_points::pointXpos1/(byte*) print_line_cursor#35 )
+  (byte*) print_line_cursor#33 ← phi( print_points::pointXpos1/(byte*) print_line_cursor#34 )
   (byte*) print_points::point#4 ← phi( print_points::pointXpos1/(byte*) print_points::point#5 )
-  (byte*) print_char_cursor#50 ← phi( print_points::pointXpos1/(byte*) print_char_cursor#53 )
+  (byte*) print_char_cursor#50 ← phi( print_points::pointXpos1/(byte*) print_char_cursor#52 )
   (byte*) print_points::pointXpos1_return#2 ← phi( print_points::pointXpos1/(byte*) print_points::pointXpos1_return#0 )
   (byte*) print_points::pointXpos1_return#1 ← (byte*) print_points::pointXpos1_return#2
   to:print_points::@4
 print_points::@4: scope:[print_points]  from print_points::pointXpos1_@return
   (byte) print_points::i#10 ← phi( print_points::pointXpos1_@return/(byte) print_points::i#11 )
-  (byte*) print_line_cursor#33 ← phi( print_points::pointXpos1_@return/(byte*) print_line_cursor#34 )
+  (byte*) print_line_cursor#32 ← phi( print_points::pointXpos1_@return/(byte*) print_line_cursor#33 )
   (byte*) print_points::point#3 ← phi( print_points::pointXpos1_@return/(byte*) print_points::point#4 )
   (byte*) print_char_cursor#45 ← phi( print_points::pointXpos1_@return/(byte*) print_char_cursor#50 )
   (byte*) print_points::pointXpos1_return#3 ← phi( print_points::pointXpos1_@return/(byte*) print_points::pointXpos1_return#1 )
@@ -431,7 +426,7 @@ print_points::@4: scope:[print_points]  from print_points::pointXpos1_@return
   to:print_points::@7
 print_points::@7: scope:[print_points]  from print_points::@4
   (byte) print_points::i#9 ← phi( print_points::@4/(byte) print_points::i#10 )
-  (byte*) print_line_cursor#32 ← phi( print_points::@4/(byte*) print_line_cursor#33 )
+  (byte*) print_line_cursor#31 ← phi( print_points::@4/(byte*) print_line_cursor#32 )
   (byte*) print_points::point#2 ← phi( print_points::@4/(byte*) print_points::point#3 )
   (byte*) print_char_cursor#34 ← phi( print_points::@4/(byte*) print_char_cursor#7 )
   (byte*) print_char_cursor#15 ← (byte*) print_char_cursor#34
@@ -440,7 +435,7 @@ print_points::@7: scope:[print_points]  from print_points::@4
   to:print_points::@8
 print_points::@8: scope:[print_points]  from print_points::@7
   (byte) print_points::i#8 ← phi( print_points::@7/(byte) print_points::i#9 )
-  (byte*) print_line_cursor#31 ← phi( print_points::@7/(byte*) print_line_cursor#32 )
+  (byte*) print_line_cursor#30 ← phi( print_points::@7/(byte*) print_line_cursor#31 )
   (byte*) print_points::point#1 ← phi( print_points::@7/(byte*) print_points::point#2 )
   (byte*) print_char_cursor#35 ← phi( print_points::@7/(byte*) print_char_cursor#2 )
   (byte*) print_char_cursor#16 ← (byte*) print_char_cursor#35
@@ -448,8 +443,8 @@ print_points::@8: scope:[print_points]  from print_points::@7
   to:print_points::pointYpos1
 print_points::pointYpos1: scope:[print_points]  from print_points::@8
   (byte) print_points::i#7 ← phi( print_points::@8/(byte) print_points::i#8 )
-  (byte*) print_line_cursor#30 ← phi( print_points::@8/(byte*) print_line_cursor#31 )
-  (byte*) print_char_cursor#54 ← phi( print_points::@8/(byte*) print_char_cursor#16 )
+  (byte*) print_line_cursor#29 ← phi( print_points::@8/(byte*) print_line_cursor#30 )
+  (byte*) print_char_cursor#53 ← phi( print_points::@8/(byte*) print_char_cursor#16 )
   (byte*) print_points::pointYpos1_point#1 ← phi( print_points::@8/(byte*) print_points::pointYpos1_point#0 )
   (byte*~) print_points::pointYpos1_$0 ← (byte*) print_points::pointYpos1_point#1 + (number) 1
   (byte*~) print_points::pointYpos1_$1 ← ((byte*)) (byte*~) print_points::pointYpos1_$0
@@ -457,14 +452,14 @@ print_points::pointYpos1: scope:[print_points]  from print_points::@8
   to:print_points::pointYpos1_@return
 print_points::pointYpos1_@return: scope:[print_points]  from print_points::pointYpos1
   (byte) print_points::i#6 ← phi( print_points::pointYpos1/(byte) print_points::i#7 )
-  (byte*) print_line_cursor#29 ← phi( print_points::pointYpos1/(byte*) print_line_cursor#30 )
-  (byte*) print_char_cursor#51 ← phi( print_points::pointYpos1/(byte*) print_char_cursor#54 )
+  (byte*) print_line_cursor#28 ← phi( print_points::pointYpos1/(byte*) print_line_cursor#29 )
+  (byte*) print_char_cursor#51 ← phi( print_points::pointYpos1/(byte*) print_char_cursor#53 )
   (byte*) print_points::pointYpos1_return#2 ← phi( print_points::pointYpos1/(byte*) print_points::pointYpos1_return#0 )
   (byte*) print_points::pointYpos1_return#1 ← (byte*) print_points::pointYpos1_return#2
   to:print_points::@5
 print_points::@5: scope:[print_points]  from print_points::pointYpos1_@return
   (byte) print_points::i#5 ← phi( print_points::pointYpos1_@return/(byte) print_points::i#6 )
-  (byte*) print_line_cursor#27 ← phi( print_points::pointYpos1_@return/(byte*) print_line_cursor#29 )
+  (byte*) print_line_cursor#27 ← phi( print_points::pointYpos1_@return/(byte*) print_line_cursor#28 )
   (byte*) print_char_cursor#46 ← phi( print_points::pointYpos1_@return/(byte*) print_char_cursor#51 )
   (byte*) print_points::pointYpos1_return#3 ← phi( print_points::pointYpos1_@return/(byte*) print_points::pointYpos1_return#1 )
   (byte*~) print_points::$5 ← (byte*) print_points::pointYpos1_return#3
@@ -495,10 +490,10 @@ print_points::@return: scope:[print_points]  from print_points::@10
   (byte*) print_char_cursor#19 ← (byte*) print_char_cursor#38
   return 
   to:@return
-@42: scope:[]  from @36
-  (byte*) print_screen#6 ← phi( @36/(byte*) print_screen#7 )
-  (byte*) print_char_cursor#47 ← phi( @36/(byte*) print_char_cursor#52 )
-  (byte*) print_line_cursor#25 ← phi( @36/(byte*) print_line_cursor#28 )
+@42: scope:[]  from @12
+  (byte*) print_screen#6 ← phi( @12/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#47 ← phi( @12/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#25 ← phi( @12/(byte*) print_line_cursor#0 )
   call main 
   to:@43
 @43: scope:[]  from @42
@@ -511,7 +506,6 @@ print_points::@return: scope:[print_points]  from print_points::@10
 
 SYMBOL TABLE SSA
 (label) @12
-(label) @36
 (label) @42
 (label) @43
 (label) @begin
@@ -646,7 +640,7 @@ SYMBOL TABLE SSA
 (void*) memset::str#3
 (void*) memset::str#4
 (void*) memset::str#5
-(byte[NUM_POINTS*SIZEOF_POINT]) points
+(const byte*) points = { fill( NUM_POINTS*SIZEOF_POINT, 0) }
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0
 (number~) print_byte::$2
@@ -719,7 +713,6 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#55
 (byte*) print_char_cursor#56
 (byte*) print_char_cursor#57
-(byte*) print_char_cursor#58
 (byte*) print_char_cursor#6
 (byte*) print_char_cursor#7
 (byte*) print_char_cursor#8
@@ -727,7 +720,7 @@ SYMBOL TABLE SSA
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -762,7 +755,6 @@ SYMBOL TABLE SSA
 (byte*) print_line_cursor#36
 (byte*) print_line_cursor#37
 (byte*) print_line_cursor#38
-(byte*) print_line_cursor#39
 (byte*) print_line_cursor#4
 (byte*) print_line_cursor#5
 (byte*) print_line_cursor#6
@@ -859,7 +851,6 @@ SYMBOL TABLE SSA
 (byte*) print_screen#4
 (byte*) print_screen#5
 (byte*) print_screen#6
-(byte*) print_screen#7
 (void()) print_str((byte*) print_str::str)
 (bool~) print_str::$0
 (label) print_str::@1
@@ -948,7 +939,7 @@ Alias (byte) memset::c#1 = (byte) memset::c#2
 Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
 Alias (byte*) memset::end#1 = (byte*) memset::end#2 
 Alias (void*) memset::str#4 = (void*) memset::str#5 
-Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#28 (byte*) print_char_cursor#52 (byte*) print_screen#7 (byte*) print_line_cursor#25 (byte*) print_char_cursor#47 (byte*) print_screen#6 
+Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#25 (byte*) print_char_cursor#47 (byte*) print_screen#6 
 Alias (byte*) print_str::str#2 = (byte*) print_str::str#3 
 Alias (byte*) print_char_cursor#2 = (byte*) print_char_cursor#21 (byte*) print_char_cursor#40 (byte*) print_char_cursor#22 
 Alias (byte*) print_line_cursor#1 = (byte*~) print_ln::$0 (byte*) print_line_cursor#12 (byte*) print_char_cursor#3 (byte*) print_line_cursor#13 (byte*) print_char_cursor#24 (byte*) print_line_cursor#2 (byte*) print_char_cursor#4 
@@ -971,12 +962,12 @@ Alias (byte*) init_points::pointYpos1_return#0 = (byte*~) init_points::pointYpos
 Alias (byte*) print_line_cursor#17 = (byte*) print_line_cursor#7 
 Alias (byte*) print_char_cursor#14 = (byte*) print_char_cursor#33 
 Alias (byte) print_points::i#10 = (byte) print_points::getPoint1_idx#0 (byte) print_points::i#2 (byte) print_points::getPoint1_idx#1 (byte) print_points::i#15 (byte) print_points::i#14 (byte) print_points::i#13 (byte) print_points::i#12 (byte) print_points::i#11 (byte) print_points::i#9 (byte) print_points::i#8 (byte) print_points::i#7 (byte) print_points::i#6 (byte) print_points::i#5 (byte) print_points::i#4 (byte) print_points::i#3 
-Alias (byte*) print_char_cursor#45 = (byte*) print_char_cursor#57 (byte*) print_char_cursor#58 (byte*) print_char_cursor#56 (byte*) print_char_cursor#55 (byte*) print_char_cursor#53 (byte*) print_char_cursor#50 
-Alias (byte*) print_line_cursor#24 = (byte*) print_line_cursor#38 (byte*) print_line_cursor#39 (byte*) print_line_cursor#37 (byte*) print_line_cursor#36 (byte*) print_line_cursor#35 (byte*) print_line_cursor#34 (byte*) print_line_cursor#33 (byte*) print_line_cursor#32 (byte*) print_line_cursor#31 (byte*) print_line_cursor#30 (byte*) print_line_cursor#29 (byte*) print_line_cursor#27 
+Alias (byte*) print_char_cursor#45 = (byte*) print_char_cursor#56 (byte*) print_char_cursor#57 (byte*) print_char_cursor#55 (byte*) print_char_cursor#54 (byte*) print_char_cursor#52 (byte*) print_char_cursor#50 
+Alias (byte*) print_line_cursor#24 = (byte*) print_line_cursor#37 (byte*) print_line_cursor#38 (byte*) print_line_cursor#36 (byte*) print_line_cursor#35 (byte*) print_line_cursor#34 (byte*) print_line_cursor#33 (byte*) print_line_cursor#32 (byte*) print_line_cursor#31 (byte*) print_line_cursor#30 (byte*) print_line_cursor#29 (byte*) print_line_cursor#28 (byte*) print_line_cursor#27 
 Alias (byte*) print_points::point#0 = (byte*) print_points::getPoint1_return#0 (byte*~) print_points::getPoint1_$1 (byte*) print_points::getPoint1_return#2 (byte*) print_points::getPoint1_return#1 (byte*) print_points::getPoint1_return#3 (byte*~) print_points::$1 (byte*) print_points::pointXpos1_point#0 (byte*) print_points::pointXpos1_point#1 (byte*) print_points::point#5 (byte*) print_points::point#4 (byte*) print_points::point#3 (byte*) print_points::point#2 (byte*) print_points::point#1 (byte*) print_points::pointYpos1_point#0 (byte*) print_points::pointYpos1_point#1 
 Alias (byte*) print_points::pointXpos1_return#0 = (byte*~) print_points::pointXpos1_$1 (byte*~) print_points::pointXpos1_$0 (byte*) print_points::pointXpos1_return#2 (byte*) print_points::pointXpos1_return#1 (byte*) print_points::pointXpos1_return#3 (byte*~) print_points::$2 
 Alias (byte*) print_char_cursor#15 = (byte*) print_char_cursor#34 
-Alias (byte*) print_char_cursor#16 = (byte*) print_char_cursor#35 (byte*) print_char_cursor#54 (byte*) print_char_cursor#51 (byte*) print_char_cursor#46 
+Alias (byte*) print_char_cursor#16 = (byte*) print_char_cursor#35 (byte*) print_char_cursor#53 (byte*) print_char_cursor#51 (byte*) print_char_cursor#46 
 Alias (byte*) print_points::pointYpos1_return#0 = (byte*~) print_points::pointYpos1_$1 (byte*~) print_points::pointYpos1_$0 (byte*) print_points::pointYpos1_return#2 (byte*) print_points::pointYpos1_return#1 (byte*) print_points::pointYpos1_return#3 (byte*~) print_points::$5 
 Alias (byte*) print_char_cursor#17 = (byte*) print_char_cursor#36 
 Alias (byte*) print_line_cursor#18 = (byte*) print_line_cursor#8 (byte*) print_line_cursor#19 (byte*) print_line_cursor#9 
@@ -1022,15 +1013,12 @@ Simple Condition (bool~) memset::$1 [3] if((word) memset::num#0<=(byte) 0) goto 
 Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str::$0 [26] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [39] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1
-Simple Condition (bool~) init_points::$3 [129] if((byte) init_points::i#1!=rangelast(0,NUM_POINTS-1)) goto init_points::@1
-Simple Condition (bool~) print_points::$8 [184] if((byte) print_points::i#1!=rangelast(0,NUM_POINTS-1)) goto print_points::@1
+Simple Condition (bool~) init_points::$3 [127] if((byte) init_points::i#1!=rangelast(0,NUM_POINTS-1)) goto init_points::@1
+Simple Condition (bool~) print_points::$8 [182] if((byte) print_points::i#1!=rangelast(0,NUM_POINTS-1)) goto print_points::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [80] (byte[NUM_POINTS*SIZEOF_POINT]) points ← { fill( NUM_POINTS*SIZEOF_POINT, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const byte[NUM_POINTS*SIZEOF_POINT]) points = { fill( NUM_POINTS*SIZEOF_POINT, 0) }
 Constant (const byte) init_points::pos#0 = $a
 Constant (const byte) init_points::i#0 = 0
 Constant (const byte) print_points::i#0 = 0
@@ -1044,19 +1032,19 @@ Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always false - eliminating [3] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [127] init_points::i#1 ← ++ init_points::i#10 to ++
-Resolved ranged comparison value [129] if(init_points::i#1!=rangelast(0,NUM_POINTS-1)) goto init_points::@1 to (const byte) NUM_POINTS-(byte) 1+(number) 1
-Resolved ranged next value [182] print_points::i#1 ← ++ print_points::i#10 to ++
-Resolved ranged comparison value [184] if(print_points::i#1!=rangelast(0,NUM_POINTS-1)) goto print_points::@1 to (const byte) NUM_POINTS-(byte) 1+(number) 1
-Converting *(pointer+n) to pointer[n] [114] *((byte*) init_points::pointXpos1_return#0) ← (byte) init_points::pos#10  -- *(init_points::getPoint1_return#0 + 0)
-Converting *(pointer+n) to pointer[n] [125] *((byte*) init_points::pointYpos1_return#0) ← (byte) init_points::pos#1  -- *(init_points::getPoint1_return#0 + 1)
-Converting *(pointer+n) to pointer[n] [157] (byte) print_byte::b#0 ← *((byte*) print_points::pointXpos1_return#0)  -- *(print_points::point#0 + 0)
-Converting *(pointer+n) to pointer[n] [174] (byte) print_byte::b#1 ← *((byte*) print_points::pointYpos1_return#0)  -- *(print_points::point#0 + 1)
+Resolved ranged next value [125] init_points::i#1 ← ++ init_points::i#10 to ++
+Resolved ranged comparison value [127] if(init_points::i#1!=rangelast(0,NUM_POINTS-1)) goto init_points::@1 to (const byte) NUM_POINTS-(byte) 1+(number) 1
+Resolved ranged next value [180] print_points::i#1 ← ++ print_points::i#10 to ++
+Resolved ranged comparison value [182] if(print_points::i#1!=rangelast(0,NUM_POINTS-1)) goto print_points::@1 to (const byte) NUM_POINTS-(byte) 1+(number) 1
+Converting *(pointer+n) to pointer[n] [112] *((byte*) init_points::pointXpos1_return#0) ← (byte) init_points::pos#10  -- *(init_points::getPoint1_return#0 + 0)
+Converting *(pointer+n) to pointer[n] [123] *((byte*) init_points::pointYpos1_return#0) ← (byte) init_points::pos#1  -- *(init_points::getPoint1_return#0 + 1)
+Converting *(pointer+n) to pointer[n] [155] (byte) print_byte::b#0 ← *((byte*) print_points::pointXpos1_return#0)  -- *(print_points::point#0 + 0)
+Converting *(pointer+n) to pointer[n] [172] (byte) print_byte::b#1 ← *((byte*) print_points::pointYpos1_return#0)  -- *(print_points::point#0 + 1)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero init_points::getPoint1_return#0 in [107] (byte*) init_points::pointXpos1_return#0 ← (byte*) init_points::getPoint1_return#0 + (byte) 0
-Simplifying expression containing zero init_points::getPoint1_return#0 in [114] *((byte*) init_points::getPoint1_return#0 + (byte) 0) ← (byte) init_points::pos#10
-Simplifying expression containing zero print_points::point#0 in [150] (byte*) print_points::pointXpos1_return#0 ← (byte*) print_points::point#0 + (byte) 0
-Simplifying expression containing zero print_points::point#0 in [157] (byte) print_byte::b#0 ← *((byte*) print_points::point#0 + (byte) 0)
+Simplifying expression containing zero init_points::getPoint1_return#0 in [105] (byte*) init_points::pointXpos1_return#0 ← (byte*) init_points::getPoint1_return#0 + (byte) 0
+Simplifying expression containing zero init_points::getPoint1_return#0 in [112] *((byte*) init_points::getPoint1_return#0 + (byte) 0) ← (byte) init_points::pos#10
+Simplifying expression containing zero print_points::point#0 in [148] (byte*) print_points::pointXpos1_return#0 ← (byte*) print_points::point#0 + (byte) 0
+Simplifying expression containing zero print_points::point#0 in [155] (byte) print_byte::b#0 ← *((byte*) print_points::point#0 + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*) init_points::pointXpos1_return#0 and assignment [36] (byte*) init_points::pointXpos1_return#0 ← (byte*) init_points::getPoint1_return#0
 Eliminating unused variable (byte*) init_points::pointYpos1_return#0 and assignment [39] (byte*) init_points::pointYpos1_return#0 ← (byte*) init_points::getPoint1_return#0 + (byte) 1
@@ -1106,7 +1094,6 @@ Added new block during phi lifting init_points::@6(between init_points::@5 and i
 Added new block during phi lifting print_points::@11(between print_points::@10 and print_points::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @12
-Adding NOP phi() at start of @36
 Adding NOP phi() at start of @42
 Adding NOP phi() at start of @43
 Adding NOP phi() at start of @end
@@ -1139,35 +1126,34 @@ Adding NOP phi() at start of init_points::pointXpos1_@return
 Adding NOP phi() at start of init_points::pointYpos1
 Adding NOP phi() at start of init_points::pointYpos1_@return
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to init_points:8 print_points:10 
-Calls in [print_points] to print_cls:14 print_byte:26 print_str:28 print_byte:35 print_ln:37 
-Calls in [print_byte] to print_char:56 print_char:61 
-Calls in [print_cls] to memset:78 
+Calls in [] to main:3 
+Calls in [main] to init_points:7 print_points:9 
+Calls in [print_points] to print_cls:13 print_byte:25 print_str:27 print_byte:34 print_ln:36 
+Calls in [print_byte] to print_char:55 print_char:60 
+Calls in [print_cls] to memset:77 
 
 Created 13 initial phi equivalence classes
-Coalesced [24] print_byte::b#4 ← print_byte::b#0
-Coalesced [25] print_char_cursor#61 ← print_char_cursor#45
-Coalesced [33] print_byte::b#5 ← print_byte::b#1
-Coalesced [34] print_char_cursor#62 ← print_char_cursor#2
-Coalesced [41] print_points::i#16 ← print_points::i#1
-Not coalescing [42] print_char_cursor#65 ← print_line_cursor#1
-Coalesced [43] print_line_cursor#42 ← print_line_cursor#1
-Coalesced [44] print_line_cursor#40 ← print_line_cursor#24
-Coalesced (already) [50] print_line_cursor#41 ← print_line_cursor#1
-Coalesced [54] print_char::ch#3 ← print_char::ch#0
-Coalesced [55] print_char_cursor#63 ← print_char_cursor#42
-Coalesced [59] print_char::ch#4 ← print_char::ch#1
-Coalesced [60] print_char_cursor#64 ← print_char_cursor#29
-Coalesced (already) [68] print_char_cursor#59 ← print_char_cursor#29
-Coalesced [75] print_str::str#5 ← print_str::str#0
-Coalesced [76] print_char_cursor#60 ← print_char_cursor#1
-Coalesced [89] memset::dst#4 ← memset::dst#1
-Coalesced [107] init_points::i#12 ← init_points::i#1
-Coalesced [108] init_points::pos#13 ← init_points::pos#2
+Coalesced [23] print_byte::b#4 ← print_byte::b#0
+Coalesced [24] print_char_cursor#60 ← print_char_cursor#45
+Coalesced [32] print_byte::b#5 ← print_byte::b#1
+Coalesced [33] print_char_cursor#61 ← print_char_cursor#2
+Coalesced [40] print_points::i#16 ← print_points::i#1
+Not coalescing [41] print_char_cursor#64 ← print_line_cursor#1
+Coalesced [42] print_line_cursor#41 ← print_line_cursor#1
+Coalesced [43] print_line_cursor#39 ← print_line_cursor#24
+Coalesced (already) [49] print_line_cursor#40 ← print_line_cursor#1
+Coalesced [53] print_char::ch#3 ← print_char::ch#0
+Coalesced [54] print_char_cursor#62 ← print_char_cursor#42
+Coalesced [58] print_char::ch#4 ← print_char::ch#1
+Coalesced [59] print_char_cursor#63 ← print_char_cursor#29
+Coalesced (already) [67] print_char_cursor#58 ← print_char_cursor#29
+Coalesced [74] print_str::str#5 ← print_str::str#0
+Coalesced [75] print_char_cursor#59 ← print_char_cursor#1
+Coalesced [88] memset::dst#4 ← memset::dst#1
+Coalesced [106] init_points::i#12 ← init_points::i#1
+Coalesced [107] init_points::pos#13 ← init_points::pos#2
 Coalesced down to 9 phi equivalence classes
 Culled Empty Block (label) @12
-Culled Empty Block (label) @36
 Culled Empty Block (label) @43
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) print_points::@6
@@ -1247,18 +1233,18 @@ print_points: scope:[print_points]  from main::@1
   to:print_points::@1
 print_points::@1: scope:[print_points]  from print_points print_points::@7
   [11] (byte*) print_line_cursor#24 ← phi( print_points::@7/(byte*) print_line_cursor#1 print_points/(byte*) 1024 )
-  [11] (byte*) print_char_cursor#45 ← phi( print_points::@7/(byte*) print_char_cursor#65 print_points/(byte*) 1024 )
+  [11] (byte*) print_char_cursor#45 ← phi( print_points::@7/(byte*) print_char_cursor#64 print_points/(byte*) 1024 )
   [11] (byte) print_points::i#10 ← phi( print_points::@7/(byte) print_points::i#1 print_points/(byte) 0 )
   to:print_points::getPoint1
 print_points::getPoint1: scope:[print_points]  from print_points::@1
   [12] (byte~) print_points::getPoint1_$0 ← (byte) print_points::i#10 << (byte) 1
-  [13] (byte*) print_points::point#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0
+  [13] (byte*) print_points::point#0 ← (const byte*) points + (byte~) print_points::getPoint1_$0
   to:print_points::pointXpos1
 print_points::pointXpos1: scope:[print_points]  from print_points::getPoint1
   [14] phi()
   to:print_points::@2
 print_points::@2: scope:[print_points]  from print_points::pointXpos1
-  [15] (byte) print_byte::b#0 ← *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0)
+  [15] (byte) print_byte::b#0 ← *((const byte*) points + (byte~) print_points::getPoint1_$0)
   [16] call print_byte 
   to:print_points::@4
 print_points::@4: scope:[print_points]  from print_points::@2
@@ -1284,7 +1270,7 @@ print_points::@return: scope:[print_points]  from print_points::@6
   [26] return 
   to:@return
 print_points::@7: scope:[print_points]  from print_points::@6
-  [27] (byte*) print_char_cursor#65 ← (byte*) print_line_cursor#1
+  [27] (byte*) print_char_cursor#64 ← (byte*) print_line_cursor#1
   to:print_points::@1
 
 (void()) print_ln()
@@ -1305,12 +1291,12 @@ print_byte: scope:[print_byte]  from print_points::@2 print_points::@3
   [33] (byte*) print_char_cursor#42 ← phi( print_points::@2/(byte*) print_char_cursor#45 print_points::@3/(byte*) print_char_cursor#2 )
   [33] (byte) print_byte::b#2 ← phi( print_points::@2/(byte) print_byte::b#0 print_points::@3/(byte) print_byte::b#1 )
   [34] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4
-  [35] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  [35] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   [36] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [37] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f
-  [38] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2)
+  [38] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
   [39] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -1381,13 +1367,13 @@ init_points::@1: scope:[init_points]  from init_points init_points::@3
   to:init_points::getPoint1
 init_points::getPoint1: scope:[init_points]  from init_points::@1
   [63] (byte~) init_points::getPoint1_$0 ← (byte) init_points::i#10 << (byte) 1
-  [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0
+  [64] (byte*) init_points::getPoint1_return#0 ← (const byte*) points + (byte~) init_points::getPoint1_$0
   to:init_points::pointXpos1
 init_points::pointXpos1: scope:[init_points]  from init_points::getPoint1
   [65] phi()
   to:init_points::@2
 init_points::@2: scope:[init_points]  from init_points::pointXpos1
-  [66] *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10
+  [66] *((const byte*) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10
   [67] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a
   to:init_points::pointYpos1
 init_points::pointYpos1: scope:[init_points]  from init_points::@2
@@ -1451,7 +1437,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor#29 6.6875
 (byte*) print_char_cursor#42 8.0
 (byte*) print_char_cursor#45 4.4
-(byte*) print_char_cursor#65 22.0
+(byte*) print_char_cursor#64 22.0
 (void()) print_cls()
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 46.42857142857143
@@ -1482,7 +1468,7 @@ Initial phi equivalence classes
 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ]
 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-[ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#65 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
+[ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#64 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 [ print_str::str#2 print_str::str#0 ]
 [ memset::dst#2 memset::dst#1 ]
 [ init_points::i#10 init_points::i#1 ]
@@ -1499,7 +1485,7 @@ Complete equivalence classes
 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ]
 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-[ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#65 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
+[ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#64 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 [ print_str::str#2 print_str::str#0 ]
 [ memset::dst#2 memset::dst#1 ]
 [ init_points::i#10 init_points::i#1 ]
@@ -1515,7 +1501,7 @@ Allocated zp[1]:2 [ print_points::i#10 print_points::i#1 ]
 Allocated zp[2]:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ]
 Allocated zp[1]:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Allocated zp[1]:6 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-Allocated zp[2]:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#65 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
+Allocated zp[2]:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#64 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 Allocated zp[2]:9 [ print_str::str#2 print_str::str#0 ]
 Allocated zp[2]:11 [ memset::dst#2 memset::dst#1 ]
 Allocated zp[1]:13 [ init_points::i#10 init_points::i#1 ]
@@ -1622,7 +1608,7 @@ print_points: {
     lda.z i
     asl
     sta.z getPoint1___0
-    // [13] (byte*) print_points::point#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuz2 
+    // [13] (byte*) print_points::point#0 ← (const byte*) points + (byte~) print_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z getPoint1___0
     clc
     adc #<points
@@ -1638,7 +1624,7 @@ print_points: {
     jmp __b2
     // print_points::@2
   __b2:
-    // [15] (byte) print_byte::b#0 ← *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [15] (byte) print_byte::b#0 ← *((const byte*) points + (byte~) print_points::getPoint1_$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z getPoint1___0
     lda points,y
     sta.z print_byte.b
@@ -1700,7 +1686,7 @@ print_points: {
     rts
     // print_points::@7
   __b7:
-    // [27] (byte*) print_char_cursor#65 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [27] (byte*) print_char_cursor#64 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -1708,7 +1694,7 @@ print_points: {
     // [11] phi from print_points::@7 to print_points::@1 [phi:print_points::@7->print_points::@1]
   __b1_from___b7:
     // [11] phi (byte*) print_line_cursor#24 = (byte*) print_line_cursor#1 [phi:print_points::@7->print_points::@1#0] -- register_copy 
-    // [11] phi (byte*) print_char_cursor#45 = (byte*) print_char_cursor#65 [phi:print_points::@7->print_points::@1#1] -- register_copy 
+    // [11] phi (byte*) print_char_cursor#45 = (byte*) print_char_cursor#64 [phi:print_points::@7->print_points::@1#1] -- register_copy 
     // [11] phi (byte) print_points::i#10 = (byte) print_points::i#1 [phi:print_points::@7->print_points::@1#2] -- register_copy 
     jmp __b1
     str: .text " "
@@ -1761,7 +1747,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [35] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [35] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -1778,7 +1764,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [38] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [38] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -1953,7 +1939,7 @@ init_points: {
     lda.z i
     asl
     sta.z getPoint1___0
-    // [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuz2 
+    // [64] (byte*) init_points::getPoint1_return#0 ← (const byte*) points + (byte~) init_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z getPoint1___0
     clc
     adc #<points
@@ -1969,7 +1955,7 @@ init_points: {
     jmp __b2
     // init_points::@2
   __b2:
-    // [66] *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [66] *((const byte*) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z pos_1
     ldy.z getPoint1___0
     sta points,y
@@ -2013,11 +1999,11 @@ init_points: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] (byte~) print_points::getPoint1_$0 ← (byte) print_points::i#10 << (byte) 1 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 ] ( main:2::print_points:7 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ print_points::i#10 print_points::i#1 ]
-Statement [13] (byte*) print_points::point#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 print_points::point#0 ] ( main:2::print_points:7 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 print_points::point#0 ] ) always clobbers reg byte a 
+Statement [13] (byte*) print_points::point#0 ← (const byte*) points + (byte~) print_points::getPoint1_$0 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 print_points::point#0 ] ( main:2::print_points:7 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 print_points::point#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:15 [ print_points::getPoint1_$0 ]
 Statement [20] (byte) print_byte::b#1 ← *((byte*) print_points::point#0 + (byte) 1) [ print_points::i#10 print_line_cursor#24 print_byte::b#1 print_char_cursor#2 ] ( main:2::print_points:7 [ print_points::i#10 print_line_cursor#24 print_byte::b#1 print_char_cursor#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ print_points::i#10 print_points::i#1 ]
-Statement [27] (byte*) print_char_cursor#65 ← (byte*) print_line_cursor#1 [ print_points::i#1 print_char_cursor#65 print_line_cursor#1 ] ( main:2::print_points:7 [ print_points::i#1 print_char_cursor#65 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [27] (byte*) print_char_cursor#64 ← (byte*) print_line_cursor#1 [ print_points::i#1 print_char_cursor#64 print_line_cursor#1 ] ( main:2::print_points:7 [ print_points::i#1 print_char_cursor#64 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [30] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte) $28 [ print_line_cursor#1 print_char_cursor#29 ] ( main:2::print_points:7::print_ln:23 [ print_points::i#10 print_line_cursor#1 print_char_cursor#29 ] ) always clobbers reg byte a 
 Statement [31] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#29 ] ( main:2::print_points:7::print_ln:23 [ print_points::i#10 print_line_cursor#1 print_char_cursor#29 ] ) always clobbers reg byte a 
 Statement [34] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ print_byte::b#2 print_char_cursor#42 print_byte::$0 ] ( main:2::print_points:7::print_byte:16 [ print_points::i#10 print_line_cursor#24 print_points::point#0 print_byte::b#2 print_char_cursor#42 print_byte::$0 ] main:2::print_points:7::print_byte:21 [ print_points::i#10 print_line_cursor#24 print_byte::b#2 print_char_cursor#42 print_byte::$0 ] ) always clobbers reg byte a 
@@ -2032,17 +2018,17 @@ Statement [59] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::d
 Statement [63] (byte~) init_points::getPoint1_$0 ← (byte) init_points::i#10 << (byte) 1 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:13 [ init_points::i#10 init_points::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:14 [ init_points::pos#10 init_points::pos#2 ]
-Statement [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
+Statement [64] (byte*) init_points::getPoint1_return#0 ← (const byte*) points + (byte~) init_points::getPoint1_$0 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:20 [ init_points::getPoint1_$0 ]
-Statement [66] *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
+Statement [66] *((const byte*) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
 Statement [67] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ) always clobbers reg byte a 
 Statement [69] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 [ init_points::i#10 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#1 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:13 [ init_points::i#10 init_points::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:23 [ init_points::pos#1 ]
 Statement [12] (byte~) print_points::getPoint1_$0 ← (byte) print_points::i#10 << (byte) 1 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 ] ( main:2::print_points:7 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 ] ) always clobbers reg byte a 
-Statement [13] (byte*) print_points::point#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 print_points::point#0 ] ( main:2::print_points:7 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 print_points::point#0 ] ) always clobbers reg byte a 
+Statement [13] (byte*) print_points::point#0 ← (const byte*) points + (byte~) print_points::getPoint1_$0 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 print_points::point#0 ] ( main:2::print_points:7 [ print_points::i#10 print_char_cursor#45 print_line_cursor#24 print_points::getPoint1_$0 print_points::point#0 ] ) always clobbers reg byte a 
 Statement [20] (byte) print_byte::b#1 ← *((byte*) print_points::point#0 + (byte) 1) [ print_points::i#10 print_line_cursor#24 print_byte::b#1 print_char_cursor#2 ] ( main:2::print_points:7 [ print_points::i#10 print_line_cursor#24 print_byte::b#1 print_char_cursor#2 ] ) always clobbers reg byte a reg byte y 
-Statement [27] (byte*) print_char_cursor#65 ← (byte*) print_line_cursor#1 [ print_points::i#1 print_char_cursor#65 print_line_cursor#1 ] ( main:2::print_points:7 [ print_points::i#1 print_char_cursor#65 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [27] (byte*) print_char_cursor#64 ← (byte*) print_line_cursor#1 [ print_points::i#1 print_char_cursor#64 print_line_cursor#1 ] ( main:2::print_points:7 [ print_points::i#1 print_char_cursor#64 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [30] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte) $28 [ print_line_cursor#1 print_char_cursor#29 ] ( main:2::print_points:7::print_ln:23 [ print_points::i#10 print_line_cursor#1 print_char_cursor#29 ] ) always clobbers reg byte a 
 Statement [31] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#29 ] ( main:2::print_points:7::print_ln:23 [ print_points::i#10 print_line_cursor#1 print_char_cursor#29 ] ) always clobbers reg byte a 
 Statement [34] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ print_byte::b#2 print_char_cursor#42 print_byte::$0 ] ( main:2::print_points:7::print_byte:16 [ print_points::i#10 print_line_cursor#24 print_points::point#0 print_byte::b#2 print_char_cursor#42 print_byte::$0 ] main:2::print_points:7::print_byte:21 [ print_points::i#10 print_line_cursor#24 print_byte::b#2 print_char_cursor#42 print_byte::$0 ] ) always clobbers reg byte a 
@@ -2053,15 +2039,15 @@ Statement [49] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#2) [ 
 Statement [57] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_points:7::print_cls:10::memset:53 [ memset::dst#2 ] ) always clobbers reg byte a 
 Statement [59] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_points:7::print_cls:10::memset:53 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
 Statement [63] (byte~) init_points::getPoint1_$0 ← (byte) init_points::i#10 << (byte) 1 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 ] ) always clobbers reg byte a 
-Statement [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
-Statement [66] *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
+Statement [64] (byte*) init_points::getPoint1_return#0 ← (const byte*) points + (byte~) init_points::getPoint1_$0 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_$0 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
+Statement [66] *((const byte*) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#10 init_points::getPoint1_return#0 ] ) always clobbers reg byte a 
 Statement [67] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::getPoint1_return#0 init_points::pos#1 ] ) always clobbers reg byte a 
 Statement [69] *((byte*) init_points::getPoint1_return#0 + (byte) 1) ← (byte) init_points::pos#1 [ init_points::i#10 init_points::pos#1 ] ( main:2::init_points:5 [ init_points::i#10 init_points::pos#1 ] ) always clobbers reg byte y 
 Potential registers zp[1]:2 [ print_points::i#10 print_points::i#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[2]:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] : zp[1]:5 , reg byte x , 
 Potential registers zp[1]:6 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[2]:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#65 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ] : zp[2]:7 , 
+Potential registers zp[2]:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#64 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ] : zp[2]:7 , 
 Potential registers zp[2]:9 [ print_str::str#2 print_str::str#0 ] : zp[2]:9 , 
 Potential registers zp[2]:11 [ memset::dst#2 memset::dst#1 ] : zp[2]:11 , 
 Potential registers zp[1]:13 [ init_points::i#10 init_points::i#1 ] : zp[1]:13 , reg byte x , 
@@ -2075,7 +2061,7 @@ Potential registers zp[2]:21 [ init_points::getPoint1_return#0 ] : zp[2]:21 ,
 Potential registers zp[1]:23 [ init_points::pos#1 ] : zp[1]:23 , reg byte a , reg byte x , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 251.43: zp[2]:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ] 191.23: zp[2]:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#65 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ] 
+Uplift Scope [] 251.43: zp[2]:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ] 191.23: zp[2]:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#64 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ] 
 Uplift Scope [print_str] 303: zp[2]:9 [ print_str::str#2 print_str::str#0 ] 
 Uplift Scope [init_points] 20.17: zp[1]:13 [ init_points::i#10 init_points::i#1 ] 13.93: zp[1]:14 [ init_points::pos#10 init_points::pos#2 ] 11: zp[1]:20 [ init_points::getPoint1_$0 ] 11: zp[1]:23 [ init_points::pos#1 ] 4.4: zp[2]:21 [ init_points::getPoint1_return#0 ] 
 Uplift Scope [print_byte] 50.5: zp[1]:5 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp[1]:18 [ print_byte::$0 ] 4: zp[1]:19 [ print_byte::$2 ] 
@@ -2087,7 +2073,7 @@ Uplift Scope [print_ln]
 Uplift Scope [print_cls] 
 Uplift Scope [main] 
 
-Uplifting [] best 14577 combination zp[2]:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ] zp[2]:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#65 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ] 
+Uplifting [] best 14577 combination zp[2]:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ] zp[2]:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#64 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ] 
 Uplifting [print_str] best 14577 combination zp[2]:9 [ print_str::str#2 print_str::str#0 ] 
 Uplifting [init_points] best 14377 combination reg byte x [ init_points::i#10 init_points::i#1 ] zp[1]:14 [ init_points::pos#10 init_points::pos#2 ] reg byte y [ init_points::getPoint1_$0 ] reg byte a [ init_points::pos#1 ] zp[2]:21 [ init_points::getPoint1_return#0 ] 
 Uplifting [print_byte] best 14325 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
@@ -2104,12 +2090,12 @@ Attempting to uplift remaining variables inzp[1]:2 [ print_points::i#10 print_po
 Uplifting [print_points] best 14266 combination zp[1]:2 [ print_points::i#10 print_points::i#1 ] 
 Coalescing zero page register [ zp[2]:11 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:3 [ print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ] ]
 Coalescing zero page register [ zp[1]:14 [ init_points::pos#10 init_points::pos#2 ] ] with [ zp[1]:2 [ print_points::i#10 print_points::i#1 ] ]
-Coalescing zero page register [ zp[2]:21 [ init_points::getPoint1_return#0 ] ] with [ zp[2]:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#65 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ] ]
+Coalescing zero page register [ zp[2]:21 [ init_points::getPoint1_return#0 ] ] with [ zp[2]:7 [ print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#64 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ] ]
 Allocated (was zp[2]:9) zp[2]:2 [ print_str::str#2 print_str::str#0 ]
 Allocated (was zp[2]:11) zp[2]:4 [ memset::dst#2 memset::dst#1 print_line_cursor#11 print_line_cursor#24 print_line_cursor#1 ]
 Allocated (was zp[1]:14) zp[1]:6 [ init_points::pos#10 init_points::pos#2 print_points::i#10 print_points::i#1 ]
 Allocated (was zp[2]:16) zp[2]:7 [ print_points::point#0 ]
-Allocated (was zp[2]:21) zp[2]:9 [ init_points::getPoint1_return#0 print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#65 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
+Allocated (was zp[2]:21) zp[2]:9 [ init_points::getPoint1_return#0 print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#64 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2203,7 +2189,7 @@ print_points: {
     lda.z i
     asl
     tay
-    // [13] (byte*) print_points::point#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuyy 
+    // [13] (byte*) print_points::point#0 ← (const byte*) points + (byte~) print_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuyy 
     tya
     clc
     adc #<points
@@ -2219,7 +2205,7 @@ print_points: {
     jmp __b2
     // print_points::@2
   __b2:
-    // [15] (byte) print_byte::b#0 ← *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [15] (byte) print_byte::b#0 ← *((const byte*) points + (byte~) print_points::getPoint1_$0) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx points,y
     // [16] call print_byte 
     // [33] phi from print_points::@2 to print_byte [phi:print_points::@2->print_byte]
@@ -2279,7 +2265,7 @@ print_points: {
     rts
     // print_points::@7
   __b7:
-    // [27] (byte*) print_char_cursor#65 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [27] (byte*) print_char_cursor#64 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -2287,7 +2273,7 @@ print_points: {
     // [11] phi from print_points::@7 to print_points::@1 [phi:print_points::@7->print_points::@1]
   __b1_from___b7:
     // [11] phi (byte*) print_line_cursor#24 = (byte*) print_line_cursor#1 [phi:print_points::@7->print_points::@1#0] -- register_copy 
-    // [11] phi (byte*) print_char_cursor#45 = (byte*) print_char_cursor#65 [phi:print_points::@7->print_points::@1#1] -- register_copy 
+    // [11] phi (byte*) print_char_cursor#45 = (byte*) print_char_cursor#64 [phi:print_points::@7->print_points::@1#1] -- register_copy 
     // [11] phi (byte) print_points::i#10 = (byte) print_points::i#1 [phi:print_points::@7->print_points::@1#2] -- register_copy 
     jmp __b1
     str: .text " "
@@ -2336,7 +2322,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [35] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [35] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [36] call print_char 
@@ -2351,7 +2337,7 @@ print_byte: {
     // [37] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuxx=vbuxx_band_vbuc1 
     lda #$f
     axs #0
-    // [38] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [38] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [39] call print_char 
     // [41] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -2518,7 +2504,7 @@ init_points: {
     txa
     asl
     tay
-    // [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuyy 
+    // [64] (byte*) init_points::getPoint1_return#0 ← (const byte*) points + (byte~) init_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuyy 
     tya
     clc
     adc #<points
@@ -2534,7 +2520,7 @@ init_points: {
     jmp __b2
     // init_points::@2
   __b2:
-    // [66] *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuyy=vbuz1 
+    // [66] *((const byte*) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuyy=vbuz1 
     lda.z pos
     sta points,y
     // [67] (byte) init_points::pos#1 ← (byte) init_points::pos#10 + (byte) $a -- vbuaa=vbuz1_plus_vbuc1 
@@ -2730,7 +2716,7 @@ FINAL SYMBOL TABLE
 (void*) memset::return
 (void*) memset::str
 (const void*) memset::str#0 str = (void*)(byte*) 1024
-(const byte[NUM_POINTS*SIZEOF_POINT]) points = { fill( NUM_POINTS*SIZEOF_POINT, 0) }
+(const byte*) points = { fill( NUM_POINTS*SIZEOF_POINT, 0) }
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0 reg byte a 4.0
 (byte~) print_byte::$2 reg byte x 4.0
@@ -2753,10 +2739,10 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#29 print_char_cursor zp[2]:9 6.6875
 (byte*) print_char_cursor#42 print_char_cursor zp[2]:9 8.0
 (byte*) print_char_cursor#45 print_char_cursor zp[2]:9 4.4
-(byte*) print_char_cursor#65 print_char_cursor zp[2]:9 22.0
+(byte*) print_char_cursor#64 print_char_cursor zp[2]:9 22.0
 (void()) print_cls()
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp[2]:4 46.42857142857143
 (byte*) print_line_cursor#11 print_line_cursor zp[2]:4 204.0
@@ -2809,7 +2795,7 @@ zp[2]:7 [ print_points::point#0 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
 reg byte y [ init_points::getPoint1_$0 ]
-zp[2]:9 [ init_points::getPoint1_return#0 print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#65 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
+zp[2]:9 [ init_points::getPoint1_return#0 print_char_cursor#28 print_char_cursor#42 print_char_cursor#45 print_char_cursor#64 print_char_cursor#2 print_char_cursor#29 print_char_cursor#1 ]
 reg byte a [ init_points::pos#1 ]
 
 
@@ -2892,7 +2878,7 @@ print_points: {
     asl
     tay
     // points+idx*SIZEOF_POINT
-    // [13] (byte*) print_points::point#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuyy 
+    // [13] (byte*) print_points::point#0 ← (const byte*) points + (byte~) print_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuyy 
     tya
     clc
     adc #<points
@@ -2904,7 +2890,7 @@ print_points: {
     // print_points::pointXpos1
     // print_points::@2
     // print_byte(*pointXpos(point))
-    // [15] (byte) print_byte::b#0 ← *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) print_points::getPoint1_$0) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [15] (byte) print_byte::b#0 ← *((const byte*) points + (byte~) print_points::getPoint1_$0) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx points,y
     // [16] call print_byte 
     // [33] phi from print_points::@2 to print_byte [phi:print_points::@2->print_byte]
@@ -2950,14 +2936,14 @@ print_points: {
     rts
     // print_points::@7
   __b7:
-    // [27] (byte*) print_char_cursor#65 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [27] (byte*) print_char_cursor#64 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     // [11] phi from print_points::@7 to print_points::@1 [phi:print_points::@7->print_points::@1]
     // [11] phi (byte*) print_line_cursor#24 = (byte*) print_line_cursor#1 [phi:print_points::@7->print_points::@1#0] -- register_copy 
-    // [11] phi (byte*) print_char_cursor#45 = (byte*) print_char_cursor#65 [phi:print_points::@7->print_points::@1#1] -- register_copy 
+    // [11] phi (byte*) print_char_cursor#45 = (byte*) print_char_cursor#64 [phi:print_points::@7->print_points::@1#1] -- register_copy 
     // [11] phi (byte) print_points::i#10 = (byte) print_points::i#1 [phi:print_points::@7->print_points::@1#2] -- register_copy 
     jmp __b1
     str: .text " "
@@ -3006,7 +2992,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [35] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [35] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [36] call print_char 
@@ -3020,7 +3006,7 @@ print_byte: {
     lda #$f
     axs #0
     // print_char(print_hextab[b&$f])
-    // [38] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [38] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [39] call print_char 
     // [41] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -3178,7 +3164,7 @@ init_points: {
     asl
     tay
     // points+idx*SIZEOF_POINT
-    // [64] (byte*) init_points::getPoint1_return#0 ← (const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuyy 
+    // [64] (byte*) init_points::getPoint1_return#0 ← (const byte*) points + (byte~) init_points::getPoint1_$0 -- pbuz1=pbuc1_plus_vbuyy 
     tya
     clc
     adc #<points
@@ -3190,7 +3176,7 @@ init_points: {
     // init_points::pointXpos1
     // init_points::@2
     // *pointXpos(point) = pos
-    // [66] *((const byte[NUM_POINTS*SIZEOF_POINT]) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuyy=vbuz1 
+    // [66] *((const byte*) points + (byte~) init_points::getPoint1_$0) ← (byte) init_points::pos#10 -- pbuc1_derefidx_vbuyy=vbuz1 
     lda.z pos
     sta points,y
     // pos +=10

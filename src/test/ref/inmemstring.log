@@ -13,7 +13,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@2
   (byte*) main::cursor#2 ← phi( main/(byte*) main::cursor#0 main::@2/(byte*) main::cursor#1 )
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#4 )
-  *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3)
+  *((byte*) main::cursor#2) ← *((const byte*) TEXT + (byte) main::i#3)
   (byte) main::i#1 ← ++ (byte) main::i#3
   (bool~) main::$0 ← (byte) main::i#1 == (number) 8
   (bool~) main::$1 ← ! (bool~) main::$0
@@ -47,7 +47,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*)(number) $400
-(const byte[]) TEXT = (string) "camelot "z
+(const byte*) TEXT = (string) "camelot "z
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -157,7 +157,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@2
   [5] (byte*) main::cursor#2 ← phi( main/(const byte*) SCREEN main::@2/(byte*) main::cursor#1 )
   [5] (byte) main::i#3 ← phi( main/(byte) 0 main::@2/(byte) main::i#4 )
-  [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3)
+  [6] *((byte*) main::cursor#2) ← *((const byte*) TEXT + (byte) main::i#3)
   [7] (byte) main::i#1 ← ++ (byte) main::i#3
   [8] if((byte) main::i#1!=(byte) 8) goto main::@3
   to:main::@2
@@ -240,7 +240,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [6] *((byte*) main::cursor#2) ← *((const byte*) TEXT + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda TEXT,y
     ldy #0
@@ -292,11 +292,11 @@ main: {
   TEXT: .text "camelot "
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3) [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) always clobbers reg byte a reg byte y 
+Statement [6] *((byte*) main::cursor#2) ← *((const byte*) TEXT + (byte) main::i#3) [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#3 main::i#4 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#3 main::i#4 main::i#1 ]
 Statement [12] if((byte*) main::cursor#1<(const byte*) SCREEN+(word) $3e8) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) always clobbers reg byte a 
-Statement [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3) [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) always clobbers reg byte a reg byte y 
+Statement [6] *((byte*) main::cursor#2) ← *((const byte*) TEXT + (byte) main::i#3) [ main::i#3 main::cursor#2 ] ( main:2 [ main::i#3 main::cursor#2 ] ) always clobbers reg byte a reg byte y 
 Statement [12] if((byte*) main::cursor#1<(const byte*) SCREEN+(word) $3e8) goto main::@1 [ main::i#4 main::cursor#1 ] ( main:2 [ main::i#4 main::cursor#1 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#3 main::i#4 main::i#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[2]:3 [ main::cursor#2 main::cursor#1 ] : zp[2]:3 , 
@@ -353,7 +353,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
+    // [6] *((byte*) main::cursor#2) ← *((const byte*) TEXT + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda TEXT,x
     ldy #0
     sta (cursor),y
@@ -441,7 +441,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*) 1024
-(const byte[]) TEXT = (string) "camelot "z
+(const byte*) TEXT = (string) "camelot "z
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -493,7 +493,7 @@ main: {
     // main::@1
   __b1:
     // *cursor = TEXT[i]
-    // [6] *((byte*) main::cursor#2) ← *((const byte[]) TEXT + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
+    // [6] *((byte*) main::cursor#2) ← *((const byte*) TEXT + (byte) main::i#3) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda TEXT,x
     ldy #0
     sta (cursor),y

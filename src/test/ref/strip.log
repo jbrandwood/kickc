@@ -9,25 +9,25 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @3
   (byte*) screen#17 ← phi( @3/(byte*) screen#16 )
-  (byte*) strip::p#0 ← (const byte[]) msg1
+  (byte*) strip::p#0 ← (const byte*) msg1
   (byte) strip::c#0 ← (byte) ' '
   call strip 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte*) screen#13 ← phi( main/(byte*) screen#17 )
-  (byte*) print::msg#0 ← (const byte[]) msg1
+  (byte*) print::msg#0 ← (const byte*) msg1
   call print 
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte*) screen#7 ← phi( main::@1/(byte*) screen#5 )
   (byte*) screen#0 ← (byte*) screen#7
-  (byte*) strip::p#1 ← (const byte[]) msg2
+  (byte*) strip::p#1 ← (const byte*) msg2
   (byte) strip::c#1 ← (byte) 'y'
   call strip 
   to:main::@3
 main::@3: scope:[main]  from main::@2
   (byte*) screen#14 ← phi( main::@2/(byte*) screen#0 )
-  (byte*) print::msg#1 ← (const byte[]) msg2
+  (byte*) print::msg#1 ← (const byte*) msg2
   call print 
   to:main::@4
 main::@4: scope:[main]  from main::@3
@@ -117,8 +117,8 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@4
 (label) main::@return
-(const byte[]) msg1 = (string) "hello world!"
-(const byte[]) msg2 = (string) "goodbye blue sky!"
+(const byte*) msg1 = (string) "hello world!"
+(const byte*) msg2 = (string) "goodbye blue sky!"
 (void()) print((byte*) print::msg)
 (bool~) print::$0
 (label) print::@1
@@ -231,10 +231,10 @@ Inlining constant with var siblings (const byte) strip::c#1
 Inlining constant with var siblings (const byte*) print::msg#0
 Inlining constant with var siblings (const byte*) print::msg#1
 Inlining constant with var siblings (const byte*) screen#16
-Constant inlined strip::p#0 = (const byte[]) msg1
-Constant inlined print::msg#1 = (const byte[]) msg2
-Constant inlined strip::p#1 = (const byte[]) msg2
-Constant inlined print::msg#0 = (const byte[]) msg1
+Constant inlined strip::p#0 = (const byte*) msg1
+Constant inlined print::msg#1 = (const byte*) msg2
+Constant inlined strip::p#1 = (const byte*) msg2
+Constant inlined print::msg#0 = (const byte*) msg1
 Constant inlined strip::c#0 = (byte) ' '
 Constant inlined strip::c#1 = (byte) 'y'
 Constant inlined screen#16 = (byte*) 1024
@@ -318,7 +318,7 @@ main::@return: scope:[main]  from main::@3
 (void()) print((byte*) print::msg)
 print: scope:[print]  from main::@1 main::@3
   [13] (byte*) screen#15 ← phi( main::@1/(byte*) 1024 main::@3/(byte*) screen#11 )
-  [13] (byte*) print::msg#4 ← phi( main::@1/(const byte[]) msg1 main::@3/(const byte[]) msg2 )
+  [13] (byte*) print::msg#4 ← phi( main::@1/(const byte*) msg1 main::@3/(const byte*) msg2 )
   to:print::@1
 print::@1: scope:[print]  from print print::@1
   [14] (byte*) screen#10 ← phi( print/(byte*) screen#15 print::@1/(byte*) screen#11 )
@@ -335,7 +335,7 @@ print::@return: scope:[print]  from print::@1
 (void()) strip((byte*) strip::p , (byte) strip::c)
 strip: scope:[strip]  from main main::@2
   [20] (byte) strip::c#3 ← phi( main/(byte) ' ' main::@2/(byte) 'y' )
-  [20] (byte*) strip::dest#0 ← phi( main/(const byte[]) msg1 main::@2/(const byte[]) msg2 )
+  [20] (byte*) strip::dest#0 ← phi( main/(const byte*) msg1 main::@2/(const byte*) msg2 )
   [21] (byte*) strip::p#7 ← (byte*) strip::dest#0
   to:strip::@1
 strip::@1: scope:[strip]  from strip strip::@4
@@ -440,7 +440,7 @@ main: {
     // [20] phi (byte) strip::c#3 = (byte) ' ' [phi:main->strip#0] -- vbuz1=vbuc1 
     lda #' '
     sta.z strip.c
-    // [20] phi (byte*) strip::dest#0 = (const byte[]) msg1 [phi:main->strip#1] -- pbuz1=pbuc1 
+    // [20] phi (byte*) strip::dest#0 = (const byte*) msg1 [phi:main->strip#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z strip.dest
     lda #>msg1
@@ -459,7 +459,7 @@ main: {
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [13] phi (byte*) print::msg#4 = (const byte[]) msg1 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    // [13] phi (byte*) print::msg#4 = (const byte*) msg1 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z print.msg
     lda #>msg1
@@ -476,7 +476,7 @@ main: {
     // [20] phi (byte) strip::c#3 = (byte) 'y' [phi:main::@2->strip#0] -- vbuz1=vbuc1 
     lda #'y'
     sta.z strip.c
-    // [20] phi (byte*) strip::dest#0 = (const byte[]) msg2 [phi:main::@2->strip#1] -- pbuz1=pbuc1 
+    // [20] phi (byte*) strip::dest#0 = (const byte*) msg2 [phi:main::@2->strip#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z strip.dest
     lda #>msg2
@@ -491,7 +491,7 @@ main: {
     // [13] phi from main::@3 to print [phi:main::@3->print]
   print_from___b3:
     // [13] phi (byte*) screen#15 = (byte*) screen#11 [phi:main::@3->print#0] -- register_copy 
-    // [13] phi (byte*) print::msg#4 = (const byte[]) msg2 [phi:main::@3->print#1] -- pbuz1=pbuc1 
+    // [13] phi (byte*) print::msg#4 = (const byte*) msg2 [phi:main::@3->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z print.msg
     lda #>msg2
@@ -693,7 +693,7 @@ main: {
   strip_from_main:
     // [20] phi (byte) strip::c#3 = (byte) ' ' [phi:main->strip#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [20] phi (byte*) strip::dest#0 = (const byte[]) msg1 [phi:main->strip#1] -- pbuz1=pbuc1 
+    // [20] phi (byte*) strip::dest#0 = (const byte*) msg1 [phi:main->strip#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z strip.dest
     lda #>msg1
@@ -712,7 +712,7 @@ main: {
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [13] phi (byte*) print::msg#4 = (const byte[]) msg1 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    // [13] phi (byte*) print::msg#4 = (const byte*) msg1 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z print.msg
     lda #>msg1
@@ -728,7 +728,7 @@ main: {
   strip_from___b2:
     // [20] phi (byte) strip::c#3 = (byte) 'y' [phi:main::@2->strip#0] -- vbuxx=vbuc1 
     ldx #'y'
-    // [20] phi (byte*) strip::dest#0 = (const byte[]) msg2 [phi:main::@2->strip#1] -- pbuz1=pbuc1 
+    // [20] phi (byte*) strip::dest#0 = (const byte*) msg2 [phi:main::@2->strip#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z strip.dest
     lda #>msg2
@@ -743,7 +743,7 @@ main: {
     // [13] phi from main::@3 to print [phi:main::@3->print]
   print_from___b3:
     // [13] phi (byte*) screen#15 = (byte*) screen#11 [phi:main::@3->print#0] -- register_copy 
-    // [13] phi (byte*) print::msg#4 = (const byte[]) msg2 [phi:main::@3->print#1] -- pbuz1=pbuc1 
+    // [13] phi (byte*) print::msg#4 = (const byte*) msg2 [phi:main::@3->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z print.msg
     lda #>msg2
@@ -935,8 +935,8 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(const byte[]) msg1 = (string) "hello world!"
-(const byte[]) msg2 = (string) "goodbye blue sky!"
+(const byte*) msg1 = (string) "hello world!"
+(const byte*) msg2 = (string) "goodbye blue sky!"
 (void()) print((byte*) print::msg)
 (label) print::@1
 (label) print::@return
@@ -999,7 +999,7 @@ main: {
     // [20] phi from main to strip [phi:main->strip]
     // [20] phi (byte) strip::c#3 = (byte) ' ' [phi:main->strip#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [20] phi (byte*) strip::dest#0 = (const byte[]) msg1 [phi:main->strip#1] -- pbuz1=pbuc1 
+    // [20] phi (byte*) strip::dest#0 = (const byte*) msg1 [phi:main->strip#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z strip.dest
     lda #>msg1
@@ -1015,7 +1015,7 @@ main: {
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [13] phi (byte*) print::msg#4 = (const byte[]) msg1 [phi:main::@1->print#1] -- pbuz1=pbuc1 
+    // [13] phi (byte*) print::msg#4 = (const byte*) msg1 [phi:main::@1->print#1] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z print.msg
     lda #>msg1
@@ -1028,7 +1028,7 @@ main: {
     // [20] phi from main::@2 to strip [phi:main::@2->strip]
     // [20] phi (byte) strip::c#3 = (byte) 'y' [phi:main::@2->strip#0] -- vbuxx=vbuc1 
     ldx #'y'
-    // [20] phi (byte*) strip::dest#0 = (const byte[]) msg2 [phi:main::@2->strip#1] -- pbuz1=pbuc1 
+    // [20] phi (byte*) strip::dest#0 = (const byte*) msg2 [phi:main::@2->strip#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z strip.dest
     lda #>msg2
@@ -1040,7 +1040,7 @@ main: {
     // [11] call print 
     // [13] phi from main::@3 to print [phi:main::@3->print]
     // [13] phi (byte*) screen#15 = (byte*) screen#11 [phi:main::@3->print#0] -- register_copy 
-    // [13] phi (byte*) print::msg#4 = (const byte[]) msg2 [phi:main::@3->print#1] -- pbuz1=pbuc1 
+    // [13] phi (byte*) print::msg#4 = (const byte*) msg2 [phi:main::@3->print#1] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z print.msg
     lda #>msg2

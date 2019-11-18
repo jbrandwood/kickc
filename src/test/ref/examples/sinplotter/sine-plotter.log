@@ -1,7 +1,7 @@
 Fixing pointer increment (signed word*) sin16s_gen::sintab ← ++ (signed word*) sin16s_gen::sintab
 Fixing pointer increment (signed word*) sin16s_gen2::sintab ← ++ (signed word*) sin16s_gen2::sintab
-Fixing pointer addition (signed word*~) render_sine::$1 ← (signed word[$200]) sin + (word) render_sine::sin_idx
-Fixing pointer addition (signed word*~) render_sine::$4 ← (signed word[$200]) sin2 + (word) render_sine::sin_idx
+Fixing pointer addition (signed word*~) render_sine::$1 ← (const signed word*) sin + (word) render_sine::sin_idx
+Fixing pointer addition (signed word*~) render_sine::$4 ← (signed word*) sin2 + (word) render_sine::sin_idx
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition (number~) abs_u16::$1
 Warning! Adding boolean cast to non-boolean condition (number~) sgn_u16::$1
@@ -612,9 +612,6 @@ memset::@return: scope:[memset]  from memset::@1
   (word) rem16u#32 ← phi( @6/(word) rem16u#0 )
   (byte*) bitmap_screen#0 ← (byte*) 0
   (byte*) bitmap_gfx#0 ← (byte*) 0
-  (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-  (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-  (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
   to:@34
 
 (void()) bitmap_init((byte*) bitmap_init::gfx , (byte*) bitmap_init::screen)
@@ -632,7 +629,7 @@ bitmap_init::@1: scope:[bitmap_init]  from bitmap_init bitmap_init::@2
   (byte*) bitmap_init::gfx#4 ← phi( bitmap_init/(byte*) bitmap_init::gfx#1 bitmap_init::@2/(byte*) bitmap_init::gfx#3 )
   (byte) bitmap_init::x#2 ← phi( bitmap_init/(byte) bitmap_init::x#0 bitmap_init::@2/(byte) bitmap_init::x#1 )
   (byte) bitmap_init::bits#3 ← phi( bitmap_init/(byte) bitmap_init::bits#0 bitmap_init::@2/(byte) bitmap_init::bits#4 )
-  *((byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
+  *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
   (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (number) 1
   (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (number) 0
   (bool~) bitmap_init::$1 ← ! (bool~) bitmap_init::$0
@@ -670,9 +667,9 @@ bitmap_init::@5: scope:[bitmap_init]  from bitmap_init::@4 bitmap_init::@6
   (number~) bitmap_init::$3 ← (byte) bitmap_init::y#2 & (number) 7
   (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2
   (number~) bitmap_init::$5 ← (number~) bitmap_init::$3 | (byte~) bitmap_init::$4
-  *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (number~) bitmap_init::$5
+  *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (number~) bitmap_init::$5
   (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2
-  *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
+  *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
   (number~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (number) 7
   (bool~) bitmap_init::$8 ← (number~) bitmap_init::$7 == (number) 7
   (bool~) bitmap_init::$9 ← ! (bool~) bitmap_init::$8
@@ -736,12 +733,12 @@ bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@2
 bitmap_plot: scope:[bitmap_plot]  from render_sine::@11 render_sine::@9
   (word) bitmap_plot::x#2 ← phi( render_sine::@11/(word) bitmap_plot::x#1 render_sine::@9/(word) bitmap_plot::x#0 )
   (byte) bitmap_plot::y#2 ← phi( render_sine::@11/(byte) bitmap_plot::y#1 render_sine::@9/(byte) bitmap_plot::y#0 )
-  (byte*~) bitmap_plot::$0 ← ((byte*)) { *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#2), *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#2) }
+  (byte*~) bitmap_plot::$0 ← ((byte*)) { *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#2), *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#2) }
   (byte*) bitmap_plot::plotter#0 ← (byte*~) bitmap_plot::$0
   (number~) bitmap_plot::$1 ← (word) bitmap_plot::x#2 & (number) $fff8
   (byte*) bitmap_plot::plotter#1 ← (byte*) bitmap_plot::plotter#0 + (number~) bitmap_plot::$1
   (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#2
-  *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2)
+  *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2)
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   return 
@@ -750,8 +747,7 @@ bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   (word) rem16u#30 ← phi( @28/(word) rem16u#32 )
   (byte*) bitmap_screen#20 ← phi( @28/(byte*) bitmap_screen#0 )
   (byte*) bitmap_gfx#21 ← phi( @28/(byte*) bitmap_gfx#0 )
-  (signed word[$200]) sin ← { fill( $200, 0) }
-  (signed word[$200]) sin2 ← kickasm {{ .for(var i=0; i<512; i++) {
+  (signed word*) sin2 ← kickasm {{ .for(var i=0; i<512; i++) {
   	  .word sin(toRadians([i*360]/512))*320
     }
  }}
@@ -859,7 +855,7 @@ main::@10: scope:[main]  from main::@9
   (byte*) bitmap_screen#26 ← phi( main::@9/(byte*) bitmap_screen#3 )
   (byte*) bitmap_gfx#27 ← phi( main::@9/(byte*) bitmap_gfx#3 )
   (word) rem16u#23 ← phi( main::@9/(word) rem16u#27 )
-  (signed word*) sin16s_gen2::sintab#1 ← (signed word[$200]) sin
+  (signed word*) sin16s_gen2::sintab#1 ← (const signed word*) sin
   (word) sin16s_gen2::wavelength#0 ← (const word) SIN_SIZE
   (signed word) sin16s_gen2::min#0 ← (number) -$140
   (signed word) sin16s_gen2::max#0 ← (number) $140
@@ -914,7 +910,7 @@ render_sine::@2: scope:[render_sine]  from render_sine::@1
   (word) render_sine::xpos#6 ← phi( render_sine::@1/(word) render_sine::xpos#8 )
   (word) render_sine::sin_idx#3 ← phi( render_sine::@1/(word) render_sine::sin_idx#2 )
   (word~) render_sine::$10 ← (word) render_sine::sin_idx#3 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word*~) render_sine::$1 ← (signed word[$200]) sin + (word~) render_sine::$10
+  (signed word*~) render_sine::$1 ← (const signed word*) sin + (word~) render_sine::$10
   (signed word) render_sine::sin_val#0 ← *((signed word*~) render_sine::$1)
   (signed word) wrap_y::y#0 ← (signed word) render_sine::sin_val#0
   call wrap_y 
@@ -934,7 +930,7 @@ render_sine::@10: scope:[render_sine]  from render_sine::@9
   (word) render_sine::xpos#7 ← phi( render_sine::@9/(word) render_sine::xpos#3 )
   (word) render_sine::sin_idx#4 ← phi( render_sine::@9/(word) render_sine::sin_idx#6 )
   (word~) render_sine::$11 ← (word) render_sine::sin_idx#4 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word*~) render_sine::$4 ← (signed word[$200]) sin2 + (word~) render_sine::$11
+  (signed word*~) render_sine::$4 ← (signed word*) sin2 + (word~) render_sine::$11
   (signed word) render_sine::sin2_val#0 ← *((signed word*~) render_sine::$4)
   (number~) render_sine::$5 ← (signed word) render_sine::sin2_val#0 + (number) $a
   (signed word) wrap_y::y#1 ← (number~) render_sine::$5
@@ -1172,9 +1168,9 @@ SYMBOL TABLE SSA
 (byte) bitmap_plot::y#0
 (byte) bitmap_plot::y#1
 (byte) bitmap_plot::y#2
-(byte[$100]) bitmap_plot_bit
-(byte[$100]) bitmap_plot_yhi
-(byte[$100]) bitmap_plot_ylo
+(const byte*) bitmap_plot_bit = { fill( $100, 0) }
+(const byte*) bitmap_plot_yhi = { fill( $100, 0) }
+(const byte*) bitmap_plot_ylo = { fill( $100, 0) }
 (byte*) bitmap_screen
 (byte*) bitmap_screen#0
 (byte*) bitmap_screen#1
@@ -1652,7 +1648,7 @@ SYMBOL TABLE SSA
 (byte) render_sine::ypos#0
 (byte) render_sine::ypos2
 (byte) render_sine::ypos2#0
-(signed word[$200]) sin
+(const signed word*) sin = { fill( $200, 0) }
 (signed word()) sin16s((dword) sin16s::x)
 (bool~) sin16s::$0
 (bool~) sin16s::$1
@@ -1817,7 +1813,7 @@ SYMBOL TABLE SSA
 (dword) sin16s_gen2::x#3
 (dword) sin16s_gen2::x#4
 (dword) sin16s_gen2::x#5
-(signed word[$200]) sin2
+(signed word*) sin2
 (byte()) wrap_y((signed word) wrap_y::y)
 (byte~) wrap_y::$0
 (bool~) wrap_y::$1
@@ -2024,8 +2020,8 @@ Simplifying constant integer cast 7
 Simplifying constant integer cast 7
 Simplifying constant integer cast $10
 Simplifying constant integer cast 0
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#2)
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#2)
+Simplifying constant integer cast *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#2)
+Simplifying constant integer cast *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#2)
 Simplifying constant integer cast $fff8
 Simplifying constant integer cast (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Simplifying constant integer cast 3
@@ -2138,9 +2134,9 @@ Inversing boolean not [170] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (const 
 Inversing boolean not [174] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (const dword) PI_HALF_u4f28 from [173] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (const dword) PI_HALF_u4f28
 Inversing boolean not [233] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 == (byte) 0 from [232] (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (byte) 0
 Inversing boolean not [262] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [261] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [295] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [294] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
-Inversing boolean not [315] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [314] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
-Inversing boolean not [459] (bool~) render_sine::$9 ← (word) render_sine::xpos#1 != (word) $140 from [458] (bool~) render_sine::$8 ← (word) render_sine::xpos#1 == (word) $140
+Inversing boolean not [292] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [291] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
+Inversing boolean not [312] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [311] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
+Inversing boolean not [455] (bool~) render_sine::$9 ← (word) render_sine::xpos#1 != (word) $140 from [454] (bool~) render_sine::$8 ← (word) render_sine::xpos#1 == (word) $140
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -2356,7 +2352,7 @@ Identical Phi Values (word) rem16u#10 (word) rem16u#18
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [313] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
+Identified duplicate assignment right side [310] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) divr16u::$4 [11] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
 Simple Condition (bool~) divr16u::$9 [19] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
@@ -2371,20 +2367,16 @@ Simple Condition (bool~) sin16s::$3 [175] if((dword) sin16s::x#4<(const dword) P
 Simple Condition (bool~) sin16s::$16 [234] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@3
 Simple Condition (bool~) memset::$1 [263] if((word) memset::num#2<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$4 [273] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) bitmap_init::$1 [296] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
-Simple Condition (bool~) bitmap_init::$2 [300] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
-Simple Condition (bool~) bitmap_init::$9 [316] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
-Simple Condition (bool~) bitmap_init::$11 [320] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) render_sine::$0 [428] if((word) render_sine::sin_idx#2<(const word) SIN_SIZE) goto render_sine::@2
-Simple Condition (bool~) render_sine::$9 [460] if((word) render_sine::xpos#1!=(word) $140) goto render_sine::@4
-Simple Condition (bool~) wrap_y::$1 [469] if((signed word) wrap_y::y#4>=(signed word) $c8) goto wrap_y::@2
-Simple Condition (bool~) wrap_y::$2 [474] if((signed word) wrap_y::y#6<(signed byte) 0) goto wrap_y::@8
+Simple Condition (bool~) bitmap_init::$1 [293] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
+Simple Condition (bool~) bitmap_init::$2 [297] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
+Simple Condition (bool~) bitmap_init::$9 [313] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
+Simple Condition (bool~) bitmap_init::$11 [317] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
+Simple Condition (bool~) render_sine::$0 [424] if((word) render_sine::sin_idx#2<(const word) SIN_SIZE) goto render_sine::@2
+Simple Condition (bool~) render_sine::$9 [456] if((word) render_sine::xpos#1!=(word) $140) goto render_sine::@4
+Simple Condition (bool~) wrap_y::$1 [465] if((signed word) wrap_y::y#4>=(signed word) $c8) goto wrap_y::@2
+Simple Condition (bool~) wrap_y::$2 [470] if((signed word) wrap_y::y#6<(signed byte) 0) goto wrap_y::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [201] (word) mulu16_sel::v2#2 ← (unumber)(number) $10000/(number) 6
-Constant right-side identified [283] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-Constant right-side identified [284] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-Constant right-side identified [285] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-Constant right-side identified [354] (signed word[$200]) sin ← { fill( $200, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
@@ -2404,9 +2396,6 @@ Constant (const byte) mulu16_sel::select#3 = 0
 Constant (const byte) mulu16_sel::select#4 = 0
 Constant (const byte*) bitmap_screen#0 = (byte*) 0
 Constant (const byte*) bitmap_gfx#0 = (byte*) 0
-Constant (const byte[$100]) bitmap_plot_ylo = { fill( $100, 0) }
-Constant (const byte[$100]) bitmap_plot_yhi = { fill( $100, 0) }
-Constant (const byte[$100]) bitmap_plot_bit = { fill( $100, 0) }
 Constant (const byte) bitmap_init::bits#0 = $80
 Constant (const byte) bitmap_init::x#0 = 0
 Constant (const byte) bitmap_init::bits#2 = $80
@@ -2414,8 +2403,7 @@ Constant (const byte) bitmap_init::y#0 = 0
 Constant (const word) memset::num#0 = $3e8
 Constant (const byte) memset::c#1 = 0
 Constant (const word) memset::num#1 = $1f40
-Constant (const signed word[$200]) sin = { fill( $200, 0) }
-Constant (const signed word[$200]) sin2 = kickasm {{ .for(var i=0; i<512; i++) {
+Constant (const signed word*) sin2 = kickasm {{ .for(var i=0; i<512; i++) {
   	  .word sin(toRadians([i*360]/512))*320
     }
  }}
@@ -2426,6 +2414,7 @@ Constant (const byte*) bitmap_init::gfx#0 = BITMAP
 Constant (const byte*) bitmap_init::screen#0 = SCREEN
 Constant (const byte) bitmap_clear::bgcol#0 = BLACK
 Constant (const byte) bitmap_clear::fgcol#0 = WHITE
+Constant (const signed word*) sin16s_gen2::sintab#1 = sin
 Constant (const word) sin16s_gen2::wavelength#0 = SIN_SIZE
 Constant (const signed word) sin16s_gen2::min#0 = -$140
 Constant (const signed word) sin16s_gen2::max#0 = $140
@@ -2439,22 +2428,21 @@ Constant (const byte*) bitmap_screen#1 = bitmap_init::screen#0
 Constant (const word) main::vicSelectGfxBank1_toDd001_$0 = (word)main::vicSelectGfxBank1_gfx#0
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
-Constant (const signed word*) sin16s_gen2::sintab#1 = sin
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::divisor#0 = div32u16u::divisor#0
 Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
 Constant (const void*) memset::str#0 = (void*)bitmap_screen#1
 Constant (const void*) memset::str#1 = (void*)bitmap_gfx#1
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [416] if(true) goto main::@2
+if() condition always true - replacing block destination [412] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [24] divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value [26] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
-Resolved ranged next value [298] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
-Resolved ranged comparison value [300] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
-Resolved ranged next value [318] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
-Resolved ranged comparison value [320] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
-Simplifying expression containing zero bitmap_clear::$0 in [330] (byte) bitmap_clear::col#0 ← (byte~) bitmap_clear::$0 + (const byte) bitmap_clear::bgcol#0
+Resolved ranged next value [295] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
+Resolved ranged comparison value [297] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
+Resolved ranged next value [315] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
+Resolved ranged comparison value [317] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
+Simplifying expression containing zero bitmap_clear::$0 in [327] (byte) bitmap_clear::col#0 ← (byte~) bitmap_clear::$0 + (const byte) bitmap_clear::bgcol#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (void*) memset::return#2 and assignment [167] (void*) memset::return#2 ← (void*) memset::str#3
 Eliminating unused variable (void*) memset::return#3 and assignment [169] (void*) memset::return#3 ← (void*) memset::str#3
@@ -2630,7 +2618,7 @@ Constant inlined main::toD0181_$6 = >(word)(const byte*) BITMAP/(byte) 4
 Constant inlined main::toD0181_$5 = >(word)(const byte*) BITMAP
 Constant inlined main::toD0181_$4 = (word)(const byte*) BITMAP
 Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4
-Constant inlined sin16s_gen2::sintab#1 = (const signed word[$200]) sin
+Constant inlined sin16s_gen2::sintab#1 = (const signed word*) sin
 Constant inlined memset::c#0 = (const byte) bitmap_clear::col#0
 Constant inlined bitmap_init::x#0 = (byte) 0
 Constant inlined memset::c#1 = (byte) 0
@@ -2926,7 +2914,7 @@ render_sine::@return: scope:[render_sine]  from render_sine::@1
   to:@return
 render_sine::@2: scope:[render_sine]  from render_sine::@1
   [26] (word~) render_sine::$10 ← (word) render_sine::sin_idx#2 << (byte) 1
-  [27] (signed word*~) render_sine::$1 ← (const signed word[$200]) sin + (word~) render_sine::$10
+  [27] (signed word*~) render_sine::$1 ← (const signed word*) sin + (word~) render_sine::$10
   [28] (signed word) render_sine::sin_val#0 ← *((signed word*~) render_sine::$1)
   [29] (signed word) wrap_y::y#0 ← (signed word) render_sine::sin_val#0
   [30] call wrap_y 
@@ -2940,7 +2928,7 @@ render_sine::@4: scope:[render_sine]  from render_sine::@2
   to:render_sine::@5
 render_sine::@5: scope:[render_sine]  from render_sine::@4
   [36] (word~) render_sine::$11 ← (word) render_sine::sin_idx#2 << (byte) 1
-  [37] (signed word*~) render_sine::$4 ← (const signed word[$200]) sin2 + (word~) render_sine::$11
+  [37] (signed word*~) render_sine::$4 ← (const signed word*) sin2 + (word~) render_sine::$11
   [38] (signed word) render_sine::sin2_val#0 ← *((signed word*~) render_sine::$4)
   [39] (signed word) wrap_y::y#1 ← (signed word) render_sine::sin2_val#0 + (signed byte) $a
   [40] call wrap_y 
@@ -2968,11 +2956,11 @@ render_sine::@3: scope:[render_sine]  from render_sine::@7 render_sine::@8
 bitmap_plot: scope:[bitmap_plot]  from render_sine::@4 render_sine::@6
   [51] (word) bitmap_plot::x#2 ← phi( render_sine::@6/(word) bitmap_plot::x#1 render_sine::@4/(word) bitmap_plot::x#0 )
   [51] (byte) bitmap_plot::y#2 ← phi( render_sine::@6/(byte) bitmap_plot::y#1 render_sine::@4/(byte) bitmap_plot::y#0 )
-  [52] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#2)
+  [52] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#2)
   [53] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#2 & (word) $fff8
   [54] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1
   [55] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#2
-  [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2)
+  [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2)
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   [57] return 
@@ -3013,7 +3001,7 @@ sin16s_gen2::@3: scope:[sin16s_gen2]  from sin16s_gen2
   [70] (dword) sin16s_gen2::step#0 ← (dword) div32u16u::return#2
   to:sin16s_gen2::@1
 sin16s_gen2::@1: scope:[sin16s_gen2]  from sin16s_gen2::@3 sin16s_gen2::@5
-  [71] (signed word*) sin16s_gen2::sintab#2 ← phi( sin16s_gen2::@3/(const signed word[$200]) sin sin16s_gen2::@5/(signed word*) sin16s_gen2::sintab#0 )
+  [71] (signed word*) sin16s_gen2::sintab#2 ← phi( sin16s_gen2::@3/(const signed word*) sin sin16s_gen2::@5/(signed word*) sin16s_gen2::sintab#0 )
   [71] (dword) sin16s_gen2::x#2 ← phi( sin16s_gen2::@3/(byte) 0 sin16s_gen2::@5/(dword) sin16s_gen2::x#1 )
   [71] (word) sin16s_gen2::i#2 ← phi( sin16s_gen2::@3/(byte) 0 sin16s_gen2::@5/(word) sin16s_gen2::i#1 )
   [72] if((word) sin16s_gen2::i#2<(const word) SIN_SIZE) goto sin16s_gen2::@2
@@ -3286,7 +3274,7 @@ bitmap_init: scope:[bitmap_init]  from main::@3
 bitmap_init::@1: scope:[bitmap_init]  from bitmap_init bitmap_init::@2
   [199] (byte) bitmap_init::x#2 ← phi( bitmap_init/(byte) 0 bitmap_init::@2/(byte) bitmap_init::x#1 )
   [199] (byte) bitmap_init::bits#3 ← phi( bitmap_init/(byte) $80 bitmap_init::@2/(byte) bitmap_init::bits#4 )
-  [200] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
+  [200] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
   [201] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1
   [202] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@6
   to:bitmap_init::@2
@@ -3304,9 +3292,9 @@ bitmap_init::@3: scope:[bitmap_init]  from bitmap_init::@2 bitmap_init::@4
   [208] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
   [209] (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2
   [210] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4
-  [211] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5
+  [211] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5
   [212] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2
-  [213] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
+  [213] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
   [214] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4
   to:bitmap_init::@5
 bitmap_init::@5: scope:[bitmap_init]  from bitmap_init::@3
@@ -4039,7 +4027,7 @@ render_sine: {
     lda.z sin_idx+1
     rol
     sta.z __10+1
-    // [27] (signed word*~) render_sine::$1 ← (const signed word[$200]) sin + (word~) render_sine::$10 -- pwsz1=pwsc1_plus_vwuz2 
+    // [27] (signed word*~) render_sine::$1 ← (const signed word*) sin + (word~) render_sine::$10 -- pwsz1=pwsc1_plus_vwuz2 
     lda.z __10
     clc
     adc #<sin
@@ -4097,7 +4085,7 @@ render_sine: {
     lda.z sin_idx+1
     rol
     sta.z __11+1
-    // [37] (signed word*~) render_sine::$4 ← (const signed word[$200]) sin2 + (word~) render_sine::$11 -- pwsz1=pwsc1_plus_vwuz2 
+    // [37] (signed word*~) render_sine::$4 ← (const signed word*) sin2 + (word~) render_sine::$11 -- pwsz1=pwsc1_plus_vwuz2 
     lda.z __11
     clc
     adc #<sin2
@@ -4203,7 +4191,7 @@ bitmap_plot: {
     .label plotter_1 = $56
     .label x = 7
     .label y = 6
-    // [52] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#2) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
+    // [52] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#2) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
     ldy.z y
     lda bitmap_plot_yhi,y
     sta.z plotter+1
@@ -4227,7 +4215,7 @@ bitmap_plot: {
     // [55] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#2 -- vbuz1=_lo_vwuz2 
     lda.z x
     sta.z __2
-    // [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
+    // [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
     ldy #0
     lda (plotter_1),y
     ldy.z __2
@@ -4349,7 +4337,7 @@ sin16s_gen2: {
     sta.z step+3
     // [71] phi from sin16s_gen2::@3 to sin16s_gen2::@1 [phi:sin16s_gen2::@3->sin16s_gen2::@1]
   __b1_from___b3:
-    // [71] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[$200]) sin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
+    // [71] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word*) sin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
     lda #<sin
     sta.z sintab
     lda #>sin
@@ -5459,7 +5447,7 @@ bitmap_init: {
     jmp __b1
     // bitmap_init::@1
   __b1:
-    // [200] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [200] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z bits
     ldy.z x
     sta bitmap_plot_bit,y
@@ -5521,14 +5509,14 @@ bitmap_init: {
     lda.z __7
     ora.z __4
     sta.z __5
-    // [211] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [211] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __5
     ldy.z y
     sta bitmap_plot_ylo,y
     // [212] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuz1=_hi_pbuz2 
     lda.z yoffs+1
     sta.z __6
-    // [213] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [213] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __6
     ldy.z y
     sta bitmap_plot_yhi,y
@@ -5590,23 +5578,23 @@ Statement [11] *((const byte*) D016) ← (const byte) VIC_CSEL [ ] ( main:2 [ ] 
 Statement [13] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [24] if((word) render_sine::sin_idx#2<(const word) SIN_SIZE) goto render_sine::@2 [ render_sine::sin_idx#2 render_sine::xpos#3 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 ] ) always clobbers reg byte a 
 Statement [26] (word~) render_sine::$10 ← (word) render_sine::sin_idx#2 << (byte) 1 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$10 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$10 ] ) always clobbers reg byte a 
-Statement [27] (signed word*~) render_sine::$1 ← (const signed word[$200]) sin + (word~) render_sine::$10 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$1 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$1 ] ) always clobbers reg byte a 
+Statement [27] (signed word*~) render_sine::$1 ← (const signed word*) sin + (word~) render_sine::$10 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$1 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$1 ] ) always clobbers reg byte a 
 Statement [28] (signed word) render_sine::sin_val#0 ← *((signed word*~) render_sine::$1) [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::sin_val#0 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::sin_val#0 ] ) always clobbers reg byte a reg byte y 
 Statement [29] (signed word) wrap_y::y#0 ← (signed word) render_sine::sin_val#0 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#0 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#0 ] ) always clobbers reg byte a 
 Statement [33] (word) bitmap_plot::x#0 ← (word) render_sine::xpos#3 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::ypos#0 bitmap_plot::x#0 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::ypos#0 bitmap_plot::x#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:73 [ render_sine::ypos#0 ]
 Statement [36] (word~) render_sine::$11 ← (word) render_sine::sin_idx#2 << (byte) 1 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$11 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$11 ] ) always clobbers reg byte a 
-Statement [37] (signed word*~) render_sine::$4 ← (const signed word[$200]) sin2 + (word~) render_sine::$11 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$4 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$4 ] ) always clobbers reg byte a 
+Statement [37] (signed word*~) render_sine::$4 ← (const signed word*) sin2 + (word~) render_sine::$11 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$4 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$4 ] ) always clobbers reg byte a 
 Statement [38] (signed word) render_sine::sin2_val#0 ← *((signed word*~) render_sine::$4) [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::sin2_val#0 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::sin2_val#0 ] ) always clobbers reg byte a reg byte y 
 Statement [39] (signed word) wrap_y::y#1 ← (signed word) render_sine::sin2_val#0 + (signed byte) $a [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#1 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#1 ] ) always clobbers reg byte a 
 Statement [43] (word) bitmap_plot::x#1 ← (word) render_sine::xpos#3 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::ypos2#0 bitmap_plot::x#1 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::ypos2#0 bitmap_plot::x#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:81 [ render_sine::ypos2#0 ]
 Statement [47] if((word) render_sine::xpos#1!=(word) $140) goto render_sine::@8 [ render_sine::sin_idx#2 render_sine::xpos#1 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#1 ] ) always clobbers reg byte a 
-Statement [52] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#2) [ bitmap_plot::x#2 bitmap_plot::plotter#0 ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
+Statement [52] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#2) [ bitmap_plot::x#2 bitmap_plot::plotter#0 ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
 Statement [53] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#2 & (word) $fff8 [ bitmap_plot::x#2 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
 Statement [54] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 [ bitmap_plot::x#2 bitmap_plot::plotter#1 ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#1 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
 Statement [55] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#2 [ bitmap_plot::plotter#1 bitmap_plot::$2 ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::plotter#1 bitmap_plot::$2 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::plotter#1 bitmap_plot::$2 ] ) always clobbers reg byte a 
-Statement [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 ] ) always clobbers reg byte a reg byte y 
+Statement [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 ] ) always clobbers reg byte a reg byte y 
 Statement [60] if((signed word) wrap_y::y#4>=(signed word) $c8) goto wrap_y::@2 [ wrap_y::y#4 ] ( main:2::render_sine:20::wrap_y:30 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#4 ] main:2::render_sine:20::wrap_y:40 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#4 ] ) always clobbers reg byte a 
 Statement [62] if((signed word) wrap_y::y#6<(signed byte) 0) goto wrap_y::@4 [ wrap_y::y#6 ] ( main:2::render_sine:20::wrap_y:30 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#6 ] main:2::render_sine:20::wrap_y:40 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#6 ] ) always clobbers reg byte a 
 Statement [63] (byte) wrap_y::return#2 ← (byte)(signed word) wrap_y::y#6 [ wrap_y::return#2 ] ( main:2::render_sine:20::wrap_y:30 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::return#2 ] main:2::render_sine:20::wrap_y:40 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::return#2 ] ) always clobbers reg byte a 
@@ -5703,21 +5691,21 @@ Statement [11] *((const byte*) D016) ← (const byte) VIC_CSEL [ ] ( main:2 [ ] 
 Statement [13] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [24] if((word) render_sine::sin_idx#2<(const word) SIN_SIZE) goto render_sine::@2 [ render_sine::sin_idx#2 render_sine::xpos#3 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 ] ) always clobbers reg byte a 
 Statement [26] (word~) render_sine::$10 ← (word) render_sine::sin_idx#2 << (byte) 1 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$10 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$10 ] ) always clobbers reg byte a 
-Statement [27] (signed word*~) render_sine::$1 ← (const signed word[$200]) sin + (word~) render_sine::$10 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$1 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$1 ] ) always clobbers reg byte a 
+Statement [27] (signed word*~) render_sine::$1 ← (const signed word*) sin + (word~) render_sine::$10 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$1 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$1 ] ) always clobbers reg byte a 
 Statement [28] (signed word) render_sine::sin_val#0 ← *((signed word*~) render_sine::$1) [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::sin_val#0 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::sin_val#0 ] ) always clobbers reg byte a reg byte y 
 Statement [29] (signed word) wrap_y::y#0 ← (signed word) render_sine::sin_val#0 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#0 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#0 ] ) always clobbers reg byte a 
 Statement [33] (word) bitmap_plot::x#0 ← (word) render_sine::xpos#3 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::ypos#0 bitmap_plot::x#0 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::ypos#0 bitmap_plot::x#0 ] ) always clobbers reg byte a 
 Statement [36] (word~) render_sine::$11 ← (word) render_sine::sin_idx#2 << (byte) 1 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$11 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$11 ] ) always clobbers reg byte a 
-Statement [37] (signed word*~) render_sine::$4 ← (const signed word[$200]) sin2 + (word~) render_sine::$11 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$4 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$4 ] ) always clobbers reg byte a 
+Statement [37] (signed word*~) render_sine::$4 ← (const signed word*) sin2 + (word~) render_sine::$11 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$4 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::$4 ] ) always clobbers reg byte a 
 Statement [38] (signed word) render_sine::sin2_val#0 ← *((signed word*~) render_sine::$4) [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::sin2_val#0 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::sin2_val#0 ] ) always clobbers reg byte a reg byte y 
 Statement [39] (signed word) wrap_y::y#1 ← (signed word) render_sine::sin2_val#0 + (signed byte) $a [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#1 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#1 ] ) always clobbers reg byte a 
 Statement [43] (word) bitmap_plot::x#1 ← (word) render_sine::xpos#3 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::ypos2#0 bitmap_plot::x#1 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#3 render_sine::ypos2#0 bitmap_plot::x#1 ] ) always clobbers reg byte a 
 Statement [47] if((word) render_sine::xpos#1!=(word) $140) goto render_sine::@8 [ render_sine::sin_idx#2 render_sine::xpos#1 ] ( main:2::render_sine:20 [ render_sine::sin_idx#2 render_sine::xpos#1 ] ) always clobbers reg byte a 
-Statement [52] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#2) [ bitmap_plot::x#2 bitmap_plot::plotter#0 ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
+Statement [52] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#2) [ bitmap_plot::x#2 bitmap_plot::plotter#0 ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
 Statement [53] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#2 & (word) $fff8 [ bitmap_plot::x#2 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
 Statement [54] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 [ bitmap_plot::x#2 bitmap_plot::plotter#1 ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#1 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::x#2 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
 Statement [55] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#2 [ bitmap_plot::plotter#1 bitmap_plot::$2 ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::plotter#1 bitmap_plot::$2 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 bitmap_plot::plotter#1 bitmap_plot::$2 ] ) always clobbers reg byte a 
-Statement [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 ] ) always clobbers reg byte a reg byte y 
+Statement [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:2::render_sine:20::bitmap_plot:35 [ render_sine::sin_idx#2 render_sine::xpos#3 ] main:2::render_sine:20::bitmap_plot:45 [ render_sine::sin_idx#2 render_sine::xpos#3 ] ) always clobbers reg byte a reg byte y 
 Statement [60] if((signed word) wrap_y::y#4>=(signed word) $c8) goto wrap_y::@2 [ wrap_y::y#4 ] ( main:2::render_sine:20::wrap_y:30 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#4 ] main:2::render_sine:20::wrap_y:40 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#4 ] ) always clobbers reg byte a 
 Statement [62] if((signed word) wrap_y::y#6<(signed byte) 0) goto wrap_y::@4 [ wrap_y::y#6 ] ( main:2::render_sine:20::wrap_y:30 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#6 ] main:2::render_sine:20::wrap_y:40 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::y#6 ] ) always clobbers reg byte a 
 Statement [63] (byte) wrap_y::return#2 ← (byte)(signed word) wrap_y::y#6 [ wrap_y::return#2 ] ( main:2::render_sine:20::wrap_y:30 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::return#2 ] main:2::render_sine:20::wrap_y:40 [ render_sine::sin_idx#2 render_sine::xpos#3 wrap_y::return#2 ] ) always clobbers reg byte a 
@@ -6192,7 +6180,7 @@ render_sine: {
     lda.z sin_idx+1
     rol
     sta.z __10+1
-    // [27] (signed word*~) render_sine::$1 ← (const signed word[$200]) sin + (word~) render_sine::$10 -- pwsz1=pwsc1_plus_vwuz1 
+    // [27] (signed word*~) render_sine::$1 ← (const signed word*) sin + (word~) render_sine::$10 -- pwsz1=pwsc1_plus_vwuz1 
     clc
     lda.z __1
     adc #<sin
@@ -6239,7 +6227,7 @@ render_sine: {
     lda.z sin_idx+1
     rol
     sta.z __11+1
-    // [37] (signed word*~) render_sine::$4 ← (const signed word[$200]) sin2 + (word~) render_sine::$11 -- pwsz1=pwsc1_plus_vwuz1 
+    // [37] (signed word*~) render_sine::$4 ← (const signed word*) sin2 + (word~) render_sine::$11 -- pwsz1=pwsc1_plus_vwuz1 
     clc
     lda.z __4
     adc #<sin2
@@ -6335,7 +6323,7 @@ bitmap_plot: {
     .label __1 = $18
     .label plotter = $12
     .label x = 6
-    // [52] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#2) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+    // [52] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#2) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -6357,7 +6345,7 @@ bitmap_plot: {
     sta.z plotter+1
     // [55] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#2 -- vbuaa=_lo_vwuz1 
     lda.z x
-    // [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
+    // [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
     tay
     lda bitmap_plot_bit,y
     ldy #0
@@ -6459,7 +6447,7 @@ sin16s_gen2: {
     // [70] (dword) sin16s_gen2::step#0 ← (dword) div32u16u::return#2
     // [71] phi from sin16s_gen2::@3 to sin16s_gen2::@1 [phi:sin16s_gen2::@3->sin16s_gen2::@1]
   __b1_from___b3:
-    // [71] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[$200]) sin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
+    // [71] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word*) sin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
     lda #<sin
     sta.z sintab
     lda #>sin
@@ -7373,7 +7361,7 @@ bitmap_init: {
     jmp __b1
     // bitmap_init::@1
   __b1:
-    // [200] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [200] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_bit,x
     // [201] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
@@ -7425,11 +7413,11 @@ bitmap_init: {
     lda.z yoffs
     // [210] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __7
-    // [211] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [211] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // [212] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
     lda.z yoffs+1
-    // [213] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [213] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
     // [214] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
@@ -7808,9 +7796,9 @@ FINAL SYMBOL TABLE
 (byte) bitmap_plot::y#0 reg byte x 22.0
 (byte) bitmap_plot::y#1 reg byte x 22.0
 (byte) bitmap_plot::y#2 reg byte x 26.0
-(const byte[$100]) bitmap_plot_bit = { fill( $100, 0) }
-(const byte[$100]) bitmap_plot_yhi = { fill( $100, 0) }
-(const byte[$100]) bitmap_plot_ylo = { fill( $100, 0) }
+(const byte*) bitmap_plot_bit = { fill( $100, 0) }
+(const byte*) bitmap_plot_yhi = { fill( $100, 0) }
+(const byte*) bitmap_plot_ylo = { fill( $100, 0) }
 (byte*) bitmap_screen
 (dword()) div32u16u((dword) div32u16u::dividend , (word) div32u16u::divisor)
 (label) div32u16u::@1
@@ -8000,7 +7988,7 @@ FINAL SYMBOL TABLE
 (byte) render_sine::ypos#0 reg byte x 11.0
 (byte) render_sine::ypos2
 (byte) render_sine::ypos2#0 reg byte x 11.0
-(const signed word[$200]) sin = { fill( $200, 0) }
+(const signed word*) sin = { fill( $200, 0) }
 (signed word()) sin16s((dword) sin16s::x)
 (dword~) sin16s::$4 zp[4]:26 4.0
 (label) sin16s::@1
@@ -8075,7 +8063,7 @@ FINAL SYMBOL TABLE
 (dword) sin16s_gen2::x
 (dword) sin16s_gen2::x#1 x zp[4]:2 11.0
 (dword) sin16s_gen2::x#2 x zp[4]:2 2.75
-(const signed word[$200]) sin2 = kickasm {{ .for(var i=0; i<512; i++) {
+(const signed word*) sin2 = kickasm {{ .for(var i=0; i<512; i++) {
   	  .word sin(toRadians([i*360]/512))*320
     }
  }}
@@ -8300,7 +8288,7 @@ render_sine: {
     lda.z sin_idx+1
     rol
     sta.z __10+1
-    // [27] (signed word*~) render_sine::$1 ← (const signed word[$200]) sin + (word~) render_sine::$10 -- pwsz1=pwsc1_plus_vwuz1 
+    // [27] (signed word*~) render_sine::$1 ← (const signed word*) sin + (word~) render_sine::$10 -- pwsz1=pwsc1_plus_vwuz1 
     clc
     lda.z __1
     adc #<sin
@@ -8347,7 +8335,7 @@ render_sine: {
     lda.z sin_idx+1
     rol
     sta.z __11+1
-    // [37] (signed word*~) render_sine::$4 ← (const signed word[$200]) sin2 + (word~) render_sine::$11 -- pwsz1=pwsc1_plus_vwuz1 
+    // [37] (signed word*~) render_sine::$4 ← (const signed word*) sin2 + (word~) render_sine::$11 -- pwsz1=pwsc1_plus_vwuz1 
     clc
     lda.z __4
     adc #<sin2
@@ -8437,7 +8425,7 @@ bitmap_plot: {
     .label plotter = $12
     .label x = 6
     // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    // [52] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#2) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+    // [52] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#2) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#2) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -8463,7 +8451,7 @@ bitmap_plot: {
     // [55] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#2 -- vbuaa=_lo_vwuz1 
     lda.z x
     // *plotter |= bitmap_plot_bit[<x]
-    // [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
+    // [56] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
     tay
     lda bitmap_plot_bit,y
     ldy #0
@@ -8558,7 +8546,7 @@ sin16s_gen2: {
     // step = div32u16u(PI2_u4f28, wavelength)
     // [70] (dword) sin16s_gen2::step#0 ← (dword) div32u16u::return#2
     // [71] phi from sin16s_gen2::@3 to sin16s_gen2::@1 [phi:sin16s_gen2::@3->sin16s_gen2::@1]
-    // [71] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[$200]) sin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
+    // [71] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word*) sin [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
     lda #<sin
     sta.z sintab
     lda #>sin
@@ -9442,7 +9430,7 @@ bitmap_init: {
     // bitmap_init::@1
   __b1:
     // bitmap_plot_bit[x] = bits
-    // [200] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [200] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_bit,x
     // bits >>= 1
     // [201] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
@@ -9490,13 +9478,13 @@ bitmap_init: {
     // [210] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __7
     // bitmap_plot_ylo[y] = y&$7 | <yoffs
-    // [211] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [211] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // >yoffs
     // [212] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
     lda.z yoffs+1
     // bitmap_plot_yhi[y] = >yoffs
-    // [213] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [213] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
     // [214] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 

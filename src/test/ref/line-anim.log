@@ -1,9 +1,9 @@
-Fixing pointer array-indexing *((const word[SIZE]) x_start + (byte) main::i)
-Fixing pointer array-indexing *((const word[SIZE]) x_end + (byte) point_init::point_idx)
-Fixing pointer array-indexing *((const word[SIZE]) x_start + (byte) point_init::point_idx)
-Fixing pointer array-indexing *((const word[SIZE]) x_start + (byte) point_init::point_idx)
-Fixing pointer array-indexing *((word[SIZE]) x_cur + (byte) point_init::point_idx)
-Fixing pointer array-indexing *((word[SIZE]) y_cur + (byte) point_init::point_idx)
+Fixing pointer array-indexing *((const word*) x_start + (byte) main::i)
+Fixing pointer array-indexing *((const word*) x_end + (byte) point_init::point_idx)
+Fixing pointer array-indexing *((const word*) x_start + (byte) point_init::point_idx)
+Fixing pointer array-indexing *((const word*) x_start + (byte) point_init::point_idx)
+Fixing pointer array-indexing *((const word*) x_cur + (byte) point_init::point_idx)
+Fixing pointer array-indexing *((const word*) y_cur + (byte) point_init::point_idx)
 Identified constant variable (byte*) BITMAP
 Identified constant variable (byte*) SCREEN
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
@@ -29,6 +29,7 @@ Culled Empty Block (label) divr16s::@6
 Culled Empty Block (label) divr16s::@13
 Culled Empty Block (label) divr16s::@14
 Culled Empty Block (label) @11
+Culled Empty Block (label) @12
 Culled Empty Block (label) main::vicSelectGfxBank1_toDd001_@1
 Culled Empty Block (label) main::vicSelectGfxBank1_@return
 Culled Empty Block (label) main::toD0181_@1
@@ -57,6 +58,7 @@ Culled Empty Block (label) point_init::@6
 Culled Empty Block (label) @14
 Culled Empty Block (label) @15
 Culled Empty Block (label) screen_fill::@4
+Culled Empty Block (label) @16
 Culled Empty Block (label) bitmap_init::@8
 Culled Empty Block (label) @17
 Culled Empty Block (label) bitmap_clear::@4
@@ -64,7 +66,7 @@ Culled Empty Block (label) @18
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@12
+  to:@19
 
 (word()) divr16u((word) divr16u::dividend , (word) divr16u::divisor , (word) divr16u::rem)
 divr16u: scope:[divr16u]  from divr16s::@4
@@ -239,13 +241,6 @@ divr16s::@return: scope:[divr16s]  from divr16s::@11 divr16s::@5
   (signed word) divr16s::return#2 ← (signed word) divr16s::return#4
   return 
   to:@return
-@12: scope:[]  from @begin
-  (word[SIZE]) x_cur ← { fill( SIZE, 0) }
-  (word[SIZE]) y_cur ← { fill( SIZE, 0) }
-  (signed byte[SIZE]) x_add ← { fill( SIZE, 0) }
-  (signed byte[SIZE]) y_add ← { fill( SIZE, 0) }
-  (byte[SIZE]) delay ← { fill( SIZE, 0) }
-  to:@16
 
 (void()) main()
 main: scope:[main]  from @19
@@ -325,8 +320,8 @@ main::@1: scope:[main]  from main::@19 main::@21
 main::@20: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
   (byte~) main::$10 ← (byte) main::i#3 * (const byte) SIZEOF_WORD
-  (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10)
-  (byte) bitmap_plot::y#0 ← *((const byte[SIZE]) y_start + (byte) main::i#3)
+  (word) bitmap_plot::x#0 ← *((const word*) x_start + (byte~) main::$10)
+  (byte) bitmap_plot::y#0 ← *((const byte*) y_start + (byte) main::i#3)
   call bitmap_plot 
   to:main::@21
 main::@21: scope:[main]  from main::@20
@@ -353,13 +348,13 @@ main::@return: scope:[main]  from main::@3
 point_init: scope:[point_init]  from main::@1
   (byte) point_init::point_idx#1 ← phi( main::@1/(byte) point_init::point_idx#0 )
   (byte~) point_init::$17 ← (byte) point_init::point_idx#1 * (const byte) SIZEOF_WORD
-  (signed word~) point_init::$0 ← ((signed word)) *((const word[SIZE]) x_end + (byte~) point_init::$17)
+  (signed word~) point_init::$0 ← ((signed word)) *((const word*) x_end + (byte~) point_init::$17)
   (byte~) point_init::$18 ← (byte) point_init::point_idx#1 * (const byte) SIZEOF_WORD
-  (signed word~) point_init::$1 ← ((signed word)) *((const word[SIZE]) x_start + (byte~) point_init::$18)
+  (signed word~) point_init::$1 ← ((signed word)) *((const word*) x_start + (byte~) point_init::$18)
   (signed word~) point_init::$2 ← (signed word~) point_init::$0 - (signed word~) point_init::$1
   (signed word) point_init::x_diff#0 ← (signed word~) point_init::$2
-  (signed word~) point_init::$3 ← ((signed word)) *((const byte[SIZE]) y_end + (byte) point_init::point_idx#1)
-  (signed word~) point_init::$4 ← ((signed word)) *((const byte[SIZE]) y_start + (byte) point_init::point_idx#1)
+  (signed word~) point_init::$3 ← ((signed word)) *((const byte*) y_end + (byte) point_init::point_idx#1)
+  (signed word~) point_init::$4 ← ((signed word)) *((const byte*) y_start + (byte) point_init::point_idx#1)
   (signed word~) point_init::$5 ← (signed word~) point_init::$3 - (signed word~) point_init::$4
   (signed word) point_init::y_diff#0 ← (signed word~) point_init::$5
   (signed word) point_init::abs16s1_w#0 ← (signed word) point_init::x_diff#0
@@ -455,26 +450,26 @@ point_init::@1: scope:[point_init]  from point_init::@10
 point_init::@2: scope:[point_init]  from point_init::@10 point_init::@11
   (byte) point_init::point_idx#2 ← phi( point_init::@10/(byte) point_init::point_idx#6 point_init::@11/(byte) point_init::point_idx#5 )
   (byte~) point_init::$19 ← (byte) point_init::point_idx#2 * (const byte) SIZEOF_WORD
-  (number~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$19) * (number) $10
+  (number~) point_init::$9 ← *((const word*) x_start + (byte~) point_init::$19) * (number) $10
   (byte~) point_init::$20 ← (byte) point_init::point_idx#2 * (const byte) SIZEOF_WORD
-  *((word[SIZE]) x_cur + (byte~) point_init::$20) ← (number~) point_init::$9
-  (word~) point_init::$10 ← ((word)) *((const byte[SIZE]) y_start + (byte) point_init::point_idx#2)
+  *((const word*) x_cur + (byte~) point_init::$20) ← (number~) point_init::$9
+  (word~) point_init::$10 ← ((word)) *((const byte*) y_start + (byte) point_init::point_idx#2)
   (number~) point_init::$11 ← (word~) point_init::$10 * (number) $10
   (byte~) point_init::$21 ← (byte) point_init::point_idx#2 * (const byte) SIZEOF_WORD
-  *((word[SIZE]) y_cur + (byte~) point_init::$21) ← (number~) point_init::$11
-  *((byte[SIZE]) delay + (byte) point_init::point_idx#2) ← (const byte) DELAY
+  *((const word*) y_cur + (byte~) point_init::$21) ← (number~) point_init::$11
+  *((const byte*) delay + (byte) point_init::point_idx#2) ← (const byte) DELAY
   to:point_init::@return
 point_init::@7: scope:[point_init]  from point_init::@1
   (signed word) point_init::y_diff#5 ← phi( point_init::@1/(signed word) point_init::y_diff#8 )
   (signed word) point_init::x_diff#5 ← phi( point_init::@1/(signed word) point_init::x_diff#1 )
   (byte) point_init::point_idx#3 ← phi( point_init::@1/(byte) point_init::point_idx#7 )
-  *((signed byte[SIZE]) x_add + (byte) point_init::point_idx#3) ← (number) -$10
+  *((const signed byte*) x_add + (byte) point_init::point_idx#3) ← (number) -$10
   to:point_init::@8
 point_init::@5: scope:[point_init]  from point_init::@1
   (signed word) point_init::y_diff#4 ← phi( point_init::@1/(signed word) point_init::y_diff#8 )
   (signed word) point_init::x_diff#4 ← phi( point_init::@1/(signed word) point_init::x_diff#1 )
   (byte) point_init::point_idx#4 ← phi( point_init::@1/(byte) point_init::point_idx#7 )
-  *((signed byte[SIZE]) x_add + (byte) point_init::point_idx#4) ← (number) $10
+  *((const signed byte*) x_add + (byte) point_init::point_idx#4) ← (number) $10
   to:point_init::@8
 point_init::@8: scope:[point_init]  from point_init::@5 point_init::@7
   (byte) point_init::point_idx#8 ← phi( point_init::@5/(byte) point_init::point_idx#4 point_init::@7/(byte) point_init::point_idx#3 )
@@ -494,7 +489,7 @@ point_init::@11: scope:[point_init]  from point_init::@8
   (byte~) point_init::$14 ← > (signed word) point_init::x_stepf#0
   (number~) point_init::$15 ← (byte~) point_init::$14 / (number) $10
   (signed byte~) point_init::$16 ← ((signed byte)) (number~) point_init::$15
-  *((signed byte[SIZE]) y_add + (byte) point_init::point_idx#5) ← (signed byte~) point_init::$16
+  *((const signed byte*) y_add + (byte) point_init::point_idx#5) ← (signed byte~) point_init::$16
   to:point_init::@2
 point_init::@return: scope:[point_init]  from point_init::@2
   return 
@@ -534,11 +529,6 @@ screen_fill::@3: scope:[screen_fill]  from screen_fill::@2
 screen_fill::@return: scope:[screen_fill]  from screen_fill::@3
   return 
   to:@return
-@16: scope:[]  from @12
-  (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-  (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-  (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-  to:@19
 
 (void()) bitmap_init((byte*) bitmap_init::bitmap)
 bitmap_init: scope:[bitmap_init]  from main::@16
@@ -550,7 +540,7 @@ bitmap_init::@1: scope:[bitmap_init]  from bitmap_init bitmap_init::@2
   (byte*) bitmap_init::bitmap#3 ← phi( bitmap_init/(byte*) bitmap_init::bitmap#5 bitmap_init::@2/(byte*) bitmap_init::bitmap#2 )
   (byte) bitmap_init::x#2 ← phi( bitmap_init/(byte) bitmap_init::x#0 bitmap_init::@2/(byte) bitmap_init::x#1 )
   (byte) bitmap_init::bits#3 ← phi( bitmap_init/(byte) bitmap_init::bits#0 bitmap_init::@2/(byte) bitmap_init::bits#4 )
-  *((byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
+  *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
   (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (number) 1
   (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (number) 0
   (bool~) bitmap_init::$1 ← ! (bool~) bitmap_init::$0
@@ -580,9 +570,9 @@ bitmap_init::@5: scope:[bitmap_init]  from bitmap_init::@4 bitmap_init::@6
   (number~) bitmap_init::$3 ← (byte) bitmap_init::y#2 & (number) 7
   (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2
   (number~) bitmap_init::$5 ← (number~) bitmap_init::$3 | (byte~) bitmap_init::$4
-  *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (number~) bitmap_init::$5
+  *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (number~) bitmap_init::$5
   (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2
-  *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
+  *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
   (number~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (number) 7
   (bool~) bitmap_init::$8 ← (number~) bitmap_init::$7 == (number) 7
   (bool~) bitmap_init::$9 ← ! (bool~) bitmap_init::$8
@@ -607,7 +597,7 @@ bitmap_init::@return: scope:[bitmap_init]  from bitmap_init::@6
 
 (void()) bitmap_clear()
 bitmap_clear: scope:[bitmap_clear]  from main::@17
-  (byte*~) bitmap_clear::$0 ← ((byte*)) { *((byte[$100]) bitmap_plot_yhi + (number) 0), *((byte[$100]) bitmap_plot_ylo + (number) 0) }
+  (byte*~) bitmap_clear::$0 ← ((byte*)) { *((const byte*) bitmap_plot_yhi + (number) 0), *((const byte*) bitmap_plot_ylo + (number) 0) }
   (byte*) bitmap_clear::bitmap#0 ← (byte*~) bitmap_clear::$0
   (byte) bitmap_clear::y#0 ← (byte) 0
   to:bitmap_clear::@1
@@ -641,17 +631,17 @@ bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@3
 bitmap_plot: scope:[bitmap_plot]  from main::@20
   (word) bitmap_plot::x#1 ← phi( main::@20/(word) bitmap_plot::x#0 )
   (byte) bitmap_plot::y#1 ← phi( main::@20/(byte) bitmap_plot::y#0 )
-  (byte*~) bitmap_plot::$0 ← ((byte*)) { *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#1), *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#1) }
+  (byte*~) bitmap_plot::$0 ← ((byte*)) { *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#1), *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#1) }
   (byte*) bitmap_plot::plotter#0 ← (byte*~) bitmap_plot::$0
   (number~) bitmap_plot::$1 ← (word) bitmap_plot::x#1 & (number) $fff8
   (byte*) bitmap_plot::plotter#1 ← (byte*) bitmap_plot::plotter#0 + (number~) bitmap_plot::$1
   (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#1
-  *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2)
+  *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2)
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   return 
   to:@return
-@19: scope:[]  from @16
+@19: scope:[]  from @begin
   call main 
   to:@20
 @20: scope:[]  from @19
@@ -659,8 +649,6 @@ bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
 @end: scope:[]  from @20
 
 SYMBOL TABLE SSA
-(label) @12
-(label) @16
 (label) @19
 (label) @20
 (label) @begin
@@ -773,10 +761,10 @@ SYMBOL TABLE SSA
 (byte) bitmap_plot::y
 (byte) bitmap_plot::y#0
 (byte) bitmap_plot::y#1
-(byte[$100]) bitmap_plot_bit
-(byte[$100]) bitmap_plot_yhi
-(byte[$100]) bitmap_plot_ylo
-(byte[SIZE]) delay
+(const byte*) bitmap_plot_bit = { fill( $100, 0) }
+(const byte*) bitmap_plot_yhi = { fill( $100, 0) }
+(const byte*) bitmap_plot_ylo = { fill( $100, 0) }
+(const byte*) delay = { fill( SIZE, 0) }
 (signed word()) divr16s((signed word) divr16s::dividend , (signed word) divr16s::divisor , (signed word) divr16s::rem)
 (bool~) divr16s::$0
 (bool~) divr16s::$1
@@ -1157,14 +1145,14 @@ SYMBOL TABLE SSA
 (byte) screen_fill::y#2
 (byte) screen_fill::y#3
 (byte) screen_fill::y#4
-(signed byte[SIZE]) x_add
-(word[SIZE]) x_cur
-(const word[SIZE]) x_end = { (word)(number) $14, (word)(number) $a, (word)(number) $14, (word)(number) $14 }
-(const word[SIZE]) x_start = { (word)(number) $a, (word)(number) $14, (word)(number) $1e, (word)(number) $1e }
-(signed byte[SIZE]) y_add
-(word[SIZE]) y_cur
-(const byte[SIZE]) y_end = { (byte)(number) $14, (byte)(number) $14, (byte)(number) $a, (byte)(number) $14 }
-(const byte[SIZE]) y_start = { (byte)(number) $a, (byte)(number) $a, (byte)(number) $a, (byte)(number) $14 }
+(const signed byte*) x_add = { fill( SIZE, 0) }
+(const word*) x_cur = { fill( SIZE, 0) }
+(const word*) x_end = { (word)(number) $14, (word)(number) $a, (word)(number) $14, (word)(number) $14 }
+(const word*) x_start = { (word)(number) $a, (word)(number) $14, (word)(number) $1e, (word)(number) $1e }
+(const signed byte*) y_add = { fill( SIZE, 0) }
+(const word*) y_cur = { fill( SIZE, 0) }
+(const byte*) y_end = { (byte)(number) $14, (byte)(number) $14, (byte)(number) $a, (byte)(number) $14 }
+(const byte*) y_start = { (byte)(number) $a, (byte)(number) $a, (byte)(number) $a, (byte)(number) $14 }
 
 Fixing inline constructor with bitmap_clear::$3 ← (byte)*(bitmap_plot_yhi + 0) w= (byte)*(bitmap_plot_ylo + 0)
 Fixing inline constructor with bitmap_plot::$3 ← (byte)*(bitmap_plot_yhi + bitmap_plot::y#1) w= (byte)*(bitmap_plot_ylo + bitmap_plot::y#1)
@@ -1212,12 +1200,12 @@ Adding number conversion cast (unumber) $ff in (bool~) main::$8 ← *((const byt
 Adding number conversion cast (snumber) 0 in (bool~) point_init::abs16s1_$0 ← (signed word) point_init::abs16s1_w#1 < (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) point_init::abs16s2_$0 ← (signed word) point_init::abs16s2_w#1 < (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) point_init::$12 ← (signed word) point_init::x_diff#1 < (number) 0
-Adding number conversion cast (unumber) $10 in (number~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$19) * (number) $10
-Adding number conversion cast (unumber) point_init::$9 in (number~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$19) * (unumber)(number) $10
+Adding number conversion cast (unumber) $10 in (number~) point_init::$9 ← *((const word*) x_start + (byte~) point_init::$19) * (number) $10
+Adding number conversion cast (unumber) point_init::$9 in (number~) point_init::$9 ← *((const word*) x_start + (byte~) point_init::$19) * (unumber)(number) $10
 Adding number conversion cast (unumber) $10 in (number~) point_init::$11 ← (word~) point_init::$10 * (number) $10
 Adding number conversion cast (unumber) point_init::$11 in (number~) point_init::$11 ← (word~) point_init::$10 * (unumber)(number) $10
-Adding number conversion cast (snumber) -$10 in *((signed byte[SIZE]) x_add + (byte) point_init::point_idx#3) ← (number) -$10
-Adding number conversion cast (snumber) $10 in *((signed byte[SIZE]) x_add + (byte) point_init::point_idx#4) ← (number) $10
+Adding number conversion cast (snumber) -$10 in *((const signed byte*) x_add + (byte) point_init::point_idx#3) ← (number) -$10
+Adding number conversion cast (snumber) $10 in *((const signed byte*) x_add + (byte) point_init::point_idx#4) ← (number) $10
 Adding number conversion cast (snumber) 0 in (signed word) divr16s::dividend#0 ← (number) 0
 Adding number conversion cast (unumber) $10 in (number~) point_init::$15 ← (byte~) point_init::$14 / (number) $10
 Adding number conversion cast (unumber) point_init::$15 in (number~) point_init::$15 ← (byte~) point_init::$14 / (unumber)(number) $10
@@ -1232,8 +1220,8 @@ Adding number conversion cast (unumber) 7 in (number~) bitmap_init::$7 ← (byte
 Adding number conversion cast (unumber) bitmap_init::$7 in (number~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (unumber)(number) 7
 Adding number conversion cast (unumber) 7 in (bool~) bitmap_init::$8 ← (unumber~) bitmap_init::$7 == (number) 7
 Adding number conversion cast (unumber) $28*8 in (byte*~) bitmap_init::$10 ← (byte*) bitmap_init::yoffs#3 + (number) $28*(number) 8
-Adding number conversion cast (unumber) 0 in (var~) bitmap_clear::$3 ← (byte)*((byte[$100]) bitmap_plot_yhi + (number) 0) w= (byte)*((byte[$100]) bitmap_plot_ylo + (number) 0)
-Adding number conversion cast (unumber) 0 in (var~) bitmap_clear::$3 ← (byte)*((byte[$100]) bitmap_plot_yhi + (unumber)(number) 0) w= (byte)*((byte[$100]) bitmap_plot_ylo + (number) 0)
+Adding number conversion cast (unumber) 0 in (var~) bitmap_clear::$3 ← (byte)*((const byte*) bitmap_plot_yhi + (number) 0) w= (byte)*((const byte*) bitmap_plot_ylo + (number) 0)
+Adding number conversion cast (unumber) 0 in (var~) bitmap_clear::$3 ← (byte)*((const byte*) bitmap_plot_yhi + (unumber)(number) 0) w= (byte)*((const byte*) bitmap_plot_ylo + (number) 0)
 Adding number conversion cast (unumber) 0 in *((byte*) bitmap_clear::bitmap#2) ← (number) 0
 Adding number conversion cast (unumber) $fff8 in (number~) bitmap_plot::$1 ← (word) bitmap_plot::x#1 & (number) $fff8
 Adding number conversion cast (unumber) bitmap_plot::$1 in (number~) bitmap_plot::$1 ← (word) bitmap_plot::x#1 & (unumber)(number) $fff8
@@ -1258,17 +1246,17 @@ Inlining cast (word~) main::vicSelectGfxBank1_toDd001_$0 ← (word)(byte*) main:
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Inlining cast (byte) screen_fill::ch#0 ← (unumber)(number) $10
-Inlining cast (signed word~) point_init::$0 ← (signed word)*((const word[SIZE]) x_end + (byte~) point_init::$17)
-Inlining cast (signed word~) point_init::$1 ← (signed word)*((const word[SIZE]) x_start + (byte~) point_init::$18)
-Inlining cast (signed word~) point_init::$3 ← (signed word)*((const byte[SIZE]) y_end + (byte) point_init::point_idx#1)
-Inlining cast (signed word~) point_init::$4 ← (signed word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#1)
+Inlining cast (signed word~) point_init::$0 ← (signed word)*((const word*) x_end + (byte~) point_init::$17)
+Inlining cast (signed word~) point_init::$1 ← (signed word)*((const word*) x_start + (byte~) point_init::$18)
+Inlining cast (signed word~) point_init::$3 ← (signed word)*((const byte*) y_end + (byte) point_init::point_idx#1)
+Inlining cast (signed word~) point_init::$4 ← (signed word)*((const byte*) y_start + (byte) point_init::point_idx#1)
 Inlining cast (word~) point_init::abs16s1_$3 ← (word)(signed word~) point_init::abs16s1_$2
 Inlining cast (word~) point_init::abs16s1_$1 ← (word)(signed word) point_init::abs16s1_w#3
 Inlining cast (word~) point_init::abs16s2_$3 ← (word)(signed word~) point_init::abs16s2_$2
 Inlining cast (word~) point_init::abs16s2_$1 ← (word)(signed word) point_init::abs16s2_w#3
-Inlining cast (word~) point_init::$10 ← (word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#2)
-Inlining cast *((signed byte[SIZE]) x_add + (byte) point_init::point_idx#3) ← (snumber)(number) -$10
-Inlining cast *((signed byte[SIZE]) x_add + (byte) point_init::point_idx#4) ← (snumber)(number) $10
+Inlining cast (word~) point_init::$10 ← (word)*((const byte*) y_start + (byte) point_init::point_idx#2)
+Inlining cast *((const signed byte*) x_add + (byte) point_init::point_idx#3) ← (snumber)(number) -$10
+Inlining cast *((const signed byte*) x_add + (byte) point_init::point_idx#4) ← (snumber)(number) $10
 Inlining cast (signed word) divr16s::dividend#0 ← (snumber)(number) 0
 Inlining cast (signed byte~) point_init::$16 ← (signed byte)(unumber~) point_init::$15
 Inlining cast (byte) bitmap_init::bits#0 ← (unumber)(number) $80
@@ -1346,13 +1334,13 @@ Simplifying constant integer cast $80
 Simplifying constant integer cast 7
 Simplifying constant integer cast 7
 Simplifying constant integer cast 7
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_yhi + (unumber)(number) 0)
+Simplifying constant integer cast *((const byte*) bitmap_plot_yhi + (unumber)(number) 0)
 Simplifying constant integer cast 0
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_ylo + (unumber)(number) 0)
+Simplifying constant integer cast *((const byte*) bitmap_plot_ylo + (unumber)(number) 0)
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#1)
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#1)
+Simplifying constant integer cast *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#1)
+Simplifying constant integer cast *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#1)
 Simplifying constant integer cast $fff8
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
@@ -1415,7 +1403,7 @@ Inferred type updated to byte in (unumber~) main::toD0181_$3 ← > (word~) main:
 Inferred type updated to byte in (unumber~) main::toD0181_$6 ← (byte~) main::toD0181_$5 / (byte) 4
 Inferred type updated to byte in (unumber~) main::toD0181_$7 ← (byte~) main::toD0181_$6 & (byte) $f
 Inferred type updated to byte in (unumber~) main::toD0181_$8 ← (byte~) main::toD0181_$3 | (byte~) main::toD0181_$7
-Inferred type updated to word in (unumber~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$19) * (byte) $10
+Inferred type updated to word in (unumber~) point_init::$9 ← *((const word*) x_start + (byte~) point_init::$19) * (byte) $10
 Inferred type updated to word in (unumber~) point_init::$11 ← (word~) point_init::$10 * (byte) $10
 Inferred type updated to byte in (unumber~) point_init::$15 ← (byte~) point_init::$14 / (byte) $10
 Inferred type updated to byte in (unumber~) bitmap_init::$3 ← (byte) bitmap_init::y#2 & (byte) 7
@@ -1427,8 +1415,8 @@ Adding pointer type conversion cast (byte*) bitmap_plot::$0 in (byte*~) bitmap_p
 Successful SSA optimization PassNAddTypeConversionAssignment
 Inversing boolean not [9] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [8] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
 Inversing boolean not [17] (bool~) divr16u::$9 ← (word) divr16u::rem#5 < (word) divr16u::divisor#1 from [16] (bool~) divr16u::$8 ← (word) divr16u::rem#5 >= (word) divr16u::divisor#1
-Inversing boolean not [255] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [254] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
-Inversing boolean not [275] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [274] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
+Inversing boolean not [247] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [246] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
+Inversing boolean not [267] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [266] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#6 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#7 
@@ -1539,42 +1527,33 @@ Identical Phi Values (word) bitmap_plot::x#1 (word) bitmap_plot::x#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte) screen_fill::ch#2 (byte) screen_fill::ch#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [159] (byte~) point_init::$18 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
-Identified duplicate assignment right side [205] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
-Identified duplicate assignment right side [209] (byte~) point_init::$21 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
-Identified duplicate assignment right side [273] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
+Identified duplicate assignment right side [154] (byte~) point_init::$18 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
+Identified duplicate assignment right side [200] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
+Identified duplicate assignment right side [204] (byte~) point_init::$21 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
+Identified duplicate assignment right side [265] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) divr16u::$4 [10] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
 Simple Condition (bool~) divr16u::$9 [18] if((word) divr16u::rem#5<(word) divr16u::divisor#0) goto divr16u::@3
 Simple Condition (bool~) divr16u::$11 [25] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
 Simple Condition (bool~) divr16s::$3 [59] if((signed word) divr16s::divisor#0<(signed byte) 0) goto divr16s::@3
 Simple Condition (bool~) divr16s::$5 [79] if((byte) divr16s::neg#4==(byte) 0) goto divr16s::@5
-Simple Condition (bool~) main::$7 [150] if((byte) main::i#1!=rangelast(0,SIZE-1)) goto main::@1
-Simple Condition (bool~) main::$8 [153] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@6
-Simple Condition (bool~) point_init::abs16s1_$0 [170] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::abs16s1_@1
-Simple Condition (bool~) point_init::abs16s2_$0 [185] if((signed word) point_init::y_diff#0<(signed byte) 0) goto point_init::abs16s2_@1
-Simple Condition (bool~) point_init::$8 [198] if((word) point_init::abs16s1_return#2>(word) point_init::abs16s2_return#2) goto point_init::@1
-Simple Condition (bool~) point_init::$12 [201] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::@7
-Simple Condition (bool~) screen_fill::$0 [239] if((byte) screen_fill::x#1!=rangelast(0,$27)) goto screen_fill::@2
-Simple Condition (bool~) screen_fill::$1 [243] if((byte) screen_fill::y#1!=rangelast(0,$18)) goto screen_fill::@1
-Simple Condition (bool~) bitmap_init::$1 [256] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
-Simple Condition (bool~) bitmap_init::$2 [260] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
-Simple Condition (bool~) bitmap_init::$9 [276] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
-Simple Condition (bool~) bitmap_init::$11 [280] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) bitmap_clear::$1 [296] if((byte) bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2
-Simple Condition (bool~) bitmap_clear::$2 [300] if((byte) bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1
+Simple Condition (bool~) main::$7 [145] if((byte) main::i#1!=rangelast(0,SIZE-1)) goto main::@1
+Simple Condition (bool~) main::$8 [148] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@6
+Simple Condition (bool~) point_init::abs16s1_$0 [165] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::abs16s1_@1
+Simple Condition (bool~) point_init::abs16s2_$0 [180] if((signed word) point_init::y_diff#0<(signed byte) 0) goto point_init::abs16s2_@1
+Simple Condition (bool~) point_init::$8 [193] if((word) point_init::abs16s1_return#2>(word) point_init::abs16s2_return#2) goto point_init::@1
+Simple Condition (bool~) point_init::$12 [196] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::@7
+Simple Condition (bool~) screen_fill::$0 [234] if((byte) screen_fill::x#1!=rangelast(0,$27)) goto screen_fill::@2
+Simple Condition (bool~) screen_fill::$1 [238] if((byte) screen_fill::y#1!=rangelast(0,$18)) goto screen_fill::@1
+Simple Condition (bool~) bitmap_init::$1 [248] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
+Simple Condition (bool~) bitmap_init::$2 [252] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
+Simple Condition (bool~) bitmap_init::$9 [268] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
+Simple Condition (bool~) bitmap_init::$11 [272] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
+Simple Condition (bool~) bitmap_clear::$1 [288] if((byte) bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2
+Simple Condition (bool~) bitmap_clear::$2 [292] if((byte) bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Rewriting || if()-condition to two if()s [41] (bool~) divr16s::$2 ← (bool~) divr16s::$0 || (bool~) divr16s::$1
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant right-side identified [90] (word[SIZE]) x_cur ← { fill( SIZE, 0) }
-Constant right-side identified [91] (word[SIZE]) y_cur ← { fill( SIZE, 0) }
-Constant right-side identified [92] (signed byte[SIZE]) x_add ← { fill( SIZE, 0) }
-Constant right-side identified [93] (signed byte[SIZE]) y_add ← { fill( SIZE, 0) }
-Constant right-side identified [94] (byte[SIZE]) delay ← { fill( SIZE, 0) }
-Constant right-side identified [245] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-Constant right-side identified [246] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-Constant right-side identified [247] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
 Constant (const byte) divr16s::neg#0 = 0
@@ -1582,11 +1561,6 @@ Constant (const word) divr16s::dividendu#0 = 0
 Constant (const word) divr16s::remu#0 = 0
 Constant (const byte) divr16s::neg#1 = 1
 Constant (const word) divr16s::divisoru#0 = 0
-Constant (const word[SIZE]) x_cur = { fill( SIZE, 0) }
-Constant (const word[SIZE]) y_cur = { fill( SIZE, 0) }
-Constant (const signed byte[SIZE]) x_add = { fill( SIZE, 0) }
-Constant (const signed byte[SIZE]) y_add = { fill( SIZE, 0) }
-Constant (const byte[SIZE]) delay = { fill( SIZE, 0) }
 Constant (const byte*) main::vicSelectGfxBank1_gfx#0 = SCREEN
 Constant (const byte*) main::toD0181_screen#0 = SCREEN
 Constant (const byte*) main::toD0181_gfx#0 = BITMAP
@@ -1597,9 +1571,6 @@ Constant (const byte) main::i#0 = 0
 Constant (const signed word) divr16s::dividend#0 = 0
 Constant (const byte) screen_fill::y#0 = 0
 Constant (const byte) screen_fill::x#0 = 0
-Constant (const byte[$100]) bitmap_plot_ylo = { fill( $100, 0) }
-Constant (const byte[$100]) bitmap_plot_yhi = { fill( $100, 0) }
-Constant (const byte[$100]) bitmap_plot_bit = { fill( $100, 0) }
 Constant (const byte) bitmap_init::bits#0 = $80
 Constant (const byte) bitmap_init::x#0 = 0
 Constant (const byte) bitmap_init::bits#2 = $80
@@ -1612,28 +1583,28 @@ Constant (const word) main::vicSelectGfxBank1_toDd001_$0 = (word)main::vicSelect
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [151] if(true) goto main::@6
+if() condition always true - replacing block destination [146] if(true) goto main::@6
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [23] divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value [25] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
-Resolved ranged next value [148] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [150] if(main::i#1!=rangelast(0,SIZE-1)) goto main::@1 to (const byte) SIZE-(byte) 1+(number) 1
-Resolved ranged next value [237] screen_fill::x#1 ← ++ screen_fill::x#2 to ++
-Resolved ranged comparison value [239] if(screen_fill::x#1!=rangelast(0,$27)) goto screen_fill::@2 to (number) $28
-Resolved ranged next value [241] screen_fill::y#1 ← ++ screen_fill::y#4 to ++
-Resolved ranged comparison value [243] if(screen_fill::y#1!=rangelast(0,$18)) goto screen_fill::@1 to (number) $19
-Resolved ranged next value [258] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
-Resolved ranged comparison value [260] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
-Resolved ranged next value [278] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
-Resolved ranged comparison value [280] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
-Resolved ranged next value [294] bitmap_clear::x#1 ← ++ bitmap_clear::x#2 to ++
-Resolved ranged comparison value [296] if(bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2 to (number) $c8
-Resolved ranged next value [298] bitmap_clear::y#1 ← ++ bitmap_clear::y#4 to ++
-Resolved ranged comparison value [300] if(bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1 to (number) $28
+Resolved ranged next value [143] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [145] if(main::i#1!=rangelast(0,SIZE-1)) goto main::@1 to (const byte) SIZE-(byte) 1+(number) 1
+Resolved ranged next value [232] screen_fill::x#1 ← ++ screen_fill::x#2 to ++
+Resolved ranged comparison value [234] if(screen_fill::x#1!=rangelast(0,$27)) goto screen_fill::@2 to (number) $28
+Resolved ranged next value [236] screen_fill::y#1 ← ++ screen_fill::y#4 to ++
+Resolved ranged comparison value [238] if(screen_fill::y#1!=rangelast(0,$18)) goto screen_fill::@1 to (number) $19
+Resolved ranged next value [250] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
+Resolved ranged comparison value [252] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
+Resolved ranged next value [270] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
+Resolved ranged comparison value [272] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
+Resolved ranged next value [286] bitmap_clear::x#1 ← ++ bitmap_clear::x#2 to ++
+Resolved ranged comparison value [288] if(bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2 to (number) $c8
+Resolved ranged next value [290] bitmap_clear::y#1 ← ++ bitmap_clear::y#4 to ++
+Resolved ranged comparison value [292] if(bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1 to (number) $28
 Simplifying constant evaluating to zero (word)(const signed word) divr16s::dividend#0 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero bitmap_plot_yhi in [285] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_yhi + (byte) 0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) 0)
-Simplifying expression containing zero bitmap_plot_ylo in [285] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_yhi) w= *((const byte[$100]) bitmap_plot_ylo + (byte) 0)
+Simplifying expression containing zero bitmap_plot_yhi in [277] (word~) bitmap_clear::$3 ← *((const byte*) bitmap_plot_yhi + (byte) 0) w= *((const byte*) bitmap_plot_ylo + (byte) 0)
+Simplifying expression containing zero bitmap_plot_ylo in [277] (word~) bitmap_clear::$3 ← *((const byte*) bitmap_plot_yhi) w= *((const byte*) bitmap_plot_ylo + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const word) divr16s::dividendu#0
 Eliminating unused constant (const word) divr16s::remu#0
@@ -1732,15 +1703,15 @@ Inlining Noop Cast [18] (word) divr16s::remu#2 ← (word)(signed word) divr16s::
 Inlining Noop Cast [24] (word) divr16s::divisoru#2 ← (word)(signed word) divr16s::divisor#0 keeping divr16s::divisor#0
 Inlining Noop Cast [33] (signed word) divr16s::return#0 ← (signed word)(word) divr16s::resultu#0 keeping divr16s::resultu#0
 Inlining Noop Cast [34] (signed word~) divr16s::$18 ← (signed word)(word) divr16s::resultu#0 keeping divr16s::resultu#0
-Inlining Noop Cast [60] (signed word~) point_init::$0 ← (signed word)*((const word[SIZE]) x_end + (byte~) point_init::$18) keeping *(x_end + point_init::$18)
-Inlining Noop Cast [61] (signed word~) point_init::$1 ← (signed word)*((const word[SIZE]) x_start + (byte~) point_init::$18) keeping *(x_start + point_init::$18)
+Inlining Noop Cast [60] (signed word~) point_init::$0 ← (signed word)*((const word*) x_end + (byte~) point_init::$18) keeping *(x_end + point_init::$18)
+Inlining Noop Cast [61] (signed word~) point_init::$1 ← (signed word)*((const word*) x_start + (byte~) point_init::$18) keeping *(x_start + point_init::$18)
 Inlining Noop Cast [69] (word) point_init::abs16s1_return#1 ← (word)(signed word) point_init::x_diff#1 keeping point_init::x_diff#1
 Inlining Noop Cast [74] (word) point_init::abs16s2_return#1 ← (word)(signed word) point_init::y_diff#0 keeping point_init::y_diff#0
 Successful SSA optimization Pass2NopCastInlining
 Rewriting multiplication to use shift [51] (byte~) main::$10 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
 Rewriting multiplication to use shift [59] (byte~) point_init::$18 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
 Rewriting multiplication to use shift [78] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift [79] (word~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$20) * (byte) $10
+Rewriting multiplication to use shift [79] (word~) point_init::$9 ← *((const word*) x_start + (byte~) point_init::$20) * (byte) $10
 Rewriting multiplication to use shift [82] (word~) point_init::$11 ← (word~) point_init::$10 * (byte) $10
 Rewriting division to use shift [93] (byte~) point_init::$16 ← (byte~) point_init::$14 / (byte) $10
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -1814,8 +1785,6 @@ Added new block during phi lifting bitmap_init::@12(between bitmap_init::@5 and 
 Added new block during phi lifting bitmap_clear::@5(between bitmap_clear::@3 and bitmap_clear::@1)
 Added new block during phi lifting bitmap_clear::@6(between bitmap_clear::@2 and bitmap_clear::@2)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @12
-Adding NOP phi() at start of @16
 Adding NOP phi() at start of @19
 Adding NOP phi() at start of @20
 Adding NOP phi() at start of @end
@@ -1836,47 +1805,45 @@ Adding NOP phi() at start of bitmap_init
 Adding NOP phi() at start of bitmap_init::@3
 Adding NOP phi() at start of bitmap_init::@4
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to bitmap_init:19 bitmap_clear:21 screen_fill:23 point_init:27 bitmap_plot:31 
-Calls in [point_init] to divr16s:69 
-Calls in [divr16s] to divr16u:90 
+Calls in [] to main:2 
+Calls in [main] to bitmap_init:17 bitmap_clear:19 screen_fill:21 point_init:25 bitmap_plot:29 
+Calls in [point_init] to divr16s:67 
+Calls in [divr16s] to divr16u:88 
 
 Created 29 initial phi equivalence classes
-Coalesced [37] main::i#5 ← main::i#1
-Coalesced [86] divr16s::neg#10 ← divr16s::neg#3
-Coalesced [95] divr16s::return#6 ← divr16s::return#1
-Coalesced [102] divr16s::neg#9 ← divr16s::neg#2
-Coalesced [105] divr16u::rem#10 ← divr16u::rem#3
-Coalesced [112] divr16u::rem#13 ← divr16u::rem#1
-Coalesced [119] divr16u::rem#15 ← divr16u::rem#2
-Coalesced [120] divr16u::return#6 ← divr16u::quotient#2
-Coalesced [126] divr16u::rem#11 ← divr16u::rem#9
-Coalesced [127] divr16u::dividend#8 ← divr16u::dividend#0
-Coalesced [128] divr16u::quotient#9 ← divr16u::return#0
-Coalesced [129] divr16u::i#7 ← divr16u::i#1
-Coalesced [130] divr16u::rem#14 ← divr16u::rem#5
-Coalesced [131] divr16u::return#5 ← divr16u::quotient#1
-Coalesced [132] divr16u::rem#12 ← divr16u::rem#0
-Coalesced [135] screen_fill::screen#7 ← screen_fill::screen#3
-Coalesced [144] screen_fill::screen#6 ← screen_fill::screen#1
-Coalesced [145] screen_fill::y#5 ← screen_fill::y#1
-Coalesced (already) [146] screen_fill::screen#8 ← screen_fill::screen#1
-Coalesced [147] screen_fill::x#3 ← screen_fill::x#1
-Coalesced [151] bitmap_clear::bitmap#7 ← bitmap_clear::bitmap#3
-Coalesced [160] bitmap_clear::bitmap#6 ← bitmap_clear::bitmap#1
-Coalesced [161] bitmap_clear::y#5 ← bitmap_clear::y#1
-Coalesced (already) [162] bitmap_clear::bitmap#8 ← bitmap_clear::bitmap#1
-Coalesced [163] bitmap_clear::x#3 ← bitmap_clear::x#1
-Coalesced [183] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
-Coalesced [188] bitmap_init::y#5 ← bitmap_init::y#1
-Coalesced [189] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
-Coalesced (already) [190] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
-Coalesced [191] bitmap_init::bits#5 ← bitmap_init::bits#4
-Coalesced [192] bitmap_init::x#5 ← bitmap_init::x#1
-Coalesced [193] bitmap_init::bits#6 ← bitmap_init::bits#1
+Coalesced [35] main::i#5 ← main::i#1
+Coalesced [84] divr16s::neg#10 ← divr16s::neg#3
+Coalesced [93] divr16s::return#6 ← divr16s::return#1
+Coalesced [100] divr16s::neg#9 ← divr16s::neg#2
+Coalesced [103] divr16u::rem#10 ← divr16u::rem#3
+Coalesced [110] divr16u::rem#13 ← divr16u::rem#1
+Coalesced [117] divr16u::rem#15 ← divr16u::rem#2
+Coalesced [118] divr16u::return#6 ← divr16u::quotient#2
+Coalesced [124] divr16u::rem#11 ← divr16u::rem#9
+Coalesced [125] divr16u::dividend#8 ← divr16u::dividend#0
+Coalesced [126] divr16u::quotient#9 ← divr16u::return#0
+Coalesced [127] divr16u::i#7 ← divr16u::i#1
+Coalesced [128] divr16u::rem#14 ← divr16u::rem#5
+Coalesced [129] divr16u::return#5 ← divr16u::quotient#1
+Coalesced [130] divr16u::rem#12 ← divr16u::rem#0
+Coalesced [133] screen_fill::screen#7 ← screen_fill::screen#3
+Coalesced [142] screen_fill::screen#6 ← screen_fill::screen#1
+Coalesced [143] screen_fill::y#5 ← screen_fill::y#1
+Coalesced (already) [144] screen_fill::screen#8 ← screen_fill::screen#1
+Coalesced [145] screen_fill::x#3 ← screen_fill::x#1
+Coalesced [149] bitmap_clear::bitmap#7 ← bitmap_clear::bitmap#3
+Coalesced [158] bitmap_clear::bitmap#6 ← bitmap_clear::bitmap#1
+Coalesced [159] bitmap_clear::y#5 ← bitmap_clear::y#1
+Coalesced (already) [160] bitmap_clear::bitmap#8 ← bitmap_clear::bitmap#1
+Coalesced [161] bitmap_clear::x#3 ← bitmap_clear::x#1
+Coalesced [181] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
+Coalesced [186] bitmap_init::y#5 ← bitmap_init::y#1
+Coalesced [187] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
+Coalesced (already) [188] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
+Coalesced [189] bitmap_init::bits#5 ← bitmap_init::bits#4
+Coalesced [190] bitmap_init::x#5 ← bitmap_init::x#1
+Coalesced [191] bitmap_init::bits#6 ← bitmap_init::bits#1
 Coalesced down to 21 phi equivalence classes
-Culled Empty Block (label) @12
-Culled Empty Block (label) @16
 Culled Empty Block (label) @20
 Culled Empty Block (label) main::vicSelectGfxBank1_toDd001_@return
 Culled Empty Block (label) main::@15
@@ -1982,8 +1949,8 @@ main::@1: scope:[main]  from main::@6 main::@8
   to:main::@7
 main::@7: scope:[main]  from main::@1
   [21] (byte~) main::$10 ← (byte) main::i#2 << (byte) 1
-  [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10)
-  [23] (byte) bitmap_plot::y#0 ← *((const byte[SIZE]) y_start + (byte) main::i#2)
+  [22] (word) bitmap_plot::x#0 ← *((const word*) x_start + (byte~) main::$10)
+  [23] (byte) bitmap_plot::y#0 ← *((const byte*) y_start + (byte) main::i#2)
   [24] call bitmap_plot 
   to:main::@8
 main::@8: scope:[main]  from main::@7
@@ -1999,11 +1966,11 @@ main::@3: scope:[main]  from main::@2
 
 (void()) bitmap_plot((word) bitmap_plot::x , (byte) bitmap_plot::y)
 bitmap_plot: scope:[bitmap_plot]  from main::@7
-  [29] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0)
+  [29] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0)
   [30] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8
   [31] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1
   [32] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0
-  [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2)
+  [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2)
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   [34] return 
@@ -2012,9 +1979,9 @@ bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
 (void()) point_init((byte) point_init::point_idx)
 point_init: scope:[point_init]  from main::@1
   [35] (byte~) point_init::$18 ← (byte) point_init::point_idx#0 << (byte) 1
-  [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word[SIZE]) x_end + (byte~) point_init::$18) - (signed word)*((const word[SIZE]) x_start + (byte~) point_init::$18)
-  [37] (signed word~) point_init::$3 ← (signed word)*((const byte[SIZE]) y_end + (byte) point_init::point_idx#0)
-  [38] (signed word~) point_init::$4 ← (signed word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0)
+  [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word*) x_end + (byte~) point_init::$18) - (signed word)*((const word*) x_start + (byte~) point_init::$18)
+  [37] (signed word~) point_init::$3 ← (signed word)*((const byte*) y_end + (byte) point_init::point_idx#0)
+  [38] (signed word~) point_init::$4 ← (signed word)*((const byte*) y_start + (byte) point_init::point_idx#0)
   [39] (signed word) point_init::y_diff#0 ← (signed word~) point_init::$3 - (signed word~) point_init::$4
   to:point_init::abs16s1
 point_init::abs16s1: scope:[point_init]  from point_init
@@ -2040,12 +2007,12 @@ point_init::@6: scope:[point_init]  from point_init::abs16s2_@return
   to:point_init::@2
 point_init::@2: scope:[point_init]  from point_init::@6 point_init::@7
   [47] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 << (byte) 1
-  [48] (word~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$20) << (byte) 4
-  [49] *((const word[SIZE]) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9
-  [50] (word~) point_init::$10 ← (word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0)
+  [48] (word~) point_init::$9 ← *((const word*) x_start + (byte~) point_init::$20) << (byte) 4
+  [49] *((const word*) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9
+  [50] (word~) point_init::$10 ← (word)*((const byte*) y_start + (byte) point_init::point_idx#0)
   [51] (word~) point_init::$11 ← (word~) point_init::$10 << (byte) 4
-  [52] *((const word[SIZE]) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11
-  [53] *((const byte[SIZE]) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY
+  [52] *((const word*) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11
+  [53] *((const byte*) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY
   to:point_init::@return
 point_init::@return: scope:[point_init]  from point_init::@2
   [54] return 
@@ -2054,7 +2021,7 @@ point_init::@1: scope:[point_init]  from point_init::@6
   [55] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::@4
   to:point_init::@3
 point_init::@3: scope:[point_init]  from point_init::@1
-  [56] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10
+  [56] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10
   to:point_init::@5
 point_init::@5: scope:[point_init]  from point_init::@3 point_init::@4
   [57] (signed word) divr16s::divisor#0 ← (signed word) point_init::x_diff#1
@@ -2066,10 +2033,10 @@ point_init::@7: scope:[point_init]  from point_init::@5
   [61] (signed word) point_init::x_stepf#0 ← (signed word) divr16s::return#3
   [62] (byte~) point_init::$14 ← > (signed word) point_init::x_stepf#0
   [63] (byte~) point_init::$16 ← (byte~) point_init::$14 >> (byte) 4
-  [64] *((const signed byte[SIZE]) y_add + (byte) point_init::point_idx#0) ← (signed byte)(byte~) point_init::$16
+  [64] *((const signed byte*) y_add + (byte) point_init::point_idx#0) ← (signed byte)(byte~) point_init::$16
   to:point_init::@2
 point_init::@4: scope:[point_init]  from point_init::@1
-  [65] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10
+  [65] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10
   to:point_init::@5
 point_init::abs16s2_@1: scope:[point_init]  from point_init::abs16s2
   [66] (signed word) point_init::abs16s2_return#0 ← - (signed word) point_init::y_diff#0
@@ -2193,7 +2160,7 @@ screen_fill::@return: scope:[screen_fill]  from screen_fill::@3
 
 (void()) bitmap_clear()
 bitmap_clear: scope:[bitmap_clear]  from main::@5
-  [119] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_yhi) w= *((const byte[$100]) bitmap_plot_ylo)
+  [119] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_yhi) w= *((const byte*) bitmap_plot_ylo)
   [120] (byte*) bitmap_clear::bitmap#5 ← (byte*)(word) bitmap_clear::bitmap#0
   to:bitmap_clear::@1
 bitmap_clear::@1: scope:[bitmap_clear]  from bitmap_clear bitmap_clear::@3
@@ -2223,7 +2190,7 @@ bitmap_init: scope:[bitmap_init]  from main::@4
 bitmap_init::@1: scope:[bitmap_init]  from bitmap_init bitmap_init::@2
   [131] (byte) bitmap_init::x#2 ← phi( bitmap_init/(byte) 0 bitmap_init::@2/(byte) bitmap_init::x#1 )
   [131] (byte) bitmap_init::bits#3 ← phi( bitmap_init/(byte) $80 bitmap_init::@2/(byte) bitmap_init::bits#4 )
-  [132] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
+  [132] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
   [133] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1
   [134] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@6
   to:bitmap_init::@2
@@ -2241,9 +2208,9 @@ bitmap_init::@3: scope:[bitmap_init]  from bitmap_init::@2 bitmap_init::@4
   [140] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
   [141] (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2
   [142] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4
-  [143] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5
+  [143] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5
   [144] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2
-  [145] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
+  [145] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
   [146] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4
   to:bitmap_init::@5
 bitmap_init::@5: scope:[bitmap_init]  from bitmap_init::@3
@@ -2727,13 +2694,13 @@ main: {
     lda.z i
     asl
     sta.z __10
-    // [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuz2 
+    // [22] (word) bitmap_plot::x#0 ← *((const word*) x_start + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuz2 
     ldy.z __10
     lda x_start,y
     sta.z bitmap_plot.x
     lda x_start+1,y
     sta.z bitmap_plot.x+1
-    // [23] (byte) bitmap_plot::y#0 ← *((const byte[SIZE]) y_start + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [23] (byte) bitmap_plot::y#0 ← *((const byte*) y_start + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda y_start,y
     sta.z bitmap_plot.y
@@ -2772,7 +2739,7 @@ bitmap_plot: {
     .label y = $26
     .label plotter = $27
     .label plotter_1 = $2b
-    // [29] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
+    // [29] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
     ldy.z y
     lda bitmap_plot_yhi,y
     sta.z plotter+1
@@ -2796,7 +2763,7 @@ bitmap_plot: {
     // [32] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 -- vbuz1=_lo_vwuz2 
     lda.z x
     sta.z __2
-    // [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
+    // [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
     ldy #0
     lda (plotter_1),y
     ldy.z __2
@@ -2834,7 +2801,7 @@ point_init: {
     lda.z point_idx
     asl
     sta.z __18
-    // [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word[SIZE]) x_end + (byte~) point_init::$18) - (signed word)*((const word[SIZE]) x_start + (byte~) point_init::$18) -- vwsz1=pwsc1_derefidx_vbuz2_minus_pwsc2_derefidx_vbuz2 
+    // [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word*) x_end + (byte~) point_init::$18) - (signed word)*((const word*) x_start + (byte~) point_init::$18) -- vwsz1=pwsc1_derefidx_vbuz2_minus_pwsc2_derefidx_vbuz2 
     ldy.z __18
     sec
     lda x_end,y
@@ -2843,13 +2810,13 @@ point_init: {
     lda x_end+1,y
     sbc x_start+1,y
     sta.z x_diff+1
-    // [37] (signed word~) point_init::$3 ← (signed word)*((const byte[SIZE]) y_end + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
+    // [37] (signed word~) point_init::$3 ← (signed word)*((const byte*) y_end + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_end,y
     sta.z __3
     lda #0
     sta.z __3+1
-    // [38] (signed word~) point_init::$4 ← (signed word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
+    // [38] (signed word~) point_init::$4 ← (signed word)*((const byte*) y_start + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_start,y
     sta.z __4
@@ -2924,7 +2891,7 @@ point_init: {
     lda.z point_idx
     asl
     sta.z __20
-    // [48] (word~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$20) << (byte) 4 -- vwuz1=pwuc1_derefidx_vbuz2_rol_4 
+    // [48] (word~) point_init::$9 ← *((const word*) x_start + (byte~) point_init::$20) << (byte) 4 -- vwuz1=pwuc1_derefidx_vbuz2_rol_4 
     ldy.z __20
     lda x_start,y
     sta.z __9
@@ -2938,13 +2905,13 @@ point_init: {
     rol.z __9+1
     asl.z __9
     rol.z __9+1
-    // [49] *((const word[SIZE]) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 -- pwuc1_derefidx_vbuz1=vwuz2 
+    // [49] *((const word*) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 -- pwuc1_derefidx_vbuz1=vwuz2 
     ldy.z __20
     lda.z __9
     sta x_cur,y
     lda.z __9+1
     sta x_cur+1,y
-    // [50] (word~) point_init::$10 ← (word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
+    // [50] (word~) point_init::$10 ← (word)*((const byte*) y_start + (byte) point_init::point_idx#0) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_start,y
     sta.z __10
@@ -2963,13 +2930,13 @@ point_init: {
     rol.z __11+1
     asl.z __11
     rol.z __11+1
-    // [52] *((const word[SIZE]) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 -- pwuc1_derefidx_vbuz1=vwuz2 
+    // [52] *((const word*) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 -- pwuc1_derefidx_vbuz1=vwuz2 
     ldy.z __20
     lda.z __11
     sta y_cur,y
     lda.z __11+1
     sta y_cur+1,y
-    // [53] *((const byte[SIZE]) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [53] *((const byte*) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #DELAY
     ldy.z point_idx
     sta delay,y
@@ -2987,7 +2954,7 @@ point_init: {
     jmp __b3
     // point_init::@3
   __b3:
-    // [56] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 -- pbsc1_derefidx_vbuz1=vbsc2 
+    // [56] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 -- pbsc1_derefidx_vbuz1=vbsc2 
     // x add = 1.0
     lda #$10
     ldy.z point_idx
@@ -3032,14 +2999,14 @@ point_init: {
     lsr
     lsr
     sta.z __16
-    // [64] *((const signed byte[SIZE]) y_add + (byte) point_init::point_idx#0) ← (signed byte)(byte~) point_init::$16 -- pbsc1_derefidx_vbuz1=vbsz2 
+    // [64] *((const signed byte*) y_add + (byte) point_init::point_idx#0) ← (signed byte)(byte~) point_init::$16 -- pbsc1_derefidx_vbuz1=vbsz2 
     lda.z __16
     ldy.z point_idx
     sta y_add,y
     jmp __b2
     // point_init::@4
   __b4:
-    // [65] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 -- pbsc1_derefidx_vbuz1=vbsc2 
+    // [65] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 -- pbsc1_derefidx_vbuz1=vbsc2 
     // x add = -1.0
     lda #-$10
     ldy.z point_idx
@@ -3438,7 +3405,7 @@ bitmap_clear: {
     .label bitmap_1 = $1a
     .label x = $1c
     .label y = $19
-    // [119] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_yhi) w= *((const byte[$100]) bitmap_plot_ylo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    // [119] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_yhi) w= *((const byte*) bitmap_plot_ylo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda bitmap_plot_ylo
     sta.z bitmap
     lda bitmap_plot_yhi
@@ -3532,7 +3499,7 @@ bitmap_init: {
     jmp __b1
     // bitmap_init::@1
   __b1:
-    // [132] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [132] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z bits
     ldy.z x
     sta bitmap_plot_bit,y
@@ -3594,14 +3561,14 @@ bitmap_init: {
     lda.z __7
     ora.z __4
     sta.z __5
-    // [143] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [143] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __5
     ldy.z y
     sta bitmap_plot_ylo,y
     // [144] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuz1=_hi_pbuz2 
     lda.z yoffs+1
     sta.z __6
-    // [145] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [145] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __6
     ldy.z y
     sta bitmap_plot_yhi,y
@@ -3670,19 +3637,19 @@ Statement [10] *((const byte*) CIA2_PORT_A) ← (const byte) main::vicSelectGfxB
 Statement [12] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [21] (byte~) main::$10 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$10 ] ( main:2 [ main::i#2 main::$10 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10) [ main::i#2 bitmap_plot::x#0 ] ( main:2 [ main::i#2 bitmap_plot::x#0 ] ) always clobbers reg byte a 
+Statement [22] (word) bitmap_plot::x#0 ← *((const word*) x_start + (byte~) main::$10) [ main::i#2 bitmap_plot::x#0 ] ( main:2 [ main::i#2 bitmap_plot::x#0 ] ) always clobbers reg byte a 
 Statement [27] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [29] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
+Statement [29] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
 Statement [30] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
 Statement [31] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
 Statement [32] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 [ bitmap_plot::plotter#1 bitmap_plot::$2 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::plotter#1 bitmap_plot::$2 ] ) always clobbers reg byte a 
-Statement [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:2::bitmap_plot:24 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:2::bitmap_plot:24 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [35] (byte~) point_init::$18 ← (byte) point_init::point_idx#0 << (byte) 1 [ point_init::point_idx#0 point_init::$18 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$18 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:34 [ point_init::point_idx#0 ]
-Statement [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word[SIZE]) x_end + (byte~) point_init::$18) - (signed word)*((const word[SIZE]) x_start + (byte~) point_init::$18) [ point_init::point_idx#0 point_init::x_diff#1 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 ] ) always clobbers reg byte a 
-Statement [37] (signed word~) point_init::$3 ← (signed word)*((const byte[SIZE]) y_end + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::x_diff#1 point_init::$3 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::$3 ] ) always clobbers reg byte a 
-Statement [38] (signed word~) point_init::$4 ← (signed word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::x_diff#1 point_init::$3 point_init::$4 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::$3 point_init::$4 ] ) always clobbers reg byte a 
+Statement [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word*) x_end + (byte~) point_init::$18) - (signed word)*((const word*) x_start + (byte~) point_init::$18) [ point_init::point_idx#0 point_init::x_diff#1 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 ] ) always clobbers reg byte a 
+Statement [37] (signed word~) point_init::$3 ← (signed word)*((const byte*) y_end + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::x_diff#1 point_init::$3 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::$3 ] ) always clobbers reg byte a 
+Statement [38] (signed word~) point_init::$4 ← (signed word)*((const byte*) y_start + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::x_diff#1 point_init::$3 point_init::$4 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::$3 point_init::$4 ] ) always clobbers reg byte a 
 Statement [39] (signed word) point_init::y_diff#0 ← (signed word~) point_init::$3 - (signed word~) point_init::$4 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
 Statement [40] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::abs16s1_@1 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
 Statement [41] (word) point_init::abs16s1_return#6 ← (word)(signed word) point_init::x_diff#1 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#6 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#6 ] ) always clobbers reg byte a 
@@ -3690,22 +3657,22 @@ Statement [43] if((signed word) point_init::y_diff#0<(signed byte) 0) goto point
 Statement [44] (word) point_init::abs16s2_return#6 ← (word)(signed word) point_init::y_diff#0 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#6 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#6 ] ) always clobbers reg byte a 
 Statement [46] if((word) point_init::abs16s1_return#2>(word) point_init::abs16s2_return#2) goto point_init::@1 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
 Statement [47] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 << (byte) 1 [ point_init::point_idx#0 point_init::$20 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 ] ) always clobbers reg byte a 
-Statement [48] (word~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$20) << (byte) 4 [ point_init::point_idx#0 point_init::$20 point_init::$9 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 point_init::$9 ] ) always clobbers reg byte a 
+Statement [48] (word~) point_init::$9 ← *((const word*) x_start + (byte~) point_init::$20) << (byte) 4 [ point_init::point_idx#0 point_init::$20 point_init::$9 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 point_init::$9 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:55 [ point_init::$20 ]
-Statement [49] *((const word[SIZE]) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 [ point_init::point_idx#0 point_init::$20 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 ] ) always clobbers reg byte a 
-Statement [50] (word~) point_init::$10 ← (word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::$20 point_init::$10 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 point_init::$10 ] ) always clobbers reg byte a 
+Statement [49] *((const word*) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 [ point_init::point_idx#0 point_init::$20 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 ] ) always clobbers reg byte a 
+Statement [50] (word~) point_init::$10 ← (word)*((const byte*) y_start + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::$20 point_init::$10 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 point_init::$10 ] ) always clobbers reg byte a 
 Statement [51] (word~) point_init::$11 ← (word~) point_init::$10 << (byte) 4 [ point_init::point_idx#0 point_init::$20 point_init::$11 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 point_init::$11 ] ) always clobbers reg byte a 
-Statement [52] *((const word[SIZE]) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 [ point_init::point_idx#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 ] ) always clobbers reg byte a 
-Statement [53] *((const byte[SIZE]) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY [ ] ( main:2::point_init:20 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [52] *((const word*) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 [ point_init::point_idx#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 ] ) always clobbers reg byte a 
+Statement [53] *((const byte*) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY [ ] ( main:2::point_init:20 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [55] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::@4 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
-Statement [56] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
+Statement [56] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
 Statement [57] (signed word) divr16s::divisor#0 ← (signed word) point_init::x_diff#1 [ point_init::point_idx#0 point_init::y_diff#0 divr16s::divisor#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::y_diff#0 divr16s::divisor#0 ] ) always clobbers reg byte a 
 Statement [58] (signed word) divr16s::rem#0 ← (signed word) point_init::y_diff#0 [ point_init::point_idx#0 divr16s::divisor#0 divr16s::rem#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 divr16s::divisor#0 divr16s::rem#0 ] ) always clobbers reg byte a 
 Statement [60] (signed word) divr16s::return#3 ← (signed word) divr16s::return#2 [ point_init::point_idx#0 divr16s::return#3 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 divr16s::return#3 ] ) always clobbers reg byte a 
 Statement [61] (signed word) point_init::x_stepf#0 ← (signed word) divr16s::return#3 [ point_init::point_idx#0 point_init::x_stepf#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_stepf#0 ] ) always clobbers reg byte a 
 Statement [62] (byte~) point_init::$14 ← > (signed word) point_init::x_stepf#0 [ point_init::point_idx#0 point_init::$14 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$14 ] ) always clobbers reg byte a 
 Statement [63] (byte~) point_init::$16 ← (byte~) point_init::$14 >> (byte) 4 [ point_init::point_idx#0 point_init::$16 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$16 ] ) always clobbers reg byte a 
-Statement [65] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
+Statement [65] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
 Statement [66] (signed word) point_init::abs16s2_return#0 ← - (signed word) point_init::y_diff#0 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#0 ] ) always clobbers reg byte a 
 Statement [67] (word) point_init::abs16s2_return#5 ← (word)(signed word) point_init::abs16s2_return#0 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#5 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#5 ] ) always clobbers reg byte a 
 Statement [68] (signed word) point_init::abs16s1_return#0 ← - (signed word) point_init::x_diff#1 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#0 ] ) always clobbers reg byte a 
@@ -3736,7 +3703,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:21 [ screen
 Removing always clobbered register reg byte y as potential for zp[1]:21 [ screen_fill::y#4 screen_fill::y#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:24 [ screen_fill::x#2 screen_fill::x#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:24 [ screen_fill::x#2 screen_fill::x#1 ]
-Statement [119] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_yhi) w= *((const byte[$100]) bitmap_plot_ylo) [ bitmap_clear::bitmap#0 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#0 ] ) always clobbers reg byte a 
+Statement [119] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_yhi) w= *((const byte*) bitmap_plot_ylo) [ bitmap_clear::bitmap#0 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#0 ] ) always clobbers reg byte a 
 Statement [120] (byte*) bitmap_clear::bitmap#5 ← (byte*)(word) bitmap_clear::bitmap#0 [ bitmap_clear::bitmap#5 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#5 ] ) always clobbers reg byte a 
 Statement [123] *((byte*) bitmap_clear::bitmap#2) ← (byte) 0 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ( main:2::bitmap_clear:15 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:25 [ bitmap_clear::y#4 bitmap_clear::y#1 ]
@@ -3752,17 +3719,17 @@ Statement [8] *((const byte*) CIA2_PORT_A_DDR) ← (byte) 3 [ ] ( main:2 [ ] ) a
 Statement [10] *((const byte*) CIA2_PORT_A) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [21] (byte~) main::$10 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$10 ] ( main:2 [ main::i#2 main::$10 ] ) always clobbers reg byte a 
-Statement [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10) [ main::i#2 bitmap_plot::x#0 ] ( main:2 [ main::i#2 bitmap_plot::x#0 ] ) always clobbers reg byte a 
+Statement [22] (word) bitmap_plot::x#0 ← *((const word*) x_start + (byte~) main::$10) [ main::i#2 bitmap_plot::x#0 ] ( main:2 [ main::i#2 bitmap_plot::x#0 ] ) always clobbers reg byte a 
 Statement [27] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [29] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
+Statement [29] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
 Statement [30] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
 Statement [31] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
 Statement [32] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 [ bitmap_plot::plotter#1 bitmap_plot::$2 ] ( main:2::bitmap_plot:24 [ main::i#2 bitmap_plot::plotter#1 bitmap_plot::$2 ] ) always clobbers reg byte a 
-Statement [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:2::bitmap_plot:24 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:2::bitmap_plot:24 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [35] (byte~) point_init::$18 ← (byte) point_init::point_idx#0 << (byte) 1 [ point_init::point_idx#0 point_init::$18 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$18 ] ) always clobbers reg byte a 
-Statement [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word[SIZE]) x_end + (byte~) point_init::$18) - (signed word)*((const word[SIZE]) x_start + (byte~) point_init::$18) [ point_init::point_idx#0 point_init::x_diff#1 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 ] ) always clobbers reg byte a 
-Statement [37] (signed word~) point_init::$3 ← (signed word)*((const byte[SIZE]) y_end + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::x_diff#1 point_init::$3 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::$3 ] ) always clobbers reg byte a 
-Statement [38] (signed word~) point_init::$4 ← (signed word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::x_diff#1 point_init::$3 point_init::$4 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::$3 point_init::$4 ] ) always clobbers reg byte a 
+Statement [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word*) x_end + (byte~) point_init::$18) - (signed word)*((const word*) x_start + (byte~) point_init::$18) [ point_init::point_idx#0 point_init::x_diff#1 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 ] ) always clobbers reg byte a 
+Statement [37] (signed word~) point_init::$3 ← (signed word)*((const byte*) y_end + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::x_diff#1 point_init::$3 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::$3 ] ) always clobbers reg byte a 
+Statement [38] (signed word~) point_init::$4 ← (signed word)*((const byte*) y_start + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::x_diff#1 point_init::$3 point_init::$4 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::$3 point_init::$4 ] ) always clobbers reg byte a 
 Statement [39] (signed word) point_init::y_diff#0 ← (signed word~) point_init::$3 - (signed word~) point_init::$4 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
 Statement [40] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::abs16s1_@1 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
 Statement [41] (word) point_init::abs16s1_return#6 ← (word)(signed word) point_init::x_diff#1 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#6 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#6 ] ) always clobbers reg byte a 
@@ -3770,21 +3737,21 @@ Statement [43] if((signed word) point_init::y_diff#0<(signed byte) 0) goto point
 Statement [44] (word) point_init::abs16s2_return#6 ← (word)(signed word) point_init::y_diff#0 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#6 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#6 ] ) always clobbers reg byte a 
 Statement [46] if((word) point_init::abs16s1_return#2>(word) point_init::abs16s2_return#2) goto point_init::@1 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
 Statement [47] (byte~) point_init::$20 ← (byte) point_init::point_idx#0 << (byte) 1 [ point_init::point_idx#0 point_init::$20 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 ] ) always clobbers reg byte a 
-Statement [48] (word~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$20) << (byte) 4 [ point_init::point_idx#0 point_init::$20 point_init::$9 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 point_init::$9 ] ) always clobbers reg byte a 
-Statement [49] *((const word[SIZE]) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 [ point_init::point_idx#0 point_init::$20 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 ] ) always clobbers reg byte a 
-Statement [50] (word~) point_init::$10 ← (word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::$20 point_init::$10 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 point_init::$10 ] ) always clobbers reg byte a 
+Statement [48] (word~) point_init::$9 ← *((const word*) x_start + (byte~) point_init::$20) << (byte) 4 [ point_init::point_idx#0 point_init::$20 point_init::$9 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 point_init::$9 ] ) always clobbers reg byte a 
+Statement [49] *((const word*) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 [ point_init::point_idx#0 point_init::$20 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 ] ) always clobbers reg byte a 
+Statement [50] (word~) point_init::$10 ← (word)*((const byte*) y_start + (byte) point_init::point_idx#0) [ point_init::point_idx#0 point_init::$20 point_init::$10 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 point_init::$10 ] ) always clobbers reg byte a 
 Statement [51] (word~) point_init::$11 ← (word~) point_init::$10 << (byte) 4 [ point_init::point_idx#0 point_init::$20 point_init::$11 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$20 point_init::$11 ] ) always clobbers reg byte a 
-Statement [52] *((const word[SIZE]) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 [ point_init::point_idx#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 ] ) always clobbers reg byte a 
-Statement [53] *((const byte[SIZE]) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY [ ] ( main:2::point_init:20 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [52] *((const word*) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 [ point_init::point_idx#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 ] ) always clobbers reg byte a 
+Statement [53] *((const byte*) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY [ ] ( main:2::point_init:20 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [55] if((signed word) point_init::x_diff#1<(signed byte) 0) goto point_init::@4 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
-Statement [56] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
+Statement [56] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
 Statement [57] (signed word) divr16s::divisor#0 ← (signed word) point_init::x_diff#1 [ point_init::point_idx#0 point_init::y_diff#0 divr16s::divisor#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::y_diff#0 divr16s::divisor#0 ] ) always clobbers reg byte a 
 Statement [58] (signed word) divr16s::rem#0 ← (signed word) point_init::y_diff#0 [ point_init::point_idx#0 divr16s::divisor#0 divr16s::rem#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 divr16s::divisor#0 divr16s::rem#0 ] ) always clobbers reg byte a 
 Statement [60] (signed word) divr16s::return#3 ← (signed word) divr16s::return#2 [ point_init::point_idx#0 divr16s::return#3 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 divr16s::return#3 ] ) always clobbers reg byte a 
 Statement [61] (signed word) point_init::x_stepf#0 ← (signed word) divr16s::return#3 [ point_init::point_idx#0 point_init::x_stepf#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_stepf#0 ] ) always clobbers reg byte a 
 Statement [62] (byte~) point_init::$14 ← > (signed word) point_init::x_stepf#0 [ point_init::point_idx#0 point_init::$14 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$14 ] ) always clobbers reg byte a 
 Statement [63] (byte~) point_init::$16 ← (byte~) point_init::$14 >> (byte) 4 [ point_init::point_idx#0 point_init::$16 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::$16 ] ) always clobbers reg byte a 
-Statement [65] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
+Statement [65] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 ] ) always clobbers reg byte a 
 Statement [66] (signed word) point_init::abs16s2_return#0 ← - (signed word) point_init::y_diff#0 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#0 ] ) always clobbers reg byte a 
 Statement [67] (word) point_init::abs16s2_return#5 ← (word)(signed word) point_init::abs16s2_return#0 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#5 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#2 point_init::abs16s2_return#5 ] ) always clobbers reg byte a 
 Statement [68] (signed word) point_init::abs16s1_return#0 ← - (signed word) point_init::x_diff#1 [ point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#0 ] ( main:2::point_init:20 [ main::i#2 point_init::point_idx#0 point_init::x_diff#1 point_init::y_diff#0 point_init::abs16s1_return#0 ] ) always clobbers reg byte a 
@@ -3809,7 +3776,7 @@ Statement [98] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 [ divr
 Statement [102] if((word) divr16u::rem#5<(word) divr16u::divisor#0) goto divr16u::@3 [ divr16u::divisor#0 divr16u::i#2 divr16u::dividend#0 divr16u::rem#5 divr16u::quotient#1 ] ( main:2::point_init:20::divr16s:59::divr16u:79 [ main::i#2 point_init::point_idx#0 divr16s::neg#4 divr16u::divisor#0 divr16u::i#2 divr16u::dividend#0 divr16u::rem#5 divr16u::quotient#1 ] ) always clobbers reg byte a 
 Statement [104] (word) divr16u::rem#2 ← (word) divr16u::rem#5 - (word) divr16u::divisor#0 [ divr16u::divisor#0 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:2::point_init:20::divr16s:59::divr16u:79 [ main::i#2 point_init::point_idx#0 divr16s::neg#4 divr16u::divisor#0 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ) always clobbers reg byte a 
 Statement [112] *((byte*) screen_fill::screen#2) ← (const byte) screen_fill::ch#0 [ screen_fill::y#4 screen_fill::screen#2 screen_fill::x#2 ] ( main:2::screen_fill:17 [ screen_fill::y#4 screen_fill::screen#2 screen_fill::x#2 ] ) always clobbers reg byte a reg byte y 
-Statement [119] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_yhi) w= *((const byte[$100]) bitmap_plot_ylo) [ bitmap_clear::bitmap#0 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#0 ] ) always clobbers reg byte a 
+Statement [119] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_yhi) w= *((const byte*) bitmap_plot_ylo) [ bitmap_clear::bitmap#0 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#0 ] ) always clobbers reg byte a 
 Statement [120] (byte*) bitmap_clear::bitmap#5 ← (byte*)(word) bitmap_clear::bitmap#0 [ bitmap_clear::bitmap#5 ] ( main:2::bitmap_clear:15 [ bitmap_clear::bitmap#5 ] ) always clobbers reg byte a 
 Statement [123] *((byte*) bitmap_clear::bitmap#2) ← (byte) 0 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ( main:2::bitmap_clear:15 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ) always clobbers reg byte a reg byte y 
 Statement [140] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$7 ] ( main:2::bitmap_init:13 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$7 ] ) always clobbers reg byte a 
@@ -4083,13 +4050,13 @@ main: {
     // [21] (byte~) main::$10 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
-    // [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuaa 
+    // [22] (word) bitmap_plot::x#0 ← *((const word*) x_start + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda x_start,y
     sta.z bitmap_plot.x
     lda x_start+1,y
     sta.z bitmap_plot.x+1
-    // [23] (byte) bitmap_plot::y#0 ← *((const byte[SIZE]) y_start + (byte) main::i#2) -- vbuxx=pbuc1_derefidx_vbuz1 
+    // [23] (byte) bitmap_plot::y#0 ← *((const byte*) y_start + (byte) main::i#2) -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy.z i
     ldx y_start,y
     // [24] call bitmap_plot 
@@ -4124,7 +4091,7 @@ bitmap_plot: {
     .label __1 = $e
     .label x = $a
     .label plotter = $c
-    // [29] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+    // [29] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -4146,7 +4113,7 @@ bitmap_plot: {
     sta.z plotter+1
     // [32] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 -- vbuaa=_lo_vwuz1 
     lda.z x
-    // [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
+    // [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
     tay
     lda bitmap_plot_bit,y
     ldy #0
@@ -4177,7 +4144,7 @@ point_init: {
     // [35] (byte~) point_init::$18 ← (byte) point_init::point_idx#0 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z point_idx
     asl
-    // [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word[SIZE]) x_end + (byte~) point_init::$18) - (signed word)*((const word[SIZE]) x_start + (byte~) point_init::$18) -- vwsz1=pwsc1_derefidx_vbuaa_minus_pwsc2_derefidx_vbuaa 
+    // [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word*) x_end + (byte~) point_init::$18) - (signed word)*((const word*) x_start + (byte~) point_init::$18) -- vwsz1=pwsc1_derefidx_vbuaa_minus_pwsc2_derefidx_vbuaa 
     tay
     sec
     lda x_end,y
@@ -4186,13 +4153,13 @@ point_init: {
     lda x_end+1,y
     sbc x_start+1,y
     sta.z x_diff+1
-    // [37] (signed word~) point_init::$3 ← (signed word)*((const byte[SIZE]) y_end + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
+    // [37] (signed word~) point_init::$3 ← (signed word)*((const byte*) y_end + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_end,y
     sta.z __3
     lda #0
     sta.z __3+1
-    // [38] (signed word~) point_init::$4 ← (signed word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
+    // [38] (signed word~) point_init::$4 ← (signed word)*((const byte*) y_start + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_start,y
     sta.z __4
@@ -4267,7 +4234,7 @@ point_init: {
     lda.z point_idx
     asl
     tax
-    // [48] (word~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$20) << (byte) 4 -- vwuz1=pwuc1_derefidx_vbuxx_rol_4 
+    // [48] (word~) point_init::$9 ← *((const word*) x_start + (byte~) point_init::$20) << (byte) 4 -- vwuz1=pwuc1_derefidx_vbuxx_rol_4 
     lda x_start,x
     sta.z __9
     lda x_start+1,x
@@ -4280,12 +4247,12 @@ point_init: {
     rol.z __9+1
     asl.z __9
     rol.z __9+1
-    // [49] *((const word[SIZE]) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 -- pwuc1_derefidx_vbuxx=vwuz1 
+    // [49] *((const word*) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 -- pwuc1_derefidx_vbuxx=vwuz1 
     lda.z __9
     sta x_cur,x
     lda.z __9+1
     sta x_cur+1,x
-    // [50] (word~) point_init::$10 ← (word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
+    // [50] (word~) point_init::$10 ← (word)*((const byte*) y_start + (byte) point_init::point_idx#0) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_start,y
     sta.z __10
@@ -4300,12 +4267,12 @@ point_init: {
     rol.z __11+1
     asl.z __11
     rol.z __11+1
-    // [52] *((const word[SIZE]) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 -- pwuc1_derefidx_vbuxx=vwuz1 
+    // [52] *((const word*) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 -- pwuc1_derefidx_vbuxx=vwuz1 
     lda.z __11
     sta y_cur,x
     lda.z __11+1
     sta y_cur+1,x
-    // [53] *((const byte[SIZE]) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [53] *((const byte*) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #DELAY
     ldy.z point_idx
     sta delay,y
@@ -4323,7 +4290,7 @@ point_init: {
     jmp __b3
     // point_init::@3
   __b3:
-    // [56] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 -- pbsc1_derefidx_vbuz1=vbsc2 
+    // [56] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 -- pbsc1_derefidx_vbuz1=vbsc2 
     // x add = 1.0
     lda #$10
     ldy.z point_idx
@@ -4349,13 +4316,13 @@ point_init: {
     lsr
     lsr
     lsr
-    // [64] *((const signed byte[SIZE]) y_add + (byte) point_init::point_idx#0) ← (signed byte)(byte~) point_init::$16 -- pbsc1_derefidx_vbuz1=vbsaa 
+    // [64] *((const signed byte*) y_add + (byte) point_init::point_idx#0) ← (signed byte)(byte~) point_init::$16 -- pbsc1_derefidx_vbuz1=vbsaa 
     ldy.z point_idx
     sta y_add,y
     jmp __b2
     // point_init::@4
   __b4:
-    // [65] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 -- pbsc1_derefidx_vbuz1=vbsc2 
+    // [65] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 -- pbsc1_derefidx_vbuz1=vbsc2 
     // x add = -1.0
     lda #-$10
     ldy.z point_idx
@@ -4688,7 +4655,7 @@ screen_fill: {
 bitmap_clear: {
     .label bitmap = 6
     .label y = $12
-    // [119] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_yhi) w= *((const byte[$100]) bitmap_plot_ylo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    // [119] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_yhi) w= *((const byte*) bitmap_plot_ylo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda bitmap_plot_ylo
     sta.z bitmap
     lda bitmap_plot_yhi
@@ -4768,7 +4735,7 @@ bitmap_init: {
     jmp __b1
     // bitmap_init::@1
   __b1:
-    // [132] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [132] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_bit,x
     // [133] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
@@ -4820,11 +4787,11 @@ bitmap_init: {
     lda.z yoffs
     // [142] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __7
-    // [143] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [143] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // [144] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
     lda.z yoffs+1
-    // [145] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [145] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
     // [146] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
@@ -5148,10 +5115,10 @@ FINAL SYMBOL TABLE
 (word) bitmap_plot::x#0 x zp[2]:10 3.0
 (byte) bitmap_plot::y
 (byte) bitmap_plot::y#0 reg byte x 15.0
-(const byte[$100]) bitmap_plot_bit = { fill( $100, 0) }
-(const byte[$100]) bitmap_plot_yhi = { fill( $100, 0) }
-(const byte[$100]) bitmap_plot_ylo = { fill( $100, 0) }
-(const byte[SIZE]) delay = { fill( SIZE, 0) }
+(const byte*) bitmap_plot_bit = { fill( $100, 0) }
+(const byte*) bitmap_plot_yhi = { fill( $100, 0) }
+(const byte*) bitmap_plot_ylo = { fill( $100, 0) }
+(const byte*) delay = { fill( SIZE, 0) }
 (signed word()) divr16s((signed word) divr16s::dividend , (signed word) divr16s::divisor , (signed word) divr16s::rem)
 (label) divr16s::@1
 (label) divr16s::@10
@@ -5311,14 +5278,14 @@ FINAL SYMBOL TABLE
 (byte) screen_fill::y
 (byte) screen_fill::y#1 y zp[1]:18 16.5
 (byte) screen_fill::y#4 y zp[1]:18 3.6666666666666665
-(const signed byte[SIZE]) x_add = { fill( SIZE, 0) }
-(const word[SIZE]) x_cur = { fill( SIZE, 0) }
-(const word[SIZE]) x_end = { (word) $14, (word) $a, (word) $14, (word) $14 }
-(const word[SIZE]) x_start = { (word) $a, (word) $14, (word) $1e, (word) $1e }
-(const signed byte[SIZE]) y_add = { fill( SIZE, 0) }
-(const word[SIZE]) y_cur = { fill( SIZE, 0) }
-(const byte[SIZE]) y_end = { (byte) $14, (byte) $14, (byte) $a, (byte) $14 }
-(const byte[SIZE]) y_start = { (byte) $a, (byte) $a, (byte) $a, (byte) $14 }
+(const signed byte*) x_add = { fill( SIZE, 0) }
+(const word*) x_cur = { fill( SIZE, 0) }
+(const word*) x_end = { (word) $14, (word) $a, (word) $14, (word) $14 }
+(const word*) x_start = { (word) $a, (word) $14, (word) $1e, (word) $1e }
+(const signed byte*) y_add = { fill( SIZE, 0) }
+(const word*) y_cur = { fill( SIZE, 0) }
+(const byte*) y_end = { (byte) $14, (byte) $14, (byte) $a, (byte) $14 }
+(const byte*) y_start = { (byte) $a, (byte) $a, (byte) $a, (byte) $14 }
 
 reg byte y [ divr16s::neg#4 divr16s::neg#2 divr16s::neg#3 ]
 zp[2]:2 [ divr16u::dividend#2 divr16u::dividend#0 point_init::abs16s1_return#2 point_init::abs16s1_return#5 point_init::abs16s1_return#6 point_init::abs16s1_return#0 ]
@@ -5464,13 +5431,13 @@ main: {
     // [21] (byte~) main::$10 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
-    // [22] (word) bitmap_plot::x#0 ← *((const word[SIZE]) x_start + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuaa 
+    // [22] (word) bitmap_plot::x#0 ← *((const word*) x_start + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda x_start,y
     sta.z bitmap_plot.x
     lda x_start+1,y
     sta.z bitmap_plot.x+1
-    // [23] (byte) bitmap_plot::y#0 ← *((const byte[SIZE]) y_start + (byte) main::i#2) -- vbuxx=pbuc1_derefidx_vbuz1 
+    // [23] (byte) bitmap_plot::y#0 ← *((const byte*) y_start + (byte) main::i#2) -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy.z i
     ldx y_start,y
     // [24] call bitmap_plot 
@@ -5504,7 +5471,7 @@ bitmap_plot: {
     .label x = $a
     .label plotter = $c
     // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    // [29] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+    // [29] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -5530,7 +5497,7 @@ bitmap_plot: {
     // [32] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 -- vbuaa=_lo_vwuz1 
     lda.z x
     // *plotter |= bitmap_plot_bit[<x]
-    // [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
+    // [33] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
     tay
     lda bitmap_plot_bit,y
     ldy #0
@@ -5561,7 +5528,7 @@ point_init: {
     lda.z point_idx
     asl
     // ((signed word)x_end[point_idx])-((signed word)x_start[point_idx])
-    // [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word[SIZE]) x_end + (byte~) point_init::$18) - (signed word)*((const word[SIZE]) x_start + (byte~) point_init::$18) -- vwsz1=pwsc1_derefidx_vbuaa_minus_pwsc2_derefidx_vbuaa 
+    // [36] (signed word) point_init::x_diff#1 ← (signed word)*((const word*) x_end + (byte~) point_init::$18) - (signed word)*((const word*) x_start + (byte~) point_init::$18) -- vwsz1=pwsc1_derefidx_vbuaa_minus_pwsc2_derefidx_vbuaa 
     tay
     sec
     lda x_end,y
@@ -5571,14 +5538,14 @@ point_init: {
     sbc x_start+1,y
     sta.z x_diff+1
     // (signed word)y_end[point_idx]
-    // [37] (signed word~) point_init::$3 ← (signed word)*((const byte[SIZE]) y_end + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
+    // [37] (signed word~) point_init::$3 ← (signed word)*((const byte*) y_end + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_end,y
     sta.z __3
     lda #0
     sta.z __3+1
     // (signed word)y_start[point_idx]
-    // [38] (signed word~) point_init::$4 ← (signed word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
+    // [38] (signed word~) point_init::$4 ← (signed word)*((const byte*) y_start + (byte) point_init::point_idx#0) -- vwsz1=_sword_pbuc1_derefidx_vbuz2 
     lda y_start,y
     sta.z __4
     lda #0
@@ -5644,7 +5611,7 @@ point_init: {
     lda.z point_idx
     asl
     tax
-    // [48] (word~) point_init::$9 ← *((const word[SIZE]) x_start + (byte~) point_init::$20) << (byte) 4 -- vwuz1=pwuc1_derefidx_vbuxx_rol_4 
+    // [48] (word~) point_init::$9 ← *((const word*) x_start + (byte~) point_init::$20) << (byte) 4 -- vwuz1=pwuc1_derefidx_vbuxx_rol_4 
     lda x_start,x
     sta.z __9
     lda x_start+1,x
@@ -5658,13 +5625,13 @@ point_init: {
     asl.z __9
     rol.z __9+1
     // x_cur[point_idx] = x_start[point_idx]*$10
-    // [49] *((const word[SIZE]) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 -- pwuc1_derefidx_vbuxx=vwuz1 
+    // [49] *((const word*) x_cur + (byte~) point_init::$20) ← (word~) point_init::$9 -- pwuc1_derefidx_vbuxx=vwuz1 
     lda.z __9
     sta x_cur,x
     lda.z __9+1
     sta x_cur+1,x
     // (word)y_start[point_idx]
-    // [50] (word~) point_init::$10 ← (word)*((const byte[SIZE]) y_start + (byte) point_init::point_idx#0) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
+    // [50] (word~) point_init::$10 ← (word)*((const byte*) y_start + (byte) point_init::point_idx#0) -- vwuz1=_word_pbuc1_derefidx_vbuz2 
     ldy.z point_idx
     lda y_start,y
     sta.z __10
@@ -5681,13 +5648,13 @@ point_init: {
     asl.z __11
     rol.z __11+1
     // y_cur[point_idx] = ((word)y_start[point_idx])*$10
-    // [52] *((const word[SIZE]) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 -- pwuc1_derefidx_vbuxx=vwuz1 
+    // [52] *((const word*) y_cur + (byte~) point_init::$20) ← (word~) point_init::$11 -- pwuc1_derefidx_vbuxx=vwuz1 
     lda.z __11
     sta y_cur,x
     lda.z __11+1
     sta y_cur+1,x
     // delay[point_idx] = DELAY
-    // [53] *((const byte[SIZE]) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [53] *((const byte*) delay + (byte) point_init::point_idx#0) ← (const byte) DELAY -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #DELAY
     sta delay,y
     // point_init::@return
@@ -5703,7 +5670,7 @@ point_init: {
     bmi __b4
     // point_init::@3
     // x_add[point_idx] = $10
-    // [56] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 -- pbsc1_derefidx_vbuz1=vbsc2 
+    // [56] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) $10 -- pbsc1_derefidx_vbuz1=vbsc2 
     // x add = 1.0
     lda #$10
     ldy.z point_idx
@@ -5731,14 +5698,14 @@ point_init: {
     lsr
     lsr
     // y_add[point_idx] = (signed byte)((>x_stepf)/$10)
-    // [64] *((const signed byte[SIZE]) y_add + (byte) point_init::point_idx#0) ← (signed byte)(byte~) point_init::$16 -- pbsc1_derefidx_vbuz1=vbsaa 
+    // [64] *((const signed byte*) y_add + (byte) point_init::point_idx#0) ← (signed byte)(byte~) point_init::$16 -- pbsc1_derefidx_vbuz1=vbsaa 
     ldy.z point_idx
     sta y_add,y
     jmp __b2
     // point_init::@4
   __b4:
     // x_add[point_idx] = -$10
-    // [65] *((const signed byte[SIZE]) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 -- pbsc1_derefidx_vbuz1=vbsc2 
+    // [65] *((const signed byte*) x_add + (byte) point_init::point_idx#0) ← (signed byte) -$10 -- pbsc1_derefidx_vbuz1=vbsc2 
     // x add = -1.0
     lda #-$10
     ldy.z point_idx
@@ -6049,7 +6016,7 @@ bitmap_clear: {
     .label bitmap = 6
     .label y = $12
     // (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] }
-    // [119] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_yhi) w= *((const byte[$100]) bitmap_plot_ylo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    // [119] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_yhi) w= *((const byte*) bitmap_plot_ylo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda bitmap_plot_ylo
     sta.z bitmap
     lda bitmap_plot_yhi
@@ -6119,7 +6086,7 @@ bitmap_init: {
     // bitmap_init::@1
   __b1:
     // bitmap_plot_bit[x] = bits
-    // [132] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [132] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_bit,x
     // bits >>= 1
     // [133] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
@@ -6167,13 +6134,13 @@ bitmap_init: {
     // [142] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __7
     // bitmap_plot_ylo[y] = y&$7 | <yoffs
-    // [143] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [143] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // >yoffs
     // [144] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
     lda.z yoffs+1
     // bitmap_plot_yhi[y] = >yoffs
-    // [145] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [145] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
     // [146] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 

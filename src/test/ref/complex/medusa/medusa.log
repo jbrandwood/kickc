@@ -59,10 +59,10 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
   return 
   to:@return
 @8: scope:[]  from @begin
-  (byte[$3e8]) MEDUSA_SCREEN ← kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
+  (byte*) MEDUSA_SCREEN ← kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
     .fill fileScreen.getSize(), fileScreen.get(i)
  }}
-  (byte[]) MEDUSA_COLORS ← kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
+  (byte*) MEDUSA_COLORS ← kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)
  }}
   to:@9
@@ -71,14 +71,14 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
 main: scope:[main]  from @9
   *((const byte*) BGCOL) ← (const byte) BLACK
   (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN
-  (void*) memcpy::source#0 ← (void*)(byte[$3e8]) MEDUSA_SCREEN
+  (void*) memcpy::source#0 ← (void*)(byte*) MEDUSA_SCREEN
   (word) memcpy::num#0 ← (number) $3e8
   call memcpy 
   (void*) memcpy::return#2 ← (void*) memcpy::return#1
   to:main::@7
 main::@7: scope:[main]  from main
   (void*) memcpy::destination#1 ← (void*)(const byte*) COLS
-  (void*) memcpy::source#1 ← (void*)(byte[]) MEDUSA_COLORS
+  (void*) memcpy::source#1 ← (void*)(byte*) MEDUSA_COLORS
   (word) memcpy::num#1 ← (number) $3e8
   call memcpy 
   (void*) memcpy::return#3 ← (void*) memcpy::return#1
@@ -111,8 +111,8 @@ SYMBOL TABLE SSA
 (const byte*) BGCOL = (byte*)(number) $d021
 (const byte) BLACK = (number) 0
 (const byte*) COLS = (byte*)(number) $d800
-(byte[]) MEDUSA_COLORS
-(byte[$3e8]) MEDUSA_SCREEN
+(byte*) MEDUSA_COLORS
+(byte*) MEDUSA_SCREEN
 (const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (byte*~) main::$2
@@ -203,10 +203,10 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [21] (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN
 Constant right-side identified [32] (byte*~) main::$2 ← (const byte*) SCREEN + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte[$3e8]) MEDUSA_SCREEN = kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
+Constant (const byte*) MEDUSA_SCREEN = kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
     .fill fileScreen.getSize(), fileScreen.get(i)
  }}
-Constant (const byte[]) MEDUSA_COLORS = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
+Constant (const byte*) MEDUSA_COLORS = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)
  }}
 Constant (const void*) memcpy::destination#0 = (void*)SCREEN
@@ -237,11 +237,11 @@ Inlining constant with var siblings (const void*) memcpy::source#0
 Inlining constant with var siblings (const void*) memcpy::source#1
 Constant inlined memcpy::num#1 = (word) $3e8
 Constant inlined memcpy::num#0 = (word) $3e8
-Constant inlined memcpy::source#1 = (void*)(const byte[]) MEDUSA_COLORS
+Constant inlined memcpy::source#1 = (void*)(const byte*) MEDUSA_COLORS
 Constant inlined main::$2 = (const byte*) SCREEN+(word) $3e7
 Constant inlined memcpy::destination#0 = (void*)(const byte*) SCREEN
 Constant inlined memcpy::destination#1 = (void*)(const byte*) COLS
-Constant inlined memcpy::source#0 = (void*)(const byte[$3e8]) MEDUSA_SCREEN
+Constant inlined memcpy::source#0 = (void*)(const byte*) MEDUSA_SCREEN
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) memcpy::num#2 (word) $3e8
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -302,7 +302,7 @@ main::@1: scope:[main]  from main::@1 main::@2
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 memcpy: scope:[memcpy]  from main main::@2
   [9] (void*) memcpy::destination#2 ← phi( main/(void*)(const byte*) SCREEN main::@2/(void*)(const byte*) COLS )
-  [9] (void*) memcpy::source#2 ← phi( main/(void*)(const byte[$3e8]) MEDUSA_SCREEN main::@2/(void*)(const byte[]) MEDUSA_COLORS )
+  [9] (void*) memcpy::source#2 ← phi( main/(void*)(const byte*) MEDUSA_SCREEN main::@2/(void*)(const byte*) MEDUSA_COLORS )
   [10] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) $3e8
   [11] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
   [12] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
@@ -403,7 +403,7 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[$3e8]) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_SCREEN
     sta.z memcpy.source
     lda #>MEDUSA_SCREEN
@@ -422,7 +422,7 @@ main: {
     sta.z memcpy.destination
     lda #>COLS
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[]) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_COLORS
     sta.z memcpy.source
     lda #>MEDUSA_COLORS
@@ -582,7 +582,7 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[$3e8]) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_SCREEN
     sta.z memcpy.source
     lda #>MEDUSA_SCREEN
@@ -601,7 +601,7 @@ main: {
     sta.z memcpy.destination
     lda #>COLS
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[]) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_COLORS
     sta.z memcpy.source
     lda #>MEDUSA_COLORS
@@ -723,10 +723,10 @@ FINAL SYMBOL TABLE
 (const byte*) BGCOL = (byte*) 53281
 (const byte) BLACK = (number) 0
 (const byte*) COLS = (byte*) 55296
-(const byte[]) MEDUSA_COLORS = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
+(const byte*) MEDUSA_COLORS = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)
  }}
-(const byte[$3e8]) MEDUSA_SCREEN = kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
+(const byte*) MEDUSA_SCREEN = kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
     .fill fileScreen.getSize(), fileScreen.get(i)
  }}
 (const byte*) SCREEN = (byte*) 1024
@@ -796,7 +796,7 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[$3e8]) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_SCREEN
     sta.z memcpy.source
     lda #>MEDUSA_SCREEN
@@ -812,7 +812,7 @@ main: {
     sta.z memcpy.destination
     lda #>COLS
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[]) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_COLORS
     sta.z memcpy.source
     lda #>MEDUSA_COLORS

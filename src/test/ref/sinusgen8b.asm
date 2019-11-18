@@ -67,10 +67,10 @@ main: {
     cpx #$c0
     bne __b1
     rts
-    str: .text "  "
-    .byte 0
     sintabb: .fill $c0, 0
     sintabw: .fill 2*$c0, 0
+    str: .text "  "
+    .byte 0
 }
 // Print a zero-terminated string
 // print_str(byte* zeropage($a) str)

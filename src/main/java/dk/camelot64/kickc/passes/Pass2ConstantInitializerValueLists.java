@@ -7,10 +7,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
-import dk.camelot64.kickc.model.types.SymbolTypeConversion;
-import dk.camelot64.kickc.model.types.SymbolTypeStruct;
+import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -86,9 +83,9 @@ public class Pass2ConstantInitializerValueLists extends Pass2SsaOptimization {
          }
       }
       // All elements are constant - convert to constant of declared type
-      if(declaredType instanceof SymbolTypeArray) {
+      if(declaredType instanceof SymbolTypePointer) {
          // Check that type of constant values match the array element type
-         SymbolType declaredElementType = ((SymbolTypeArray) declaredType).getElementType();
+         SymbolType declaredElementType = ((SymbolTypePointer) declaredType).getElementType();
          for(ConstantValue constantValue : constantValues) {
             SymbolType elmType = constantValue.getType(program.getScope());
             if(!elmType.equals(declaredElementType)) {

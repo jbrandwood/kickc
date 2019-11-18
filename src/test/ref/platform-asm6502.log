@@ -5,7 +5,6 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[$a]) TABLE ← { fill( $a, 0) }
   to:@1
 
 (void()) main()
@@ -19,7 +18,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((byte[$a]) TABLE + (byte) main::i#3) ← (byte) main::i#3
+  *((const byte*) TABLE + (byte) main::i#3) ← (byte) main::i#3
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -37,7 +36,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte[$a]) TABLE
+(const byte*) TABLE = { fill( $a, 0) }
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -62,11 +61,8 @@ Finalized unsigned number type (byte) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [4] if((byte) main::i#2<(byte) $a) goto main::@2
+Simple Condition (bool~) main::$0 [3] if((byte) main::i#2<(byte) $a) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (byte[$a]) TABLE ← { fill( $a, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte[$a]) TABLE = { fill( $a, 0) }
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
@@ -112,7 +108,7 @@ main::@return: scope:[main]  from main::@1
   [7] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] *((const byte[$a]) TABLE + (byte) main::i#2) ← (byte) main::i#2
+  [8] *((const byte*) TABLE + (byte) main::i#2) ← (byte) main::i#2
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
@@ -174,7 +170,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [8] *((const byte[$a]) TABLE + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [8] *((const byte*) TABLE + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta TABLE,y
@@ -239,7 +235,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [8] *((const byte[$a]) TABLE + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [8] *((const byte*) TABLE + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta TABLE,x
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -276,7 +272,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte[$a]) TABLE = { fill( $a, 0) }
+(const byte*) TABLE = { fill( $a, 0) }
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -321,7 +317,7 @@ main: {
     // main::@2
   __b2:
     // TABLE[i] = i
-    // [8] *((const byte[$a]) TABLE + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [8] *((const byte*) TABLE + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta TABLE,x
     // for(char i=0;i<10;i++)

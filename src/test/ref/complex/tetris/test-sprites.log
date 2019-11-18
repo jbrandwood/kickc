@@ -291,7 +291,7 @@ sprites_irq::@return: scope:[sprites_irq]  from sprites_irq::@6
   (byte) irq_sprite_ptr#17 ← phi( @10/(byte) irq_sprite_ptr#0 )
   (byte) irq_raster_next#17 ← phi( @10/(byte) irq_raster_next#20 )
   (byte) irq_sprite_ypos#14 ← phi( @10/(byte) irq_sprite_ypos#18 )
-  (byte[$100]) SIN ← kickasm {{ .var AMPL = 200-21
+  (byte*) SIN ← kickasm {{ .var AMPL = 200-21
     .for(var i=0; i<256; i++) {
   	  .byte 51+AMPL/2+sin(toRadians([i*360]/256))*AMPL/2
     }
@@ -458,7 +458,7 @@ loop::@6: scope:[loop]  from loop::@5 loop::@6
   (byte) loop::idx#2 ← phi( loop::@5/(byte) loop::idx#0 loop::@6/(byte) loop::idx#1 )
   (byte) loop::s#2 ← phi( loop::@5/(byte) loop::s#0 loop::@6/(byte) loop::s#1 )
   (number~) loop::$1 ← (byte) loop::s#2 * (number) 2
-  *((const byte*) SPRITES_YPOS + (number~) loop::$1) ← *((byte[$100]) SIN + (byte) loop::idx#2)
+  *((const byte*) SPRITES_YPOS + (number~) loop::$1) ← *((byte*) SIN + (byte) loop::idx#2)
   (byte) loop::idx#1 ← (byte) loop::idx#2 + (number) $a
   (byte) loop::s#1 ← (byte) loop::s#2 + rangenext(4,7)
   (bool~) loop::$2 ← (byte) loop::s#1 != rangelast(4,7)
@@ -521,7 +521,7 @@ SYMBOL TABLE SSA
 (const byte) PROCPORT_DDR_MEMORY_MASK = (number) 7
 (const byte) PROCPORT_RAM_IO = (number) 5
 (const byte*) RASTER = (byte*)(number) $d012
-(byte[$100]) SIN
+(byte*) SIN
 (const byte*) SIN_SPRITE = (byte*)(number) $2800
 (const byte*) SPRITES_COLS = (byte*)(number) $d027
 (const byte*) SPRITES_ENABLE = (byte*)(number) $d015
@@ -1202,7 +1202,7 @@ Constant (const byte) sprites_init::xpos#0 = (unumber)$18+$f*8
 Constant (const byte) sprites_init::s#0 = 0
 Constant (const byte*) toSpritePtr1_sprite#0 = PLAYFIELD_SPRITES
 Constant (const byte*) sprites_irq::toSpritePtr2_sprite#0 = PLAYFIELD_SPRITES
-Constant (const byte[$100]) SIN = kickasm {{ .var AMPL = 200-21
+Constant (const byte*) SIN = kickasm {{ .var AMPL = 200-21
     .for(var i=0; i<256; i++) {
   	  .byte 51+AMPL/2+sin(toRadians([i*360]/256))*AMPL/2
     }
@@ -1579,7 +1579,7 @@ loop::@4: scope:[loop]  from loop::@3 loop::@4
   [41] (byte) loop::idx#2 ← phi( loop::@3/(byte) loop::idx#0 loop::@4/(byte) loop::idx#1 )
   [41] (byte) loop::s#2 ← phi( loop::@3/(byte) 4 loop::@4/(byte) loop::s#1 )
   [42] (byte~) loop::$1 ← (byte) loop::s#2 << (byte) 1
-  [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte[$100]) SIN + (byte) loop::idx#2)
+  [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte*) SIN + (byte) loop::idx#2)
   [44] (byte) loop::idx#1 ← (byte) loop::idx#2 + (byte) $a
   [45] (byte) loop::s#1 ← ++ (byte) loop::s#2
   [46] if((byte) loop::s#1!=(byte) 8) goto loop::@4
@@ -2171,7 +2171,7 @@ loop: {
     lda.z s
     asl
     sta.z __1
-    // [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte[$100]) SIN + (byte) loop::idx#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte*) SIN + (byte) loop::idx#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z idx
     lda SIN,y
     ldy.z __1
@@ -2568,7 +2568,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:5 [ sin_idx
 Statement [42] (byte~) loop::$1 ← (byte) loop::s#2 << (byte) 1 [ sin_idx#10 loop::s#2 loop::idx#2 loop::$1 ] ( main:10::loop:35 [ sin_idx#10 loop::s#2 loop::idx#2 loop::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ loop::s#2 loop::s#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ loop::idx#2 loop::idx#0 loop::idx#1 ]
-Statement [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte[$100]) SIN + (byte) loop::idx#2) [ sin_idx#10 loop::s#2 loop::idx#2 ] ( main:10::loop:35 [ sin_idx#10 loop::s#2 loop::idx#2 ] ) always clobbers reg byte a 
+Statement [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte*) SIN + (byte) loop::idx#2) [ sin_idx#10 loop::s#2 loop::idx#2 ] ( main:10::loop:35 [ sin_idx#10 loop::s#2 loop::idx#2 ] ) always clobbers reg byte a 
 Statement [44] (byte) loop::idx#1 ← (byte) loop::idx#2 + (byte) $a [ sin_idx#10 loop::s#2 loop::idx#1 ] ( main:10::loop:35 [ sin_idx#10 loop::s#2 loop::idx#1 ] ) always clobbers reg byte a 
 Statement [49] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ ] ( main:10::sprites_irq_init:33 [ ] ) always clobbers reg byte a 
 Statement asm { ldaCIA1_INTERRUPT  } always clobbers reg byte a 
@@ -2625,7 +2625,7 @@ Statement [28] (byte) main::xpos#1 ← (byte) main::xpos#2 + (byte) $18 [ main::
 Statement [29] (byte) main::ypos#1 ← (byte) main::ypos#2 + (byte) $18 [ main::s#2 main::xpos#1 main::ypos#1 ] ( main:10 [ main::s#2 main::xpos#1 main::ypos#1 ] ) always clobbers reg byte a 
 Statement [39] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@2 [ sin_idx#10 ] ( main:10::loop:35 [ sin_idx#10 ] ) always clobbers reg byte a 
 Statement [42] (byte~) loop::$1 ← (byte) loop::s#2 << (byte) 1 [ sin_idx#10 loop::s#2 loop::idx#2 loop::$1 ] ( main:10::loop:35 [ sin_idx#10 loop::s#2 loop::idx#2 loop::$1 ] ) always clobbers reg byte a 
-Statement [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte[$100]) SIN + (byte) loop::idx#2) [ sin_idx#10 loop::s#2 loop::idx#2 ] ( main:10::loop:35 [ sin_idx#10 loop::s#2 loop::idx#2 ] ) always clobbers reg byte a 
+Statement [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte*) SIN + (byte) loop::idx#2) [ sin_idx#10 loop::s#2 loop::idx#2 ] ( main:10::loop:35 [ sin_idx#10 loop::s#2 loop::idx#2 ] ) always clobbers reg byte a 
 Statement [44] (byte) loop::idx#1 ← (byte) loop::idx#2 + (byte) $a [ sin_idx#10 loop::s#2 loop::idx#1 ] ( main:10::loop:35 [ sin_idx#10 loop::s#2 loop::idx#1 ] ) always clobbers reg byte a 
 Statement [49] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ ] ( main:10::sprites_irq_init:33 [ ] ) always clobbers reg byte a 
 Statement asm { ldaCIA1_INTERRUPT  } always clobbers reg byte a 
@@ -3035,7 +3035,7 @@ loop: {
     // [42] (byte~) loop::$1 ← (byte) loop::s#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z s
     asl
-    // [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte[$100]) SIN + (byte) loop::idx#2) -- pbuc1_derefidx_vbuaa=pbuc2_derefidx_vbuxx 
+    // [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte*) SIN + (byte) loop::idx#2) -- pbuc1_derefidx_vbuaa=pbuc2_derefidx_vbuxx 
     tay
     lda SIN,x
     sta SPRITES_YPOS,y
@@ -3507,7 +3507,7 @@ FINAL SYMBOL TABLE
 (const byte) PROCPORT_DDR_MEMORY_MASK = (number) 7
 (const byte) PROCPORT_RAM_IO = (number) 5
 (const byte*) RASTER = (byte*) 53266
-(const byte[$100]) SIN = kickasm {{ .var AMPL = 200-21
+(const byte*) SIN = kickasm {{ .var AMPL = 200-21
     .for(var i=0; i<256; i++) {
   	  .byte 51+AMPL/2+sin(toRadians([i*360]/256))*AMPL/2
     }
@@ -3930,7 +3930,7 @@ loop: {
     lda.z s
     asl
     // SPRITES_YPOS[s*2] = SIN[idx]
-    // [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte[$100]) SIN + (byte) loop::idx#2) -- pbuc1_derefidx_vbuaa=pbuc2_derefidx_vbuxx 
+    // [43] *((const byte*) SPRITES_YPOS + (byte~) loop::$1) ← *((const byte*) SIN + (byte) loop::idx#2) -- pbuc1_derefidx_vbuaa=pbuc2_derefidx_vbuxx 
     tay
     lda SIN,x
     sta SPRITES_YPOS,y

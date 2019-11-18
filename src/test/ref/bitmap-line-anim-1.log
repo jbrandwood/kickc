@@ -2,6 +2,7 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) bitmap_init::@8
 Culled Empty Block (label) @5
 Culled Empty Block (label) bitmap_clear::@4
@@ -38,13 +39,6 @@ Culled Empty Block (label) init_screen::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@4
-@4: scope:[]  from @begin
-  (byte[$100]) bitmap_plot_xlo ← { fill( $100, 0) }
-  (byte[$100]) bitmap_plot_xhi ← { fill( $100, 0) }
-  (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-  (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-  (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
   to:@12
 
 (void()) bitmap_init((byte*) bitmap_init::bitmap)
@@ -58,10 +52,10 @@ bitmap_init::@1: scope:[bitmap_init]  from bitmap_init bitmap_init::@2
   (byte*) bitmap_init::bitmap#1 ← phi( bitmap_init/(byte*) bitmap_init::bitmap#2 bitmap_init::@2/(byte*) bitmap_init::bitmap#3 )
   (byte) bitmap_init::x#2 ← phi( bitmap_init/(byte) bitmap_init::x#0 bitmap_init::@2/(byte) bitmap_init::x#1 )
   (number~) bitmap_init::$0 ← (byte) bitmap_init::x#2 & (number) $f8
-  *((byte[$100]) bitmap_plot_xlo + (byte) bitmap_init::x#2) ← (number~) bitmap_init::$0
+  *((const byte*) bitmap_plot_xlo + (byte) bitmap_init::x#2) ← (number~) bitmap_init::$0
   (byte~) bitmap_init::$1 ← > (byte*) bitmap_init::bitmap#1
-  *((byte[$100]) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← (byte~) bitmap_init::$1
-  *((byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
+  *((const byte*) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← (byte~) bitmap_init::$1
+  *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
   (byte~) bitmap_init::$2 ← (byte) bitmap_init::bits#3 >> (number) 1
   (byte) bitmap_init::bits#1 ← (byte~) bitmap_init::$2
   (bool~) bitmap_init::$3 ← (byte) bitmap_init::bits#1 == (number) 0
@@ -91,9 +85,9 @@ bitmap_init::@5: scope:[bitmap_init]  from bitmap_init::@4 bitmap_init::@6
   (number~) bitmap_init::$6 ← (byte) bitmap_init::y#2 & (number) 7
   (byte~) bitmap_init::$7 ← < (byte*) bitmap_init::yoffs#2
   (number~) bitmap_init::$8 ← (number~) bitmap_init::$6 | (byte~) bitmap_init::$7
-  *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (number~) bitmap_init::$8
+  *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (number~) bitmap_init::$8
   (byte~) bitmap_init::$9 ← > (byte*) bitmap_init::yoffs#2
-  *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$9
+  *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$9
   (number~) bitmap_init::$10 ← (byte) bitmap_init::y#2 & (number) 7
   (bool~) bitmap_init::$11 ← (number~) bitmap_init::$10 == (number) 7
   (bool~) bitmap_init::$12 ← ! (bool~) bitmap_init::$11
@@ -118,7 +112,7 @@ bitmap_init::@return: scope:[bitmap_init]  from bitmap_init::@6
 
 (void()) bitmap_clear()
 bitmap_clear: scope:[bitmap_clear]  from main::@3
-  (byte*~) bitmap_clear::$0 ← ((byte*)) { *((byte[$100]) bitmap_plot_xhi + (number) 0), *((byte[$100]) bitmap_plot_xlo + (number) 0) }
+  (byte*~) bitmap_clear::$0 ← ((byte*)) { *((const byte*) bitmap_plot_xhi + (number) 0), *((const byte*) bitmap_plot_xlo + (number) 0) }
   (byte*) bitmap_clear::bitmap#0 ← (byte*~) bitmap_clear::$0
   (byte) bitmap_clear::y#0 ← (byte) 0
   to:bitmap_clear::@1
@@ -152,11 +146,11 @@ bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@3
 bitmap_plot: scope:[bitmap_plot]  from bitmap_line_xdyd::@1 bitmap_line_xdyi::@1 bitmap_line_ydxd::@1 bitmap_line_ydxi::@1
   (byte) bitmap_plot::y#4 ← phi( bitmap_line_xdyd::@1/(byte) bitmap_plot::y#1 bitmap_line_xdyi::@1/(byte) bitmap_plot::y#0 bitmap_line_ydxd::@1/(byte) bitmap_plot::y#3 bitmap_line_ydxi::@1/(byte) bitmap_plot::y#2 )
   (byte) bitmap_plot::x#4 ← phi( bitmap_line_xdyd::@1/(byte) bitmap_plot::x#1 bitmap_line_xdyi::@1/(byte) bitmap_plot::x#0 bitmap_line_ydxd::@1/(byte) bitmap_plot::x#3 bitmap_line_ydxi::@1/(byte) bitmap_plot::x#2 )
-  (word) bitmap_plot::plotter_x#0 ← ((word)) { *((byte[$100]) bitmap_plot_xhi + (byte) bitmap_plot::x#4), *((byte[$100]) bitmap_plot_xlo + (byte) bitmap_plot::x#4) }
-  (word) bitmap_plot::plotter_y#0 ← ((word)) { *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#4), *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#4) }
+  (word) bitmap_plot::plotter_x#0 ← ((word)) { *((const byte*) bitmap_plot_xhi + (byte) bitmap_plot::x#4), *((const byte*) bitmap_plot_xlo + (byte) bitmap_plot::x#4) }
+  (word) bitmap_plot::plotter_y#0 ← ((word)) { *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#4), *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#4) }
   (word~) bitmap_plot::$0 ← (word) bitmap_plot::plotter_x#0 + (word) bitmap_plot::plotter_y#0
   (byte*) bitmap_plot::plotter#0 ← ((byte*)) (word~) bitmap_plot::$0
-  (byte~) bitmap_plot::$1 ← *((byte*) bitmap_plot::plotter#0) | *((byte[$100]) bitmap_plot_bit + (byte) bitmap_plot::x#4)
+  (byte~) bitmap_plot::$1 ← *((byte*) bitmap_plot::plotter#0) | *((const byte*) bitmap_plot_bit + (byte) bitmap_plot::x#4)
   *((byte*) bitmap_plot::plotter#0) ← (byte~) bitmap_plot::$1
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
@@ -606,7 +600,7 @@ bitmap_line_ydxd::@3: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd::@5
 bitmap_line_ydxd::@return: scope:[bitmap_line_ydxd]  from bitmap_line_ydxd::@2
   return 
   to:@return
-@12: scope:[]  from @4
+@12: scope:[]  from @begin
   (byte) next#0 ← (number) 0
   to:@14
 
@@ -681,7 +675,6 @@ SYMBOL TABLE SSA
 (label) @12
 (label) @14
 (label) @15
-(label) @4
 (label) @begin
 (label) @end
 (const byte*) BGCOL = (byte*)(number) $d021
@@ -1173,11 +1166,11 @@ SYMBOL TABLE SSA
 (byte) bitmap_plot::y#2
 (byte) bitmap_plot::y#3
 (byte) bitmap_plot::y#4
-(byte[$100]) bitmap_plot_bit
-(byte[$100]) bitmap_plot_xhi
-(byte[$100]) bitmap_plot_xlo
-(byte[$100]) bitmap_plot_yhi
-(byte[$100]) bitmap_plot_ylo
+(const byte*) bitmap_plot_bit = { fill( $100, 0) }
+(const byte*) bitmap_plot_xhi = { fill( $100, 0) }
+(const byte*) bitmap_plot_xlo = { fill( $100, 0) }
+(const byte*) bitmap_plot_yhi = { fill( $100, 0) }
+(const byte*) bitmap_plot_ylo = { fill( $100, 0) }
 (void()) init_screen()
 (bool~) init_screen::$0
 (label) init_screen::@1
@@ -1227,8 +1220,8 @@ Adding number conversion cast (unumber) 7 in (number~) bitmap_init::$10 ← (byt
 Adding number conversion cast (unumber) bitmap_init::$10 in (number~) bitmap_init::$10 ← (byte) bitmap_init::y#2 & (unumber)(number) 7
 Adding number conversion cast (unumber) 7 in (bool~) bitmap_init::$11 ← (unumber~) bitmap_init::$10 == (number) 7
 Adding number conversion cast (unumber) $28*8 in (byte*~) bitmap_init::$13 ← (byte*) bitmap_init::yoffs#3 + (number) $28*(number) 8
-Adding number conversion cast (unumber) 0 in (var~) bitmap_clear::$3 ← (byte)*((byte[$100]) bitmap_plot_xhi + (number) 0) w= (byte)*((byte[$100]) bitmap_plot_xlo + (number) 0)
-Adding number conversion cast (unumber) 0 in (var~) bitmap_clear::$3 ← (byte)*((byte[$100]) bitmap_plot_xhi + (unumber)(number) 0) w= (byte)*((byte[$100]) bitmap_plot_xlo + (number) 0)
+Adding number conversion cast (unumber) 0 in (var~) bitmap_clear::$3 ← (byte)*((const byte*) bitmap_plot_xhi + (number) 0) w= (byte)*((const byte*) bitmap_plot_xlo + (number) 0)
+Adding number conversion cast (unumber) 0 in (var~) bitmap_clear::$3 ← (byte)*((const byte*) bitmap_plot_xhi + (unumber)(number) 0) w= (byte)*((const byte*) bitmap_plot_xlo + (number) 0)
 Adding number conversion cast (unumber) 0 in *((byte*) bitmap_clear::bitmap#2) ← (number) 0
 Adding number conversion cast (unumber) 1 in (byte~) bitmap_line_xdyi::$0 ← (byte) bitmap_line_xdyi::yd#2 >> (number) 1
 Adding number conversion cast (unumber) 1 in (number~) bitmap_line_xdyi::$6 ← (byte) bitmap_line_xdyi::x1#2 + (number) 1
@@ -1287,15 +1280,15 @@ Simplifying constant pointer cast (byte*) 0
 Simplifying constant integer cast 7
 Simplifying constant integer cast 7
 Simplifying constant integer cast 7
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_xhi + (unumber)(number) 0)
+Simplifying constant integer cast *((const byte*) bitmap_plot_xhi + (unumber)(number) 0)
 Simplifying constant integer cast 0
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_xlo + (unumber)(number) 0)
+Simplifying constant integer cast *((const byte*) bitmap_plot_xlo + (unumber)(number) 0)
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_xhi + (byte) bitmap_plot::x#4)
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_xlo + (byte) bitmap_plot::x#4)
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#4)
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#4)
+Simplifying constant integer cast *((const byte*) bitmap_plot_xhi + (byte) bitmap_plot::x#4)
+Simplifying constant integer cast *((const byte*) bitmap_plot_xlo + (byte) bitmap_plot::x#4)
+Simplifying constant integer cast *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#4)
+Simplifying constant integer cast *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#4)
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
@@ -1362,12 +1355,12 @@ Inferred type updated to byte in (unumber~) bitmap_line_ydxi::$6 ← (byte) bitm
 Inferred type updated to byte in (unumber~) bitmap_line_ydxd::$6 ← (byte) bitmap_line_ydxd::y1#2 + (byte) 1
 Adding pointer type conversion cast (byte*) bitmap_clear::$0 in (byte*~) bitmap_clear::$0 ← (word~) bitmap_clear::$3
 Successful SSA optimization PassNAddTypeConversionAssignment
-Inversing boolean not [17] (bool~) bitmap_init::$4 ← (byte) bitmap_init::bits#1 != (byte) 0 from [16] (bool~) bitmap_init::$3 ← (byte) bitmap_init::bits#1 == (byte) 0
-Inversing boolean not [36] (bool~) bitmap_init::$12 ← (byte~) bitmap_init::$10 != (byte) 7 from [35] (bool~) bitmap_init::$11 ← (byte~) bitmap_init::$10 == (byte) 7
-Inversing boolean not [177] (bool~) bitmap_line_xdyi::$4 ← (byte) bitmap_line_xdyi::xd#2 >= (byte) bitmap_line_xdyi::e#1 from [176] (bool~) bitmap_line_xdyi::$3 ← (byte) bitmap_line_xdyi::xd#2 < (byte) bitmap_line_xdyi::e#1
-Inversing boolean not [200] (bool~) bitmap_line_xdyd::$4 ← (byte) bitmap_line_xdyd::xd#2 >= (byte) bitmap_line_xdyd::e#1 from [199] (bool~) bitmap_line_xdyd::$3 ← (byte) bitmap_line_xdyd::xd#2 < (byte) bitmap_line_xdyd::e#1
-Inversing boolean not [223] (bool~) bitmap_line_ydxi::$4 ← (byte) bitmap_line_ydxi::yd#2 >= (byte) bitmap_line_ydxi::e#1 from [222] (bool~) bitmap_line_ydxi::$3 ← (byte) bitmap_line_ydxi::yd#2 < (byte) bitmap_line_ydxi::e#1
-Inversing boolean not [247] (bool~) bitmap_line_ydxd::$4 ← (byte) bitmap_line_ydxd::yd#2 >= (byte) bitmap_line_ydxd::e#1 from [246] (bool~) bitmap_line_ydxd::$3 ← (byte) bitmap_line_ydxd::yd#2 < (byte) bitmap_line_ydxd::e#1
+Inversing boolean not [12] (bool~) bitmap_init::$4 ← (byte) bitmap_init::bits#1 != (byte) 0 from [11] (bool~) bitmap_init::$3 ← (byte) bitmap_init::bits#1 == (byte) 0
+Inversing boolean not [31] (bool~) bitmap_init::$12 ← (byte~) bitmap_init::$10 != (byte) 7 from [30] (bool~) bitmap_init::$11 ← (byte~) bitmap_init::$10 == (byte) 7
+Inversing boolean not [172] (bool~) bitmap_line_xdyi::$4 ← (byte) bitmap_line_xdyi::xd#2 >= (byte) bitmap_line_xdyi::e#1 from [171] (bool~) bitmap_line_xdyi::$3 ← (byte) bitmap_line_xdyi::xd#2 < (byte) bitmap_line_xdyi::e#1
+Inversing boolean not [195] (bool~) bitmap_line_xdyd::$4 ← (byte) bitmap_line_xdyd::xd#2 >= (byte) bitmap_line_xdyd::e#1 from [194] (bool~) bitmap_line_xdyd::$3 ← (byte) bitmap_line_xdyd::xd#2 < (byte) bitmap_line_xdyd::e#1
+Inversing boolean not [218] (bool~) bitmap_line_ydxi::$4 ← (byte) bitmap_line_ydxi::yd#2 >= (byte) bitmap_line_ydxi::e#1 from [217] (bool~) bitmap_line_ydxi::$3 ← (byte) bitmap_line_ydxi::yd#2 < (byte) bitmap_line_ydxi::e#1
+Inversing boolean not [242] (bool~) bitmap_line_ydxd::$4 ← (byte) bitmap_line_ydxd::yd#2 >= (byte) bitmap_line_ydxd::e#1 from [241] (bool~) bitmap_line_ydxd::$3 ← (byte) bitmap_line_ydxd::yd#2 < (byte) bitmap_line_ydxd::e#1
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) bitmap_init::bits#1 = (byte~) bitmap_init::$2 
 Alias (byte) bitmap_init::x#2 = (byte) bitmap_init::x#4 
@@ -1479,42 +1472,31 @@ Identical Phi Values (byte) bitmap_line_ydxd::y1#2 (byte) bitmap_line_ydxd::y1#6
 Identical Phi Values (byte) next#10 (byte) next#0
 Identical Phi Values (byte) next#3 (byte) next#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [34] (byte~) bitmap_init::$10 ← (byte) bitmap_init::y#2 & (byte) 7
+Identified duplicate assignment right side [29] (byte~) bitmap_init::$10 ← (byte) bitmap_init::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) bitmap_init::$4 [18] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
-Simple Condition (bool~) bitmap_init::$5 [22] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
-Simple Condition (bool~) bitmap_init::$12 [37] if((byte~) bitmap_init::$10!=(byte) 7) goto bitmap_init::@6
-Simple Condition (bool~) bitmap_init::$14 [41] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) bitmap_clear::$1 [57] if((byte) bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2
-Simple Condition (bool~) bitmap_clear::$2 [61] if((byte) bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1
-Simple Condition (bool~) bitmap_line::$0 [77] if((byte) bitmap_line::x0#0<(byte) bitmap_line::x1#0) goto bitmap_line::@1
-Simple Condition (bool~) bitmap_line::$12 [82] if((byte) bitmap_line::y0#0<(byte) bitmap_line::y1#0) goto bitmap_line::@20
-Simple Condition (bool~) bitmap_line::$2 [87] if((byte) bitmap_line::y0#0<(byte) bitmap_line::y1#0) goto bitmap_line::@10
-Simple Condition (bool~) bitmap_line::$8 [92] if((byte) bitmap_line::yd#1<(byte) bitmap_line::xd#2) goto bitmap_line::@15
-Simple Condition (bool~) bitmap_line::$4 [97] if((byte) bitmap_line::yd#2<(byte) bitmap_line::xd#2) goto bitmap_line::@11
-Simple Condition (bool~) bitmap_line::$18 [130] if((byte) bitmap_line::yd#11<(byte) bitmap_line::xd#1) goto bitmap_line::@25
-Simple Condition (bool~) bitmap_line::$14 [135] if((byte) bitmap_line::yd#10<(byte) bitmap_line::xd#1) goto bitmap_line::@21
-Simple Condition (bool~) bitmap_line_xdyi::$4 [178] if((byte) bitmap_line_xdyi::xd#5>=(byte) bitmap_line_xdyi::e#1) goto bitmap_line_xdyi::@2
-Simple Condition (bool~) bitmap_line_xdyi::$7 [182] if((byte) bitmap_line_xdyi::x#2!=(byte~) bitmap_line_xdyi::$6) goto bitmap_line_xdyi::@1
-Simple Condition (bool~) bitmap_line_xdyd::$4 [201] if((byte) bitmap_line_xdyd::xd#5>=(byte) bitmap_line_xdyd::e#1) goto bitmap_line_xdyd::@2
-Simple Condition (bool~) bitmap_line_xdyd::$7 [205] if((byte) bitmap_line_xdyd::x#2!=(byte~) bitmap_line_xdyd::$6) goto bitmap_line_xdyd::@1
-Simple Condition (bool~) bitmap_line_ydxi::$4 [224] if((byte) bitmap_line_ydxi::yd#5>=(byte) bitmap_line_ydxi::e#1) goto bitmap_line_ydxi::@2
-Simple Condition (bool~) bitmap_line_ydxi::$7 [228] if((byte) bitmap_line_ydxi::y#2!=(byte~) bitmap_line_ydxi::$6) goto bitmap_line_ydxi::@1
-Simple Condition (bool~) bitmap_line_ydxd::$4 [248] if((byte) bitmap_line_ydxd::yd#5>=(byte) bitmap_line_ydxd::e#1) goto bitmap_line_ydxd::@2
-Simple Condition (bool~) bitmap_line_ydxd::$7 [252] if((byte) bitmap_line_ydxd::y#3!=(byte~) bitmap_line_ydxd::$6) goto bitmap_line_ydxd::@1
-Simple Condition (bool~) init_screen::$0 [286] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@2
+Simple Condition (bool~) bitmap_init::$4 [13] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
+Simple Condition (bool~) bitmap_init::$5 [17] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
+Simple Condition (bool~) bitmap_init::$12 [32] if((byte~) bitmap_init::$10!=(byte) 7) goto bitmap_init::@6
+Simple Condition (bool~) bitmap_init::$14 [36] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
+Simple Condition (bool~) bitmap_clear::$1 [52] if((byte) bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2
+Simple Condition (bool~) bitmap_clear::$2 [56] if((byte) bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1
+Simple Condition (bool~) bitmap_line::$0 [72] if((byte) bitmap_line::x0#0<(byte) bitmap_line::x1#0) goto bitmap_line::@1
+Simple Condition (bool~) bitmap_line::$12 [77] if((byte) bitmap_line::y0#0<(byte) bitmap_line::y1#0) goto bitmap_line::@20
+Simple Condition (bool~) bitmap_line::$2 [82] if((byte) bitmap_line::y0#0<(byte) bitmap_line::y1#0) goto bitmap_line::@10
+Simple Condition (bool~) bitmap_line::$8 [87] if((byte) bitmap_line::yd#1<(byte) bitmap_line::xd#2) goto bitmap_line::@15
+Simple Condition (bool~) bitmap_line::$4 [92] if((byte) bitmap_line::yd#2<(byte) bitmap_line::xd#2) goto bitmap_line::@11
+Simple Condition (bool~) bitmap_line::$18 [125] if((byte) bitmap_line::yd#11<(byte) bitmap_line::xd#1) goto bitmap_line::@25
+Simple Condition (bool~) bitmap_line::$14 [130] if((byte) bitmap_line::yd#10<(byte) bitmap_line::xd#1) goto bitmap_line::@21
+Simple Condition (bool~) bitmap_line_xdyi::$4 [173] if((byte) bitmap_line_xdyi::xd#5>=(byte) bitmap_line_xdyi::e#1) goto bitmap_line_xdyi::@2
+Simple Condition (bool~) bitmap_line_xdyi::$7 [177] if((byte) bitmap_line_xdyi::x#2!=(byte~) bitmap_line_xdyi::$6) goto bitmap_line_xdyi::@1
+Simple Condition (bool~) bitmap_line_xdyd::$4 [196] if((byte) bitmap_line_xdyd::xd#5>=(byte) bitmap_line_xdyd::e#1) goto bitmap_line_xdyd::@2
+Simple Condition (bool~) bitmap_line_xdyd::$7 [200] if((byte) bitmap_line_xdyd::x#2!=(byte~) bitmap_line_xdyd::$6) goto bitmap_line_xdyd::@1
+Simple Condition (bool~) bitmap_line_ydxi::$4 [219] if((byte) bitmap_line_ydxi::yd#5>=(byte) bitmap_line_ydxi::e#1) goto bitmap_line_ydxi::@2
+Simple Condition (bool~) bitmap_line_ydxi::$7 [223] if((byte) bitmap_line_ydxi::y#2!=(byte~) bitmap_line_ydxi::$6) goto bitmap_line_ydxi::@1
+Simple Condition (bool~) bitmap_line_ydxd::$4 [243] if((byte) bitmap_line_ydxd::yd#5>=(byte) bitmap_line_ydxd::e#1) goto bitmap_line_ydxd::@2
+Simple Condition (bool~) bitmap_line_ydxd::$7 [247] if((byte) bitmap_line_ydxd::y#3!=(byte~) bitmap_line_ydxd::$6) goto bitmap_line_ydxd::@1
+Simple Condition (bool~) init_screen::$0 [281] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (byte[$100]) bitmap_plot_xlo ← { fill( $100, 0) }
-Constant right-side identified [1] (byte[$100]) bitmap_plot_xhi ← { fill( $100, 0) }
-Constant right-side identified [2] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-Constant right-side identified [3] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-Constant right-side identified [4] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte[$100]) bitmap_plot_xlo = { fill( $100, 0) }
-Constant (const byte[$100]) bitmap_plot_xhi = { fill( $100, 0) }
-Constant (const byte[$100]) bitmap_plot_ylo = { fill( $100, 0) }
-Constant (const byte[$100]) bitmap_plot_yhi = { fill( $100, 0) }
-Constant (const byte[$100]) bitmap_plot_bit = { fill( $100, 0) }
 Constant (const byte) bitmap_init::bits#0 = $80
 Constant (const byte) bitmap_init::x#0 = 0
 Constant (const byte) bitmap_init::bits#2 = $80
@@ -1550,26 +1532,26 @@ Constant (const byte) bitmap_line_ydxi::y#1 = bitmap_line::y0#0
 Constant (const byte) bitmap_line_ydxi::x#1 = bitmap_line::x0#0
 Constant (const byte) bitmap_line_ydxi::y1#1 = bitmap_line::y1#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [82] if((const byte) bitmap_line::y0#0<(const byte) bitmap_line::y1#0) goto bitmap_line::@20
-if() condition always true - replacing block destination [87] if((const byte) bitmap_line::y0#0<(const byte) bitmap_line::y1#0) goto bitmap_line::@10
-if() condition always true - replacing block destination [279] if(true) goto main::@1
+if() condition always true - replacing block destination [77] if((const byte) bitmap_line::y0#0<(const byte) bitmap_line::y1#0) goto bitmap_line::@20
+if() condition always true - replacing block destination [82] if((const byte) bitmap_line::y0#0<(const byte) bitmap_line::y1#0) goto bitmap_line::@10
+if() condition always true - replacing block destination [274] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [20] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
-Resolved ranged comparison value [22] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
-Resolved ranged next value [39] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
-Resolved ranged comparison value [41] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
-Resolved ranged next value [55] bitmap_clear::x#1 ← ++ bitmap_clear::x#2 to ++
-Resolved ranged comparison value [57] if(bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2 to (number) $c8
-Resolved ranged next value [59] bitmap_clear::y#1 ← ++ bitmap_clear::y#4 to ++
-Resolved ranged comparison value [61] if(bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1 to (number) $28
-Simplifying expression containing zero bitmap_plot_xhi in [46] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_xhi + (byte) 0) w= *((const byte[$100]) bitmap_plot_xlo + (byte) 0)
-Simplifying expression containing zero bitmap_plot_xlo in [46] (word~) bitmap_clear::$3 ← *((const byte[$100]) bitmap_plot_xhi) w= *((const byte[$100]) bitmap_plot_xlo + (byte) 0)
-Simplifying expression containing zero bitmap_line::x1#0 in [79] (byte) bitmap_line::xd#1 ← (byte) bitmap_line::x1#0 - (const byte) bitmap_line::x0#0
-Simplifying expression containing zero bitmap_line::x1#0 in [84] (byte) bitmap_line::xd#2 ← (const byte) bitmap_line::x0#0 - (byte) bitmap_line::x1#0
-Simplifying expression containing zero bitmap_line::y1#0 in [89] (byte) bitmap_line::yd#1 ← (const byte) bitmap_line::y1#0 - (const byte) bitmap_line::y0#0
-Simplifying expression containing zero bitmap_line::y1#0 in [94] (byte) bitmap_line::yd#2 ← (const byte) bitmap_line::y0#0 - (const byte) bitmap_line::y1#0
-Simplifying expression containing zero bitmap_line::y1#0 in [127] (byte) bitmap_line::yd#11 ← (const byte) bitmap_line::y1#0 - (const byte) bitmap_line::y0#0
-Simplifying expression containing zero bitmap_line::y1#0 in [132] (byte) bitmap_line::yd#10 ← (const byte) bitmap_line::y0#0 - (const byte) bitmap_line::y1#0
+Resolved ranged next value [15] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
+Resolved ranged comparison value [17] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
+Resolved ranged next value [34] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
+Resolved ranged comparison value [36] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
+Resolved ranged next value [50] bitmap_clear::x#1 ← ++ bitmap_clear::x#2 to ++
+Resolved ranged comparison value [52] if(bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2 to (number) $c8
+Resolved ranged next value [54] bitmap_clear::y#1 ← ++ bitmap_clear::y#4 to ++
+Resolved ranged comparison value [56] if(bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1 to (number) $28
+Simplifying expression containing zero bitmap_plot_xhi in [41] (word~) bitmap_clear::$3 ← *((const byte*) bitmap_plot_xhi + (byte) 0) w= *((const byte*) bitmap_plot_xlo + (byte) 0)
+Simplifying expression containing zero bitmap_plot_xlo in [41] (word~) bitmap_clear::$3 ← *((const byte*) bitmap_plot_xhi) w= *((const byte*) bitmap_plot_xlo + (byte) 0)
+Simplifying expression containing zero bitmap_line::x1#0 in [74] (byte) bitmap_line::xd#1 ← (byte) bitmap_line::x1#0 - (const byte) bitmap_line::x0#0
+Simplifying expression containing zero bitmap_line::x1#0 in [79] (byte) bitmap_line::xd#2 ← (const byte) bitmap_line::x0#0 - (byte) bitmap_line::x1#0
+Simplifying expression containing zero bitmap_line::y1#0 in [84] (byte) bitmap_line::yd#1 ← (const byte) bitmap_line::y1#0 - (const byte) bitmap_line::y0#0
+Simplifying expression containing zero bitmap_line::y1#0 in [89] (byte) bitmap_line::yd#2 ← (const byte) bitmap_line::y0#0 - (const byte) bitmap_line::y1#0
+Simplifying expression containing zero bitmap_line::y1#0 in [122] (byte) bitmap_line::yd#11 ← (const byte) bitmap_line::y1#0 - (const byte) bitmap_line::y0#0
+Simplifying expression containing zero bitmap_line::y1#0 in [127] (byte) bitmap_line::yd#10 ← (const byte) bitmap_line::y0#0 - (const byte) bitmap_line::y1#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) bitmap_line::xd#0
 Eliminating unused constant (const byte) bitmap_line::yd#0
@@ -1763,7 +1745,6 @@ Added new block during phi lifting bitmap_line_ydxi::@7(between bitmap_line_ydxi
 Added new block during phi lifting bitmap_line_ydxd::@6(between bitmap_line_ydxd::@2 and bitmap_line_ydxd::@1)
 Added new block during phi lifting bitmap_line_ydxd::@7(between bitmap_line_ydxd::@5 and bitmap_line_ydxd::@2)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @12
 Adding NOP phi() at start of @14
 Adding NOP phi() at start of @15
@@ -1781,70 +1762,69 @@ Adding NOP phi() at start of bitmap_init
 Adding NOP phi() at start of bitmap_init::@3
 Adding NOP phi() at start of bitmap_init::@4
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to bitmap_init:11 bitmap_clear:13 init_screen:15 bitmap_line:19 
-Calls in [bitmap_line] to bitmap_line_ydxd:26 bitmap_line_xdyd:31 bitmap_line_ydxi:36 bitmap_line_xdyi:40 
-Calls in [bitmap_line_xdyi] to bitmap_plot:48 
-Calls in [bitmap_line_ydxi] to bitmap_plot:79 
-Calls in [bitmap_line_xdyd] to bitmap_plot:101 
-Calls in [bitmap_line_ydxd] to bitmap_plot:124 
+Calls in [] to main:3 
+Calls in [main] to bitmap_init:10 bitmap_clear:12 init_screen:14 bitmap_line:18 
+Calls in [bitmap_line] to bitmap_line_ydxd:25 bitmap_line_xdyd:30 bitmap_line_ydxi:35 bitmap_line_xdyi:39 
+Calls in [bitmap_line_xdyi] to bitmap_plot:47 
+Calls in [bitmap_line_ydxi] to bitmap_plot:78 
+Calls in [bitmap_line_xdyd] to bitmap_plot:100 
+Calls in [bitmap_line_ydxd] to bitmap_plot:123 
 
 Created 34 initial phi equivalence classes
-Coalesced [21] next#13 ← next#1
-Coalesced [46] bitmap_plot::x#6 ← bitmap_plot::x#0
-Coalesced [47] bitmap_plot::y#6 ← bitmap_plot::y#0
-Coalesced [54] bitmap_line_xdyi::y#9 ← bitmap_line_xdyi::y#2
-Coalesced [55] bitmap_line_xdyi::e#8 ← bitmap_line_xdyi::e#2
-Coalesced [60] bitmap_line_xdyi::x#8 ← bitmap_line_xdyi::x#2
-Coalesced [61] bitmap_line_xdyi::y#8 ← bitmap_line_xdyi::y#6
-Coalesced [62] bitmap_line_xdyi::e#7 ← bitmap_line_xdyi::e#6
-Coalesced (already) [63] bitmap_line_xdyi::y#10 ← bitmap_line_xdyi::y#3
-Coalesced [64] bitmap_line_xdyi::e#9 ← bitmap_line_xdyi::e#1
-Coalesced [73] bitmap_line_ydxi::e#7 ← bitmap_line_ydxi::e#0
-Coalesced [77] bitmap_plot::x#8 ← bitmap_plot::x#2
-Coalesced [78] bitmap_plot::y#8 ← bitmap_plot::y#2
-Coalesced [85] bitmap_line_ydxi::x#9 ← bitmap_line_ydxi::x#2
-Coalesced [86] bitmap_line_ydxi::e#9 ← bitmap_line_ydxi::e#2
-Coalesced [90] bitmap_line_ydxi::x#8 ← bitmap_line_ydxi::x#6
-Coalesced [91] bitmap_line_ydxi::y#8 ← bitmap_line_ydxi::y#2
-Coalesced [92] bitmap_line_ydxi::e#8 ← bitmap_line_ydxi::e#6
-Coalesced (already) [93] bitmap_line_ydxi::x#10 ← bitmap_line_ydxi::x#3
-Coalesced [94] bitmap_line_ydxi::e#10 ← bitmap_line_ydxi::e#1
-Coalesced [95] bitmap_line_xdyd::x#8 ← bitmap_line_xdyd::x#0
-Coalesced [99] bitmap_plot::x#5 ← bitmap_plot::x#1
-Coalesced [100] bitmap_plot::y#5 ← bitmap_plot::y#1
-Coalesced [107] bitmap_line_xdyd::y#9 ← bitmap_line_xdyd::y#2
-Coalesced [108] bitmap_line_xdyd::e#8 ← bitmap_line_xdyd::e#2
-Coalesced [112] bitmap_line_xdyd::x#9 ← bitmap_line_xdyd::x#2
-Coalesced [113] bitmap_line_xdyd::y#8 ← bitmap_line_xdyd::y#6
-Coalesced [114] bitmap_line_xdyd::e#7 ← bitmap_line_xdyd::e#6
-Coalesced (already) [115] bitmap_line_xdyd::y#10 ← bitmap_line_xdyd::y#3
-Coalesced [116] bitmap_line_xdyd::e#9 ← bitmap_line_xdyd::e#1
-Coalesced [118] bitmap_line_ydxd::e#7 ← bitmap_line_ydxd::e#0
-Coalesced [122] bitmap_plot::x#7 ← bitmap_plot::x#3
-Coalesced [123] bitmap_plot::y#7 ← bitmap_plot::y#3
-Coalesced [130] bitmap_line_ydxd::x#9 ← bitmap_line_ydxd::x#2
-Coalesced [131] bitmap_line_ydxd::e#9 ← bitmap_line_ydxd::e#2
-Coalesced [135] bitmap_line_ydxd::x#8 ← bitmap_line_ydxd::x#6
-Coalesced [136] bitmap_line_ydxd::y#9 ← bitmap_line_ydxd::y#3
-Coalesced [137] bitmap_line_ydxd::e#8 ← bitmap_line_ydxd::e#6
-Coalesced (already) [138] bitmap_line_ydxd::x#10 ← bitmap_line_ydxd::x#3
-Coalesced [139] bitmap_line_ydxd::e#10 ← bitmap_line_ydxd::e#1
-Coalesced [146] init_screen::c#4 ← init_screen::c#1
-Coalesced [150] bitmap_clear::bitmap#7 ← bitmap_clear::bitmap#3
-Coalesced [159] bitmap_clear::bitmap#6 ← bitmap_clear::bitmap#1
-Coalesced [160] bitmap_clear::y#5 ← bitmap_clear::y#1
-Coalesced (already) [161] bitmap_clear::bitmap#8 ← bitmap_clear::bitmap#1
-Coalesced [162] bitmap_clear::x#3 ← bitmap_clear::x#1
-Coalesced [185] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
-Coalesced [190] bitmap_init::y#5 ← bitmap_init::y#1
-Coalesced [191] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
-Coalesced (already) [192] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
-Coalesced [193] bitmap_init::x#5 ← bitmap_init::x#1
-Coalesced [194] bitmap_init::bits#5 ← bitmap_init::bits#4
-Coalesced [195] bitmap_init::bits#6 ← bitmap_init::bits#1
+Coalesced [20] next#13 ← next#1
+Coalesced [45] bitmap_plot::x#6 ← bitmap_plot::x#0
+Coalesced [46] bitmap_plot::y#6 ← bitmap_plot::y#0
+Coalesced [53] bitmap_line_xdyi::y#9 ← bitmap_line_xdyi::y#2
+Coalesced [54] bitmap_line_xdyi::e#8 ← bitmap_line_xdyi::e#2
+Coalesced [59] bitmap_line_xdyi::x#8 ← bitmap_line_xdyi::x#2
+Coalesced [60] bitmap_line_xdyi::y#8 ← bitmap_line_xdyi::y#6
+Coalesced [61] bitmap_line_xdyi::e#7 ← bitmap_line_xdyi::e#6
+Coalesced (already) [62] bitmap_line_xdyi::y#10 ← bitmap_line_xdyi::y#3
+Coalesced [63] bitmap_line_xdyi::e#9 ← bitmap_line_xdyi::e#1
+Coalesced [72] bitmap_line_ydxi::e#7 ← bitmap_line_ydxi::e#0
+Coalesced [76] bitmap_plot::x#8 ← bitmap_plot::x#2
+Coalesced [77] bitmap_plot::y#8 ← bitmap_plot::y#2
+Coalesced [84] bitmap_line_ydxi::x#9 ← bitmap_line_ydxi::x#2
+Coalesced [85] bitmap_line_ydxi::e#9 ← bitmap_line_ydxi::e#2
+Coalesced [89] bitmap_line_ydxi::x#8 ← bitmap_line_ydxi::x#6
+Coalesced [90] bitmap_line_ydxi::y#8 ← bitmap_line_ydxi::y#2
+Coalesced [91] bitmap_line_ydxi::e#8 ← bitmap_line_ydxi::e#6
+Coalesced (already) [92] bitmap_line_ydxi::x#10 ← bitmap_line_ydxi::x#3
+Coalesced [93] bitmap_line_ydxi::e#10 ← bitmap_line_ydxi::e#1
+Coalesced [94] bitmap_line_xdyd::x#8 ← bitmap_line_xdyd::x#0
+Coalesced [98] bitmap_plot::x#5 ← bitmap_plot::x#1
+Coalesced [99] bitmap_plot::y#5 ← bitmap_plot::y#1
+Coalesced [106] bitmap_line_xdyd::y#9 ← bitmap_line_xdyd::y#2
+Coalesced [107] bitmap_line_xdyd::e#8 ← bitmap_line_xdyd::e#2
+Coalesced [111] bitmap_line_xdyd::x#9 ← bitmap_line_xdyd::x#2
+Coalesced [112] bitmap_line_xdyd::y#8 ← bitmap_line_xdyd::y#6
+Coalesced [113] bitmap_line_xdyd::e#7 ← bitmap_line_xdyd::e#6
+Coalesced (already) [114] bitmap_line_xdyd::y#10 ← bitmap_line_xdyd::y#3
+Coalesced [115] bitmap_line_xdyd::e#9 ← bitmap_line_xdyd::e#1
+Coalesced [117] bitmap_line_ydxd::e#7 ← bitmap_line_ydxd::e#0
+Coalesced [121] bitmap_plot::x#7 ← bitmap_plot::x#3
+Coalesced [122] bitmap_plot::y#7 ← bitmap_plot::y#3
+Coalesced [129] bitmap_line_ydxd::x#9 ← bitmap_line_ydxd::x#2
+Coalesced [130] bitmap_line_ydxd::e#9 ← bitmap_line_ydxd::e#2
+Coalesced [134] bitmap_line_ydxd::x#8 ← bitmap_line_ydxd::x#6
+Coalesced [135] bitmap_line_ydxd::y#9 ← bitmap_line_ydxd::y#3
+Coalesced [136] bitmap_line_ydxd::e#8 ← bitmap_line_ydxd::e#6
+Coalesced (already) [137] bitmap_line_ydxd::x#10 ← bitmap_line_ydxd::x#3
+Coalesced [138] bitmap_line_ydxd::e#10 ← bitmap_line_ydxd::e#1
+Coalesced [145] init_screen::c#4 ← init_screen::c#1
+Coalesced [149] bitmap_clear::bitmap#7 ← bitmap_clear::bitmap#3
+Coalesced [158] bitmap_clear::bitmap#6 ← bitmap_clear::bitmap#1
+Coalesced [159] bitmap_clear::y#5 ← bitmap_clear::y#1
+Coalesced (already) [160] bitmap_clear::bitmap#8 ← bitmap_clear::bitmap#1
+Coalesced [161] bitmap_clear::x#3 ← bitmap_clear::x#1
+Coalesced [184] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
+Coalesced [189] bitmap_init::y#5 ← bitmap_init::y#1
+Coalesced [190] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
+Coalesced (already) [191] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
+Coalesced [192] bitmap_init::x#5 ← bitmap_init::x#1
+Coalesced [193] bitmap_init::bits#5 ← bitmap_init::bits#4
+Coalesced [194] bitmap_init::bits#6 ← bitmap_init::bits#1
 Coalesced down to 23 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @12
 Culled Empty Block (label) @15
 Culled Empty Block (label) main::@5
@@ -2006,10 +1986,10 @@ bitmap_line_xdyi::@return: scope:[bitmap_line_xdyi]  from bitmap_line_xdyi::@2
 bitmap_plot: scope:[bitmap_plot]  from bitmap_line_xdyd::@1 bitmap_line_xdyi::@1 bitmap_line_ydxd::@1 bitmap_line_ydxi::@1
   [47] (byte) bitmap_plot::y#4 ← phi( bitmap_line_xdyd::@1/(byte) bitmap_plot::y#1 bitmap_line_xdyi::@1/(byte) bitmap_plot::y#0 bitmap_line_ydxd::@1/(byte) bitmap_plot::y#3 bitmap_line_ydxi::@1/(byte) bitmap_plot::y#2 )
   [47] (byte) bitmap_plot::x#4 ← phi( bitmap_line_xdyd::@1/(byte) bitmap_plot::x#1 bitmap_line_xdyi::@1/(byte) bitmap_plot::x#0 bitmap_line_ydxd::@1/(byte) bitmap_plot::x#3 bitmap_line_ydxi::@1/(byte) bitmap_plot::x#2 )
-  [48] (word) bitmap_plot::plotter_x#0 ← *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte[$100]) bitmap_plot_xlo + (byte) bitmap_plot::x#4)
-  [49] (word) bitmap_plot::plotter_y#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#4)
+  [48] (word) bitmap_plot::plotter_x#0 ← *((const byte*) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte*) bitmap_plot_xlo + (byte) bitmap_plot::x#4)
+  [49] (word) bitmap_plot::plotter_y#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#4)
   [50] (word) bitmap_plot::plotter#0 ← (word) bitmap_plot::plotter_x#0 + (word) bitmap_plot::plotter_y#0
-  [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_plot::x#4)
+  [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte*) bitmap_plot_bit + (byte) bitmap_plot::x#4)
   [52] *((byte*)(word) bitmap_plot::plotter#0) ← (byte~) bitmap_plot::$1
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
@@ -2124,7 +2104,7 @@ init_screen::@2: scope:[init_screen]  from init_screen::@1
 
 (void()) bitmap_clear()
 bitmap_clear: scope:[bitmap_clear]  from main::@2
-  [99] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_xhi) w= *((const byte[$100]) bitmap_plot_xlo)
+  [99] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_xhi) w= *((const byte*) bitmap_plot_xlo)
   [100] (byte*) bitmap_clear::bitmap#5 ← (byte*)(word) bitmap_clear::bitmap#0
   to:bitmap_clear::@1
 bitmap_clear::@1: scope:[bitmap_clear]  from bitmap_clear bitmap_clear::@3
@@ -2155,9 +2135,9 @@ bitmap_init::@1: scope:[bitmap_init]  from bitmap_init bitmap_init::@2
   [111] (byte) bitmap_init::bits#3 ← phi( bitmap_init/(byte) $80 bitmap_init::@2/(byte) bitmap_init::bits#4 )
   [111] (byte) bitmap_init::x#2 ← phi( bitmap_init/(byte) 0 bitmap_init::@2/(byte) bitmap_init::x#1 )
   [112] (byte~) bitmap_init::$0 ← (byte) bitmap_init::x#2 & (byte) $f8
-  [113] *((const byte[$100]) bitmap_plot_xlo + (byte) bitmap_init::x#2) ← (byte~) bitmap_init::$0
-  [114] *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP
-  [115] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
+  [113] *((const byte*) bitmap_plot_xlo + (byte) bitmap_init::x#2) ← (byte~) bitmap_init::$0
+  [114] *((const byte*) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP
+  [115] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
   [116] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1
   [117] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@6
   to:bitmap_init::@2
@@ -2175,9 +2155,9 @@ bitmap_init::@3: scope:[bitmap_init]  from bitmap_init::@2 bitmap_init::@4
   [123] (byte~) bitmap_init::$10 ← (byte) bitmap_init::y#2 & (byte) 7
   [124] (byte~) bitmap_init::$7 ← < (byte*) bitmap_init::yoffs#2
   [125] (byte~) bitmap_init::$8 ← (byte~) bitmap_init::$10 | (byte~) bitmap_init::$7
-  [126] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$8
+  [126] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$8
   [127] (byte~) bitmap_init::$9 ← > (byte*) bitmap_init::yoffs#2
-  [128] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$9
+  [128] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$9
   [129] if((byte~) bitmap_init::$10!=(byte) 7) goto bitmap_init::@4
   to:bitmap_init::@5
 bitmap_init::@5: scope:[bitmap_init]  from bitmap_init::@3
@@ -2743,13 +2723,13 @@ bitmap_plot: {
     .label plotter = $29
     .label x = 6
     .label y = 7
-    // [48] (word) bitmap_plot::plotter_x#0 ← *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte[$100]) bitmap_plot_xlo + (byte) bitmap_plot::x#4) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
+    // [48] (word) bitmap_plot::plotter_x#0 ← *((const byte*) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte*) bitmap_plot_xlo + (byte) bitmap_plot::x#4) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
     ldy.z x
     lda bitmap_plot_xhi,y
     sta.z plotter_x+1
     lda bitmap_plot_xlo,y
     sta.z plotter_x
-    // [49] (word) bitmap_plot::plotter_y#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#4) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
+    // [49] (word) bitmap_plot::plotter_y#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#4) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
     ldy.z y
     lda bitmap_plot_yhi,y
     sta.z plotter_y+1
@@ -2763,7 +2743,7 @@ bitmap_plot: {
     lda.z plotter_x+1
     adc.z plotter_y+1
     sta.z plotter+1
-    // [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_plot::x#4) -- vbuz1=_deref_pbuz2_bor_pbuc1_derefidx_vbuz3 
+    // [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte*) bitmap_plot_bit + (byte) bitmap_plot::x#4) -- vbuz1=_deref_pbuz2_bor_pbuc1_derefidx_vbuz3 
     ldy #0
     lda (plotter),y
     ldy.z x
@@ -3069,7 +3049,7 @@ bitmap_clear: {
     .label bitmap_1 = $14
     .label x = $16
     .label y = $13
-    // [99] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_xhi) w= *((const byte[$100]) bitmap_plot_xlo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    // [99] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_xhi) w= *((const byte*) bitmap_plot_xlo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda bitmap_plot_xlo
     sta.z bitmap
     lda bitmap_plot_xhi
@@ -3169,15 +3149,15 @@ bitmap_init: {
     lda #$f8
     and.z x
     sta.z __0
-    // [113] *((const byte[$100]) bitmap_plot_xlo + (byte) bitmap_init::x#2) ← (byte~) bitmap_init::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [113] *((const byte*) bitmap_plot_xlo + (byte) bitmap_init::x#2) ← (byte~) bitmap_init::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __0
     ldy.z x
     sta bitmap_plot_xlo,y
-    // [114] *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [114] *((const byte*) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #>BITMAP
     ldy.z x
     sta bitmap_plot_xhi,y
-    // [115] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [115] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z bits
     ldy.z x
     sta bitmap_plot_bit,y
@@ -3239,14 +3219,14 @@ bitmap_init: {
     lda.z __10
     ora.z __7
     sta.z __8
-    // [126] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$8 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [126] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$8 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __8
     ldy.z y
     sta bitmap_plot_ylo,y
     // [127] (byte~) bitmap_init::$9 ← > (byte*) bitmap_init::yoffs#2 -- vbuz1=_hi_pbuz2 
     lda.z yoffs+1
     sta.z __9
-    // [128] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$9 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [128] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$9 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __9
     ldy.z y
     sta bitmap_plot_yhi,y
@@ -3305,7 +3285,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:35 [ bitmap
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ bitmap_line_xdyi::y#3 bitmap_line_xdyi::y#6 bitmap_line_xdyi::y#2 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ bitmap_line_xdyi::x#3 bitmap_line_xdyi::x#2 ]
 Statement [42] (byte) bitmap_line_xdyi::e#2 ← (byte) bitmap_line_xdyi::e#1 - (byte) bitmap_line_xdyi::xd#1 [ bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#2 bitmap_line_xdyi::y#2 bitmap_line_xdyi::e#2 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#2 bitmap_line_xdyi::y#2 bitmap_line_xdyi::e#2 ] ) always clobbers reg byte a 
-Statement [48] (word) bitmap_plot::plotter_x#0 ← *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte[$100]) bitmap_plot_xlo + (byte) bitmap_plot::x#4) [ bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ) always clobbers reg byte a 
+Statement [48] (word) bitmap_plot::plotter_x#0 ← *((const byte*) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte*) bitmap_plot_xlo + (byte) bitmap_plot::x#4) [ bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ bitmap_line_xdyi::e#3 bitmap_line_xdyi::e#6 bitmap_line_xdyi::e#2 bitmap_line_xdyi::e#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ bitmap_plot::x#4 bitmap_plot::x#1 bitmap_plot::x#0 bitmap_plot::x#3 bitmap_plot::x#2 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ bitmap_plot::y#4 bitmap_plot::y#1 bitmap_plot::y#0 bitmap_plot::y#3 bitmap_plot::y#2 ]
@@ -3321,9 +3301,9 @@ Removing always clobbered register reg byte a as potential for zp[1]:30 [ bitmap
 Removing always clobbered register reg byte a as potential for zp[1]:14 [ bitmap_line_ydxd::x#3 bitmap_line_ydxd::x#6 bitmap_line_ydxd::x#2 ]
 Removing always clobbered register reg byte a as potential for zp[1]:15 [ bitmap_line_ydxd::y#2 bitmap_line_ydxd::y#3 ]
 Removing always clobbered register reg byte a as potential for zp[1]:16 [ bitmap_line_ydxd::e#3 bitmap_line_ydxd::e#0 bitmap_line_ydxd::e#6 bitmap_line_ydxd::e#2 bitmap_line_ydxd::e#1 ]
-Statement [49] (word) bitmap_plot::plotter_y#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#4) [ bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ) always clobbers reg byte a 
+Statement [49] (word) bitmap_plot::plotter_y#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#4) [ bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ) always clobbers reg byte a 
 Statement [50] (word) bitmap_plot::plotter#0 ← (word) bitmap_plot::plotter_x#0 + (word) bitmap_plot::plotter_y#0 [ bitmap_plot::x#4 bitmap_plot::plotter#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
-Statement [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_plot::x#4) [ bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a reg byte y 
+Statement [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte*) bitmap_plot_bit + (byte) bitmap_plot::x#4) [ bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ next#4 next#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:34 [ bitmap_line_xdyi::x1#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:35 [ bitmap_line_xdyi::xd#1 ]
@@ -3367,17 +3347,17 @@ Removing always clobbered register reg byte x as potential for zp[1]:14 [ bitmap
 Statement [91] if((byte) bitmap_line_ydxd::y#3!=(const byte) bitmap_line::y1#0+(byte) 1) goto bitmap_line_ydxd::@1 [ bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#6 bitmap_line_ydxd::y#3 bitmap_line_ydxd::e#6 ] ( main:2::bitmap_line:15::bitmap_line_ydxd:21 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#6 bitmap_line_ydxd::y#3 bitmap_line_ydxd::e#6 ] ) always clobbers reg byte a 
 Statement [95] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@2 [ init_screen::c#2 ] ( main:2::init_screen:12 [ init_screen::c#2 ] ) always clobbers reg byte a 
 Statement [97] *((byte*) init_screen::c#2) ← (byte) $14 [ init_screen::c#2 ] ( main:2::init_screen:12 [ init_screen::c#2 ] ) always clobbers reg byte a reg byte y 
-Statement [99] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_xhi) w= *((const byte[$100]) bitmap_plot_xlo) [ bitmap_clear::bitmap#0 ] ( main:2::bitmap_clear:10 [ bitmap_clear::bitmap#0 ] ) always clobbers reg byte a 
+Statement [99] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_xhi) w= *((const byte*) bitmap_plot_xlo) [ bitmap_clear::bitmap#0 ] ( main:2::bitmap_clear:10 [ bitmap_clear::bitmap#0 ] ) always clobbers reg byte a 
 Statement [100] (byte*) bitmap_clear::bitmap#5 ← (byte*)(word) bitmap_clear::bitmap#0 [ bitmap_clear::bitmap#5 ] ( main:2::bitmap_clear:10 [ bitmap_clear::bitmap#5 ] ) always clobbers reg byte a 
 Statement [103] *((byte*) bitmap_clear::bitmap#2) ← (byte) 0 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ( main:2::bitmap_clear:10 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:19 [ bitmap_clear::y#4 bitmap_clear::y#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:19 [ bitmap_clear::y#4 bitmap_clear::y#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:22 [ bitmap_clear::x#2 bitmap_clear::x#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:22 [ bitmap_clear::x#2 bitmap_clear::x#1 ]
-Statement [114] *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
+Statement [114] *((const byte*) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:23 [ bitmap_init::x#2 bitmap_init::x#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:24 [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ]
-Statement [115] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
+Statement [115] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
 Statement [130] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:2::bitmap_init:8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:25 [ bitmap_init::y#2 bitmap_init::y#1 ]
 Statement [4] *((const byte*) BORDERCOL) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -3391,10 +3371,10 @@ Removing always clobbered register reg byte x as potential for zp[1]:4 [ bitmap_
 Removing always clobbered register reg byte x as potential for zp[1]:3 [ bitmap_line_xdyi::x#3 bitmap_line_xdyi::x#2 ]
 Statement [40] if((byte) bitmap_line_xdyi::xd#1>=(byte) bitmap_line_xdyi::e#1) goto bitmap_line_xdyi::@2 [ bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::y#3 bitmap_line_xdyi::x#2 bitmap_line_xdyi::e#1 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::y#3 bitmap_line_xdyi::x#2 bitmap_line_xdyi::e#1 ] ) always clobbers reg byte a 
 Statement [42] (byte) bitmap_line_xdyi::e#2 ← (byte) bitmap_line_xdyi::e#1 - (byte) bitmap_line_xdyi::xd#1 [ bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#2 bitmap_line_xdyi::y#2 bitmap_line_xdyi::e#2 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#2 bitmap_line_xdyi::y#2 bitmap_line_xdyi::e#2 ] ) always clobbers reg byte a 
-Statement [48] (word) bitmap_plot::plotter_x#0 ← *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte[$100]) bitmap_plot_xlo + (byte) bitmap_plot::x#4) [ bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ) always clobbers reg byte a 
-Statement [49] (word) bitmap_plot::plotter_y#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#4) [ bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ) always clobbers reg byte a 
+Statement [48] (word) bitmap_plot::plotter_x#0 ← *((const byte*) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte*) bitmap_plot_xlo + (byte) bitmap_plot::x#4) [ bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ) always clobbers reg byte a 
+Statement [49] (word) bitmap_plot::plotter_y#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#4) [ bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ) always clobbers reg byte a 
 Statement [50] (word) bitmap_plot::plotter#0 ← (word) bitmap_plot::plotter_x#0 + (word) bitmap_plot::plotter_y#0 [ bitmap_plot::x#4 bitmap_plot::plotter#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
-Statement [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_plot::x#4) [ bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a reg byte y 
+Statement [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte*) bitmap_plot_bit + (byte) bitmap_plot::x#4) [ bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a reg byte y 
 Statement [52] *((byte*)(word) bitmap_plot::plotter#0) ← (byte~) bitmap_plot::$1 [ ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 ] ) always clobbers reg byte y 
 Statement [54] (byte) bitmap_line_ydxi::e#0 ← (byte) bitmap_line_ydxi::xd#1 >> (byte) 1 [ bitmap_line_ydxi::xd#1 bitmap_line_ydxi::e#0 ] ( main:2::bitmap_line:15::bitmap_line_ydxi:29 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::e#0 ] ) always clobbers reg byte a 
 Statement [60] (byte) bitmap_line_ydxi::e#1 ← (byte) bitmap_line_ydxi::e#3 + (byte) bitmap_line_ydxi::xd#1 [ bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#2 bitmap_line_ydxi::e#1 ] ( main:2::bitmap_line:15::bitmap_line_ydxi:29 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#2 bitmap_line_ydxi::e#1 ] ) always clobbers reg byte a 
@@ -3410,12 +3390,12 @@ Statement [89] (byte) bitmap_line_ydxd::e#2 ← (byte) bitmap_line_ydxd::e#1 - (
 Statement [91] if((byte) bitmap_line_ydxd::y#3!=(const byte) bitmap_line::y1#0+(byte) 1) goto bitmap_line_ydxd::@1 [ bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#6 bitmap_line_ydxd::y#3 bitmap_line_ydxd::e#6 ] ( main:2::bitmap_line:15::bitmap_line_ydxd:21 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#6 bitmap_line_ydxd::y#3 bitmap_line_ydxd::e#6 ] ) always clobbers reg byte a 
 Statement [95] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@2 [ init_screen::c#2 ] ( main:2::init_screen:12 [ init_screen::c#2 ] ) always clobbers reg byte a 
 Statement [97] *((byte*) init_screen::c#2) ← (byte) $14 [ init_screen::c#2 ] ( main:2::init_screen:12 [ init_screen::c#2 ] ) always clobbers reg byte a reg byte y 
-Statement [99] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_xhi) w= *((const byte[$100]) bitmap_plot_xlo) [ bitmap_clear::bitmap#0 ] ( main:2::bitmap_clear:10 [ bitmap_clear::bitmap#0 ] ) always clobbers reg byte a 
+Statement [99] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_xhi) w= *((const byte*) bitmap_plot_xlo) [ bitmap_clear::bitmap#0 ] ( main:2::bitmap_clear:10 [ bitmap_clear::bitmap#0 ] ) always clobbers reg byte a 
 Statement [100] (byte*) bitmap_clear::bitmap#5 ← (byte*)(word) bitmap_clear::bitmap#0 [ bitmap_clear::bitmap#5 ] ( main:2::bitmap_clear:10 [ bitmap_clear::bitmap#5 ] ) always clobbers reg byte a 
 Statement [103] *((byte*) bitmap_clear::bitmap#2) ← (byte) 0 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ( main:2::bitmap_clear:10 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ) always clobbers reg byte a reg byte y 
 Statement [112] (byte~) bitmap_init::$0 ← (byte) bitmap_init::x#2 & (byte) $f8 [ bitmap_init::x#2 bitmap_init::bits#3 bitmap_init::$0 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 bitmap_init::$0 ] ) always clobbers reg byte a 
-Statement [114] *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
-Statement [115] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
+Statement [114] *((const byte*) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
+Statement [115] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
 Statement [123] (byte~) bitmap_init::$10 ← (byte) bitmap_init::y#2 & (byte) 7 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$10 ] ( main:2::bitmap_init:8 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$10 ] ) always clobbers reg byte a 
 Statement [130] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:2::bitmap_init:8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ) always clobbers reg byte a 
 Statement [4] *((const byte*) BORDERCOL) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -3425,10 +3405,10 @@ Statement [7] *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN&(
 Statement [39] (byte) bitmap_line_xdyi::e#1 ← (byte) bitmap_line_xdyi::e#3 + (const byte) bitmap_line::y1#0 [ bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::y#3 bitmap_line_xdyi::x#2 bitmap_line_xdyi::e#1 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::y#3 bitmap_line_xdyi::x#2 bitmap_line_xdyi::e#1 ] ) always clobbers reg byte a reg byte x 
 Statement [40] if((byte) bitmap_line_xdyi::xd#1>=(byte) bitmap_line_xdyi::e#1) goto bitmap_line_xdyi::@2 [ bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::y#3 bitmap_line_xdyi::x#2 bitmap_line_xdyi::e#1 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::y#3 bitmap_line_xdyi::x#2 bitmap_line_xdyi::e#1 ] ) always clobbers reg byte a 
 Statement [42] (byte) bitmap_line_xdyi::e#2 ← (byte) bitmap_line_xdyi::e#1 - (byte) bitmap_line_xdyi::xd#1 [ bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#2 bitmap_line_xdyi::y#2 bitmap_line_xdyi::e#2 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#2 bitmap_line_xdyi::y#2 bitmap_line_xdyi::e#2 ] ) always clobbers reg byte a 
-Statement [48] (word) bitmap_plot::plotter_x#0 ← *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte[$100]) bitmap_plot_xlo + (byte) bitmap_plot::x#4) [ bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ) always clobbers reg byte a 
-Statement [49] (word) bitmap_plot::plotter_y#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#4) [ bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ) always clobbers reg byte a 
+Statement [48] (word) bitmap_plot::plotter_x#0 ← *((const byte*) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte*) bitmap_plot_xlo + (byte) bitmap_plot::x#4) [ bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::y#4 bitmap_plot::plotter_x#0 ] ) always clobbers reg byte a 
+Statement [49] (word) bitmap_plot::plotter_y#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#4) [ bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::plotter_x#0 bitmap_plot::plotter_y#0 ] ) always clobbers reg byte a 
 Statement [50] (word) bitmap_plot::plotter#0 ← (word) bitmap_plot::plotter_x#0 + (word) bitmap_plot::plotter_y#0 [ bitmap_plot::x#4 bitmap_plot::plotter#0 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::x#4 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
-Statement [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_plot::x#4) [ bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a reg byte y 
+Statement [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte*) bitmap_plot_bit + (byte) bitmap_plot::x#4) [ bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a reg byte y 
 Statement [52] *((byte*)(word) bitmap_plot::plotter#0) ← (byte~) bitmap_plot::$1 [ ] ( main:2::bitmap_line:15::bitmap_line_xdyi:32::bitmap_plot:37 [ next#4 bitmap_line_xdyi::x1#1 bitmap_line_xdyi::xd#1 bitmap_line_xdyi::x#3 bitmap_line_xdyi::y#3 bitmap_line_xdyi::e#3 ] main:2::bitmap_line:15::bitmap_line_ydxi:29::bitmap_plot:58 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#3 bitmap_line_ydxi::e#3 ] main:2::bitmap_line:15::bitmap_line_xdyd:25::bitmap_plot:71 [ next#4 bitmap_line_xdyd::xd#0 bitmap_line_xdyd::x#3 bitmap_line_xdyd::y#3 bitmap_line_xdyd::e#3 ] main:2::bitmap_line:15::bitmap_line_ydxd:21::bitmap_plot:84 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#3 bitmap_line_ydxd::y#2 bitmap_line_ydxd::e#3 ] ) always clobbers reg byte y 
 Statement [54] (byte) bitmap_line_ydxi::e#0 ← (byte) bitmap_line_ydxi::xd#1 >> (byte) 1 [ bitmap_line_ydxi::xd#1 bitmap_line_ydxi::e#0 ] ( main:2::bitmap_line:15::bitmap_line_ydxi:29 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::e#0 ] ) always clobbers reg byte a 
 Statement [60] (byte) bitmap_line_ydxi::e#1 ← (byte) bitmap_line_ydxi::e#3 + (byte) bitmap_line_ydxi::xd#1 [ bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#2 bitmap_line_ydxi::e#1 ] ( main:2::bitmap_line:15::bitmap_line_ydxi:29 [ next#4 bitmap_line_ydxi::xd#1 bitmap_line_ydxi::x#3 bitmap_line_ydxi::y#2 bitmap_line_ydxi::e#1 ] ) always clobbers reg byte a 
@@ -3444,12 +3424,12 @@ Statement [89] (byte) bitmap_line_ydxd::e#2 ← (byte) bitmap_line_ydxd::e#1 - (
 Statement [91] if((byte) bitmap_line_ydxd::y#3!=(const byte) bitmap_line::y1#0+(byte) 1) goto bitmap_line_ydxd::@1 [ bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#6 bitmap_line_ydxd::y#3 bitmap_line_ydxd::e#6 ] ( main:2::bitmap_line:15::bitmap_line_ydxd:21 [ next#4 bitmap_line_ydxd::xd#0 bitmap_line_ydxd::x#6 bitmap_line_ydxd::y#3 bitmap_line_ydxd::e#6 ] ) always clobbers reg byte a 
 Statement [95] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@2 [ init_screen::c#2 ] ( main:2::init_screen:12 [ init_screen::c#2 ] ) always clobbers reg byte a 
 Statement [97] *((byte*) init_screen::c#2) ← (byte) $14 [ init_screen::c#2 ] ( main:2::init_screen:12 [ init_screen::c#2 ] ) always clobbers reg byte a reg byte y 
-Statement [99] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_xhi) w= *((const byte[$100]) bitmap_plot_xlo) [ bitmap_clear::bitmap#0 ] ( main:2::bitmap_clear:10 [ bitmap_clear::bitmap#0 ] ) always clobbers reg byte a 
+Statement [99] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_xhi) w= *((const byte*) bitmap_plot_xlo) [ bitmap_clear::bitmap#0 ] ( main:2::bitmap_clear:10 [ bitmap_clear::bitmap#0 ] ) always clobbers reg byte a 
 Statement [100] (byte*) bitmap_clear::bitmap#5 ← (byte*)(word) bitmap_clear::bitmap#0 [ bitmap_clear::bitmap#5 ] ( main:2::bitmap_clear:10 [ bitmap_clear::bitmap#5 ] ) always clobbers reg byte a 
 Statement [103] *((byte*) bitmap_clear::bitmap#2) ← (byte) 0 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ( main:2::bitmap_clear:10 [ bitmap_clear::y#4 bitmap_clear::bitmap#2 bitmap_clear::x#2 ] ) always clobbers reg byte a reg byte y 
 Statement [112] (byte~) bitmap_init::$0 ← (byte) bitmap_init::x#2 & (byte) $f8 [ bitmap_init::x#2 bitmap_init::bits#3 bitmap_init::$0 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 bitmap_init::$0 ] ) always clobbers reg byte a 
-Statement [114] *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
-Statement [115] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
+Statement [114] *((const byte*) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
+Statement [115] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 [ bitmap_init::x#2 bitmap_init::bits#3 ] ( main:2::bitmap_init:8 [ bitmap_init::x#2 bitmap_init::bits#3 ] ) always clobbers reg byte a 
 Statement [123] (byte~) bitmap_init::$10 ← (byte) bitmap_init::y#2 & (byte) 7 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$10 ] ( main:2::bitmap_init:8 [ bitmap_init::y#2 bitmap_init::yoffs#2 bitmap_init::$10 ] ) always clobbers reg byte a 
 Statement [130] (byte*) bitmap_init::yoffs#1 ← (byte*) bitmap_init::yoffs#2 + (word)(number) $28*(number) 8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ( main:2::bitmap_init:8 [ bitmap_init::y#2 bitmap_init::yoffs#1 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ next#4 next#1 ] : zp[1]:2 , 
@@ -3850,12 +3830,12 @@ bitmap_plot: {
     .label plotter_x = 7
     .label plotter_y = 9
     .label plotter = 7
-    // [48] (word) bitmap_plot::plotter_x#0 ← *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte[$100]) bitmap_plot_xlo + (byte) bitmap_plot::x#4) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+    // [48] (word) bitmap_plot::plotter_x#0 ← *((const byte*) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte*) bitmap_plot_xlo + (byte) bitmap_plot::x#4) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_xhi,x
     sta.z plotter_x+1
     lda bitmap_plot_xlo,x
     sta.z plotter_x
-    // [49] (word) bitmap_plot::plotter_y#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#4) -- vwuz1=pbuc1_derefidx_vbuyy_word_pbuc2_derefidx_vbuyy 
+    // [49] (word) bitmap_plot::plotter_y#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#4) -- vwuz1=pbuc1_derefidx_vbuyy_word_pbuc2_derefidx_vbuyy 
     lda bitmap_plot_yhi,y
     sta.z plotter_y+1
     lda bitmap_plot_ylo,y
@@ -3868,7 +3848,7 @@ bitmap_plot: {
     lda.z plotter+1
     adc.z plotter_y+1
     sta.z plotter+1
-    // [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_plot::x#4) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 
+    // [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte*) bitmap_plot_bit + (byte) bitmap_plot::x#4) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
@@ -4163,7 +4143,7 @@ init_screen: {
 bitmap_clear: {
     .label bitmap = 7
     .label y = 5
-    // [99] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_xhi) w= *((const byte[$100]) bitmap_plot_xlo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    // [99] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_xhi) w= *((const byte*) bitmap_plot_xlo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda bitmap_plot_xlo
     sta.z bitmap
     lda bitmap_plot_xhi
@@ -4247,12 +4227,12 @@ bitmap_init: {
     // [112] (byte~) bitmap_init::$0 ← (byte) bitmap_init::x#2 & (byte) $f8 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f8
-    // [113] *((const byte[$100]) bitmap_plot_xlo + (byte) bitmap_init::x#2) ← (byte~) bitmap_init::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [113] *((const byte*) bitmap_plot_xlo + (byte) bitmap_init::x#2) ← (byte~) bitmap_init::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_xlo,x
-    // [114] *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [114] *((const byte*) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #>BITMAP
     sta bitmap_plot_xhi,x
-    // [115] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuyy 
+    // [115] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
     sta bitmap_plot_bit,x
     // [116] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1 -- vbuyy=vbuyy_ror_1 
@@ -4307,11 +4287,11 @@ bitmap_init: {
     lda.z yoffs
     // [125] (byte~) bitmap_init::$8 ← (byte~) bitmap_init::$10 | (byte~) bitmap_init::$7 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __10
-    // [126] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [126] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // [127] (byte~) bitmap_init::$9 ← > (byte*) bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
     lda.z yoffs+1
-    // [128] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$9 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [128] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$9 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
     // [129] if((byte~) bitmap_init::$10!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
@@ -4716,11 +4696,11 @@ FINAL SYMBOL TABLE
 (byte) bitmap_plot::y#2 reg byte y 202.0
 (byte) bitmap_plot::y#3 reg byte y 202.0
 (byte) bitmap_plot::y#4 reg byte y 204.0
-(const byte[$100]) bitmap_plot_bit = { fill( $100, 0) }
-(const byte[$100]) bitmap_plot_xhi = { fill( $100, 0) }
-(const byte[$100]) bitmap_plot_xlo = { fill( $100, 0) }
-(const byte[$100]) bitmap_plot_yhi = { fill( $100, 0) }
-(const byte[$100]) bitmap_plot_ylo = { fill( $100, 0) }
+(const byte*) bitmap_plot_bit = { fill( $100, 0) }
+(const byte*) bitmap_plot_xhi = { fill( $100, 0) }
+(const byte*) bitmap_plot_xlo = { fill( $100, 0) }
+(const byte*) bitmap_plot_yhi = { fill( $100, 0) }
+(const byte*) bitmap_plot_ylo = { fill( $100, 0) }
 (void()) init_screen()
 (label) init_screen::@1
 (label) init_screen::@2
@@ -4999,13 +4979,13 @@ bitmap_plot: {
     .label plotter_y = 9
     .label plotter = 7
     // plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] }
-    // [48] (word) bitmap_plot::plotter_x#0 ← *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte[$100]) bitmap_plot_xlo + (byte) bitmap_plot::x#4) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+    // [48] (word) bitmap_plot::plotter_x#0 ← *((const byte*) bitmap_plot_xhi + (byte) bitmap_plot::x#4) w= *((const byte*) bitmap_plot_xlo + (byte) bitmap_plot::x#4) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_xhi,x
     sta.z plotter_x+1
     lda bitmap_plot_xlo,x
     sta.z plotter_x
     // plotter_y = { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    // [49] (word) bitmap_plot::plotter_y#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#4) -- vwuz1=pbuc1_derefidx_vbuyy_word_pbuc2_derefidx_vbuyy 
+    // [49] (word) bitmap_plot::plotter_y#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#4) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#4) -- vwuz1=pbuc1_derefidx_vbuyy_word_pbuc2_derefidx_vbuyy 
     lda bitmap_plot_yhi,y
     sta.z plotter_y+1
     lda bitmap_plot_ylo,y
@@ -5020,7 +5000,7 @@ bitmap_plot: {
     adc.z plotter_y+1
     sta.z plotter+1
     // *plotter | bitmap_plot_bit[x]
-    // [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_plot::x#4) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 
+    // [51] (byte~) bitmap_plot::$1 ← *((byte*)(word) bitmap_plot::plotter#0) | *((const byte*) bitmap_plot_bit + (byte) bitmap_plot::x#4) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuxx 
     lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
@@ -5298,7 +5278,7 @@ bitmap_clear: {
     .label bitmap = 7
     .label y = 5
     // (byte*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
-    // [99] (word) bitmap_clear::bitmap#0 ← *((const byte[$100]) bitmap_plot_xhi) w= *((const byte[$100]) bitmap_plot_xlo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    // [99] (word) bitmap_clear::bitmap#0 ← *((const byte*) bitmap_plot_xhi) w= *((const byte*) bitmap_plot_xlo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda bitmap_plot_xlo
     sta.z bitmap
     lda bitmap_plot_xhi
@@ -5373,14 +5353,14 @@ bitmap_init: {
     txa
     and #$f8
     // bitmap_plot_xlo[x] = x&$f8
-    // [113] *((const byte[$100]) bitmap_plot_xlo + (byte) bitmap_init::x#2) ← (byte~) bitmap_init::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [113] *((const byte*) bitmap_plot_xlo + (byte) bitmap_init::x#2) ← (byte~) bitmap_init::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_xlo,x
     // bitmap_plot_xhi[x] = >bitmap
-    // [114] *((const byte[$100]) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [114] *((const byte*) bitmap_plot_xhi + (byte) bitmap_init::x#2) ← >(const byte*) BITMAP -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #>BITMAP
     sta bitmap_plot_xhi,x
     // bitmap_plot_bit[x] = bits
-    // [115] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuyy 
+    // [115] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
     sta bitmap_plot_bit,x
     // bits = bits>>1
@@ -5430,13 +5410,13 @@ bitmap_init: {
     // [125] (byte~) bitmap_init::$8 ← (byte~) bitmap_init::$10 | (byte~) bitmap_init::$7 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __10
     // bitmap_plot_ylo[y] = y&$7 | <yoffs
-    // [126] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [126] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // >yoffs
     // [127] (byte~) bitmap_init::$9 ← > (byte*) bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
     lda.z yoffs+1
     // bitmap_plot_yhi[y] = >yoffs
-    // [128] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$9 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [128] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$9 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
     // [129] if((byte~) bitmap_init::$10!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 

@@ -3,8 +3,8 @@ Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot +
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
-Fixing pointer array-indexing *((word[MAX_OBJECTS]) OBJ_WORLD_X + (byte) move_enemy::obj_slot)
-Fixing pointer array-indexing *((word[MAX_OBJECTS]) OBJ_WORLD_X + (byte) move_enemy::obj_slot)
+Fixing pointer array-indexing *((const word*) OBJ_WORLD_X + (byte) move_enemy::obj_slot)
+Fixing pointer array-indexing *((const word*) OBJ_WORLD_X + (byte) move_enemy::obj_slot)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
 Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
@@ -47,6 +47,7 @@ Culled Empty Block (label) @32
 Culled Empty Block (label) @33
 Culled Empty Block (label) @34
 Culled Empty Block (label) @35
+Culled Empty Block (label) @36
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) @37
 Culled Empty Block (label) move_enemy::@1
@@ -54,9 +55,6 @@ Culled Empty Block (label) @38
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@36
-@36: scope:[]  from @begin
-  (word[MAX_OBJECTS]) OBJ_WORLD_X ← { fill( MAX_OBJECTS, 0) }
   to:@39
 
 (void()) main()
@@ -83,7 +81,7 @@ main::@return: scope:[main]  from main::@3
 move_enemy: scope:[move_enemy]  from main::@1
   (byte) move_enemy::obj_slot#1 ← phi( main::@1/(byte) move_enemy::obj_slot#0 )
   (byte~) move_enemy::$0 ← (byte) move_enemy::obj_slot#1 * (const byte) SIZEOF_WORD
-  *((word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) - (number) 1
+  *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) - (number) 1
   (bool) move_enemy::return#1 ← true
   to:move_enemy::@return
 move_enemy::@return: scope:[move_enemy]  from move_enemy
@@ -91,7 +89,7 @@ move_enemy::@return: scope:[move_enemy]  from move_enemy
   (bool) move_enemy::return#2 ← (bool) move_enemy::return#3
   return 
   to:@return
-@39: scope:[]  from @36
+@39: scope:[]  from @begin
   call main 
   to:@40
 @40: scope:[]  from @39
@@ -99,13 +97,12 @@ move_enemy::@return: scope:[move_enemy]  from move_enemy
 @end: scope:[]  from @40
 
 SYMBOL TABLE SSA
-(label) @36
 (label) @39
 (label) @40
 (label) @begin
 (label) @end
 (const byte) MAX_OBJECTS = (number) $10
-(word[MAX_OBJECTS]) OBJ_WORLD_X
+(const word*) OBJ_WORLD_X = { fill( MAX_OBJECTS, 0) }
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
@@ -133,7 +130,7 @@ SYMBOL TABLE SSA
 (bool) move_enemy::return#2
 (bool) move_enemy::return#3
 
-Adding number conversion cast (unumber) 1 in *((word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) - (number) 1
+Adding number conversion cast (unumber) 1 in *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) - (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
@@ -144,18 +141,15 @@ Alias (bool) move_enemy::return#1 = (bool) move_enemy::return#3 (bool) move_enem
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) move_enemy::obj_slot#1 (byte) move_enemy::obj_slot#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [9] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
+Simple Condition (bool~) main::$1 [8] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (word[MAX_OBJECTS]) OBJ_WORLD_X ← { fill( MAX_OBJECTS, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word[MAX_OBJECTS]) OBJ_WORLD_X = { fill( MAX_OBJECTS, 0) }
 Constant (const byte) main::i#0 = 0
 Constant (const bool) move_enemy::return#1 = true
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const bool) move_enemy::return#0 = move_enemy::return#1
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [7] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [9] if(main::i#1!=rangelast(0,5)) goto main::@1 to (number) 6
+Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [8] if(main::i#1!=rangelast(0,5)) goto main::@1 to (number) 6
 Eliminating unused constant (const bool) move_enemy::return#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const bool) move_enemy::return#1
@@ -175,19 +169,17 @@ Eliminating unused constant (const byte) SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
 Added new block during phi lifting main::@4(between main::@3 and main::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @36
 Adding NOP phi() at start of @39
 Adding NOP phi() at start of @40
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to move_enemy:9 
+Calls in [] to main:2 
+Calls in [main] to move_enemy:8 
 
 Created 1 initial phi equivalence classes
-Coalesced [13] main::i#4 ← main::i#1
+Coalesced [12] main::i#4 ← main::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @36
 Culled Empty Block (label) @40
 Culled Empty Block (label) main::@4
 Renumbering block @39 to @1
@@ -228,7 +220,7 @@ main::@return: scope:[main]  from main::@2
 (bool()) move_enemy((byte) move_enemy::obj_slot)
 move_enemy: scope:[move_enemy]  from main::@1
   [11] (byte~) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte) 1
-  [12] *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1
+  [12] *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1
   to:move_enemy::@return
 move_enemy::@return: scope:[move_enemy]  from move_enemy
   [13] return 
@@ -328,7 +320,7 @@ move_enemy: {
     lda.z obj_slot
     asl
     sta.z __0
-    // [12] *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1 -- pwuc1_derefidx_vbuz1=pwuc1_derefidx_vbuz1_minus_1 
+    // [12] *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1 -- pwuc1_derefidx_vbuz1=pwuc1_derefidx_vbuz1_minus_1 
     ldx.z __0
     lda OBJ_WORLD_X,x
     bne !+
@@ -347,9 +339,9 @@ move_enemy: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [11] (byte~) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte) 1 [ move_enemy::$0 ] ( main:2::move_enemy:7 [ main::i#2 move_enemy::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [12] *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1 [ ] ( main:2::move_enemy:7 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [12] *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1 [ ] ( main:2::move_enemy:7 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [11] (byte~) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte) 1 [ move_enemy::$0 ] ( main:2::move_enemy:7 [ main::i#2 move_enemy::$0 ] ) always clobbers reg byte a 
-Statement [12] *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1 [ ] ( main:2::move_enemy:7 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [12] *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1 [ ] ( main:2::move_enemy:7 [ main::i#2 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ move_enemy::obj_slot#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ move_enemy::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -426,7 +418,7 @@ move_enemy: {
     // [11] (byte~) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte) 1 -- vbuaa=vbuyy_rol_1 
     tya
     asl
-    // [12] *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1 -- pwuc1_derefidx_vbuaa=pwuc1_derefidx_vbuaa_minus_1 
+    // [12] *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1 -- pwuc1_derefidx_vbuaa=pwuc1_derefidx_vbuaa_minus_1 
     tax
     lda OBJ_WORLD_X,x
     bne !+
@@ -477,7 +469,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte) MAX_OBJECTS = (number) $10
-(const word[MAX_OBJECTS]) OBJ_WORLD_X = { fill( MAX_OBJECTS, 0) }
+(const word*) OBJ_WORLD_X = { fill( MAX_OBJECTS, 0) }
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
@@ -551,7 +543,7 @@ move_enemy: {
     // [11] (byte~) move_enemy::$0 ← (byte) move_enemy::obj_slot#0 << (byte) 1 -- vbuaa=vbuyy_rol_1 
     tya
     asl
-    // [12] *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word[MAX_OBJECTS]) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1 -- pwuc1_derefidx_vbuaa=pwuc1_derefidx_vbuaa_minus_1 
+    // [12] *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) ← *((const word*) OBJ_WORLD_X + (byte~) move_enemy::$0) - (byte) 1 -- pwuc1_derefidx_vbuaa=pwuc1_derefidx_vbuaa_minus_1 
     tax
     lda OBJ_WORLD_X,x
     bne !+

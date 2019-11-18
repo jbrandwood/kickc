@@ -1,7 +1,7 @@
-Fixing pointer array-indexing *((const signed word[8]) ball_y + (byte) main::hit_check)
-Fixing pointer array-indexing *((const signed word[8]) ball_y + (byte) main::hit_check)
-Fixing pointer array-indexing *((const signed word[8]) ball_y + (byte) scan_for_lowest::i)
-Fixing pointer array-indexing *((const signed word[8]) ball_y + (byte) scan_for_lowest::i)
+Fixing pointer array-indexing *((const signed word*) ball_y + (byte) main::hit_check)
+Fixing pointer array-indexing *((const signed word*) ball_y + (byte) main::hit_check)
+Fixing pointer array-indexing *((const signed word*) ball_y + (byte) scan_for_lowest::i)
+Fixing pointer array-indexing *((const signed word*) ball_y + (byte) scan_for_lowest::i)
 Culled Empty Block (label) @1
 Culled Empty Block (label) scan_for_lowest::@5
 Culled Empty Block (label) scan_for_lowest::@6
@@ -23,10 +23,10 @@ main::@1: scope:[main]  from main
   (byte) main::hit_check#0 ← (byte~) main::$0
   *((const byte*) main::screen + (number) 0) ← (byte) main::hit_check#0
   (byte~) main::$3 ← (byte) main::hit_check#0 * (const byte) SIZEOF_SIGNED_WORD
-  (byte~) main::$1 ← < *((const signed word[8]) ball_y + (byte~) main::$3)
+  (byte~) main::$1 ← < *((const signed word*) ball_y + (byte~) main::$3)
   *((const byte*) main::screen + (number) 2) ← (byte~) main::$1
   (byte~) main::$4 ← (byte) main::hit_check#0 * (const byte) SIZEOF_SIGNED_WORD
-  (byte~) main::$2 ← > *((const signed word[8]) ball_y + (byte~) main::$4)
+  (byte~) main::$2 ← > *((const signed word*) ball_y + (byte~) main::$4)
   *((const byte*) main::screen + (number) 3) ← (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -51,7 +51,7 @@ scan_for_lowest::@2: scope:[scan_for_lowest]  from scan_for_lowest::@1
   (signed word) scan_for_lowest::height#2 ← phi( scan_for_lowest::@1/(signed word) scan_for_lowest::height#3 )
   (byte) scan_for_lowest::i#3 ← phi( scan_for_lowest::@1/(byte) scan_for_lowest::i#2 )
   (byte~) scan_for_lowest::$3 ← (byte) scan_for_lowest::i#3 * (const byte) SIZEOF_SIGNED_WORD
-  (bool~) scan_for_lowest::$1 ← *((const signed word[8]) ball_y + (byte~) scan_for_lowest::$3) < (signed word) scan_for_lowest::height#2
+  (bool~) scan_for_lowest::$1 ← *((const signed word*) ball_y + (byte~) scan_for_lowest::$3) < (signed word) scan_for_lowest::height#2
   (bool~) scan_for_lowest::$2 ← ! (bool~) scan_for_lowest::$1
   if((bool~) scan_for_lowest::$2) goto scan_for_lowest::@4
   to:scan_for_lowest::@7
@@ -68,7 +68,7 @@ scan_for_lowest::@4: scope:[scan_for_lowest]  from scan_for_lowest::@2 scan_for_
 scan_for_lowest::@7: scope:[scan_for_lowest]  from scan_for_lowest::@2
   (byte) scan_for_lowest::i#5 ← phi( scan_for_lowest::@2/(byte) scan_for_lowest::i#3 )
   (byte~) scan_for_lowest::$4 ← (byte) scan_for_lowest::i#5 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word) scan_for_lowest::height#1 ← *((const signed word[8]) ball_y + (byte~) scan_for_lowest::$4)
+  (signed word) scan_for_lowest::height#1 ← *((const signed word*) ball_y + (byte~) scan_for_lowest::$4)
   (byte) scan_for_lowest::lowest#1 ← (byte) scan_for_lowest::i#5
   to:scan_for_lowest::@4
 scan_for_lowest::@return: scope:[scan_for_lowest]  from scan_for_lowest::@3
@@ -89,7 +89,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
-(const signed word[8]) ball_y = { (signed word)(number) $32, (signed word)(number) $64, (signed word)(number) -$c8, (signed word)(number) $c, (signed word)(number) -$64, (signed word)(number) $4b, (signed word)(number) 0, (signed word)(number) -$79 }
+(const signed word*) ball_y = { (signed word)(number) $32, (signed word)(number) $64, (signed word)(number) -$c8, (signed word)(number) $c, (signed word)(number) -$64, (signed word)(number) $4b, (signed word)(number) 0, (signed word)(number) -$79 }
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -177,7 +177,7 @@ Finalized signed number type (signed word) $258
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [22] (bool~) scan_for_lowest::$2 ← *((const signed word[8]) ball_y + (byte~) scan_for_lowest::$3) >= (signed word) scan_for_lowest::height#2 from [21] (bool~) scan_for_lowest::$1 ← *((const signed word[8]) ball_y + (byte~) scan_for_lowest::$3) < (signed word) scan_for_lowest::height#2
+Inversing boolean not [22] (bool~) scan_for_lowest::$2 ← *((const signed word*) ball_y + (byte~) scan_for_lowest::$3) >= (signed word) scan_for_lowest::height#2 from [21] (bool~) scan_for_lowest::$1 ← *((const signed word*) ball_y + (byte~) scan_for_lowest::$3) < (signed word) scan_for_lowest::height#2
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) scan_for_lowest::return#0 = (byte) scan_for_lowest::return#3 
 Alias (byte) main::hit_check#0 = (byte~) main::$0 
@@ -191,7 +191,7 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identified duplicate assignment right side [9] (byte~) main::$4 ← (byte) main::hit_check#0 * (const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) scan_for_lowest::$0 [18] if((byte) scan_for_lowest::i#2<(byte) 8) goto scan_for_lowest::@2
-Simple Condition (bool~) scan_for_lowest::$2 [23] if(*((const signed word[8]) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@4
+Simple Condition (bool~) scan_for_lowest::$2 [23] if(*((const signed word*) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) scan_for_lowest::lowest#0 = $ff
 Constant (const signed word) scan_for_lowest::height#0 = $258
@@ -271,9 +271,9 @@ main::@1: scope:[main]  from main
   [7] (byte) main::hit_check#0 ← (byte) scan_for_lowest::return#0
   [8] *((const byte*) main::screen) ← (byte) main::hit_check#0
   [9] (byte~) main::$4 ← (byte) main::hit_check#0 << (byte) 1
-  [10] (byte~) main::$1 ← < *((const signed word[8]) ball_y + (byte~) main::$4)
+  [10] (byte~) main::$1 ← < *((const signed word*) ball_y + (byte~) main::$4)
   [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$1
-  [12] (byte~) main::$2 ← > *((const signed word[8]) ball_y + (byte~) main::$4)
+  [12] (byte~) main::$2 ← > *((const signed word*) ball_y + (byte~) main::$4)
   [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$2
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -295,11 +295,11 @@ scan_for_lowest::@return: scope:[scan_for_lowest]  from scan_for_lowest::@1
   to:@return
 scan_for_lowest::@2: scope:[scan_for_lowest]  from scan_for_lowest::@1
   [19] (byte~) scan_for_lowest::$3 ← (byte) scan_for_lowest::i#2 << (byte) 1
-  [20] if(*((const signed word[8]) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3
+  [20] if(*((const signed word*) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3
   to:scan_for_lowest::@4
 scan_for_lowest::@4: scope:[scan_for_lowest]  from scan_for_lowest::@2
   [21] (byte~) scan_for_lowest::$4 ← (byte) scan_for_lowest::i#2 << (byte) 1
-  [22] (signed word) scan_for_lowest::height#1 ← *((const signed word[8]) ball_y + (byte~) scan_for_lowest::$4)
+  [22] (signed word) scan_for_lowest::height#1 ← *((const signed word*) ball_y + (byte~) scan_for_lowest::$4)
   [23] (byte) scan_for_lowest::lowest#8 ← (byte) scan_for_lowest::i#2
   to:scan_for_lowest::@3
 scan_for_lowest::@3: scope:[scan_for_lowest]  from scan_for_lowest::@2 scan_for_lowest::@4
@@ -420,14 +420,14 @@ main: {
     lda.z hit_check
     asl
     sta.z __4
-    // [10] (byte~) main::$1 ← < *((const signed word[8]) ball_y + (byte~) main::$4) -- vbuz1=_lo_pwsc1_derefidx_vbuz2 
+    // [10] (byte~) main::$1 ← < *((const signed word*) ball_y + (byte~) main::$4) -- vbuz1=_lo_pwsc1_derefidx_vbuz2 
     ldy.z __4
     lda ball_y,y
     sta.z __1
     // [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda.z __1
     sta screen+2
-    // [12] (byte~) main::$2 ← > *((const signed word[8]) ball_y + (byte~) main::$4) -- vbuz1=_hi_pwsc1_derefidx_vbuz2 
+    // [12] (byte~) main::$2 ← > *((const signed word*) ball_y + (byte~) main::$4) -- vbuz1=_hi_pwsc1_derefidx_vbuz2 
     ldy.z __4
     lda ball_y+1,y
     sta.z __2
@@ -479,7 +479,7 @@ scan_for_lowest: {
     lda.z i
     asl
     sta.z __3
-    // [20] if(*((const signed word[8]) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3 -- pwsc1_derefidx_vbuz1_ge_vwsz2_then_la1 
+    // [20] if(*((const signed word*) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3 -- pwsc1_derefidx_vbuz1_ge_vwsz2_then_la1 
     ldy.z __3
     lda ball_y,y
     cmp.z height
@@ -496,7 +496,7 @@ scan_for_lowest: {
     lda.z i
     asl
     sta.z __4
-    // [22] (signed word) scan_for_lowest::height#1 ← *((const signed word[8]) ball_y + (byte~) scan_for_lowest::$4) -- vwsz1=pwsc1_derefidx_vbuz2 
+    // [22] (signed word) scan_for_lowest::height#1 ← *((const signed word*) ball_y + (byte~) scan_for_lowest::$4) -- vwsz1=pwsc1_derefidx_vbuz2 
     ldy.z __4
     lda ball_y,y
     sta.z height
@@ -527,22 +527,22 @@ scan_for_lowest: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] (byte~) main::$4 ← (byte) main::hit_check#0 << (byte) 1 [ main::$4 ] ( main:2 [ main::$4 ] ) always clobbers reg byte a 
-Statement [10] (byte~) main::$1 ← < *((const signed word[8]) ball_y + (byte~) main::$4) [ main::$4 main::$1 ] ( main:2 [ main::$4 main::$1 ] ) always clobbers reg byte a 
+Statement [10] (byte~) main::$1 ← < *((const signed word*) ball_y + (byte~) main::$4) [ main::$4 main::$1 ] ( main:2 [ main::$4 main::$1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ main::$4 ]
-Statement [12] (byte~) main::$2 ← > *((const signed word[8]) ball_y + (byte~) main::$4) [ main::$2 ] ( main:2 [ main::$2 ] ) always clobbers reg byte a 
+Statement [12] (byte~) main::$2 ← > *((const signed word*) ball_y + (byte~) main::$4) [ main::$2 ] ( main:2 [ main::$2 ] ) always clobbers reg byte a 
 Statement [19] (byte~) scan_for_lowest::$3 ← (byte) scan_for_lowest::i#2 << (byte) 1 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 scan_for_lowest::$3 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 scan_for_lowest::$3 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ scan_for_lowest::lowest#2 scan_for_lowest::lowest#4 scan_for_lowest::lowest#8 ]
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ scan_for_lowest::i#2 scan_for_lowest::i#1 ]
-Statement [20] if(*((const signed word[8]) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 ] ) always clobbers reg byte a 
+Statement [20] if(*((const signed word*) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 ] ) always clobbers reg byte a 
 Statement [21] (byte~) scan_for_lowest::$4 ← (byte) scan_for_lowest::i#2 << (byte) 1 [ scan_for_lowest::i#2 scan_for_lowest::$4 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::i#2 scan_for_lowest::$4 ] ) always clobbers reg byte a 
-Statement [22] (signed word) scan_for_lowest::height#1 ← *((const signed word[8]) ball_y + (byte~) scan_for_lowest::$4) [ scan_for_lowest::i#2 scan_for_lowest::height#1 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::i#2 scan_for_lowest::height#1 ] ) always clobbers reg byte a 
+Statement [22] (signed word) scan_for_lowest::height#1 ← *((const signed word*) ball_y + (byte~) scan_for_lowest::$4) [ scan_for_lowest::i#2 scan_for_lowest::height#1 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::i#2 scan_for_lowest::height#1 ] ) always clobbers reg byte a 
 Statement [9] (byte~) main::$4 ← (byte) main::hit_check#0 << (byte) 1 [ main::$4 ] ( main:2 [ main::$4 ] ) always clobbers reg byte a 
-Statement [10] (byte~) main::$1 ← < *((const signed word[8]) ball_y + (byte~) main::$4) [ main::$4 main::$1 ] ( main:2 [ main::$4 main::$1 ] ) always clobbers reg byte a 
-Statement [12] (byte~) main::$2 ← > *((const signed word[8]) ball_y + (byte~) main::$4) [ main::$2 ] ( main:2 [ main::$2 ] ) always clobbers reg byte a 
+Statement [10] (byte~) main::$1 ← < *((const signed word*) ball_y + (byte~) main::$4) [ main::$4 main::$1 ] ( main:2 [ main::$4 main::$1 ] ) always clobbers reg byte a 
+Statement [12] (byte~) main::$2 ← > *((const signed word*) ball_y + (byte~) main::$4) [ main::$2 ] ( main:2 [ main::$2 ] ) always clobbers reg byte a 
 Statement [19] (byte~) scan_for_lowest::$3 ← (byte) scan_for_lowest::i#2 << (byte) 1 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 scan_for_lowest::$3 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 scan_for_lowest::$3 ] ) always clobbers reg byte a 
-Statement [20] if(*((const signed word[8]) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 ] ) always clobbers reg byte a 
+Statement [20] if(*((const signed word*) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::lowest#2 scan_for_lowest::i#2 scan_for_lowest::height#2 ] ) always clobbers reg byte a 
 Statement [21] (byte~) scan_for_lowest::$4 ← (byte) scan_for_lowest::i#2 << (byte) 1 [ scan_for_lowest::i#2 scan_for_lowest::$4 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::i#2 scan_for_lowest::$4 ] ) always clobbers reg byte a 
-Statement [22] (signed word) scan_for_lowest::height#1 ← *((const signed word[8]) ball_y + (byte~) scan_for_lowest::$4) [ scan_for_lowest::i#2 scan_for_lowest::height#1 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::i#2 scan_for_lowest::height#1 ] ) always clobbers reg byte a 
+Statement [22] (signed word) scan_for_lowest::height#1 ← *((const signed word*) ball_y + (byte~) scan_for_lowest::$4) [ scan_for_lowest::i#2 scan_for_lowest::height#1 ] ( main:2::scan_for_lowest:5 [ scan_for_lowest::i#2 scan_for_lowest::height#1 ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ scan_for_lowest::i#2 scan_for_lowest::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ scan_for_lowest::height#2 scan_for_lowest::height#4 scan_for_lowest::height#1 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ scan_for_lowest::lowest#2 scan_for_lowest::lowest#4 scan_for_lowest::lowest#8 ] : zp[1]:5 , reg byte x , reg byte y , 
@@ -615,11 +615,11 @@ main: {
     // [9] (byte~) main::$4 ← (byte) main::hit_check#0 << (byte) 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
-    // [10] (byte~) main::$1 ← < *((const signed word[8]) ball_y + (byte~) main::$4) -- vbuaa=_lo_pwsc1_derefidx_vbuxx 
+    // [10] (byte~) main::$1 ← < *((const signed word*) ball_y + (byte~) main::$4) -- vbuaa=_lo_pwsc1_derefidx_vbuxx 
     lda ball_y,x
     // [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta screen+2
-    // [12] (byte~) main::$2 ← > *((const signed word[8]) ball_y + (byte~) main::$4) -- vbuaa=_hi_pwsc1_derefidx_vbuxx 
+    // [12] (byte~) main::$2 ← > *((const signed word*) ball_y + (byte~) main::$4) -- vbuaa=_hi_pwsc1_derefidx_vbuxx 
     lda ball_y+1,x
     // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta screen+3
@@ -661,7 +661,7 @@ scan_for_lowest: {
     // [19] (byte~) scan_for_lowest::$3 ← (byte) scan_for_lowest::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [20] if(*((const signed word[8]) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3 -- pwsc1_derefidx_vbuaa_ge_vwsz1_then_la1 
+    // [20] if(*((const signed word*) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3 -- pwsc1_derefidx_vbuaa_ge_vwsz1_then_la1 
     tay
     lda ball_y,y
     cmp.z height
@@ -677,7 +677,7 @@ scan_for_lowest: {
     // [21] (byte~) scan_for_lowest::$4 ← (byte) scan_for_lowest::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [22] (signed word) scan_for_lowest::height#1 ← *((const signed word[8]) ball_y + (byte~) scan_for_lowest::$4) -- vwsz1=pwsc1_derefidx_vbuaa 
+    // [22] (signed word) scan_for_lowest::height#1 ← *((const signed word*) ball_y + (byte~) scan_for_lowest::$4) -- vwsz1=pwsc1_derefidx_vbuaa 
     tay
     lda ball_y,y
     sta.z height
@@ -743,7 +743,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const signed word[8]) ball_y = { (signed word) $32, (signed word) $64, (signed word) -$c8, (signed word) $c, (signed word) -$64, (signed word) $4b, (signed word) 0, (signed word) -$79 }
+(const signed word*) ball_y = { (signed word) $32, (signed word) $64, (signed word) -$c8, (signed word) $c, (signed word) -$64, (signed word) $4b, (signed word) 0, (signed word) -$79 }
 (void()) main()
 (byte~) main::$1 reg byte a 4.0
 (byte~) main::$2 reg byte a 4.0
@@ -826,13 +826,13 @@ main: {
     // [9] (byte~) main::$4 ← (byte) main::hit_check#0 << (byte) 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
-    // [10] (byte~) main::$1 ← < *((const signed word[8]) ball_y + (byte~) main::$4) -- vbuaa=_lo_pwsc1_derefidx_vbuxx 
+    // [10] (byte~) main::$1 ← < *((const signed word*) ball_y + (byte~) main::$4) -- vbuaa=_lo_pwsc1_derefidx_vbuxx 
     lda ball_y,x
     // screen[2] = <ball_y[hit_check]
     // [11] *((const byte*) main::screen+(byte) 2) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta screen+2
     // >ball_y[hit_check]
-    // [12] (byte~) main::$2 ← > *((const signed word[8]) ball_y + (byte~) main::$4) -- vbuaa=_hi_pwsc1_derefidx_vbuxx 
+    // [12] (byte~) main::$2 ← > *((const signed word*) ball_y + (byte~) main::$4) -- vbuaa=_hi_pwsc1_derefidx_vbuxx 
     lda ball_y+1,x
     // screen[3] = >ball_y[hit_check]
     // [13] *((const byte*) main::screen+(byte) 3) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
@@ -874,7 +874,7 @@ scan_for_lowest: {
     txa
     asl
     // if (ball_y[i]<height)
-    // [20] if(*((const signed word[8]) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3 -- pwsc1_derefidx_vbuaa_ge_vwsz1_then_la1 
+    // [20] if(*((const signed word*) ball_y + (byte~) scan_for_lowest::$3)>=(signed word) scan_for_lowest::height#2) goto scan_for_lowest::@3 -- pwsc1_derefidx_vbuaa_ge_vwsz1_then_la1 
     tay
     lda ball_y,y
     cmp.z height
@@ -889,7 +889,7 @@ scan_for_lowest: {
     // [21] (byte~) scan_for_lowest::$4 ← (byte) scan_for_lowest::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [22] (signed word) scan_for_lowest::height#1 ← *((const signed word[8]) ball_y + (byte~) scan_for_lowest::$4) -- vwsz1=pwsc1_derefidx_vbuaa 
+    // [22] (signed word) scan_for_lowest::height#1 ← *((const signed word*) ball_y + (byte~) scan_for_lowest::$4) -- vwsz1=pwsc1_derefidx_vbuaa 
     tay
     lda ball_y,y
     sta.z height

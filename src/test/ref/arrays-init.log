@@ -2,17 +2,16 @@ Identified constant variable (byte*) SCREEN
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[3]) b ← { fill( 3, 0) }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  *((byte[3]) b + (number) 0) ← (byte) 'c'
-  *((const byte*) SCREEN) ← *((byte[3]) b + (number) 0)
+  *((const byte*) b + (number) 0) ← (byte) 'c'
+  *((const byte*) SCREEN) ← *((const byte*) b + (number) 0)
   (byte*~) main::$0 ← (const byte*) SCREEN + (number) 1
-  *((byte*~) main::$0) ← *((const byte[]) c + (number) 1)
+  *((byte*~) main::$0) ← *((const byte*) c + (number) 1)
   (byte*~) main::$1 ← (const byte*) SCREEN + (number) 2
-  *((byte*~) main::$1) ← *((const byte[]) d + (number) 2)
+  *((byte*~) main::$1) ← *((const byte*) d + (number) 2)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -30,20 +29,20 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*)(number) $400
-(byte[3]) b
-(const byte[]) c = { (byte) 'c', (byte) 'm', (byte) 'l' }
-(const byte[]) d = (string) "cml"z
+(const byte*) b = { fill( 3, 0) }
+(const byte*) c = { (byte) 'c', (byte) 'm', (byte) 'l' }
+(const byte*) d = (string) "cml"z
 (void()) main()
 (byte*~) main::$0
 (byte*~) main::$1
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((byte[3]) b + (number) 0) ← (byte) 'c'
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN) ← *((byte[3]) b + (number) 0)
+Adding number conversion cast (unumber) 0 in *((const byte*) b + (number) 0) ← (byte) 'c'
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN) ← *((const byte*) b + (number) 0)
 Adding number conversion cast (unumber) 1 in (byte*~) main::$0 ← (const byte*) SCREEN + (number) 1
-Adding number conversion cast (unumber) 1 in *((byte*~) main::$0) ← *((const byte[]) c + (number) 1)
+Adding number conversion cast (unumber) 1 in *((byte*~) main::$0) ← *((const byte*) c + (number) 1)
 Adding number conversion cast (unumber) 2 in (byte*~) main::$1 ← (const byte*) SCREEN + (number) 2
-Adding number conversion cast (unumber) 2 in *((byte*~) main::$1) ← *((const byte[]) d + (number) 2)
+Adding number conversion cast (unumber) 2 in *((byte*~) main::$1) ← *((const byte*) d + (number) 2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -60,16 +59,14 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte[3]) b ← { fill( 3, 0) }
-Constant right-side identified [3] (byte*~) main::$0 ← (const byte*) SCREEN + (byte) 1
-Constant right-side identified [5] (byte*~) main::$1 ← (const byte*) SCREEN + (byte) 2
+Constant right-side identified [2] (byte*~) main::$0 ← (const byte*) SCREEN + (byte) 1
+Constant right-side identified [4] (byte*~) main::$1 ← (const byte*) SCREEN + (byte) 2
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte[3]) b = { fill( 3, 0) }
 Constant (const byte*) main::$0 = SCREEN+1
 Constant (const byte*) main::$1 = SCREEN+2
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero b in [1] *((const byte[3]) b + (byte) 0) ← (byte) 'c'
-Simplifying expression containing zero b in [2] *((const byte*) SCREEN) ← *((const byte[3]) b + (byte) 0)
+Simplifying expression containing zero b in [0] *((const byte*) b + (byte) 0) ← (byte) 'c'
+Simplifying expression containing zero b in [1] *((const byte*) SCREEN) ← *((const byte*) b + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant inlined main::$1 = (const byte*) SCREEN+(byte) 2
 Constant inlined main::$0 = (const byte*) SCREEN+(byte) 1
@@ -104,10 +101,10 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte[3]) b) ← (byte) 'c'
-  [5] *((const byte*) SCREEN) ← *((const byte[3]) b)
-  [6] *((const byte*) SCREEN+(byte) 1) ← *((const byte[]) c+(byte) 1)
-  [7] *((const byte*) SCREEN+(byte) 2) ← *((const byte[]) d+(byte) 2)
+  [4] *((const byte*) b) ← (byte) 'c'
+  [5] *((const byte*) SCREEN) ← *((const byte*) b)
+  [6] *((const byte*) SCREEN+(byte) 1) ← *((const byte*) c+(byte) 1)
+  [7] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) d+(byte) 2)
   to:main::@return
 main::@return: scope:[main]  from main
   [8] return 
@@ -145,16 +142,16 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte[3]) b) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) b) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta b
-    // [5] *((const byte*) SCREEN) ← *((const byte[3]) b) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const byte*) SCREEN) ← *((const byte*) b) -- _deref_pbuc1=_deref_pbuc2 
     lda b
     sta SCREEN
-    // [6] *((const byte*) SCREEN+(byte) 1) ← *((const byte[]) c+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN+(byte) 1) ← *((const byte*) c+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda c+1
     sta SCREEN+1
-    // [7] *((const byte*) SCREEN+(byte) 2) ← *((const byte[]) d+(byte) 2) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) d+(byte) 2) -- _deref_pbuc1=_deref_pbuc2 
     lda d+2
     sta SCREEN+2
     jmp __breturn
@@ -164,15 +161,15 @@ main: {
     rts
 }
   // File Data
+  b: .fill 3, 0
   c: .byte 'c', 'm', 'l'
   d: .text "cml"
-  b: .fill 3, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte[3]) b) ← (byte) 'c' [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) SCREEN) ← *((const byte[3]) b) [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN+(byte) 1) ← *((const byte[]) c+(byte) 1) [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN+(byte) 2) ← *((const byte[]) d+(byte) 2) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) b) ← (byte) 'c' [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) SCREEN) ← *((const byte*) b) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN+(byte) 1) ← *((const byte*) c+(byte) 1) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) d+(byte) 2) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -205,16 +202,16 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte[3]) b) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) b) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta b
-    // [5] *((const byte*) SCREEN) ← *((const byte[3]) b) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const byte*) SCREEN) ← *((const byte*) b) -- _deref_pbuc1=_deref_pbuc2 
     lda b
     sta SCREEN
-    // [6] *((const byte*) SCREEN+(byte) 1) ← *((const byte[]) c+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN+(byte) 1) ← *((const byte*) c+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda c+1
     sta SCREEN+1
-    // [7] *((const byte*) SCREEN+(byte) 2) ← *((const byte[]) d+(byte) 2) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) d+(byte) 2) -- _deref_pbuc1=_deref_pbuc2 
     lda d+2
     sta SCREEN+2
     jmp __breturn
@@ -224,9 +221,9 @@ main: {
     rts
 }
   // File Data
+  b: .fill 3, 0
   c: .byte 'c', 'm', 'l'
   d: .text "cml"
-  b: .fill 3, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -254,9 +251,9 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*) 1024
-(const byte[3]) b = { fill( 3, 0) }
-(const byte[]) c = { (byte) 'c', (byte) 'm', (byte) 'l' }
-(const byte[]) d = (string) "cml"z
+(const byte*) b = { fill( 3, 0) }
+(const byte*) c = { (byte) 'c', (byte) 'm', (byte) 'l' }
+(const byte*) d = (string) "cml"z
 (void()) main()
 (label) main::@return
 
@@ -281,18 +278,18 @@ Score: 32
   // main
 main: {
     // b[0] = 'c'
-    // [4] *((const byte[3]) b) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) b) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta b
     // *SCREEN = b[0]
-    // [5] *((const byte*) SCREEN) ← *((const byte[3]) b) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const byte*) SCREEN) ← *((const byte*) b) -- _deref_pbuc1=_deref_pbuc2 
     sta SCREEN
     // *(SCREEN+1) = c[1]
-    // [6] *((const byte*) SCREEN+(byte) 1) ← *((const byte[]) c+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN+(byte) 1) ← *((const byte*) c+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda c+1
     sta SCREEN+1
     // *(SCREEN+2) = d[2]
-    // [7] *((const byte*) SCREEN+(byte) 2) ← *((const byte[]) d+(byte) 2) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) d+(byte) 2) -- _deref_pbuc1=_deref_pbuc2 
     lda d+2
     sta SCREEN+2
     // main::@return
@@ -301,7 +298,7 @@ main: {
     rts
 }
   // File Data
+  b: .fill 3, 0
   c: .byte 'c', 'm', 'l'
   d: .text "cml"
-  b: .fill 3, 0
 

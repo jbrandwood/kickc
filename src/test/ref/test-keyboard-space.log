@@ -36,7 +36,7 @@ keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   (byte) keyboard_matrix_read::rowid#1 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 )
-  *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
+  *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
   (byte~) keyboard_matrix_read::$0 ← ~ *((const byte*) CIA1_PORT_B)
   (byte) keyboard_matrix_read::row_pressed_bits#0 ← (byte~) keyboard_matrix_read::$0
   (byte) keyboard_matrix_read::return#0 ← (byte) keyboard_matrix_read::row_pressed_bits#0
@@ -62,7 +62,7 @@ keyboard_key_pressed::@2: scope:[keyboard_key_pressed]  from keyboard_key_presse
   (byte) keyboard_key_pressed::colidx#1 ← phi( keyboard_key_pressed/(byte) keyboard_key_pressed::colidx#0 )
   (byte) keyboard_matrix_read::return#4 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::return#2 )
   (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#4
-  (byte~) keyboard_key_pressed::$3 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#1)
+  (byte~) keyboard_key_pressed::$3 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#1)
   (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$3
   to:keyboard_key_pressed::@return
 keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@2
@@ -148,7 +148,7 @@ SYMBOL TABLE SSA
 (byte) keyboard_key_pressed::return#4
 (byte) keyboard_key_pressed::rowidx
 (byte) keyboard_key_pressed::rowidx#0
-(const byte[8]) keyboard_matrix_col_bitmask = { (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
+(const byte*) keyboard_matrix_col_bitmask = { (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (byte~) keyboard_matrix_read::$0
 (label) keyboard_matrix_read::@return
@@ -163,7 +163,7 @@ SYMBOL TABLE SSA
 (byte) keyboard_matrix_read::rowid
 (byte) keyboard_matrix_read::rowid#0
 (byte) keyboard_matrix_read::rowid#1
-(const byte[8]) keyboard_matrix_row_bitmask = { (byte)(number) $fe, (byte)(number) $fd, (byte)(number) $fb, (byte)(number) $f7, (byte)(number) $ef, (byte)(number) $df, (byte)(number) $bf, (byte)(number) $7f }
+(const byte*) keyboard_matrix_row_bitmask = { (byte)(number) $fe, (byte)(number) $fd, (byte)(number) $fb, (byte)(number) $f7, (byte)(number) $ef, (byte)(number) $df, (byte)(number) $bf, (byte)(number) $7f }
 (void()) main()
 (bool~) main::$1
 (byte~) main::$2
@@ -334,7 +334,7 @@ keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@2
   to:keyboard_key_pressed::@1
 keyboard_key_pressed::@1: scope:[keyboard_key_pressed]  from keyboard_key_pressed
   [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0)
+  [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0)
   to:keyboard_key_pressed::@return
 keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@1
   [19] return 
@@ -342,7 +342,7 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
-  [20] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0)
+  [20] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0)
   [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B)
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
@@ -507,7 +507,7 @@ keyboard_key_pressed: {
     // [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
     lda.z keyboard_matrix_read.return_1
     sta.z __2
-    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band__deref_pbuc1 
+    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band__deref_pbuc1 
     lda keyboard_matrix_col_bitmask+colidx
     and.z __2
     sta.z return
@@ -526,7 +526,7 @@ keyboard_key_pressed: {
 keyboard_matrix_read: {
     .label return = 7
     .label return_1 = 4
-    // [20] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [20] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
     // [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
@@ -566,7 +566,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) BGCOL) ← (const byte) BLUE [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) BGCOL) ← (const byte) GREEN [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [20] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:8::keyboard_matrix_read:15 [ ] ) always clobbers reg byte a 
+Statement [20] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:8::keyboard_matrix_read:15 [ ] ) always clobbers reg byte a 
 Statement [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:8::keyboard_matrix_read:15 [ keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
 Statement [23] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff [ ] ( main:2::keyboard_init:5 [ ] ) always clobbers reg byte a 
 Statement [24] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 [ ] ( main:2::keyboard_init:5 [ ] ) always clobbers reg byte a 
@@ -684,7 +684,7 @@ keyboard_key_pressed: {
     // keyboard_key_pressed::@1
   __b1:
     // [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
+    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
     and keyboard_matrix_col_bitmask+colidx
     jmp __breturn
     // keyboard_key_pressed::@return
@@ -699,7 +699,7 @@ keyboard_key_pressed: {
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-    // [20] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [20] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
     // [21] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
@@ -796,7 +796,7 @@ FINAL SYMBOL TABLE
 (byte) keyboard_key_pressed::return#2 reg byte a 22.0
 (byte) keyboard_key_pressed::rowidx
 (const byte) keyboard_key_pressed::rowidx#0 rowidx = (const byte) KEY_SPACE>>(byte) 3
-(const byte[8]) keyboard_matrix_col_bitmask = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
+(const byte*) keyboard_matrix_col_bitmask = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (label) keyboard_matrix_read::@return
 (byte) keyboard_matrix_read::return
@@ -804,7 +804,7 @@ FINAL SYMBOL TABLE
 (byte) keyboard_matrix_read::return#2 reg byte a 4.0
 (byte) keyboard_matrix_read::row_pressed_bits
 (byte) keyboard_matrix_read::rowid
-(const byte[8]) keyboard_matrix_row_bitmask = { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
+(const byte*) keyboard_matrix_row_bitmask = { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
 (void()) main()
 (byte~) main::$2 reg byte a 22.0
 (label) main::@1
@@ -906,7 +906,7 @@ keyboard_key_pressed: {
     // keyboard_key_pressed::@1
     // [17] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
     // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
-    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
+    // [18] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask+(const byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band__deref_pbuc1 
     and keyboard_matrix_col_bitmask+colidx
     // keyboard_key_pressed::@return
     // }
@@ -921,7 +921,7 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
-    // [20] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [20] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
     // ~*CIA1_PORT_B

@@ -36,8 +36,14 @@ public class Variable implements Symbol {
    /** The kind of the variable.  */
    private Kind kind;
 
-   /** True of the variable is a compile-time constant (previously ConstantVar) [ALL] */
+   /** True of the variable is a compile-time constant (previously ConstantVar) [ALL] TODO: Eliminate (use Kind.CONSTANT) */
    private boolean isConstant;
+
+   /** True if the variable is an array. */
+   private boolean isArray;
+
+   /** If the variable is a fixed size array this is the fixed size of the array. */
+   private ConstantValue arraySize;
 
    /** The local name of the variable. [ALL] */
    private String name;
@@ -106,11 +112,12 @@ public class Variable implements Symbol {
     * @param dataSegment The data segment (in main memory)
     * @param value The constant value
     */
-   public Variable(String name, Scope scope, SymbolType type, String dataSegment, ConstantValue value) {
+   public Variable(String name, Scope scope, SymbolType type, boolean isArray, String dataSegment, ConstantValue value) {
       this.isConstant = true;
       this.name = name;
       this.scope = scope;
       this.type = type;
+      this.isArray = isArray;
       this.dataSegment = dataSegment;
       this.kind = Kind.CONSTANT;
       this.memoryArea = MemoryArea.MAIN_MEMORY;
@@ -151,6 +158,8 @@ public class Variable implements Symbol {
     */
    public Variable(Variable phiMaster, int version) {
       this(false, phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), Kind.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
+      this.setArray(phiMaster.isArray());
+      this.setArraySize(phiMaster.getArraySize());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       this.setDeclaredConst(phiMaster.isDeclaredConst());
@@ -170,6 +179,8 @@ public class Variable implements Symbol {
     */
    public Variable(String name, Scope scope, Variable original) {
       this(original.isConstant(), name, scope, original.getType(), original.getKind(), original.getMemoryArea(), original.getDataSegment());
+      this.setArray(original.isArray());
+      this.setArraySize(original.getArraySize());
       this.setDeclaredAlignment(original.getDeclaredAlignment());
       this.setDeclaredAsRegister(original.isDeclaredAsRegister());
       this.setDeclaredConst(original.isDeclaredConst());
@@ -273,6 +284,21 @@ public class Variable implements Symbol {
       return getScope().getVariable(versionOfName);
    }
 
+   public boolean isArray() {
+      return isArray;
+   }
+
+   public void setArray(boolean array) {
+      isArray = array;
+   }
+
+   public ConstantValue getArraySize() {
+      return arraySize;
+   }
+
+   public void setArraySize(ConstantValue arraySize) {
+      this.arraySize = arraySize;
+   }
 
    public Registers.Register getAllocation() {
       return allocation;

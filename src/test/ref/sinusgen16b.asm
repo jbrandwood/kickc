@@ -78,12 +78,12 @@ main: {
     cpx #$78
     bne __b1
     rts
+    sintab1: .fill 2*$78, 0
+    sintab2: .fill 2*$78, 0
     str: .text "   "
     .byte 0
     str1: .text " "
     .byte 0
-    sintab1: .fill 2*$78, 0
-    sintab2: .fill 2*$78, 0
 }
 // Print a zero-terminated string
 // print_str(byte* zeropage($11) str)

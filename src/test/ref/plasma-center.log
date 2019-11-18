@@ -6,8 +6,8 @@ Fixing pointer addition (word~) sqrt::$1 ← (word*) sqrt::found - (word*) SQUAR
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Fixing pointer array-indexing *((word*) SQUARES + (byte) sqr::val)
-Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
-Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
+Fixing pointer array-indexing *((word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
+Fixing pointer array-indexing *((word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
 Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
@@ -367,7 +367,7 @@ sqrt::@return: scope:[sqrt]  from sqrt::@2
   (word*) SQUARES#48 ← phi( @16/(word*) SQUARES#0 )
   (byte) NUM_SQUARES#42 ← phi( @16/(byte) NUM_SQUARES#0 )
   (byte*) heap_head#36 ← phi( @16/(byte*) heap_head#41 )
-  (word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+  (word*) CORDIC_ATAN2_ANGLES_16 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
   to:@21
@@ -528,7 +528,7 @@ atan2_16::@26: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#4 + (signed word) atan2_16::yd#5
   (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#6 - (signed word) atan2_16::xd#5
   (byte~) atan2_16::$22 ← (byte) atan2_16::i#3 * (const byte) SIZEOF_WORD
-  (word) atan2_16::angle#2 ← (word) atan2_16::angle#7 + *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
+  (word) atan2_16::angle#2 ← (word) atan2_16::angle#7 + *((word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
   to:atan2_16::@27
 atan2_16::@30: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::y#11 ← phi( atan2_16::@25/(signed word) atan2_16::y#14 )
@@ -542,7 +542,7 @@ atan2_16::@30: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#5 - (signed word) atan2_16::yd#6
   (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#7 + (signed word) atan2_16::xd#6
   (byte~) atan2_16::$23 ← (byte) atan2_16::i#4 * (const byte) SIZEOF_WORD
-  (word) atan2_16::angle#3 ← (word) atan2_16::angle#8 - *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
+  (word) atan2_16::angle#3 ← (word) atan2_16::angle#8 - *((word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
   to:atan2_16::@27
 atan2_16::@27: scope:[atan2_16]  from atan2_16::@26 atan2_16::@30
   (signed word) atan2_16::y#8 ← phi( atan2_16::@26/(signed word) atan2_16::y#10 atan2_16::@30/(signed word) atan2_16::y#11 )
@@ -651,7 +651,7 @@ sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
   (word*) SQUARES#44 ← phi( @21/(word*) SQUARES#46 )
   (byte) NUM_SQUARES#35 ← phi( @21/(byte) NUM_SQUARES#39 )
   (byte*) heap_head#23 ← phi( @21/(byte*) heap_head#31 )
-  (byte[$200]) SINTABLE ← kickasm {{ .for(var i=0;i<$200;i++)
+  (byte*) SINTABLE ← kickasm {{ .for(var i=0;i<$200;i++)
         .byte round(127.5+127.5*sin(2*PI*i/256))
  }}
   (word) malloc::size#1 ← (number) $3e8
@@ -958,9 +958,9 @@ doplasma: scope:[doplasma]  from main::@2 main::@7
   (byte*) SCREEN_ANGLE#2 ← phi( main::@2/(byte*) SCREEN_ANGLE#4 main::@7/(byte*) SCREEN_ANGLE#5 )
   (byte*) doplasma::angle#0 ← (byte*) SCREEN_ANGLE#2
   (byte*) doplasma::dist#0 ← (byte*) SCREEN_DIST#2
-  (byte*~) doplasma::$0 ← (byte[$200]) SINTABLE + (byte) sin_offset_x#10
+  (byte*~) doplasma::$0 ← (byte*) SINTABLE + (byte) sin_offset_x#10
   (byte*) doplasma::sin_x#0 ← (byte*~) doplasma::$0
-  (byte*~) doplasma::$1 ← (byte[$200]) SINTABLE + (byte) sin_offset_y#10
+  (byte*~) doplasma::$1 ← (byte*) SINTABLE + (byte) sin_offset_y#10
   (byte*) doplasma::sin_y#0 ← (byte*~) doplasma::$1
   (byte) doplasma::y#0 ← (byte) 0
   to:doplasma::@1
@@ -1353,7 +1353,7 @@ make_plasma_charset::@2: scope:[make_plasma_charset]  from make_plasma_charset::
   (byte*) make_plasma_charset::charset#8 ← phi( make_plasma_charset::@1/(byte*) make_plasma_charset::charset#10 )
   (word) make_plasma_charset::c#3 ← phi( make_plasma_charset::@1/(word) make_plasma_charset::c#2 )
   (byte~) make_plasma_charset::$3 ← < (word) make_plasma_charset::c#3
-  (byte) make_plasma_charset::s#0 ← *((byte[$200]) SINTABLE + (byte~) make_plasma_charset::$3)
+  (byte) make_plasma_charset::s#0 ← *((byte*) SINTABLE + (byte~) make_plasma_charset::$3)
   (byte) make_plasma_charset::i#0 ← (number) 0
   to:make_plasma_charset::@4
 make_plasma_charset::@4: scope:[make_plasma_charset]  from make_plasma_charset::@2 make_plasma_charset::@9
@@ -1459,7 +1459,7 @@ make_plasma_charset::@13: scope:[make_plasma_charset]  from make_plasma_charset:
   (word) make_plasma_charset::c#13 ← phi( make_plasma_charset::@25/(word) make_plasma_charset::c#14 )
   (byte) make_plasma_charset::ii#4 ← phi( make_plasma_charset::@25/(byte) make_plasma_charset::ii#5 )
   (byte) make_plasma_charset::b#3 ← phi( make_plasma_charset::@25/(byte) make_plasma_charset::b#5 )
-  (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#3 | *((const byte[8]) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#4)
+  (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#3 | *((const byte*) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#4)
   to:make_plasma_charset::@10
 make_plasma_charset::@19: scope:[make_plasma_charset]  from make_plasma_charset::@26 make_plasma_charset::@6
   (byte*) make_plasma_charset::charset#11 ← phi( make_plasma_charset::@26/(byte*) make_plasma_charset::charset#14 make_plasma_charset::@6/(byte*) make_plasma_charset::charset#15 )
@@ -1539,7 +1539,7 @@ SYMBOL TABLE SSA
 (const byte) BLACK = (number) 0
 (const byte*) CHARSET = (byte*)(number) $2000
 (const byte*) COLS = (byte*)(number) $d800
-(word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16
+(word*) CORDIC_ATAN2_ANGLES_16
 (const byte) CORDIC_ITERATIONS_16 = (number) $f
 (const byte*) D018 = (byte*)(number) $d018
 (const byte*) HEAP_TOP = (byte*)(number) $a000
@@ -1643,7 +1643,7 @@ SYMBOL TABLE SSA
 (const byte*) SID_VOICE3_CONTROL = (byte*)(number) $d412
 (const word*) SID_VOICE3_FREQ = (word*)(number) $d40e
 (const byte*) SID_VOICE3_OSC = (byte*)(number) $d41b
-(byte[$200]) SINTABLE
+(byte*) SINTABLE
 (const byte) SIZEOF_WORD = (byte) 2
 (word*) SQUARES
 (word*) SQUARES#0
@@ -2403,7 +2403,7 @@ SYMBOL TABLE SSA
 (byte) make_plasma_charset::b#5
 (byte) make_plasma_charset::b#6
 (byte) make_plasma_charset::b#7
-(const byte[8]) make_plasma_charset::bittab = { (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
+(const byte*) make_plasma_charset::bittab = { (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
 (word) make_plasma_charset::c
 (word) make_plasma_charset::c#0
 (word) make_plasma_charset::c#1
@@ -3629,7 +3629,7 @@ Constant (const byte) NUM_SQUARES#0 = $ff
 Constant (const word*) SQUARES#0 = (word*) 0
 Constant (const word) init_squares::sqr#0 = 0
 Constant (const byte) init_squares::i#0 = 0
-Constant (const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+Constant (const word*) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
 Constant (const word) atan2_16::angle#0 = 0
@@ -3637,7 +3637,7 @@ Constant (const byte) atan2_16::i#0 = 0
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const byte[$200]) SINTABLE = kickasm {{ .for(var i=0;i<$200;i++)
+Constant (const byte*) SINTABLE = kickasm {{ .for(var i=0;i<$200;i++)
         .byte round(127.5+127.5*sin(2*PI*i/256))
  }}
 Constant (const word) malloc::size#1 = $3e8
@@ -4219,8 +4219,8 @@ doplasma: scope:[doplasma]  from main::@2 main::@3
   [25] (byte) sin_offset_x#10 ← phi( main::@2/(byte) sin_offset_x#14 main::@3/(byte) sin_offset_x#12 )
   [26] (byte*) doplasma::angle#0 ← (byte*)(void*) SCREEN_ANGLE#0
   [27] (byte*) doplasma::dist#0 ← (byte*)(void*) SCREEN_DIST#0
-  [28] (byte*) doplasma::sin_x#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_x#10
-  [29] (byte*) doplasma::sin_y#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_y#10
+  [28] (byte*) doplasma::sin_x#0 ← (const byte*) SINTABLE + (byte) sin_offset_x#10
+  [29] (byte*) doplasma::sin_y#0 ← (const byte*) SINTABLE + (byte) sin_offset_y#10
   to:doplasma::@1
 doplasma::@1: scope:[doplasma]  from doplasma doplasma::@3
   [30] (byte) doplasma::y#4 ← phi( doplasma/(byte) 0 doplasma::@3/(byte) doplasma::y#1 )
@@ -4290,7 +4290,7 @@ make_plasma_charset::@return: scope:[make_plasma_charset]  from make_plasma_char
   to:@return
 make_plasma_charset::@2: scope:[make_plasma_charset]  from make_plasma_charset::@1
   [59] (byte~) make_plasma_charset::$3 ← < (word) make_plasma_charset::c#2
-  [60] (byte) make_plasma_charset::s#0 ← *((const byte[$200]) SINTABLE + (byte~) make_plasma_charset::$3)
+  [60] (byte) make_plasma_charset::s#0 ← *((const byte*) SINTABLE + (byte~) make_plasma_charset::$3)
   to:make_plasma_charset::@3
 make_plasma_charset::@3: scope:[make_plasma_charset]  from make_plasma_charset::@2 make_plasma_charset::@7
   [61] (byte) make_plasma_charset::i#2 ← phi( make_plasma_charset::@2/(byte) 0 make_plasma_charset::@7/(byte) make_plasma_charset::i#1 )
@@ -4331,7 +4331,7 @@ make_plasma_charset::@13: scope:[make_plasma_charset]  from make_plasma_charset:
   [81] if((byte~) make_plasma_charset::$7<=(byte) make_plasma_charset::s#0) goto make_plasma_charset::@8
   to:make_plasma_charset::@9
 make_plasma_charset::@9: scope:[make_plasma_charset]  from make_plasma_charset::@13
-  [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte[8]) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2)
+  [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte*) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2)
   to:make_plasma_charset::@8
 make_plasma_charset::@8: scope:[make_plasma_charset]  from make_plasma_charset::@13 make_plasma_charset::@9
   [83] (byte) make_plasma_charset::b#6 ← phi( make_plasma_charset::@9/(byte) make_plasma_charset::b#1 make_plasma_charset::@13/(byte) make_plasma_charset::b#2 )
@@ -4495,7 +4495,7 @@ atan2_16::@20: scope:[atan2_16]  from atan2_16::@17
   [154] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5
   [155] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5
   [156] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1
-  [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
+  [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
   to:atan2_16::@19
 atan2_16::@19: scope:[atan2_16]  from atan2_16::@18 atan2_16::@20
   [158] (signed word) atan2_16::xi#8 ← phi( atan2_16::@18/(signed word) atan2_16::xi#1 atan2_16::@20/(signed word) atan2_16::xi#2 )
@@ -4508,7 +4508,7 @@ atan2_16::@18: scope:[atan2_16]  from atan2_16::@17
   [161] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5
   [162] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5
   [163] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1
-  [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
+  [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
   to:atan2_16::@19
 atan2_16::@14: scope:[atan2_16]  from atan2_16::@13
   [165] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2
@@ -5549,7 +5549,7 @@ doplasma: {
     sta.z dist
     lda.z SCREEN_DIST+1
     sta.z dist+1
-    // [28] (byte*) doplasma::sin_x#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_x#10 -- pbuz1=pbuc1_plus_vbuz2 
+    // [28] (byte*) doplasma::sin_x#0 ← (const byte*) SINTABLE + (byte) sin_offset_x#10 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z sin_offset_x
     clc
     adc #<SINTABLE
@@ -5557,7 +5557,7 @@ doplasma: {
     lda #>SINTABLE
     adc #0
     sta.z sin_x+1
-    // [29] (byte*) doplasma::sin_y#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_y#10 -- pbuz1=pbuc1_plus_vbuz2 
+    // [29] (byte*) doplasma::sin_y#0 ← (const byte*) SINTABLE + (byte) sin_offset_y#10 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z sin_offset_y
     clc
     adc #<SINTABLE
@@ -5782,7 +5782,7 @@ make_plasma_charset: {
     // [59] (byte~) make_plasma_charset::$3 ← < (word) make_plasma_charset::c#2 -- vbuz1=_lo_vwuz2 
     lda.z c
     sta.z __3
-    // [60] (byte) make_plasma_charset::s#0 ← *((const byte[$200]) SINTABLE + (byte~) make_plasma_charset::$3) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [60] (byte) make_plasma_charset::s#0 ← *((const byte*) SINTABLE + (byte~) make_plasma_charset::$3) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __3
     lda SINTABLE,y
     sta.z s
@@ -5915,7 +5915,7 @@ make_plasma_charset: {
     jmp __b9
     // make_plasma_charset::@9
   __b9:
-    // [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte[8]) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) -- vbuz1=vbuz1_bor_pbuc1_derefidx_vbuz2 
+    // [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte*) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) -- vbuz1=vbuz1_bor_pbuc1_derefidx_vbuz2 
     lda.z b
     ldy.z ii
     ora bittab,y
@@ -6436,7 +6436,7 @@ atan2_16: {
     lda.z i
     asl
     sta.z __23
-    // [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
+    // [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
     ldy.z __23
     sec
     lda.z angle_1
@@ -6489,7 +6489,7 @@ atan2_16: {
     lda.z i
     asl
     sta.z __22
-    // [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuz2 
+    // [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuz2 
     ldy.z __22
     clc
     lda.z angle_1
@@ -7178,8 +7178,8 @@ Removing always clobbered register reg byte a as potential for zp[1]:3 [ sin_off
 Statement [24] *((const byte*) D018) ← (const byte) main::toD0182_return#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#12 sin_offset_y#12 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#12 sin_offset_y#12 ] ) always clobbers reg byte a 
 Statement [26] (byte*) doplasma::angle#0 ← (byte*)(void*) SCREEN_ANGLE#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 ] ) always clobbers reg byte a 
 Statement [27] (byte*) doplasma::dist#0 ← (byte*)(void*) SCREEN_DIST#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 ] ) always clobbers reg byte a 
-Statement [28] (byte*) doplasma::sin_x#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_x#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ) always clobbers reg byte a 
-Statement [29] (byte*) doplasma::sin_y#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_y#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ) always clobbers reg byte a 
+Statement [28] (byte*) doplasma::sin_x#0 ← (const byte*) SINTABLE + (byte) sin_offset_x#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ) always clobbers reg byte a 
+Statement [29] (byte*) doplasma::sin_y#0 ← (const byte*) SINTABLE + (byte) sin_offset_y#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ) always clobbers reg byte a 
 Statement [32] (byte~) doplasma::$2 ← *((byte*) doplasma::sin_x#0 + *((byte*) doplasma::angle#4 + (byte) doplasma::x#2)) + *((byte*) doplasma::sin_y#0 + *((byte*) doplasma::dist#4 + (byte) doplasma::x#2)) [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 doplasma::$2 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 doplasma::$2 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 doplasma::$2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ sin_offset_x#10 sin_offset_x#14 sin_offset_x#12 ]
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ sin_offset_y#10 sin_offset_y#14 sin_offset_y#12 ]
@@ -7213,7 +7213,7 @@ Statement [73] (byte*~) make_plasma_charset::$16 ← (const byte*) CHARSET + (wo
 Statement [74] *((byte*~) make_plasma_charset::$16) ← (byte) make_plasma_charset::b#2 [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:81 [ make_plasma_charset::s#0 ]
 Removing always clobbered register reg byte y as potential for zp[1]:21 [ make_plasma_charset::i#2 make_plasma_charset::i#1 ]
-Statement [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte[8]) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ) always clobbers reg byte a 
+Statement [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte*) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:22 [ make_plasma_charset::ii#2 make_plasma_charset::ii#1 ]
 Statement [87] *((byte*) print_char_cursor#18) ← (const byte) print_char::ch#0 [ print_char_cursor#18 ] ( main:7::make_plasma_charset:14::print_char:66 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 ] ) always clobbers reg byte a reg byte y 
 Statement [93] *((const word*) SID_VOICE3_FREQ) ← (word) $ffff [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] ) always clobbers reg byte a 
@@ -7268,11 +7268,11 @@ Statement [153] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16:
 Statement [154] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ) always clobbers reg byte a 
 Statement [155] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ) always clobbers reg byte a 
 Statement [156] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ) always clobbers reg byte a 
-Statement [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
+Statement [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
 Statement [161] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [162] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [163] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ) always clobbers reg byte a 
-Statement [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
+Statement [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [165] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ) always clobbers reg byte a 
 Statement [166] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ) always clobbers reg byte a 
 Statement [168] (signed word) atan2_16::xi#13 ← (signed word) atan2_16::x#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ) always clobbers reg byte a 
@@ -7335,8 +7335,8 @@ Statement [21] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ S
 Statement [24] *((const byte*) D018) ← (const byte) main::toD0182_return#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#12 sin_offset_y#12 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#12 sin_offset_y#12 ] ) always clobbers reg byte a 
 Statement [26] (byte*) doplasma::angle#0 ← (byte*)(void*) SCREEN_ANGLE#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 ] ) always clobbers reg byte a 
 Statement [27] (byte*) doplasma::dist#0 ← (byte*)(void*) SCREEN_DIST#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 ] ) always clobbers reg byte a 
-Statement [28] (byte*) doplasma::sin_x#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_x#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ) always clobbers reg byte a 
-Statement [29] (byte*) doplasma::sin_y#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_y#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ) always clobbers reg byte a 
+Statement [28] (byte*) doplasma::sin_x#0 ← (const byte*) SINTABLE + (byte) sin_offset_x#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ) always clobbers reg byte a 
+Statement [29] (byte*) doplasma::sin_y#0 ← (const byte*) SINTABLE + (byte) sin_offset_y#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ) always clobbers reg byte a 
 Statement [32] (byte~) doplasma::$2 ← *((byte*) doplasma::sin_x#0 + *((byte*) doplasma::angle#4 + (byte) doplasma::x#2)) + *((byte*) doplasma::sin_y#0 + *((byte*) doplasma::dist#4 + (byte) doplasma::x#2)) [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 doplasma::$2 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 doplasma::$2 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 doplasma::$2 ] ) always clobbers reg byte a reg byte y 
 Statement [33] *((byte*) doplasma::screen#5 + (byte) doplasma::x#2) ← (byte~) doplasma::$2 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 ] ) always clobbers reg byte y 
 Statement [36] (byte*) doplasma::screen#2 ← (byte*) doplasma::screen#5 + (byte) $28 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::y#4 doplasma::screen#2 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::y#4 doplasma::screen#2 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::y#4 doplasma::screen#2 ] ) always clobbers reg byte a 
@@ -7355,7 +7355,7 @@ Statement [71] (word~) make_plasma_charset::$10 ← (word) make_plasma_charset::
 Statement [72] (word~) make_plasma_charset::$11 ← (word~) make_plasma_charset::$10 + (byte) make_plasma_charset::i#2 [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::b#2 make_plasma_charset::$11 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::b#2 make_plasma_charset::$11 ] ) always clobbers reg byte a 
 Statement [73] (byte*~) make_plasma_charset::$16 ← (const byte*) CHARSET + (word~) make_plasma_charset::$11 [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::b#2 make_plasma_charset::$16 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::b#2 make_plasma_charset::$16 ] ) always clobbers reg byte a 
 Statement [74] *((byte*~) make_plasma_charset::$16) ← (byte) make_plasma_charset::b#2 [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 ] ) always clobbers reg byte a reg byte y 
-Statement [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte[8]) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ) always clobbers reg byte a 
+Statement [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte*) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ) always clobbers reg byte a 
 Statement [87] *((byte*) print_char_cursor#18) ← (const byte) print_char::ch#0 [ print_char_cursor#18 ] ( main:7::make_plasma_charset:14::print_char:66 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 ] ) always clobbers reg byte a reg byte y 
 Statement [93] *((const word*) SID_VOICE3_FREQ) ← (word) $ffff [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] ) always clobbers reg byte a 
 Statement [94] *((const byte*) SID_VOICE3_CONTROL) ← (const byte) SID_CONTROL_NOISE [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] ) always clobbers reg byte a 
@@ -7399,11 +7399,11 @@ Statement [153] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16:
 Statement [154] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ) always clobbers reg byte a 
 Statement [155] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ) always clobbers reg byte a 
 Statement [156] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ) always clobbers reg byte a 
-Statement [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
+Statement [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
 Statement [161] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [162] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [163] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ) always clobbers reg byte a 
-Statement [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
+Statement [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [165] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ) always clobbers reg byte a 
 Statement [166] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ) always clobbers reg byte a 
 Statement [168] (signed word) atan2_16::xi#13 ← (signed word) atan2_16::x#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ) always clobbers reg byte a 
@@ -7461,8 +7461,8 @@ Statement [21] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ S
 Statement [24] *((const byte*) D018) ← (const byte) main::toD0182_return#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#12 sin_offset_y#12 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#12 sin_offset_y#12 ] ) always clobbers reg byte a 
 Statement [26] (byte*) doplasma::angle#0 ← (byte*)(void*) SCREEN_ANGLE#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 ] ) always clobbers reg byte a 
 Statement [27] (byte*) doplasma::dist#0 ← (byte*)(void*) SCREEN_DIST#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 ] ) always clobbers reg byte a 
-Statement [28] (byte*) doplasma::sin_x#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_x#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ) always clobbers reg byte a 
-Statement [29] (byte*) doplasma::sin_y#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_y#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ) always clobbers reg byte a 
+Statement [28] (byte*) doplasma::sin_x#0 ← (const byte*) SINTABLE + (byte) sin_offset_x#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 ] ) always clobbers reg byte a 
+Statement [29] (byte*) doplasma::sin_y#0 ← (const byte*) SINTABLE + (byte) sin_offset_y#10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::screen#6 doplasma::angle#0 doplasma::dist#0 doplasma::sin_x#0 doplasma::sin_y#0 ] ) always clobbers reg byte a 
 Statement [32] (byte~) doplasma::$2 ← *((byte*) doplasma::sin_x#0 + *((byte*) doplasma::angle#4 + (byte) doplasma::x#2)) + *((byte*) doplasma::sin_y#0 + *((byte*) doplasma::dist#4 + (byte) doplasma::x#2)) [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 doplasma::$2 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 doplasma::$2 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 doplasma::$2 ] ) always clobbers reg byte a reg byte y 
 Statement [33] *((byte*) doplasma::screen#5 + (byte) doplasma::x#2) ← (byte~) doplasma::$2 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::screen#5 doplasma::y#4 doplasma::x#2 ] ) always clobbers reg byte y 
 Statement [36] (byte*) doplasma::screen#2 ← (byte*) doplasma::screen#5 + (byte) $28 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::y#4 doplasma::screen#2 ] ( main:7::doplasma:19 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::y#4 doplasma::screen#2 ] main:7::doplasma:22 [ SCREEN_DIST#0 SCREEN_ANGLE#0 sin_offset_x#10 sin_offset_y#10 doplasma::sin_x#0 doplasma::sin_y#0 doplasma::angle#4 doplasma::dist#4 doplasma::y#4 doplasma::screen#2 ] ) always clobbers reg byte a 
@@ -7481,7 +7481,7 @@ Statement [71] (word~) make_plasma_charset::$10 ← (word) make_plasma_charset::
 Statement [72] (word~) make_plasma_charset::$11 ← (word~) make_plasma_charset::$10 + (byte) make_plasma_charset::i#2 [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::b#2 make_plasma_charset::$11 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::b#2 make_plasma_charset::$11 ] ) always clobbers reg byte a 
 Statement [73] (byte*~) make_plasma_charset::$16 ← (const byte*) CHARSET + (word~) make_plasma_charset::$11 [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::b#2 make_plasma_charset::$16 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::b#2 make_plasma_charset::$16 ] ) always clobbers reg byte a 
 Statement [74] *((byte*~) make_plasma_charset::$16) ← (byte) make_plasma_charset::b#2 [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 ] ) always clobbers reg byte a reg byte y 
-Statement [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte[8]) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ) always clobbers reg byte a 
+Statement [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte*) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ) always clobbers reg byte a 
 Statement [87] *((byte*) print_char_cursor#18) ← (const byte) print_char::ch#0 [ print_char_cursor#18 ] ( main:7::make_plasma_charset:14::print_char:66 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 ] ) always clobbers reg byte a reg byte y 
 Statement [93] *((const word*) SID_VOICE3_FREQ) ← (word) $ffff [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] ) always clobbers reg byte a 
 Statement [94] *((const byte*) SID_VOICE3_CONTROL) ← (const byte) SID_CONTROL_NOISE [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] ) always clobbers reg byte a 
@@ -7525,11 +7525,11 @@ Statement [153] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16:
 Statement [154] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ) always clobbers reg byte a 
 Statement [155] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ) always clobbers reg byte a 
 Statement [156] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ) always clobbers reg byte a 
-Statement [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
+Statement [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
 Statement [161] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [162] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [163] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ) always clobbers reg byte a 
-Statement [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
+Statement [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [165] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ) always clobbers reg byte a 
 Statement [166] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ) always clobbers reg byte a 
 Statement [168] (signed word) atan2_16::xi#13 ← (signed word) atan2_16::x#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ( main:7::init_angle_screen:12::atan2_16:113 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ) always clobbers reg byte a 
@@ -8063,7 +8063,7 @@ doplasma: {
     sta.z dist
     lda.z SCREEN_DIST+1
     sta.z dist+1
-    // [28] (byte*) doplasma::sin_x#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_x#10 -- pbuz1=pbuc1_plus_vbuz2 
+    // [28] (byte*) doplasma::sin_x#0 ← (const byte*) SINTABLE + (byte) sin_offset_x#10 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z sin_offset_x
     clc
     adc #<SINTABLE
@@ -8071,7 +8071,7 @@ doplasma: {
     lda #>SINTABLE
     adc #0
     sta.z sin_x+1
-    // [29] (byte*) doplasma::sin_y#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_y#10 -- pbuz1=pbuc1_plus_vbuz2 
+    // [29] (byte*) doplasma::sin_y#0 ← (const byte*) SINTABLE + (byte) sin_offset_y#10 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z sin_offset_y
     clc
     adc #<SINTABLE
@@ -8283,7 +8283,7 @@ make_plasma_charset: {
   __b2:
     // [59] (byte~) make_plasma_charset::$3 ← < (word) make_plasma_charset::c#2 -- vbuaa=_lo_vwuz1 
     lda.z c
-    // [60] (byte) make_plasma_charset::s#0 ← *((const byte[$200]) SINTABLE + (byte~) make_plasma_charset::$3) -- vbuz1=pbuc1_derefidx_vbuaa 
+    // [60] (byte) make_plasma_charset::s#0 ← *((const byte*) SINTABLE + (byte~) make_plasma_charset::$3) -- vbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda SINTABLE,y
     sta.z s
@@ -8406,7 +8406,7 @@ make_plasma_charset: {
     jmp __b9
     // make_plasma_charset::@9
   __b9:
-    // [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte[8]) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) -- vbuyy=vbuyy_bor_pbuc1_derefidx_vbuxx 
+    // [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte*) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) -- vbuyy=vbuyy_bor_pbuc1_derefidx_vbuxx 
     tya
     ora bittab,x
     tay
@@ -8876,7 +8876,7 @@ atan2_16: {
     // [156] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
+    // [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
     lda.z angle
@@ -8927,7 +8927,7 @@ atan2_16: {
     // [163] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
+    // [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
     tay
     clc
     lda.z angle
@@ -9817,7 +9817,7 @@ FINAL SYMBOL TABLE
 (const byte) BLACK = (number) 0
 (const byte*) CHARSET = (byte*) 8192
 (const byte*) COLS = (byte*) 55296
-(const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+(const word*) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
 (const byte) CORDIC_ITERATIONS_16 = (number) $f
@@ -9839,7 +9839,7 @@ FINAL SYMBOL TABLE
 (const byte*) SID_VOICE3_CONTROL = (byte*) 54290
 (const word*) SID_VOICE3_FREQ = (word*) 54286
 (const byte*) SID_VOICE3_OSC = (byte*) 54299
-(const byte[$200]) SINTABLE = kickasm {{ .for(var i=0;i<$200;i++)
+(const byte*) SINTABLE = kickasm {{ .for(var i=0;i<$200;i++)
         .byte round(127.5+127.5*sin(2*PI*i/256))
  }}
 (const byte) SIZEOF_WORD = (byte) 2
@@ -10144,7 +10144,7 @@ FINAL SYMBOL TABLE
 (byte) make_plasma_charset::b#1 reg byte y 2002.0
 (byte) make_plasma_charset::b#2 reg byte y 282.1818181818182
 (byte) make_plasma_charset::b#6 reg byte y 1501.5
-(const byte[8]) make_plasma_charset::bittab = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
+(const byte*) make_plasma_charset::bittab = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (word) make_plasma_charset::c
 (word) make_plasma_charset::c#1 c zp[2]:5 22.0
 (word) make_plasma_charset::c#2 c zp[2]:5 5.777777777777778
@@ -10490,7 +10490,7 @@ doplasma: {
     lda.z SCREEN_DIST+1
     sta.z dist+1
     // sin_x = SINTABLE+sin_offset_x
-    // [28] (byte*) doplasma::sin_x#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_x#10 -- pbuz1=pbuc1_plus_vbuz2 
+    // [28] (byte*) doplasma::sin_x#0 ← (const byte*) SINTABLE + (byte) sin_offset_x#10 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z sin_offset_x
     clc
     adc #<SINTABLE
@@ -10499,7 +10499,7 @@ doplasma: {
     adc #0
     sta.z sin_x+1
     // sin_y = SINTABLE+sin_offset_y
-    // [29] (byte*) doplasma::sin_y#0 ← (const byte[$200]) SINTABLE + (byte) sin_offset_y#10 -- pbuz1=pbuc1_plus_vbuz2 
+    // [29] (byte*) doplasma::sin_y#0 ← (const byte*) SINTABLE + (byte) sin_offset_y#10 -- pbuz1=pbuc1_plus_vbuz2 
     lda.z sin_offset_y
     clc
     adc #<SINTABLE
@@ -10702,7 +10702,7 @@ make_plasma_charset: {
     // [59] (byte~) make_plasma_charset::$3 ← < (word) make_plasma_charset::c#2 -- vbuaa=_lo_vwuz1 
     lda.z c
     // s = SINTABLE[<c]
-    // [60] (byte) make_plasma_charset::s#0 ← *((const byte[$200]) SINTABLE + (byte~) make_plasma_charset::$3) -- vbuz1=pbuc1_derefidx_vbuaa 
+    // [60] (byte) make_plasma_charset::s#0 ← *((const byte*) SINTABLE + (byte~) make_plasma_charset::$3) -- vbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda SINTABLE,y
     sta.z s
@@ -10818,7 +10818,7 @@ make_plasma_charset: {
     bcs __b8
     // make_plasma_charset::@9
     // b |= bittab[ii]
-    // [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte[8]) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) -- vbuyy=vbuyy_bor_pbuc1_derefidx_vbuxx 
+    // [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const byte*) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) -- vbuyy=vbuyy_bor_pbuc1_derefidx_vbuxx 
     tya
     ora bittab,x
     tay
@@ -11273,7 +11273,7 @@ atan2_16: {
     // [156] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
+    // [157] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
     lda.z angle
@@ -11326,7 +11326,7 @@ atan2_16: {
     // [163] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
+    // [164] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
     tay
     clc
     lda.z angle

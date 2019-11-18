@@ -2343,11 +2343,11 @@ print_set_screen: {
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
-  MENU_TEXT: .text "C64DTV Graphics Modes            CCLHBME@                                 OHIIMCC@                                 LUNCMMM@----------------------------------------@1. Standard Char             (V) 0000000@2. Extended Color Char       (V) 0000001@3. Multicolor Char           (V) 0000010@4. Standard Bitmap           (V) 0000100@5. Multicolor Bitmap         (V) 0000110@6. High Color Standard Char  (H) 0001000@7. High Extended Color Char  (H) 0001001@8. High Multicolor Char      (H) 0001010@9. High Multicolor Bitmap    (H) 0001110@a. Sixs Fred 2               (D) 0010111@b. Two Plane Bitmap          (D) 0011101@c. Sixs Fred (2 Plane MC BM) (D) 0011111@d. 8bpp Pixel Cell           (D) 0111011@e. Chunky 8bpp Bitmap        (D) 1111011@----------------------------------------@    (V) vicII (H) vicII+hicol (D) c64dtv@"
-  .byte 0
   // Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
+  MENU_TEXT: .text "C64DTV Graphics Modes            CCLHBME@                                 OHIIMCC@                                 LUNCMMM@----------------------------------------@1. Standard Char             (V) 0000000@2. Extended Color Char       (V) 0000001@3. Multicolor Char           (V) 0000010@4. Standard Bitmap           (V) 0000100@5. Multicolor Bitmap         (V) 0000110@6. High Color Standard Char  (H) 0001000@7. High Extended Color Char  (H) 0001001@8. High Multicolor Char      (H) 0001010@9. High Multicolor Bitmap    (H) 0001110@a. Sixs Fred 2               (D) 0010111@b. Two Plane Bitmap          (D) 0011101@c. Sixs Fred (2 Plane MC BM) (D) 0011111@d. 8bpp Pixel Cell           (D) 0111011@e. Chunky 8bpp Bitmap        (D) 1111011@----------------------------------------@    (V) vicII (H) vicII+hicol (D) c64dtv@"
+  .byte 0

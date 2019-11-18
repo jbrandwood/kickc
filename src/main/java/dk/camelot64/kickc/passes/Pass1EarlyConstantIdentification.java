@@ -120,7 +120,8 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
       SymbolVariableRef variableRef = variable.getRef();
       Scope scope = variable.getScope();
       scope.remove(variable);
-      Variable constVar = new Variable(variable.getName(), scope, variable.getType(), variable.getDataSegment(), constantValue);
+      Variable constVar = new Variable(variable.getName(), scope, variable.getType(), variable.isArray(), variable.getDataSegment(), constantValue);
+      constVar.setArraySize(variable.getArraySize());
       constVar.setDeclaredAlignment(variable.getDeclaredAlignment());
       constVar.setDeclaredAsRegister(variable.isDeclaredAsRegister());
       constVar.setDeclaredConst(variable.isDeclaredConst());

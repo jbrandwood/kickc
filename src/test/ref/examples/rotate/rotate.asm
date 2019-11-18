@@ -489,10 +489,6 @@ mulf_init: {
   !:
     jmp __b1
 }
-  print_hextab: .text "0123456789abcdef"
-  // Positions to rotate
-  xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
-  ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // <f(x) = <(( x * x )/4)
   .align $100
@@ -506,6 +502,10 @@ mulf_init: {
   // >g(x) = >((( x - 255) * ( x - 255 ))/4)
   .align $100
   mulf_sqr2_hi: .fill $200, 0
+  print_hextab: .text "0123456789abcdef"
+  // Positions to rotate
+  xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
+  ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
   // Sine and Cosine tables  
   // Angles: $00=0, $80=PI,$100=2*PI
   // Sine/Cosine: signed fixed [-$7f,$7f]

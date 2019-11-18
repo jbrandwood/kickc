@@ -174,13 +174,13 @@ main: {
     jsr print_ln
     inx
     jmp __b1
+    lintab1: .fill 2*$14, 0
+    lintab2: .fill 2*$14, 0
+    lintab3: .fill 2*$14, 0
     str: .text "   "
     .byte 0
     str1: .text " "
     .byte 0
-    lintab1: .fill 2*$14, 0
-    lintab2: .fill 2*$14, 0
-    lintab3: .fill 2*$14, 0
 }
 // Print a newline
 print_ln: {

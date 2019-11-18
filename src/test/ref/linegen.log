@@ -4,9 +4,9 @@ Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - 
 Fixing pointer increment (word*) lin16u_gen::lintab ← ++ (word*) lin16u_gen::lintab
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
-Fixing pointer array-indexing *((word[$14]) main::lintab1 + (byte) main::i)
-Fixing pointer array-indexing *((word[$14]) main::lintab2 + (byte) main::i)
-Fixing pointer array-indexing *((word[$14]) main::lintab3 + (byte) main::i)
+Fixing pointer array-indexing *((const word*) main::lintab1 + (byte) main::i)
+Fixing pointer array-indexing *((const word*) main::lintab2 + (byte) main::i)
+Fixing pointer array-indexing *((const word*) main::lintab3 + (byte) main::i)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
 Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
@@ -291,7 +291,7 @@ print_byte: scope:[print_byte]  from main::@2 print_word print_word::@1
   (byte*) print_char_cursor#81 ← phi( main::@2/(byte*) print_char_cursor#83 print_word/(byte*) print_char_cursor#80 print_word::@1/(byte*) print_char_cursor#5 )
   (byte) print_byte::b#3 ← phi( main::@2/(byte) print_byte::b#2 print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#3 >> (number) 4
-  (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -299,7 +299,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#47 ← phi( print_byte/(byte*) print_char_cursor#12 )
   (byte*) print_char_cursor#8 ← (byte*) print_char_cursor#47
   (number~) print_byte::$2 ← (byte) print_byte::b#4 & (number) $f
-  (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#1 ← *((const byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -353,10 +353,9 @@ main: scope:[main]  from @46
   (byte*) print_line_cursor#35 ← phi( @46/(byte*) print_line_cursor#26 )
   (byte*) print_screen#6 ← phi( @46/(byte*) print_screen#7 )
   (word) rem16u#20 ← phi( @46/(word) rem16u#24 )
-  (word[$14]) main::lintab1 ← { fill( $14, 0) }
   (word) lin16u_gen::min#0 ← (number) $22d
   (word) lin16u_gen::max#0 ← (number) $7461
-  (word*) lin16u_gen::lintab#0 ← (word[$14]) main::lintab1
+  (word*) lin16u_gen::lintab#0 ← (const word*) main::lintab1
   (word) lin16u_gen::length#0 ← (number) $14
   call lin16u_gen 
   to:main::@7
@@ -366,10 +365,9 @@ main::@7: scope:[main]  from main
   (byte*) print_screen#5 ← phi( main/(byte*) print_screen#6 )
   (word) rem16u#12 ← phi( main/(word) rem16u#9 )
   (word) rem16u#3 ← (word) rem16u#12
-  (word[$14]) main::lintab2 ← { fill( $14, 0) }
   (word) lin16u_gen::min#1 ← (number) $79cb
   (word) lin16u_gen::max#1 ← (number) $f781
-  (word*) lin16u_gen::lintab#1 ← (word[$14]) main::lintab2
+  (word*) lin16u_gen::lintab#1 ← (const word*) main::lintab2
   (word) lin16u_gen::length#1 ← (number) $14
   call lin16u_gen 
   to:main::@8
@@ -379,10 +377,9 @@ main::@8: scope:[main]  from main::@7
   (byte*) print_screen#4 ← phi( main::@7/(byte*) print_screen#5 )
   (word) rem16u#13 ← phi( main::@7/(word) rem16u#9 )
   (word) rem16u#4 ← (word) rem16u#13
-  (word[$14]) main::lintab3 ← { fill( $14, 0) }
   (word) lin16u_gen::min#2 ← (number) 0
   (word) lin16u_gen::max#2 ← (number) $6488
-  (word*) lin16u_gen::lintab#2 ← (word[$14]) main::lintab3
+  (word*) lin16u_gen::lintab#2 ← (const word*) main::lintab3
   (word) lin16u_gen::length#2 ← (number) $14
   call lin16u_gen 
   to:main::@9
@@ -490,7 +487,7 @@ main::@19: scope:[main]  from main::@18
   (byte*) print_char_cursor#62 ← phi( main::@18/(byte*) print_char_cursor#2 )
   (byte*) print_char_cursor#24 ← (byte*) print_char_cursor#62
   (byte~) main::$27 ← (byte) main::i#4 * (const byte) SIZEOF_WORD
-  (word) print_word::w#3 ← *((word[$14]) main::lintab1 + (byte~) main::$27)
+  (word) print_word::w#3 ← *((const word*) main::lintab1 + (byte~) main::$27)
   call print_word 
   to:main::@20
 main::@20: scope:[main]  from main::@19
@@ -509,7 +506,7 @@ main::@21: scope:[main]  from main::@20
   (byte*) print_char_cursor#64 ← phi( main::@20/(byte*) print_char_cursor#2 )
   (byte*) print_char_cursor#26 ← (byte*) print_char_cursor#64
   (byte~) main::$28 ← (byte) main::i#5 * (const byte) SIZEOF_WORD
-  (word) print_word::w#4 ← *((word[$14]) main::lintab2 + (byte~) main::$28)
+  (word) print_word::w#4 ← *((const word*) main::lintab2 + (byte~) main::$28)
   call print_word 
   to:main::@22
 main::@22: scope:[main]  from main::@21
@@ -528,7 +525,7 @@ main::@23: scope:[main]  from main::@22
   (byte*) print_char_cursor#66 ← phi( main::@22/(byte*) print_char_cursor#2 )
   (byte*) print_char_cursor#28 ← (byte*) print_char_cursor#66
   (byte~) main::$29 ← (byte) main::i#6 * (const byte) SIZEOF_WORD
-  (word) print_word::w#5 ← *((word[$14]) main::lintab3 + (byte~) main::$29)
+  (word) print_word::w#5 ← *((const word*) main::lintab3 + (byte~) main::$29)
   call print_word 
   to:main::@24
 main::@24: scope:[main]  from main::@23
@@ -915,9 +912,9 @@ SYMBOL TABLE SSA
 (byte) main::i#7
 (byte) main::i#8
 (byte) main::i#9
-(word[$14]) main::lintab1
-(word[$14]) main::lintab2
-(word[$14]) main::lintab3
+(const word*) main::lintab1 = { fill( $14, 0) }
+(const word*) main::lintab2 = { fill( $14, 0) }
+(const word*) main::lintab3 = { fill( $14, 0) }
 (const string) main::str = (string) "   "
 (const string) main::str1 = (string) " "
 (const string) main::str2 = (string) " "
@@ -1082,7 +1079,7 @@ SYMBOL TABLE SSA
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -1575,30 +1572,26 @@ Simple Condition (bool~) memset::$1 [41] if((word) memset::num#0<=(byte) 0) goto
 Simple Condition (bool~) memset::$4 [51] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str::$0 [65] if((byte) 0!=*((byte*) print_str::str#10)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [78] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#11) goto print_ln::@1
-Simple Condition (bool~) main::$18 [192] if((byte) main::i#10<(byte) $14) goto main::@2
-Simple Condition (bool~) lin16u_gen::$5 [294] if((word) lin16u_gen::i#2<(word) lin16u_gen::length#3) goto lin16u_gen::@2
+Simple Condition (bool~) main::$18 [189] if((byte) main::i#10<(byte) $14) goto main::@2
+Simple Condition (bool~) lin16u_gen::$5 [291] if((word) lin16u_gen::i#2<(word) lin16u_gen::length#3) goto lin16u_gen::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [133] (word[$14]) main::lintab1 ← { fill( $14, 0) }
-Constant right-side identified [141] (word[$14]) main::lintab2 ← { fill( $14, 0) }
-Constant right-side identified [149] (word[$14]) main::lintab3 ← { fill( $14, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const word[$14]) main::lintab1 = { fill( $14, 0) }
 Constant (const word) lin16u_gen::min#0 = $22d
 Constant (const word) lin16u_gen::max#0 = $7461
+Constant (const word*) lin16u_gen::lintab#0 = main::lintab1
 Constant (const word) lin16u_gen::length#0 = $14
-Constant (const word[$14]) main::lintab2 = { fill( $14, 0) }
 Constant (const word) lin16u_gen::min#1 = $79cb
 Constant (const word) lin16u_gen::max#1 = $f781
+Constant (const word*) lin16u_gen::lintab#1 = main::lintab2
 Constant (const word) lin16u_gen::length#1 = $14
-Constant (const word[$14]) main::lintab3 = { fill( $14, 0) }
 Constant (const word) lin16u_gen::min#2 = 0
 Constant (const word) lin16u_gen::max#2 = $6488
+Constant (const word*) lin16u_gen::lintab#2 = main::lintab3
 Constant (const word) lin16u_gen::length#2 = $14
 Constant (const byte*) print_str::str#1 = main::str
 Constant (const word) print_word::w#0 = $22d
@@ -1621,9 +1614,6 @@ Constant (const word) divr16u::dividend#2 = 0
 Constant (const word) lin16u_gen::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
-Constant (const word*) lin16u_gen::lintab#0 = main::lintab1
-Constant (const word*) lin16u_gen::lintab#1 = main::lintab2
-Constant (const word*) lin16u_gen::lintab#2 = main::lintab3
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) memset::$2 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
@@ -1676,17 +1666,17 @@ Inlining constant with var siblings (const word) print_word::w#8
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const word) lin16u_gen::min#0
 Inlining constant with var siblings (const word) lin16u_gen::max#0
+Inlining constant with var siblings (const word*) lin16u_gen::lintab#0
 Inlining constant with var siblings (const word) lin16u_gen::length#0
 Inlining constant with var siblings (const word) lin16u_gen::min#1
 Inlining constant with var siblings (const word) lin16u_gen::max#1
+Inlining constant with var siblings (const word*) lin16u_gen::lintab#1
 Inlining constant with var siblings (const word) lin16u_gen::length#1
 Inlining constant with var siblings (const word) lin16u_gen::min#2
 Inlining constant with var siblings (const word) lin16u_gen::max#2
+Inlining constant with var siblings (const word*) lin16u_gen::lintab#2
 Inlining constant with var siblings (const word) lin16u_gen::length#2
 Inlining constant with var siblings (const word) lin16u_gen::i#0
-Inlining constant with var siblings (const word*) lin16u_gen::lintab#0
-Inlining constant with var siblings (const word*) lin16u_gen::lintab#1
-Inlining constant with var siblings (const word*) lin16u_gen::lintab#2
 Inlining constant with var siblings (const byte*) print_line_cursor#0
 Constant inlined main::str4 = (const string) main::str1
 Constant inlined main::str5 = (const string) main::str1
@@ -1722,14 +1712,14 @@ Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
 Constant inlined print_str::str#1 = (const string) main::str
 Constant inlined print_str::str#8 = (const string) main::str1
 Constant inlined main::str8 = (const string) main::str1
-Constant inlined lin16u_gen::lintab#2 = (const word[$14]) main::lintab3
+Constant inlined lin16u_gen::lintab#2 = (const word*) main::lintab3
 Constant inlined lin16u_gen::min#1 = (word) $79cb
 Constant inlined lin16u_gen::i#0 = (byte) 0
 Constant inlined print_str::str#7 = (const string) main::str
-Constant inlined lin16u_gen::lintab#1 = (const word[$14]) main::lintab2
+Constant inlined lin16u_gen::lintab#1 = (const word*) main::lintab2
 Constant inlined lin16u_gen::min#2 = (byte) 0
 Constant inlined print_str::str#6 = (const string) main::str1
-Constant inlined lin16u_gen::lintab#0 = (const word[$14]) main::lintab1
+Constant inlined lin16u_gen::lintab#0 = (const word*) main::lintab1
 Constant inlined print_str::str#5 = (const string) main::str1
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) lin16u_gen::length#3 (byte) $14
@@ -2010,7 +2000,7 @@ main::@14: scope:[main]  from main::@2
   to:main::@15
 main::@15: scope:[main]  from main::@14
   [48] (byte~) main::$27 ← (byte) main::i#10 << (byte) 1
-  [49] (word) print_word::w#3 ← *((const word[$14]) main::lintab1 + (byte~) main::$27)
+  [49] (word) print_word::w#3 ← *((const word*) main::lintab1 + (byte~) main::$27)
   [50] call print_word 
   to:main::@16
 main::@16: scope:[main]  from main::@15
@@ -2019,7 +2009,7 @@ main::@16: scope:[main]  from main::@15
   to:main::@17
 main::@17: scope:[main]  from main::@16
   [53] (byte~) main::$28 ← (byte) main::i#10 << (byte) 1
-  [54] (word) print_word::w#4 ← *((const word[$14]) main::lintab2 + (byte~) main::$28)
+  [54] (word) print_word::w#4 ← *((const word*) main::lintab2 + (byte~) main::$28)
   [55] call print_word 
   to:main::@18
 main::@18: scope:[main]  from main::@17
@@ -2028,7 +2018,7 @@ main::@18: scope:[main]  from main::@17
   to:main::@19
 main::@19: scope:[main]  from main::@18
   [58] (byte~) main::$29 ← (byte) main::i#10 << (byte) 1
-  [59] (word) print_word::w#5 ← *((const word[$14]) main::lintab3 + (byte~) main::$29)
+  [59] (word) print_word::w#5 ← *((const word*) main::lintab3 + (byte~) main::$29)
   [60] call print_word 
   to:main::@20
 main::@20: scope:[main]  from main::@19
@@ -2071,12 +2061,12 @@ print_byte: scope:[print_byte]  from main::@2 print_word print_word::@1
   [75] (byte*) print_char_cursor#81 ← phi( main::@2/(byte*) print_char_cursor#101 print_word/(byte*) print_char_cursor#2 print_word::@1/(byte*) print_char_cursor#11 )
   [75] (byte) print_byte::b#3 ← phi( main::@2/(byte) print_byte::b#2 print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   [76] (byte~) print_byte::$0 ← (byte) print_byte::b#3 >> (byte) 4
-  [77] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  [77] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   [78] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [79] (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte) $f
-  [80] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2)
+  [80] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
   [81] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -2140,7 +2130,7 @@ memset::@2: scope:[memset]  from memset::@1
 
 (void()) lin16u_gen((word) lin16u_gen::min , (word) lin16u_gen::max , (word*) lin16u_gen::lintab , (word) lin16u_gen::length)
 lin16u_gen: scope:[lin16u_gen]  from main main::@4 main::@5
-  [103] (word*) lin16u_gen::lintab#6 ← phi( main/(const word[$14]) main::lintab1 main::@4/(const word[$14]) main::lintab2 main::@5/(const word[$14]) main::lintab3 )
+  [103] (word*) lin16u_gen::lintab#6 ← phi( main/(const word*) main::lintab1 main::@4/(const word*) main::lintab2 main::@5/(const word*) main::lintab3 )
   [103] (word) lin16u_gen::min#3 ← phi( main/(word) $22d main::@4/(word) $79cb main::@5/(byte) 0 )
   [103] (word) lin16u_gen::max#3 ← phi( main/(word) $7461 main::@4/(word) $f781 main::@5/(word) $6488 )
   [104] (word) lin16u_gen::ampl#0 ← (word) lin16u_gen::max#3 - (word) lin16u_gen::min#3
@@ -2476,7 +2466,7 @@ main: {
     // [5] call lin16u_gen 
     // [103] phi from main to lin16u_gen [phi:main->lin16u_gen]
   lin16u_gen_from_main:
-    // [103] phi (word*) lin16u_gen::lintab#6 = (const word[$14]) main::lintab1 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#6 = (const word*) main::lintab1 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab1
     sta.z lin16u_gen.lintab
     lda #>lintab1
@@ -2500,7 +2490,7 @@ main: {
     // [7] call lin16u_gen 
     // [103] phi from main::@4 to lin16u_gen [phi:main::@4->lin16u_gen]
   lin16u_gen_from___b4:
-    // [103] phi (word*) lin16u_gen::lintab#6 = (const word[$14]) main::lintab2 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#6 = (const word*) main::lintab2 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab2
     sta.z lin16u_gen.lintab
     lda #>lintab2
@@ -2524,7 +2514,7 @@ main: {
     // [9] call lin16u_gen 
     // [103] phi from main::@5 to lin16u_gen [phi:main::@5->lin16u_gen]
   lin16u_gen_from___b5:
-    // [103] phi (word*) lin16u_gen::lintab#6 = (const word[$14]) main::lintab3 [phi:main::@5->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#6 = (const word*) main::lintab3 [phi:main::@5->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab3
     sta.z lin16u_gen.lintab
     lda #>lintab3
@@ -2809,7 +2799,7 @@ main: {
     lda.z i
     asl
     sta.z __27
-    // [49] (word) print_word::w#3 ← *((const word[$14]) main::lintab1 + (byte~) main::$27) -- vwuz1=pwuc1_derefidx_vbuz2 
+    // [49] (word) print_word::w#3 ← *((const word*) main::lintab1 + (byte~) main::$27) -- vwuz1=pwuc1_derefidx_vbuz2 
     ldy.z __27
     lda lintab1,y
     sta.z print_word.w
@@ -2842,7 +2832,7 @@ main: {
     lda.z i
     asl
     sta.z __28
-    // [54] (word) print_word::w#4 ← *((const word[$14]) main::lintab2 + (byte~) main::$28) -- vwuz1=pwuc1_derefidx_vbuz2 
+    // [54] (word) print_word::w#4 ← *((const word*) main::lintab2 + (byte~) main::$28) -- vwuz1=pwuc1_derefidx_vbuz2 
     ldy.z __28
     lda lintab2,y
     sta.z print_word.w
@@ -2875,7 +2865,7 @@ main: {
     lda.z i
     asl
     sta.z __29
-    // [59] (word) print_word::w#5 ← *((const word[$14]) main::lintab3 + (byte~) main::$29) -- vwuz1=pwuc1_derefidx_vbuz2 
+    // [59] (word) print_word::w#5 ← *((const word*) main::lintab3 + (byte~) main::$29) -- vwuz1=pwuc1_derefidx_vbuz2 
     ldy.z __29
     lda lintab3,y
     sta.z print_word.w
@@ -2905,13 +2895,13 @@ main: {
   __b1_from___b21:
     // [26] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@21->main::@1#0] -- register_copy 
     jmp __b1
+    lintab1: .fill 2*$14, 0
+    lintab2: .fill 2*$14, 0
+    lintab3: .fill 2*$14, 0
     str: .text "   "
     .byte 0
     str1: .text " "
     .byte 0
-    lintab1: .fill 2*$14, 0
-    lintab2: .fill 2*$14, 0
-    lintab3: .fill 2*$14, 0
 }
   // print_ln
 // Print a newline
@@ -2992,7 +2982,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [77] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [77] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -3009,7 +2999,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [80] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [80] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -3463,11 +3453,11 @@ Statement [44] (byte*) print_char_cursor#101 ← (byte*) print_line_cursor#1 [ m
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#10 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ print_byte::b#3 print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement [48] (byte~) main::$27 ← (byte) main::i#10 << (byte) 1 [ main::i#10 print_line_cursor#1 main::$27 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 main::$27 print_char_cursor#2 ] ) always clobbers reg byte a 
-Statement [49] (word) print_word::w#3 ← *((const word[$14]) main::lintab1 + (byte~) main::$27) [ main::i#10 print_line_cursor#1 print_word::w#3 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#3 print_char_cursor#2 ] ) always clobbers reg byte a 
+Statement [49] (word) print_word::w#3 ← *((const word*) main::lintab1 + (byte~) main::$27) [ main::i#10 print_line_cursor#1 print_word::w#3 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#3 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [53] (byte~) main::$28 ← (byte) main::i#10 << (byte) 1 [ main::i#10 print_line_cursor#1 main::$28 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 main::$28 print_char_cursor#2 ] ) always clobbers reg byte a 
-Statement [54] (word) print_word::w#4 ← *((const word[$14]) main::lintab2 + (byte~) main::$28) [ main::i#10 print_line_cursor#1 print_word::w#4 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#4 print_char_cursor#2 ] ) always clobbers reg byte a 
+Statement [54] (word) print_word::w#4 ← *((const word*) main::lintab2 + (byte~) main::$28) [ main::i#10 print_line_cursor#1 print_word::w#4 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#4 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [58] (byte~) main::$29 ← (byte) main::i#10 << (byte) 1 [ main::i#10 print_line_cursor#1 main::$29 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 main::$29 print_char_cursor#2 ] ) always clobbers reg byte a 
-Statement [59] (word) print_word::w#5 ← *((const word[$14]) main::lintab3 + (byte~) main::$29) [ main::i#10 print_line_cursor#1 print_word::w#5 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#5 print_char_cursor#2 ] ) always clobbers reg byte a 
+Statement [59] (word) print_word::w#5 ← *((const word*) main::lintab3 + (byte~) main::$29) [ main::i#10 print_line_cursor#1 print_word::w#5 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#5 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [66] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte) $28 [ print_line_cursor#1 print_char_cursor#11 ] ( main:2::print_ln:25 [ print_line_cursor#1 print_char_cursor#11 ] main:2::print_ln:41 [ print_line_cursor#1 print_char_cursor#11 ] main:2::print_ln:62 [ main::i#10 print_line_cursor#1 print_char_cursor#11 ] ) always clobbers reg byte a 
 Statement [67] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#11) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#11 ] ( main:2::print_ln:25 [ print_line_cursor#1 print_char_cursor#11 ] main:2::print_ln:41 [ print_line_cursor#1 print_char_cursor#11 ] main:2::print_ln:62 [ main::i#10 print_line_cursor#1 print_char_cursor#11 ] ) always clobbers reg byte a 
 Statement [70] (byte) print_byte::b#0 ← > (word) print_word::w#10 [ print_word::w#10 print_byte::b#0 print_char_cursor#2 ] ( main:2::print_word:15 [ print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:19 [ print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:23 [ print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:31 [ print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:35 [ print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:39 [ print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:50 [ main::i#10 print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:55 [ main::i#10 print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:60 [ main::i#10 print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] ) always clobbers reg byte a 
@@ -3504,11 +3494,11 @@ Statement [139] (word) rem16u#1 ← (word) divr16u::rem#11 [ divr16u::return#0 r
 Statement [28] (byte*) print_char_cursor#98 ← (byte*) print_line_cursor#1 [ print_char_cursor#98 print_line_cursor#1 ] ( main:2 [ print_char_cursor#98 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [44] (byte*) print_char_cursor#101 ← (byte*) print_line_cursor#1 [ main::i#10 print_line_cursor#1 print_byte::b#2 print_char_cursor#101 ] ( main:2 [ main::i#10 print_line_cursor#1 print_byte::b#2 print_char_cursor#101 ] ) always clobbers reg byte a 
 Statement [48] (byte~) main::$27 ← (byte) main::i#10 << (byte) 1 [ main::i#10 print_line_cursor#1 main::$27 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 main::$27 print_char_cursor#2 ] ) always clobbers reg byte a 
-Statement [49] (word) print_word::w#3 ← *((const word[$14]) main::lintab1 + (byte~) main::$27) [ main::i#10 print_line_cursor#1 print_word::w#3 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#3 print_char_cursor#2 ] ) always clobbers reg byte a 
+Statement [49] (word) print_word::w#3 ← *((const word*) main::lintab1 + (byte~) main::$27) [ main::i#10 print_line_cursor#1 print_word::w#3 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#3 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [53] (byte~) main::$28 ← (byte) main::i#10 << (byte) 1 [ main::i#10 print_line_cursor#1 main::$28 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 main::$28 print_char_cursor#2 ] ) always clobbers reg byte a 
-Statement [54] (word) print_word::w#4 ← *((const word[$14]) main::lintab2 + (byte~) main::$28) [ main::i#10 print_line_cursor#1 print_word::w#4 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#4 print_char_cursor#2 ] ) always clobbers reg byte a 
+Statement [54] (word) print_word::w#4 ← *((const word*) main::lintab2 + (byte~) main::$28) [ main::i#10 print_line_cursor#1 print_word::w#4 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#4 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [58] (byte~) main::$29 ← (byte) main::i#10 << (byte) 1 [ main::i#10 print_line_cursor#1 main::$29 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 main::$29 print_char_cursor#2 ] ) always clobbers reg byte a 
-Statement [59] (word) print_word::w#5 ← *((const word[$14]) main::lintab3 + (byte~) main::$29) [ main::i#10 print_line_cursor#1 print_word::w#5 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#5 print_char_cursor#2 ] ) always clobbers reg byte a 
+Statement [59] (word) print_word::w#5 ← *((const word*) main::lintab3 + (byte~) main::$29) [ main::i#10 print_line_cursor#1 print_word::w#5 print_char_cursor#2 ] ( main:2 [ main::i#10 print_line_cursor#1 print_word::w#5 print_char_cursor#2 ] ) always clobbers reg byte a 
 Statement [66] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#11 + (byte) $28 [ print_line_cursor#1 print_char_cursor#11 ] ( main:2::print_ln:25 [ print_line_cursor#1 print_char_cursor#11 ] main:2::print_ln:41 [ print_line_cursor#1 print_char_cursor#11 ] main:2::print_ln:62 [ main::i#10 print_line_cursor#1 print_char_cursor#11 ] ) always clobbers reg byte a 
 Statement [67] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#11) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#11 ] ( main:2::print_ln:25 [ print_line_cursor#1 print_char_cursor#11 ] main:2::print_ln:41 [ print_line_cursor#1 print_char_cursor#11 ] main:2::print_ln:62 [ main::i#10 print_line_cursor#1 print_char_cursor#11 ] ) always clobbers reg byte a 
 Statement [70] (byte) print_byte::b#0 ← > (word) print_word::w#10 [ print_word::w#10 print_byte::b#0 print_char_cursor#2 ] ( main:2::print_word:15 [ print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:19 [ print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:23 [ print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:31 [ print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:35 [ print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:39 [ print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:50 [ main::i#10 print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:55 [ main::i#10 print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] main:2::print_word:60 [ main::i#10 print_line_cursor#1 print_word::w#10 print_byte::b#0 print_char_cursor#2 ] ) always clobbers reg byte a 
@@ -3660,7 +3650,7 @@ main: {
     // [5] call lin16u_gen 
     // [103] phi from main to lin16u_gen [phi:main->lin16u_gen]
   lin16u_gen_from_main:
-    // [103] phi (word*) lin16u_gen::lintab#6 = (const word[$14]) main::lintab1 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#6 = (const word*) main::lintab1 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab1
     sta.z lin16u_gen.lintab
     lda #>lintab1
@@ -3684,7 +3674,7 @@ main: {
     // [7] call lin16u_gen 
     // [103] phi from main::@4 to lin16u_gen [phi:main::@4->lin16u_gen]
   lin16u_gen_from___b4:
-    // [103] phi (word*) lin16u_gen::lintab#6 = (const word[$14]) main::lintab2 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#6 = (const word*) main::lintab2 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab2
     sta.z lin16u_gen.lintab
     lda #>lintab2
@@ -3708,7 +3698,7 @@ main: {
     // [9] call lin16u_gen 
     // [103] phi from main::@5 to lin16u_gen [phi:main::@5->lin16u_gen]
   lin16u_gen_from___b5:
-    // [103] phi (word*) lin16u_gen::lintab#6 = (const word[$14]) main::lintab3 [phi:main::@5->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#6 = (const word*) main::lintab3 [phi:main::@5->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab3
     sta.z lin16u_gen.lintab
     lda #>lintab3
@@ -3989,7 +3979,7 @@ main: {
     // [48] (byte~) main::$27 ← (byte) main::i#10 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [49] (word) print_word::w#3 ← *((const word[$14]) main::lintab1 + (byte~) main::$27) -- vwuz1=pwuc1_derefidx_vbuaa 
+    // [49] (word) print_word::w#3 ← *((const word*) main::lintab1 + (byte~) main::$27) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda lintab1,y
     sta.z print_word.w
@@ -4021,7 +4011,7 @@ main: {
     // [53] (byte~) main::$28 ← (byte) main::i#10 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [54] (word) print_word::w#4 ← *((const word[$14]) main::lintab2 + (byte~) main::$28) -- vwuz1=pwuc1_derefidx_vbuaa 
+    // [54] (word) print_word::w#4 ← *((const word*) main::lintab2 + (byte~) main::$28) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda lintab2,y
     sta.z print_word.w
@@ -4053,7 +4043,7 @@ main: {
     // [58] (byte~) main::$29 ← (byte) main::i#10 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [59] (word) print_word::w#5 ← *((const word[$14]) main::lintab3 + (byte~) main::$29) -- vwuz1=pwuc1_derefidx_vbuaa 
+    // [59] (word) print_word::w#5 ← *((const word*) main::lintab3 + (byte~) main::$29) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda lintab3,y
     sta.z print_word.w
@@ -4083,13 +4073,13 @@ main: {
   __b1_from___b21:
     // [26] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@21->main::@1#0] -- register_copy 
     jmp __b1
+    lintab1: .fill 2*$14, 0
+    lintab2: .fill 2*$14, 0
+    lintab3: .fill 2*$14, 0
     str: .text "   "
     .byte 0
     str1: .text " "
     .byte 0
-    lintab1: .fill 2*$14, 0
-    lintab2: .fill 2*$14, 0
-    lintab3: .fill 2*$14, 0
 }
   // print_ln
 // Print a newline
@@ -4167,7 +4157,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [77] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [77] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [78] call print_char 
@@ -4182,7 +4172,7 @@ print_byte: {
     // [79] (byte~) print_byte::$2 ← (byte) print_byte::b#3 & (byte) $f -- vbuaa=vbuz1_band_vbuc1 
     lda #$f
     and.z b
-    // [80] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [80] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [81] call print_char 
@@ -4902,9 +4892,9 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 22.0
 (byte) main::i#10 reg byte x 3.5
-(const word[$14]) main::lintab1 = { fill( $14, 0) }
-(const word[$14]) main::lintab2 = { fill( $14, 0) }
-(const word[$14]) main::lintab3 = { fill( $14, 0) }
+(const word*) main::lintab1 = { fill( $14, 0) }
+(const word*) main::lintab2 = { fill( $14, 0) }
+(const word*) main::lintab3 = { fill( $14, 0) }
 (const string) main::str = (string) "   "
 (const string) main::str1 = (string) " "
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
@@ -4950,7 +4940,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#98 print_char_cursor zp[2]:3 4.0
 (void()) print_cls()
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp[2]:11 8.225
 (byte*) print_line_cursor#11 print_line_cursor zp[2]:11 204.0
@@ -5027,7 +5017,7 @@ main: {
     // lin16u_gen(557, 29793, lintab1, 20)
     // [5] call lin16u_gen 
     // [103] phi from main to lin16u_gen [phi:main->lin16u_gen]
-    // [103] phi (word*) lin16u_gen::lintab#6 = (const word[$14]) main::lintab1 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#6 = (const word*) main::lintab1 [phi:main->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab1
     sta.z lin16u_gen.lintab
     lda #>lintab1
@@ -5048,7 +5038,7 @@ main: {
     // lin16u_gen(31179, 63361, lintab2, 20)
     // [7] call lin16u_gen 
     // [103] phi from main::@4 to lin16u_gen [phi:main::@4->lin16u_gen]
-    // [103] phi (word*) lin16u_gen::lintab#6 = (const word[$14]) main::lintab2 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#6 = (const word*) main::lintab2 [phi:main::@4->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab2
     sta.z lin16u_gen.lintab
     lda #>lintab2
@@ -5069,7 +5059,7 @@ main: {
     // lin16u_gen(0, $6488, lintab3, 20)
     // [9] call lin16u_gen 
     // [103] phi from main::@5 to lin16u_gen [phi:main::@5->lin16u_gen]
-    // [103] phi (word*) lin16u_gen::lintab#6 = (const word[$14]) main::lintab3 [phi:main::@5->lin16u_gen#0] -- pwuz1=pwuc1 
+    // [103] phi (word*) lin16u_gen::lintab#6 = (const word*) main::lintab3 [phi:main::@5->lin16u_gen#0] -- pwuz1=pwuc1 
     lda #<lintab3
     sta.z lin16u_gen.lintab
     lda #>lintab3
@@ -5299,7 +5289,7 @@ main: {
     // [48] (byte~) main::$27 ← (byte) main::i#10 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [49] (word) print_word::w#3 ← *((const word[$14]) main::lintab1 + (byte~) main::$27) -- vwuz1=pwuc1_derefidx_vbuaa 
+    // [49] (word) print_word::w#3 ← *((const word*) main::lintab1 + (byte~) main::$27) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda lintab1,y
     sta.z print_word.w
@@ -5326,7 +5316,7 @@ main: {
     // [53] (byte~) main::$28 ← (byte) main::i#10 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [54] (word) print_word::w#4 ← *((const word[$14]) main::lintab2 + (byte~) main::$28) -- vwuz1=pwuc1_derefidx_vbuaa 
+    // [54] (word) print_word::w#4 ← *((const word*) main::lintab2 + (byte~) main::$28) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda lintab2,y
     sta.z print_word.w
@@ -5353,7 +5343,7 @@ main: {
     // [58] (byte~) main::$29 ← (byte) main::i#10 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [59] (word) print_word::w#5 ← *((const word[$14]) main::lintab3 + (byte~) main::$29) -- vwuz1=pwuc1_derefidx_vbuaa 
+    // [59] (word) print_word::w#5 ← *((const word*) main::lintab3 + (byte~) main::$29) -- vwuz1=pwuc1_derefidx_vbuaa 
     tay
     lda lintab3,y
     sta.z print_word.w
@@ -5377,13 +5367,13 @@ main: {
     // [26] phi from main::@21 to main::@1 [phi:main::@21->main::@1]
     // [26] phi (byte) main::i#10 = (byte) main::i#1 [phi:main::@21->main::@1#0] -- register_copy 
     jmp __b1
+    lintab1: .fill 2*$14, 0
+    lintab2: .fill 2*$14, 0
+    lintab3: .fill 2*$14, 0
     str: .text "   "
     .byte 0
     str1: .text " "
     .byte 0
-    lintab1: .fill 2*$14, 0
-    lintab2: .fill 2*$14, 0
-    lintab3: .fill 2*$14, 0
 }
   // print_ln
 // Print a newline
@@ -5458,7 +5448,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [77] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [77] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [78] call print_char 
@@ -5472,7 +5462,7 @@ print_byte: {
     lda #$f
     and.z b
     // print_char(print_hextab[b&$f])
-    // [80] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [80] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [81] call print_char 

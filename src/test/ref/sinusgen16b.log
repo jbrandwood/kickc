@@ -830,7 +830,7 @@ print_byte: scope:[print_byte]  from print_word print_word::@1
   (byte*) print_char_cursor#49 ← phi( print_word/(byte*) print_char_cursor#48 print_word::@1/(byte*) print_char_cursor#7 )
   (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
-  (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -838,7 +838,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#32 ← phi( print_byte/(byte*) print_char_cursor#14 )
   (byte*) print_char_cursor#10 ← (byte*) print_char_cursor#32
   (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
-  (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#3 ← *((const byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -892,9 +892,7 @@ main: scope:[main]  from @59
   (byte*) print_line_cursor#15 ← phi( @59/(byte*) print_line_cursor#12 )
   (byte*) print_screen#5 ← phi( @59/(byte*) print_screen#6 )
   (word) rem16u#31 ← phi( @59/(word) rem16u#33 )
-  (signed word[$78]) main::sintab1 ← { fill( $78, 0) }
-  (signed word[$78]) main::sintab2 ← { fill( $78, 0) }
-  (signed word*) sin16s_gen::sintab#1 ← (signed word[$78]) main::sintab1
+  (signed word*) sin16s_gen::sintab#1 ← (const signed word*) main::sintab1
   (word) sin16s_gen::wavelength#0 ← (const word) main::wavelength
   call sin16s_gen 
   to:main::@5
@@ -904,7 +902,7 @@ main::@5: scope:[main]  from main
   (byte*) print_screen#4 ← phi( main/(byte*) print_screen#5 )
   (word) rem16u#22 ← phi( main/(word) rem16u#7 )
   (word) rem16u#10 ← (word) rem16u#22
-  (signed word*) sin16s_genb::sintab#1 ← (signed word[$78]) main::sintab2
+  (signed word*) sin16s_genb::sintab#1 ← (const signed word*) main::sintab2
   (word) sin16s_genb::wavelength#0 ← (const word) main::wavelength
   call sin16s_genb 
   to:main::@6
@@ -922,8 +920,8 @@ main::@7: scope:[main]  from main::@6
   (byte*) print_line_cursor#7 ← phi( main::@6/(byte*) print_line_cursor#2 )
   (byte*) print_line_cursor#3 ← (byte*) print_line_cursor#7
   (byte*) print_char_cursor#17 ← (byte*) print_char_cursor#38
-  (signed word*) main::st1#0 ← (signed word[$78]) main::sintab1
-  (signed word*) main::st2#0 ← (signed word[$78]) main::sintab2
+  (signed word*) main::st1#0 ← (const signed word*) main::sintab1
+  (signed word*) main::st2#0 ← (const signed word*) main::sintab2
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main::@7 main::@9
@@ -1174,8 +1172,8 @@ SYMBOL TABLE SSA
 (byte) main::i#5
 (byte) main::i#6
 (byte) main::i#7
-(signed word[$78]) main::sintab1
-(signed word[$78]) main::sintab2
+(const signed word*) main::sintab1 = { fill( $78, 0) }
+(const signed word*) main::sintab2 = { fill( $78, 0) }
 (signed word*) main::st1
 (signed word*) main::st1#0
 (signed word*) main::st1#1
@@ -1439,7 +1437,7 @@ SYMBOL TABLE SSA
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -2024,7 +2022,7 @@ Inversing boolean not [243] (bool~) sin16sb::$1 ← (word) sin16sb::x#3 < (const
 Inversing boolean not [247] (bool~) sin16sb::$3 ← (word) sin16sb::x#4 < (const word) PI_HALF_u4f12 from [246] (bool~) sin16sb::$2 ← (word) sin16sb::x#4 >= (const word) PI_HALF_u4f12
 Inversing boolean not [305] (bool~) sin16sb::$15 ← (byte) sin16sb::isUpper#2 == (byte) 0 from [304] (bool~) sin16sb::$14 ← (byte) sin16sb::isUpper#2 != (byte) 0
 Inversing boolean not [321] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [320] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
-Inversing boolean not [449] (bool~) main::$5 ← (signed word) main::sw#0 < (signed byte) 0 from [448] (bool~) main::$4 ← (signed word) main::sw#0 >= (signed byte) 0
+Inversing boolean not [447] (bool~) main::$5 ← (signed word) main::sw#0 < (signed byte) 0 from [446] (bool~) main::$4 ← (signed word) main::sw#0 >= (signed byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -2172,8 +2170,6 @@ Alias (word) rem16u#10 = (word) rem16u#22
 Alias (word) rem16u#11 = (word) rem16u#23 (word) rem16u#43 
 Alias (byte*) print_line_cursor#3 = (byte*) print_line_cursor#7 
 Alias (byte*) print_char_cursor#17 = (byte*) print_char_cursor#38 
-Alias (signed word[$78]) main::sintab1 = (signed word*) main::st1#0 
-Alias (signed word[$78]) main::sintab2 = (signed word*) main::st2#0 
 Alias (signed word) main::sw#0 = (signed word~) main::$3 (signed word) main::sw#3 (signed word) main::sw#2 
 Alias (signed word*) main::st1#3 = (signed word*) main::st1#4 (signed word*) main::st1#5 
 Alias (signed word*) main::st2#3 = (signed word*) main::st2#4 (signed word*) main::st2#5 
@@ -2287,13 +2283,11 @@ Simple Condition (bool~) memset::$1 [322] if((word) memset::num#0<=(byte) 0) got
 Simple Condition (bool~) memset::$4 [332] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str::$0 [346] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2
 Simple Condition (bool~) print_sword::$0 [356] if((signed word) print_sword::w#1<(signed byte) 0) goto print_sword::@1
-Simple Condition (bool~) main::$5 [450] if((signed word) main::sw#0<(signed byte) 0) goto main::@2
-Simple Condition (bool~) main::$9 [464] if((byte) main::i#1!=rangelast(0,$77)) goto main::@1
+Simple Condition (bool~) main::$5 [448] if((signed word) main::sw#0<(signed byte) 0) goto main::@2
+Simple Condition (bool~) main::$9 [462] if((byte) main::i#1!=rangelast(0,$77)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [152] (word) mulu16_sel::v2#2 ← (unumber)(number) $10000/(number) 6
 Constant right-side identified [273] (word) mulu16_sel::v2#7 ← (unumber)(number) $10000/(number) 6
-Constant right-side identified [426] (signed word[$78]) main::sintab1 ← { fill( $78, 0) }
-Constant right-side identified [427] (signed word[$78]) main::sintab2 ← { fill( $78, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
@@ -2327,10 +2321,12 @@ Constant (const byte) print_char::ch#0 = '-'
 Constant (const byte) print_char::ch#1 = ' '
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const signed word[$78]) main::sintab1 = { fill( $78, 0) }
-Constant (const signed word[$78]) main::sintab2 = { fill( $78, 0) }
+Constant (const signed word*) sin16s_gen::sintab#1 = main::sintab1
 Constant (const word) sin16s_gen::wavelength#0 = main::wavelength
+Constant (const signed word*) sin16s_genb::sintab#1 = main::sintab2
 Constant (const word) sin16s_genb::wavelength#0 = main::wavelength
+Constant (const signed word*) main::st1#0 = main::sintab1
+Constant (const signed word*) main::st2#0 = main::sintab2
 Constant (const byte) main::i#0 = 0
 Constant (const byte*) print_str::str#1 = main::str
 Constant (const byte*) print_str::str#2 = main::str1
@@ -2338,8 +2334,6 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) div32u16u::divisor#0 = sin16s_gen::wavelength#0
 Constant (const word) div32u16u::divisor#1 = sin16s_genb::wavelength#0
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
-Constant (const signed word*) sin16s_gen::sintab#1 = main::sintab1
-Constant (const signed word*) sin16s_genb::sintab#1 = main::sintab2
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) memset::$2 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
@@ -2349,8 +2343,8 @@ if() condition always false - eliminating [322] if((const word) memset::num#0<=(
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [24] divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value [26] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
-Resolved ranged next value [462] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [464] if(main::i#1!=rangelast(0,$77)) goto main::@1 to (number) $78
+Resolved ranged next value [460] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [462] if(main::i#1!=rangelast(0,$77)) goto main::@1 to (number) $78
 Eliminating unused variable - keeping the phi block (word) rem16u#26
 Eliminating unused constant (const void*) memset::return#2
 Successful SSA optimization PassNEliminateUnusedVars
@@ -2412,6 +2406,8 @@ Inlining constant with var siblings (const byte*) print_str::str#1
 Inlining constant with var siblings (const byte*) print_str::str#2
 Inlining constant with var siblings (const byte) print_char::ch#0
 Inlining constant with var siblings (const byte) print_char::ch#1
+Inlining constant with var siblings (const signed word*) main::st1#0
+Inlining constant with var siblings (const signed word*) main::st2#0
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined divr16u::rem#3 = (byte) 0
 Constant inlined divr16u::i#0 = (byte) 0
@@ -2430,7 +2426,7 @@ Constant inlined mul16u::res#0 = (byte) 0
 Constant inlined mulu16_sel::select#0 = (byte) 0
 Constant inlined sin16s::isUpper#1 = (byte) 1
 Constant inlined mulu16_sel::select#1 = (byte) 1
-Constant inlined sin16s_genb::sintab#1 = (const signed word[$78]) main::sintab2
+Constant inlined sin16s_genb::sintab#1 = (const signed word*) main::sintab2
 Constant inlined main::i#0 = (byte) 0
 Constant inlined sin16s_genb::x#0 = (byte) 0
 Constant inlined sin16sb::isUpper#1 = (byte) 1
@@ -2441,9 +2437,11 @@ Constant inlined sin16s_genb::i#0 = (byte) 0
 Constant inlined mulu16_sel::select#8 = (byte) 0
 Constant inlined mulu16_sel::select#9 = (byte) 0
 Constant inlined mulu16_sel::select#6 = (byte) 1
-Constant inlined sin16s_gen::sintab#1 = (const signed word[$78]) main::sintab1
+Constant inlined sin16s_gen::sintab#1 = (const signed word*) main::sintab1
 Constant inlined mulu16_sel::select#7 = (byte) 1
+Constant inlined main::st2#0 = (const signed word*) main::sintab2
 Constant inlined print_char::ch#1 = (byte) ' '
+Constant inlined main::st1#0 = (const signed word*) main::sintab1
 Constant inlined mulu16_sel::v2#2 = (word)(number) $10000/(number) 6
 Constant inlined print_char::ch#0 = (byte) '-'
 Constant inlined sin16s_gen::x#0 = (byte) 0
@@ -2700,8 +2698,8 @@ main::@5: scope:[main]  from main::@4
 main::@1: scope:[main]  from main::@5 main::@7
   [10] (byte) main::i#2 ← phi( main::@5/(byte) 0 main::@7/(byte) main::i#1 )
   [10] (byte*) print_char_cursor#52 ← phi( main::@5/(const byte*) print_line_cursor#0 main::@7/(byte*) print_char_cursor#2 )
-  [10] (signed word*) main::st2#2 ← phi( main::@5/(const signed word[$78]) main::sintab2 main::@7/(signed word*) main::st2#1 )
-  [10] (signed word*) main::st1#2 ← phi( main::@5/(const signed word[$78]) main::sintab1 main::@7/(signed word*) main::st1#1 )
+  [10] (signed word*) main::st2#2 ← phi( main::@5/(const signed word*) main::sintab2 main::@7/(signed word*) main::st2#1 )
+  [10] (signed word*) main::st1#2 ← phi( main::@5/(const signed word*) main::sintab1 main::@7/(signed word*) main::st1#1 )
   [11] (signed word) main::sw#0 ← *((signed word*) main::st1#2) - *((signed word*) main::st2#2)
   [12] if((signed word) main::sw#0<(signed byte) 0) goto main::@2
   to:main::@3
@@ -2799,12 +2797,12 @@ print_word::@return: scope:[print_word]  from print_word::@1
 print_byte: scope:[print_byte]  from print_word print_word::@1
   [51] (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   [52] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4
-  [53] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  [53] (byte) print_char::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   [54] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [55] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f
-  [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2)
+  [56] (byte) print_char::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
   [57] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -2846,7 +2844,7 @@ sin16s_genb::@3: scope:[sin16s_genb]  from sin16s_genb
   [71] (dword) sin16s_genb::step#0 ← (dword) div32u16u::return#3
   to:sin16s_genb::@1
 sin16s_genb::@1: scope:[sin16s_genb]  from sin16s_genb::@3 sin16s_genb::@4
-  [72] (signed word*) sin16s_genb::sintab#2 ← phi( sin16s_genb::@3/(const signed word[$78]) main::sintab2 sin16s_genb::@4/(signed word*) sin16s_genb::sintab#0 )
+  [72] (signed word*) sin16s_genb::sintab#2 ← phi( sin16s_genb::@3/(const signed word*) main::sintab2 sin16s_genb::@4/(signed word*) sin16s_genb::sintab#0 )
   [72] (dword) sin16s_genb::x#2 ← phi( sin16s_genb::@3/(byte) 0 sin16s_genb::@4/(dword) sin16s_genb::x#1 )
   [72] (word) sin16s_genb::i#2 ← phi( sin16s_genb::@3/(byte) 0 sin16s_genb::@4/(word) sin16s_genb::i#1 )
   [73] if((word) sin16s_genb::i#2<(const word) main::wavelength) goto sin16s_genb::@2
@@ -3053,7 +3051,7 @@ sin16s_gen::@3: scope:[sin16s_gen]  from sin16s_gen
   [172] (dword) sin16s_gen::step#0 ← (dword) div32u16u::return#2
   to:sin16s_gen::@1
 sin16s_gen::@1: scope:[sin16s_gen]  from sin16s_gen::@3 sin16s_gen::@4
-  [173] (signed word*) sin16s_gen::sintab#2 ← phi( sin16s_gen::@3/(const signed word[$78]) main::sintab1 sin16s_gen::@4/(signed word*) sin16s_gen::sintab#0 )
+  [173] (signed word*) sin16s_gen::sintab#2 ← phi( sin16s_gen::@3/(const signed word*) main::sintab1 sin16s_gen::@4/(signed word*) sin16s_gen::sintab#0 )
   [173] (dword) sin16s_gen::x#2 ← phi( sin16s_gen::@3/(byte) 0 sin16s_gen::@4/(dword) sin16s_gen::x#1 )
   [173] (word) sin16s_gen::i#2 ← phi( sin16s_gen::@3/(byte) 0 sin16s_gen::@4/(word) sin16s_gen::i#1 )
   [174] if((word) sin16s_gen::i#2<(const word) main::wavelength) goto sin16s_gen::@2
@@ -3736,12 +3734,12 @@ main: {
     sta.z print_char_cursor
     lda #>print_line_cursor
     sta.z print_char_cursor+1
-    // [10] phi (signed word*) main::st2#2 = (const signed word[$78]) main::sintab2 [phi:main::@5->main::@1#2] -- pwsz1=pwsc1 
+    // [10] phi (signed word*) main::st2#2 = (const signed word*) main::sintab2 [phi:main::@5->main::@1#2] -- pwsz1=pwsc1 
     lda #<sintab2
     sta.z st2
     lda #>sintab2
     sta.z st2+1
-    // [10] phi (signed word*) main::st1#2 = (const signed word[$78]) main::sintab1 [phi:main::@5->main::@1#3] -- pwsz1=pwsc1 
+    // [10] phi (signed word*) main::st1#2 = (const signed word*) main::sintab1 [phi:main::@5->main::@1#3] -- pwsz1=pwsc1 
     lda #<sintab1
     sta.z st1
     lda #>sintab1
@@ -3843,12 +3841,12 @@ main: {
   __breturn:
     // [24] return 
     rts
+    sintab1: .fill 2*$78, 0
+    sintab2: .fill 2*$78, 0
     str: .text "   "
     .byte 0
     str1: .text " "
     .byte 0
-    sintab1: .fill 2*$78, 0
-    sintab2: .fill 2*$78, 0
 }
   // print_str
 // Print a zero-terminated string
@@ -4022,7 +4020,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [53] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [53] (byte) print_char::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -4039,7 +4037,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [56] (byte) print_char::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -4152,7 +4150,7 @@ sin16s_genb: {
     sta.z step+3
     // [72] phi from sin16s_genb::@3 to sin16s_genb::@1 [phi:sin16s_genb::@3->sin16s_genb::@1]
   __b1_from___b3:
-    // [72] phi (signed word*) sin16s_genb::sintab#2 = (const signed word[$78]) main::sintab2 [phi:sin16s_genb::@3->sin16s_genb::@1#0] -- pwsz1=pwsc1 
+    // [72] phi (signed word*) sin16s_genb::sintab#2 = (const signed word*) main::sintab2 [phi:sin16s_genb::@3->sin16s_genb::@1#0] -- pwsz1=pwsc1 
     lda #<main.sintab2
     sta.z sintab
     lda #>main.sintab2
@@ -4986,7 +4984,7 @@ sin16s_gen: {
     sta.z step+3
     // [173] phi from sin16s_gen::@3 to sin16s_gen::@1 [phi:sin16s_gen::@3->sin16s_gen::@1]
   __b1_from___b3:
-    // [173] phi (signed word*) sin16s_gen::sintab#2 = (const signed word[$78]) main::sintab1 [phi:sin16s_gen::@3->sin16s_gen::@1#0] -- pwsz1=pwsc1 
+    // [173] phi (signed word*) sin16s_gen::sintab#2 = (const signed word*) main::sintab1 [phi:sin16s_gen::@3->sin16s_gen::@1#0] -- pwsz1=pwsc1 
     lda #<main.sintab1
     sta.z sintab
     lda #>main.sintab1
@@ -5968,12 +5966,12 @@ main: {
     sta.z print_char_cursor
     lda #>print_line_cursor
     sta.z print_char_cursor+1
-    // [10] phi (signed word*) main::st2#2 = (const signed word[$78]) main::sintab2 [phi:main::@5->main::@1#2] -- pwsz1=pwsc1 
+    // [10] phi (signed word*) main::st2#2 = (const signed word*) main::sintab2 [phi:main::@5->main::@1#2] -- pwsz1=pwsc1 
     lda #<sintab2
     sta.z st2
     lda #>sintab2
     sta.z st2+1
-    // [10] phi (signed word*) main::st1#2 = (const signed word[$78]) main::sintab1 [phi:main::@5->main::@1#3] -- pwsz1=pwsc1 
+    // [10] phi (signed word*) main::st1#2 = (const signed word*) main::sintab1 [phi:main::@5->main::@1#3] -- pwsz1=pwsc1 
     lda #<sintab1
     sta.z st1
     lda #>sintab1
@@ -6070,12 +6068,12 @@ main: {
   __breturn:
     // [24] return 
     rts
+    sintab1: .fill 2*$78, 0
+    sintab2: .fill 2*$78, 0
     str: .text "   "
     .byte 0
     str1: .text " "
     .byte 0
-    sintab1: .fill 2*$78, 0
-    sintab2: .fill 2*$78, 0
 }
   // print_str
 // Print a zero-terminated string
@@ -6238,7 +6236,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [53] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [53] (byte) print_char::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [54] call print_char 
@@ -6253,7 +6251,7 @@ print_byte: {
     // [55] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuaa=vbuz1_band_vbuc1 
     lda #$f
     and.z b
-    // [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [56] (byte) print_char::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [57] call print_char 
@@ -6349,7 +6347,7 @@ sin16s_genb: {
     // [71] (dword) sin16s_genb::step#0 ← (dword) div32u16u::return#3
     // [72] phi from sin16s_genb::@3 to sin16s_genb::@1 [phi:sin16s_genb::@3->sin16s_genb::@1]
   __b1_from___b3:
-    // [72] phi (signed word*) sin16s_genb::sintab#2 = (const signed word[$78]) main::sintab2 [phi:sin16s_genb::@3->sin16s_genb::@1#0] -- pwsz1=pwsc1 
+    // [72] phi (signed word*) sin16s_genb::sintab#2 = (const signed word*) main::sintab2 [phi:sin16s_genb::@3->sin16s_genb::@1#0] -- pwsz1=pwsc1 
     lda #<main.sintab2
     sta.z sintab
     lda #>main.sintab2
@@ -7018,7 +7016,7 @@ sin16s_gen: {
     // [172] (dword) sin16s_gen::step#0 ← (dword) div32u16u::return#2
     // [173] phi from sin16s_gen::@3 to sin16s_gen::@1 [phi:sin16s_gen::@3->sin16s_gen::@1]
   __b1_from___b3:
-    // [173] phi (signed word*) sin16s_gen::sintab#2 = (const signed word[$78]) main::sintab1 [phi:sin16s_gen::@3->sin16s_gen::@1#0] -- pwsz1=pwsc1 
+    // [173] phi (signed word*) sin16s_gen::sintab#2 = (const signed word*) main::sintab1 [phi:sin16s_gen::@3->sin16s_gen::@1#0] -- pwsz1=pwsc1 
     lda #<main.sintab1
     sta.z sintab
     lda #>main.sintab1
@@ -7746,8 +7744,8 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 1.8333333333333333
-(const signed word[$78]) main::sintab1 = { fill( $78, 0) }
-(const signed word[$78]) main::sintab2 = { fill( $78, 0) }
+(const signed word*) main::sintab1 = { fill( $78, 0) }
+(const signed word*) main::sintab2 = { fill( $78, 0) }
 (signed word*) main::st1
 (signed word*) main::st1#1 st1 zp[2]:3 5.5
 (signed word*) main::st1#2 st1 zp[2]:3 3.3000000000000003
@@ -7863,7 +7861,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#54 print_char_cursor zp[2]:31 24.0
 (void()) print_cls()
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (const byte*) print_line_cursor#0 print_line_cursor = (byte*) 1024
 (byte*) print_screen
@@ -8108,12 +8106,12 @@ main: {
     sta.z print_char_cursor
     lda #>print_line_cursor
     sta.z print_char_cursor+1
-    // [10] phi (signed word*) main::st2#2 = (const signed word[$78]) main::sintab2 [phi:main::@5->main::@1#2] -- pwsz1=pwsc1 
+    // [10] phi (signed word*) main::st2#2 = (const signed word*) main::sintab2 [phi:main::@5->main::@1#2] -- pwsz1=pwsc1 
     lda #<sintab2
     sta.z st2
     lda #>sintab2
     sta.z st2+1
-    // [10] phi (signed word*) main::st1#2 = (const signed word[$78]) main::sintab1 [phi:main::@5->main::@1#3] -- pwsz1=pwsc1 
+    // [10] phi (signed word*) main::st1#2 = (const signed word*) main::sintab1 [phi:main::@5->main::@1#3] -- pwsz1=pwsc1 
     lda #<sintab1
     sta.z st1
     lda #>sintab1
@@ -8200,12 +8198,12 @@ main: {
     // }
     // [24] return 
     rts
+    sintab1: .fill 2*$78, 0
+    sintab2: .fill 2*$78, 0
     str: .text "   "
     .byte 0
     str1: .text " "
     .byte 0
-    sintab1: .fill 2*$78, 0
-    sintab2: .fill 2*$78, 0
 }
   // print_str
 // Print a zero-terminated string
@@ -8358,7 +8356,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [53] (byte) print_char::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [53] (byte) print_char::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [54] call print_char 
@@ -8372,7 +8370,7 @@ print_byte: {
     lda #$f
     and.z b
     // print_char(print_hextab[b&$f])
-    // [56] (byte) print_char::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [56] (byte) print_char::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [57] call print_char 
@@ -8463,7 +8461,7 @@ sin16s_genb: {
     // step = div32u16u(PI2_u4f28, wavelength)
     // [71] (dword) sin16s_genb::step#0 ← (dword) div32u16u::return#3
     // [72] phi from sin16s_genb::@3 to sin16s_genb::@1 [phi:sin16s_genb::@3->sin16s_genb::@1]
-    // [72] phi (signed word*) sin16s_genb::sintab#2 = (const signed word[$78]) main::sintab2 [phi:sin16s_genb::@3->sin16s_genb::@1#0] -- pwsz1=pwsc1 
+    // [72] phi (signed word*) sin16s_genb::sintab#2 = (const signed word*) main::sintab2 [phi:sin16s_genb::@3->sin16s_genb::@1#0] -- pwsz1=pwsc1 
     lda #<main.sintab2
     sta.z sintab
     lda #>main.sintab2
@@ -9110,7 +9108,7 @@ sin16s_gen: {
     // step = div32u16u(PI2_u4f28, wavelength)
     // [172] (dword) sin16s_gen::step#0 ← (dword) div32u16u::return#2
     // [173] phi from sin16s_gen::@3 to sin16s_gen::@1 [phi:sin16s_gen::@3->sin16s_gen::@1]
-    // [173] phi (signed word*) sin16s_gen::sintab#2 = (const signed word[$78]) main::sintab1 [phi:sin16s_gen::@3->sin16s_gen::@1#0] -- pwsz1=pwsc1 
+    // [173] phi (signed word*) sin16s_gen::sintab#2 = (const signed word*) main::sintab1 [phi:sin16s_gen::@3->sin16s_gen::@1#0] -- pwsz1=pwsc1 
     lda #<main.sintab1
     sta.z sintab
     lda #>main.sintab1

@@ -35,7 +35,12 @@ public class PassNAddInitializerValueListTypeCasts extends Pass2SsaOptimization 
             if(binary.getRight() instanceof ValueList && binary.getOperator().equals(Operators.ASSIGNMENT)) {
                RValue left = binary.getLeft();
                SymbolType declaredType = SymbolTypeInference.inferType(getProgram().getScope(), left);
-               boolean isModified = addValueCasts(declaredType, binary.getRightValue(), getProgram(), currentStmt.getSource());
+               boolean isArray = false;
+               if(left instanceof SymbolVariableRef) {
+                  Variable constant = getScope().getVar((SymbolVariableRef) left);
+                  isArray = constant.isArray();
+               }
+               boolean isModified = addValueCasts(declaredType, isArray, binary.getRightValue(), getProgram(), currentStmt.getSource());
                if(isModified) {
                   getLog().append("Added casts to value list in " + currentStmt.toString(getProgram(), false));
                   modified.set(true);
@@ -50,23 +55,24 @@ public class PassNAddInitializerValueListTypeCasts extends Pass2SsaOptimization 
     * Add cast to a value inside a value list initializer.
     *
     * @param declaredType The declared type of the value
+    * @param isArray true if the declared variable is an array
     * @param programValue The value wrapped in a program value
     * @param source The current statement
     * @return true if anything was modified
     */
-   public static boolean addValueCasts(SymbolType declaredType, ProgramValue programValue, Program program, StatementSource source) {
+   public static boolean addValueCasts(SymbolType declaredType, boolean isArray, ProgramValue programValue, Program program, StatementSource source) {
       boolean exprModified = false;
       Value value = programValue.get();
       if(value instanceof ValueList) {
          ValueList valueList = (ValueList) value;
-         if(declaredType instanceof SymbolTypeArray) {
-            SymbolTypeArray declaredArrayType = (SymbolTypeArray) declaredType;
+         if(declaredType instanceof SymbolTypePointer && isArray) {
+            SymbolTypePointer declaredArrayType = (SymbolTypePointer) declaredType;
             // Recursively cast all sub-elements
             SymbolType declaredElmType = declaredArrayType.getElementType();
             int size = valueList.getList().size();
             // TODO: Check declared array size vs. actual size
             for(int i = 0; i < size; i++) {
-               exprModified |= addValueCasts(declaredElmType, new ProgramValue.ProgramValueListElement(valueList, i), program, source);
+               exprModified |= addValueCasts(declaredElmType, false, new ProgramValue.ProgramValueListElement(valueList, i), program, source);
             }
             // Add a cast to the value list itself
             programValue.set(new CastValue(declaredType, valueList));
@@ -86,7 +92,7 @@ public class PassNAddInitializerValueListTypeCasts extends Pass2SsaOptimization 
             Iterator<Variable> memberDefIt = memberDefinitions.iterator();
             for(int i = 0; i < size; i++) {
                Variable memberDef = memberDefIt.next();
-               exprModified |= addValueCasts(memberDef.getType(), new ProgramValue.ProgramValueListElement(valueList, i), program, source);
+               exprModified |= addValueCasts(memberDef.getType(), memberDef.isArray(), new ProgramValue.ProgramValueListElement(valueList, i), program, source);
             }
             // Add a cast to the value list itself
             programValue.set(new CastValue(declaredType, valueList));

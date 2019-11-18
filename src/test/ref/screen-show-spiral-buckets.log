@@ -9,8 +9,8 @@ Fixing pointer addition (word~) sqrt::$1 ← (word*) sqrt::found - (word*) SQUAR
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Fixing pointer array-indexing *((word*) SQUARES + (byte) sqr::val)
-Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
-Fixing pointer array-indexing *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
+Fixing pointer array-indexing *((word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
+Fixing pointer array-indexing *((word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Fixing pointer array-indexing *((word**) BUCKETS + (byte) main::bucket_idx)
 Fixing pointer array-indexing *((word*) main::bucket + (byte) main::i)
 Fixing pointer array-indexing *((word**) BUCKETS + (word) init_buckets::i2)
@@ -294,7 +294,7 @@ sqrt::@return: scope:[sqrt]  from sqrt::@2
   (word*) SQUARES#59 ← phi( @16/(word*) SQUARES#0 )
   (byte) NUM_SQUARES#54 ← phi( @16/(byte) NUM_SQUARES#0 )
   (byte*) heap_head#47 ← phi( @16/(byte*) heap_head#54 )
-  (word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+  (word*) CORDIC_ATAN2_ANGLES_16 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
   to:@21
@@ -455,7 +455,7 @@ atan2_16::@26: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#4 + (signed word) atan2_16::yd#5
   (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#6 - (signed word) atan2_16::xd#5
   (byte~) atan2_16::$22 ← (byte) atan2_16::i#3 * (const byte) SIZEOF_WORD
-  (word) atan2_16::angle#2 ← (word) atan2_16::angle#7 + *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
+  (word) atan2_16::angle#2 ← (word) atan2_16::angle#7 + *((word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
   to:atan2_16::@27
 atan2_16::@30: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::y#11 ← phi( atan2_16::@25/(signed word) atan2_16::y#14 )
@@ -469,7 +469,7 @@ atan2_16::@30: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#5 - (signed word) atan2_16::yd#6
   (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#7 + (signed word) atan2_16::xd#6
   (byte~) atan2_16::$23 ← (byte) atan2_16::i#4 * (const byte) SIZEOF_WORD
-  (word) atan2_16::angle#3 ← (word) atan2_16::angle#8 - *((word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
+  (word) atan2_16::angle#3 ← (word) atan2_16::angle#8 - *((word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
   to:atan2_16::@27
 atan2_16::@27: scope:[atan2_16]  from atan2_16::@26 atan2_16::@30
   (signed word) atan2_16::y#8 ← phi( atan2_16::@26/(signed word) atan2_16::y#10 atan2_16::@30/(signed word) atan2_16::y#11 )
@@ -1407,7 +1407,7 @@ SYMBOL TABLE SSA
 (byte*) BUCKET_SIZES#8
 (byte*) BUCKET_SIZES#9
 (const byte*) COLS = (byte*)(number) $d800
-(word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16
+(word*) CORDIC_ATAN2_ANGLES_16
 (const byte) CORDIC_ITERATIONS_16 = (number) $f
 (const byte) FILL_CHAR = (byte) '*'
 (const byte*) HEAP_TOP = (byte*)(number) $a000
@@ -3149,7 +3149,7 @@ Constant (const byte) NUM_SQUARES#0 = $ff
 Constant (const word*) SQUARES#0 = (word*) 0
 Constant (const word) init_squares::sqr#0 = 0
 Constant (const byte) init_squares::i#0 = 0
-Constant (const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+Constant (const word*) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
 Constant (const word) atan2_16::angle#0 = 0
@@ -3914,7 +3914,7 @@ atan2_16::@20: scope:[atan2_16]  from atan2_16::@17
   [155] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5
   [156] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5
   [157] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1
-  [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
+  [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
   to:atan2_16::@19
 atan2_16::@19: scope:[atan2_16]  from atan2_16::@18 atan2_16::@20
   [159] (signed word) atan2_16::xi#8 ← phi( atan2_16::@18/(signed word) atan2_16::xi#1 atan2_16::@20/(signed word) atan2_16::xi#2 )
@@ -3927,7 +3927,7 @@ atan2_16::@18: scope:[atan2_16]  from atan2_16::@17
   [162] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5
   [163] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5
   [164] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1
-  [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
+  [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
   to:atan2_16::@19
 atan2_16::@14: scope:[atan2_16]  from atan2_16::@13
   [166] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2
@@ -5885,7 +5885,7 @@ atan2_16: {
     lda.z i
     asl
     sta.z __23
-    // [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
+    // [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
     ldy.z __23
     sec
     lda.z angle_1
@@ -5938,7 +5938,7 @@ atan2_16: {
     lda.z i
     asl
     sta.z __22
-    // [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuz2 
+    // [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuz2 
     ldy.z __22
     clc
     lda.z angle_1
@@ -6699,11 +6699,11 @@ Statement [154] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16:
 Statement [155] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ) always clobbers reg byte a 
 Statement [156] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ) always clobbers reg byte a 
 Statement [157] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ) always clobbers reg byte a 
-Statement [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
+Statement [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
 Statement [162] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [163] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [164] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ) always clobbers reg byte a 
-Statement [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
+Statement [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [166] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ) always clobbers reg byte a 
 Statement [167] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ) always clobbers reg byte a 
 Statement [169] (signed word) atan2_16::xi#13 ← (signed word) atan2_16::x#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ) always clobbers reg byte a 
@@ -6846,11 +6846,11 @@ Statement [154] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16:
 Statement [155] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ) always clobbers reg byte a 
 Statement [156] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ) always clobbers reg byte a 
 Statement [157] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ) always clobbers reg byte a 
-Statement [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
+Statement [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
 Statement [162] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [163] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [164] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ) always clobbers reg byte a 
-Statement [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
+Statement [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [166] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ) always clobbers reg byte a 
 Statement [167] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ) always clobbers reg byte a 
 Statement [169] (signed word) atan2_16::xi#13 ← (signed word) atan2_16::x#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ) always clobbers reg byte a 
@@ -6988,11 +6988,11 @@ Statement [154] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16:
 Statement [155] (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#3 - (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#2 ] ) always clobbers reg byte a 
 Statement [156] (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#3 + (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 ] ) always clobbers reg byte a 
 Statement [157] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::xi#2 atan2_16::yi#2 atan2_16::$23 ] ) always clobbers reg byte a 
-Statement [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
+Statement [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::xi#2 atan2_16::yi#2 atan2_16::angle#3 ] ) always clobbers reg byte a 
 Statement [162] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::xd#5 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [163] (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#3 - (signed word) atan2_16::xd#5 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [164] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1 [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::angle#12 atan2_16::yi#1 atan2_16::xi#1 atan2_16::$22 ] ) always clobbers reg byte a 
-Statement [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
+Statement [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) [ atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::i#2 atan2_16::yi#1 atan2_16::angle#2 atan2_16::xi#1 ] ) always clobbers reg byte a 
 Statement [166] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::yd#3 atan2_16::xd#1 ] ) always clobbers reg byte a 
 Statement [167] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ) always clobbers reg byte a 
 Statement [169] (signed word) atan2_16::xi#13 ← (signed word) atan2_16::x#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ( main:14::init_angle_screen:20::atan2_16:114 [ SCREEN_DIST#0 SCREEN_ANGLE#0 BUCKET_SIZES#0 BUCKETS#0 BUCKET_IDX#0 heap_head#1 init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ) always clobbers reg byte a 
@@ -8374,7 +8374,7 @@ atan2_16: {
     // [157] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
+    // [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
     lda.z angle
@@ -8425,7 +8425,7 @@ atan2_16: {
     // [164] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
+    // [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
     tay
     clc
     lda.z angle
@@ -9289,7 +9289,7 @@ FINAL SYMBOL TABLE
 (byte*) BUCKET_SIZES
 (void*) BUCKET_SIZES#0 BUCKET_SIZES zp[2]:16 0.024691358024691357
 (const byte*) COLS = (byte*) 55296
-(const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+(const word*) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
 (const byte) CORDIC_ITERATIONS_16 = (number) $f
@@ -10759,7 +10759,7 @@ atan2_16: {
     // [157] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
+    // [158] (word) atan2_16::angle#3 ← (word) atan2_16::angle#12 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
     lda.z angle
@@ -10812,7 +10812,7 @@ atan2_16: {
     // [164] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word[CORDIC_ITERATIONS_16]) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
+    // [165] (word) atan2_16::angle#2 ← (word) atan2_16::angle#12 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22) -- vwuz1=vwuz1_plus_pwuc1_derefidx_vbuaa 
     tay
     clc
     lda.z angle

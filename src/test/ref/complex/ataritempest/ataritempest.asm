@@ -41,7 +41,7 @@ entryPoint: {
 .segment RomData
   MESSAGE: .text "hello world"
   .byte 0
-.segment Vectors
-  VECTORS: .word nmiHandler, entryPoint
 .segment RamData
   SCREEN: .fill $32, 0
+.segment Vectors
+  VECTORS: .word nmiHandler, entryPoint

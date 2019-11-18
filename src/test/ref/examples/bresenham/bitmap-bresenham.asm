@@ -417,11 +417,11 @@ bitmap_init: {
     bne __b3
     rts
 }
-  lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
-  lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a
   // Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0
   bitmap_plot_bit: .fill $100, 0
+  lines_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28, $3c
+  lines_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28, $a

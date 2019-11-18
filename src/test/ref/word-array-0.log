@@ -1,5 +1,5 @@
-Fixing pointer array-indexing *((const word[3]) main::words + (number) 1)
-Fixing pointer array-indexing *((const word[3]) main::words + (number) 2)
+Fixing pointer array-indexing *((const word*) main::words + (number) 1)
+Fixing pointer array-indexing *((const word*) main::words + (number) 2)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -8,13 +8,13 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (number~) main::$4 ← (number) 1 * (const byte) SIZEOF_WORD
-  (word) main::w1#0 ← *((const word[3]) main::words + (number~) main::$4)
+  (word) main::w1#0 ← *((const word*) main::words + (number~) main::$4)
   (byte~) main::$0 ← < (word) main::w1#0
   *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
   (byte~) main::$1 ← > (word) main::w1#0
   *((const byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
   (number~) main::$5 ← (number) 2 * (const byte) SIZEOF_WORD
-  (word) main::w2#0 ← *((const word[3]) main::words + (number~) main::$5)
+  (word) main::w2#0 ← *((const word*) main::words + (number~) main::$5)
   (byte~) main::$2 ← < (word) main::w2#0
   *((const byte*) main::SCREEN + (number) 2) ← (byte~) main::$2
   (byte~) main::$3 ← > (word) main::w2#0
@@ -49,7 +49,7 @@ SYMBOL TABLE SSA
 (word) main::w1#0
 (word) main::w2
 (word) main::w2#0
-(const word[3]) main::words = (word[3])(number) $400
+(const word*) main::words = (word*)(number) $400
 
 Adding number conversion cast (unumber) 1 in (number~) main::$4 ← (number) 1 * (const byte) SIZEOF_WORD
 Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (unumber)(number) 1 * (const byte) SIZEOF_WORD
@@ -121,12 +121,12 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (word) main::w1#0 ← *((const word[3]) main::words+(byte) 1*(const byte) SIZEOF_WORD)
+  [4] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD)
   [5] (byte~) main::$0 ← < (word) main::w1#0
   [6] *((const byte*) main::SCREEN) ← (byte~) main::$0
   [7] (byte~) main::$1 ← > (word) main::w1#0
   [8] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1
-  [9] (word) main::w2#0 ← *((const word[3]) main::words+(byte) 2*(const byte) SIZEOF_WORD)
+  [9] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD)
   [10] (byte~) main::$2 ← < (word) main::w2#0
   [11] *((const byte*) main::SCREEN+(byte) 2) ← (byte~) main::$2
   [12] (byte~) main::$3 ← > (word) main::w2#0
@@ -203,7 +203,7 @@ main: {
     .label __3 = 9
     .label w1 = 2
     .label w2 = 6
-    // [4] (word) main::w1#0 ← *((const word[3]) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [4] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+1*SIZEOF_WORD
     sta.z w1
     lda words+1*SIZEOF_WORD+1
@@ -220,7 +220,7 @@ main: {
     // [8] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda.z __1
     sta SCREEN+1
-    // [9] (word) main::w2#0 ← *((const word[3]) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [9] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+2*SIZEOF_WORD
     sta.z w2
     lda words+2*SIZEOF_WORD+1
@@ -246,10 +246,10 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (word) main::w1#0 ← *((const word[3]) main::words+(byte) 1*(const byte) SIZEOF_WORD) [ main::w1#0 ] ( main:2 [ main::w1#0 ] ) always clobbers reg byte a 
+Statement [4] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) [ main::w1#0 ] ( main:2 [ main::w1#0 ] ) always clobbers reg byte a 
 Statement [5] (byte~) main::$0 ← < (word) main::w1#0 [ main::w1#0 main::$0 ] ( main:2 [ main::w1#0 main::$0 ] ) always clobbers reg byte a 
 Statement [7] (byte~) main::$1 ← > (word) main::w1#0 [ main::$1 ] ( main:2 [ main::$1 ] ) always clobbers reg byte a 
-Statement [9] (word) main::w2#0 ← *((const word[3]) main::words+(byte) 2*(const byte) SIZEOF_WORD) [ main::w2#0 ] ( main:2 [ main::w2#0 ] ) always clobbers reg byte a 
+Statement [9] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) [ main::w2#0 ] ( main:2 [ main::w2#0 ] ) always clobbers reg byte a 
 Statement [10] (byte~) main::$2 ← < (word) main::w2#0 [ main::w2#0 main::$2 ] ( main:2 [ main::w2#0 main::$2 ] ) always clobbers reg byte a 
 Statement [12] (byte~) main::$3 ← > (word) main::w2#0 [ main::$3 ] ( main:2 [ main::$3 ] ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::w1#0 ] : zp[2]:2 , 
@@ -297,7 +297,7 @@ main: {
     .label words = $400
     .label w1 = 2
     .label w2 = 4
-    // [4] (word) main::w1#0 ← *((const word[3]) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [4] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+1*SIZEOF_WORD
     sta.z w1
     lda words+1*SIZEOF_WORD+1
@@ -310,7 +310,7 @@ main: {
     lda.z w1+1
     // [8] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
-    // [9] (word) main::w2#0 ← *((const word[3]) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [9] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+2*SIZEOF_WORD
     sta.z w2
     lda words+2*SIZEOF_WORD+1
@@ -366,7 +366,7 @@ FINAL SYMBOL TABLE
 (word) main::w1#0 w1 zp[2]:2 2.0
 (word) main::w2
 (word) main::w2#0 w2 zp[2]:4 2.0
-(const word[3]) main::words = (word*) 1024
+(const word*) main::words = (word*) 1024
 
 zp[2]:2 [ main::w1#0 ]
 reg byte a [ main::$0 ]
@@ -400,7 +400,7 @@ main: {
     .label w1 = 2
     .label w2 = 4
     // w1 = words[1]
-    // [4] (word) main::w1#0 ← *((const word[3]) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [4] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+1*SIZEOF_WORD
     sta.z w1
     lda words+1*SIZEOF_WORD+1
@@ -418,7 +418,7 @@ main: {
     // [8] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
     // w2 = words[2]
-    // [9] (word) main::w2#0 ← *((const word[3]) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [9] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+2*SIZEOF_WORD
     sta.z w2
     lda words+2*SIZEOF_WORD+1

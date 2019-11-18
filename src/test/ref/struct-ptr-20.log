@@ -1,4 +1,4 @@
-Fixing pointer addition (struct Setting*~) main::$2 ← (const struct Setting[]) settings + (byte) main::len
+Fixing pointer addition (struct Setting*~) main::$2 ← (const struct Setting*) settings + (byte) main::len
 Fixing pointer increment (struct Setting*) main::setting ← ++ (struct Setting*) main::setting
 Rewriting struct pointer member access *((struct Setting*) main::setting).off
 Rewriting struct pointer member access *((struct Setting*) main::setting).id
@@ -15,17 +15,17 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (byte) main::idx#0 ← (number) 0
-  (byte~) main::$0 ← sizeof  (const struct Setting[]) settings
+  (byte~) main::$0 ← sizeof  (const struct Setting*) settings
   (byte~) main::$1 ← (byte~) main::$0 / (const byte) SIZEOF_STRUCT_SETTING
   (byte) main::len#0 ← (byte~) main::$1
-  (struct Setting*) main::setting#0 ← (const struct Setting[]) settings
+  (struct Setting*) main::setting#0 ← (const struct Setting*) settings
   to:main::@1
 main::@1: scope:[main]  from main main::@4
   (byte) main::idx#4 ← phi( main/(byte) main::idx#0 main::@4/(byte) main::idx#5 )
   (struct Setting*) main::setting#2 ← phi( main/(struct Setting*) main::setting#0 main::@4/(struct Setting*) main::setting#1 )
   (byte) main::len#1 ← phi( main/(byte) main::len#0 main::@4/(byte) main::len#2 )
   (byte~) main::$6 ← (byte) main::len#1 * (const byte) SIZEOF_STRUCT_SETTING
-  (struct Setting*~) main::$2 ← (const struct Setting[]) settings + (byte~) main::$6
+  (struct Setting*~) main::$2 ← (const struct Setting*) settings + (byte~) main::$6
   (bool~) main::$3 ← (struct Setting*) main::setting#2 < (struct Setting*~) main::$2
   if((bool~) main::$3) goto main::@2
   to:main::@return
@@ -110,7 +110,7 @@ SYMBOL TABLE SSA
 (struct Setting*) main::setting#3
 (struct Setting*) main::setting#4
 (struct Setting*) main::setting#5
-(const struct Setting[]) settings = { { off: (byte)(number) 0, id: (byte) 'a' }, { off: (byte)(number) 1, id: (byte) 'b' }, { off: (byte)(number) 0, id: (byte) 'c' } }
+(const struct Setting*) settings = { { off: (byte)(number) 0, id: (byte) 'a' }, { off: (byte)(number) 1, id: (byte) 'b' }, { off: (byte)(number) 0, id: (byte) 'c' } }
 
 Adding number conversion cast (unumber) 0 in (byte) main::idx#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) main::$9 ← (number) 0 != *((byte*~) main::$7)
@@ -143,7 +143,7 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$3 [9] if((struct Setting*) main::setting#2<(struct Setting*~) main::$2) goto main::@2
 Simple Condition (bool~) main::$5 [15] if((byte) 0!=*((byte*~) main::$7)) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [1] (byte~) main::$0 ← sizeof  (const struct Setting[]) settings
+Constant right-side identified [1] (byte~) main::$0 ← sizeof  (const struct Setting*) settings
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::idx#0 = 0
 Constant (const byte) main::$0 = sizeof settings
@@ -159,7 +159,7 @@ Eliminating unused variable (byte*~) main::$7 and assignment [5] (byte*~) main::
 Eliminating unused variable (byte*~) main::$8 and assignment [9] (byte*~) main::$8 ← (byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID
 Eliminating unused constant (const byte) OFFSET_STRUCT_SETTING_OFF
 Successful SSA optimization PassNEliminateUnusedVars
-Resolving array sizeof() sizeof (const struct Setting[]) settings
+Resolving array sizeof() sizeof (const struct Setting*) settings
 Successful SSA optimization PassNSizeOfSimplification
 Constant right-side identified [0] (byte) main::len#0 ← (const byte) main::$0 / (const byte) SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -175,7 +175,7 @@ Constant right-side identified [1] (byte~) main::$6 ← (const byte) main::len#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$6 = main::len#0*SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [1] (struct Setting*~) main::$2 ← (const struct Setting[]) settings + (const byte) main::$6
+Constant right-side identified [1] (struct Setting*~) main::$2 ← (const struct Setting*) settings + (const byte) main::$6
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const struct Setting*) main::$2 = settings+main::$6
 Successful SSA optimization Pass2ConstantIdentification
@@ -183,8 +183,8 @@ Inlining constant with var siblings (const byte) main::idx#0
 Inlining constant with var siblings (const struct Setting*) main::setting#0
 Constant inlined main::$6 = (const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING
 Constant inlined main::idx#0 = (byte) 0
-Constant inlined main::setting#0 = (const struct Setting[]) settings
-Constant inlined main::$2 = (const struct Setting[]) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING
+Constant inlined main::setting#0 = (const struct Setting*) settings
+Constant inlined main::$2 = (const struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING
 Constant inlined main::$0 = (byte) 3*(const byte) SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@9(between main::@2 and main::@4)
@@ -228,8 +228,8 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@3
   [5] (byte) main::idx#2 ← phi( main/(byte) 0 main::@3/(byte) main::idx#5 )
-  [5] (struct Setting*) main::setting#2 ← phi( main/(const struct Setting[]) settings main::@3/(struct Setting*) main::setting#1 )
-  [6] if((struct Setting*) main::setting#2<(const struct Setting[]) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2
+  [5] (struct Setting*) main::setting#2 ← phi( main/(const struct Setting*) settings main::@3/(struct Setting*) main::setting#1 )
+  [6] if((struct Setting*) main::setting#2<(const struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [7] return 
@@ -307,7 +307,7 @@ main: {
     // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z idx
-    // [5] phi (struct Setting*) main::setting#2 = (const struct Setting[]) settings [phi:main->main::@1#1] -- pssz1=pssc1 
+    // [5] phi (struct Setting*) main::setting#2 = (const struct Setting*) settings [phi:main->main::@1#1] -- pssz1=pssc1 
     lda #<settings
     sta.z setting
     lda #>settings
@@ -315,7 +315,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((struct Setting*) main::setting#2<(const struct Setting[]) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
+    // [6] if((struct Setting*) main::setting#2<(const struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
     lda.z setting+1
     cmp #>settings+len*SIZEOF_STRUCT_SETTING
     bcc __b2
@@ -371,13 +371,13 @@ main: {
   settings: .byte 0, 'a', 1, 'b', 0, 'c'
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if((struct Setting*) main::setting#2<(const struct Setting[]) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 [ main::setting#2 main::idx#2 ] ( main:2 [ main::setting#2 main::idx#2 ] ) always clobbers reg byte a 
+Statement [6] if((struct Setting*) main::setting#2<(const struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 [ main::setting#2 main::idx#2 ] ( main:2 [ main::setting#2 main::idx#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::idx#2 main::idx#5 main::idx#1 ]
 Statement [8] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2)) goto main::@3 [ main::setting#2 main::idx#2 ] ( main:2 [ main::setting#2 main::idx#2 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ main::idx#2 main::idx#5 main::idx#1 ]
 Statement [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID) [ main::setting#2 main::idx#2 ] ( main:2 [ main::setting#2 main::idx#2 ] ) always clobbers reg byte a reg byte y 
 Statement [12] (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#2 + (const byte) SIZEOF_STRUCT_SETTING [ main::setting#1 main::idx#5 ] ( main:2 [ main::setting#1 main::idx#5 ] ) always clobbers reg byte a 
-Statement [6] if((struct Setting*) main::setting#2<(const struct Setting[]) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 [ main::setting#2 main::idx#2 ] ( main:2 [ main::setting#2 main::idx#2 ] ) always clobbers reg byte a 
+Statement [6] if((struct Setting*) main::setting#2<(const struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 [ main::setting#2 main::idx#2 ] ( main:2 [ main::setting#2 main::idx#2 ] ) always clobbers reg byte a 
 Statement [8] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2)) goto main::@3 [ main::setting#2 main::idx#2 ] ( main:2 [ main::setting#2 main::idx#2 ] ) always clobbers reg byte a reg byte y 
 Statement [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID) [ main::setting#2 main::idx#2 ] ( main:2 [ main::setting#2 main::idx#2 ] ) always clobbers reg byte a reg byte y 
 Statement [12] (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#2 + (const byte) SIZEOF_STRUCT_SETTING [ main::setting#1 main::idx#5 ] ( main:2 [ main::setting#1 main::idx#5 ] ) always clobbers reg byte a 
@@ -428,7 +428,7 @@ main: {
   __b1_from_main:
     // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi (struct Setting*) main::setting#2 = (const struct Setting[]) settings [phi:main->main::@1#1] -- pssz1=pssc1 
+    // [5] phi (struct Setting*) main::setting#2 = (const struct Setting*) settings [phi:main->main::@1#1] -- pssz1=pssc1 
     lda #<settings
     sta.z setting
     lda #>settings
@@ -436,7 +436,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((struct Setting*) main::setting#2<(const struct Setting[]) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
+    // [6] if((struct Setting*) main::setting#2<(const struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
     lda.z setting+1
     cmp #>settings+len*SIZEOF_STRUCT_SETTING
     bcc __b2
@@ -543,7 +543,7 @@ FINAL SYMBOL TABLE
 (struct Setting*) main::setting
 (struct Setting*) main::setting#1 setting zp[2]:2 22.0
 (struct Setting*) main::setting#2 setting zp[2]:2 5.5
-(const struct Setting[]) settings = { { off: (byte) 0, id: (byte) 'a' }, { off: (byte) 1, id: (byte) 'b' }, { off: (byte) 0, id: (byte) 'c' } }
+(const struct Setting*) settings = { { off: (byte) 0, id: (byte) 'a' }, { off: (byte) 1, id: (byte) 'b' }, { off: (byte) 0, id: (byte) 'c' } }
 
 zp[2]:2 [ main::setting#2 main::setting#1 ]
 reg byte x [ main::idx#2 main::idx#5 main::idx#1 ]
@@ -576,7 +576,7 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi (struct Setting*) main::setting#2 = (const struct Setting[]) settings [phi:main->main::@1#1] -- pssz1=pssc1 
+    // [5] phi (struct Setting*) main::setting#2 = (const struct Setting*) settings [phi:main->main::@1#1] -- pssz1=pssc1 
     lda #<settings
     sta.z setting
     lda #>settings
@@ -584,7 +584,7 @@ main: {
     // main::@1
   __b1:
     // for(struct Setting* setting = settings; setting<settings+len; setting++)
-    // [6] if((struct Setting*) main::setting#2<(const struct Setting[]) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
+    // [6] if((struct Setting*) main::setting#2<(const struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
     lda.z setting+1
     cmp #>settings+len*SIZEOF_STRUCT_SETTING
     bcc __b2

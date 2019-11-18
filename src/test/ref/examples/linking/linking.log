@@ -1,6 +1,6 @@
 Loading link script "linking.ld"
-Resolved forward reference base to (byte[$100]) base
-Resolved forward reference base to (byte[$100]) base
+Resolved forward reference base to (const byte*) base
+Resolved forward reference base to (const byte*) base
 Identified constant variable (byte*) BGCOL
 Identified constant variable (byte*) SCREEN
 Culled Empty Block (label) main::@2
@@ -24,7 +24,7 @@ main: scope:[main]  from @2
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte[$100]) base + (byte) main::i#2) ← (byte) main::i#2
+  *((const byte*) base + (byte) main::i#2) ← (byte) main::i#2
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$ff)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,$ff)
   if((bool~) main::$0) goto main::@1
@@ -61,7 +61,7 @@ fillscreen::@2: scope:[fillscreen]  from fillscreen::@1
   (byte*) fillscreen::screen#3 ← phi( fillscreen::@1/(byte*) fillscreen::screen#2 )
   (byte) fillscreen::i#2 ← phi( fillscreen::@1/(byte) fillscreen::i#3 )
   (byte) fillscreen::c#1 ← phi( fillscreen::@1/(byte) fillscreen::c#2 )
-  (byte~) fillscreen::$2 ← (byte) fillscreen::c#1 + *((byte[$100]) base + (byte) fillscreen::i#2)
+  (byte~) fillscreen::$2 ← (byte) fillscreen::c#1 + *((const byte*) base + (byte) fillscreen::i#2)
   *((byte*) fillscreen::screen#3) ← (byte~) fillscreen::$2
   (byte) fillscreen::i#1 ← ++ (byte) fillscreen::i#2
   (byte*) fillscreen::screen#1 ← ++ (byte*) fillscreen::screen#3
@@ -70,7 +70,6 @@ fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte[$100]) base ← { fill( $100, 0) }
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -84,7 +83,7 @@ SYMBOL TABLE SSA
 (label) @end
 (const byte*) BGCOL = (byte*)(number) $d021
 (const byte*) SCREEN = (byte*)(number) $400
-(byte[$100]) base
+(const byte*) base = { fill( $100, 0) }
 (void()) fillscreen((byte) fillscreen::c)
 (byte*~) fillscreen::$0
 (bool~) fillscreen::$1
@@ -143,13 +142,11 @@ Simple Condition (bool~) main::$0 [5] if((byte) main::i#1!=rangelast(0,$ff)) got
 Simple Condition (bool~) fillscreen::$1 [17] if((byte*) fillscreen::screen#2<(byte*~) fillscreen::$0) goto fillscreen::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [15] (byte*~) fillscreen::$0 ← (const byte*) SCREEN + (word) $3e8
-Constant right-side identified [24] (byte[$100]) base ← { fill( $100, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::i#0 = 0
 Constant (const byte) fillscreen::i#0 = 0
 Constant (const byte*) fillscreen::screen#0 = SCREEN
 Constant (const byte*) fillscreen::$0 = SCREEN+$3e8
-Constant (const byte[$100]) base = { fill( $100, 0) }
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [6] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
@@ -217,7 +214,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] *((const byte[$100]) base + (byte) main::i#2) ← (byte) main::i#2
+  [6] *((const byte*) base + (byte) main::i#2) ← (byte) main::i#2
   [7] (byte) main::i#1 ← ++ (byte) main::i#2
   [8] if((byte) main::i#1!=(byte) 0) goto main::@1
   to:main::@2
@@ -242,7 +239,7 @@ fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
   [15] return 
   to:@return
 fillscreen::@2: scope:[fillscreen]  from fillscreen::@1
-  [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base + (byte) fillscreen::i#2)
+  [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte*) base + (byte) fillscreen::i#2)
   [17] *((byte*) fillscreen::screen#2) ← (byte~) fillscreen::$2
   [18] (byte) fillscreen::i#1 ← ++ (byte) fillscreen::i#2
   [19] (byte*) fillscreen::screen#1 ← ++ (byte*) fillscreen::screen#2
@@ -338,7 +335,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte[$100]) base + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [6] *((const byte*) base + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta base,y
@@ -402,7 +399,7 @@ fillscreen: {
     rts
     // fillscreen::@2
   __b2:
-    // [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base + (byte) fillscreen::i#2) -- vbuz1=vbuz2_plus_pbuc1_derefidx_vbuz3 
+    // [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte*) base + (byte) fillscreen::i#2) -- vbuz1=vbuz2_plus_pbuc1_derefidx_vbuz3 
     lda.z c
     ldy.z i
     clc
@@ -433,12 +430,12 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [14] if((byte*) fillscreen::screen#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ fillscreen::c#0 ]
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ fillscreen::i#2 fillscreen::i#1 ]
-Statement [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base + (byte) fillscreen::i#2) [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 fillscreen::$2 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 fillscreen::$2 ] ) always clobbers reg byte a 
+Statement [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte*) base + (byte) fillscreen::i#2) [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 fillscreen::$2 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 fillscreen::$2 ] ) always clobbers reg byte a 
 Statement [17] *((byte*) fillscreen::screen#2) ← (byte~) fillscreen::$2 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:6 [ fillscreen::c#0 ]
 Removing always clobbered register reg byte y as potential for zp[1]:5 [ fillscreen::i#2 fillscreen::i#1 ]
 Statement [14] if((byte*) fillscreen::screen#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 ] ) always clobbers reg byte a 
-Statement [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base + (byte) fillscreen::i#2) [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 fillscreen::$2 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 fillscreen::$2 ] ) always clobbers reg byte a 
+Statement [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte*) base + (byte) fillscreen::i#2) [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 fillscreen::$2 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 fillscreen::$2 ] ) always clobbers reg byte a 
 Statement [17] *((byte*) fillscreen::screen#2) ← (byte~) fillscreen::$2 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 ] ( main:2::fillscreen:10 [ fillscreen::c#0 fillscreen::screen#2 fillscreen::i#2 ] ) always clobbers reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ fillscreen::screen#2 fillscreen::screen#1 ] : zp[2]:3 , 
@@ -511,7 +508,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte[$100]) base + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const byte*) base + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta base,x
     // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -570,7 +567,7 @@ fillscreen: {
     rts
     // fillscreen::@2
   __b2:
-    // [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base + (byte) fillscreen::i#2) -- vbuaa=vbuz1_plus_pbuc1_derefidx_vbuxx 
+    // [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte*) base + (byte) fillscreen::i#2) -- vbuaa=vbuz1_plus_pbuc1_derefidx_vbuxx 
     lda base,x
     clc
     adc.z c
@@ -630,7 +627,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte*) BGCOL = (byte*) 53281
 (const byte*) SCREEN = (byte*) 1024
-(const byte[$100]) base = { fill( $100, 0) }
+(const byte*) base = { fill( $100, 0) }
 (void()) fillscreen((byte) fillscreen::c)
 (byte~) fillscreen::$2 reg byte a 202.0
 (label) fillscreen::@1
@@ -701,7 +698,7 @@ main: {
     // main::@1
   __b1:
     // base[i] = i
-    // [6] *((const byte[$100]) base + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const byte*) base + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta base,x
     // for(char i:0..255)
@@ -758,7 +755,7 @@ fillscreen: {
     // fillscreen::@2
   __b2:
     // c+base[i++]
-    // [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte[$100]) base + (byte) fillscreen::i#2) -- vbuaa=vbuz1_plus_pbuc1_derefidx_vbuxx 
+    // [16] (byte~) fillscreen::$2 ← (byte) fillscreen::c#0 + *((const byte*) base + (byte) fillscreen::i#2) -- vbuaa=vbuz1_plus_pbuc1_derefidx_vbuxx 
     lda base,x
     clc
     adc.z c

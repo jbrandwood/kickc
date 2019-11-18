@@ -4,8 +4,8 @@ Resolved forward reference frame_cnt to (byte) frame_cnt
 Resolved forward reference irq to interrupt(HARDWARE_CLOBBER)(void()) irq()
 Fixing pointer increment (signed word*) sin16s_gen::sintab ← ++ (signed word*) sin16s_gen::sintab
 Fixing pointer increment (signed word*) sin16s_gen2::sintab ← ++ (signed word*) sin16s_gen2::sintab
-Fixing pointer array-indexing *((signed word[$200]) SINUS + (word) main::idx_x)
-Fixing pointer array-indexing *((signed word[$200]) SINUS + (word) main::idx_y)
+Fixing pointer array-indexing *((const signed word*) SINUS + (word) main::idx_x)
+Fixing pointer array-indexing *((const signed word*) SINUS + (word) main::idx_y)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition (number~) abs_u16::$1
 Warning! Adding boolean cast to non-boolean condition (number~) sgn_u16::$1
@@ -64,6 +64,7 @@ Culled Empty Block (label) @30
 Culled Empty Block (label) @31
 Culled Empty Block (label) @32
 Culled Empty Block (label) @33
+Culled Empty Block (label) @34
 Culled Empty Block (label) main::toD0181_@1
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@3
@@ -598,13 +599,10 @@ memset::@return: scope:[memset]  from memset::@1
   return 
   to:@return
 @28: scope:[]  from @6
-  (word) rem16u#36 ← phi( @6/(word) rem16u#0 )
+  (word) rem16u#34 ← phi( @6/(word) rem16u#0 )
   (byte*) bitmap_screen#0 ← (byte*) 0
   (byte*) bitmap_gfx#0 ← (byte*) 0
-  (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-  (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-  (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-  to:@34
+  to:@35
 
 (void()) bitmap_init((byte*) bitmap_init::gfx , (byte*) bitmap_init::screen)
 bitmap_init: scope:[bitmap_init]  from main::@12
@@ -616,20 +614,20 @@ bitmap_init: scope:[bitmap_init]  from main::@12
   (byte) bitmap_init::x#0 ← (byte) 0
   to:bitmap_init::@1
 bitmap_init::@1: scope:[bitmap_init]  from bitmap_init bitmap_init::@2
-  (byte*) bitmap_screen#30 ← phi( bitmap_init/(byte*) bitmap_screen#1 bitmap_init::@2/(byte*) bitmap_screen#26 )
-  (byte*) bitmap_gfx#31 ← phi( bitmap_init/(byte*) bitmap_gfx#1 bitmap_init::@2/(byte*) bitmap_gfx#27 )
+  (byte*) bitmap_screen#29 ← phi( bitmap_init/(byte*) bitmap_screen#1 bitmap_init::@2/(byte*) bitmap_screen#25 )
+  (byte*) bitmap_gfx#30 ← phi( bitmap_init/(byte*) bitmap_gfx#1 bitmap_init::@2/(byte*) bitmap_gfx#26 )
   (byte*) bitmap_init::gfx#4 ← phi( bitmap_init/(byte*) bitmap_init::gfx#1 bitmap_init::@2/(byte*) bitmap_init::gfx#3 )
   (byte) bitmap_init::x#2 ← phi( bitmap_init/(byte) bitmap_init::x#0 bitmap_init::@2/(byte) bitmap_init::x#1 )
   (byte) bitmap_init::bits#3 ← phi( bitmap_init/(byte) bitmap_init::bits#0 bitmap_init::@2/(byte) bitmap_init::bits#4 )
-  *((byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
+  *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
   (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (number) 1
   (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (number) 0
   (bool~) bitmap_init::$1 ← ! (bool~) bitmap_init::$0
   if((bool~) bitmap_init::$1) goto bitmap_init::@2
   to:bitmap_init::@3
 bitmap_init::@2: scope:[bitmap_init]  from bitmap_init::@1 bitmap_init::@3
-  (byte*) bitmap_screen#26 ← phi( bitmap_init::@1/(byte*) bitmap_screen#30 bitmap_init::@3/(byte*) bitmap_screen#31 )
-  (byte*) bitmap_gfx#27 ← phi( bitmap_init::@1/(byte*) bitmap_gfx#31 bitmap_init::@3/(byte*) bitmap_gfx#32 )
+  (byte*) bitmap_screen#25 ← phi( bitmap_init::@1/(byte*) bitmap_screen#29 bitmap_init::@3/(byte*) bitmap_screen#30 )
+  (byte*) bitmap_gfx#26 ← phi( bitmap_init::@1/(byte*) bitmap_gfx#30 bitmap_init::@3/(byte*) bitmap_gfx#31 )
   (byte*) bitmap_init::gfx#3 ← phi( bitmap_init::@1/(byte*) bitmap_init::gfx#4 bitmap_init::@3/(byte*) bitmap_init::gfx#5 )
   (byte) bitmap_init::bits#4 ← phi( bitmap_init::@1/(byte) bitmap_init::bits#1 bitmap_init::@3/(byte) bitmap_init::bits#2 )
   (byte) bitmap_init::x#3 ← phi( bitmap_init::@1/(byte) bitmap_init::x#2 bitmap_init::@3/(byte) bitmap_init::x#4 )
@@ -638,15 +636,15 @@ bitmap_init::@2: scope:[bitmap_init]  from bitmap_init::@1 bitmap_init::@3
   if((bool~) bitmap_init::$2) goto bitmap_init::@1
   to:bitmap_init::@4
 bitmap_init::@3: scope:[bitmap_init]  from bitmap_init::@1
-  (byte*) bitmap_screen#31 ← phi( bitmap_init::@1/(byte*) bitmap_screen#30 )
-  (byte*) bitmap_gfx#32 ← phi( bitmap_init::@1/(byte*) bitmap_gfx#31 )
+  (byte*) bitmap_screen#30 ← phi( bitmap_init::@1/(byte*) bitmap_screen#29 )
+  (byte*) bitmap_gfx#31 ← phi( bitmap_init::@1/(byte*) bitmap_gfx#30 )
   (byte*) bitmap_init::gfx#5 ← phi( bitmap_init::@1/(byte*) bitmap_init::gfx#4 )
   (byte) bitmap_init::x#4 ← phi( bitmap_init::@1/(byte) bitmap_init::x#2 )
   (byte) bitmap_init::bits#2 ← (number) $80
   to:bitmap_init::@2
 bitmap_init::@4: scope:[bitmap_init]  from bitmap_init::@2
-  (byte*) bitmap_screen#21 ← phi( bitmap_init::@2/(byte*) bitmap_screen#26 )
-  (byte*) bitmap_gfx#22 ← phi( bitmap_init::@2/(byte*) bitmap_gfx#27 )
+  (byte*) bitmap_screen#21 ← phi( bitmap_init::@2/(byte*) bitmap_screen#25 )
+  (byte*) bitmap_gfx#22 ← phi( bitmap_init::@2/(byte*) bitmap_gfx#26 )
   (byte*) bitmap_init::gfx#2 ← phi( bitmap_init::@2/(byte*) bitmap_init::gfx#3 )
   (byte*) bitmap_init::yoffs#0 ← (byte*) bitmap_init::gfx#2
   (byte) bitmap_init::y#0 ← (byte) 0
@@ -659,9 +657,9 @@ bitmap_init::@5: scope:[bitmap_init]  from bitmap_init::@4 bitmap_init::@6
   (number~) bitmap_init::$3 ← (byte) bitmap_init::y#2 & (number) 7
   (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2
   (number~) bitmap_init::$5 ← (number~) bitmap_init::$3 | (byte~) bitmap_init::$4
-  *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (number~) bitmap_init::$5
+  *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (number~) bitmap_init::$5
   (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2
-  *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
+  *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
   (number~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (number) 7
   (bool~) bitmap_init::$8 ← (number~) bitmap_init::$7 == (number) 7
   (bool~) bitmap_init::$9 ← ! (bool~) bitmap_init::$8
@@ -725,23 +723,16 @@ bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@2
 bitmap_plot: scope:[bitmap_plot]  from main::@17
   (word) bitmap_plot::x#1 ← phi( main::@17/(word) bitmap_plot::x#0 )
   (byte) bitmap_plot::y#1 ← phi( main::@17/(byte) bitmap_plot::y#0 )
-  (byte*~) bitmap_plot::$0 ← ((byte*)) { *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#1), *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#1) }
+  (byte*~) bitmap_plot::$0 ← ((byte*)) { *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#1), *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#1) }
   (byte*) bitmap_plot::plotter#0 ← (byte*~) bitmap_plot::$0
   (number~) bitmap_plot::$1 ← (word) bitmap_plot::x#1 & (number) $fff8
   (byte*) bitmap_plot::plotter#1 ← (byte*) bitmap_plot::plotter#0 + (number~) bitmap_plot::$1
   (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#1
-  *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2)
+  *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2)
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   return 
   to:@return
-@34: scope:[]  from @28
-  (byte*) bitmap_screen#25 ← phi( @28/(byte*) bitmap_screen#0 )
-  (byte*) bitmap_gfx#26 ← phi( @28/(byte*) bitmap_gfx#0 )
-  (word) rem16u#34 ← phi( @28/(word) rem16u#36 )
-  (byte[$100]) plots_per_frame ← { fill( $100, 0) }
-  (signed word[$200]) SINUS ← { fill( $200, 0) }
-  to:@35
 
 (void()) main()
 main: scope:[main]  from @37
@@ -749,7 +740,7 @@ main: scope:[main]  from @37
   (byte*) bitmap_screen#17 ← phi( @37/(byte*) bitmap_screen#14 )
   (byte*) bitmap_gfx#18 ← phi( @37/(byte*) bitmap_gfx#15 )
   (word) rem16u#23 ← phi( @37/(word) rem16u#25 )
-  (signed word*) sin16s_gen2::sintab#1 ← (signed word[$200]) SINUS
+  (signed word*) sin16s_gen2::sintab#1 ← (const signed word*) SINUS
   (word) sin16s_gen2::wavelength#0 ← (number) $200
   (signed word) sin16s_gen2::min#0 ← (number) -$1001
   (signed word) sin16s_gen2::max#0 ← (number) $1001
@@ -767,7 +758,7 @@ main::@12: scope:[main]  from main
   to:main::@13
 main::@13: scope:[main]  from main::@12
   (byte) frame_cnt#22 ← phi( main::@12/(byte) frame_cnt#23 )
-  (word) rem16u#44 ← phi( main::@12/(word) rem16u#8 )
+  (word) rem16u#43 ← phi( main::@12/(word) rem16u#8 )
   (byte*) bitmap_screen#8 ← phi( main::@12/(byte*) bitmap_screen#2 )
   (byte*) bitmap_gfx#8 ← phi( main::@12/(byte*) bitmap_gfx#2 )
   (byte*) bitmap_gfx#3 ← (byte*) bitmap_gfx#8
@@ -778,18 +769,18 @@ main::@13: scope:[main]  from main::@12
   to:main::@14
 main::@14: scope:[main]  from main::@13
   (byte) frame_cnt#21 ← phi( main::@13/(byte) frame_cnt#22 )
-  (byte*) bitmap_screen#34 ← phi( main::@13/(byte*) bitmap_screen#3 )
-  (byte*) bitmap_gfx#35 ← phi( main::@13/(byte*) bitmap_gfx#3 )
-  (word) rem16u#42 ← phi( main::@13/(word) rem16u#44 )
+  (byte*) bitmap_screen#33 ← phi( main::@13/(byte*) bitmap_screen#3 )
+  (byte*) bitmap_gfx#34 ← phi( main::@13/(byte*) bitmap_gfx#3 )
+  (word) rem16u#41 ← phi( main::@13/(word) rem16u#43 )
   *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
   (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
   (byte*) main::toD0181_gfx#0 ← (const byte*) BITMAP
   to:main::toD0181
 main::toD0181: scope:[main]  from main::@14
   (byte) frame_cnt#20 ← phi( main::@14/(byte) frame_cnt#21 )
-  (byte*) bitmap_screen#32 ← phi( main::@14/(byte*) bitmap_screen#34 )
-  (byte*) bitmap_gfx#33 ← phi( main::@14/(byte*) bitmap_gfx#35 )
-  (word) rem16u#40 ← phi( main::@14/(word) rem16u#42 )
+  (byte*) bitmap_screen#31 ← phi( main::@14/(byte*) bitmap_screen#33 )
+  (byte*) bitmap_gfx#32 ← phi( main::@14/(byte*) bitmap_gfx#34 )
+  (word) rem16u#39 ← phi( main::@14/(word) rem16u#41 )
   (byte*) main::toD0181_gfx#1 ← phi( main::@14/(byte*) main::toD0181_gfx#0 )
   (byte*) main::toD0181_screen#1 ← phi( main::@14/(byte*) main::toD0181_screen#0 )
   (word~) main::toD0181_$0 ← ((word)) (byte*) main::toD0181_screen#1
@@ -805,17 +796,17 @@ main::toD0181: scope:[main]  from main::@14
   to:main::toD0181_@return
 main::toD0181_@return: scope:[main]  from main::toD0181
   (byte) frame_cnt#19 ← phi( main::toD0181/(byte) frame_cnt#20 )
-  (byte*) bitmap_screen#27 ← phi( main::toD0181/(byte*) bitmap_screen#32 )
-  (byte*) bitmap_gfx#28 ← phi( main::toD0181/(byte*) bitmap_gfx#33 )
-  (word) rem16u#37 ← phi( main::toD0181/(word) rem16u#40 )
+  (byte*) bitmap_screen#26 ← phi( main::toD0181/(byte*) bitmap_screen#31 )
+  (byte*) bitmap_gfx#27 ← phi( main::toD0181/(byte*) bitmap_gfx#32 )
+  (word) rem16u#36 ← phi( main::toD0181/(word) rem16u#39 )
   (byte) main::toD0181_return#2 ← phi( main::toD0181/(byte) main::toD0181_return#0 )
   (byte) main::toD0181_return#1 ← (byte) main::toD0181_return#2
   to:main::@11
 main::@11: scope:[main]  from main::toD0181_@return
   (byte) frame_cnt#18 ← phi( main::toD0181_@return/(byte) frame_cnt#19 )
-  (byte*) bitmap_screen#22 ← phi( main::toD0181_@return/(byte*) bitmap_screen#27 )
-  (byte*) bitmap_gfx#23 ← phi( main::toD0181_@return/(byte*) bitmap_gfx#28 )
-  (word) rem16u#31 ← phi( main::toD0181_@return/(word) rem16u#37 )
+  (byte*) bitmap_screen#22 ← phi( main::toD0181_@return/(byte*) bitmap_screen#26 )
+  (byte*) bitmap_gfx#23 ← phi( main::toD0181_@return/(byte*) bitmap_gfx#27 )
+  (word) rem16u#31 ← phi( main::toD0181_@return/(word) rem16u#36 )
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
   (byte~) main::$3 ← (byte) main::toD0181_return#3
   *((const byte*) D018) ← (byte~) main::$3
@@ -839,23 +830,23 @@ main::@1: scope:[main]  from main::@15 main::@5
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte*) bitmap_screen#36 ← phi( main::@1/(byte*) bitmap_screen#13 )
-  (byte*) bitmap_gfx#37 ← phi( main::@1/(byte*) bitmap_gfx#14 )
-  (word) rem16u#45 ← phi( main::@1/(word) rem16u#24 )
+  (byte*) bitmap_screen#35 ← phi( main::@1/(byte*) bitmap_screen#13 )
+  (byte*) bitmap_gfx#36 ← phi( main::@1/(byte*) bitmap_gfx#14 )
+  (word) rem16u#44 ← phi( main::@1/(word) rem16u#24 )
   (byte) frame_cnt#15 ← phi( main::@1/(byte) frame_cnt#16 )
   (word) main::idx_y#5 ← phi( main::@1/(word) main::idx_y#8 )
   (word) main::idx_x#3 ← phi( main::@1/(word) main::idx_x#5 )
   (word~) main::$22 ← (word) main::idx_x#3 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word) main::cos_x#0 ← *((signed word[$200]) SINUS + (word~) main::$22)
+  (signed word) main::cos_x#0 ← *((const signed word*) SINUS + (word~) main::$22)
   (signed word) mul16s::a#1 ← (number) $a0
   (signed word) mul16s::b#1 ← (signed word) main::cos_x#0
   call mul16s 
   (signed dword) mul16s::return#3 ← (signed dword) mul16s::return#1
   to:main::@16
 main::@16: scope:[main]  from main::@2
-  (byte*) bitmap_screen#35 ← phi( main::@2/(byte*) bitmap_screen#36 )
-  (byte*) bitmap_gfx#36 ← phi( main::@2/(byte*) bitmap_gfx#37 )
-  (word) rem16u#43 ← phi( main::@2/(word) rem16u#45 )
+  (byte*) bitmap_screen#34 ← phi( main::@2/(byte*) bitmap_screen#35 )
+  (byte*) bitmap_gfx#35 ← phi( main::@2/(byte*) bitmap_gfx#36 )
+  (word) rem16u#42 ← phi( main::@2/(word) rem16u#44 )
   (byte) frame_cnt#14 ← phi( main::@2/(byte) frame_cnt#15 )
   (word) main::idx_x#8 ← phi( main::@2/(word) main::idx_x#3 )
   (word) main::idx_y#3 ← phi( main::@2/(word) main::idx_y#5 )
@@ -868,16 +859,16 @@ main::@16: scope:[main]  from main::@2
   (word~) main::$9 ← ((word)) (number~) main::$8
   (word) main::x#0 ← (word~) main::$9
   (word~) main::$23 ← (word) main::idx_y#3 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word) main::sin_y#0 ← *((signed word[$200]) SINUS + (word~) main::$23)
+  (signed word) main::sin_y#0 ← *((const signed word*) SINUS + (word~) main::$23)
   (signed word) mul16s::a#2 ← (number) $64
   (signed word) mul16s::b#2 ← (signed word) main::sin_y#0
   call mul16s 
   (signed dword) mul16s::return#4 ← (signed dword) mul16s::return#1
   to:main::@17
 main::@17: scope:[main]  from main::@16
-  (byte*) bitmap_screen#33 ← phi( main::@16/(byte*) bitmap_screen#35 )
-  (byte*) bitmap_gfx#34 ← phi( main::@16/(byte*) bitmap_gfx#36 )
-  (word) rem16u#41 ← phi( main::@16/(word) rem16u#43 )
+  (byte*) bitmap_screen#32 ← phi( main::@16/(byte*) bitmap_screen#34 )
+  (byte*) bitmap_gfx#33 ← phi( main::@16/(byte*) bitmap_gfx#35 )
+  (word) rem16u#40 ← phi( main::@16/(word) rem16u#42 )
   (byte) frame_cnt#13 ← phi( main::@16/(byte) frame_cnt#14 )
   (word) main::idx_y#9 ← phi( main::@16/(word) main::idx_y#3 )
   (word) main::idx_x#6 ← phi( main::@16/(word) main::idx_x#8 )
@@ -896,9 +887,9 @@ main::@17: scope:[main]  from main::@16
   call bitmap_plot 
   to:main::@18
 main::@18: scope:[main]  from main::@17
-  (byte*) bitmap_screen#28 ← phi( main::@17/(byte*) bitmap_screen#33 )
-  (byte*) bitmap_gfx#29 ← phi( main::@17/(byte*) bitmap_gfx#34 )
-  (word) rem16u#38 ← phi( main::@17/(word) rem16u#41 )
+  (byte*) bitmap_screen#27 ← phi( main::@17/(byte*) bitmap_screen#32 )
+  (byte*) bitmap_gfx#28 ← phi( main::@17/(byte*) bitmap_gfx#33 )
+  (word) rem16u#37 ← phi( main::@17/(word) rem16u#40 )
   (byte) frame_cnt#11 ← phi( main::@17/(byte) frame_cnt#13 )
   (word) main::idx_y#6 ← phi( main::@17/(word) main::idx_y#9 )
   (word) main::idx_x#4 ← phi( main::@17/(word) main::idx_x#6 )
@@ -908,9 +899,9 @@ main::@18: scope:[main]  from main::@17
   if((bool~) main::$18) goto main::@4
   to:main::@8
 main::@4: scope:[main]  from main::@18 main::@8
-  (byte*) bitmap_screen#23 ← phi( main::@18/(byte*) bitmap_screen#28 main::@8/(byte*) bitmap_screen#29 )
-  (byte*) bitmap_gfx#24 ← phi( main::@18/(byte*) bitmap_gfx#29 main::@8/(byte*) bitmap_gfx#30 )
-  (word) rem16u#32 ← phi( main::@18/(word) rem16u#38 main::@8/(word) rem16u#39 )
+  (byte*) bitmap_screen#23 ← phi( main::@18/(byte*) bitmap_screen#27 main::@8/(byte*) bitmap_screen#28 )
+  (byte*) bitmap_gfx#24 ← phi( main::@18/(byte*) bitmap_gfx#28 main::@8/(byte*) bitmap_gfx#29 )
+  (word) rem16u#32 ← phi( main::@18/(word) rem16u#37 main::@8/(word) rem16u#38 )
   (word) main::idx_x#9 ← phi( main::@18/(word) main::idx_x#1 main::@8/(word) main::idx_x#2 )
   (byte) frame_cnt#7 ← phi( main::@18/(byte) frame_cnt#11 main::@8/(byte) frame_cnt#12 )
   (word) main::idx_y#4 ← phi( main::@18/(word) main::idx_y#6 main::@8/(word) main::idx_y#7 )
@@ -920,9 +911,9 @@ main::@4: scope:[main]  from main::@18 main::@8
   if((bool~) main::$20) goto main::@5
   to:main::@9
 main::@8: scope:[main]  from main::@18
-  (byte*) bitmap_screen#29 ← phi( main::@18/(byte*) bitmap_screen#28 )
-  (byte*) bitmap_gfx#30 ← phi( main::@18/(byte*) bitmap_gfx#29 )
-  (word) rem16u#39 ← phi( main::@18/(word) rem16u#38 )
+  (byte*) bitmap_screen#28 ← phi( main::@18/(byte*) bitmap_screen#27 )
+  (byte*) bitmap_gfx#29 ← phi( main::@18/(byte*) bitmap_gfx#28 )
+  (word) rem16u#38 ← phi( main::@18/(word) rem16u#37 )
   (byte) frame_cnt#12 ← phi( main::@18/(byte) frame_cnt#11 )
   (word) main::idx_y#7 ← phi( main::@18/(word) main::idx_y#6 )
   (word) main::idx_x#2 ← (number) 0
@@ -934,7 +925,7 @@ main::@5: scope:[main]  from main::@4 main::@9
   (word) rem16u#28 ← phi( main::@4/(word) rem16u#32 main::@9/(word) rem16u#33 )
   (word) main::idx_x#7 ← phi( main::@4/(word) main::idx_x#9 main::@9/(word) main::idx_x#10 )
   (byte) frame_cnt#3 ← phi( main::@4/(byte) frame_cnt#7 main::@9/(byte) frame_cnt#8 )
-  *((byte[$100]) plots_per_frame + (byte) frame_cnt#3) ← ++ *((byte[$100]) plots_per_frame + (byte) frame_cnt#3)
+  *((const byte*) plots_per_frame + (byte) frame_cnt#3) ← ++ *((const byte*) plots_per_frame + (byte) frame_cnt#3)
   to:main::@1
 main::@9: scope:[main]  from main::@4
   (byte*) bitmap_screen#24 ← phi( main::@4/(byte*) bitmap_screen#23 )
@@ -953,10 +944,10 @@ main::@return: scope:[main]  from main::@1
   (byte*) bitmap_screen#4 ← (byte*) bitmap_screen#9
   return 
   to:@return
-@35: scope:[]  from @34
-  (byte*) bitmap_screen#20 ← phi( @34/(byte*) bitmap_screen#25 )
-  (byte*) bitmap_gfx#21 ← phi( @34/(byte*) bitmap_gfx#26 )
-  (word) rem16u#29 ← phi( @34/(word) rem16u#34 )
+@35: scope:[]  from @28
+  (byte*) bitmap_screen#20 ← phi( @28/(byte*) bitmap_screen#0 )
+  (byte*) bitmap_gfx#21 ← phi( @28/(byte*) bitmap_gfx#0 )
+  (word) rem16u#29 ← phi( @28/(word) rem16u#34 )
   (byte) frame_cnt#0 ← (number) 1
   to:@37
 
@@ -1017,7 +1008,6 @@ irq::@return: scope:[irq]  from irq::@1
 
 SYMBOL TABLE SSA
 (label) @28
-(label) @34
 (label) @35
 (label) @37
 (label) @38
@@ -1044,7 +1034,7 @@ SYMBOL TABLE SSA
 (const byte) PROCPORT_RAM_IO = (number) 5
 (const byte*) RASTER = (byte*)(number) $d012
 (const byte*) SCREEN = (byte*)(number) $400
-(signed word[$200]) SINUS
+(const signed word*) SINUS = { fill( $200, 0) }
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
 (const byte) VIC_BMM = (number) $20
 (const byte*) VIC_CONTROL = (byte*)(number) $d011
@@ -1097,7 +1087,6 @@ SYMBOL TABLE SSA
 (byte*) bitmap_gfx#34
 (byte*) bitmap_gfx#35
 (byte*) bitmap_gfx#36
-(byte*) bitmap_gfx#37
 (byte*) bitmap_gfx#4
 (byte*) bitmap_gfx#5
 (byte*) bitmap_gfx#6
@@ -1173,9 +1162,9 @@ SYMBOL TABLE SSA
 (byte) bitmap_plot::y
 (byte) bitmap_plot::y#0
 (byte) bitmap_plot::y#1
-(byte[$100]) bitmap_plot_bit
-(byte[$100]) bitmap_plot_yhi
-(byte[$100]) bitmap_plot_ylo
+(const byte*) bitmap_plot_bit = { fill( $100, 0) }
+(const byte*) bitmap_plot_yhi = { fill( $100, 0) }
+(const byte*) bitmap_plot_ylo = { fill( $100, 0) }
 (byte*) bitmap_screen
 (byte*) bitmap_screen#0
 (byte*) bitmap_screen#1
@@ -1207,7 +1196,6 @@ SYMBOL TABLE SSA
 (byte*) bitmap_screen#33
 (byte*) bitmap_screen#34
 (byte*) bitmap_screen#35
-(byte*) bitmap_screen#36
 (byte*) bitmap_screen#4
 (byte*) bitmap_screen#5
 (byte*) bitmap_screen#6
@@ -1644,7 +1632,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (word) mulu16_sel::v2#3
 (word) mulu16_sel::v2#4
 (word) mulu16_sel::v2#5
-(byte[$100]) plots_per_frame
+(const byte*) plots_per_frame = { fill( $100, 0) }
 (word) rem16u
 (word) rem16u#0
 (word) rem16u#1
@@ -1686,7 +1674,6 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (word) rem16u#42
 (word) rem16u#43
 (word) rem16u#44
-(word) rem16u#45
 (word) rem16u#5
 (word) rem16u#6
 (word) rem16u#7
@@ -2046,8 +2033,8 @@ Simplifying constant integer cast 7
 Simplifying constant integer cast 7
 Simplifying constant integer cast $10
 Simplifying constant integer cast 0
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#1)
-Simplifying constant integer cast *((byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#1)
+Simplifying constant integer cast *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#1)
+Simplifying constant integer cast *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#1)
 Simplifying constant integer cast $fff8
 Simplifying constant integer cast $200
 Simplifying constant integer cast -$1001
@@ -2169,11 +2156,11 @@ Inversing boolean not [170] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (const 
 Inversing boolean not [174] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (const dword) PI_HALF_u4f28 from [173] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (const dword) PI_HALF_u4f28
 Inversing boolean not [233] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 == (byte) 0 from [232] (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (byte) 0
 Inversing boolean not [262] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [261] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [295] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [294] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
-Inversing boolean not [315] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [314] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
-Inversing boolean not [435] (bool~) main::$18 ← (word) main::idx_x#1 != (word) $200 from [434] (bool~) main::$17 ← (word) main::idx_x#1 == (word) $200
-Inversing boolean not [440] (bool~) main::$20 ← (word) main::idx_y#1 != (word) $200 from [439] (bool~) main::$19 ← (word) main::idx_y#1 == (word) $200
-Inversing boolean not [468] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [467] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
+Inversing boolean not [292] (bool~) bitmap_init::$1 ← (byte) bitmap_init::bits#1 != (byte) 0 from [291] (bool~) bitmap_init::$0 ← (byte) bitmap_init::bits#1 == (byte) 0
+Inversing boolean not [312] (bool~) bitmap_init::$9 ← (byte~) bitmap_init::$7 != (byte) 7 from [311] (bool~) bitmap_init::$8 ← (byte~) bitmap_init::$7 == (byte) 7
+Inversing boolean not [429] (bool~) main::$18 ← (word) main::idx_x#1 != (word) $200 from [428] (bool~) main::$17 ← (word) main::idx_x#1 == (word) $200
+Inversing boolean not [434] (bool~) main::$20 ← (word) main::idx_y#1 != (word) $200 from [433] (bool~) main::$19 ← (word) main::idx_y#1 == (word) $200
+Inversing boolean not [462] (bool~) irq::$0 ← (byte) 0 == (byte) frame_cnt#4 from [461] (bool~) irq::$1 ← (byte) 0 != (byte) frame_cnt#4
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (word) divr16u::rem#0 = (word~) divr16u::$0 (word) divr16u::rem#7 
 Alias (word) divr16u::dividend#0 = (word~) divr16u::$6 (word) divr16u::dividend#8 
@@ -2273,14 +2260,14 @@ Alias (byte) memset::c#2 = (byte) memset::c#3
 Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
 Alias (byte*) memset::end#1 = (byte*) memset::end#2 
 Alias (void*) memset::str#5 = (void*) memset::str#6 
-Alias (word) rem16u#0 = (word) rem16u#36 (word) rem16u#34 (word) rem16u#29 (word) rem16u#25 
+Alias (word) rem16u#0 = (word) rem16u#34 (word) rem16u#29 (word) rem16u#25 
 Alias (byte) bitmap_init::x#2 = (byte) bitmap_init::x#4 
 Alias (byte*) bitmap_init::gfx#4 = (byte*) bitmap_init::gfx#5 
-Alias (byte*) bitmap_gfx#31 = (byte*) bitmap_gfx#32 
-Alias (byte*) bitmap_screen#30 = (byte*) bitmap_screen#31 
+Alias (byte*) bitmap_gfx#30 = (byte*) bitmap_gfx#31 
+Alias (byte*) bitmap_screen#29 = (byte*) bitmap_screen#30 
 Alias (byte*) bitmap_init::gfx#2 = (byte*) bitmap_init::gfx#3 (byte*) bitmap_init::yoffs#0 
-Alias (byte*) bitmap_gfx#22 = (byte*) bitmap_gfx#27 
-Alias (byte*) bitmap_screen#21 = (byte*) bitmap_screen#26 
+Alias (byte*) bitmap_gfx#22 = (byte*) bitmap_gfx#26 
+Alias (byte*) bitmap_screen#21 = (byte*) bitmap_screen#25 
 Alias (byte*) bitmap_init::yoffs#2 = (byte*) bitmap_init::yoffs#3 
 Alias (byte) bitmap_init::y#2 = (byte) bitmap_init::y#4 
 Alias (byte*) bitmap_gfx#16 = (byte*) bitmap_gfx#17 
@@ -2291,23 +2278,21 @@ Alias (byte*) bitmap_screen#11 = (byte*) bitmap_screen#6 (byte*) bitmap_screen#2
 Alias (byte) bitmap_clear::col#0 = (byte~) bitmap_clear::$1 
 Alias (byte*) bitmap_gfx#12 = (byte*) bitmap_gfx#7 
 Alias (byte*) bitmap_plot::plotter#0 = (byte*~) bitmap_plot::$0 
-Alias (byte*) bitmap_gfx#0 = (byte*) bitmap_gfx#26 (byte*) bitmap_gfx#21 (byte*) bitmap_gfx#15 
-Alias (byte*) bitmap_screen#0 = (byte*) bitmap_screen#25 (byte*) bitmap_screen#20 (byte*) bitmap_screen#14 
 Alias (byte*) bitmap_gfx#13 = (byte*) bitmap_gfx#18 
 Alias (byte*) bitmap_screen#12 = (byte*) bitmap_screen#17 
 Alias (byte) frame_cnt#17 = (byte) frame_cnt#23 (byte) frame_cnt#24 (byte) frame_cnt#22 (byte) frame_cnt#21 (byte) frame_cnt#20 (byte) frame_cnt#19 (byte) frame_cnt#18 
-Alias (word) rem16u#17 = (word) rem16u#8 (word) rem16u#44 (word) rem16u#42 (word) rem16u#40 (word) rem16u#37 (word) rem16u#31 (word) rem16u#27 
-Alias (byte*) bitmap_gfx#19 = (byte*) bitmap_gfx#3 (byte*) bitmap_gfx#8 (byte*) bitmap_gfx#35 (byte*) bitmap_gfx#33 (byte*) bitmap_gfx#28 (byte*) bitmap_gfx#23 
-Alias (byte*) bitmap_screen#18 = (byte*) bitmap_screen#3 (byte*) bitmap_screen#8 (byte*) bitmap_screen#34 (byte*) bitmap_screen#32 (byte*) bitmap_screen#27 (byte*) bitmap_screen#22 
+Alias (word) rem16u#17 = (word) rem16u#8 (word) rem16u#43 (word) rem16u#41 (word) rem16u#39 (word) rem16u#36 (word) rem16u#31 (word) rem16u#27 
+Alias (byte*) bitmap_gfx#19 = (byte*) bitmap_gfx#3 (byte*) bitmap_gfx#8 (byte*) bitmap_gfx#34 (byte*) bitmap_gfx#32 (byte*) bitmap_gfx#27 (byte*) bitmap_gfx#23 
+Alias (byte*) bitmap_screen#18 = (byte*) bitmap_screen#3 (byte*) bitmap_screen#8 (byte*) bitmap_screen#33 (byte*) bitmap_screen#31 (byte*) bitmap_screen#26 (byte*) bitmap_screen#22 
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
 Alias (byte*) main::toD0181_gfx#0 = (byte*) main::toD0181_gfx#1 
 Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$3 
 Alias (word) main::idx_x#3 = (word) main::idx_x#5 (word) main::idx_x#8 (word) main::idx_x#6 (word) main::idx_x#4 
 Alias (word) main::idx_y#3 = (word) main::idx_y#5 (word) main::idx_y#8 (word) main::idx_y#9 (word) main::idx_y#6 (word) main::idx_y#7 
 Alias (byte) frame_cnt#11 = (byte) frame_cnt#15 (byte) frame_cnt#16 (byte) frame_cnt#14 (byte) frame_cnt#13 (byte) frame_cnt#12 
-Alias (word) rem16u#18 = (word) rem16u#45 (word) rem16u#24 (word) rem16u#43 (word) rem16u#41 (word) rem16u#38 (word) rem16u#39 (word) rem16u#9 
-Alias (byte*) bitmap_gfx#14 = (byte*) bitmap_gfx#37 (byte*) bitmap_gfx#36 (byte*) bitmap_gfx#34 (byte*) bitmap_gfx#29 (byte*) bitmap_gfx#30 (byte*) bitmap_gfx#9 (byte*) bitmap_gfx#4 
-Alias (byte*) bitmap_screen#13 = (byte*) bitmap_screen#36 (byte*) bitmap_screen#35 (byte*) bitmap_screen#33 (byte*) bitmap_screen#28 (byte*) bitmap_screen#29 (byte*) bitmap_screen#9 (byte*) bitmap_screen#4 
+Alias (word) rem16u#18 = (word) rem16u#44 (word) rem16u#24 (word) rem16u#42 (word) rem16u#40 (word) rem16u#37 (word) rem16u#38 (word) rem16u#9 
+Alias (byte*) bitmap_gfx#14 = (byte*) bitmap_gfx#36 (byte*) bitmap_gfx#35 (byte*) bitmap_gfx#33 (byte*) bitmap_gfx#28 (byte*) bitmap_gfx#29 (byte*) bitmap_gfx#9 (byte*) bitmap_gfx#4 
+Alias (byte*) bitmap_screen#13 = (byte*) bitmap_screen#35 (byte*) bitmap_screen#34 (byte*) bitmap_screen#32 (byte*) bitmap_screen#27 (byte*) bitmap_screen#28 (byte*) bitmap_screen#9 (byte*) bitmap_screen#4 
 Alias (signed dword) mul16s::return#3 = (signed dword) mul16s::return#7 
 Alias (signed dword) main::xpos#0 = (signed dword~) main::$5 
 Alias (word) main::x#0 = (word~) main::$9 (word) main::x#1 
@@ -2320,6 +2305,8 @@ Alias (word) main::idx_x#10 = (word) main::idx_x#9
 Alias (word) rem16u#32 = (word) rem16u#33 
 Alias (byte*) bitmap_gfx#24 = (byte*) bitmap_gfx#25 
 Alias (byte*) bitmap_screen#23 = (byte*) bitmap_screen#24 
+Alias (byte*) bitmap_gfx#0 = (byte*) bitmap_gfx#21 (byte*) bitmap_gfx#15 
+Alias (byte*) bitmap_screen#0 = (byte*) bitmap_screen#20 (byte*) bitmap_screen#14 
 Alias (byte) frame_cnt#4 = (byte) frame_cnt#5 
 Alias (byte) frame_cnt#10 = (byte) frame_cnt#6 (byte) frame_cnt#2 
 Alias (byte) frame_cnt#0 = (byte) frame_cnt#9 
@@ -2339,8 +2326,8 @@ Alias (signed word) mul16s::a#3 = (signed word) mul16s::a#5
 Alias (byte) sin16s::isUpper#2 = (byte) sin16s::isUpper#8 
 Alias (byte) bitmap_init::x#2 = (byte) bitmap_init::x#3 
 Alias (byte*) bitmap_init::gfx#2 = (byte*) bitmap_init::gfx#4 
-Alias (byte*) bitmap_gfx#22 = (byte*) bitmap_gfx#31 
-Alias (byte*) bitmap_screen#21 = (byte*) bitmap_screen#30 
+Alias (byte*) bitmap_gfx#22 = (byte*) bitmap_gfx#30 
+Alias (byte*) bitmap_screen#21 = (byte*) bitmap_screen#29 
 Alias (byte) bitmap_init::y#2 = (byte) bitmap_init::y#3 
 Alias (byte*) bitmap_gfx#11 = (byte*) bitmap_gfx#16 
 Alias (byte*) bitmap_screen#11 = (byte*) bitmap_screen#15 
@@ -2403,7 +2390,7 @@ Identical Phi Values (byte*) bitmap_screen#10 (byte*) bitmap_screen#13
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [313] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
+Identified duplicate assignment right side [310] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) divr16u::$4 [11] if((byte~) divr16u::$2==(byte) 0) goto divr16u::@2
 Simple Condition (bool~) divr16u::$9 [19] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
@@ -2418,20 +2405,15 @@ Simple Condition (bool~) sin16s::$3 [175] if((dword) sin16s::x#4<(const dword) P
 Simple Condition (bool~) sin16s::$16 [234] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@3
 Simple Condition (bool~) memset::$1 [263] if((word) memset::num#2<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$4 [273] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) bitmap_init::$1 [296] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
-Simple Condition (bool~) bitmap_init::$2 [300] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
-Simple Condition (bool~) bitmap_init::$9 [316] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
-Simple Condition (bool~) bitmap_init::$11 [320] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) main::$18 [436] if((word) main::idx_x#1!=(word) $200) goto main::@4
-Simple Condition (bool~) main::$20 [441] if((word) main::idx_y#1!=(word) $200) goto main::@5
-Simple Condition (bool~) irq::$0 [469] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
+Simple Condition (bool~) bitmap_init::$1 [293] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@2
+Simple Condition (bool~) bitmap_init::$2 [297] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
+Simple Condition (bool~) bitmap_init::$9 [313] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@6
+Simple Condition (bool~) bitmap_init::$11 [317] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
+Simple Condition (bool~) main::$18 [430] if((word) main::idx_x#1!=(word) $200) goto main::@4
+Simple Condition (bool~) main::$20 [435] if((word) main::idx_y#1!=(word) $200) goto main::@5
+Simple Condition (bool~) irq::$0 [463] if((byte) 0==(byte) frame_cnt#0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [201] (word) mulu16_sel::v2#2 ← (unumber)(number) $10000/(number) 6
-Constant right-side identified [283] (byte[$100]) bitmap_plot_ylo ← { fill( $100, 0) }
-Constant right-side identified [284] (byte[$100]) bitmap_plot_yhi ← { fill( $100, 0) }
-Constant right-side identified [285] (byte[$100]) bitmap_plot_bit ← { fill( $100, 0) }
-Constant right-side identified [354] (byte[$100]) plots_per_frame ← { fill( $100, 0) }
-Constant right-side identified [355] (signed word[$200]) SINUS ← { fill( $200, 0) }
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
@@ -2451,9 +2433,6 @@ Constant (const byte) mulu16_sel::select#3 = 0
 Constant (const byte) mulu16_sel::select#4 = 0
 Constant (const byte*) bitmap_screen#0 = (byte*) 0
 Constant (const byte*) bitmap_gfx#0 = (byte*) 0
-Constant (const byte[$100]) bitmap_plot_ylo = { fill( $100, 0) }
-Constant (const byte[$100]) bitmap_plot_yhi = { fill( $100, 0) }
-Constant (const byte[$100]) bitmap_plot_bit = { fill( $100, 0) }
 Constant (const byte) bitmap_init::bits#0 = $80
 Constant (const byte) bitmap_init::x#0 = 0
 Constant (const byte) bitmap_init::bits#2 = $80
@@ -2461,8 +2440,7 @@ Constant (const byte) bitmap_init::y#0 = 0
 Constant (const word) memset::num#0 = $3e8
 Constant (const byte) memset::c#1 = 0
 Constant (const word) memset::num#1 = $1f40
-Constant (const byte[$100]) plots_per_frame = { fill( $100, 0) }
-Constant (const signed word[$200]) SINUS = { fill( $200, 0) }
+Constant (const signed word*) sin16s_gen2::sintab#1 = SINUS
 Constant (const word) sin16s_gen2::wavelength#0 = $200
 Constant (const signed word) sin16s_gen2::min#0 = -$1001
 Constant (const signed word) sin16s_gen2::max#0 = $1001
@@ -2482,7 +2460,6 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) div32u16u::divisor#0 = sin16s_gen2::wavelength#0
 Constant (const byte*) bitmap_gfx#1 = bitmap_init::gfx#0
 Constant (const byte*) bitmap_screen#1 = bitmap_init::screen#0
-Constant (const signed word*) sin16s_gen2::sintab#1 = SINUS
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -2491,18 +2468,18 @@ Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
 Constant (const void*) memset::str#0 = (void*)bitmap_screen#1
 Constant (const void*) memset::str#1 = (void*)bitmap_gfx#1
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [398] if(true) goto main::@2
+if() condition always true - replacing block destination [392] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [24] divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value [26] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
-Resolved ranged next value [298] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
-Resolved ranged comparison value [300] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
-Resolved ranged next value [318] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
-Resolved ranged comparison value [320] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
-De-inlining pointer[w] to *(pointer+w)   [401] (signed word) main::cos_x#0 ← *((const signed word[$200]) SINUS + (word~) main::$22)
-De-inlining pointer[w] to *(pointer+w)   [415] (signed word) main::sin_y#0 ← *((const signed word[$200]) SINUS + (word~) main::$23)
+Resolved ranged next value [295] bitmap_init::x#1 ← ++ bitmap_init::x#2 to ++
+Resolved ranged comparison value [297] if(bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1 to (number) 0
+Resolved ranged next value [315] bitmap_init::y#1 ← ++ bitmap_init::y#2 to ++
+Resolved ranged comparison value [317] if(bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5 to (number) 0
+De-inlining pointer[w] to *(pointer+w)   [395] (signed word) main::cos_x#0 ← *((const signed word*) SINUS + (word~) main::$22)
+De-inlining pointer[w] to *(pointer+w)   [409] (signed word) main::sin_y#0 ← *((const signed word*) SINUS + (word~) main::$23)
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Simplifying expression containing zero bitmap_clear::$0 in [330] (byte) bitmap_clear::col#0 ← (byte~) bitmap_clear::$0 + (const byte) bitmap_clear::bgcol#0
+Simplifying expression containing zero bitmap_clear::$0 in [327] (byte) bitmap_clear::col#0 ← (byte~) bitmap_clear::$0 + (const byte) bitmap_clear::bgcol#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (void*) memset::return#2 and assignment [168] (void*) memset::return#2 ← (void*) memset::str#3
 Eliminating unused variable (void*) memset::return#3 and assignment [170] (void*) memset::return#3 ← (void*) memset::str#3
@@ -2654,7 +2631,7 @@ Constant inlined main::toD0181_$6 = >(word)(const byte*) BITMAP/(byte) 4
 Constant inlined main::toD0181_$5 = >(word)(const byte*) BITMAP
 Constant inlined main::toD0181_$4 = (word)(const byte*) BITMAP
 Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4
-Constant inlined sin16s_gen2::sintab#1 = (const signed word[$200]) SINUS
+Constant inlined sin16s_gen2::sintab#1 = (const signed word*) SINUS
 Constant inlined memset::c#0 = (const byte) bitmap_clear::col#0
 Constant inlined bitmap_init::x#0 = (byte) 0
 Constant inlined memset::c#1 = (byte) 0
@@ -2705,7 +2682,6 @@ Added new block during phi lifting irq::@3(between irq and irq::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @28
-Adding NOP phi() at start of @34
 Adding NOP phi() at start of @37
 Adding NOP phi() at start of @38
 Adding NOP phi() at start of @end
@@ -2728,82 +2704,81 @@ Adding NOP phi() at start of bitmap_init::@4
 Adding NOP phi() at start of sin16s_gen2
 Adding NOP phi() at start of div32u16u
 CALL GRAPH
-Calls in [] to main:6 
-Calls in [main] to sin16s_gen2:10 bitmap_init:12 bitmap_clear:14 init_irq:19 mul16s:27 mul16s:38 bitmap_plot:46 
-Calls in [mul16s] to mul16u:71 
-Calls in [bitmap_clear] to memset:119 memset:121 
-Calls in [sin16s_gen2] to div32u16u:166 sin16s:173 mul16s:177 
-Calls in [sin16s] to mulu16_sel:202 mulu16_sel:209 mulu16_sel:214 mulu16_sel:222 mulu16_sel:229 
-Calls in [mulu16_sel] to mul16u:247 
-Calls in [div32u16u] to divr16u:254 divr16u:259 
+Calls in [] to main:5 
+Calls in [main] to sin16s_gen2:9 bitmap_init:11 bitmap_clear:13 init_irq:18 mul16s:26 mul16s:37 bitmap_plot:45 
+Calls in [mul16s] to mul16u:70 
+Calls in [bitmap_clear] to memset:118 memset:120 
+Calls in [sin16s_gen2] to div32u16u:165 sin16s:172 mul16s:176 
+Calls in [sin16s] to mulu16_sel:201 mulu16_sel:208 mulu16_sel:213 mulu16_sel:221 mulu16_sel:228 
+Calls in [mulu16_sel] to mul16u:246 
+Calls in [div32u16u] to divr16u:253 divr16u:258 
 
 Created 44 initial phi equivalence classes
-Coalesced [26] mul16s::b#8 ← mul16s::b#1
-Coalesced [37] mul16s::b#7 ← mul16s::b#2
-Coalesced [56] main::idx_x#11 ← main::idx_x#10
-Coalesced [57] main::idx_y#11 ← main::idx_y#10
-Coalesced [58] main::idx_y#12 ← main::idx_y#1
-Coalesced [59] main::idx_x#12 ← main::idx_x#1
-Coalesced [69] mul16u::mb#6 ← mul16u::b#0
-Coalesced [70] mul16u::a#8 ← mul16u::a#1
-Coalesced [78] mul16s::m#7 ← mul16s::m#1
-Coalesced [84] mul16s::m#10 ← mul16s::m#2
-Coalesced [88] mul16s::m#9 ← mul16s::m#5
-Coalesced [89] mul16s::m#8 ← mul16s::m#0
-Coalesced [91] mul16u::a#10 ← mul16u::a#6
-Coalesced [92] mul16u::mb#8 ← mul16u::mb#0
-Coalesced [100] mul16u::res#9 ← mul16u::res#1
-Coalesced [104] mul16u::a#11 ← mul16u::a#0
-Coalesced [105] mul16u::res#7 ← mul16u::res#6
-Coalesced [106] mul16u::mb#9 ← mul16u::mb#1
-Coalesced (already) [107] mul16u::res#8 ← mul16u::res#2
-Coalesced [134] memset::dst#5 ← memset::dst#1
-Coalesced [154] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
-Coalesced [159] bitmap_init::y#5 ← bitmap_init::y#1
-Coalesced [160] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
-Coalesced (already) [161] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
-Coalesced [162] bitmap_init::bits#5 ← bitmap_init::bits#4
-Coalesced [163] bitmap_init::x#5 ← bitmap_init::x#1
-Coalesced [164] bitmap_init::bits#6 ← bitmap_init::bits#1
-Coalesced [176] mul16s::a#8 ← mul16s::a#0
-Coalesced [185] sin16s_gen2::i#6 ← sin16s_gen2::i#1
-Coalesced [186] sin16s_gen2::x#6 ← sin16s_gen2::x#1
-Coalesced [187] sin16s_gen2::sintab#8 ← sin16s_gen2::sintab#0
-Coalesced [190] sin16s::x#9 ← sin16s::x#1
-Coalesced [194] sin16s::x#11 ← sin16s::x#2
-Coalesced [200] mulu16_sel::v1#8 ← mulu16_sel::v1#0
-Coalesced [201] mulu16_sel::v2#8 ← mulu16_sel::v2#0
-Coalesced [207] mulu16_sel::v1#9 ← mulu16_sel::v1#1
-Coalesced [208] mulu16_sel::v2#9 ← mulu16_sel::v2#1
-Coalesced [213] mulu16_sel::v1#10 ← mulu16_sel::v1#2
-Coalesced [220] mulu16_sel::v1#6 ← mulu16_sel::v1#3
-Coalesced [221] mulu16_sel::v2#6 ← mulu16_sel::v2#3
-Coalesced [227] mulu16_sel::v1#7 ← mulu16_sel::v1#4
-Coalesced [228] mulu16_sel::v2#7 ← mulu16_sel::v2#4
-Coalesced [236] sin16s::return#6 ← sin16s::sinx#1
-Coalesced [240] sin16s::x#10 ← sin16s::x#4
-Coalesced [241] sin16s::x#8 ← sin16s::x#0
-Coalesced [245] mul16u::mb#7 ← mul16u::b#1
-Coalesced [246] mul16u::a#9 ← mul16u::a#2
-Coalesced [258] divr16u::rem#12 ← divr16u::rem#4
-Coalesced [265] divr16u::rem#13 ← divr16u::rem#10
-Coalesced [266] divr16u::dividend#9 ← divr16u::dividend#5
-Coalesced [273] divr16u::rem#16 ← divr16u::rem#1
-Coalesced [280] divr16u::rem#18 ← divr16u::rem#2
-Coalesced [281] divr16u::return#8 ← divr16u::quotient#2
-Coalesced [287] divr16u::rem#14 ← divr16u::rem#11
-Coalesced [288] divr16u::dividend#10 ← divr16u::dividend#0
-Coalesced [289] divr16u::quotient#9 ← divr16u::return#0
-Coalesced [290] divr16u::i#7 ← divr16u::i#1
-Coalesced [291] divr16u::rem#17 ← divr16u::rem#6
-Coalesced [292] divr16u::return#7 ← divr16u::quotient#1
-Coalesced [293] divr16u::rem#15 ← divr16u::rem#0
-Coalesced [297] frame_cnt#26 ← frame_cnt#1
-Coalesced [302] frame_cnt#25 ← frame_cnt#0
+Coalesced [25] mul16s::b#8 ← mul16s::b#1
+Coalesced [36] mul16s::b#7 ← mul16s::b#2
+Coalesced [55] main::idx_x#11 ← main::idx_x#10
+Coalesced [56] main::idx_y#11 ← main::idx_y#10
+Coalesced [57] main::idx_y#12 ← main::idx_y#1
+Coalesced [58] main::idx_x#12 ← main::idx_x#1
+Coalesced [68] mul16u::mb#6 ← mul16u::b#0
+Coalesced [69] mul16u::a#8 ← mul16u::a#1
+Coalesced [77] mul16s::m#7 ← mul16s::m#1
+Coalesced [83] mul16s::m#10 ← mul16s::m#2
+Coalesced [87] mul16s::m#9 ← mul16s::m#5
+Coalesced [88] mul16s::m#8 ← mul16s::m#0
+Coalesced [90] mul16u::a#10 ← mul16u::a#6
+Coalesced [91] mul16u::mb#8 ← mul16u::mb#0
+Coalesced [99] mul16u::res#9 ← mul16u::res#1
+Coalesced [103] mul16u::a#11 ← mul16u::a#0
+Coalesced [104] mul16u::res#7 ← mul16u::res#6
+Coalesced [105] mul16u::mb#9 ← mul16u::mb#1
+Coalesced (already) [106] mul16u::res#8 ← mul16u::res#2
+Coalesced [133] memset::dst#5 ← memset::dst#1
+Coalesced [153] bitmap_init::yoffs#7 ← bitmap_init::yoffs#1
+Coalesced [158] bitmap_init::y#5 ← bitmap_init::y#1
+Coalesced [159] bitmap_init::yoffs#5 ← bitmap_init::yoffs#4
+Coalesced (already) [160] bitmap_init::yoffs#6 ← bitmap_init::yoffs#2
+Coalesced [161] bitmap_init::bits#5 ← bitmap_init::bits#4
+Coalesced [162] bitmap_init::x#5 ← bitmap_init::x#1
+Coalesced [163] bitmap_init::bits#6 ← bitmap_init::bits#1
+Coalesced [175] mul16s::a#8 ← mul16s::a#0
+Coalesced [184] sin16s_gen2::i#6 ← sin16s_gen2::i#1
+Coalesced [185] sin16s_gen2::x#6 ← sin16s_gen2::x#1
+Coalesced [186] sin16s_gen2::sintab#8 ← sin16s_gen2::sintab#0
+Coalesced [189] sin16s::x#9 ← sin16s::x#1
+Coalesced [193] sin16s::x#11 ← sin16s::x#2
+Coalesced [199] mulu16_sel::v1#8 ← mulu16_sel::v1#0
+Coalesced [200] mulu16_sel::v2#8 ← mulu16_sel::v2#0
+Coalesced [206] mulu16_sel::v1#9 ← mulu16_sel::v1#1
+Coalesced [207] mulu16_sel::v2#9 ← mulu16_sel::v2#1
+Coalesced [212] mulu16_sel::v1#10 ← mulu16_sel::v1#2
+Coalesced [219] mulu16_sel::v1#6 ← mulu16_sel::v1#3
+Coalesced [220] mulu16_sel::v2#6 ← mulu16_sel::v2#3
+Coalesced [226] mulu16_sel::v1#7 ← mulu16_sel::v1#4
+Coalesced [227] mulu16_sel::v2#7 ← mulu16_sel::v2#4
+Coalesced [235] sin16s::return#6 ← sin16s::sinx#1
+Coalesced [239] sin16s::x#10 ← sin16s::x#4
+Coalesced [240] sin16s::x#8 ← sin16s::x#0
+Coalesced [244] mul16u::mb#7 ← mul16u::b#1
+Coalesced [245] mul16u::a#9 ← mul16u::a#2
+Coalesced [257] divr16u::rem#12 ← divr16u::rem#4
+Coalesced [264] divr16u::rem#13 ← divr16u::rem#10
+Coalesced [265] divr16u::dividend#9 ← divr16u::dividend#5
+Coalesced [272] divr16u::rem#16 ← divr16u::rem#1
+Coalesced [279] divr16u::rem#18 ← divr16u::rem#2
+Coalesced [280] divr16u::return#8 ← divr16u::quotient#2
+Coalesced [286] divr16u::rem#14 ← divr16u::rem#11
+Coalesced [287] divr16u::dividend#10 ← divr16u::dividend#0
+Coalesced [288] divr16u::quotient#9 ← divr16u::return#0
+Coalesced [289] divr16u::i#7 ← divr16u::i#1
+Coalesced [290] divr16u::rem#17 ← divr16u::rem#6
+Coalesced [291] divr16u::return#7 ← divr16u::quotient#1
+Coalesced [292] divr16u::rem#15 ← divr16u::rem#0
+Coalesced [296] frame_cnt#26 ← frame_cnt#1
+Coalesced [301] frame_cnt#25 ← frame_cnt#0
 Coalesced down to 30 phi equivalence classes
 Culled Empty Block (label) @6
 Culled Empty Block (label) @28
-Culled Empty Block (label) @34
 Culled Empty Block (label) @38
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@15
@@ -2920,7 +2895,7 @@ main::@1: scope:[main]  from main::@4 main::@5
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [16] (word~) main::$22 ← (word) main::idx_x#3 << (byte) 1
-  [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22
+  [17] (signed word*~) main::$24 ← (const signed word*) SINUS + (word~) main::$22
   [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$24)
   [19] (signed word) mul16s::b#1 ← (signed word) main::cos_x#0
   [20] call mul16s 
@@ -2932,7 +2907,7 @@ main::@9: scope:[main]  from main::@2
   [24] (word~) main::$7 ← > (signed dword~) main::$6
   [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$7
   [26] (word~) main::$23 ← (word) main::idx_y#3 << (byte) 1
-  [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23
+  [27] (signed word*~) main::$25 ← (const signed word*) SINUS + (word~) main::$23
   [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$25)
   [29] (signed word) mul16s::b#2 ← (signed word) main::sin_y#0
   [30] call mul16s 
@@ -2964,16 +2939,16 @@ main::@13: scope:[main]  from main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@13 main::@3
   [46] (word) main::idx_y#10 ← phi( main::@13/(word) main::idx_y#1 main::@3/(byte) 0 )
-  [47] *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0)
+  [47] *((const byte*) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte*) plots_per_frame + (byte) frame_cnt#0)
   to:main::@1
 
 (void()) bitmap_plot((word) bitmap_plot::x , (byte) bitmap_plot::y)
 bitmap_plot: scope:[bitmap_plot]  from main::@10
-  [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0)
+  [48] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0)
   [49] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8
   [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1
   [51] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0
-  [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2)
+  [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2)
   to:bitmap_plot::@return
 bitmap_plot::@return: scope:[bitmap_plot]  from bitmap_plot
   [53] return 
@@ -3100,7 +3075,7 @@ bitmap_init: scope:[bitmap_init]  from main::@6
 bitmap_init::@1: scope:[bitmap_init]  from bitmap_init bitmap_init::@2
   [107] (byte) bitmap_init::x#2 ← phi( bitmap_init/(byte) 0 bitmap_init::@2/(byte) bitmap_init::x#1 )
   [107] (byte) bitmap_init::bits#3 ← phi( bitmap_init/(byte) $80 bitmap_init::@2/(byte) bitmap_init::bits#4 )
-  [108] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
+  [108] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3
   [109] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1
   [110] if((byte) bitmap_init::bits#1!=(byte) 0) goto bitmap_init::@6
   to:bitmap_init::@2
@@ -3118,9 +3093,9 @@ bitmap_init::@3: scope:[bitmap_init]  from bitmap_init::@2 bitmap_init::@4
   [116] (byte~) bitmap_init::$7 ← (byte) bitmap_init::y#2 & (byte) 7
   [117] (byte~) bitmap_init::$4 ← < (byte*) bitmap_init::yoffs#2
   [118] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4
-  [119] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5
+  [119] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5
   [120] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2
-  [121] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
+  [121] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6
   [122] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4
   to:bitmap_init::@5
 bitmap_init::@5: scope:[bitmap_init]  from bitmap_init::@3
@@ -3145,7 +3120,7 @@ sin16s_gen2::@3: scope:[sin16s_gen2]  from sin16s_gen2
   [131] (dword) sin16s_gen2::step#0 ← (dword) div32u16u::return#2
   to:sin16s_gen2::@1
 sin16s_gen2::@1: scope:[sin16s_gen2]  from sin16s_gen2::@3 sin16s_gen2::@5
-  [132] (signed word*) sin16s_gen2::sintab#2 ← phi( sin16s_gen2::@3/(const signed word[$200]) SINUS sin16s_gen2::@5/(signed word*) sin16s_gen2::sintab#0 )
+  [132] (signed word*) sin16s_gen2::sintab#2 ← phi( sin16s_gen2::@3/(const signed word*) SINUS sin16s_gen2::@5/(signed word*) sin16s_gen2::sintab#0 )
   [132] (dword) sin16s_gen2::x#2 ← phi( sin16s_gen2::@3/(byte) 0 sin16s_gen2::@5/(dword) sin16s_gen2::x#1 )
   [132] (word) sin16s_gen2::i#2 ← phi( sin16s_gen2::@3/(byte) 0 sin16s_gen2::@5/(word) sin16s_gen2::i#1 )
   [133] if((word) sin16s_gen2::i#2<(const word) sin16s_gen2::wavelength#0) goto sin16s_gen2::@2
@@ -4057,7 +4032,7 @@ main: {
     lda.z idx_x+1
     rol
     sta.z __22+1
-    // [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22 -- pwsz1=pwsc1_plus_vwuz2 
+    // [17] (signed word*~) main::$24 ← (const signed word*) SINUS + (word~) main::$22 -- pwsz1=pwsc1_plus_vwuz2 
     lda.z __22
     clc
     adc #<SINUS
@@ -4153,7 +4128,7 @@ main: {
     lda.z idx_y+1
     rol
     sta.z __23+1
-    // [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23 -- pwsz1=pwsc1_plus_vwuz2 
+    // [27] (signed word*~) main::$25 ← (const signed word*) SINUS + (word~) main::$23 -- pwsz1=pwsc1_plus_vwuz2 
     lda.z __23
     clc
     adc #<SINUS
@@ -4317,7 +4292,7 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [47] *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
+    // [47] *((const byte*) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte*) plots_per_frame + (byte) frame_cnt#0) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
     ldx.z frame_cnt
     inc plots_per_frame,x
     // [15] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
@@ -4336,7 +4311,7 @@ bitmap_plot: {
     .label plotter_1 = $77
     .label x = $71
     .label y = $70
-    // [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
+    // [48] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuz2_word_pbuc2_derefidx_vbuz2 
     ldy.z y
     lda bitmap_plot_yhi,y
     sta.z plotter+1
@@ -4360,7 +4335,7 @@ bitmap_plot: {
     // [51] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 -- vbuz1=_lo_vwuz2 
     lda.z x
     sta.z __2
-    // [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
+    // [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
     ldy #0
     lda (plotter_1),y
     ldy.z __2
@@ -4778,7 +4753,7 @@ bitmap_init: {
     jmp __b1
     // bitmap_init::@1
   __b1:
-    // [108] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [108] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z bits
     ldy.z x
     sta bitmap_plot_bit,y
@@ -4840,14 +4815,14 @@ bitmap_init: {
     lda.z __7
     ora.z __4
     sta.z __5
-    // [119] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [119] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __5
     ldy.z y
     sta bitmap_plot_ylo,y
     // [120] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuz1=_hi_pbuz2 
     lda.z yoffs+1
     sta.z __6
-    // [121] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [121] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __6
     ldy.z y
     sta bitmap_plot_yhi,y
@@ -4928,7 +4903,7 @@ sin16s_gen2: {
     sta.z step+3
     // [132] phi from sin16s_gen2::@3 to sin16s_gen2::@1 [phi:sin16s_gen2::@3->sin16s_gen2::@1]
   __b1_from___b3:
-    // [132] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[$200]) SINUS [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
+    // [132] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word*) SINUS [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
     lda #<SINUS
     sta.z sintab
     lda #>SINUS
@@ -5783,7 +5758,7 @@ Statement [1] (byte) frame_cnt#0 ← (byte) 1 [ frame_cnt#0 ] (  [ frame_cnt#0 ]
 Statement [11] *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3 [ frame_cnt#0 ] ( main:3 [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ frame_cnt#0 ] ( main:3 [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [16] (word~) main::$22 ← (word) main::idx_x#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$22 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$22 ] ) always clobbers reg byte a 
-Statement [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ) always clobbers reg byte a 
+Statement [17] (signed word*~) main::$24 ← (const signed word*) SINUS + (word~) main::$22 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ) always clobbers reg byte a 
 Statement [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$24) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ) always clobbers reg byte a reg byte y 
 Statement [19] (signed word) mul16s::b#1 ← (signed word) main::cos_x#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::b#1 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::b#1 ] ) always clobbers reg byte a 
 Statement [21] (signed dword) mul16s::return#3 ← (signed dword) mul16s::return#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::return#3 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::return#3 ] ) always clobbers reg byte a 
@@ -5791,7 +5766,7 @@ Statement [22] (signed dword) main::xpos#0 ← (signed dword) mul16s::return#3 [
 Statement [23] (signed dword~) main::$6 ← (signed dword) main::xpos#0 << (signed byte) 4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$6 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$6 ] ) always clobbers reg byte a 
 Statement [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$7 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ) always clobbers reg byte a 
 Statement [26] (word~) main::$23 ← (word) main::idx_y#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$23 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$23 ] ) always clobbers reg byte a 
-Statement [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ) always clobbers reg byte a 
+Statement [27] (signed word*~) main::$25 ← (const signed word*) SINUS + (word~) main::$23 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ) always clobbers reg byte a 
 Statement [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$25) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ) always clobbers reg byte a reg byte y 
 Statement [29] (signed word) mul16s::b#2 ← (signed word) main::sin_y#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::b#2 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::b#2 ] ) always clobbers reg byte a 
 Statement [31] (signed dword) mul16s::return#4 ← (signed dword) mul16s::return#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::return#4 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::return#4 ] ) always clobbers reg byte a 
@@ -5803,12 +5778,12 @@ Statement [37] (word) bitmap_plot::x#0 ← (word) main::x#0 [ frame_cnt#0 main::
 Removing always clobbered register reg byte a as potential for zp[1]:112 [ bitmap_plot::y#0 ]
 Statement [40] if((word) main::idx_x#1!=(word) $200) goto main::@12 [ frame_cnt#0 main::idx_y#3 main::idx_x#1 ] ( main:3 [ frame_cnt#0 main::idx_y#3 main::idx_x#1 ] ) always clobbers reg byte a 
 Statement [44] if((word) main::idx_y#1!=(word) $200) goto main::@13 [ frame_cnt#0 main::idx_x#10 main::idx_y#1 ] ( main:3 [ frame_cnt#0 main::idx_x#10 main::idx_y#1 ] ) always clobbers reg byte a 
-Statement [47] *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0) [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ( main:3 [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ) always clobbers reg byte x 
-Statement [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
+Statement [47] *((const byte*) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte*) plots_per_frame + (byte) frame_cnt#0) [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ( main:3 [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ) always clobbers reg byte x 
+Statement [48] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
 Statement [49] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
 Statement [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
 Statement [51] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 [ bitmap_plot::plotter#1 bitmap_plot::$2 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::plotter#1 bitmap_plot::$2 ] ) always clobbers reg byte a 
-Statement [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 ] ) always clobbers reg byte a reg byte y 
+Statement [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 ] ) always clobbers reg byte a reg byte y 
 Statement [55] (word) mul16u::a#1 ← (word)(signed word) mul16s::a#3 [ mul16s::a#3 mul16s::b#3 mul16u::a#1 ] ( main:3::mul16s:20 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] main:3::mul16s:30 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] main:3::sin16s_gen2:6::mul16s:139 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] ) always clobbers reg byte a 
 Statement [56] (word) mul16u::b#0 ← (word)(signed word) mul16s::b#3 [ mul16s::a#3 mul16s::b#3 mul16u::a#1 mul16u::b#0 ] ( main:3::mul16s:20 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::a#3 mul16s::b#3 mul16u::a#1 mul16u::b#0 ] main:3::mul16s:30 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::a#3 mul16s::b#3 mul16u::a#1 mul16u::b#0 ] main:3::sin16s_gen2:6::mul16s:139 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 mul16s::a#3 mul16s::b#3 mul16u::a#1 mul16u::b#0 ] ) always clobbers reg byte a 
 Statement [58] (dword) mul16u::return#2 ← (dword) mul16u::res#2 [ mul16s::a#3 mul16s::b#3 mul16u::return#2 ] ( main:3::mul16s:20 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::a#3 mul16s::b#3 mul16u::return#2 ] main:3::mul16s:30 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::a#3 mul16s::b#3 mul16u::return#2 ] main:3::sin16s_gen2:6::mul16s:139 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 mul16s::a#3 mul16s::b#3 mul16u::return#2 ] ) always clobbers reg byte a 
@@ -5912,7 +5887,7 @@ Statement [1] (byte) frame_cnt#0 ← (byte) 1 [ frame_cnt#0 ] (  [ frame_cnt#0 ]
 Statement [11] *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3 [ frame_cnt#0 ] ( main:3 [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ frame_cnt#0 ] ( main:3 [ frame_cnt#0 ] ) always clobbers reg byte a 
 Statement [16] (word~) main::$22 ← (word) main::idx_x#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$22 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$22 ] ) always clobbers reg byte a 
-Statement [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ) always clobbers reg byte a 
+Statement [17] (signed word*~) main::$24 ← (const signed word*) SINUS + (word~) main::$22 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$24 ] ) always clobbers reg byte a 
 Statement [18] (signed word) main::cos_x#0 ← *((signed word*~) main::$24) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::cos_x#0 ] ) always clobbers reg byte a reg byte y 
 Statement [19] (signed word) mul16s::b#1 ← (signed word) main::cos_x#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::b#1 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::b#1 ] ) always clobbers reg byte a 
 Statement [21] (signed dword) mul16s::return#3 ← (signed dword) mul16s::return#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::return#3 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::return#3 ] ) always clobbers reg byte a 
@@ -5920,7 +5895,7 @@ Statement [22] (signed dword) main::xpos#0 ← (signed dword) mul16s::return#3 [
 Statement [23] (signed dword~) main::$6 ← (signed dword) main::xpos#0 << (signed byte) 4 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$6 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::$6 ] ) always clobbers reg byte a 
 Statement [25] (word) main::x#0 ← (byte) $a0 + (word~) main::$7 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 ] ) always clobbers reg byte a 
 Statement [26] (word~) main::$23 ← (word) main::idx_y#3 << (byte) 1 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$23 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$23 ] ) always clobbers reg byte a 
-Statement [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ) always clobbers reg byte a 
+Statement [27] (signed word*~) main::$25 ← (const signed word*) SINUS + (word~) main::$23 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::$25 ] ) always clobbers reg byte a 
 Statement [28] (signed word) main::sin_y#0 ← *((signed word*~) main::$25) [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 main::sin_y#0 ] ) always clobbers reg byte a reg byte y 
 Statement [29] (signed word) mul16s::b#2 ← (signed word) main::sin_y#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::b#2 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::b#2 ] ) always clobbers reg byte a 
 Statement [31] (signed dword) mul16s::return#4 ← (signed dword) mul16s::return#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::return#4 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::return#4 ] ) always clobbers reg byte a 
@@ -5931,12 +5906,12 @@ Statement [36] (byte) bitmap_plot::y#0 ← (byte)(word) main::y#0 [ frame_cnt#0 
 Statement [37] (word) bitmap_plot::x#0 ← (word) main::x#0 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::y#0 bitmap_plot::x#0 ] ( main:3 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::y#0 bitmap_plot::x#0 ] ) always clobbers reg byte a 
 Statement [40] if((word) main::idx_x#1!=(word) $200) goto main::@12 [ frame_cnt#0 main::idx_y#3 main::idx_x#1 ] ( main:3 [ frame_cnt#0 main::idx_y#3 main::idx_x#1 ] ) always clobbers reg byte a 
 Statement [44] if((word) main::idx_y#1!=(word) $200) goto main::@13 [ frame_cnt#0 main::idx_x#10 main::idx_y#1 ] ( main:3 [ frame_cnt#0 main::idx_x#10 main::idx_y#1 ] ) always clobbers reg byte a 
-Statement [47] *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0) [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ( main:3 [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ) always clobbers reg byte x 
-Statement [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
+Statement [47] *((const byte*) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte*) plots_per_frame + (byte) frame_cnt#0) [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ( main:3 [ frame_cnt#0 main::idx_x#10 main::idx_y#10 ] ) always clobbers reg byte x 
+Statement [48] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) [ bitmap_plot::x#0 bitmap_plot::plotter#0 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#0 ] ) always clobbers reg byte a 
 Statement [49] (word~) bitmap_plot::$1 ← (word) bitmap_plot::x#0 & (word) $fff8 [ bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#0 bitmap_plot::$1 ] ) always clobbers reg byte a 
 Statement [50] (byte*) bitmap_plot::plotter#1 ← (byte*)(word) bitmap_plot::plotter#0 + (word~) bitmap_plot::$1 [ bitmap_plot::x#0 bitmap_plot::plotter#1 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::x#0 bitmap_plot::plotter#1 ] ) always clobbers reg byte a 
 Statement [51] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 [ bitmap_plot::plotter#1 bitmap_plot::$2 ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 bitmap_plot::plotter#1 bitmap_plot::$2 ] ) always clobbers reg byte a 
-Statement [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 ] ) always clobbers reg byte a reg byte y 
+Statement [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) [ ] ( main:3::bitmap_plot:38 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 ] ) always clobbers reg byte a reg byte y 
 Statement [55] (word) mul16u::a#1 ← (word)(signed word) mul16s::a#3 [ mul16s::a#3 mul16s::b#3 mul16u::a#1 ] ( main:3::mul16s:20 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] main:3::mul16s:30 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] main:3::sin16s_gen2:6::mul16s:139 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 mul16s::a#3 mul16s::b#3 mul16u::a#1 ] ) always clobbers reg byte a 
 Statement [56] (word) mul16u::b#0 ← (word)(signed word) mul16s::b#3 [ mul16s::a#3 mul16s::b#3 mul16u::a#1 mul16u::b#0 ] ( main:3::mul16s:20 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::a#3 mul16s::b#3 mul16u::a#1 mul16u::b#0 ] main:3::mul16s:30 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::a#3 mul16s::b#3 mul16u::a#1 mul16u::b#0 ] main:3::sin16s_gen2:6::mul16s:139 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 mul16s::a#3 mul16s::b#3 mul16u::a#1 mul16u::b#0 ] ) always clobbers reg byte a 
 Statement [58] (dword) mul16u::return#2 ← (dword) mul16u::res#2 [ mul16s::a#3 mul16s::b#3 mul16u::return#2 ] ( main:3::mul16s:20 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 mul16s::a#3 mul16s::b#3 mul16u::return#2 ] main:3::mul16s:30 [ frame_cnt#0 main::idx_x#3 main::idx_y#3 main::x#0 mul16s::a#3 mul16s::b#3 mul16u::return#2 ] main:3::sin16s_gen2:6::mul16s:139 [ frame_cnt#0 sin16s_gen2::step#0 sin16s_gen2::i#2 sin16s_gen2::x#2 sin16s_gen2::sintab#2 mul16s::a#3 mul16s::b#3 mul16u::return#2 ] ) always clobbers reg byte a 
@@ -6419,7 +6394,7 @@ main: {
     lda.z idx_x+1
     rol
     sta.z __22+1
-    // [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22 -- pwsz1=pwsc1_plus_vwuz1 
+    // [17] (signed word*~) main::$24 ← (const signed word*) SINUS + (word~) main::$22 -- pwsz1=pwsc1_plus_vwuz1 
     clc
     lda.z __24
     adc #<SINUS
@@ -6485,7 +6460,7 @@ main: {
     lda.z idx_y+1
     rol
     sta.z __23+1
-    // [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23 -- pwsz1=pwsc1_plus_vwuz1 
+    // [27] (signed word*~) main::$25 ← (const signed word*) SINUS + (word~) main::$23 -- pwsz1=pwsc1_plus_vwuz1 
     clc
     lda.z __25
     adc #<SINUS
@@ -6615,7 +6590,7 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [47] *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
+    // [47] *((const byte*) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte*) plots_per_frame + (byte) frame_cnt#0) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
     ldx.z frame_cnt
     inc plots_per_frame,x
     // [15] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
@@ -6631,7 +6606,7 @@ bitmap_plot: {
     .label __1 = $15
     .label plotter = $13
     .label x = $1c
-    // [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+    // [48] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -6653,7 +6628,7 @@ bitmap_plot: {
     sta.z plotter+1
     // [51] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 -- vbuaa=_lo_vwuz1 
     lda.z x
-    // [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
+    // [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
     tay
     lda bitmap_plot_bit,y
     ldy #0
@@ -7025,7 +7000,7 @@ bitmap_init: {
     jmp __b1
     // bitmap_init::@1
   __b1:
-    // [108] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [108] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_bit,x
     // [109] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
@@ -7077,11 +7052,11 @@ bitmap_init: {
     lda.z yoffs
     // [118] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __7
-    // [119] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [119] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // [120] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
     lda.z yoffs+1
-    // [121] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [121] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
     // [122] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
@@ -7143,7 +7118,7 @@ sin16s_gen2: {
     // [131] (dword) sin16s_gen2::step#0 ← (dword) div32u16u::return#2
     // [132] phi from sin16s_gen2::@3 to sin16s_gen2::@1 [phi:sin16s_gen2::@3->sin16s_gen2::@1]
   __b1_from___b3:
-    // [132] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[$200]) SINUS [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
+    // [132] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word*) SINUS [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
     lda #<SINUS
     sta.z sintab
     lda #>SINUS
@@ -8108,7 +8083,7 @@ FINAL SYMBOL TABLE
 (const byte) PROCPORT_RAM_IO = (number) 5
 (const byte*) RASTER = (byte*) 53266
 (const byte*) SCREEN = (byte*) 1024
-(const signed word[$200]) SINUS = { fill( $200, 0) }
+(const signed word*) SINUS = { fill( $200, 0) }
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
 (const byte) VIC_BMM = (number) $20
 (const byte*) VIC_CONTROL = (byte*) 53265
@@ -8162,9 +8137,9 @@ FINAL SYMBOL TABLE
 (word) bitmap_plot::x#0 x zp[2]:28 3.75
 (byte) bitmap_plot::y
 (byte) bitmap_plot::y#0 reg byte x 7.5
-(const byte[$100]) bitmap_plot_bit = { fill( $100, 0) }
-(const byte[$100]) bitmap_plot_yhi = { fill( $100, 0) }
-(const byte[$100]) bitmap_plot_ylo = { fill( $100, 0) }
+(const byte*) bitmap_plot_bit = { fill( $100, 0) }
+(const byte*) bitmap_plot_yhi = { fill( $100, 0) }
+(const byte*) bitmap_plot_ylo = { fill( $100, 0) }
 (byte*) bitmap_screen
 (dword()) div32u16u((dword) div32u16u::dividend , (word) div32u16u::divisor)
 (label) div32u16u::@1
@@ -8373,7 +8348,7 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (word) mulu16_sel::v2#3 v2 zp[2]:2 4.0
 (word) mulu16_sel::v2#4 v2 zp[2]:2 4.0
 (word) mulu16_sel::v2#5 v2 zp[2]:2 5.0
-(const byte[$100]) plots_per_frame = { fill( $100, 0) }
+(const byte*) plots_per_frame = { fill( $100, 0) }
 (word) rem16u
 (word) rem16u#1 rem16u zp[2]:12 0.8
 (signed word()) sin16s((dword) sin16s::x)
@@ -8624,7 +8599,7 @@ main: {
     lda.z idx_x+1
     rol
     sta.z __22+1
-    // [17] (signed word*~) main::$24 ← (const signed word[$200]) SINUS + (word~) main::$22 -- pwsz1=pwsc1_plus_vwuz1 
+    // [17] (signed word*~) main::$24 ← (const signed word*) SINUS + (word~) main::$22 -- pwsz1=pwsc1_plus_vwuz1 
     clc
     lda.z __24
     adc #<SINUS
@@ -8694,7 +8669,7 @@ main: {
     lda.z idx_y+1
     rol
     sta.z __23+1
-    // [27] (signed word*~) main::$25 ← (const signed word[$200]) SINUS + (word~) main::$23 -- pwsz1=pwsc1_plus_vwuz1 
+    // [27] (signed word*~) main::$25 ← (const signed word*) SINUS + (word~) main::$23 -- pwsz1=pwsc1_plus_vwuz1 
     clc
     lda.z __25
     adc #<SINUS
@@ -8813,7 +8788,7 @@ main: {
     // main::@4
   __b4:
     // plots_per_frame[frame_cnt]++;
-    // [47] *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte[$100]) plots_per_frame + (byte) frame_cnt#0) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
+    // [47] *((const byte*) plots_per_frame + (byte) frame_cnt#0) ← ++ *((const byte*) plots_per_frame + (byte) frame_cnt#0) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
     ldx.z frame_cnt
     inc plots_per_frame,x
     // [15] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
@@ -8829,7 +8804,7 @@ bitmap_plot: {
     .label plotter = $13
     .label x = $1c
     // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    // [48] (word) bitmap_plot::plotter#0 ← *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
+    // [48] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -8855,7 +8830,7 @@ bitmap_plot: {
     // [51] (byte~) bitmap_plot::$2 ← < (word) bitmap_plot::x#0 -- vbuaa=_lo_vwuz1 
     lda.z x
     // *plotter |= bitmap_plot_bit[<x]
-    // [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte[$100]) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
+    // [52] *((byte*) bitmap_plot::plotter#1) ← *((byte*) bitmap_plot::plotter#1) | *((const byte*) bitmap_plot_bit + (byte~) bitmap_plot::$2) -- _deref_pbuz1=_deref_pbuz1_bor_pbuc1_derefidx_vbuaa 
     tay
     lda bitmap_plot_bit,y
     ldy #0
@@ -9218,7 +9193,7 @@ bitmap_init: {
     // bitmap_init::@1
   __b1:
     // bitmap_plot_bit[x] = bits
-    // [108] *((const byte[$100]) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [108] *((const byte*) bitmap_plot_bit + (byte) bitmap_init::x#2) ← (byte) bitmap_init::bits#3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_bit,x
     // bits >>= 1
     // [109] (byte) bitmap_init::bits#1 ← (byte) bitmap_init::bits#3 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
@@ -9266,13 +9241,13 @@ bitmap_init: {
     // [118] (byte~) bitmap_init::$5 ← (byte~) bitmap_init::$7 | (byte~) bitmap_init::$4 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __7
     // bitmap_plot_ylo[y] = y&$7 | <yoffs
-    // [119] *((const byte[$100]) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [119] *((const byte*) bitmap_plot_ylo + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_ylo,x
     // >yoffs
     // [120] (byte~) bitmap_init::$6 ← > (byte*) bitmap_init::yoffs#2 -- vbuaa=_hi_pbuz1 
     lda.z yoffs+1
     // bitmap_plot_yhi[y] = >yoffs
-    // [121] *((const byte[$100]) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [121] *((const byte*) bitmap_plot_yhi + (byte) bitmap_init::y#2) ← (byte~) bitmap_init::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta bitmap_plot_yhi,x
     // if((y&$7)==7)
     // [122] if((byte~) bitmap_init::$7!=(byte) 7) goto bitmap_init::@4 -- vbuz1_neq_vbuc1_then_la1 
@@ -9330,7 +9305,7 @@ sin16s_gen2: {
     // step = div32u16u(PI2_u4f28, wavelength)
     // [131] (dword) sin16s_gen2::step#0 ← (dword) div32u16u::return#2
     // [132] phi from sin16s_gen2::@3 to sin16s_gen2::@1 [phi:sin16s_gen2::@3->sin16s_gen2::@1]
-    // [132] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word[$200]) SINUS [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
+    // [132] phi (signed word*) sin16s_gen2::sintab#2 = (const signed word*) SINUS [phi:sin16s_gen2::@3->sin16s_gen2::@1#0] -- pwsz1=pwsc1 
     lda #<SINUS
     sta.z sintab
     lda #>SINUS

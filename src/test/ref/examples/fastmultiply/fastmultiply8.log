@@ -1,5 +1,5 @@
-Resolved forward reference mulf_sqr1 to (byte[$200]) mulf_sqr1
-Resolved forward reference mulf_sqr2 to (byte[$200]) mulf_sqr2
+Resolved forward reference mulf_sqr1 to (byte*) mulf_sqr1
+Resolved forward reference mulf_sqr2 to (byte*) mulf_sqr2
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
 Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
@@ -165,7 +165,7 @@ print_byte_at: scope:[print_byte_at]  from print_sbyte_at::@2
   (byte*) print_byte_at::at#1 ← phi( print_sbyte_at::@2/(byte*) print_byte_at::at#0 )
   (byte) print_byte_at::b#1 ← phi( print_sbyte_at::@2/(byte) print_byte_at::b#0 )
   (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#1 >> (number) 4
-  (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$0)
+  (byte) print_char_at::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0)
   (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#1
   call print_char_at 
   to:print_byte_at::@1
@@ -174,7 +174,7 @@ print_byte_at::@1: scope:[print_byte_at]  from print_byte_at
   (byte) print_byte_at::b#2 ← phi( print_byte_at/(byte) print_byte_at::b#1 )
   (number~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (number) $f
   (byte*~) print_byte_at::$3 ← (byte*) print_byte_at::at#2 + (number) 1
-  (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab + (number~) print_byte_at::$2)
+  (byte) print_char_at::ch#3 ← *((const byte*) print_hextab + (number~) print_byte_at::$2)
   (byte*) print_char_at::at#3 ← (byte*~) print_byte_at::$3
   call print_char_at 
   to:print_byte_at::@2
@@ -224,7 +224,7 @@ main::@1: scope:[main]  from main::@7 main::@8
   (byte*) main::at_line#7 ← phi( main::@7/(byte*) main::at_line#0 main::@8/(byte*) main::at_line#5 )
   (byte*) main::at#4 ← phi( main::@7/(byte*) main::at#0 main::@8/(byte*) main::at#1 )
   (byte) main::k#2 ← phi( main::@7/(byte) main::k#0 main::@8/(byte) main::k#1 )
-  (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals + (byte) main::k#2)
+  (signed byte) print_sbyte_at::b#1 ← *((const signed byte*) vals + (byte) main::k#2)
   (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4
   call print_sbyte_at 
   to:main::@8
@@ -246,7 +246,7 @@ main::@3: scope:[main]  from main::@2 main::@5
   (byte*) main::at_line#2 ← phi( main::@2/(byte*) main::at_line#3 main::@5/(byte*) main::at_line#4 )
   (byte*) main::at_line#1 ← (byte*) main::at_line#2 + (number) $28
   (byte*) main::at#2 ← (byte*) main::at_line#1
-  (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals + (byte) main::i#2)
+  (signed byte) print_sbyte_at::b#2 ← *((const signed byte*) vals + (byte) main::i#2)
   (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2
   call print_sbyte_at 
   to:main::@9
@@ -262,8 +262,8 @@ main::@4: scope:[main]  from main::@11 main::@9
   (byte) main::i#3 ← phi( main::@11/(byte) main::i#5 main::@9/(byte) main::i#6 )
   (byte*) main::at#6 ← phi( main::@11/(byte*) main::at#8 main::@9/(byte*) main::at#9 )
   (byte*) main::at#3 ← (byte*) main::at#6 + (number) 4
-  (signed byte) fmul8::a#0 ← *((const signed byte[]) vals + (byte) main::i#3)
-  (signed byte) fmul8::b#0 ← *((const signed byte[]) vals + (byte) main::j#2)
+  (signed byte) fmul8::a#0 ← *((const signed byte*) vals + (byte) main::i#3)
+  (signed byte) fmul8::b#0 ← *((const signed byte*) vals + (byte) main::j#2)
   call fmul8 
   (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#2
   to:main::@10
@@ -352,13 +352,13 @@ fmul8::@return: scope:[fmul8]  from fmul8
   to:@return
 @39: scope:[]  from @12
   (byte*) print_screen#4 ← phi( @12/(byte*) print_screen#0 )
-  (byte[$200]) mulf_sqr1 ← kickasm {{ .for(var i=0;i<$200;i++) {
+  (byte*) mulf_sqr1 ← kickasm {{ .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
     }
  }}
-  (byte[$200]) mulf_sqr2 ← kickasm {{ .for(var i=0;i<$200;i++) {
+  (byte*) mulf_sqr2 ← kickasm {{ .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
@@ -524,8 +524,8 @@ SYMBOL TABLE SSA
 (void*) memset::str#3
 (void*) memset::str#4
 (void*) memset::str#5
-(byte[$200]) mulf_sqr1
-(byte[$200]) mulf_sqr2
+(byte*) mulf_sqr1
+(byte*) mulf_sqr2
 (void()) print_byte_at((byte) print_byte_at::b , (byte*) print_byte_at::at)
 (byte~) print_byte_at::$0
 (number~) print_byte_at::$2
@@ -558,7 +558,7 @@ SYMBOL TABLE SSA
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (void()) print_sbyte_at((signed byte) print_sbyte_at::b , (byte*) print_sbyte_at::at)
 (bool~) print_sbyte_at::$0
 (byte~) print_sbyte_at::$1
@@ -598,7 +598,7 @@ SYMBOL TABLE SSA
 (byte*) print_screen#2
 (byte*) print_screen#3
 (byte*) print_screen#4
-(const signed byte[]) vals = { (signed byte)(number) -$5f, (signed byte)(number) -$40, (signed byte)(number) -$20, (signed byte)(number) -$10, (signed byte)(number) 0, (signed byte)(number) $10, (signed byte)(number) $20, (signed byte)(number) $40, (signed byte)(number) $5f }
+(const signed byte*) vals = { (signed byte)(number) -$5f, (signed byte)(number) -$40, (signed byte)(number) -$20, (signed byte)(number) -$10, (signed byte)(number) 0, (signed byte)(number) $10, (signed byte)(number) $20, (signed byte)(number) $40, (signed byte)(number) $5f }
 
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) print_sbyte_at::$0 ← (signed byte) print_sbyte_at::b#4 < (number) 0
@@ -754,13 +754,13 @@ Constant (const byte) main::j#0 = 0
 Constant (const byte*) init_screen::COLS#0 = (byte*) 55296
 Constant (const byte) init_screen::l#0 = 0
 Constant (const byte) init_screen::m#0 = 0
-Constant (const byte[$200]) mulf_sqr1 = kickasm {{ .for(var i=0;i<$200;i++) {
+Constant (const byte*) mulf_sqr1 = kickasm {{ .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
     }
  }}
-Constant (const byte[$200]) mulf_sqr2 = kickasm {{ .for(var i=0;i<$200;i++) {
+Constant (const byte*) mulf_sqr2 = kickasm {{ .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
@@ -951,7 +951,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@5
   [6] (byte*) main::at#4 ← phi( main/(byte*) 1024+(byte) 4 main::@5/(byte*) main::at#1 )
   [6] (byte) main::k#2 ← phi( main/(byte) 0 main::@5/(byte) main::k#1 )
-  [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals + (byte) main::k#2)
+  [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte*) vals + (byte) main::k#2)
   [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4
   [9] call print_sbyte_at 
   to:main::@5
@@ -964,7 +964,7 @@ main::@2: scope:[main]  from main::@4 main::@5
   [13] (byte) main::i#2 ← phi( main::@5/(byte) 0 main::@4/(byte) main::i#1 )
   [13] (byte*) main::at_line#2 ← phi( main::@5/(byte*) 1024 main::@4/(byte*) main::at#2 )
   [14] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28
-  [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals + (byte) main::i#2)
+  [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte*) vals + (byte) main::i#2)
   [16] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2
   [17] call print_sbyte_at 
   to:main::@6
@@ -975,8 +975,8 @@ main::@3: scope:[main]  from main::@6 main::@8
   [19] (byte) main::j#2 ← phi( main::@8/(byte) main::j#1 main::@6/(byte) 0 )
   [19] (byte*) main::at#6 ← phi( main::@8/(byte*) main::at#3 main::@6/(byte*) main::at#12 )
   [20] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4
-  [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals + (byte) main::i#2)
-  [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals + (byte) main::j#2)
+  [21] (signed byte) fmul8::a#0 ← *((const signed byte*) vals + (byte) main::i#2)
+  [22] (signed byte) fmul8::b#0 ← *((const signed byte*) vals + (byte) main::j#2)
   [23] call fmul8 
   [24] (signed byte) fmul8::return#0 ← (signed byte) fmul8::return#1
   to:main::@7
@@ -1038,14 +1038,14 @@ print_char_at::@return: scope:[print_char_at]  from print_char_at
 (void()) print_byte_at((byte) print_byte_at::b , (byte*) print_byte_at::at)
 print_byte_at: scope:[print_byte_at]  from print_sbyte_at::@2
   [49] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4
-  [50] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$0)
+  [50] (byte) print_char_at::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0)
   [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
   [52] call print_char_at 
   to:print_byte_at::@1
 print_byte_at::@1: scope:[print_byte_at]  from print_byte_at
   [53] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f
   [54] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1
-  [55] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$2)
+  [55] (byte) print_char_at::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2)
   [56] call print_char_at 
   to:print_byte_at::@return
 print_byte_at::@return: scope:[print_byte_at]  from print_byte_at::@1
@@ -1338,7 +1338,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+    // [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte*) vals + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z k
     lda vals,y
     sta.z print_sbyte_at.b
@@ -1396,7 +1396,7 @@ main: {
     bcc !+
     inc.z at_1+1
   !:
-    // [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+    // [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte*) vals + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z i
     lda vals,y
     sta.z print_sbyte_at.b
@@ -1441,11 +1441,11 @@ main: {
     bcc !+
     inc.z at_2+1
   !:
-    // [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+    // [21] (signed byte) fmul8::a#0 ← *((const signed byte*) vals + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z i
     lda vals,y
     sta.z fmul8.a
-    // [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals + (byte) main::j#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+    // [22] (signed byte) fmul8::b#0 ← *((const signed byte*) vals + (byte) main::j#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z j
     lda vals,y
     sta.z fmul8.b
@@ -1605,7 +1605,7 @@ print_byte_at: {
     lsr
     lsr
     sta.z __0
-    // [50] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [50] (byte) print_char_at::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char_at.ch
@@ -1635,7 +1635,7 @@ print_byte_at: {
     lda.z at+1
     adc #0
     sta.z print_char_at.at+1
-    // [55] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [55] (byte) print_char_at::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char_at.ch
@@ -1899,12 +1899,12 @@ Statement [85] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::d
 Statement [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ( main:2 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ) always clobbers reg byte a 
 Statement [10] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 [ main::k#2 main::at#1 ] ( main:2 [ main::k#2 main::at#1 ] ) always clobbers reg byte a 
 Statement [14] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 [ main::i#2 main::at#2 ] ( main:2 [ main::i#2 main::at#2 ] ) always clobbers reg byte a 
-Statement [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals + (byte) main::i#2) [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ( main:2 [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ) always clobbers reg byte y 
+Statement [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte*) vals + (byte) main::i#2) [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ( main:2 [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ) always clobbers reg byte y 
 Statement [16] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ( main:2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ) always clobbers reg byte a 
 Statement [18] (byte*) main::at#12 ← (byte*) main::at#2 [ main::i#2 main::at#2 main::at#12 ] ( main:2 [ main::i#2 main::at#2 main::at#12 ] ) always clobbers reg byte a 
 Statement [20] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a 
-Statement [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals + (byte) main::i#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ) always clobbers reg byte y 
-Statement [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals + (byte) main::j#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ) always clobbers reg byte y 
+Statement [21] (signed byte) fmul8::a#0 ← *((const signed byte*) vals + (byte) main::i#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ) always clobbers reg byte y 
+Statement [22] (signed byte) fmul8::b#0 ← *((const signed byte*) vals + (byte) main::j#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:23 [ fmul8::a#0 ]
 Statement [27] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ) always clobbers reg byte a 
 Statement [30] if((byte) main::j#1!=(byte) 9) goto main::@3 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ( main:2 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ) always clobbers reg byte a 
@@ -1930,12 +1930,12 @@ Statement [85] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::d
 Statement [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ( main:2 [ main::k#2 main::at#4 print_sbyte_at::b#1 print_sbyte_at::at#0 ] ) always clobbers reg byte a 
 Statement [10] (byte*) main::at#1 ← (byte*) main::at#4 + (byte) 4 [ main::k#2 main::at#1 ] ( main:2 [ main::k#2 main::at#1 ] ) always clobbers reg byte a 
 Statement [14] (byte*) main::at#2 ← (byte*) main::at_line#2 + (byte) $28 [ main::i#2 main::at#2 ] ( main:2 [ main::i#2 main::at#2 ] ) always clobbers reg byte a 
-Statement [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals + (byte) main::i#2) [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ( main:2 [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ) always clobbers reg byte y 
+Statement [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte*) vals + (byte) main::i#2) [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ( main:2 [ main::i#2 main::at#2 print_sbyte_at::b#2 ] ) always clobbers reg byte y 
 Statement [16] (byte*) print_sbyte_at::at#1 ← (byte*) main::at#2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ( main:2 [ main::i#2 main::at#2 print_sbyte_at::b#2 print_sbyte_at::at#1 ] ) always clobbers reg byte a 
 Statement [18] (byte*) main::at#12 ← (byte*) main::at#2 [ main::i#2 main::at#2 main::at#12 ] ( main:2 [ main::i#2 main::at#2 main::at#12 ] ) always clobbers reg byte a 
 Statement [20] (byte*) main::at#3 ← (byte*) main::at#6 + (byte) 4 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 ] ) always clobbers reg byte a 
-Statement [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals + (byte) main::i#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ) always clobbers reg byte y 
-Statement [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals + (byte) main::j#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ) always clobbers reg byte y 
+Statement [21] (signed byte) fmul8::a#0 ← *((const signed byte*) vals + (byte) main::i#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 ] ) always clobbers reg byte y 
+Statement [22] (signed byte) fmul8::b#0 ← *((const signed byte*) vals + (byte) main::j#2) [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 fmul8::a#0 fmul8::b#0 ] ) always clobbers reg byte y 
 Statement [27] (byte*) print_sbyte_at::at#2 ← (byte*) main::at#3 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ( main:2 [ main::i#2 main::at#2 main::j#2 main::at#3 print_sbyte_at::b#3 print_sbyte_at::at#2 ] ) always clobbers reg byte a 
 Statement [30] if((byte) main::j#1!=(byte) 9) goto main::@3 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ( main:2 [ main::i#2 main::at#2 main::at#3 main::j#1 ] ) always clobbers reg byte a 
 Statement [32] if((byte) main::i#1!=(byte) 9) goto main::@2 [ main::at#2 main::i#1 ] ( main:2 [ main::at#2 main::i#1 ] ) always clobbers reg byte a 
@@ -2092,7 +2092,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuxx 
+    // [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte*) vals + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuxx 
     lda vals,x
     sta.z print_sbyte_at.b
     // [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 -- pbuz1=pbuz2 
@@ -2148,7 +2148,7 @@ main: {
     bcc !+
     inc.z at_1+1
   !:
-    // [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+    // [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte*) vals + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z i
     lda vals,y
     sta.z print_sbyte_at.b
@@ -2193,10 +2193,10 @@ main: {
     bcc !+
     inc.z at_2+1
   !:
-    // [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuz1 
+    // [21] (signed byte) fmul8::a#0 ← *((const signed byte*) vals + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuz1 
     ldy.z i
     lda vals,y
-    // [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals + (byte) main::j#2) -- vbsxx=pbsc1_derefidx_vbuz1 
+    // [22] (signed byte) fmul8::b#0 ← *((const signed byte*) vals + (byte) main::j#2) -- vbsxx=pbsc1_derefidx_vbuz1 
     ldy.z j
     ldx vals,y
     // [23] call fmul8 
@@ -2334,7 +2334,7 @@ print_byte_at: {
     lsr
     lsr
     lsr
-    // [50] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuaa 
+    // [50] (byte) print_char_at::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     sta.z print_char_at.ch
@@ -2357,7 +2357,7 @@ print_byte_at: {
     bne !+
     inc.z print_char_at.at+1
   !:
-    // [55] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuyy 
+    // [55] (byte) print_char_at::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuyy 
     lda print_hextab,y
     sta.z print_char_at.ch
     // [56] call print_char_at 
@@ -2741,13 +2741,13 @@ FINAL SYMBOL TABLE
 (void*) memset::return
 (void*) memset::str
 (const void*) memset::str#0 str = (void*)(const byte*) print_screen#0
-(const byte[$200]) mulf_sqr1 = kickasm {{ .for(var i=0;i<$200;i++) {
+(const byte*) mulf_sqr1 = kickasm {{ .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
     	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
     }
  }}
-(const byte[$200]) mulf_sqr2 = kickasm {{ .for(var i=0;i<$200;i++) {
+(const byte*) mulf_sqr2 = kickasm {{ .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
     	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
@@ -2776,7 +2776,7 @@ FINAL SYMBOL TABLE
 (byte) print_char_at::ch#4 ch zp[1]:9 6.0
 (void()) print_cls()
 (label) print_cls::@return
-(const byte[]) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab = (string) "0123456789abcdef"z
 (void()) print_sbyte_at((signed byte) print_sbyte_at::b , (byte*) print_sbyte_at::at)
 (label) print_sbyte_at::@1
 (label) print_sbyte_at::@2
@@ -2797,7 +2797,7 @@ FINAL SYMBOL TABLE
 (signed byte) print_sbyte_at::b#6 b zp[1]:8 4.0
 (byte*) print_screen
 (const byte*) print_screen#0 print_screen = (byte*) 1024
-(const signed byte[]) vals = { (signed byte) -$5f, (signed byte) -$40, (signed byte) -$20, (signed byte) -$10, (signed byte) 0, (signed byte) $10, (signed byte) $20, (signed byte) $40, (signed byte) $5f }
+(const signed byte*) vals = { (signed byte) -$5f, (signed byte) -$40, (signed byte) -$20, (signed byte) -$10, (signed byte) 0, (signed byte) $10, (signed byte) $20, (signed byte) $40, (signed byte) $5f }
 
 reg byte x [ main::k#2 main::k#1 ]
 zp[1]:2 [ main::i#2 main::i#1 ]
@@ -2873,7 +2873,7 @@ main: {
     // main::@1
   __b1:
     // print_sbyte_at(vals[k], at)
-    // [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte[]) vals + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuxx 
+    // [7] (signed byte) print_sbyte_at::b#1 ← *((const signed byte*) vals + (byte) main::k#2) -- vbsz1=pbsc1_derefidx_vbuxx 
     lda vals,x
     sta.z print_sbyte_at.b
     // [8] (byte*) print_sbyte_at::at#0 ← (byte*) main::at#4 -- pbuz1=pbuz2 
@@ -2926,7 +2926,7 @@ main: {
     inc.z at_1+1
   !:
     // print_sbyte_at(vals[i], at)
-    // [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte[]) vals + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
+    // [15] (signed byte) print_sbyte_at::b#2 ← *((const signed byte*) vals + (byte) main::i#2) -- vbsz1=pbsc1_derefidx_vbuz2 
     ldy.z i
     lda vals,y
     sta.z print_sbyte_at.b
@@ -2966,10 +2966,10 @@ main: {
     inc.z at_2+1
   !:
     // fmul8(vals[i], vals[j])
-    // [21] (signed byte) fmul8::a#0 ← *((const signed byte[]) vals + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuz1 
+    // [21] (signed byte) fmul8::a#0 ← *((const signed byte*) vals + (byte) main::i#2) -- vbsaa=pbsc1_derefidx_vbuz1 
     ldy.z i
     lda vals,y
-    // [22] (signed byte) fmul8::b#0 ← *((const signed byte[]) vals + (byte) main::j#2) -- vbsxx=pbsc1_derefidx_vbuz1 
+    // [22] (signed byte) fmul8::b#0 ← *((const signed byte*) vals + (byte) main::j#2) -- vbsxx=pbsc1_derefidx_vbuz1 
     ldy.z j
     ldx vals,y
     // [23] call fmul8 
@@ -3099,7 +3099,7 @@ print_byte_at: {
     lsr
     lsr
     // print_char_at(print_hextab[b>>4], at)
-    // [50] (byte) print_char_at::ch#2 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuaa 
+    // [50] (byte) print_char_at::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     sta.z print_char_at.ch
@@ -3121,7 +3121,7 @@ print_byte_at: {
     bne !+
     inc.z print_char_at.at+1
   !:
-    // [55] (byte) print_char_at::ch#3 ← *((const byte[]) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuyy 
+    // [55] (byte) print_char_at::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuyy 
     lda print_hextab,y
     sta.z print_char_at.ch
     // [56] call print_char_at 

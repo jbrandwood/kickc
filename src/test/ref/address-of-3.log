@@ -1,5 +1,5 @@
-Fixing constant pointer addition (const signed word[]) VALS+(number) 1
-Fixing pointer array-indexing *((const signed word[]) VALS + (byte) main::i)
+Fixing constant pointer addition (const signed word*) VALS+(number) 1
+Fixing pointer array-indexing *((const signed word*) VALS + (byte) main::i)
 Fixing pointer array-indexing *((const signed word*) SCREEN + (byte) idx)
 Culled Empty Block (label) main::@2
 
@@ -10,13 +10,13 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte) idx#15 ← phi( @2/(byte) idx#17 )
-  (signed word*) print::p#0 ← (const signed word[]) VALS
+  (signed word*) print::p#0 ← (const signed word*) VALS
   call print 
   to:main::@3
 main::@3: scope:[main]  from main
   (byte) idx#8 ← phi( main/(byte) idx#6 )
   (byte) idx#0 ← (byte) idx#8
-  (signed word*) print::p#1 ← (const signed word[]) VALS+(number) 1*(const byte) SIZEOF_SIGNED_WORD
+  (signed word*) print::p#1 ← (const signed word*) VALS+(number) 1*(const byte) SIZEOF_SIGNED_WORD
   call print 
   to:main::@4
 main::@4: scope:[main]  from main::@3
@@ -28,7 +28,7 @@ main::@1: scope:[main]  from main::@4 main::@5
   (byte) idx#16 ← phi( main::@4/(byte) idx#1 main::@5/(byte) idx#2 )
   (byte) main::i#2 ← phi( main::@4/(byte) main::i#0 main::@5/(byte) main::i#1 )
   (byte~) main::$5 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
-  (signed word*~) main::$2 ← & *((const signed word[]) VALS + (byte~) main::$5)
+  (signed word*~) main::$2 ← & *((const signed word*) VALS + (byte~) main::$5)
   (signed word*) print::p#2 ← (signed word*~) main::$2
   call print 
   to:main::@5
@@ -80,7 +80,7 @@ SYMBOL TABLE SSA
 (label) @end
 (const signed word*) SCREEN = (signed word*)(number) $400
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
-(const signed word[]) VALS = { (signed word)(number) 1, (signed word)(number) 2, (signed word)(number) 3, (signed word)(number) 4 }
+(const signed word*) VALS = { (signed word)(number) 1, (signed word)(number) 2, (signed word)(number) 3, (signed word)(number) 4 }
 (byte) idx
 (byte) idx#0
 (byte) idx#1
@@ -123,8 +123,8 @@ SYMBOL TABLE SSA
 (signed word*) print::p#2
 (signed word*) print::p#3
 
-Adding number conversion cast (unumber) 1*SIZEOF_SIGNED_WORD in (signed word*) print::p#1 ← (const signed word[]) VALS+(number) 1*(const byte) SIZEOF_SIGNED_WORD
-Adding number conversion cast (unumber) 1 in (signed word*) print::p#1 ← (const signed word[]) VALS+(unumber)(number) 1*(const byte) SIZEOF_SIGNED_WORD
+Adding number conversion cast (unumber) 1*SIZEOF_SIGNED_WORD in (signed word*) print::p#1 ← (const signed word*) VALS+(number) 1*(const byte) SIZEOF_SIGNED_WORD
+Adding number conversion cast (unumber) 1 in (signed word*) print::p#1 ← (const signed word*) VALS+(unumber)(number) 1*(const byte) SIZEOF_SIGNED_WORD
 Adding number conversion cast (unumber) 0 in (byte) idx#4 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) idx#4 ← (unumber)(number) 0
@@ -160,7 +160,7 @@ Identical Phi Values (byte) idx#16 (byte) idx#13
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$4 [19] if((byte) main::i#1!=rangelast(2,3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting array member address-of to pointer addition [12] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5
+Rewriting array member address-of to pointer addition [12] (signed word*) print::p#2 ← (const signed word*) VALS + (byte~) main::$5
 Successful SSA optimization PassNArrayElementAddressOfRewriting
 Constant (const signed word*) print::p#0 = VALS
 Constant (const signed word*) print::p#1 = VALS+1*SIZEOF_SIGNED_WORD
@@ -184,8 +184,8 @@ Inlining constant with var siblings (const signed word*) print::p#1
 Inlining constant with var siblings (const byte) idx#17
 Constant inlined main::i#0 = (byte) 2
 Constant inlined idx#17 = (byte) 0
-Constant inlined print::p#1 = (const signed word[]) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD
-Constant inlined print::p#0 = (const signed word[]) VALS
+Constant inlined print::p#1 = (const signed word*) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD
+Constant inlined print::p#0 = (const signed word*) VALS
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@6(between main::@5 and main::@1)
 Adding NOP phi() at start of @begin
@@ -241,7 +241,7 @@ main::@2: scope:[main]  from main
 main::@1: scope:[main]  from main::@2 main::@3
   [8] (byte) main::i#2 ← phi( main::@2/(byte) 2 main::@3/(byte) main::i#1 )
   [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1
-  [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5
+  [10] (signed word*) print::p#2 ← (const signed word*) VALS + (byte~) main::$5
   [11] call print 
   to:main::@3
 main::@3: scope:[main]  from main::@1
@@ -254,7 +254,7 @@ main::@return: scope:[main]  from main::@3
 
 (void()) print((signed word*) print::p)
 print: scope:[print]  from main main::@1 main::@2
-  [15] (signed word*) print::p#3 ← phi( main/(const signed word[]) VALS main::@1/(signed word*) print::p#2 main::@2/(const signed word[]) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD )
+  [15] (signed word*) print::p#3 ← phi( main/(const signed word*) VALS main::@1/(signed word*) print::p#2 main::@2/(const signed word*) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD )
   [15] (byte) idx#12 ← phi( main/(byte) 0 main::@1/(byte) idx#13 main::@2/(byte) idx#13 )
   [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1
   [17] *((const signed word*) SCREEN + (byte~) print::$0) ← *((signed word*) print::p#3)
@@ -333,7 +333,7 @@ main: {
     // [5] call print 
     // [15] phi from main to print [phi:main->print]
   print_from_main:
-    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS [phi:main->print#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) print::p#3 = (const signed word*) VALS [phi:main->print#0] -- pwsz1=pwsc1 
     lda #<VALS
     sta.z print.p
     lda #>VALS
@@ -350,7 +350,7 @@ main: {
     // [7] call print 
     // [15] phi from main::@2 to print [phi:main::@2->print]
   print_from___b2:
-    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) print::p#3 = (const signed word*) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
     lda #<VALS+1*SIZEOF_SIGNED_WORD
     sta.z print.p
     lda #>VALS+1*SIZEOF_SIGNED_WORD
@@ -373,7 +373,7 @@ main: {
     lda.z i
     asl
     sta.z __5
-    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5 -- pwsz1=pwsc1_plus_vbuz2 
+    // [10] (signed word*) print::p#2 ← (const signed word*) VALS + (byte~) main::$5 -- pwsz1=pwsc1_plus_vbuz2 
     lda.z __5
     clc
     adc #<VALS
@@ -434,13 +434,13 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$5 idx#13 ] ( main:2 [ main::i#2 main::$5 idx#13 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ idx#12 idx#13 ]
-Statement [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5 [ main::i#2 print::p#2 idx#13 ] ( main:2 [ main::i#2 print::p#2 idx#13 ] ) always clobbers reg byte a 
+Statement [10] (signed word*) print::p#2 ← (const signed word*) VALS + (byte~) main::$5 [ main::i#2 print::p#2 idx#13 ] ( main:2 [ main::i#2 print::p#2 idx#13 ] ) always clobbers reg byte a 
 Statement [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 [ idx#12 print::p#3 print::$0 ] ( main:2::print:5 [ idx#12 print::p#3 print::$0 ] main:2::print:7 [ idx#12 print::p#3 print::$0 ] main:2::print:11 [ main::i#2 idx#12 print::p#3 print::$0 ] ) always clobbers reg byte a 
 Statement [17] *((const signed word*) SCREEN + (byte~) print::$0) ← *((signed word*) print::p#3) [ idx#12 ] ( main:2::print:5 [ idx#12 ] main:2::print:7 [ idx#12 ] main:2::print:11 [ main::i#2 idx#12 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ idx#12 idx#13 ]
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$5 idx#13 ] ( main:2 [ main::i#2 main::$5 idx#13 ] ) always clobbers reg byte a 
-Statement [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5 [ main::i#2 print::p#2 idx#13 ] ( main:2 [ main::i#2 print::p#2 idx#13 ] ) always clobbers reg byte a 
+Statement [10] (signed word*) print::p#2 ← (const signed word*) VALS + (byte~) main::$5 [ main::i#2 print::p#2 idx#13 ] ( main:2 [ main::i#2 print::p#2 idx#13 ] ) always clobbers reg byte a 
 Statement [16] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 [ idx#12 print::p#3 print::$0 ] ( main:2::print:5 [ idx#12 print::p#3 print::$0 ] main:2::print:7 [ idx#12 print::p#3 print::$0 ] main:2::print:11 [ main::i#2 idx#12 print::p#3 print::$0 ] ) always clobbers reg byte a 
 Statement [17] *((const signed word*) SCREEN + (byte~) print::$0) ← *((signed word*) print::p#3) [ idx#12 ] ( main:2::print:5 [ idx#12 ] main:2::print:7 [ idx#12 ] main:2::print:11 [ main::i#2 idx#12 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
@@ -495,7 +495,7 @@ main: {
     // [5] call print 
     // [15] phi from main to print [phi:main->print]
   print_from_main:
-    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS [phi:main->print#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) print::p#3 = (const signed word*) VALS [phi:main->print#0] -- pwsz1=pwsc1 
     lda #<VALS
     sta.z print.p
     lda #>VALS
@@ -512,7 +512,7 @@ main: {
     // [7] call print 
     // [15] phi from main::@2 to print [phi:main::@2->print]
   print_from___b2:
-    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) print::p#3 = (const signed word*) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
     lda #<VALS+1*SIZEOF_SIGNED_WORD
     sta.z print.p
     lda #>VALS+1*SIZEOF_SIGNED_WORD
@@ -534,7 +534,7 @@ main: {
     // [9] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
-    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5 -- pwsz1=pwsc1_plus_vbuaa 
+    // [10] (signed word*) print::p#2 ← (const signed word*) VALS + (byte~) main::$5 -- pwsz1=pwsc1_plus_vbuaa 
     clc
     adc #<VALS
     sta.z print.p
@@ -630,7 +630,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (const signed word*) SCREEN = (signed word*) 1024
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
-(const signed word[]) VALS = { (signed word) 1, (signed word) 2, (signed word) 3, (signed word) 4 }
+(const signed word*) VALS = { (signed word) 1, (signed word) 2, (signed word) 3, (signed word) 4 }
 (byte) idx
 (byte) idx#12 idx zp[1]:3 5.666666666666667
 (byte) idx#13 idx zp[1]:3 1.3636363636363638
@@ -683,7 +683,7 @@ main: {
     // print(VALS)
     // [5] call print 
     // [15] phi from main to print [phi:main->print]
-    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS [phi:main->print#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) print::p#3 = (const signed word*) VALS [phi:main->print#0] -- pwsz1=pwsc1 
     lda #<VALS
     sta.z print.p
     lda #>VALS
@@ -697,7 +697,7 @@ main: {
     // print(&VALS[1])
     // [7] call print 
     // [15] phi from main::@2 to print [phi:main::@2->print]
-    // [15] phi (signed word*) print::p#3 = (const signed word[]) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) print::p#3 = (const signed word*) VALS+(byte) 1*(const byte) SIZEOF_SIGNED_WORD [phi:main::@2->print#0] -- pwsz1=pwsc1 
     lda #<VALS+1*SIZEOF_SIGNED_WORD
     sta.z print.p
     lda #>VALS+1*SIZEOF_SIGNED_WORD
@@ -717,7 +717,7 @@ main: {
     lda.z i
     asl
     // print(&VALS[i])
-    // [10] (signed word*) print::p#2 ← (const signed word[]) VALS + (byte~) main::$5 -- pwsz1=pwsc1_plus_vbuaa 
+    // [10] (signed word*) print::p#2 ← (const signed word*) VALS + (byte~) main::$5 -- pwsz1=pwsc1_plus_vbuaa 
     clc
     adc #<VALS
     sta.z print.p

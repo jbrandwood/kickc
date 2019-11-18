@@ -92,7 +92,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
             // Create a new root - and roll around again
             ProgramScope rootScope = getScope();
             String localName = getRootName(constantVars);
-            Variable newRootConstant = new Variable(localName, rootScope, SymbolType.STRING, segmentData, constString);
+            Variable newRootConstant = new Variable(localName, rootScope, SymbolType.STRING, true, segmentData, constString);
             rootScope.add(newRootConstant);
             rootConstant = newRootConstant;
          }

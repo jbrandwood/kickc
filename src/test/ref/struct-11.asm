@@ -47,7 +47,7 @@ main: {
     jsr print_person
     rts
 }
-// print_person(dword zeropage(2) person_id, byte[3] zeropage(6) person_initials)
+// print_person(dword zeropage(2) person_id, byte* zeropage(6) person_initials)
 print_person: {
     .label person_id = 2
     .label person_initials = 6
@@ -265,9 +265,9 @@ ultoa_append: {
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits
   RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
+  // Digits used for storing the decimal word
+  decimal_digits_long: .fill $b, 0
   jesper_initials: .text "jg"
   .byte 0
   henry_initials: .text "hg"
   .byte 0
-  // Digits used for storing the decimal word
-  decimal_digits_long: .fill $b, 0

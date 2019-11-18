@@ -814,11 +814,10 @@ public class TestPrograms {
       compileAndCompare("struct-ptr-32");
    }
 
-   // TODO: Fix problem with structs containing arrays
-   // @Test
-   // public void testStructPtr31() throws IOException, URISyntaxException {
-   //  compileAndCompare("struct-ptr-31");
-   // }
+    @Test
+    public void testStructPtr31() throws IOException, URISyntaxException {
+     compileAndCompare("struct-ptr-31");
+    }
 
    @Test
    public void testStructPtr30() throws IOException, URISyntaxException {

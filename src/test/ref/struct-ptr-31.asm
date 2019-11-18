@@ -63,8 +63,6 @@ print_person: {
     iny
     jmp __b1
 }
-  DIGIT: .text "0123456789"
-  .byte 0
   persons: .byte 4
   .text "jesper"
   .byte 0
@@ -73,3 +71,5 @@ print_person: {
   .text "henriette"
   .byte 0
   .fill 6, 0
+  DIGIT: .text "0123456789"
+  .byte 0

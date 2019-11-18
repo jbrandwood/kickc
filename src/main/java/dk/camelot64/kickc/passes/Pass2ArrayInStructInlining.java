@@ -5,7 +5,6 @@ import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.ConstantRef;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
@@ -58,15 +57,13 @@ public class Pass2ArrayInStructInlining extends Pass2SsaOptimization {
          if(programValue instanceof ProgramValue.ProgramValueConstantStructMember) {
             SymbolVariableRef memberRef = ((ProgramValue.ProgramValueConstantStructMember) programValue).getMemberRef();
             Variable structMemberVar = getScope().getVariable(memberRef);
-            if(structMemberVar.getType() instanceof SymbolTypeArray) {
-               if(((SymbolTypeArray) structMemberVar.getType()).getSize() != null) {
-                  if(value instanceof ConstantValue) {
-                     ConstantValue constantValue = (ConstantValue) value;
-                     if(constantValue.getType(getProgram().getScope()).equals(SymbolType.STRING)) {
-                        if(constantValue instanceof ConstantRef) {
-                           Variable constantStringVar = getScope().getConstant((ConstantRef) constantValue);
-                           inline.put((ConstantRef) constantValue, constantStringVar.getConstantValue());
-                        }
+            if(structMemberVar.isArray() && structMemberVar.getArraySize() != null) {
+               if(value instanceof ConstantValue) {
+                  ConstantValue constantValue = (ConstantValue) value;
+                  if(constantValue.getType(getProgram().getScope()).equals(SymbolType.STRING)) {
+                     if(constantValue instanceof ConstantRef) {
+                        Variable constantStringVar = getScope().getConstant((ConstantRef) constantValue);
+                        inline.put((ConstantRef) constantValue, constantStringVar.getConstantValue());
                      }
                   }
                }

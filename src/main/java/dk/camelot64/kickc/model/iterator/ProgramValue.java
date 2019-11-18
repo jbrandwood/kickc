@@ -3,7 +3,6 @@ package dk.camelot64.kickc.model.iterator;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.*;
 
 /**
@@ -943,26 +942,6 @@ public interface ProgramValue {
       @Override
       public void set(Value val) {
          range.setRangeLast((RValue) val);
-      }
-
-   }
-
-   /** Size inside a fixed size array. */
-   class ProgramValueTypeArraySize implements ProgramValue {
-      private final SymbolTypeArray array;
-
-      ProgramValueTypeArraySize(SymbolTypeArray array) {
-         this.array = array;
-      }
-
-      @Override
-      public Value get() {
-         return array.getSize();
-      }
-
-      @Override
-      public void set(Value val) {
-         array.setSize((RValue) val);
       }
 
    }

@@ -75,7 +75,7 @@ public class PassNAddTypeConversionAssignment extends Pass2SsaOptimization {
                         getLog().append("Identified literal word (" + conversionType + ") " + binary.getRight().toString() + " in " + (currentStmt == null ? "" : currentStmt.toString(getProgram(), false)));
                      binary.addRightCast(conversionType, stmtIt, currentBlock == null ? null : currentBlock.getScope(), getScope());
                      modified.set(true);
-                  } else if(leftType instanceof SymbolTypePointer && !(leftType instanceof SymbolTypeArray) && isLiteralWordCandidate(right)) {
+                  } else if(leftType instanceof SymbolTypePointer && isLiteralWordCandidate(right)) {
                      // Detect word literal constructor
                      SymbolType conversionType = SymbolType.WORD;
                      if(pass2 || getLog().isVerbosePass1CreateSsa())

@@ -12,7 +12,6 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.CastValue;
 import dk.camelot64.kickc.model.values.LValue;
@@ -52,7 +51,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
                      } else if(SymbolType.DWORD.equals(castToType)) {
                         addLiteralWordConstructor(Operators.DWORD, SymbolType.DWORD, SymbolType.WORD, programExpression, listValues, currentStmt, stmtIt, currentBlock);
                         optimized.set(true);
-                     } else if((castToType instanceof SymbolTypePointer) && !(castToType instanceof SymbolTypeArray)) {
+                     } else if((castToType instanceof SymbolTypePointer)) {
                         SymbolType castType = ((OperatorCastPtr) operator).getToType();
                         addLiteralWordConstructor(Operators.WORD, castType, SymbolType.BYTE, programExpression, listValues, currentStmt, stmtIt, currentBlock);
                         optimized.set(true);

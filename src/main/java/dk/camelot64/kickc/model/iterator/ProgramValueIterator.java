@@ -4,8 +4,9 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
+import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -47,9 +48,6 @@ public class ProgramValueIterator {
     * @param programValueHandler The programValueHandler to execute
     */
    public static void execute(Variable variable, ProgramValueHandler programValueHandler) {
-      if(variable.getType() instanceof SymbolTypeArray) {
-         execute(new ProgramValue.ProgramValueTypeArraySize((SymbolTypeArray) variable.getType()), programValueHandler, null, null, null);
-      }
       if(variable.isConstant()) {
          execute(new ProgramValue.ProgramValueConstantVar(variable), programValueHandler, null, null, null);
       }

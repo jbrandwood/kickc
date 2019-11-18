@@ -2,6 +2,8 @@ package dk.camelot64.kickc.model.types;
 
 import dk.camelot64.kickc.model.values.RValue;
 
+import java.util.Objects;
+
 /**
  * A fixed size array of another type
  */
@@ -41,7 +43,7 @@ public class SymbolTypeArray extends SymbolTypePointer {
       if(o == null || getClass() != o.getClass()) return false;
       if(!super.equals(o)) return false;
       SymbolTypeArray that = (SymbolTypeArray) o;
-      return size != null ? size.equals(that.size) : that.size == null;
+      return Objects.equals(size, that.size);
    }
 
    @Override

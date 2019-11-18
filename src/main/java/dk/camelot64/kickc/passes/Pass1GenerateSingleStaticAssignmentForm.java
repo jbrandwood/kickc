@@ -6,10 +6,14 @@ import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementLValue;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.StatementSource;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.Collection;
@@ -115,22 +119,6 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                   for(RValue lValueElement : lValueList) {
                      if(lValueElement instanceof VariableRef) {
                         updateBlockVersions((VariableRef) lValueElement, blockVersions);
-                     }
-                  }
-               }
-            }
-            // Examine if the assigned variable is an array with a fixed size
-            if(currentStmt instanceof StatementAssignment) {
-               LValue lValue = ((StatementAssignment) currentStmt).getlValue();
-               if(lValue instanceof VariableRef) {
-                  Variable assignedVar = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable((VariableRef) lValue);
-                  SymbolType assignedVarType = assignedVar.getType();
-                  if(assignedVarType instanceof SymbolTypeArray) {
-                     SymbolTypeArray assignedArrayType = (SymbolTypeArray) assignedVarType;
-                     RValue arraySize = assignedArrayType.getSize();
-                     Variable vrs = findOrCreateVersion(arraySize, blockVersions, blockNewPhis);
-                     if(vrs != null) {
-                        assignedArrayType.setSize(vrs.getRef());
                      }
                   }
                }

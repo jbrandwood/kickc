@@ -1,9 +1,10 @@
 package dk.camelot64.kickc.model.values;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ConstantArrayList implements ConstantArray {
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      return new SymbolTypeArray(elementType);
+      return new SymbolTypePointer(elementType);
    }
 
    public SymbolType getElementType() {

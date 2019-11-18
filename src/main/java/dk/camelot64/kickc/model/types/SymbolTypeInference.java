@@ -50,13 +50,13 @@ public class SymbolTypeInference {
             throw new CompileError("Cannot infer pointer element type from type: " + pointerType);
          }
       } else if(rValue instanceof ConstantArrayList) {
-         return new SymbolTypeArray(((ConstantArrayList) rValue).getElementType());
+         return new SymbolTypePointer(((ConstantArrayList) rValue).getElementType());
       } else if(rValue instanceof ConstantArrayKickAsm) {
-         return new SymbolTypeArray(((ConstantArrayKickAsm) rValue).getElementType());
+         return new SymbolTypePointer(((ConstantArrayKickAsm) rValue).getElementType());
       } else if(rValue instanceof ArrayFilled) {
-         return new SymbolTypeArray(((ArrayFilled) rValue).getElementType(), ((ArrayFilled) rValue).getSize());
+         return new SymbolTypePointer(((ArrayFilled) rValue).getElementType());
       } else if(rValue instanceof ConstantArrayFilled) {
-         return new SymbolTypeArray(((ConstantArrayFilled) rValue).getElementType(), ((ConstantArrayFilled) rValue).getSize());
+         return new SymbolTypePointer(((ConstantArrayFilled) rValue).getElementType());
       } else if(rValue instanceof ConstantSymbolPointer) {
          return ((ConstantSymbolPointer) rValue).getType(symbols);
       } else if(rValue instanceof CastValue) {

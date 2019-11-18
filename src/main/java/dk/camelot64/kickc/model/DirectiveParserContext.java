@@ -3,7 +3,6 @@ package dk.camelot64.kickc.model;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.ScopeRef;
@@ -54,8 +53,6 @@ public class DirectiveParserContext {
          } else if(SymbolType.BOOLEAN.equals(type)) {
             return INTEGER;
          } else if(SymbolType.STRING.equals(type)) {
-            return ARRAY;
-         } else if(type instanceof SymbolTypeArray) {
             return ARRAY;
          } else if(type instanceof SymbolTypePointer) {
             return POINTER;

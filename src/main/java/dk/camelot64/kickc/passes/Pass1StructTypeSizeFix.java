@@ -21,7 +21,7 @@ public class Pass1StructTypeSizeFix extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       AtomicBoolean modified = new AtomicBoolean(false);
-      for(Variable variable : getScope().getAllVariables(true)) {
+      for(Variable variable : getScope().getAllVars(true)) {
          modified.set(fixStructSize(variable.getType()));
       }
       return modified.get();

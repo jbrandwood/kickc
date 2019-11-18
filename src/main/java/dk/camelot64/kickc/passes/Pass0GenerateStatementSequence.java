@@ -508,6 +508,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    /** Holds the declared type when descending into a Variable Declaration. */
    private SymbolType declVarType = null;
+   /** Holds the information about whether the declared variable is an array. */
+   private boolean declIsArray = false;
+   /** Holds the information about the size of the declared variable. */
+   private ConstantValue declArraySize = null;
    /** Holds the declared directives when descending into a Variable Declaration. */
    private List<Directive> declVarDirectives = null;
    /** Holds the declared comments when descending into a Variable Declaration. */
@@ -537,6 +541,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.declVarType = null;
       this.declVarDirectives = null;
       this.declVarComments = null;
+      this.declIsArray = false;
+      this.declArraySize = null;
    }
 
    @Override
@@ -637,30 +643,23 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    private Variable visitDeclVariableInit(String varName, KickCParser.DeclVariableInitContext ctx) {
       try {
-         boolean isArray = false;
-         RValue arraySize = null;
-         if(declVarType instanceof SymbolTypeArray) {
-            isArray = true;
-            arraySize = ((SymbolTypeArray) declVarType).getSize();
-            declVarType = new SymbolTypePointer(((SymbolTypeArray) declVarType).getElementType());
-         }
          List<Directive> directives = declVarDirectives;
          SymbolType type = declVarType;
          List<Comment> comments = declVarComments;
          // Find kind
-         Variable.Kind kind = directiveContext.getKind(type, getCurrentScope(), false, isArray, directives, new StatementSource(ctx));
+         Variable.Kind kind = directiveContext.getKind(type, getCurrentScope(), false, declIsArray, directives, new StatementSource(ctx));
          // Create variable
          Variable lValue = getCurrentScope().addVariable(kind, varName, type, defaultMemoryArea, currentDataSegment);
-         if(isArray) {
+         if(declIsArray) {
             lValue.setArray(true);
-            if(arraySize != null) {
-               if(!(arraySize instanceof ConstantValue))
-                  throw new CompileError("Error! Array size not constant " + arraySize.toString(program), new StatementSource(ctx));
-               lValue.setArraySize((ConstantValue) arraySize);
+            if(declArraySize != null) {
+               if(!(declArraySize instanceof ConstantValue))
+                  throw new CompileError("Error! Array size not constant " + declArraySize.toString(program), new StatementSource(ctx));
+               lValue.setArraySize((ConstantValue) declArraySize);
             }
          }
          // Add directives
-         directiveContext.applyDirectives(lValue, false, isArray, directives, new StatementSource(ctx));
+         directiveContext.applyDirectives(lValue, false, declIsArray, directives, new StatementSource(ctx));
          if(lValue.isDeclaredConst()) {
             // Add comments to constant
             lValue.setComments(ensureUnusedComments(comments));
@@ -697,14 +696,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(type instanceof SymbolTypeIntegerFixed) {
          // Add an zero value initializer
          return new ConstantInteger(0L, type);
-      } else if(type instanceof SymbolTypeArray) {
-         // Add an zero-array initializer
-         SymbolTypeArray typeArray = (SymbolTypeArray) type;
-         RValue size = typeArray.getSize();
-         if(size == null) {
-            throw new CompileError("Error! Array has no declared size. " + varRef.toString(), statementSource);
-         }
-         return new ArrayFilled(typeArray.getElementType(), size);
       } else if(type instanceof SymbolTypePointer) {
          // Add an zero value initializer
          SymbolTypePointer typePointer = (SymbolTypePointer) type;
@@ -1495,14 +1486,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       lValue.getComments().addAll(ensureUnusedComments(comments));
    }
 
-   private void addInitialAssignment(KickCParser.ExprContext initializer, Variable lValue, List<Comment> comments, StatementSource statementSource) {
-      PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
-      RValue rValue = (RValue) visit(initializer);
-      Statement stmt = new StatementAssignment((LValue) lValue.getRef(), rValue, statementSource, ensureUnusedComments(comments));
-      sequence.addStatement(stmt);
-      PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
-   }
-
    @Override
    public RValue visitInitList(KickCParser.InitListContext ctx) {
       List<RValue> initValues = new ArrayList<>();
@@ -1672,9 +1655,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
       if(ctx.expr() != null) {
          RValue sizeVal = (RValue) visit(ctx.expr());
-         return new SymbolTypeArray(elementType, sizeVal);
+         declIsArray = true;
+         declArraySize = (ConstantValue) sizeVal;
+         return new SymbolTypePointer(elementType);
       } else {
-         return new SymbolTypeArray(elementType);
+         declIsArray = true;
+         declArraySize = null;
+         return new SymbolTypePointer(elementType);
       }
    }
 

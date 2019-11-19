@@ -392,26 +392,6 @@ public interface ProgramValue {
 
    }
 
-   /** Value inside a array filled expression. */
-   class ProgramValueArrayFilledSize implements ProgramValue {
-      private final ArrayFilled array;
-
-      ProgramValueArrayFilledSize(ArrayFilled array) {
-         this.array = array;
-      }
-
-      @Override
-      public Value get() {
-         return array.getSize();
-      }
-
-      @Override
-      public void set(Value val) {
-         array.setSize((RValue) val);
-      }
-
-   }
-
    /** A variable/constant referenced inside inline ASM. */
    class ProgramValueAsmReferenced implements ProgramValue {
       private StatementAsm statementAsm;

@@ -224,11 +224,6 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          if(castConstant != null) {
             return new ConstantCastValue(castValue.getToType(), castConstant);
          }
-      } else if(rValue instanceof ArrayFilled) {
-         ArrayFilled arrayFilled = (ArrayFilled) rValue;
-         if(arrayFilled.getSize() instanceof ConstantValue) {
-            return new ConstantArrayFilled(arrayFilled.getElementType(), (ConstantValue) arrayFilled.getSize());
-         }
       }
       return null;
    }

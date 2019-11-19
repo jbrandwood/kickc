@@ -486,7 +486,7 @@ public class Pass4CodeGeneration {
                asm.addDataAlignment(alignment);
             }
             ConstantValue constantValue = constantVar.getConstantValue();
-            if(constantValue instanceof ConstantArrayList || constantValue instanceof ConstantArrayFilled || constantValue instanceof ConstantArrayKickAsm || constantValue instanceof ConstantString) {
+            if(constantValue instanceof ConstantArray || constantValue instanceof ConstantString) {
                AsmDataChunk asmDataChunk = new AsmDataChunk();
                addChunkData(asmDataChunk, constantValue, constantVar.getType(), constantVar.isArray(), constantVar.getArraySize(), scopeRef);
                asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);

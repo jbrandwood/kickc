@@ -202,6 +202,8 @@ public class AsmFormat {
          } else {
             throw new CompileError("Unhandled type " + operand);
          }
+      } else if(Operators.POS.equals(operator)) {
+         return getAsmConstant(program, operand, outerPrecedence, codeScope);
       } else {
          return operator.getOperator() +
                getAsmConstant(program, operand, operator.getPrecedence(), codeScope);

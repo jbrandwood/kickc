@@ -233,8 +233,6 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueConstantBinaryRight((ConstantBinary) value));
       } else if(value instanceof ConstantUnary) {
          subValues.add(new ProgramValue.ProgramValueConstantUnaryValue((ConstantUnary) value));
-      } else if(value instanceof ArrayFilled) {
-         subValues.add(new ProgramValue.ProgramValueArrayFilledSize((ArrayFilled) value));
       } else if(value instanceof ConstantArrayFilled) {
          subValues.add(new ProgramValue.ProgramValueConstantArrayFilledSize((ConstantArrayFilled) value));
       } else if(value instanceof ConstantArrayKickAsm) {

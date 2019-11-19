@@ -53,8 +53,6 @@ public class SymbolTypeInference {
          return new SymbolTypePointer(((ConstantArrayList) rValue).getElementType());
       } else if(rValue instanceof ConstantArrayKickAsm) {
          return new SymbolTypePointer(((ConstantArrayKickAsm) rValue).getElementType());
-      } else if(rValue instanceof ArrayFilled) {
-         return new SymbolTypePointer(((ArrayFilled) rValue).getElementType());
       } else if(rValue instanceof ConstantArrayFilled) {
          return new SymbolTypePointer(((ConstantArrayFilled) rValue).getElementType());
       } else if(rValue instanceof ConstantSymbolPointer) {

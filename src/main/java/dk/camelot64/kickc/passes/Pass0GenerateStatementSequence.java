@@ -1682,7 +1682,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return null;
    }
 
-
    /**
     * RValues that have not yet been output as part of a statement.
     * The expression visitor methods updates this so that the surrounding

@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testUnaryPlus() throws IOException, URISyntaxException {
+      compileAndCompare("unary-plus");
+   }
+
+   @Test
    public void testConstDeclaration() throws IOException, URISyntaxException {
       compileAndCompare("const-declaration");
    }

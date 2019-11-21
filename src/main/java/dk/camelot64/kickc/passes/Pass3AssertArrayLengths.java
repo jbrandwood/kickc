@@ -22,8 +22,8 @@ public class Pass3AssertArrayLengths extends Pass2SsaAssertion {
       Collection<Variable> allConstants = getScope().getAllConstants(true);
       for(Variable constantVar : allConstants) {
          SymbolType constantType = constantVar.getType();
-         if(constantVar.isArray() && constantVar.getArraySize() != null) {
-            ConstantValue declaredSize = constantVar.getArraySize();
+         if(constantVar.isArray() && constantVar.getArraySpec().getArraySize() != null) {
+            ConstantValue declaredSize = constantVar.getArraySpec().getArraySize();
             ConstantLiteral declaredSizeVal = declaredSize.calculateLiteral(getScope());
             if(!(declaredSizeVal instanceof ConstantInteger)) {
                throw new CompileError("Error! Array declared size is not integer " + constantType.toString());

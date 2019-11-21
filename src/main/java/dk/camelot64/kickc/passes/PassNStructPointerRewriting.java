@@ -40,7 +40,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                SymbolType memberType = SymbolTypeInference.inferType(getScope(), structMemberRef);
                Variable memberVar = structDefinition.getMember(structMemberRef.getMemberName());
                getLog().append("Rewriting struct pointer member access " + programValue.get().toString(getProgram()));
-               if(memberVar.isArray() && memberVar.getArraySize()!=null) {
+               if(memberVar.isArray() && memberVar.getArraySpec().getArraySize()!=null) {
                   // Cast struct pointer to the type of the member
                   CastValue structTypedPointer = new CastValue(memberType, structPointer);
                   // Create temporary variable to hold pointer to member ($1)
@@ -80,7 +80,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                SymbolType memberType = SymbolTypeInference.inferType(getScope(), structMemberRef);
                Variable memberVar = structDefinition.getMember(structMemberRef.getMemberName());
                getLog().append("Rewriting struct pointer member access " + programValue.get().toString(getProgram()));
-               if(memberVar.isArray() && memberVar.getArraySize()!=null) {
+               if(memberVar.isArray() && memberVar.getArraySpec().getArraySize()!=null) {
                   // Cast struct pointer to the type of the member
                   CastValue structTypedPointer = new CastValue(memberType, structPointer);
                   // Create temporary variable to hold pointer to member ($1)
@@ -133,7 +133,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
          // Constant not found - create it
          Variable memberDef = structDefinition.getMember(memberName);
          long memberByteOffset = structDefinition.getMemberByteOffset(memberDef, programScope);
-         memberOffsetConstant = new Variable(typeConstName, programScope, SymbolType.BYTE, false, Scope.SEGMENT_DATA_DEFAULT, new ConstantInteger(memberByteOffset & 0xff, SymbolType.BYTE));
+         memberOffsetConstant = new Variable(typeConstName, programScope, SymbolType.BYTE, null, Scope.SEGMENT_DATA_DEFAULT, new ConstantInteger(memberByteOffset & 0xff, SymbolType.BYTE));
          programScope.add(memberOffsetConstant);
       }
       return memberOffsetConstant.getConstantRef();

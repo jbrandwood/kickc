@@ -936,12 +936,12 @@ public interface ProgramValue {
 
       @Override
       public Value get() {
-         return variable.getArraySize();
+         return variable.getArraySpec().getArraySize();
       }
 
       @Override
       public void set(Value val) {
-         variable.setArraySize((ConstantValue) val);
+         variable.getArraySpec().setArraySize((ConstantValue) val);
       }
 
    }

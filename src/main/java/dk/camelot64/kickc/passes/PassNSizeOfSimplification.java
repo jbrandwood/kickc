@@ -72,7 +72,7 @@ public class PassNSizeOfSimplification extends Pass2SsaOptimization {
          SymbolType symbolType = constant.getType();
          if(constant.isArray() && symbolType instanceof SymbolTypePointer) {
             SymbolTypePointer arrayType = (SymbolTypePointer) symbolType;
-            RValue arraySize = constant.getArraySize();
+            ConstantValue arraySize = constant.getArraySpec().getArraySize();
             if(arraySize instanceof ConstantValue) {
                getLog().append("Resolving array sizeof() " + unary.toString(getProgram()));
                ConstantRef sizeOfConstantVar = OperatorSizeOf.getSizeOfConstantVar(getScope(), arrayType.getElementType());

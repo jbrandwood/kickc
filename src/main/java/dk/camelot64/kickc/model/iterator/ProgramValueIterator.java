@@ -51,7 +51,7 @@ public class ProgramValueIterator {
       if(variable.isConstant()) {
          execute(new ProgramValue.ProgramValueConstantVar(variable), programValueHandler, null, null, null);
       }
-      if(variable.getArraySize()!=null) {
+      if(variable.isArray()) {
          execute(new ProgramValue.ProgramValueArraySize(variable), programValueHandler, null, null, null);
       }
    }

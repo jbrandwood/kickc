@@ -213,8 +213,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                      String name = variable.getLocalName() + "_" + member.getLocalName();
                      Variable.MemoryArea memoryArea = (member.getType() instanceof SymbolTypePointer)?Variable.MemoryArea.ZEROPAGE_MEMORY:variable.getMemoryArea();
                      Variable memberVariable = scope.add(new Variable( false, name, scope, member.getType(), variable.getKind(), memoryArea, variable.getDataSegment()));
-                     memberVariable.setArray(member.isArray());
-                     memberVariable.setArraySize(member.getArraySize());
+                     memberVariable.setArraySpec(member.getArraySpec());
                      memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
                      memberVariable.setInferredVolatile(variable.isInferredVolatile());
                      memberVariable.setDeclaredConst(variable.isDeclaredConst());

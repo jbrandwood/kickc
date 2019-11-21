@@ -582,7 +582,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(lValue.isArray()) {
             // Add an zero-filled array initializer
             SymbolTypePointer typePointer = (SymbolTypePointer) type;
-            ConstantValue arraySize = lValue.getArraySize();
+            ConstantValue arraySize = lValue.getArraySpec().getArraySize();
             if(arraySize == null) {
                throw new CompileError("Error! Array has no declared size. " + lValue.toString(), statementSource);
             }
@@ -602,7 +602,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          sequence.addStatement(initStmt);
       }
 
-      if(initializer!=null) {
+      if(initializer != null) {
          PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
       }
 
@@ -651,12 +651,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          // Create variable
          Variable lValue = getCurrentScope().addVariable(kind, varName, type, defaultMemoryArea, currentDataSegment);
          if(declIsArray) {
-            lValue.setArray(true);
-            if(declArraySize != null) {
-               if(!(declArraySize instanceof ConstantValue))
-                  throw new CompileError("Error! Array size not constant " + declArraySize.toString(program), new StatementSource(ctx));
-               lValue.setArraySize((ConstantValue) declArraySize);
-            }
+            lValue.setArraySpec(new ArraySpec(declArraySize));
          }
          // Add directives
          directiveContext.applyDirectives(lValue, false, declIsArray, directives, new StatementSource(ctx));
@@ -1472,9 +1467,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       // Convert to a constant value
       scope.remove(lValue);
-      Variable constVar = new Variable(lValue.getName(), scope, lValue.getType(), lValue.isArray(), lValue.getDataSegment(), constantValue);
+      Variable constVar = new Variable(lValue.getName(), scope, lValue.getType(), lValue.getArraySpec(), lValue.getDataSegment(), constantValue);
       scope.add(constVar);
-      constVar.setArraySize(lValue.getArraySize());
       constVar.setDeclaredConst(lValue.isDeclaredConst());
       constVar.setDeclaredRegister(lValue.getDeclaredRegister());
       constVar.setMemoryArea(lValue.getMemoryArea());
@@ -1558,7 +1552,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          Scope parentScope = getCurrentScope();
          while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
          for(Variable member : enumDefinition.getAllConstants(false)) {
-            parentScope.add(new Variable(member.getLocalName(), parentScope, SymbolType.BYTE, false, currentDataSegment, member.getConstantValue()));
+            parentScope.add(new Variable(member.getLocalName(), parentScope, SymbolType.BYTE, null, currentDataSegment, member.getConstantValue()));
          }
          return SymbolType.BYTE;
       } catch(CompileError e) {
@@ -1592,7 +1586,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             }
          }
       }
-      currentEnum.add(new Variable(memberName, getCurrentScope(), SymbolType.BYTE, false, currentDataSegment, enumValue));
+      currentEnum.add(new Variable(memberName, getCurrentScope(), SymbolType.BYTE, null, currentDataSegment, enumValue));
       return null;
    }
 

@@ -1,11 +1,11 @@
 package dk.camelot64.kickc.model.types;
 
+import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
-import dk.camelot64.kickc.model.values.ConstantValue;
 
 import java.util.Objects;
 
@@ -55,16 +55,16 @@ public class SymbolTypeStruct implements SymbolType {
       int sizeBytes = 0;
       for(Variable member : structDefinition.getAllVariables(false)) {
          SymbolType memberType = member.getType();
-         int memberSize = getMemberSizeBytes(memberType, member.isArray(), member.getArraySize(), programScope);
+         int memberSize = getMemberSizeBytes(memberType, member.getArraySpec(), programScope);
          sizeBytes += memberSize;
       }
       return sizeBytes;
    }
 
-   public static int getMemberSizeBytes(SymbolType memberType, boolean isArray, ConstantValue memberArraySize, ProgramScope programScope) {
-      if(isArray && memberArraySize != null) {
+   public static int getMemberSizeBytes(SymbolType memberType, ArraySpec arraySpec, ProgramScope programScope) {
+      if(arraySpec!=null  && arraySpec.getArraySize() != null) {
          if(programScope != null) {
-            ConstantLiteral sizeLiteral = memberArraySize.calculateLiteral(programScope);
+            ConstantLiteral sizeLiteral = arraySpec.getArraySize().calculateLiteral(programScope);
             if(sizeLiteral instanceof ConstantInteger) {
                return ((ConstantInteger) sizeLiteral).getInteger().intValue();
             }

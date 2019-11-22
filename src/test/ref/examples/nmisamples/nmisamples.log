@@ -11,8 +11,7 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@4
 @4: scope:[]  from @begin
-  (byte*) SAMPLE ← kickasm {{ .import binary "moments_sample.bin"  }}
-  (byte*) sample#0 ← (byte*) SAMPLE
+  (byte*) sample#0 ← (const byte*) SAMPLE
   to:@7
 
 (void()) main()
@@ -53,11 +52,9 @@ nmi2: scope:[nmi2]  from
   *((const byte*) SID_VOLUME) ← (byte~) nmi2::$1
   (byte*) sample#1 ← ++ (byte*) sample#5
   (byte~) nmi2::$2 ← > (byte*) sample#1
-  (byte*~) nmi2::$3 ← (byte*) SAMPLE + (number) $6100
-  (byte~) nmi2::$4 ← > (byte*~) nmi2::$3
-  (bool~) nmi2::$5 ← (byte~) nmi2::$2 == (byte~) nmi2::$4
-  (bool~) nmi2::$6 ← ! (bool~) nmi2::$5
-  if((bool~) nmi2::$6) goto nmi2::@1
+  (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(number) $6100
+  (bool~) nmi2::$4 ← ! (bool~) nmi2::$3
+  if((bool~) nmi2::$4) goto nmi2::@1
   to:nmi2::@2
 nmi2::@1: scope:[nmi2]  from nmi2 nmi2::@2
   (byte*) sample#8 ← phi( nmi2/(byte*) sample#1 nmi2::@2/(byte*) sample#2 )
@@ -65,7 +62,7 @@ nmi2::@1: scope:[nmi2]  from nmi2 nmi2::@2
   *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:nmi2::@return
 nmi2::@2: scope:[nmi2]  from nmi2
-  (byte*) sample#2 ← (byte*) SAMPLE
+  (byte*) sample#2 ← (const byte*) SAMPLE
   to:nmi2::@1
 nmi2::@return: scope:[nmi2]  from nmi2::@1
   (byte*) sample#6 ← phi( nmi2::@1/(byte*) sample#8 )
@@ -92,7 +89,7 @@ SYMBOL TABLE SSA
 (const byte*) CIA2_TIMER_A_CONTROL = (byte*)(number) $dd0e
 (const byte) CIA_INTERRUPT_CLEAR = (number) $7f
 (const void()**) KERNEL_NMI = (void()**)(number) $318
-(byte*) SAMPLE
+(const byte*) SAMPLE = kickasm {{ .import binary "moments_sample.bin"  }}
 (const word) SAMPLE_SIZE = (number) $6100
 (const byte*) SID_VOLUME = (byte*)(number) $d418
 (void()) main()
@@ -103,10 +100,8 @@ interrupt(HARDWARE_ALL)(void()) nmi()
 interrupt(HARDWARE_ALL)(void()) nmi2()
 (byte~) nmi2::$1
 (byte~) nmi2::$2
-(byte*~) nmi2::$3
-(byte~) nmi2::$4
-(bool~) nmi2::$5
-(bool~) nmi2::$6
+(bool~) nmi2::$3
+(bool~) nmi2::$4
 (label) nmi2::@1
 (label) nmi2::@2
 (label) nmi2::@return
@@ -127,7 +122,7 @@ Adding number conversion cast (unumber) 1 in *((const byte*) CIA2_TIMER_A_CONTRO
 Adding number conversion cast (unumber) $f in (number~) nmi::$1 ← *((byte*) sample#4) & (number) $f
 Adding number conversion cast (unumber) nmi::$1 in (number~) nmi::$1 ← *((byte*) sample#4) & (unumber)(number) $f
 Adding number conversion cast (unumber) 4 in (byte~) nmi2::$1 ← *((byte*) sample#5) >> (number) 4
-Adding number conversion cast (unumber) $6100 in (byte*~) nmi2::$3 ← (byte*) SAMPLE + (number) $6100
+Adding number conversion cast (unumber) $6100 in (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(number) $6100
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((const word*) CIA2_TIMER_A) ← (unumber)(number) $88
 Inlining cast *((const byte*) CIA2_INTERRUPT) ← (unumber)(number) $81
@@ -154,31 +149,16 @@ Finalized unsigned number type (byte) 4
 Finalized unsigned number type (word) $6100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) nmi::$1 ← *((byte*) sample#4) & (byte) $f
-Inversing boolean not [29] (bool~) nmi2::$6 ← (byte~) nmi2::$2 != (byte~) nmi2::$4 from [28] (bool~) nmi2::$5 ← (byte~) nmi2::$2 == (byte~) nmi2::$4
+Inversing boolean not [26] (bool~) nmi2::$4 ← (byte~) nmi2::$2 != >(const byte*) SAMPLE+(word) $6100 from [25] (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(word) $6100
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias candidate removed (volatile)(byte*) SAMPLE = (byte*) sample#0 (byte*) sample#7 
 Alias (byte*) sample#3 = (byte*) sample#6 (byte*) sample#8 
+Alias (byte*) sample#0 = (byte*) sample#7 
 Successful SSA optimization Pass2AliasElimination
-Alias candidate removed (volatile)(byte*) SAMPLE = (byte*) sample#0 (byte*) sample#7 
-Identical Phi Values (byte*) sample#4 (byte*) sample#7
-Identical Phi Values (byte*) sample#5 (byte*) sample#7
-Identical Phi Values (byte*) sample#7 (byte*) sample#0
+Identical Phi Values (byte*) sample#4 (byte*) sample#0
+Identical Phi Values (byte*) sample#5 (byte*) sample#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) nmi2::$6 [30] if((byte~) nmi2::$2!=(byte~) nmi2::$4) goto nmi2::@1
+Simple Condition (bool~) nmi2::$4 [27] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SAMPLE = kickasm {{ .import binary "moments_sample.bin"  }}
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [23] (byte*~) nmi2::$3 ← (const byte*) SAMPLE + (word) $6100
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) nmi2::$3 = SAMPLE+$6100
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [23] (byte~) nmi2::$4 ← > (const byte*) nmi2::$3
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) nmi2::$4 = >nmi2::$3
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined nmi2::$4 = >(const byte*) SAMPLE+(word) $6100
-Constant inlined nmi2::$3 = (const byte*) SAMPLE+(word) $6100
-Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting nmi2::@3(between nmi2 and nmi2::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @7

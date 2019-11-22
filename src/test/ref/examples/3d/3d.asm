@@ -29,9 +29,9 @@
   .const sz = 0
   // A single sprite
   .label SPRITE = $3000
-  .label print_screen = $400
   .label COSH = SINH+$40
   .label COSQ = SINQ+$40
+  .label print_screen = $400
   .label sx = 2
   .label sy = 3
 main: {

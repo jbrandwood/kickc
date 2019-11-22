@@ -1,5 +1,5 @@
-Resolved forward reference mulf_sqr1 to (byte*) mulf_sqr1
-Resolved forward reference mulf_sqr2 to (byte*) mulf_sqr2
+Resolved forward reference mulf_sqr1 to (const byte*) mulf_sqr1
+Resolved forward reference mulf_sqr2 to (const byte*) mulf_sqr2
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
 Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
@@ -352,18 +352,6 @@ fmul8::@return: scope:[fmul8]  from fmul8
   to:@return
 @39: scope:[]  from @12
   (byte*) print_screen#4 ← phi( @12/(byte*) print_screen#0 )
-  (byte*) mulf_sqr1 ← kickasm {{ .for(var i=0;i<$200;i++) {
-    	.if(i<=159) { .byte round((i*i)/256) }
-    	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
-    	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
-    }
- }}
-  (byte*) mulf_sqr2 ← kickasm {{ .for(var i=0;i<$200;i++) {
-    	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
-    	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
-    	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
-    }
- }}
   call main 
   to:@40
 @40: scope:[]  from @39
@@ -524,8 +512,18 @@ SYMBOL TABLE SSA
 (void*) memset::str#3
 (void*) memset::str#4
 (void*) memset::str#5
-(byte*) mulf_sqr1
-(byte*) mulf_sqr2
+(const byte*) mulf_sqr1 = kickasm {{ .for(var i=0;i<$200;i++) {
+    	.if(i<=159) { .byte round((i*i)/256) }
+    	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
+    	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
+    }
+ }}
+(const byte*) mulf_sqr2 = kickasm {{ .for(var i=0;i<$200;i++) {
+    	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
+    	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
+    	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
+    }
+ }}
 (void()) print_byte_at((byte) print_byte_at::b , (byte*) print_byte_at::at)
 (byte~) print_byte_at::$0
 (number~) print_byte_at::$2
@@ -754,18 +752,6 @@ Constant (const byte) main::j#0 = 0
 Constant (const byte*) init_screen::COLS#0 = (byte*) 55296
 Constant (const byte) init_screen::l#0 = 0
 Constant (const byte) init_screen::m#0 = 0
-Constant (const byte*) mulf_sqr1 = kickasm {{ .for(var i=0;i<$200;i++) {
-    	.if(i<=159) { .byte round((i*i)/256) }
-    	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
-    	.if(i>351) { .byte round(((512-i)*(512-i))/256) }
-    }
- }}
-Constant (const byte*) mulf_sqr2 = kickasm {{ .for(var i=0;i<$200;i++) {
-    	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
-    	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
-    	.if(i>351) { .byte round(((i-511)*(i-511))/256) }  
-    }
- }}
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)print_screen#0
 Successful SSA optimization Pass2ConstantIdentification

@@ -81,15 +81,15 @@ saveZeropage: {
     bne !-
     rts
 }
-  // Storage for saving/restoring zeropage
-  .align $100
-  ZP_STORAGE: .fill $100, 0
   // A 256-byte (co)sinus (with $ff in the first two entries)
   .align $100
 SINTABLE:
 .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*cos(toRadians(360*i/256)))
 
+  // Storage for saving/restoring zeropage
+  .align $100
+  ZP_STORAGE: .fill $100, 0
   // A single sprite to animate
   .align $40
 SPRITE:

@@ -6,8 +6,8 @@ Fixing pointer addition (word~) sqrt::$1 ← (word*) sqrt::found - (word*) SQUAR
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Fixing pointer array-indexing *((word*) SQUARES + (byte) sqr::val)
-Fixing pointer array-indexing *((word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
-Fixing pointer array-indexing *((word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
+Fixing pointer array-indexing *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
+Fixing pointer array-indexing *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean sub-expression (byte) atan2_16::shift
 Identified constant variable (byte*) HEAP_TOP
@@ -34,6 +34,7 @@ Culled Empty Block (label) @13
 Culled Empty Block (label) sqr::@1
 Culled Empty Block (label) @14
 Culled Empty Block (label) sqrt::@1
+Culled Empty Block (label) @15
 Culled Empty Block (label) atan2_16::@9
 Culled Empty Block (label) atan2_16::@10
 Culled Empty Block (label) atan2_16::@11
@@ -178,10 +179,10 @@ bsearch16u::@3: scope:[bsearch16u]  from bsearch16u::@1 bsearch16u::@2
   (word*) bsearch16u::return#2 ← (word*~) bsearch16u::$4
   to:bsearch16u::@return
 @12: scope:[]  from @4
-  (byte*) heap_head#37 ← phi( @4/(byte*) heap_head#0 )
+  (byte*) heap_head#32 ← phi( @4/(byte*) heap_head#0 )
   (byte) NUM_SQUARES#0 ← (number) $ff
   (word*) SQUARES#0 ← (word*) 0
-  to:@15
+  to:@17
 
 (void()) init_squares()
 init_squares: scope:[init_squares]  from init_dist_screen
@@ -267,14 +268,6 @@ sqrt::@return: scope:[sqrt]  from sqrt::@2
   (byte) sqrt::return#1 ← (byte) sqrt::return#3
   return 
   to:@return
-@15: scope:[]  from @12
-  (word*) SQUARES#46 ← phi( @12/(word*) SQUARES#0 )
-  (byte) NUM_SQUARES#37 ← phi( @12/(byte) NUM_SQUARES#0 )
-  (byte*) heap_head#32 ← phi( @12/(byte*) heap_head#37 )
-  (word*) CORDIC_ATAN2_ANGLES_16 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
-        .word 256*2*256*atan(1/pow(2,i))/PI/2
- }}
-  to:@17
 
 (word()) atan2_16((signed word) atan2_16::x , (signed word) atan2_16::y)
 atan2_16: scope:[atan2_16]  from init_angle_screen::@3
@@ -432,7 +425,7 @@ atan2_16::@26: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#4 + (signed word) atan2_16::yd#5
   (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#6 - (signed word) atan2_16::xd#5
   (byte~) atan2_16::$22 ← (byte) atan2_16::i#3 * (const byte) SIZEOF_WORD
-  (word) atan2_16::angle#2 ← (word) atan2_16::angle#7 + *((word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
+  (word) atan2_16::angle#2 ← (word) atan2_16::angle#7 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
   to:atan2_16::@27
 atan2_16::@30: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::y#11 ← phi( atan2_16::@25/(signed word) atan2_16::y#14 )
@@ -446,7 +439,7 @@ atan2_16::@30: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#5 - (signed word) atan2_16::yd#6
   (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#7 + (signed word) atan2_16::xd#6
   (byte~) atan2_16::$23 ← (byte) atan2_16::i#4 * (const byte) SIZEOF_WORD
-  (word) atan2_16::angle#3 ← (word) atan2_16::angle#8 - *((word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
+  (word) atan2_16::angle#3 ← (word) atan2_16::angle#8 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
   to:atan2_16::@27
 atan2_16::@27: scope:[atan2_16]  from atan2_16::@26 atan2_16::@30
   (signed word) atan2_16::y#8 ← phi( atan2_16::@26/(signed word) atan2_16::y#10 atan2_16::@30/(signed word) atan2_16::y#11 )
@@ -486,10 +479,10 @@ atan2_16::@return: scope:[atan2_16]  from atan2_16::@8
   (word) atan2_16::return#1 ← (word) atan2_16::return#3
   return 
   to:@return
-@17: scope:[]  from @15
-  (word*) SQUARES#44 ← phi( @15/(word*) SQUARES#46 )
-  (byte) NUM_SQUARES#33 ← phi( @15/(byte) NUM_SQUARES#37 )
-  (byte*) heap_head#23 ← phi( @15/(byte*) heap_head#32 )
+@17: scope:[]  from @12
+  (word*) SQUARES#44 ← phi( @12/(word*) SQUARES#0 )
+  (byte) NUM_SQUARES#33 ← phi( @12/(byte) NUM_SQUARES#0 )
+  (byte*) heap_head#23 ← phi( @12/(byte*) heap_head#32 )
   (word) malloc::size#1 ← (number) $3e8
   call malloc 
   (void*) malloc::return#3 ← (void*) malloc::return#1
@@ -556,7 +549,7 @@ main::@1: scope:[main]  from main::@12 main::@18
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (word*) SQUARES#45 ← phi( main::@1/(word*) SQUARES#22 )
-  (byte*) heap_head#43 ← phi( main::@1/(byte*) heap_head#27 )
+  (byte*) heap_head#42 ← phi( main::@1/(byte*) heap_head#27 )
   (byte) NUM_SQUARES#34 ← phi( main::@1/(byte) NUM_SQUARES#15 )
   (byte*) SCREEN_ANGLE#2 ← phi( main::@1/(byte*) SCREEN_ANGLE#4 )
   (byte*) SCREEN_DIST#2 ← phi( main::@1/(byte*) SCREEN_DIST#4 )
@@ -570,7 +563,7 @@ main::@4: scope:[main]  from main::@2 main::@5
   (byte*) SCREEN_ANGLE#10 ← phi( main::@2/(byte*) SCREEN_ANGLE#2 main::@5/(byte*) SCREEN_ANGLE#9 )
   (byte*) SCREEN_DIST#11 ← phi( main::@2/(byte*) SCREEN_DIST#2 main::@5/(byte*) SCREEN_DIST#10 )
   (word*) SQUARES#37 ← phi( main::@2/(word*) SQUARES#45 main::@5/(word*) SQUARES#29 )
-  (byte*) heap_head#38 ← phi( main::@2/(byte*) heap_head#43 main::@5/(byte*) heap_head#35 )
+  (byte*) heap_head#37 ← phi( main::@2/(byte*) heap_head#42 main::@5/(byte*) heap_head#35 )
   (byte) NUM_SQUARES#26 ← phi( main::@2/(byte) NUM_SQUARES#34 main::@5/(byte) NUM_SQUARES#21 )
   (byte*) main::min_fill#5 ← phi( main::@2/(byte*) main::min_fill#0 main::@5/(byte*) main::min_fill#4 )
   (word) main::min_dist_angle#4 ← phi( main::@2/(word) main::min_dist_angle#0 main::@5/(word) main::min_dist_angle#5 )
@@ -585,7 +578,7 @@ main::@5: scope:[main]  from main::@4 main::@7 main::@8
   (byte*) SCREEN_ANGLE#9 ← phi( main::@4/(byte*) SCREEN_ANGLE#10 main::@7/(byte*) SCREEN_ANGLE#11 main::@8/(byte*) SCREEN_ANGLE#12 )
   (byte*) SCREEN_DIST#10 ← phi( main::@4/(byte*) SCREEN_DIST#11 main::@7/(byte*) SCREEN_DIST#12 main::@8/(byte*) SCREEN_DIST#13 )
   (word*) SQUARES#29 ← phi( main::@4/(word*) SQUARES#37 main::@7/(word*) SQUARES#38 main::@8/(word*) SQUARES#39 )
-  (byte*) heap_head#35 ← phi( main::@4/(byte*) heap_head#38 main::@7/(byte*) heap_head#39 main::@8/(byte*) heap_head#40 )
+  (byte*) heap_head#35 ← phi( main::@4/(byte*) heap_head#37 main::@7/(byte*) heap_head#38 main::@8/(byte*) heap_head#39 )
   (byte) NUM_SQUARES#21 ← phi( main::@4/(byte) NUM_SQUARES#26 main::@7/(byte) NUM_SQUARES#27 main::@8/(byte) NUM_SQUARES#28 )
   (byte*) main::min_fill#4 ← phi( main::@4/(byte*) main::min_fill#5 main::@7/(byte*) main::min_fill#6 main::@8/(byte*) main::min_fill#1 )
   (word) main::min_dist_angle#5 ← phi( main::@4/(word) main::min_dist_angle#4 main::@7/(word) main::min_dist_angle#2 main::@8/(word) main::min_dist_angle#1 )
@@ -602,7 +595,7 @@ main::@7: scope:[main]  from main::@4
   (byte*) SCREEN_ANGLE#11 ← phi( main::@4/(byte*) SCREEN_ANGLE#10 )
   (byte*) SCREEN_DIST#12 ← phi( main::@4/(byte*) SCREEN_DIST#11 )
   (word*) SQUARES#38 ← phi( main::@4/(word*) SQUARES#37 )
-  (byte*) heap_head#39 ← phi( main::@4/(byte*) heap_head#38 )
+  (byte*) heap_head#38 ← phi( main::@4/(byte*) heap_head#37 )
   (byte) NUM_SQUARES#27 ← phi( main::@4/(byte) NUM_SQUARES#26 )
   (byte*) main::min_fill#6 ← phi( main::@4/(byte*) main::min_fill#5 )
   (byte*) main::fill#5 ← phi( main::@4/(byte*) main::fill#2 )
@@ -618,7 +611,7 @@ main::@8: scope:[main]  from main::@7
   (byte*) SCREEN_ANGLE#12 ← phi( main::@7/(byte*) SCREEN_ANGLE#11 )
   (byte*) SCREEN_DIST#13 ← phi( main::@7/(byte*) SCREEN_DIST#12 )
   (word*) SQUARES#39 ← phi( main::@7/(word*) SQUARES#38 )
-  (byte*) heap_head#40 ← phi( main::@7/(byte*) heap_head#39 )
+  (byte*) heap_head#39 ← phi( main::@7/(byte*) heap_head#38 )
   (byte) NUM_SQUARES#28 ← phi( main::@7/(byte) NUM_SQUARES#27 )
   (byte*) main::angle#5 ← phi( main::@7/(byte*) main::angle#3 )
   (byte*) main::dist#5 ← phi( main::@7/(byte*) main::dist#3 )
@@ -748,7 +741,7 @@ init_dist_screen: scope:[init_dist_screen]  from main
   call init_squares 
   to:init_dist_screen::@19
 init_dist_screen::@19: scope:[init_dist_screen]  from init_dist_screen
-  (byte) NUM_SQUARES#41 ← phi( init_dist_screen/(byte) NUM_SQUARES#3 )
+  (byte) NUM_SQUARES#40 ← phi( init_dist_screen/(byte) NUM_SQUARES#3 )
   (byte*) init_dist_screen::screen#1 ← phi( init_dist_screen/(byte*) init_dist_screen::screen#2 )
   (word*) SQUARES#14 ← phi( init_dist_screen/(word*) SQUARES#2 )
   (byte*) heap_head#20 ← phi( init_dist_screen/(byte*) heap_head#4 )
@@ -760,8 +753,8 @@ init_dist_screen::@19: scope:[init_dist_screen]  from init_dist_screen
   (byte) init_dist_screen::y#0 ← (byte) 0
   to:init_dist_screen::@1
 init_dist_screen::@1: scope:[init_dist_screen]  from init_dist_screen::@19 init_dist_screen::@7
-  (byte*) heap_head#49 ← phi( init_dist_screen::@19/(byte*) heap_head#9 init_dist_screen::@7/(byte*) heap_head#30 )
-  (byte) NUM_SQUARES#40 ← phi( init_dist_screen::@19/(byte) NUM_SQUARES#41 init_dist_screen::@7/(byte) NUM_SQUARES#17 )
+  (byte*) heap_head#48 ← phi( init_dist_screen::@19/(byte*) heap_head#9 init_dist_screen::@7/(byte*) heap_head#30 )
+  (byte) NUM_SQUARES#39 ← phi( init_dist_screen::@19/(byte) NUM_SQUARES#40 init_dist_screen::@7/(byte) NUM_SQUARES#17 )
   (byte*) init_dist_screen::screen_bottomline#14 ← phi( init_dist_screen::@19/(byte*) init_dist_screen::screen_bottomline#0 init_dist_screen::@7/(byte*) init_dist_screen::screen_bottomline#1 )
   (byte*) init_dist_screen::screen_topline#14 ← phi( init_dist_screen::@19/(byte*) init_dist_screen::screen_topline#0 init_dist_screen::@7/(byte*) init_dist_screen::screen_topline#1 )
   (word*) SQUARES#40 ← phi( init_dist_screen::@19/(word*) SQUARES#5 init_dist_screen::@7/(word*) SQUARES#25 )
@@ -772,8 +765,8 @@ init_dist_screen::@1: scope:[init_dist_screen]  from init_dist_screen::@19 init_
   if((bool~) init_dist_screen::$3) goto init_dist_screen::@2
   to:init_dist_screen::@3
 init_dist_screen::@2: scope:[init_dist_screen]  from init_dist_screen::@1
-  (byte*) heap_head#46 ← phi( init_dist_screen::@1/(byte*) heap_head#49 )
-  (byte) NUM_SQUARES#38 ← phi( init_dist_screen::@1/(byte) NUM_SQUARES#40 )
+  (byte*) heap_head#45 ← phi( init_dist_screen::@1/(byte*) heap_head#48 )
+  (byte) NUM_SQUARES#37 ← phi( init_dist_screen::@1/(byte) NUM_SQUARES#39 )
   (byte) init_dist_screen::y#9 ← phi( init_dist_screen::@1/(byte) init_dist_screen::y#2 )
   (byte*) init_dist_screen::screen_bottomline#11 ← phi( init_dist_screen::@1/(byte*) init_dist_screen::screen_bottomline#14 )
   (byte*) init_dist_screen::screen_topline#11 ← phi( init_dist_screen::@1/(byte*) init_dist_screen::screen_topline#14 )
@@ -783,8 +776,8 @@ init_dist_screen::@2: scope:[init_dist_screen]  from init_dist_screen::@1
   (number~) init_dist_screen::$7 ← (number~) init_dist_screen::$6
   to:init_dist_screen::@4
 init_dist_screen::@3: scope:[init_dist_screen]  from init_dist_screen::@1
-  (byte*) heap_head#47 ← phi( init_dist_screen::@1/(byte*) heap_head#49 )
-  (byte) NUM_SQUARES#39 ← phi( init_dist_screen::@1/(byte) NUM_SQUARES#40 )
+  (byte*) heap_head#46 ← phi( init_dist_screen::@1/(byte*) heap_head#48 )
+  (byte) NUM_SQUARES#38 ← phi( init_dist_screen::@1/(byte) NUM_SQUARES#39 )
   (byte) init_dist_screen::y#10 ← phi( init_dist_screen::@1/(byte) init_dist_screen::y#2 )
   (byte*) init_dist_screen::screen_bottomline#12 ← phi( init_dist_screen::@1/(byte*) init_dist_screen::screen_bottomline#14 )
   (byte*) init_dist_screen::screen_topline#12 ← phi( init_dist_screen::@1/(byte*) init_dist_screen::screen_topline#14 )
@@ -794,8 +787,8 @@ init_dist_screen::@3: scope:[init_dist_screen]  from init_dist_screen::@1
   (number~) init_dist_screen::$5 ← (number~) init_dist_screen::$4
   to:init_dist_screen::@4
 init_dist_screen::@4: scope:[init_dist_screen]  from init_dist_screen::@2 init_dist_screen::@3
-  (byte*) heap_head#44 ← phi( init_dist_screen::@2/(byte*) heap_head#46 init_dist_screen::@3/(byte*) heap_head#47 )
-  (byte) NUM_SQUARES#35 ← phi( init_dist_screen::@2/(byte) NUM_SQUARES#38 init_dist_screen::@3/(byte) NUM_SQUARES#39 )
+  (byte*) heap_head#43 ← phi( init_dist_screen::@2/(byte*) heap_head#45 init_dist_screen::@3/(byte*) heap_head#46 )
+  (byte) NUM_SQUARES#35 ← phi( init_dist_screen::@2/(byte) NUM_SQUARES#37 init_dist_screen::@3/(byte) NUM_SQUARES#38 )
   (byte) init_dist_screen::y#7 ← phi( init_dist_screen::@2/(byte) init_dist_screen::y#9 init_dist_screen::@3/(byte) init_dist_screen::y#10 )
   (byte*) init_dist_screen::screen_bottomline#8 ← phi( init_dist_screen::@2/(byte*) init_dist_screen::screen_bottomline#11 init_dist_screen::@3/(byte*) init_dist_screen::screen_bottomline#12 )
   (byte*) init_dist_screen::screen_topline#8 ← phi( init_dist_screen::@2/(byte*) init_dist_screen::screen_topline#11 init_dist_screen::@3/(byte*) init_dist_screen::screen_topline#12 )
@@ -808,7 +801,7 @@ init_dist_screen::@4: scope:[init_dist_screen]  from init_dist_screen::@2 init_d
   to:init_dist_screen::@20
 init_dist_screen::@20: scope:[init_dist_screen]  from init_dist_screen::@4
   (word*) SQUARES#41 ← phi( init_dist_screen::@4/(word*) SQUARES#19 )
-  (byte*) heap_head#41 ← phi( init_dist_screen::@4/(byte*) heap_head#44 )
+  (byte*) heap_head#40 ← phi( init_dist_screen::@4/(byte*) heap_head#43 )
   (byte) NUM_SQUARES#29 ← phi( init_dist_screen::@4/(byte) NUM_SQUARES#35 )
   (byte) init_dist_screen::y#5 ← phi( init_dist_screen::@4/(byte) init_dist_screen::y#7 )
   (byte*) init_dist_screen::screen_bottomline#6 ← phi( init_dist_screen::@4/(byte*) init_dist_screen::screen_bottomline#8 )
@@ -823,7 +816,7 @@ init_dist_screen::@5: scope:[init_dist_screen]  from init_dist_screen::@20 init_
   (byte) init_dist_screen::xb#8 ← phi( init_dist_screen::@20/(byte) init_dist_screen::xb#0 init_dist_screen::@22/(byte) init_dist_screen::xb#1 )
   (word) init_dist_screen::yds#6 ← phi( init_dist_screen::@20/(word) init_dist_screen::yds#0 init_dist_screen::@22/(word) init_dist_screen::yds#7 )
   (word*) SQUARES#32 ← phi( init_dist_screen::@20/(word*) SQUARES#41 init_dist_screen::@22/(word*) SQUARES#42 )
-  (byte*) heap_head#36 ← phi( init_dist_screen::@20/(byte*) heap_head#41 init_dist_screen::@22/(byte*) heap_head#42 )
+  (byte*) heap_head#36 ← phi( init_dist_screen::@20/(byte*) heap_head#40 init_dist_screen::@22/(byte*) heap_head#41 )
   (byte) NUM_SQUARES#22 ← phi( init_dist_screen::@20/(byte) NUM_SQUARES#29 init_dist_screen::@22/(byte) NUM_SQUARES#30 )
   (byte) init_dist_screen::y#4 ← phi( init_dist_screen::@20/(byte) init_dist_screen::y#5 init_dist_screen::@22/(byte) init_dist_screen::y#6 )
   (byte*) init_dist_screen::screen_bottomline#4 ← phi( init_dist_screen::@20/(byte*) init_dist_screen::screen_bottomline#6 init_dist_screen::@22/(byte*) init_dist_screen::screen_bottomline#3 )
@@ -833,7 +826,7 @@ init_dist_screen::@5: scope:[init_dist_screen]  from init_dist_screen::@20 init_
   if((bool~) init_dist_screen::$10) goto init_dist_screen::@6
   to:init_dist_screen::@7
 init_dist_screen::@6: scope:[init_dist_screen]  from init_dist_screen::@5
-  (byte*) heap_head#52 ← phi( init_dist_screen::@5/(byte*) heap_head#36 )
+  (byte*) heap_head#51 ← phi( init_dist_screen::@5/(byte*) heap_head#36 )
   (byte) init_dist_screen::y#14 ← phi( init_dist_screen::@5/(byte) init_dist_screen::y#4 )
   (byte) init_dist_screen::xb#7 ← phi( init_dist_screen::@5/(byte) init_dist_screen::xb#8 )
   (byte*) init_dist_screen::screen_bottomline#13 ← phi( init_dist_screen::@5/(byte*) init_dist_screen::screen_bottomline#4 )
@@ -861,7 +854,7 @@ init_dist_screen::@7: scope:[init_dist_screen]  from init_dist_screen::@5
   if((bool~) init_dist_screen::$21) goto init_dist_screen::@1
   to:init_dist_screen::@return
 init_dist_screen::@8: scope:[init_dist_screen]  from init_dist_screen::@6
-  (byte*) heap_head#50 ← phi( init_dist_screen::@6/(byte*) heap_head#52 )
+  (byte*) heap_head#49 ← phi( init_dist_screen::@6/(byte*) heap_head#51 )
   (byte) init_dist_screen::y#12 ← phi( init_dist_screen::@6/(byte) init_dist_screen::y#14 )
   (byte) init_dist_screen::xb#5 ← phi( init_dist_screen::@6/(byte) init_dist_screen::xb#7 )
   (byte*) init_dist_screen::screen_bottomline#9 ← phi( init_dist_screen::@6/(byte*) init_dist_screen::screen_bottomline#13 )
@@ -875,7 +868,7 @@ init_dist_screen::@8: scope:[init_dist_screen]  from init_dist_screen::@6
   (number~) init_dist_screen::$16 ← (number~) init_dist_screen::$15
   to:init_dist_screen::@10
 init_dist_screen::@9: scope:[init_dist_screen]  from init_dist_screen::@6
-  (byte*) heap_head#51 ← phi( init_dist_screen::@6/(byte*) heap_head#52 )
+  (byte*) heap_head#50 ← phi( init_dist_screen::@6/(byte*) heap_head#51 )
   (byte) init_dist_screen::y#13 ← phi( init_dist_screen::@6/(byte) init_dist_screen::y#14 )
   (byte) init_dist_screen::xb#6 ← phi( init_dist_screen::@6/(byte) init_dist_screen::xb#7 )
   (byte*) init_dist_screen::screen_bottomline#10 ← phi( init_dist_screen::@6/(byte*) init_dist_screen::screen_bottomline#13 )
@@ -889,7 +882,7 @@ init_dist_screen::@9: scope:[init_dist_screen]  from init_dist_screen::@6
   (number~) init_dist_screen::$14 ← (number~) init_dist_screen::$13
   to:init_dist_screen::@10
 init_dist_screen::@10: scope:[init_dist_screen]  from init_dist_screen::@8 init_dist_screen::@9
-  (byte*) heap_head#48 ← phi( init_dist_screen::@8/(byte*) heap_head#50 init_dist_screen::@9/(byte*) heap_head#51 )
+  (byte*) heap_head#47 ← phi( init_dist_screen::@8/(byte*) heap_head#49 init_dist_screen::@9/(byte*) heap_head#50 )
   (byte) init_dist_screen::y#11 ← phi( init_dist_screen::@8/(byte) init_dist_screen::y#12 init_dist_screen::@9/(byte) init_dist_screen::y#13 )
   (byte) init_dist_screen::xb#4 ← phi( init_dist_screen::@8/(byte) init_dist_screen::xb#5 init_dist_screen::@9/(byte) init_dist_screen::xb#6 )
   (byte*) init_dist_screen::screen_bottomline#7 ← phi( init_dist_screen::@8/(byte*) init_dist_screen::screen_bottomline#9 init_dist_screen::@9/(byte*) init_dist_screen::screen_bottomline#10 )
@@ -905,7 +898,7 @@ init_dist_screen::@10: scope:[init_dist_screen]  from init_dist_screen::@8 init_
   (word) sqr::return#3 ← (word) sqr::return#1
   to:init_dist_screen::@21
 init_dist_screen::@21: scope:[init_dist_screen]  from init_dist_screen::@10
-  (byte*) heap_head#45 ← phi( init_dist_screen::@10/(byte*) heap_head#48 )
+  (byte*) heap_head#44 ← phi( init_dist_screen::@10/(byte*) heap_head#47 )
   (byte) init_dist_screen::y#8 ← phi( init_dist_screen::@10/(byte) init_dist_screen::y#11 )
   (byte) init_dist_screen::xb#3 ← phi( init_dist_screen::@10/(byte) init_dist_screen::xb#4 )
   (byte*) init_dist_screen::screen_bottomline#5 ← phi( init_dist_screen::@10/(byte*) init_dist_screen::screen_bottomline#7 )
@@ -926,7 +919,7 @@ init_dist_screen::@21: scope:[init_dist_screen]  from init_dist_screen::@10
 init_dist_screen::@22: scope:[init_dist_screen]  from init_dist_screen::@21
   (word) init_dist_screen::yds#7 ← phi( init_dist_screen::@21/(word) init_dist_screen::yds#1 )
   (word*) SQUARES#42 ← phi( init_dist_screen::@21/(word*) SQUARES#20 )
-  (byte*) heap_head#42 ← phi( init_dist_screen::@21/(byte*) heap_head#45 )
+  (byte*) heap_head#41 ← phi( init_dist_screen::@21/(byte*) heap_head#44 )
   (byte) NUM_SQUARES#30 ← phi( init_dist_screen::@21/(byte) NUM_SQUARES#13 )
   (byte) init_dist_screen::y#6 ← phi( init_dist_screen::@21/(byte) init_dist_screen::y#8 )
   (byte) init_dist_screen::xb#2 ← phi( init_dist_screen::@21/(byte) init_dist_screen::xb#3 )
@@ -974,7 +967,6 @@ SYMBOL TABLE SSA
 (void*~) $0
 (void*~) $1
 (label) @12
-(label) @15
 (label) @17
 (label) @20
 (label) @21
@@ -983,7 +975,9 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(word*) CORDIC_ATAN2_ANGLES_16
+(const word*) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+        .word 256*2*256*atan(1/pow(2,i))/PI/2
+ }}
 (const byte) CORDIC_ITERATIONS_16 = (number) $f
 (const byte) FILL_CHAR = (byte) '@'
 (const byte*) HEAP_TOP = (byte*)(number) $a000
@@ -1024,7 +1018,6 @@ SYMBOL TABLE SSA
 (byte) NUM_SQUARES#39
 (byte) NUM_SQUARES#4
 (byte) NUM_SQUARES#40
-(byte) NUM_SQUARES#41
 (byte) NUM_SQUARES#5
 (byte) NUM_SQUARES#6
 (byte) NUM_SQUARES#7
@@ -1107,7 +1100,6 @@ SYMBOL TABLE SSA
 (word*) SQUARES#43
 (word*) SQUARES#44
 (word*) SQUARES#45
-(word*) SQUARES#46
 (word*) SQUARES#5
 (word*) SQUARES#6
 (word*) SQUARES#7
@@ -1428,7 +1420,6 @@ SYMBOL TABLE SSA
 (byte*) heap_head#5
 (byte*) heap_head#50
 (byte*) heap_head#51
-(byte*) heap_head#52
 (byte*) heap_head#6
 (byte*) heap_head#7
 (byte*) heap_head#8
@@ -1851,8 +1842,8 @@ Adding number conversion cast (unumber) init_dist_screen::$7 in (number~) init_d
 Adding number conversion cast (unumber) $18 in (number~) init_dist_screen::$4 ← (number) $18 - (byte) init_dist_screen::y2#2
 Adding number conversion cast (unumber) init_dist_screen::$4 in (number~) init_dist_screen::$4 ← (unumber)(number) $18 - (byte) init_dist_screen::y2#2
 Adding number conversion cast (unumber) init_dist_screen::$5 in (number~) init_dist_screen::$5 ← (unumber~) init_dist_screen::$4
-Adding number conversion cast (unumber) init_dist_screen::$8 in (byte*) heap_head#44 ← phi( init_dist_screen::@2/(byte*) heap_head#46 init_dist_screen::@3/(byte*) heap_head#47 )
-  (byte) NUM_SQUARES#35 ← phi( init_dist_screen::@2/(byte) NUM_SQUARES#38 init_dist_screen::@3/(byte) NUM_SQUARES#39 )
+Adding number conversion cast (unumber) init_dist_screen::$8 in (byte*) heap_head#43 ← phi( init_dist_screen::@2/(byte*) heap_head#45 init_dist_screen::@3/(byte*) heap_head#46 )
+  (byte) NUM_SQUARES#35 ← phi( init_dist_screen::@2/(byte) NUM_SQUARES#37 init_dist_screen::@3/(byte) NUM_SQUARES#38 )
   (byte) init_dist_screen::y#7 ← phi( init_dist_screen::@2/(byte) init_dist_screen::y#9 init_dist_screen::@3/(byte) init_dist_screen::y#10 )
   (byte*) init_dist_screen::screen_bottomline#8 ← phi( init_dist_screen::@2/(byte*) init_dist_screen::screen_bottomline#11 init_dist_screen::@3/(byte*) init_dist_screen::screen_bottomline#12 )
   (byte*) init_dist_screen::screen_topline#8 ← phi( init_dist_screen::@2/(byte*) init_dist_screen::screen_topline#11 init_dist_screen::@3/(byte*) init_dist_screen::screen_topline#12 )
@@ -1872,7 +1863,7 @@ Adding number conversion cast (unumber) init_dist_screen::$16 in (number~) init_
 Adding number conversion cast (unumber) $27 in (number~) init_dist_screen::$13 ← (number) $27 - (byte) init_dist_screen::x2#2
 Adding number conversion cast (unumber) init_dist_screen::$13 in (number~) init_dist_screen::$13 ← (unumber)(number) $27 - (byte) init_dist_screen::x2#2
 Adding number conversion cast (unumber) init_dist_screen::$14 in (number~) init_dist_screen::$14 ← (unumber~) init_dist_screen::$13
-Adding number conversion cast (unumber) init_dist_screen::$17 in (byte*) heap_head#48 ← phi( init_dist_screen::@8/(byte*) heap_head#50 init_dist_screen::@9/(byte*) heap_head#51 )
+Adding number conversion cast (unumber) init_dist_screen::$17 in (byte*) heap_head#47 ← phi( init_dist_screen::@8/(byte*) heap_head#49 init_dist_screen::@9/(byte*) heap_head#50 )
   (byte) init_dist_screen::y#11 ← phi( init_dist_screen::@8/(byte) init_dist_screen::y#12 init_dist_screen::@9/(byte) init_dist_screen::y#13 )
   (byte) init_dist_screen::xb#4 ← phi( init_dist_screen::@8/(byte) init_dist_screen::xb#5 init_dist_screen::@9/(byte) init_dist_screen::xb#6 )
   (byte*) init_dist_screen::screen_bottomline#7 ← phi( init_dist_screen::@8/(byte*) init_dist_screen::screen_bottomline#9 init_dist_screen::@9/(byte*) init_dist_screen::screen_bottomline#10 )
@@ -2057,13 +2048,13 @@ Inferred type updated to byte in (unumber~) init_dist_screen::$14 ← (byte~) in
 Inferred type updated to byte for (unumber~) init_dist_screen::$17
 Inversing boolean not [24] (bool~) bsearch16u::$12 ← (signed word) bsearch16u::result#0 != (signed byte) 0 from [23] (bool~) bsearch16u::$11 ← (signed word) bsearch16u::result#0 == (signed byte) 0
 Inversing boolean not [31] (bool~) bsearch16u::$14 ← (signed word) bsearch16u::result#1 <= (signed byte) 0 from [30] (bool~) bsearch16u::$13 ← (signed word) bsearch16u::result#1 > (signed byte) 0
-Inversing boolean not [130] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [129] (bool~) atan2_16::$16 ← (signed word) atan2_16::yi#3 == (signed byte) 0
-Inversing boolean not [139] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [138] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
-Inversing boolean not [150] (bool~) atan2_16::$19 ← (byte) 0 == (byte) atan2_16::shift#4 from [149] (bool~) atan2_16::$24 ← (byte) 0 != (byte) atan2_16::shift#4
-Inversing boolean not [174] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [173] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
-Inversing boolean not [222] (bool~) main::$3 ← *((byte*) main::fill#2) == (const byte) FILL_CHAR from [221] (bool~) main::$2 ← *((byte*) main::fill#2) != (const byte) FILL_CHAR
-Inversing boolean not [234] (bool~) main::$5 ← (word) main::dist_angle#0 >= (word) main::min_dist_angle#2 from [233] (bool~) main::$4 ← (word) main::dist_angle#0 < (word) main::min_dist_angle#2
-Inversing boolean not [241] (bool~) main::$8 ← (word) main::min_dist_angle#3 != (word) $ffff from [240] (bool~) main::$7 ← (word) main::min_dist_angle#3 == (word) $ffff
+Inversing boolean not [128] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [127] (bool~) atan2_16::$16 ← (signed word) atan2_16::yi#3 == (signed byte) 0
+Inversing boolean not [137] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [136] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
+Inversing boolean not [148] (bool~) atan2_16::$19 ← (byte) 0 == (byte) atan2_16::shift#4 from [147] (bool~) atan2_16::$24 ← (byte) 0 != (byte) atan2_16::shift#4
+Inversing boolean not [172] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [171] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
+Inversing boolean not [220] (bool~) main::$3 ← *((byte*) main::fill#2) == (const byte) FILL_CHAR from [219] (bool~) main::$2 ← *((byte*) main::fill#2) != (const byte) FILL_CHAR
+Inversing boolean not [232] (bool~) main::$5 ← (word) main::dist_angle#0 >= (word) main::min_dist_angle#2 from [231] (bool~) main::$4 ← (word) main::dist_angle#0 < (word) main::min_dist_angle#2
+Inversing boolean not [239] (bool~) main::$8 ← (word) main::min_dist_angle#3 != (word) $ffff from [238] (bool~) main::$7 ← (word) main::min_dist_angle#3 == (word) $ffff
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte*) malloc::mem#0 = (byte*~) malloc::$0 
 Alias (void*) malloc::return#0 = (void*) malloc::return#5 (void*) malloc::return#1 
@@ -2077,7 +2068,7 @@ Alias (word*) bsearch16u::return#1 = (word*) bsearch16u::return#4
 Alias (word*) bsearch16u::items#0 = (word*~) bsearch16u::$15 
 Alias (word*~) bsearch16u::$2 = (word*~) bsearch16u::$1 
 Alias (word*) bsearch16u::return#2 = (word*~) bsearch16u::$4 
-Alias (byte*) heap_head#0 = (byte*) heap_head#37 (byte*) heap_head#32 (byte*) heap_head#23 
+Alias (byte*) heap_head#0 = (byte*) heap_head#32 (byte*) heap_head#23 
 Alias (word) malloc::size#0 = (byte~) init_squares::$0 
 Alias (void*) malloc::return#2 = (void*) malloc::return#6 
 Alias (byte) NUM_SQUARES#6 = (byte) NUM_SQUARES#7 
@@ -2089,8 +2080,6 @@ Alias (word*) bsearch16u::return#3 = (word*) bsearch16u::return#5
 Alias (word*) SQUARES#10 = (word*) SQUARES#11 
 Alias (word*) sqrt::found#0 = (word*~) sqrt::$0 
 Alias (byte) sqrt::return#0 = (byte) sqrt::sq#0 (byte~) sqrt::$2 (byte) sqrt::return#3 (byte) sqrt::return#1 
-Alias (byte) NUM_SQUARES#0 = (byte) NUM_SQUARES#37 (byte) NUM_SQUARES#33 (byte) NUM_SQUARES#25 (byte) NUM_SQUARES#24 (byte) NUM_SQUARES#18 
-Alias (word*) SQUARES#0 = (word*) SQUARES#46 (word*) SQUARES#44 (word*) SQUARES#36 (word*) SQUARES#35 (word*) SQUARES#26 
 Alias (signed word) atan2_16::y#1 = (signed word) atan2_16::y#2 (signed word~) atan2_16::$3 (signed word) atan2_16::y#3 
 Alias (signed word) atan2_16::x#5 = (signed word) atan2_16::x#9 (signed word) atan2_16::x#6 
 Alias (signed word~) atan2_16::$2 = (signed word~) atan2_16::$1 
@@ -2128,6 +2117,8 @@ Alias (word) atan2_16::angle#4 = (word~) atan2_16::$12
 Alias (word) atan2_16::return#0 = (word) atan2_16::angle#10 (word) atan2_16::return#3 (word) atan2_16::return#1 
 Alias (word) atan2_16::angle#11 = (word) atan2_16::angle#15 
 Alias (word) atan2_16::angle#5 = (word~) atan2_16::$15 
+Alias (byte) NUM_SQUARES#0 = (byte) NUM_SQUARES#33 (byte) NUM_SQUARES#25 (byte) NUM_SQUARES#24 (byte) NUM_SQUARES#18 
+Alias (word*) SQUARES#0 = (word*) SQUARES#44 (word*) SQUARES#36 (word*) SQUARES#35 (word*) SQUARES#26 
 Alias (void*) malloc::return#3 = (void*) malloc::return#7 
 Alias (byte*) heap_head#16 = (byte*) heap_head#5 
 Alias (void*) malloc::return#4 = (void*) malloc::return#8 
@@ -2141,7 +2132,7 @@ Alias (word*) SQUARES#12 = (word*) SQUARES#3 (word*) SQUARES#28
 Alias (byte*) SCREEN_DIST#2 = (byte*) SCREEN_DIST#4 
 Alias (byte*) SCREEN_ANGLE#2 = (byte*) SCREEN_ANGLE#4 
 Alias (byte) NUM_SQUARES#15 = (byte) NUM_SQUARES#34 
-Alias (byte*) heap_head#27 = (byte*) heap_head#43 
+Alias (byte*) heap_head#27 = (byte*) heap_head#42 
 Alias (word*) SQUARES#22 = (word*) SQUARES#45 
 Alias (byte*) main::dist#3 = (byte*) main::dist#4 (byte*) main::dist#5 
 Alias (byte*) main::angle#3 = (byte*) main::angle#4 (byte*) main::angle#5 
@@ -2149,7 +2140,7 @@ Alias (word) main::min_dist_angle#2 = (word) main::min_dist_angle#4
 Alias (byte*) main::fill#2 = (byte*) main::fill#5 (byte*) main::fill#4 (byte*) main::min_fill#1 
 Alias (byte*) main::min_fill#5 = (byte*) main::min_fill#6 
 Alias (byte) NUM_SQUARES#26 = (byte) NUM_SQUARES#27 (byte) NUM_SQUARES#28 
-Alias (byte*) heap_head#38 = (byte*) heap_head#39 (byte*) heap_head#40 
+Alias (byte*) heap_head#37 = (byte*) heap_head#38 (byte*) heap_head#39 
 Alias (word*) SQUARES#37 = (word*) SQUARES#38 (word*) SQUARES#39 
 Alias (byte*) SCREEN_DIST#11 = (byte*) SCREEN_DIST#12 (byte*) SCREEN_DIST#13 
 Alias (byte*) SCREEN_ANGLE#10 = (byte*) SCREEN_ANGLE#11 (byte*) SCREEN_ANGLE#12 
@@ -2179,7 +2170,7 @@ Alias (word) atan2_16::return#2 = (word) atan2_16::return#4
 Alias (word) init_angle_screen::angle_w#0 = (word~) init_angle_screen::$10 
 Alias (byte) init_angle_screen::ang_w#0 = (byte~) init_angle_screen::$12 
 Alias (byte*) init_dist_screen::screen#1 = (byte*) init_dist_screen::screen#2 (byte*) init_dist_screen::screen_topline#0 
-Alias (byte) NUM_SQUARES#3 = (byte) NUM_SQUARES#41 
+Alias (byte) NUM_SQUARES#3 = (byte) NUM_SQUARES#40 
 Alias (byte*) heap_head#20 = (byte*) heap_head#9 
 Alias (word*) SQUARES#14 = (word*) SQUARES#5 
 Alias (byte*) init_dist_screen::screen_bottomline#0 = (byte*~) init_dist_screen::$1 
@@ -2188,8 +2179,8 @@ Alias (word*) SQUARES#30 = (word*) SQUARES#40 (word*) SQUARES#31
 Alias (byte*) init_dist_screen::screen_topline#11 = (byte*) init_dist_screen::screen_topline#14 (byte*) init_dist_screen::screen_topline#12 
 Alias (byte*) init_dist_screen::screen_bottomline#11 = (byte*) init_dist_screen::screen_bottomline#14 (byte*) init_dist_screen::screen_bottomline#12 
 Alias (byte) init_dist_screen::y#10 = (byte) init_dist_screen::y#9 (byte) init_dist_screen::y#2 
-Alias (byte) NUM_SQUARES#38 = (byte) NUM_SQUARES#40 (byte) NUM_SQUARES#39 
-Alias (byte*) heap_head#46 = (byte*) heap_head#49 (byte*) heap_head#47 
+Alias (byte) NUM_SQUARES#37 = (byte) NUM_SQUARES#39 (byte) NUM_SQUARES#38 
+Alias (byte*) heap_head#45 = (byte*) heap_head#48 (byte*) heap_head#46 
 Alias (byte~) init_dist_screen::$7 = (byte~) init_dist_screen::$6 
 Alias (byte~) init_dist_screen::$5 = (byte~) init_dist_screen::$4 
 Alias (byte) init_dist_screen::yd#0 = (byte~) init_dist_screen::$8 
@@ -2198,7 +2189,7 @@ Alias (byte*) init_dist_screen::screen_topline#6 = (byte*) init_dist_screen::scr
 Alias (byte*) init_dist_screen::screen_bottomline#6 = (byte*) init_dist_screen::screen_bottomline#8 
 Alias (byte) init_dist_screen::y#5 = (byte) init_dist_screen::y#7 
 Alias (byte) NUM_SQUARES#29 = (byte) NUM_SQUARES#35 
-Alias (byte*) heap_head#41 = (byte*) heap_head#44 
+Alias (byte*) heap_head#40 = (byte*) heap_head#43 
 Alias (word*) SQUARES#19 = (word*) SQUARES#41 
 Alias (word) init_dist_screen::yds#0 = (word~) init_dist_screen::$9 
 Alias (byte) init_dist_screen::x#2 = (byte) init_dist_screen::x#3 (byte) init_dist_screen::x#7 (byte) init_dist_screen::x#8 
@@ -2209,7 +2200,7 @@ Alias (byte*) init_dist_screen::screen_topline#10 = (byte*) init_dist_screen::sc
 Alias (byte*) init_dist_screen::screen_bottomline#10 = (byte*) init_dist_screen::screen_bottomline#13 (byte*) init_dist_screen::screen_bottomline#4 (byte*) init_dist_screen::screen_bottomline#2 (byte*) init_dist_screen::screen_bottomline#9 
 Alias (byte) init_dist_screen::xb#5 = (byte) init_dist_screen::xb#7 (byte) init_dist_screen::xb#8 (byte) init_dist_screen::xb#6 
 Alias (byte) init_dist_screen::y#12 = (byte) init_dist_screen::y#14 (byte) init_dist_screen::y#4 (byte) init_dist_screen::y#3 (byte) init_dist_screen::y#13 
-Alias (byte*) heap_head#10 = (byte*) heap_head#52 (byte*) heap_head#36 (byte*) heap_head#30 (byte*) heap_head#50 (byte*) heap_head#51 (byte*) heap_head#21 
+Alias (byte*) heap_head#10 = (byte*) heap_head#51 (byte*) heap_head#36 (byte*) heap_head#30 (byte*) heap_head#49 (byte*) heap_head#50 (byte*) heap_head#21 
 Alias (byte) init_dist_screen::x2#0 = (byte~) init_dist_screen::$11 (byte) init_dist_screen::x2#1 (byte) init_dist_screen::x2#2 
 Alias (byte~) init_dist_screen::$16 = (byte~) init_dist_screen::$15 
 Alias (byte~) init_dist_screen::$14 = (byte~) init_dist_screen::$13 
@@ -2223,7 +2214,7 @@ Alias (byte) init_dist_screen::x#4 = (byte) init_dist_screen::x#5 (byte) init_di
 Alias (byte*) init_dist_screen::screen_bottomline#3 = (byte*) init_dist_screen::screen_bottomline#5 (byte*) init_dist_screen::screen_bottomline#7 
 Alias (byte) init_dist_screen::xb#2 = (byte) init_dist_screen::xb#3 (byte) init_dist_screen::xb#4 
 Alias (byte) init_dist_screen::y#11 = (byte) init_dist_screen::y#8 (byte) init_dist_screen::y#6 
-Alias (byte*) heap_head#42 = (byte*) heap_head#45 (byte*) heap_head#48 
+Alias (byte*) heap_head#41 = (byte*) heap_head#44 (byte*) heap_head#47 
 Alias (word) init_dist_screen::xds#0 = (word~) init_dist_screen::$18 
 Alias (word) init_dist_screen::ds#0 = (word~) init_dist_screen::$19 
 Alias (byte) sqrt::return#2 = (byte) sqrt::return#4 
@@ -2248,7 +2239,7 @@ Alias (signed word) atan2_16::y#4 = (signed word) atan2_16::y#5
 Alias (byte*) main::dist#2 = (byte*) main::dist#3 
 Alias (byte*) main::angle#2 = (byte*) main::angle#3 
 Alias (byte) NUM_SQUARES#16 = (byte) NUM_SQUARES#26 
-Alias (byte*) heap_head#28 = (byte*) heap_head#38 
+Alias (byte*) heap_head#28 = (byte*) heap_head#37 
 Alias (word*) SQUARES#23 = (word*) SQUARES#37 
 Alias (byte*) SCREEN_DIST#10 = (byte*) SCREEN_DIST#11 
 Alias (byte*) SCREEN_ANGLE#10 = (byte*) SCREEN_ANGLE#6 
@@ -2256,8 +2247,8 @@ Alias (word*) SQUARES#19 = (word*) SQUARES#30
 Alias (byte*) init_dist_screen::screen_topline#11 = (byte*) init_dist_screen::screen_topline#6 
 Alias (byte*) init_dist_screen::screen_bottomline#11 = (byte*) init_dist_screen::screen_bottomline#6 
 Alias (byte) init_dist_screen::y#10 = (byte) init_dist_screen::y#5 
-Alias (byte) NUM_SQUARES#29 = (byte) NUM_SQUARES#38 
-Alias (byte*) heap_head#41 = (byte*) heap_head#46 
+Alias (byte) NUM_SQUARES#29 = (byte) NUM_SQUARES#37 
+Alias (byte*) heap_head#40 = (byte*) heap_head#45 
 Alias (word*) SQUARES#15 = (word*) SQUARES#18 
 Alias (word) init_dist_screen::yds#1 = (word) init_dist_screen::yds#3 
 Alias (byte) NUM_SQUARES#11 = (byte) NUM_SQUARES#13 
@@ -2266,7 +2257,7 @@ Alias (byte) init_dist_screen::x#2 = (byte) init_dist_screen::x#4
 Alias (byte*) init_dist_screen::screen_bottomline#10 = (byte*) init_dist_screen::screen_bottomline#3 
 Alias (byte) init_dist_screen::xb#2 = (byte) init_dist_screen::xb#5 
 Alias (byte) init_dist_screen::y#11 = (byte) init_dist_screen::y#12 
-Alias (byte*) heap_head#10 = (byte*) heap_head#42 
+Alias (byte*) heap_head#10 = (byte*) heap_head#41 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (phi-usage) (byte*) main::fill#2 = (byte*) main::fill#3 
 Identical Phi Values (byte) bsearch16u::num#7 (byte) bsearch16u::num#2
@@ -2318,7 +2309,7 @@ Identical Phi Values (byte*) init_dist_screen::screen_topline#10 (byte*) init_di
 Identical Phi Values (byte*) init_dist_screen::screen_bottomline#10 (byte*) init_dist_screen::screen_bottomline#11
 Identical Phi Values (byte) init_dist_screen::y#11 (byte) init_dist_screen::y#10
 Identical Phi Values (byte) NUM_SQUARES#11 (byte) NUM_SQUARES#29
-Identical Phi Values (byte*) heap_head#10 (byte*) heap_head#41
+Identical Phi Values (byte*) heap_head#10 (byte*) heap_head#40
 Identical Phi Values (word*) SQUARES#15 (word*) SQUARES#19
 Identical Phi Values (word) init_dist_screen::yds#1 (word) init_dist_screen::yds#0
 Identical Phi Values (byte) NUM_SQUARES#12 (byte) NUM_SQUARES#10
@@ -2333,41 +2324,41 @@ Identical Phi Values (signed word) atan2_16::y#4 (signed word) atan2_16::y#19
 Identical Phi Values (byte*) SCREEN_DIST#2 (byte*) SCREEN_DIST#0
 Identical Phi Values (byte*) SCREEN_ANGLE#2 (byte*) SCREEN_ANGLE#0
 Identical Phi Values (byte) NUM_SQUARES#15 (byte) NUM_SQUARES#29
-Identical Phi Values (byte*) heap_head#27 (byte*) heap_head#41
+Identical Phi Values (byte*) heap_head#27 (byte*) heap_head#40
 Identical Phi Values (word*) SQUARES#22 (word*) SQUARES#19
 Identical Phi Values (byte) NUM_SQUARES#10 (byte) NUM_SQUARES#15
 Identical Phi Values (byte*) heap_head#19 (byte*) heap_head#27
 Identical Phi Values (word*) SQUARES#13 (word*) SQUARES#22
 Identical Phi Values (word*) SQUARES#19 (word*) SQUARES#1
 Identical Phi Values (byte) NUM_SQUARES#29 (byte) NUM_SQUARES#3
-Identical Phi Values (byte*) heap_head#41 (byte*) heap_head#1
+Identical Phi Values (byte*) heap_head#40 (byte*) heap_head#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) bsearch16u::$5 [13] if((byte) bsearch16u::num#3>(byte) 0) goto bsearch16u::@7
 Simple Condition (bool~) bsearch16u::$12 [25] if((signed word) bsearch16u::result#0!=(signed byte) 0) goto bsearch16u::@9
 Simple Condition (bool~) bsearch16u::$0 [28] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@1
 Simple Condition (bool~) bsearch16u::$14 [32] if((signed word) bsearch16u::result#0<=(signed byte) 0) goto bsearch16u::@10
 Simple Condition (bool~) init_squares::$5 [77] if((byte) init_squares::i#1!=rangelast(0,init_squares::$2)) goto init_squares::@1
-Simple Condition (bool~) atan2_16::$0 [109] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
-Simple Condition (bool~) atan2_16::$5 [118] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
-Simple Condition (bool~) atan2_16::$17 [131] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@16
-Simple Condition (bool~) atan2_16::$11 [140] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7
-Simple Condition (bool~) atan2_16::$18 [143] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@19
-Simple Condition (bool~) atan2_16::$19 [151] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@25
-Simple Condition (bool~) atan2_16::$20 [154] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@26
-Simple Condition (bool~) atan2_16::$21 [171] if((byte) atan2_16::i#1!=rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@15
-Simple Condition (bool~) atan2_16::$14 [175] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8
-Simple Condition (bool~) main::$3 [223] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@5
-Simple Condition (bool~) main::$6 [229] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@4
-Simple Condition (bool~) main::$5 [235] if((word) main::dist_angle#0>=(word) main::min_dist_angle#2) goto main::@5
-Simple Condition (bool~) main::$8 [242] if((word) main::min_dist_angle#3!=(word) $ffff) goto main::@12
-Simple Condition (bool~) init_angle_screen::$2 [261] if((byte) init_angle_screen::x#2<=(byte) $13) goto init_angle_screen::@3
-Simple Condition (bool~) init_angle_screen::$16 [298] if((byte) init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1
-Simple Condition (bool~) init_dist_screen::$3 [314] if((byte) init_dist_screen::y2#0>=(byte) $18) goto init_dist_screen::@2
-Simple Condition (bool~) init_dist_screen::$10 [333] if((byte) init_dist_screen::x#2<=(byte) $13) goto init_dist_screen::@6
-Simple Condition (bool~) init_dist_screen::$12 [338] if((byte) init_dist_screen::x2#0>=(byte) $27) goto init_dist_screen::@8
-Simple Condition (bool~) init_dist_screen::$21 [344] if((byte) init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1
+Simple Condition (bool~) atan2_16::$0 [107] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
+Simple Condition (bool~) atan2_16::$5 [116] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
+Simple Condition (bool~) atan2_16::$17 [129] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@16
+Simple Condition (bool~) atan2_16::$11 [138] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7
+Simple Condition (bool~) atan2_16::$18 [141] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@19
+Simple Condition (bool~) atan2_16::$19 [149] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@25
+Simple Condition (bool~) atan2_16::$20 [152] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@26
+Simple Condition (bool~) atan2_16::$21 [169] if((byte) atan2_16::i#1!=rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@15
+Simple Condition (bool~) atan2_16::$14 [173] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8
+Simple Condition (bool~) main::$3 [221] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@5
+Simple Condition (bool~) main::$6 [227] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@4
+Simple Condition (bool~) main::$5 [233] if((word) main::dist_angle#0>=(word) main::min_dist_angle#2) goto main::@5
+Simple Condition (bool~) main::$8 [240] if((word) main::min_dist_angle#3!=(word) $ffff) goto main::@12
+Simple Condition (bool~) init_angle_screen::$2 [259] if((byte) init_angle_screen::x#2<=(byte) $13) goto init_angle_screen::@3
+Simple Condition (bool~) init_angle_screen::$16 [296] if((byte) init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1
+Simple Condition (bool~) init_dist_screen::$3 [312] if((byte) init_dist_screen::y2#0>=(byte) $18) goto init_dist_screen::@2
+Simple Condition (bool~) init_dist_screen::$10 [331] if((byte) init_dist_screen::x#2<=(byte) $13) goto init_dist_screen::@6
+Simple Condition (bool~) init_dist_screen::$12 [336] if((byte) init_dist_screen::x2#0>=(byte) $27) goto init_dist_screen::@8
+Simple Condition (bool~) init_dist_screen::$21 [342] if((byte) init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [171] if((byte) atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17
+Negating conditional jump and destination [169] if((byte) atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant right-side identified [41] (byte~) bsearch16u::$17 ← (byte) 1 * (const byte) SIZEOF_WORD
 Constant right-side identified [48] (byte~) bsearch16u::$18 ← (byte) 1 * (const byte) SIZEOF_WORD
@@ -2379,9 +2370,6 @@ Constant (const byte) NUM_SQUARES#0 = $ff
 Constant (const word*) SQUARES#0 = (word*) 0
 Constant (const word) init_squares::sqr#0 = 0
 Constant (const byte) init_squares::i#0 = 0
-Constant (const word*) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
-        .word 256*2*256*atan(1/pow(2,i))/PI/2
- }}
 Constant (const word) atan2_16::angle#0 = 0
 Constant (const byte) atan2_16::i#0 = 0
 Constant (const word) malloc::size#1 = $3e8
@@ -2399,16 +2387,16 @@ Constant (const byte) init_dist_screen::xb#0 = $27
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) bsearch16u::num#2 = NUM_SQUARES#3
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [213] if(true) goto main::@2
+if() condition always true - replacing block destination [211] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [169] atan2_16::i#1 ← ++ atan2_16::i#2 to ++
-Resolved ranged comparison value [171] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17 to (const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
-Resolved ranged next value [296] init_angle_screen::y#1 ← ++ init_angle_screen::y#5 to ++
-Resolved ranged comparison value [298] if(init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1 to (number) $d
-Resolved ranged next value [342] init_dist_screen::y#1 ← ++ init_dist_screen::y#10 to ++
-Resolved ranged comparison value [344] if(init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1 to (number) $d
-Rewriting conditional comparison [261] if((byte) init_angle_screen::x#2<=(byte) $13) goto init_angle_screen::@3
-Rewriting conditional comparison [333] if((byte) init_dist_screen::x#2<=(byte) $13) goto init_dist_screen::@6
+Resolved ranged next value [167] atan2_16::i#1 ← ++ atan2_16::i#2 to ++
+Resolved ranged comparison value [169] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17 to (const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
+Resolved ranged next value [294] init_angle_screen::y#1 ← ++ init_angle_screen::y#5 to ++
+Resolved ranged comparison value [296] if(init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1 to (number) $d
+Resolved ranged next value [340] init_dist_screen::y#1 ← ++ init_dist_screen::y#10 to ++
+Resolved ranged comparison value [342] if(init_dist_screen::y#1!=rangelast(0,$c)) goto init_dist_screen::@1 to (number) $d
+Rewriting conditional comparison [259] if((byte) init_angle_screen::x#2<=(byte) $13) goto init_angle_screen::@3
+Rewriting conditional comparison [331] if((byte) init_dist_screen::x#2<=(byte) $13) goto init_dist_screen::@6
 Eliminating unused constant (const byte) NUM_SQUARES#0
 Eliminating unused constant (const word*) SQUARES#0
 Successful SSA optimization PassNEliminateUnusedVars
@@ -2536,7 +2524,6 @@ Added new block during phi lifting init_dist_screen::@23(between init_dist_scree
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @12
-Adding NOP phi() at start of @15
 Adding NOP phi() at start of @17
 Adding NOP phi() at start of @20
 Adding NOP phi() at start of @23
@@ -2545,101 +2532,100 @@ Adding NOP phi() at start of main::@18
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of init_dist_screen
 CALL GRAPH
-Calls in [] to malloc:5 malloc:8 main:11 
-Calls in [main] to init_dist_screen:15 init_angle_screen:17 
-Calls in [init_angle_screen] to atan2_16:69 
-Calls in [init_dist_screen] to init_squares:156 sqr:168 sqr:188 sqrt:193 
-Calls in [sqrt] to bsearch16u:210 
-Calls in [init_squares] to malloc:250 
+Calls in [] to malloc:4 malloc:7 main:10 
+Calls in [main] to init_dist_screen:14 init_angle_screen:16 
+Calls in [init_angle_screen] to atan2_16:68 
+Calls in [init_dist_screen] to init_squares:155 sqr:167 sqr:187 sqrt:192 
+Calls in [sqrt] to bsearch16u:209 
+Calls in [init_squares] to malloc:249 
 
 Created 48 initial phi equivalence classes
-Coalesced [7] heap_head#53 ← heap_head#1
-Coalesced [22] main::dist#6 ← main::dist#0
-Coalesced [23] main::angle#6 ← main::angle#0
-Coalesced [28] main::min_dist_angle#9 ← main::dist_angle#0
-Not coalescing [29] main::min_fill#10 ← main::fill#2
-Coalesced [38] main::fill#6 ← main::fill#1
-Coalesced [39] main::dist#7 ← main::dist#1
-Coalesced [40] main::angle#7 ← main::angle#1
-Not coalescing [41] main::min_dist_angle#6 ← main::min_dist_angle#3
-Coalesced [42] main::min_fill#7 ← main::min_fill#2
-Not coalescing [43] main::min_dist_angle#8 ← main::min_dist_angle#2
-Coalesced (already) [44] main::min_fill#9 ← main::min_fill#5
-Not coalescing [45] main::min_dist_angle#7 ← main::min_dist_angle#2
-Coalesced (already) [46] main::min_fill#8 ← main::min_fill#5
-Coalesced [49] init_angle_screen::screen_topline#7 ← init_angle_screen::screen_topline#0
-Coalesced [50] init_angle_screen::screen_bottomline#7 ← init_angle_screen::screen_bottomline#0
-Coalesced [59] init_angle_screen::y#7 ← init_angle_screen::y#1
-Coalesced [60] init_angle_screen::screen_topline#8 ← init_angle_screen::screen_topline#1
-Coalesced [61] init_angle_screen::screen_bottomline#8 ← init_angle_screen::screen_bottomline#1
-Coalesced [83] init_angle_screen::x#5 ← init_angle_screen::x#1
-Coalesced [84] init_angle_screen::xb#5 ← init_angle_screen::xb#1
-Coalesced [87] atan2_16::yi#17 ← atan2_16::$2
-Coalesced [91] atan2_16::xi#14 ← atan2_16::$7
-Coalesced [93] atan2_16::yi#19 ← atan2_16::yi#0
-Coalesced [94] atan2_16::xi#16 ← atan2_16::xi#0
-Coalesced [97] atan2_16::angle#22 ← atan2_16::angle#12
-Coalesced [102] atan2_16::angle#27 ← atan2_16::angle#4
-Coalesced [106] atan2_16::return#5 ← atan2_16::angle#5
-Coalesced [109] atan2_16::return#6 ← atan2_16::angle#11
-Coalesced [110] atan2_16::angle#26 ← atan2_16::angle#1
-Not coalescing [111] atan2_16::shift#5 ← atan2_16::i#2
-Not coalescing [112] atan2_16::xd#10 ← atan2_16::xi#3
-Not coalescing [113] atan2_16::yd#10 ← atan2_16::yi#3
-Coalesced [119] atan2_16::yd#13 ← atan2_16::yd#2
-Coalesced [120] atan2_16::xd#13 ← atan2_16::xd#2
-Coalesced [127] atan2_16::yi#21 ← atan2_16::yi#2
-Coalesced [128] atan2_16::angle#25 ← atan2_16::angle#3
-Coalesced [129] atan2_16::xi#18 ← atan2_16::xi#2
-Coalesced [133] atan2_16::yi#18 ← atan2_16::yi#8
-Coalesced [134] atan2_16::xi#15 ← atan2_16::xi#8
-Coalesced [135] atan2_16::i#12 ← atan2_16::i#1
-Coalesced [136] atan2_16::angle#21 ← atan2_16::angle#13
-Coalesced (already) [137] atan2_16::angle#23 ← atan2_16::angle#13
-Coalesced [142] atan2_16::yi#20 ← atan2_16::yi#1
-Coalesced [143] atan2_16::angle#24 ← atan2_16::angle#2
-Coalesced [144] atan2_16::xi#17 ← atan2_16::xi#1
-Coalesced [145] atan2_16::yd#12 ← atan2_16::yd#3
-Coalesced [146] atan2_16::xd#12 ← atan2_16::xd#3
-Coalesced [150] atan2_16::shift#6 ← atan2_16::shift#1
-Coalesced [151] atan2_16::xd#11 ← atan2_16::xd#1
-Coalesced [152] atan2_16::yd#11 ← atan2_16::yd#1
-Not coalescing [153] atan2_16::xi#13 ← atan2_16::x#0
-Not coalescing [154] atan2_16::yi#16 ← atan2_16::y#0
-Coalesced [158] init_dist_screen::screen_topline#15 ← init_dist_screen::screen#0
-Coalesced [159] init_dist_screen::screen_bottomline#15 ← init_dist_screen::screen_bottomline#0
-Coalesced [164] init_dist_screen::yd#2 ← init_dist_screen::$5
-Coalesced [167] sqr::val#4 ← sqr::val#0
-Coalesced [178] init_dist_screen::y#15 ← init_dist_screen::y#1
-Coalesced [179] init_dist_screen::screen_topline#16 ← init_dist_screen::screen_topline#1
-Coalesced [180] init_dist_screen::screen_bottomline#16 ← init_dist_screen::screen_bottomline#1
-Coalesced [184] init_dist_screen::xd#2 ← init_dist_screen::$14
-Coalesced [187] sqr::val#3 ← sqr::val#1
-Coalesced [202] init_dist_screen::x#9 ← init_dist_screen::x#1
-Coalesced [203] init_dist_screen::xb#9 ← init_dist_screen::xb#1
-Coalesced [205] init_dist_screen::xd#1 ← init_dist_screen::$16
-Coalesced [207] init_dist_screen::yd#1 ← init_dist_screen::$7
-Coalesced [217] bsearch16u::items#10 ← bsearch16u::items#1
-Coalesced [222] bsearch16u::return#9 ← bsearch16u::$2
-Coalesced [224] bsearch16u::return#7 ← bsearch16u::return#2
-Coalesced [227] bsearch16u::return#8 ← bsearch16u::items#2
-Not coalescing [233] bsearch16u::return#6 ← bsearch16u::pivot#0
-Coalesced [237] bsearch16u::num#10 ← bsearch16u::num#1
-Coalesced [238] bsearch16u::items#12 ← bsearch16u::items#0
-Coalesced [241] bsearch16u::num#9 ← bsearch16u::num#0
-Coalesced [242] bsearch16u::items#11 ← bsearch16u::items#8
-Coalesced [243] bsearch16u::num#11 ← bsearch16u::num#3
-Coalesced (already) [244] bsearch16u::items#13 ← bsearch16u::items#2
-Coalesced (already) [249] heap_head#54 ← heap_head#1
-Coalesced [253] init_squares::squares#4 ← init_squares::squares#0
-Coalesced [263] init_squares::sqr#3 ← init_squares::sqr#1
-Coalesced [264] init_squares::squares#3 ← init_squares::squares#1
-Coalesced [265] init_squares::i#3 ← init_squares::i#1
-Not coalescing [268] heap_head#1 ← malloc::mem#0
+Coalesced [6] heap_head#52 ← heap_head#1
+Coalesced [21] main::dist#6 ← main::dist#0
+Coalesced [22] main::angle#6 ← main::angle#0
+Coalesced [27] main::min_dist_angle#9 ← main::dist_angle#0
+Not coalescing [28] main::min_fill#10 ← main::fill#2
+Coalesced [37] main::fill#6 ← main::fill#1
+Coalesced [38] main::dist#7 ← main::dist#1
+Coalesced [39] main::angle#7 ← main::angle#1
+Not coalescing [40] main::min_dist_angle#6 ← main::min_dist_angle#3
+Coalesced [41] main::min_fill#7 ← main::min_fill#2
+Not coalescing [42] main::min_dist_angle#8 ← main::min_dist_angle#2
+Coalesced (already) [43] main::min_fill#9 ← main::min_fill#5
+Not coalescing [44] main::min_dist_angle#7 ← main::min_dist_angle#2
+Coalesced (already) [45] main::min_fill#8 ← main::min_fill#5
+Coalesced [48] init_angle_screen::screen_topline#7 ← init_angle_screen::screen_topline#0
+Coalesced [49] init_angle_screen::screen_bottomline#7 ← init_angle_screen::screen_bottomline#0
+Coalesced [58] init_angle_screen::y#7 ← init_angle_screen::y#1
+Coalesced [59] init_angle_screen::screen_topline#8 ← init_angle_screen::screen_topline#1
+Coalesced [60] init_angle_screen::screen_bottomline#8 ← init_angle_screen::screen_bottomline#1
+Coalesced [82] init_angle_screen::x#5 ← init_angle_screen::x#1
+Coalesced [83] init_angle_screen::xb#5 ← init_angle_screen::xb#1
+Coalesced [86] atan2_16::yi#17 ← atan2_16::$2
+Coalesced [90] atan2_16::xi#14 ← atan2_16::$7
+Coalesced [92] atan2_16::yi#19 ← atan2_16::yi#0
+Coalesced [93] atan2_16::xi#16 ← atan2_16::xi#0
+Coalesced [96] atan2_16::angle#22 ← atan2_16::angle#12
+Coalesced [101] atan2_16::angle#27 ← atan2_16::angle#4
+Coalesced [105] atan2_16::return#5 ← atan2_16::angle#5
+Coalesced [108] atan2_16::return#6 ← atan2_16::angle#11
+Coalesced [109] atan2_16::angle#26 ← atan2_16::angle#1
+Not coalescing [110] atan2_16::shift#5 ← atan2_16::i#2
+Not coalescing [111] atan2_16::xd#10 ← atan2_16::xi#3
+Not coalescing [112] atan2_16::yd#10 ← atan2_16::yi#3
+Coalesced [118] atan2_16::yd#13 ← atan2_16::yd#2
+Coalesced [119] atan2_16::xd#13 ← atan2_16::xd#2
+Coalesced [126] atan2_16::yi#21 ← atan2_16::yi#2
+Coalesced [127] atan2_16::angle#25 ← atan2_16::angle#3
+Coalesced [128] atan2_16::xi#18 ← atan2_16::xi#2
+Coalesced [132] atan2_16::yi#18 ← atan2_16::yi#8
+Coalesced [133] atan2_16::xi#15 ← atan2_16::xi#8
+Coalesced [134] atan2_16::i#12 ← atan2_16::i#1
+Coalesced [135] atan2_16::angle#21 ← atan2_16::angle#13
+Coalesced (already) [136] atan2_16::angle#23 ← atan2_16::angle#13
+Coalesced [141] atan2_16::yi#20 ← atan2_16::yi#1
+Coalesced [142] atan2_16::angle#24 ← atan2_16::angle#2
+Coalesced [143] atan2_16::xi#17 ← atan2_16::xi#1
+Coalesced [144] atan2_16::yd#12 ← atan2_16::yd#3
+Coalesced [145] atan2_16::xd#12 ← atan2_16::xd#3
+Coalesced [149] atan2_16::shift#6 ← atan2_16::shift#1
+Coalesced [150] atan2_16::xd#11 ← atan2_16::xd#1
+Coalesced [151] atan2_16::yd#11 ← atan2_16::yd#1
+Not coalescing [152] atan2_16::xi#13 ← atan2_16::x#0
+Not coalescing [153] atan2_16::yi#16 ← atan2_16::y#0
+Coalesced [157] init_dist_screen::screen_topline#15 ← init_dist_screen::screen#0
+Coalesced [158] init_dist_screen::screen_bottomline#15 ← init_dist_screen::screen_bottomline#0
+Coalesced [163] init_dist_screen::yd#2 ← init_dist_screen::$5
+Coalesced [166] sqr::val#4 ← sqr::val#0
+Coalesced [177] init_dist_screen::y#15 ← init_dist_screen::y#1
+Coalesced [178] init_dist_screen::screen_topline#16 ← init_dist_screen::screen_topline#1
+Coalesced [179] init_dist_screen::screen_bottomline#16 ← init_dist_screen::screen_bottomline#1
+Coalesced [183] init_dist_screen::xd#2 ← init_dist_screen::$14
+Coalesced [186] sqr::val#3 ← sqr::val#1
+Coalesced [201] init_dist_screen::x#9 ← init_dist_screen::x#1
+Coalesced [202] init_dist_screen::xb#9 ← init_dist_screen::xb#1
+Coalesced [204] init_dist_screen::xd#1 ← init_dist_screen::$16
+Coalesced [206] init_dist_screen::yd#1 ← init_dist_screen::$7
+Coalesced [216] bsearch16u::items#10 ← bsearch16u::items#1
+Coalesced [221] bsearch16u::return#9 ← bsearch16u::$2
+Coalesced [223] bsearch16u::return#7 ← bsearch16u::return#2
+Coalesced [226] bsearch16u::return#8 ← bsearch16u::items#2
+Not coalescing [232] bsearch16u::return#6 ← bsearch16u::pivot#0
+Coalesced [236] bsearch16u::num#10 ← bsearch16u::num#1
+Coalesced [237] bsearch16u::items#12 ← bsearch16u::items#0
+Coalesced [240] bsearch16u::num#9 ← bsearch16u::num#0
+Coalesced [241] bsearch16u::items#11 ← bsearch16u::items#8
+Coalesced [242] bsearch16u::num#11 ← bsearch16u::num#3
+Coalesced (already) [243] bsearch16u::items#13 ← bsearch16u::items#2
+Coalesced (already) [248] heap_head#53 ← heap_head#1
+Coalesced [252] init_squares::squares#4 ← init_squares::squares#0
+Coalesced [262] init_squares::sqr#3 ← init_squares::sqr#1
+Coalesced [263] init_squares::squares#3 ← init_squares::squares#1
+Coalesced [264] init_squares::i#3 ← init_squares::i#1
+Not coalescing [267] heap_head#1 ← malloc::mem#0
 Coalesced down to 38 phi equivalence classes
 Culled Empty Block (label) @4
 Culled Empty Block (label) @12
-Culled Empty Block (label) @15
 Culled Empty Block (label) @23
 Culled Empty Block (label) main::@18
 Culled Empty Block (label) main::@1

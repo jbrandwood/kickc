@@ -110,13 +110,13 @@ public class Variable implements Symbol {
     * @param value The constant value
     */
    public Variable(String name, Scope scope, SymbolType type, ArraySpec arraySpec, String dataSegment, ConstantValue value) {
+      this.kind = Kind.CONSTANT;
       this.isConstant = true;
       this.name = name;
       this.scope = scope;
       this.type = type;
       this.arraySpec = arraySpec;
       this.dataSegment = dataSegment;
-      this.kind = Kind.CONSTANT;
       this.memoryArea = MemoryArea.MAIN_MEMORY;
       this.constantValue = value;
       this.comments = new ArrayList<>();
@@ -144,6 +144,8 @@ public class Variable implements Symbol {
          this.nextPhiVersionNumber = 0;
       this.comments = new ArrayList<>();
       setFullName();
+      //if(isKindConstant()!=isConstant)
+      //   throw new RuntimeException("CONST ISSUE!");
    }
 
 

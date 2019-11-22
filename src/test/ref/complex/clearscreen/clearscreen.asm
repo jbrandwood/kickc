@@ -1286,22 +1286,22 @@ irqTop: {
     ldy #00
     rti
 }
-  // Sprites currently being processed in the interrupt
-  PROCESSING: .fill $e*NUM_PROCESSING, 0
-// Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
+  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:
 .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
 
-// Values added to VX
+  // Values added to VX
 VXSIN:
 .for(var i=0; i<40; i++) {
       .word -sin(toRadians([i*360]/40))*4
     }
 
-// Values added to VY
+  // Values added to VY
 VYSIN:
 .for(var i=0; i<25; i++) {
       .word -sin(toRadians([i*360]/25))*4
     }
 
+  // Sprites currently being processed in the interrupt
+  PROCESSING: .fill $e*NUM_PROCESSING, 0

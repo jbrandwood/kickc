@@ -4,10 +4,7 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementReturn;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -255,7 +252,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
                VariableRef memberVarRef = (VariableRef) memberUnwinding.getMemberUnwinding(memberName);
                membersUnwound.add(memberVarRef);
                Variable memberVar = getScope().getVariable(memberVarRef);
-               Statement initStmt = Pass0GenerateStatementSequence.createZeroInitStatement(memberVarRef, memberVar.getType(), assignment.getSource(), Comment.NO_COMMENTS);
+               StatementSource statementSource = assignment.getSource();
+               RValue initValue = Pass0GenerateStatementSequence.createZeroValue(memberVar.getType(), statementSource);
+               Statement initStmt = new StatementAssignment(memberVarRef, initValue, statementSource, Comment.NO_COMMENTS);
                stmtIt.add(initStmt);
                getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));
             }

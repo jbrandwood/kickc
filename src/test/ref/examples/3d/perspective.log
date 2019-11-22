@@ -1,6 +1,6 @@
 Resolved forward reference mulf_sqr1 to (const byte*) mulf_sqr1
 Resolved forward reference mulf_sqr2 to (const byte*) mulf_sqr2
-Resolved forward reference PERSP_Z to (signed byte*) PERSP_Z
+Resolved forward reference PERSP_Z to (const signed byte*) PERSP_Z
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
 Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
@@ -510,18 +510,6 @@ mulf_init::@return: scope:[mulf_init]  from mulf_init::@1
   (byte*) print_screen#5 ← phi( @16/(byte*) print_screen#0 )
   (byte*) print_char_cursor#73 ← phi( @16/(byte*) print_char_cursor#0 )
   (byte*) print_line_cursor#24 ← phi( @16/(byte*) print_line_cursor#0 )
-  (signed byte*) PERSP_Z ← kickasm {{ {
-    .var d = 256.0	
-    .var z0 = 5.0	
-    .for(var z=0;z<$100;z++) {
-    	.if(z>127) {
-    		.byte round(d / (z0 - ((z - 256) / 64.0)));
-    	} else {
-    		.byte round(d / (z0 - (z / 64.0)));
-    	}
-    }
-	}
- }}
   call main 
   to:@45
 @45: scope:[]  from @44
@@ -538,7 +526,18 @@ SYMBOL TABLE SSA
 (label) @45
 (label) @begin
 (label) @end
-(signed byte*) PERSP_Z
+(const signed byte*) PERSP_Z = kickasm {{ {
+    .var d = 256.0	
+    .var z0 = 5.0	
+    .for(var z=0;z<$100;z++) {
+    	.if(z>127) {
+    		.byte round(d / (z0 - ((z - 256) / 64.0)));
+    	} else {
+    		.byte round(d / (z0 - (z / 64.0)));
+    	}
+    }
+	}
+ }}
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
@@ -1116,18 +1115,6 @@ Constant (const byte*) print_str::str#6 = do_perspective::str5
 Constant (const signed word) mulf_init::sqr#0 = 0
 Constant (const signed word) mulf_init::add#0 = 1
 Constant (const byte) mulf_init::i#0 = 0
-Constant (const signed byte*) PERSP_Z = kickasm {{ {
-    .var d = 256.0	
-    .var z0 = 5.0	
-    .for(var z=0;z<$100;z++) {
-    	.if(z>127) {
-    		.byte round(d / (z0 - ((z - 256) / 64.0)));
-    	} else {
-    		.byte round(d / (z0 - (z / 64.0)));
-    	}
-    }
-	}
- }}
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Constant (const signed byte) print_sbyte::b#1 = do_perspective::x#0

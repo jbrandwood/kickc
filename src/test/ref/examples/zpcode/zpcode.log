@@ -1,6 +1,6 @@
 Loading link script "zpcode.ld"
 Resolved forward reference zpLoop to (void()) zpLoop()
-Resolved forward reference zpCodeData to (byte*) zpCodeData
+Resolved forward reference zpCodeData to (const byte*) zpCodeData
 Identified constant variable (byte*) RASTER
 Identified constant variable (byte*) BGCOL
 Identified constant variable (byte*) main::zpCode
@@ -19,11 +19,12 @@ Culled Empty Block (label) main::@15
 Culled Empty Block (label) main::@16
 Culled Empty Block (label) @1
 Culled Empty Block (label) loop::@2
+Culled Empty Block (label) @2
 Culled Empty Block (label) zpLoop::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@2
+  to:@3
 
 (void()) main()
 main: scope:[main]  from @3
@@ -37,7 +38,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@7
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((const byte*) main::zpCode + (byte) main::i#3) ← *((byte*) zpCodeData + (byte) main::i#3)
+  *((const byte*) main::zpCode + (byte) main::i#3) ← *((const byte*) zpCodeData + (byte) main::i#3)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@7: scope:[main]  from main::@1 main::@20
@@ -74,10 +75,6 @@ loop::@1: scope:[loop]  from loop loop::@1
 loop::@return: scope:[loop]  from loop::@1
   return 
   to:@return
-@2: scope:[]  from @begin
-  (byte*) zpCodeData ← kickasm {{ .segmentout [segments="ZpCode"]
- }}
-  to:@3
 
 (void()) zpLoop()
 zpLoop: scope:[zpLoop]  from main::@19
@@ -93,7 +90,7 @@ zpLoop::@1: scope:[zpLoop]  from zpLoop zpLoop::@1
 zpLoop::@return: scope:[zpLoop]  from zpLoop::@1
   return 
   to:@return
-@3: scope:[]  from @2
+@3: scope:[]  from @begin
   call main 
   to:@4
 @4: scope:[]  from @3
@@ -101,7 +98,6 @@ zpLoop::@return: scope:[zpLoop]  from zpLoop::@1
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(label) @2
 (label) @3
 (label) @4
 (label) @begin
@@ -133,7 +129,8 @@ SYMBOL TABLE SSA
 (byte) main::i#2
 (byte) main::i#3
 (const byte*) main::zpCode = (byte*)&(void()) zpLoop()
-(byte*) zpCodeData
+(const byte*) zpCodeData = kickasm {{ .segmentout [segments="ZpCode"]
+ }}
 (void()) zpLoop()
 (bool~) zpLoop::$1
 (label) zpLoop::@1
@@ -168,20 +165,18 @@ Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 [4] if((byte) main::i#2<(byte) $14) goto main::@2
 Simple Condition (bool~) main::$1 [10] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@10
 Simple Condition (bool~) loop::$1 [20] if((byte) loop::i#1!=rangelast(0,$64)) goto loop::@1
-Simple Condition (bool~) zpLoop::$1 [28] if((byte) zpLoop::i#1!=rangelast(0,$64)) goto zpLoop::@1
+Simple Condition (bool~) zpLoop::$1 [27] if((byte) zpLoop::i#1!=rangelast(0,$64)) goto zpLoop::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = 0
 Constant (const byte) loop::i#0 = 0
-Constant (const byte*) zpCodeData = kickasm {{ .segmentout [segments="ZpCode"]
- }}
 Constant (const byte) zpLoop::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [8] if(true) goto main::@10
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [18] loop::i#1 ← ++ loop::i#2 to ++
 Resolved ranged comparison value [20] if(loop::i#1!=rangelast(0,$64)) goto loop::@1 to (number) $65
-Resolved ranged next value [26] zpLoop::i#1 ← ++ zpLoop::i#2 to ++
-Resolved ranged comparison value [28] if(zpLoop::i#1!=rangelast(0,$64)) goto zpLoop::@1 to (number) $65
+Resolved ranged next value [25] zpLoop::i#1 ← ++ zpLoop::i#2 to ++
+Resolved ranged comparison value [27] if(zpLoop::i#1!=rangelast(0,$64)) goto zpLoop::@1 to (number) $65
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $65 in if((byte) loop::i#1!=(number) $65) goto loop::@1
@@ -203,7 +198,6 @@ Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting loop::@3(between loop::@1 and loop::@1)
 Added new block during phi lifting zpLoop::@3(between zpLoop::@1 and zpLoop::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
@@ -213,15 +207,14 @@ Adding NOP phi() at start of main::@19
 Adding NOP phi() at start of zpLoop
 Adding NOP phi() at start of loop
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to loop:12 zpLoop:14 
+Calls in [] to main:2 
+Calls in [main] to loop:11 zpLoop:13 
 
 Created 3 initial phi equivalence classes
-Coalesced [18] main::i#4 ← main::i#1
-Coalesced [25] zpLoop::i#3 ← zpLoop::i#1
-Coalesced [32] loop::i#3 ← loop::i#1
+Coalesced [17] main::i#4 ← main::i#1
+Coalesced [24] zpLoop::i#3 ← zpLoop::i#1
+Coalesced [31] loop::i#3 ← loop::i#1
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) @4
 Culled Empty Block (label) main::@7
 Culled Empty Block (label) zpLoop::@3

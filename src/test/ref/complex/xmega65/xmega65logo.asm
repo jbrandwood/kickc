@@ -3,6 +3,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  // Create pointers to the palette RGBs in the logo (assumes dimensions are 128x128)
   .label LOGO256_RED = LOGO256+$80*$80
   .label LOGO256_GREEN = LOGO256_RED+$100
   .label LOGO256_BLUE = LOGO256_GREEN+$100

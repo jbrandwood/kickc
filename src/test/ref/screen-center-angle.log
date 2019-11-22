@@ -5,8 +5,8 @@ Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot +
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
-Fixing pointer array-indexing *((word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
-Fixing pointer array-indexing *((word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
+Fixing pointer array-indexing *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
+Fixing pointer array-indexing *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
 Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
@@ -37,6 +37,7 @@ Culled Empty Block (label) @14
 Culled Empty Block (label) @15
 Culled Empty Block (label) @16
 Culled Empty Block (label) init_font_hex::@6
+Culled Empty Block (label) @17
 Culled Empty Block (label) atan2_16::@9
 Culled Empty Block (label) atan2_16::@10
 Culled Empty Block (label) atan2_16::@11
@@ -88,7 +89,7 @@ Culled Empty Block (label) init_angle_screen::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@17
+  to:@47
 
 (void()) init_font_hex((byte*) init_font_hex::charset)
 init_font_hex: scope:[init_font_hex]  from main
@@ -160,11 +161,6 @@ init_font_hex::@5: scope:[init_font_hex]  from init_font_hex::@4
 init_font_hex::@return: scope:[init_font_hex]  from init_font_hex::@5
   return 
   to:@return
-@17: scope:[]  from @begin
-  (word*) CORDIC_ATAN2_ANGLES_16 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
-        .word 256*2*256*atan(1/pow(2,i))/PI/2
- }}
-  to:@47
 
 (word()) atan2_16((signed word) atan2_16::x , (signed word) atan2_16::y)
 atan2_16: scope:[atan2_16]  from init_angle_screen::@3
@@ -322,7 +318,7 @@ atan2_16::@26: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#4 + (signed word) atan2_16::yd#5
   (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#6 - (signed word) atan2_16::xd#5
   (byte~) atan2_16::$22 ← (byte) atan2_16::i#3 * (const byte) SIZEOF_WORD
-  (word) atan2_16::angle#2 ← (word) atan2_16::angle#7 + *((word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
+  (word) atan2_16::angle#2 ← (word) atan2_16::angle#7 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
   to:atan2_16::@27
 atan2_16::@30: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::y#11 ← phi( atan2_16::@25/(signed word) atan2_16::y#14 )
@@ -336,7 +332,7 @@ atan2_16::@30: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#5 - (signed word) atan2_16::yd#6
   (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#7 + (signed word) atan2_16::xd#6
   (byte~) atan2_16::$23 ← (byte) atan2_16::i#4 * (const byte) SIZEOF_WORD
-  (word) atan2_16::angle#3 ← (word) atan2_16::angle#8 - *((word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
+  (word) atan2_16::angle#3 ← (word) atan2_16::angle#8 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
   to:atan2_16::@27
 atan2_16::@27: scope:[atan2_16]  from atan2_16::@26 atan2_16::@30
   (signed word) atan2_16::y#8 ← phi( atan2_16::@26/(signed word) atan2_16::y#10 atan2_16::@30/(signed word) atan2_16::y#11 )
@@ -643,7 +639,7 @@ init_angle_screen::@4: scope:[init_angle_screen]  from init_angle_screen::@2
 init_angle_screen::@return: scope:[init_angle_screen]  from init_angle_screen::@4
   return 
   to:@return
-@47: scope:[]  from @17
+@47: scope:[]  from @begin
   call main 
   to:@48
 @48: scope:[]  from @47
@@ -651,7 +647,6 @@ init_angle_screen::@return: scope:[init_angle_screen]  from init_angle_screen::@
 @end: scope:[]  from @48
 
 SYMBOL TABLE SSA
-(label) @17
 (label) @47
 (label) @48
 (label) @begin
@@ -666,7 +661,9 @@ SYMBOL TABLE SSA
 (const byte) CIA_TIMER_CONTROL_START = (number) 1
 (const byte) CIA_TIMER_CONTROL_STOP = (number) 0
 (const dword) CLOCKS_PER_INIT = (number) $12
-(word*) CORDIC_ATAN2_ANGLES_16
+(const word*) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+        .word 256*2*256*atan(1/pow(2,i))/PI/2
+ }}
 (const byte) CORDIC_ITERATIONS_16 = (number) $f
 (const byte*) D018 = (byte*)(number) $d018
 (const byte*) FONT_HEX_PROTO = { (byte)(number) 2, (byte)(number) 5, (byte)(number) 5, (byte)(number) 5, (byte)(number) 2, (byte)(number) 6, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 7, (byte)(number) 6, (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 7, (byte)(number) 6, (byte)(number) 1, (byte)(number) 2, (byte)(number) 1, (byte)(number) 6, (byte)(number) 5, (byte)(number) 5, (byte)(number) 7, (byte)(number) 1, (byte)(number) 1, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 1, (byte)(number) 6, (byte)(number) 3, (byte)(number) 4, (byte)(number) 6, (byte)(number) 5, (byte)(number) 2, (byte)(number) 7, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 2, (byte)(number) 5, (byte)(number) 2, (byte)(number) 5, (byte)(number) 2, (byte)(number) 2, (byte)(number) 5, (byte)(number) 3, (byte)(number) 1, (byte)(number) 1, (byte)(number) 2, (byte)(number) 5, (byte)(number) 7, (byte)(number) 5, (byte)(number) 5, (byte)(number) 6, (byte)(number) 5, (byte)(number) 6, (byte)(number) 5, (byte)(number) 6, (byte)(number) 2, (byte)(number) 5, (byte)(number) 4, (byte)(number) 5, (byte)(number) 2, (byte)(number) 6, (byte)(number) 5, (byte)(number) 5, (byte)(number) 5, (byte)(number) 6, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 4, (byte)(number) 7, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 4, (byte)(number) 4 }
@@ -1445,10 +1442,10 @@ Inferred type updated to word in (unumber~) init_angle_screen::$11 ← (word) in
 Inferred type updated to byte in (unumber~) init_angle_screen::$12 ← > (word~) init_angle_screen::$11
 Inferred type updated to byte in (unumber~) init_angle_screen::$14 ← (byte) $80 + (byte) init_angle_screen::ang_w#0
 Inferred type updated to byte in (unumber~) init_angle_screen::$15 ← (byte) $80 - (byte) init_angle_screen::ang_w#0
-Inversing boolean not [60] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [59] (bool~) atan2_16::$16 ← (signed word) atan2_16::yi#3 == (signed byte) 0
-Inversing boolean not [69] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [68] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
-Inversing boolean not [80] (bool~) atan2_16::$19 ← (byte) 0 == (byte) atan2_16::shift#4 from [79] (bool~) atan2_16::$24 ← (byte) 0 != (byte) atan2_16::shift#4
-Inversing boolean not [104] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [103] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
+Inversing boolean not [59] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [58] (bool~) atan2_16::$16 ← (signed word) atan2_16::yi#3 == (signed byte) 0
+Inversing boolean not [68] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [67] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
+Inversing boolean not [79] (bool~) atan2_16::$19 ← (byte) 0 == (byte) atan2_16::shift#4 from [78] (bool~) atan2_16::$24 ← (byte) 0 != (byte) atan2_16::shift#4
+Inversing boolean not [103] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [102] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte*) init_font_hex::charset#3 = (byte*) init_font_hex::charset#4 
 Alias (byte) init_font_hex::idx#2 = (byte) init_font_hex::idx#6 
@@ -1573,19 +1570,19 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) init_font_hex::$3 [19] if((byte) init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3
 Simple Condition (bool~) init_font_hex::$4 [29] if((byte) init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2
 Simple Condition (bool~) init_font_hex::$5 [34] if((byte) init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1
-Simple Condition (bool~) atan2_16::$0 [39] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
-Simple Condition (bool~) atan2_16::$5 [48] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
-Simple Condition (bool~) atan2_16::$17 [61] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@16
-Simple Condition (bool~) atan2_16::$11 [70] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7
-Simple Condition (bool~) atan2_16::$18 [73] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@19
-Simple Condition (bool~) atan2_16::$19 [81] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@25
-Simple Condition (bool~) atan2_16::$20 [84] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@26
-Simple Condition (bool~) atan2_16::$21 [101] if((byte) atan2_16::i#1!=rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@15
-Simple Condition (bool~) atan2_16::$14 [105] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8
-Simple Condition (bool~) init_angle_screen::$2 [229] if((byte) init_angle_screen::x#2<=(byte) $13) goto init_angle_screen::@3
-Simple Condition (bool~) init_angle_screen::$16 [266] if((byte) init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1
+Simple Condition (bool~) atan2_16::$0 [38] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
+Simple Condition (bool~) atan2_16::$5 [47] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
+Simple Condition (bool~) atan2_16::$17 [60] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@16
+Simple Condition (bool~) atan2_16::$11 [69] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7
+Simple Condition (bool~) atan2_16::$18 [72] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@19
+Simple Condition (bool~) atan2_16::$19 [80] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@25
+Simple Condition (bool~) atan2_16::$20 [83] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@26
+Simple Condition (bool~) atan2_16::$21 [100] if((byte) atan2_16::i#1!=rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@15
+Simple Condition (bool~) atan2_16::$14 [104] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8
+Simple Condition (bool~) init_angle_screen::$2 [228] if((byte) init_angle_screen::x#2<=(byte) $13) goto init_angle_screen::@3
+Simple Condition (bool~) init_angle_screen::$16 [265] if((byte) init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [101] if((byte) atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17
+Negating conditional jump and destination [100] if((byte) atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant (const byte*) init_font_hex::proto_hi#0 = FONT_HEX_PROTO
 Constant (const byte) init_font_hex::c#0 = 0
@@ -1593,9 +1590,6 @@ Constant (const byte*) init_font_hex::proto_lo#0 = FONT_HEX_PROTO
 Constant (const byte) init_font_hex::c1#0 = 0
 Constant (const byte) init_font_hex::idx#0 = 0
 Constant (const byte) init_font_hex::i#0 = 0
-Constant (const word*) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
-        .word 256*2*256*atan(1/pow(2,i))/PI/2
- }}
 Constant (const word) atan2_16::angle#0 = 0
 Constant (const byte) atan2_16::i#0 = 0
 Constant (const byte*) init_font_hex::charset#1 = CHARSET
@@ -1621,20 +1615,20 @@ Resolved ranged next value [27] init_font_hex::c1#1 ← ++ init_font_hex::c1#4 t
 Resolved ranged comparison value [29] if(init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2 to (number) $10
 Resolved ranged next value [32] init_font_hex::c#1 ← ++ init_font_hex::c#6 to ++
 Resolved ranged comparison value [34] if(init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1 to (number) $10
-Resolved ranged next value [99] atan2_16::i#1 ← ++ atan2_16::i#2 to ++
-Resolved ranged comparison value [101] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17 to (const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
-Resolved ranged next value [264] init_angle_screen::y#1 ← ++ init_angle_screen::y#5 to ++
-Resolved ranged comparison value [266] if(init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1 to (number) $d
-Rewriting conditional comparison [229] if((byte) init_angle_screen::x#2<=(byte) $13) goto init_angle_screen::@3
-Simplifying constant evaluating to zero (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES in [122] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
-Simplifying constant evaluating to zero (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS in [123] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Resolved ranged next value [98] atan2_16::i#1 ← ++ atan2_16::i#2 to ++
+Resolved ranged comparison value [100] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17 to (const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
+Resolved ranged next value [263] init_angle_screen::y#1 ← ++ init_angle_screen::y#5 to ++
+Resolved ranged comparison value [265] if(init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1 to (number) $d
+Rewriting conditional comparison [228] if((byte) init_angle_screen::x#2<=(byte) $13) goto init_angle_screen::@3
+Simplifying constant evaluating to zero (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES in [121] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Simplifying constant evaluating to zero (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS in [122] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero init_font_hex::charset#2 in [8] *((byte*) init_font_hex::charset#2 + (const byte) init_font_hex::idx#0) ← (byte) 0
-Simplifying expression containing zero CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A in [123] *((const byte*) CIA2_TIMER_B_CONTROL) ← (byte) 0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-Simplifying expression containing zero CIA_TIMER_CONTROL_START in [125] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-Simplifying expression containing zero CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS in [126] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Simplifying expression containing zero CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A in [122] *((const byte*) CIA2_TIMER_B_CONTROL) ← (byte) 0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Simplifying expression containing zero CIA_TIMER_CONTROL_START in [124] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Simplifying expression containing zero CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS in [125] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Simplifying expression containing zero CIA_TIMER_CONTROL_START in [126] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS
+Simplifying expression containing zero CIA_TIMER_CONTROL_START in [125] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) init_font_hex::idx#4 and assignment [15] (byte) init_font_hex::idx#4 ← ++ (byte) init_font_hex::idx#3
 Eliminating unused constant (const byte) CIA_TIMER_CONTROL_STOP
@@ -1793,7 +1787,6 @@ Added new block during phi lifting atan2_16::@38(between atan2_16::@17 and atan2
 Added new block during phi lifting atan2_16::@39(between atan2_16::@7 and atan2_16::@8)
 Added new block during phi lifting init_angle_screen::@10(between init_angle_screen::@4 and init_angle_screen::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @17
 Adding NOP phi() at start of @47
 Adding NOP phi() at start of @48
 Adding NOP phi() at start of @end
@@ -1812,72 +1805,71 @@ Adding NOP phi() at start of print_byte_at::@2
 Adding NOP phi() at start of init_angle_screen
 Adding NOP phi() at start of init_font_hex
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to init_font_hex:7 clock_start:12 init_angle_screen:14 clock:16 print_dword_at:21 
-Calls in [print_dword_at] to print_word_at:29 print_word_at:32 
-Calls in [print_word_at] to print_byte_at:40 print_byte_at:45 
-Calls in [print_byte_at] to print_char_at:54 print_char_at:60 
-Calls in [init_angle_screen] to atan2_16:87 
+Calls in [] to main:2 
+Calls in [main] to init_font_hex:6 clock_start:11 init_angle_screen:13 clock:15 print_dword_at:20 
+Calls in [print_dword_at] to print_word_at:28 print_word_at:31 
+Calls in [print_word_at] to print_byte_at:39 print_byte_at:44 
+Calls in [print_byte_at] to print_char_at:53 print_char_at:59 
+Calls in [init_angle_screen] to atan2_16:86 
 
 Created 36 initial phi equivalence classes
-Coalesced [28] print_word_at::w#4 ← print_word_at::w#0
-Coalesced [31] print_word_at::w#5 ← print_word_at::w#1
-Coalesced [38] print_byte_at::b#4 ← print_byte_at::b#0
-Coalesced [39] print_byte_at::at#4 ← print_byte_at::at#0
-Coalesced [43] print_byte_at::b#5 ← print_byte_at::b#1
-Coalesced [44] print_byte_at::at#5 ← print_byte_at::at#1
-Coalesced [52] print_char_at::ch#3 ← print_char_at::ch#0
-Coalesced [53] print_char_at::at#3 ← print_char_at::at#0
-Coalesced [58] print_char_at::ch#4 ← print_char_at::ch#1
-Coalesced [59] print_char_at::at#4 ← print_char_at::at#1
-Coalesced [77] init_angle_screen::y#7 ← init_angle_screen::y#1
-Coalesced [78] init_angle_screen::screen_topline#7 ← init_angle_screen::screen_topline#1
-Coalesced [79] init_angle_screen::screen_bottomline#7 ← init_angle_screen::screen_bottomline#1
-Coalesced [101] init_angle_screen::x#5 ← init_angle_screen::x#1
-Coalesced [102] init_angle_screen::xb#5 ← init_angle_screen::xb#1
-Coalesced [105] atan2_16::yi#17 ← atan2_16::$2
-Coalesced [109] atan2_16::xi#14 ← atan2_16::$7
-Coalesced [111] atan2_16::yi#19 ← atan2_16::yi#0
-Coalesced [112] atan2_16::xi#16 ← atan2_16::xi#0
-Coalesced [115] atan2_16::angle#22 ← atan2_16::angle#12
-Coalesced [120] atan2_16::angle#27 ← atan2_16::angle#4
-Coalesced [124] atan2_16::return#5 ← atan2_16::angle#5
-Coalesced [127] atan2_16::return#6 ← atan2_16::angle#11
-Coalesced [128] atan2_16::angle#26 ← atan2_16::angle#1
-Not coalescing [129] atan2_16::shift#5 ← atan2_16::i#2
-Not coalescing [130] atan2_16::xd#10 ← atan2_16::xi#3
-Not coalescing [131] atan2_16::yd#10 ← atan2_16::yi#3
-Coalesced [137] atan2_16::yd#13 ← atan2_16::yd#2
-Coalesced [138] atan2_16::xd#13 ← atan2_16::xd#2
-Coalesced [145] atan2_16::yi#21 ← atan2_16::yi#2
-Coalesced [146] atan2_16::angle#25 ← atan2_16::angle#3
-Coalesced [147] atan2_16::xi#18 ← atan2_16::xi#2
-Coalesced [151] atan2_16::yi#18 ← atan2_16::yi#8
-Coalesced [152] atan2_16::xi#15 ← atan2_16::xi#8
-Coalesced [153] atan2_16::i#12 ← atan2_16::i#1
-Coalesced [154] atan2_16::angle#21 ← atan2_16::angle#13
-Coalesced (already) [155] atan2_16::angle#23 ← atan2_16::angle#13
-Coalesced [160] atan2_16::yi#20 ← atan2_16::yi#1
-Coalesced [161] atan2_16::angle#24 ← atan2_16::angle#2
-Coalesced [162] atan2_16::xi#17 ← atan2_16::xi#1
-Coalesced [163] atan2_16::yd#12 ← atan2_16::yd#3
-Coalesced [164] atan2_16::xd#12 ← atan2_16::xd#3
-Coalesced [168] atan2_16::shift#6 ← atan2_16::shift#1
-Coalesced [169] atan2_16::xd#11 ← atan2_16::xd#1
-Coalesced [170] atan2_16::yd#11 ← atan2_16::yd#1
-Not coalescing [171] atan2_16::xi#13 ← atan2_16::x#0
-Not coalescing [172] atan2_16::yi#16 ← atan2_16::y#0
-Coalesced [181] init_font_hex::charset#9 ← init_font_hex::charset#5
-Coalesced [203] init_font_hex::charset#8 ← init_font_hex::charset#0
-Coalesced [204] init_font_hex::proto_hi#7 ← init_font_hex::proto_hi#1
-Coalesced [205] init_font_hex::c#7 ← init_font_hex::c#1
-Coalesced (already) [206] init_font_hex::charset#10 ← init_font_hex::charset#0
-Coalesced [207] init_font_hex::proto_lo#5 ← init_font_hex::proto_lo#1
-Coalesced [208] init_font_hex::c1#5 ← init_font_hex::c1#1
-Coalesced [209] init_font_hex::i#3 ← init_font_hex::i#1
-Coalesced [210] init_font_hex::idx#7 ← init_font_hex::idx#2
+Coalesced [27] print_word_at::w#4 ← print_word_at::w#0
+Coalesced [30] print_word_at::w#5 ← print_word_at::w#1
+Coalesced [37] print_byte_at::b#4 ← print_byte_at::b#0
+Coalesced [38] print_byte_at::at#4 ← print_byte_at::at#0
+Coalesced [42] print_byte_at::b#5 ← print_byte_at::b#1
+Coalesced [43] print_byte_at::at#5 ← print_byte_at::at#1
+Coalesced [51] print_char_at::ch#3 ← print_char_at::ch#0
+Coalesced [52] print_char_at::at#3 ← print_char_at::at#0
+Coalesced [57] print_char_at::ch#4 ← print_char_at::ch#1
+Coalesced [58] print_char_at::at#4 ← print_char_at::at#1
+Coalesced [76] init_angle_screen::y#7 ← init_angle_screen::y#1
+Coalesced [77] init_angle_screen::screen_topline#7 ← init_angle_screen::screen_topline#1
+Coalesced [78] init_angle_screen::screen_bottomline#7 ← init_angle_screen::screen_bottomline#1
+Coalesced [100] init_angle_screen::x#5 ← init_angle_screen::x#1
+Coalesced [101] init_angle_screen::xb#5 ← init_angle_screen::xb#1
+Coalesced [104] atan2_16::yi#17 ← atan2_16::$2
+Coalesced [108] atan2_16::xi#14 ← atan2_16::$7
+Coalesced [110] atan2_16::yi#19 ← atan2_16::yi#0
+Coalesced [111] atan2_16::xi#16 ← atan2_16::xi#0
+Coalesced [114] atan2_16::angle#22 ← atan2_16::angle#12
+Coalesced [119] atan2_16::angle#27 ← atan2_16::angle#4
+Coalesced [123] atan2_16::return#5 ← atan2_16::angle#5
+Coalesced [126] atan2_16::return#6 ← atan2_16::angle#11
+Coalesced [127] atan2_16::angle#26 ← atan2_16::angle#1
+Not coalescing [128] atan2_16::shift#5 ← atan2_16::i#2
+Not coalescing [129] atan2_16::xd#10 ← atan2_16::xi#3
+Not coalescing [130] atan2_16::yd#10 ← atan2_16::yi#3
+Coalesced [136] atan2_16::yd#13 ← atan2_16::yd#2
+Coalesced [137] atan2_16::xd#13 ← atan2_16::xd#2
+Coalesced [144] atan2_16::yi#21 ← atan2_16::yi#2
+Coalesced [145] atan2_16::angle#25 ← atan2_16::angle#3
+Coalesced [146] atan2_16::xi#18 ← atan2_16::xi#2
+Coalesced [150] atan2_16::yi#18 ← atan2_16::yi#8
+Coalesced [151] atan2_16::xi#15 ← atan2_16::xi#8
+Coalesced [152] atan2_16::i#12 ← atan2_16::i#1
+Coalesced [153] atan2_16::angle#21 ← atan2_16::angle#13
+Coalesced (already) [154] atan2_16::angle#23 ← atan2_16::angle#13
+Coalesced [159] atan2_16::yi#20 ← atan2_16::yi#1
+Coalesced [160] atan2_16::angle#24 ← atan2_16::angle#2
+Coalesced [161] atan2_16::xi#17 ← atan2_16::xi#1
+Coalesced [162] atan2_16::yd#12 ← atan2_16::yd#3
+Coalesced [163] atan2_16::xd#12 ← atan2_16::xd#3
+Coalesced [167] atan2_16::shift#6 ← atan2_16::shift#1
+Coalesced [168] atan2_16::xd#11 ← atan2_16::xd#1
+Coalesced [169] atan2_16::yd#11 ← atan2_16::yd#1
+Not coalescing [170] atan2_16::xi#13 ← atan2_16::x#0
+Not coalescing [171] atan2_16::yi#16 ← atan2_16::y#0
+Coalesced [180] init_font_hex::charset#9 ← init_font_hex::charset#5
+Coalesced [202] init_font_hex::charset#8 ← init_font_hex::charset#0
+Coalesced [203] init_font_hex::proto_hi#7 ← init_font_hex::proto_hi#1
+Coalesced [204] init_font_hex::c#7 ← init_font_hex::c#1
+Coalesced (already) [205] init_font_hex::charset#10 ← init_font_hex::charset#0
+Coalesced [206] init_font_hex::proto_lo#5 ← init_font_hex::proto_lo#1
+Coalesced [207] init_font_hex::c1#5 ← init_font_hex::c1#1
+Coalesced [208] init_font_hex::i#3 ← init_font_hex::i#1
+Coalesced [209] init_font_hex::idx#7 ← init_font_hex::idx#2
 Coalesced down to 28 phi equivalence classes
-Culled Empty Block (label) @17
 Culled Empty Block (label) @48
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::toD0181_@return
@@ -3635,12 +3627,12 @@ init_font_hex: {
   // File Data
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
-  print_hextab: .text "0123456789abcdef"
-// Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
+  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:
 .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
 
+  print_hextab: .text "0123456789abcdef"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -4937,12 +4929,12 @@ init_font_hex: {
   // File Data
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
-  print_hextab: .text "0123456789abcdef"
-// Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
+  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:
 .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
 
+  print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -6315,10 +6307,10 @@ init_font_hex: {
   // File Data
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
-  print_hextab: .text "0123456789abcdef"
-// Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
+  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:
 .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
 
+  print_hextab: .text "0123456789abcdef"
 

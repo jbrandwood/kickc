@@ -3,8 +3,8 @@ Resolved forward reference FONT_HEX_PROTO to (const byte*) FONT_HEX_PROTO
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
 Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
-Fixing pointer array-indexing *((word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
-Fixing pointer array-indexing *((word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
+Fixing pointer array-indexing *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
+Fixing pointer array-indexing *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte) atan2_16::i)
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
@@ -19,6 +19,7 @@ Identified constant variable (byte*) main::col00
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call (byte~) main::$1 ← call toD018 (const byte*) SCREEN (const byte*) CHARSET 
 Culled Empty Block (label) init_font_hex::@6
+Culled Empty Block (label) @1
 Culled Empty Block (label) atan2_16::@9
 Culled Empty Block (label) atan2_16::@10
 Culled Empty Block (label) atan2_16::@11
@@ -71,6 +72,7 @@ Culled Empty Block (label) @39
 Culled Empty Block (label) @40
 Culled Empty Block (label) @41
 Culled Empty Block (label) @42
+Culled Empty Block (label) @43
 Culled Empty Block (label) main::toD0181_@1
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@7
@@ -83,7 +85,7 @@ Culled Empty Block (label) diff::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@1
+  to:@19
 
 (void()) init_font_hex((byte*) init_font_hex::charset)
 init_font_hex: scope:[init_font_hex]  from main
@@ -155,11 +157,6 @@ init_font_hex::@5: scope:[init_font_hex]  from init_font_hex::@4
 init_font_hex::@return: scope:[init_font_hex]  from init_font_hex::@5
   return 
   to:@return
-@1: scope:[]  from @begin
-  (word*) CORDIC_ATAN2_ANGLES_16 ← kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
-        .word 256*2*256*atan(1/pow(2,i))/PI/2
- }}
-  to:@19
 
 (word()) atan2_16((signed word) atan2_16::x , (signed word) atan2_16::y)
 atan2_16: scope:[atan2_16]  from main::@2
@@ -317,7 +314,7 @@ atan2_16::@26: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#4 + (signed word) atan2_16::yd#5
   (signed word) atan2_16::yi#1 ← (signed word) atan2_16::yi#6 - (signed word) atan2_16::xd#5
   (byte~) atan2_16::$22 ← (byte) atan2_16::i#3 * (const byte) SIZEOF_WORD
-  (word) atan2_16::angle#2 ← (word) atan2_16::angle#7 + *((word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
+  (word) atan2_16::angle#2 ← (word) atan2_16::angle#7 + *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$22)
   to:atan2_16::@27
 atan2_16::@30: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::y#11 ← phi( atan2_16::@25/(signed word) atan2_16::y#14 )
@@ -331,7 +328,7 @@ atan2_16::@30: scope:[atan2_16]  from atan2_16::@25
   (signed word) atan2_16::xi#2 ← (signed word) atan2_16::xi#5 - (signed word) atan2_16::yd#6
   (signed word) atan2_16::yi#2 ← (signed word) atan2_16::yi#7 + (signed word) atan2_16::xd#6
   (byte~) atan2_16::$23 ← (byte) atan2_16::i#4 * (const byte) SIZEOF_WORD
-  (word) atan2_16::angle#3 ← (word) atan2_16::angle#8 - *((word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
+  (word) atan2_16::angle#3 ← (word) atan2_16::angle#8 - *((const word*) CORDIC_ATAN2_ANGLES_16 + (byte~) atan2_16::$23)
   to:atan2_16::@27
 atan2_16::@27: scope:[atan2_16]  from atan2_16::@26 atan2_16::@30
   (signed word) atan2_16::y#8 ← phi( atan2_16::@26/(signed word) atan2_16::y#10 atan2_16::@30/(signed word) atan2_16::y#11 )
@@ -371,11 +368,11 @@ atan2_16::@return: scope:[atan2_16]  from atan2_16::@8
   (word) atan2_16::return#1 ← (word) atan2_16::return#3
   return 
   to:@return
-@19: scope:[]  from @1
+@19: scope:[]  from @begin
   (byte*) print_screen#0 ← ((byte*)) (number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@43
+  to:@45
 
 (void()) print_word((word) print_word::w)
 print_word: scope:[print_word]  from main::@4
@@ -441,27 +438,20 @@ print_char::@return: scope:[print_char]  from print_char
   (byte*) print_char_cursor#8 ← (byte*) print_char_cursor#19
   return 
   to:@return
-@43: scope:[]  from @19
-  (byte*) print_char_cursor#30 ← phi( @19/(byte*) print_char_cursor#0 )
-  (byte*) SCREEN_REF ← kickasm {{ .for(var y=-12;y<=12;y++)
-        .for(var x=-19;x<=20;x++)
-            .byte round(256*atan2(y, x)/PI/2)
- }}
-  to:@45
 
 (void()) main()
 main: scope:[main]  from @45
-  (byte*) print_char_cursor#39 ← phi( @45/(byte*) print_char_cursor#27 )
+  (byte*) print_char_cursor#38 ← phi( @45/(byte*) print_char_cursor#27 )
   (byte*) init_font_hex::charset#1 ← (const byte*) CHARSET
   call init_font_hex 
   to:main::@12
 main::@12: scope:[main]  from main
-  (byte*) print_char_cursor#38 ← phi( main/(byte*) print_char_cursor#39 )
+  (byte*) print_char_cursor#37 ← phi( main/(byte*) print_char_cursor#38 )
   (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
   (byte*) main::toD0181_gfx#0 ← (const byte*) CHARSET
   to:main::toD0181
 main::toD0181: scope:[main]  from main::@12
-  (byte*) print_char_cursor#37 ← phi( main::@12/(byte*) print_char_cursor#38 )
+  (byte*) print_char_cursor#36 ← phi( main::@12/(byte*) print_char_cursor#37 )
   (byte*) main::toD0181_gfx#1 ← phi( main::@12/(byte*) main::toD0181_gfx#0 )
   (byte*) main::toD0181_screen#1 ← phi( main::@12/(byte*) main::toD0181_screen#0 )
   (word~) main::toD0181_$0 ← ((word)) (byte*) main::toD0181_screen#1
@@ -476,22 +466,22 @@ main::toD0181: scope:[main]  from main::@12
   (byte) main::toD0181_return#0 ← (number~) main::toD0181_$8
   to:main::toD0181_@return
 main::toD0181_@return: scope:[main]  from main::toD0181
-  (byte*) print_char_cursor#36 ← phi( main::toD0181/(byte*) print_char_cursor#37 )
+  (byte*) print_char_cursor#35 ← phi( main::toD0181/(byte*) print_char_cursor#36 )
   (byte) main::toD0181_return#2 ← phi( main::toD0181/(byte) main::toD0181_return#0 )
   (byte) main::toD0181_return#1 ← (byte) main::toD0181_return#2
   to:main::@11
 main::@11: scope:[main]  from main::toD0181_@return
-  (byte*) print_char_cursor#35 ← phi( main::toD0181_@return/(byte*) print_char_cursor#36 )
+  (byte*) print_char_cursor#34 ← phi( main::toD0181_@return/(byte*) print_char_cursor#35 )
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
   (byte~) main::$1 ← (byte) main::toD0181_return#3
   *((const byte*) D018) ← (byte~) main::$1
   (byte*) main::screen#0 ← (const byte*) SCREEN
-  (byte*) main::screen_ref#0 ← (byte*) SCREEN_REF
+  (byte*) main::screen_ref#0 ← (const byte*) SCREEN_REF
   (word) main::diff_sum#0 ← (number) 0
   (signed byte) main::y#0 ← (signed byte) -$c
   to:main::@1
 main::@1: scope:[main]  from main::@11 main::@3
-  (byte*) print_char_cursor#34 ← phi( main::@11/(byte*) print_char_cursor#35 main::@3/(byte*) print_char_cursor#28 )
+  (byte*) print_char_cursor#33 ← phi( main::@11/(byte*) print_char_cursor#34 main::@3/(byte*) print_char_cursor#28 )
   (byte*) main::screen#5 ← phi( main::@11/(byte*) main::screen#0 main::@3/(byte*) main::screen#6 )
   (word) main::diff_sum#7 ← phi( main::@11/(word) main::diff_sum#0 main::@3/(word) main::diff_sum#5 )
   (byte*) main::screen_ref#5 ← phi( main::@11/(byte*) main::screen_ref#0 main::@3/(byte*) main::screen_ref#6 )
@@ -499,7 +489,7 @@ main::@1: scope:[main]  from main::@11 main::@3
   (signed byte) main::x#0 ← (signed byte) -$13
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@14
-  (byte*) print_char_cursor#33 ← phi( main::@1/(byte*) print_char_cursor#34 main::@14/(byte*) print_char_cursor#31 )
+  (byte*) print_char_cursor#32 ← phi( main::@1/(byte*) print_char_cursor#33 main::@14/(byte*) print_char_cursor#30 )
   (byte*) main::screen#4 ← phi( main::@1/(byte*) main::screen#5 main::@14/(byte*) main::screen#1 )
   (word) main::diff_sum#6 ← phi( main::@1/(word) main::diff_sum#7 main::@14/(word) main::diff_sum#1 )
   (byte*) main::screen_ref#4 ← phi( main::@1/(byte*) main::screen_ref#5 main::@14/(byte*) main::screen_ref#1 )
@@ -519,7 +509,7 @@ main::@2: scope:[main]  from main::@1 main::@14
   (word) atan2_16::return#2 ← (word) atan2_16::return#1
   to:main::@13
 main::@13: scope:[main]  from main::@2
-  (byte*) print_char_cursor#32 ← phi( main::@2/(byte*) print_char_cursor#33 )
+  (byte*) print_char_cursor#31 ← phi( main::@2/(byte*) print_char_cursor#32 )
   (signed byte) main::y#6 ← phi( main::@2/(signed byte) main::y#2 )
   (signed byte) main::x#4 ← phi( main::@2/(signed byte) main::x#2 )
   (byte*) main::screen#3 ← phi( main::@2/(byte*) main::screen#4 )
@@ -537,7 +527,7 @@ main::@13: scope:[main]  from main::@2
   (byte) diff::return#0 ← (byte) diff::return#2
   to:main::@14
 main::@14: scope:[main]  from main::@13
-  (byte*) print_char_cursor#31 ← phi( main::@13/(byte*) print_char_cursor#32 )
+  (byte*) print_char_cursor#30 ← phi( main::@13/(byte*) print_char_cursor#31 )
   (signed byte) main::y#5 ← phi( main::@13/(signed byte) main::y#6 )
   (signed byte) main::x#3 ← phi( main::@13/(signed byte) main::x#4 )
   (byte*) main::screen#2 ← phi( main::@13/(byte*) main::screen#3 )
@@ -558,7 +548,7 @@ main::@14: scope:[main]  from main::@13
 main::@3: scope:[main]  from main::@14
   (byte*) main::screen#6 ← phi( main::@14/(byte*) main::screen#1 )
   (byte*) main::screen_ref#6 ← phi( main::@14/(byte*) main::screen_ref#1 )
-  (byte*) print_char_cursor#28 ← phi( main::@14/(byte*) print_char_cursor#31 )
+  (byte*) print_char_cursor#28 ← phi( main::@14/(byte*) print_char_cursor#30 )
   (word) main::diff_sum#5 ← phi( main::@14/(word) main::diff_sum#1 )
   (signed byte) main::y#3 ← phi( main::@14/(signed byte) main::y#5 )
   (signed byte) main::y#1 ← (signed byte) main::y#3 + rangenext(-$c,$c)
@@ -617,8 +607,8 @@ diff::@return: scope:[diff]  from diff::@3
   (byte) diff::return#2 ← (byte) diff::return#4
   return 
   to:@return
-@45: scope:[]  from @43
-  (byte*) print_char_cursor#27 ← phi( @43/(byte*) print_char_cursor#30 )
+@45: scope:[]  from @19
+  (byte*) print_char_cursor#27 ← phi( @19/(byte*) print_char_cursor#0 )
   call main 
   to:@46
 @46: scope:[]  from @45
@@ -628,16 +618,16 @@ diff::@return: scope:[diff]  from diff::@3
 @end: scope:[]  from @46
 
 SYMBOL TABLE SSA
-(label) @1
 (label) @19
-(label) @43
 (label) @45
 (label) @46
 (label) @begin
 (label) @end
 (const byte*) CHARSET = (byte*)(number) $2000
 (const byte*) COLS = (byte*)(number) $d800
-(word*) CORDIC_ATAN2_ANGLES_16
+(const word*) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+        .word 256*2*256*atan(1/pow(2,i))/PI/2
+ }}
 (const byte) CORDIC_ITERATIONS_16 = (number) $f
 (const byte*) D018 = (byte*)(number) $d018
 (const byte*) FONT_HEX_PROTO = { (byte)(number) 2, (byte)(number) 5, (byte)(number) 5, (byte)(number) 5, (byte)(number) 2, (byte)(number) 6, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 7, (byte)(number) 6, (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 7, (byte)(number) 6, (byte)(number) 1, (byte)(number) 2, (byte)(number) 1, (byte)(number) 6, (byte)(number) 5, (byte)(number) 5, (byte)(number) 7, (byte)(number) 1, (byte)(number) 1, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 1, (byte)(number) 6, (byte)(number) 3, (byte)(number) 4, (byte)(number) 6, (byte)(number) 5, (byte)(number) 2, (byte)(number) 7, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 2, (byte)(number) 5, (byte)(number) 2, (byte)(number) 5, (byte)(number) 2, (byte)(number) 2, (byte)(number) 5, (byte)(number) 3, (byte)(number) 1, (byte)(number) 1, (byte)(number) 2, (byte)(number) 5, (byte)(number) 7, (byte)(number) 5, (byte)(number) 5, (byte)(number) 6, (byte)(number) 5, (byte)(number) 6, (byte)(number) 5, (byte)(number) 6, (byte)(number) 2, (byte)(number) 5, (byte)(number) 4, (byte)(number) 5, (byte)(number) 2, (byte)(number) 6, (byte)(number) 5, (byte)(number) 5, (byte)(number) 5, (byte)(number) 6, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 4, (byte)(number) 7, (byte)(number) 7, (byte)(number) 4, (byte)(number) 6, (byte)(number) 4, (byte)(number) 4 }
@@ -646,7 +636,10 @@ SYMBOL TABLE SSA
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
 (const byte*) SCREEN = (byte*)(number) $2800
-(byte*) SCREEN_REF
+(const byte*) SCREEN_REF = kickasm {{ .for(var y=-12;y<=12;y++)
+        .for(var x=-19;x<=20;x++)
+            .byte round(256*atan2(y, x)/PI/2)
+ }}
 (const byte) SIZEOF_WORD = (byte) 2
 (word()) atan2_16((signed word) atan2_16::x , (signed word) atan2_16::y)
 (bool~) atan2_16::$0
@@ -1076,7 +1069,6 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#36
 (byte*) print_char_cursor#37
 (byte*) print_char_cursor#38
-(byte*) print_char_cursor#39
 (byte*) print_char_cursor#4
 (byte*) print_char_cursor#5
 (byte*) print_char_cursor#6
@@ -1334,10 +1326,10 @@ Inferred type updated to byte in (unumber~) main::toD0181_$7 ← (byte~) main::t
 Inferred type updated to byte in (unumber~) main::toD0181_$8 ← (byte~) main::toD0181_$3 | (byte~) main::toD0181_$7
 Inferred type updated to word in (unumber~) main::$10 ← (word) main::angle_w#0 + (byte) $80
 Inferred type updated to byte in (unumber~) main::$11 ← > (word~) main::$10
-Inversing boolean not [60] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [59] (bool~) atan2_16::$16 ← (signed word) atan2_16::yi#3 == (signed byte) 0
-Inversing boolean not [69] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [68] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
-Inversing boolean not [80] (bool~) atan2_16::$19 ← (byte) 0 == (byte) atan2_16::shift#4 from [79] (bool~) atan2_16::$24 ← (byte) 0 != (byte) atan2_16::shift#4
-Inversing boolean not [104] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [103] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
+Inversing boolean not [59] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [58] (bool~) atan2_16::$16 ← (signed word) atan2_16::yi#3 == (signed byte) 0
+Inversing boolean not [68] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [67] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
+Inversing boolean not [79] (bool~) atan2_16::$19 ← (byte) 0 == (byte) atan2_16::shift#4 from [78] (bool~) atan2_16::$24 ← (byte) 0 != (byte) atan2_16::shift#4
+Inversing boolean not [103] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [102] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte*) init_font_hex::charset#3 = (byte*) init_font_hex::charset#4 
 Alias (byte) init_font_hex::idx#2 = (byte) init_font_hex::idx#6 
@@ -1383,7 +1375,7 @@ Alias (word) atan2_16::angle#4 = (word~) atan2_16::$12
 Alias (word) atan2_16::return#0 = (word) atan2_16::angle#10 (word) atan2_16::return#3 (word) atan2_16::return#1 
 Alias (word) atan2_16::angle#11 = (word) atan2_16::angle#15 
 Alias (word) atan2_16::angle#5 = (word~) atan2_16::$15 
-Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#30 (byte*) print_char_cursor#27 
+Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#27 
 Alias (byte) print_byte::b#0 = (byte~) print_word::$0 
 Alias (word) print_word::w#1 = (word) print_word::w#2 
 Alias (byte*) print_char_cursor#1 = (byte*) print_char_cursor#12 
@@ -1393,7 +1385,7 @@ Alias (byte) print_byte::b#2 = (byte) print_byte::b#3
 Alias (byte*) print_char_cursor#15 = (byte*) print_char_cursor#4 
 Alias (byte*) print_char_cursor#16 = (byte*) print_char_cursor#5 (byte*) print_char_cursor#17 (byte*) print_char_cursor#6 
 Alias (byte*) print_char_cursor#19 = (byte*) print_char_cursor#7 (byte*) print_char_cursor#8 
-Alias (byte*) print_char_cursor#35 = (byte*) print_char_cursor#38 (byte*) print_char_cursor#39 (byte*) print_char_cursor#37 (byte*) print_char_cursor#36 
+Alias (byte*) print_char_cursor#34 = (byte*) print_char_cursor#37 (byte*) print_char_cursor#38 (byte*) print_char_cursor#36 (byte*) print_char_cursor#35 
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
 Alias (byte*) main::toD0181_gfx#0 = (byte*) main::toD0181_gfx#1 
 Alias (byte) main::toD0181_return#0 = (byte~) main::toD0181_$8 (byte) main::toD0181_return#2 (byte) main::toD0181_return#1 (byte) main::toD0181_return#3 (byte~) main::$1 
@@ -1407,7 +1399,7 @@ Alias (word) main::diff_sum#2 = (word) main::diff_sum#4 (word) main::diff_sum#6
 Alias (byte*) main::screen#2 = (byte*) main::screen#3 (byte*) main::screen#4 
 Alias (signed byte) main::x#2 = (signed byte) main::x#4 (signed byte) main::x#3 
 Alias (signed byte) main::y#2 = (signed byte) main::y#6 (signed byte) main::y#5 (signed byte) main::y#3 
-Alias (byte*) print_char_cursor#25 = (byte*) print_char_cursor#32 (byte*) print_char_cursor#33 (byte*) print_char_cursor#31 (byte*) print_char_cursor#28 
+Alias (byte*) print_char_cursor#25 = (byte*) print_char_cursor#31 (byte*) print_char_cursor#32 (byte*) print_char_cursor#30 (byte*) print_char_cursor#28 
 Alias (word) main::angle_w#0 = (word~) main::$9 
 Alias (byte) main::ang_w#0 = (byte~) main::$11 (byte) main::ang_w#1 
 Alias (byte) diff::return#0 = (byte) diff::return#3 
@@ -1454,9 +1446,9 @@ Identical Phi Values (byte*) print_char_cursor#1 (byte*) print_char_cursor#16
 Identical Phi Values (byte*) print_char_cursor#13 (byte*) print_char_cursor#16
 Identical Phi Values (byte*) print_char_cursor#15 (byte*) print_char_cursor#19
 Identical Phi Values (byte*) print_char_cursor#16 (byte*) print_char_cursor#19
-Identical Phi Values (byte*) print_char_cursor#35 (byte*) print_char_cursor#0
+Identical Phi Values (byte*) print_char_cursor#34 (byte*) print_char_cursor#0
 Identical Phi Values (signed byte) main::y#2 (signed byte) main::y#4
-Identical Phi Values (byte*) print_char_cursor#25 (byte*) print_char_cursor#34
+Identical Phi Values (byte*) print_char_cursor#25 (byte*) print_char_cursor#33
 Identical Phi Values (byte*) print_char_cursor#20 (byte*) print_char_cursor#13
 Identical Phi Values (byte*) print_char_cursor#10 (byte*) print_char_cursor#20
 Identical Phi Values (byte) diff::bb1#1 (byte) diff::bb1#0
@@ -1469,25 +1461,25 @@ Identical Phi Values (signed word) atan2_16::x#17 (signed word) atan2_16::x#0
 Identical Phi Values (signed word) atan2_16::y#19 (signed word) atan2_16::y#0
 Identical Phi Values (signed word) atan2_16::x#4 (signed word) atan2_16::x#17
 Identical Phi Values (signed word) atan2_16::y#4 (signed word) atan2_16::y#19
-Identical Phi Values (byte*) print_char_cursor#34 (byte*) print_char_cursor#0
+Identical Phi Values (byte*) print_char_cursor#33 (byte*) print_char_cursor#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) init_font_hex::$3 [19] if((byte) init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3
 Simple Condition (bool~) init_font_hex::$4 [29] if((byte) init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2
 Simple Condition (bool~) init_font_hex::$5 [34] if((byte) init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1
-Simple Condition (bool~) atan2_16::$0 [39] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
-Simple Condition (bool~) atan2_16::$5 [48] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
-Simple Condition (bool~) atan2_16::$17 [61] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@16
-Simple Condition (bool~) atan2_16::$11 [70] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7
-Simple Condition (bool~) atan2_16::$18 [73] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@19
-Simple Condition (bool~) atan2_16::$19 [81] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@25
-Simple Condition (bool~) atan2_16::$20 [84] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@26
-Simple Condition (bool~) atan2_16::$21 [101] if((byte) atan2_16::i#1!=rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@15
-Simple Condition (bool~) atan2_16::$14 [105] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8
-Simple Condition (bool~) main::$14 [218] if((signed byte) main::x#1!=rangelast(-$13,$14)) goto main::@2
-Simple Condition (bool~) main::$15 [222] if((signed byte) main::y#1!=rangelast(-$c,$c)) goto main::@1
-Simple Condition (bool~) diff::$0 [237] if((byte) diff::bb1#0<(byte) diff::bb2#0) goto diff::@1
+Simple Condition (bool~) atan2_16::$0 [38] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
+Simple Condition (bool~) atan2_16::$5 [47] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
+Simple Condition (bool~) atan2_16::$17 [60] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@16
+Simple Condition (bool~) atan2_16::$11 [69] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7
+Simple Condition (bool~) atan2_16::$18 [72] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@19
+Simple Condition (bool~) atan2_16::$19 [80] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@25
+Simple Condition (bool~) atan2_16::$20 [83] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@26
+Simple Condition (bool~) atan2_16::$21 [100] if((byte) atan2_16::i#1!=rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@15
+Simple Condition (bool~) atan2_16::$14 [104] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8
+Simple Condition (bool~) main::$14 [215] if((signed byte) main::x#1!=rangelast(-$13,$14)) goto main::@2
+Simple Condition (bool~) main::$15 [219] if((signed byte) main::y#1!=rangelast(-$c,$c)) goto main::@1
+Simple Condition (bool~) diff::$0 [234] if((byte) diff::bb1#0<(byte) diff::bb2#0) goto diff::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [101] if((byte) atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17
+Negating conditional jump and destination [100] if((byte) atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant (const byte*) init_font_hex::proto_hi#0 = FONT_HEX_PROTO
 Constant (const byte) init_font_hex::c#0 = 0
@@ -1495,29 +1487,22 @@ Constant (const byte*) init_font_hex::proto_lo#0 = FONT_HEX_PROTO
 Constant (const byte) init_font_hex::c1#0 = 0
 Constant (const byte) init_font_hex::idx#0 = 0
 Constant (const byte) init_font_hex::i#0 = 0
-Constant (const word*) CORDIC_ATAN2_ANGLES_16 = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
-        .word 256*2*256*atan(1/pow(2,i))/PI/2
- }}
 Constant (const word) atan2_16::angle#0 = 0
 Constant (const byte) atan2_16::i#0 = 0
 Constant (const byte*) print_char_cursor#0 = (byte*) 1024
-Constant (const byte*) SCREEN_REF = kickasm {{ .for(var y=-12;y<=12;y++)
-        .for(var x=-19;x<=20;x++)
-            .byte round(256*atan2(y, x)/PI/2)
- }}
 Constant (const byte*) init_font_hex::charset#1 = CHARSET
 Constant (const byte*) main::toD0181_screen#0 = SCREEN
 Constant (const byte*) main::toD0181_gfx#0 = CHARSET
 Constant (const byte*) main::screen#0 = SCREEN
+Constant (const byte*) main::screen_ref#0 = SCREEN_REF
 Constant (const word) main::diff_sum#0 = 0
 Constant (const signed byte) main::y#0 = -$c
 Constant (const signed byte) main::x#0 = -$13
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
-Constant (const byte*) main::screen_ref#0 = SCREEN_REF
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [229] if(true) goto main::@6
+if() condition always true - replacing block destination [226] if(true) goto main::@6
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [17] init_font_hex::i#1 ← ++ init_font_hex::i#2 to ++
 Resolved ranged comparison value [19] if(init_font_hex::i#1!=rangelast(0,4)) goto init_font_hex::@3 to (number) 5
@@ -1525,12 +1510,12 @@ Resolved ranged next value [27] init_font_hex::c1#1 ← ++ init_font_hex::c1#4 t
 Resolved ranged comparison value [29] if(init_font_hex::c1#1!=rangelast(0,$f)) goto init_font_hex::@2 to (number) $10
 Resolved ranged next value [32] init_font_hex::c#1 ← ++ init_font_hex::c#6 to ++
 Resolved ranged comparison value [34] if(init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1 to (number) $10
-Resolved ranged next value [99] atan2_16::i#1 ← ++ atan2_16::i#2 to ++
-Resolved ranged comparison value [101] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17 to (const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
-Resolved ranged next value [216] main::x#1 ← ++ main::x#2 to ++
-Resolved ranged comparison value [218] if(main::x#1!=rangelast(-$13,$14)) goto main::@2 to (number) $15
-Resolved ranged next value [220] main::y#1 ← ++ main::y#4 to ++
-Resolved ranged comparison value [222] if(main::y#1!=rangelast(-$c,$c)) goto main::@1 to (number) $d
+Resolved ranged next value [98] atan2_16::i#1 ← ++ atan2_16::i#2 to ++
+Resolved ranged comparison value [100] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17 to (const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
+Resolved ranged next value [213] main::x#1 ← ++ main::x#2 to ++
+Resolved ranged comparison value [215] if(main::x#1!=rangelast(-$13,$14)) goto main::@2 to (number) $15
+Resolved ranged next value [217] main::y#1 ← ++ main::y#4 to ++
+Resolved ranged comparison value [219] if(main::y#1!=rangelast(-$c,$c)) goto main::@1 to (number) $d
 Simplifying expression containing zero init_font_hex::charset#2 in [8] *((byte*) init_font_hex::charset#2 + (const byte) init_font_hex::idx#0) ← (byte) 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) init_font_hex::idx#4 and assignment [15] (byte) init_font_hex::idx#4 ← ++ (byte) init_font_hex::idx#3
@@ -1605,10 +1590,10 @@ Inlining constant with var siblings (const byte) init_font_hex::idx#1
 Inlining constant with var siblings (const word) atan2_16::angle#0
 Inlining constant with var siblings (const byte) atan2_16::i#0
 Inlining constant with var siblings (const byte*) main::screen#0
+Inlining constant with var siblings (const byte*) main::screen_ref#0
 Inlining constant with var siblings (const word) main::diff_sum#0
 Inlining constant with var siblings (const signed byte) main::y#0
 Inlining constant with var siblings (const signed byte) main::x#0
-Inlining constant with var siblings (const byte*) main::screen_ref#0
 Inlining constant with var siblings (const byte*) print_char_cursor#0
 Constant inlined main::screen#0 = (const byte*) SCREEN
 Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN
@@ -1653,9 +1638,7 @@ Added new block during phi lifting atan2_16::@39(between atan2_16::@7 and atan2_
 Added new block during phi lifting main::@16(between main::@3 and main::@1)
 Added new block during phi lifting main::@17(between main::@14 and main::@2)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
 Adding NOP phi() at start of @19
-Adding NOP phi() at start of @43
 Adding NOP phi() at start of @45
 Adding NOP phi() at start of @46
 Adding NOP phi() at start of @end
@@ -1669,77 +1652,75 @@ Adding NOP phi() at start of print_word::@2
 Adding NOP phi() at start of print_byte::@2
 Adding NOP phi() at start of init_font_hex
 CALL GRAPH
-Calls in [] to main:5 
-Calls in [main] to init_font_hex:9 atan2_16:23 diff:30 print_word:43 
-Calls in [print_word] to print_byte:57 print_byte:61 
-Calls in [print_byte] to print_char:69 print_char:74 
+Calls in [] to main:3 
+Calls in [main] to init_font_hex:7 atan2_16:21 diff:28 print_word:41 
+Calls in [print_word] to print_byte:55 print_byte:59 
+Calls in [print_byte] to print_char:67 print_char:72 
 
 Created 38 initial phi equivalence classes
-Coalesced [15] main::screen_ref#8 ← main::screen_ref#5
-Coalesced [16] main::diff_sum#9 ← main::diff_sum#7
-Coalesced [17] main::screen#8 ← main::screen#5
-Coalesced [47] main::y#7 ← main::y#1
-Coalesced [48] main::screen_ref#7 ← main::screen_ref#1
-Coalesced [49] main::diff_sum#8 ← main::diff_sum#1
-Coalesced [50] main::screen#7 ← main::screen#1
-Coalesced [51] main::x#5 ← main::x#1
-Coalesced (already) [52] main::screen_ref#9 ← main::screen_ref#1
-Coalesced (already) [53] main::diff_sum#10 ← main::diff_sum#1
-Coalesced (already) [54] main::screen#9 ← main::screen#1
-Coalesced [56] print_byte::b#4 ← print_byte::b#0
-Coalesced [59] print_byte::b#5 ← print_byte::b#1
-Coalesced [60] print_char_cursor#40 ← print_char_cursor#19
-Coalesced [67] print_char::ch#3 ← print_char::ch#0
-Coalesced [68] print_char_cursor#41 ← print_char_cursor#24
-Coalesced [72] print_char::ch#4 ← print_char::ch#1
-Coalesced (already) [73] print_char_cursor#42 ← print_char_cursor#19
-Coalesced [83] diff::return#6 ← diff::$2
-Coalesced [87] diff::return#5 ← diff::$4
-Coalesced [90] atan2_16::yi#17 ← atan2_16::$2
-Coalesced [94] atan2_16::xi#14 ← atan2_16::$7
-Coalesced [96] atan2_16::yi#19 ← atan2_16::yi#0
-Coalesced [97] atan2_16::xi#16 ← atan2_16::xi#0
-Coalesced [100] atan2_16::angle#22 ← atan2_16::angle#12
-Coalesced [105] atan2_16::angle#27 ← atan2_16::angle#4
-Coalesced [109] atan2_16::return#5 ← atan2_16::angle#5
-Coalesced [112] atan2_16::return#6 ← atan2_16::angle#11
-Coalesced [113] atan2_16::angle#26 ← atan2_16::angle#1
-Not coalescing [114] atan2_16::shift#5 ← atan2_16::i#2
-Not coalescing [115] atan2_16::xd#10 ← atan2_16::xi#3
-Not coalescing [116] atan2_16::yd#10 ← atan2_16::yi#3
-Coalesced [122] atan2_16::yd#13 ← atan2_16::yd#2
-Coalesced [123] atan2_16::xd#13 ← atan2_16::xd#2
-Coalesced [130] atan2_16::yi#21 ← atan2_16::yi#2
-Coalesced [131] atan2_16::angle#25 ← atan2_16::angle#3
-Coalesced [132] atan2_16::xi#18 ← atan2_16::xi#2
-Coalesced [136] atan2_16::yi#18 ← atan2_16::yi#8
-Coalesced [137] atan2_16::xi#15 ← atan2_16::xi#8
-Coalesced [138] atan2_16::i#12 ← atan2_16::i#1
-Coalesced [139] atan2_16::angle#21 ← atan2_16::angle#13
-Coalesced (already) [140] atan2_16::angle#23 ← atan2_16::angle#13
-Coalesced [145] atan2_16::yi#20 ← atan2_16::yi#1
-Coalesced [146] atan2_16::angle#24 ← atan2_16::angle#2
-Coalesced [147] atan2_16::xi#17 ← atan2_16::xi#1
-Coalesced [148] atan2_16::yd#12 ← atan2_16::yd#3
-Coalesced [149] atan2_16::xd#12 ← atan2_16::xd#3
-Coalesced [153] atan2_16::shift#6 ← atan2_16::shift#1
-Coalesced [154] atan2_16::xd#11 ← atan2_16::xd#1
-Coalesced [155] atan2_16::yd#11 ← atan2_16::yd#1
-Not coalescing [156] atan2_16::xi#13 ← atan2_16::x#0
-Not coalescing [157] atan2_16::yi#16 ← atan2_16::y#0
-Coalesced [160] init_font_hex::charset#9 ← init_font_hex::charset#5
-Coalesced [182] init_font_hex::charset#8 ← init_font_hex::charset#0
-Coalesced [183] init_font_hex::proto_hi#7 ← init_font_hex::proto_hi#1
-Coalesced [184] init_font_hex::c#7 ← init_font_hex::c#1
-Coalesced (already) [185] init_font_hex::charset#10 ← init_font_hex::charset#0
-Coalesced [186] init_font_hex::proto_lo#5 ← init_font_hex::proto_lo#1
-Coalesced [187] init_font_hex::c1#5 ← init_font_hex::c1#1
-Coalesced [188] init_font_hex::i#3 ← init_font_hex::i#1
-Coalesced [189] init_font_hex::idx#7 ← init_font_hex::idx#2
+Coalesced [13] main::screen_ref#8 ← main::screen_ref#5
+Coalesced [14] main::diff_sum#9 ← main::diff_sum#7
+Coalesced [15] main::screen#8 ← main::screen#5
+Coalesced [45] main::y#7 ← main::y#1
+Coalesced [46] main::screen_ref#7 ← main::screen_ref#1
+Coalesced [47] main::diff_sum#8 ← main::diff_sum#1
+Coalesced [48] main::screen#7 ← main::screen#1
+Coalesced [49] main::x#5 ← main::x#1
+Coalesced (already) [50] main::screen_ref#9 ← main::screen_ref#1
+Coalesced (already) [51] main::diff_sum#10 ← main::diff_sum#1
+Coalesced (already) [52] main::screen#9 ← main::screen#1
+Coalesced [54] print_byte::b#4 ← print_byte::b#0
+Coalesced [57] print_byte::b#5 ← print_byte::b#1
+Coalesced [58] print_char_cursor#39 ← print_char_cursor#19
+Coalesced [65] print_char::ch#3 ← print_char::ch#0
+Coalesced [66] print_char_cursor#40 ← print_char_cursor#24
+Coalesced [70] print_char::ch#4 ← print_char::ch#1
+Coalesced (already) [71] print_char_cursor#41 ← print_char_cursor#19
+Coalesced [81] diff::return#6 ← diff::$2
+Coalesced [85] diff::return#5 ← diff::$4
+Coalesced [88] atan2_16::yi#17 ← atan2_16::$2
+Coalesced [92] atan2_16::xi#14 ← atan2_16::$7
+Coalesced [94] atan2_16::yi#19 ← atan2_16::yi#0
+Coalesced [95] atan2_16::xi#16 ← atan2_16::xi#0
+Coalesced [98] atan2_16::angle#22 ← atan2_16::angle#12
+Coalesced [103] atan2_16::angle#27 ← atan2_16::angle#4
+Coalesced [107] atan2_16::return#5 ← atan2_16::angle#5
+Coalesced [110] atan2_16::return#6 ← atan2_16::angle#11
+Coalesced [111] atan2_16::angle#26 ← atan2_16::angle#1
+Not coalescing [112] atan2_16::shift#5 ← atan2_16::i#2
+Not coalescing [113] atan2_16::xd#10 ← atan2_16::xi#3
+Not coalescing [114] atan2_16::yd#10 ← atan2_16::yi#3
+Coalesced [120] atan2_16::yd#13 ← atan2_16::yd#2
+Coalesced [121] atan2_16::xd#13 ← atan2_16::xd#2
+Coalesced [128] atan2_16::yi#21 ← atan2_16::yi#2
+Coalesced [129] atan2_16::angle#25 ← atan2_16::angle#3
+Coalesced [130] atan2_16::xi#18 ← atan2_16::xi#2
+Coalesced [134] atan2_16::yi#18 ← atan2_16::yi#8
+Coalesced [135] atan2_16::xi#15 ← atan2_16::xi#8
+Coalesced [136] atan2_16::i#12 ← atan2_16::i#1
+Coalesced [137] atan2_16::angle#21 ← atan2_16::angle#13
+Coalesced (already) [138] atan2_16::angle#23 ← atan2_16::angle#13
+Coalesced [143] atan2_16::yi#20 ← atan2_16::yi#1
+Coalesced [144] atan2_16::angle#24 ← atan2_16::angle#2
+Coalesced [145] atan2_16::xi#17 ← atan2_16::xi#1
+Coalesced [146] atan2_16::yd#12 ← atan2_16::yd#3
+Coalesced [147] atan2_16::xd#12 ← atan2_16::xd#3
+Coalesced [151] atan2_16::shift#6 ← atan2_16::shift#1
+Coalesced [152] atan2_16::xd#11 ← atan2_16::xd#1
+Coalesced [153] atan2_16::yd#11 ← atan2_16::yd#1
+Not coalescing [154] atan2_16::xi#13 ← atan2_16::x#0
+Not coalescing [155] atan2_16::yi#16 ← atan2_16::y#0
+Coalesced [158] init_font_hex::charset#9 ← init_font_hex::charset#5
+Coalesced [180] init_font_hex::charset#8 ← init_font_hex::charset#0
+Coalesced [181] init_font_hex::proto_hi#7 ← init_font_hex::proto_hi#1
+Coalesced [182] init_font_hex::c#7 ← init_font_hex::c#1
+Coalesced (already) [183] init_font_hex::charset#10 ← init_font_hex::charset#0
+Coalesced [184] init_font_hex::proto_lo#5 ← init_font_hex::proto_lo#1
+Coalesced [185] init_font_hex::c1#5 ← init_font_hex::c1#1
+Coalesced [186] init_font_hex::i#3 ← init_font_hex::i#1
+Coalesced [187] init_font_hex::idx#7 ← init_font_hex::idx#2
 Coalesced down to 26 phi equivalence classes
-Culled Empty Block (label) @1
 Culled Empty Block (label) @19
-Culled Empty Block (label) @43
 Culled Empty Block (label) @46
 Culled Empty Block (label) main::@12
 Culled Empty Block (label) main::toD0181_@return
@@ -3231,12 +3212,12 @@ init_font_hex: {
   // File Data
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
-  print_hextab: .text "0123456789abcdef"
-// Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
+  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:
 .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
 
+  print_hextab: .text "0123456789abcdef"
 SCREEN_REF:
 .for(var y=-12;y<=12;y++)
         .for(var x=-19;x<=20;x++)
@@ -4297,12 +4278,12 @@ init_font_hex: {
   // File Data
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
-  print_hextab: .text "0123456789abcdef"
-// Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
+  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:
 .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
 
+  print_hextab: .text "0123456789abcdef"
 SCREEN_REF:
 .for(var y=-12;y<=12;y++)
         .for(var x=-19;x<=20;x++)
@@ -5482,12 +5463,12 @@ init_font_hex: {
   // File Data
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
-  print_hextab: .text "0123456789abcdef"
-// Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
+  // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:
 .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
 
+  print_hextab: .text "0123456789abcdef"
 SCREEN_REF:
 .for(var y=-12;y<=12;y++)
         .for(var x=-19;x<=20;x++)

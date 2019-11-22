@@ -269,12 +269,6 @@ plexShowSprite::@return: scope:[plexShowSprite]  from plexShowSprite::@2 plexSho
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
  }}
-  (byte*) YSIN ← kickasm {{ .var min = 50
-    .var max = 250-21
-    .var ampl = max-min;
-    .for(var i=0;i<256;i++)
-        .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
- }}
   to:@14
 
 (void()) main()
@@ -552,7 +546,7 @@ loop::@10: scope:[loop]  from loop::@10 loop::@6
   (byte) loop::sin_idx#5 ← phi( loop::@10/(byte) loop::sin_idx#5 loop::@6/(byte) loop::sin_idx#2 )
   (byte) loop::sy#2 ← phi( loop::@10/(byte) loop::sy#1 loop::@6/(byte) loop::sy#0 )
   (byte) loop::y_idx#2 ← phi( loop::@10/(byte) loop::y_idx#1 loop::@6/(byte) loop::y_idx#0 )
-  *((const byte*) PLEX_YPOS + (byte) loop::sy#2) ← *((byte*) YSIN + (byte) loop::y_idx#2)
+  *((const byte*) PLEX_YPOS + (byte) loop::sy#2) ← *((const byte*) YSIN + (byte) loop::y_idx#2)
   (byte) loop::y_idx#1 ← (byte) loop::y_idx#2 + (number) 8
   (byte) loop::sy#1 ← (byte) loop::sy#2 + rangenext(0,PLEX_COUNT-1)
   (bool~) loop::$1 ← (byte) loop::sy#1 != rangelast(0,PLEX_COUNT-1)
@@ -696,7 +690,12 @@ SYMBOL TABLE SSA
 (const byte) VIC_DEN = (number) $10
 (const byte) VIC_RSEL = (number) 8
 (const byte) WHITE = (number) 1
-(byte*) YSIN
+(const byte*) YSIN = kickasm {{ .var min = 50
+    .var max = 250-21
+    .var ampl = max-min;
+    .for(var i=0;i<256;i++)
+        .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
+ }}
 (bool) framedone
 (bool) framedone#0
 (bool) framedone#1
@@ -1484,28 +1483,22 @@ Simple Condition (bool~) plexSort::$8 [30] if((byte) plexSort::m#1!=rangelast(0,
 Simple Condition (bool~) plexSort::plexFreePrepare1_$0 [53] if((byte) plexSort::plexFreePrepare1_s#1!=rangelast(0,7)) goto plexSort::plexFreePrepare1_@1
 Simple Condition (bool~) plexShowSprite::$4 [83] if((byte~) plexShowSprite::$3!=(byte) 0) goto plexShowSprite::@1
 Simple Condition (bool~) plexShowSprite::$8 [97] if((byte) plex_sprite_msb#3!=(byte) 0) goto plexShowSprite::@return
-Simple Condition (bool~) init::$3 [148] if((byte) init::sx#1!=rangelast(0,PLEX_COUNT-1)) goto init::@1
-Simple Condition (bool~) init::$4 [156] if((byte) init::ss#1!=rangelast(0,7)) goto init::@3
-Simple Condition (bool~) plex_irq::$0 [194] if((byte) plex_show_idx#16<(const byte) PLEX_COUNT) goto plex_irq::@1
-Simple Condition (bool~) loop::$1 [224] if((byte) loop::sy#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@10
+Simple Condition (bool~) init::$3 [147] if((byte) init::sx#1!=rangelast(0,PLEX_COUNT-1)) goto init::@1
+Simple Condition (bool~) init::$4 [155] if((byte) init::ss#1!=rangelast(0,7)) goto init::@3
+Simple Condition (bool~) plex_irq::$0 [193] if((byte) plex_show_idx#16<(const byte) PLEX_COUNT) goto plex_irq::@1
+Simple Condition (bool~) loop::$1 [223] if((byte) loop::sy#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@10
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Rewriting && if()-condition to two if()s [39] (bool~) plexSort::$7 ← (bool~) plexSort::$5 && (bool~) plexSort::$6
-Rewriting && if()-condition to two if()s [189] (bool~) plex_irq::$6 ← (bool~) plex_irq::$3 && (bool~) plex_irq::$5
-Rewriting ! if()-condition to reversed if() [213] (bool~) loop::$0 ← ! (bool) framedone#12
+Rewriting && if()-condition to two if()s [188] (bool~) plex_irq::$6 ← (bool~) plex_irq::$3 && (bool~) plex_irq::$5
+Rewriting ! if()-condition to reversed if() [212] (bool~) loop::$0 ← ! (bool) framedone#12
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 Constant right-side identified [0] (byte*) PLEX_SCREEN_PTR#0 ← (byte*)(number) $400+(number) $3f8
-Constant right-side identified [140] (byte*~) init::$1 ← (const byte*) SPRITE / (byte) $40
+Constant right-side identified [139] (byte*~) init::$1 ← (const byte*) SPRITE / (byte) $40
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) PLEX_SCREEN_PTR#0 = (byte*)$400+$3f8
 Constant (const byte) plexInit::i#0 = 0
 Constant (const byte) plexSort::m#0 = 0
 Constant (const byte) plexSort::plexFreePrepare1_s#0 = 0
-Constant (const byte*) YSIN = kickasm {{ .var min = 50
-    .var max = 250-21
-    .var ampl = max-min;
-    .for(var i=0;i<256;i++)
-        .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
- }}
 Constant (const byte*) plexInit::screen#0 = SCREEN
 Constant (const word) init::xp#0 = $20
 Constant (const byte) init::sx#0 = 0
@@ -1517,7 +1510,7 @@ Constant (const byte) loop::sy#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) init::$2 = (byte)init::$1
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [211] if(true) goto loop::@4
+if() condition always true - replacing block destination [210] if(true) goto loop::@4
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [13] plexInit::i#1 ← ++ plexInit::i#2 to ++
 Resolved ranged comparison value [15] if(plexInit::i#1!=rangelast(0,PLEX_COUNT-1)) goto plexInit::@1 to (const byte) PLEX_COUNT-(byte) 1+(number) 1
@@ -1525,12 +1518,12 @@ Resolved ranged next value [28] plexSort::m#1 ← ++ plexSort::m#2 to ++
 Resolved ranged comparison value [30] if(plexSort::m#1!=rangelast(0,PLEX_COUNT-2)) goto plexSort::@1 to (const byte) PLEX_COUNT-(byte) 2+(number) 1
 Resolved ranged next value [51] plexSort::plexFreePrepare1_s#1 ← ++ plexSort::plexFreePrepare1_s#2 to ++
 Resolved ranged comparison value [53] if(plexSort::plexFreePrepare1_s#1!=rangelast(0,7)) goto plexSort::plexFreePrepare1_@1 to (number) 8
-Resolved ranged next value [146] init::sx#1 ← ++ init::sx#2 to ++
-Resolved ranged comparison value [148] if(init::sx#1!=rangelast(0,PLEX_COUNT-1)) goto init::@1 to (const byte) PLEX_COUNT-(byte) 1+(number) 1
-Resolved ranged next value [154] init::ss#1 ← ++ init::ss#2 to ++
-Resolved ranged comparison value [156] if(init::ss#1!=rangelast(0,7)) goto init::@3 to (number) 8
-Resolved ranged next value [222] loop::sy#1 ← ++ loop::sy#2 to ++
-Resolved ranged comparison value [224] if(loop::sy#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@10 to (const byte) PLEX_COUNT-(byte) 1+(number) 1
+Resolved ranged next value [145] init::sx#1 ← ++ init::sx#2 to ++
+Resolved ranged comparison value [147] if(init::sx#1!=rangelast(0,PLEX_COUNT-1)) goto init::@1 to (const byte) PLEX_COUNT-(byte) 1+(number) 1
+Resolved ranged next value [153] init::ss#1 ← ++ init::ss#2 to ++
+Resolved ranged comparison value [155] if(init::ss#1!=rangelast(0,7)) goto init::@3 to (number) 8
+Resolved ranged next value [221] loop::sy#1 ← ++ loop::sy#2 to ++
+Resolved ranged comparison value [223] if(loop::sy#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@10 to (const byte) PLEX_COUNT-(byte) 1+(number) 1
 Eliminating unused variable (byte*) PLEX_SCREEN_PTR#1 and assignment [3] (byte*) PLEX_SCREEN_PTR#1 ← (const byte*) plexInit::screen#0 + (word) $3f8
 Eliminating unused constant (const byte) plex_irq::rasterY#0
 Successful SSA optimization PassNEliminateUnusedVars

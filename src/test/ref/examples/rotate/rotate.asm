@@ -25,9 +25,9 @@
   // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
   .const CLOCKS_PER_INIT = $12
   .label SCREEN = $400
+  .label COS = SIN+$40
   // A single sprite
   .label SPRITE = $3000
-  .label COS = SIN+$40
 // sin(x) = cos(x+PI/2)
 main: {
     sei
@@ -503,9 +503,6 @@ mulf_init: {
   .align $100
   mulf_sqr2_hi: .fill $200, 0
   print_hextab: .text "0123456789abcdef"
-  // Positions to rotate
-  xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
-  ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
   // Sine and Cosine tables  
   // Angles: $00=0, $80=PI,$100=2*PI
   // Sine/Cosine: signed fixed [-$7f,$7f]
@@ -514,6 +511,9 @@ SIN:
 .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
 
+  // Positions to rotate
+  xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
+  ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
 .pc = SPRITE "SPRITE"
   .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)

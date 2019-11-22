@@ -12,6 +12,7 @@ Culled Empty Block (label) memcpy::@7
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
 Culled Empty Block (label) @7
+Culled Empty Block (label) @8
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
@@ -19,7 +20,7 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@8
+  to:@9
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 memcpy: scope:[memcpy]  from main main::@7
@@ -58,27 +59,19 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
   (void*) memcpy::return#1 ← (void*) memcpy::return#4
   return 
   to:@return
-@8: scope:[]  from @begin
-  (byte*) MEDUSA_SCREEN ← kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
-    .fill fileScreen.getSize(), fileScreen.get(i)
- }}
-  (byte*) MEDUSA_COLORS ← kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
-    .fill fileCols.getSize(), fileCols.get(i)
- }}
-  to:@9
 
 (void()) main()
 main: scope:[main]  from @9
   *((const byte*) BGCOL) ← (const byte) BLACK
   (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN
-  (void*) memcpy::source#0 ← (void*)(byte*) MEDUSA_SCREEN
+  (void*) memcpy::source#0 ← (void*)(const byte*) MEDUSA_SCREEN
   (word) memcpy::num#0 ← (number) $3e8
   call memcpy 
   (void*) memcpy::return#2 ← (void*) memcpy::return#1
   to:main::@7
 main::@7: scope:[main]  from main
   (void*) memcpy::destination#1 ← (void*)(const byte*) COLS
-  (void*) memcpy::source#1 ← (void*)(byte*) MEDUSA_COLORS
+  (void*) memcpy::source#1 ← (void*)(const byte*) MEDUSA_COLORS
   (word) memcpy::num#1 ← (number) $3e8
   call memcpy 
   (void*) memcpy::return#3 ← (void*) memcpy::return#1
@@ -95,7 +88,7 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@9: scope:[]  from @8
+@9: scope:[]  from @begin
   call main 
   to:@10
 @10: scope:[]  from @9
@@ -104,15 +97,18 @@ main::@return: scope:[main]  from main::@1
 
 SYMBOL TABLE SSA
 (label) @10
-(label) @8
 (label) @9
 (label) @begin
 (label) @end
 (const byte*) BGCOL = (byte*)(number) $d021
 (const byte) BLACK = (number) 0
 (const byte*) COLS = (byte*)(number) $d800
-(byte*) MEDUSA_COLORS
-(byte*) MEDUSA_SCREEN
+(const byte*) MEDUSA_COLORS = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
+    .fill fileCols.getSize(), fileCols.get(i)
+ }}
+(const byte*) MEDUSA_SCREEN = kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
+    .fill fileScreen.getSize(), fileScreen.get(i)
+ }}
 (const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (byte*~) main::$2
@@ -200,25 +196,18 @@ Identical Phi Values (void*) memcpy::destination#3 (void*) memcpy::destination#2
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memcpy::$2 [8] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [21] (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN
-Constant right-side identified [32] (byte*~) main::$2 ← (const byte*) SCREEN + (word) $3e7
+Constant right-side identified [19] (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN
+Constant right-side identified [30] (byte*~) main::$2 ← (const byte*) SCREEN + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) MEDUSA_SCREEN = kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
-    .fill fileScreen.getSize(), fileScreen.get(i)
- }}
-Constant (const byte*) MEDUSA_COLORS = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
-    .fill fileCols.getSize(), fileCols.get(i)
- }}
 Constant (const void*) memcpy::destination#0 = (void*)SCREEN
+Constant (const void*) memcpy::source#0 = (void*)MEDUSA_SCREEN
 Constant (const word) memcpy::num#0 = $3e8
 Constant (const void*) memcpy::destination#1 = (void*)COLS
+Constant (const void*) memcpy::source#1 = (void*)MEDUSA_COLORS
 Constant (const word) memcpy::num#1 = $3e8
 Constant (const byte*) main::$2 = SCREEN+$3e7
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const void*) memcpy::source#0 = (void*)MEDUSA_SCREEN
-Constant (const void*) memcpy::source#1 = (void*)MEDUSA_COLORS
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [31] if(true) goto main::@2
+if() condition always true - replacing block destination [29] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused variable (void*) memcpy::return#2 and assignment [13] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
 Eliminating unused variable (void*) memcpy::return#3 and assignment [15] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
@@ -230,11 +219,11 @@ Inlining Noop Cast [2] (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destinat
 Inlining Noop Cast [3] (byte*~) memcpy::$0 ← (byte*)(void*) memcpy::source#2 keeping memcpy::source#2
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const void*) memcpy::destination#0
+Inlining constant with var siblings (const void*) memcpy::source#0
 Inlining constant with var siblings (const word) memcpy::num#0
 Inlining constant with var siblings (const void*) memcpy::destination#1
-Inlining constant with var siblings (const word) memcpy::num#1
-Inlining constant with var siblings (const void*) memcpy::source#0
 Inlining constant with var siblings (const void*) memcpy::source#1
+Inlining constant with var siblings (const word) memcpy::num#1
 Constant inlined memcpy::num#1 = (word) $3e8
 Constant inlined memcpy::num#0 = (word) $3e8
 Constant inlined memcpy::source#1 = (void*)(const byte*) MEDUSA_COLORS
@@ -246,7 +235,6 @@ Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) memcpy::num#2 (word) $3e8
 Successful SSA optimization Pass2IdenticalPhiElimination
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @8
 Adding NOP phi() at start of @9
 Adding NOP phi() at start of @10
 Adding NOP phi() at start of @end
@@ -255,14 +243,13 @@ Adding NOP phi() at start of main::@8
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of memcpy::@3
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to memcpy:7 memcpy:9 
+Calls in [] to main:2 
+Calls in [main] to memcpy:6 memcpy:8 
 
 Created 4 initial phi equivalence classes
-Coalesced [24] memcpy::src#5 ← memcpy::src#1
-Coalesced [25] memcpy::dst#5 ← memcpy::dst#1
+Coalesced [23] memcpy::src#5 ← memcpy::src#1
+Coalesced [24] memcpy::dst#5 ← memcpy::dst#1
 Coalesced down to 4 phi equivalence classes
-Culled Empty Block (label) @8
 Culled Empty Block (label) @10
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@1

@@ -2,6 +2,7 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
 Culled Empty Block (label) @7
@@ -9,12 +10,6 @@ Culled Empty Block (label) @8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@4
-@4: scope:[]  from @begin
-  (byte*) SINTABLE ← kickasm {{ .for(var i=0;i<$100;i++)
-        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
- }}
-  (byte*) SPRITE ← kickasm {{ .fill $40,$ff  }}
   to:@9
 
 (void()) main()
@@ -23,9 +18,7 @@ main: scope:[main]  from @9
   *((const byte*) SPRITES_ENABLE) ← (number) 1
   *((const byte*) SPRITES_YPOS + (number) 0) ← (number) $64
   *((const byte*) SPRITES_XPOS + (number) 0) ← (number) $64
-  (byte*~) main::$0 ← (byte*) SPRITE / (number) $40
-  (byte~) main::$1 ← ((byte)) (byte*~) main::$0
-  *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte~) main::$1
+  *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte*) SPRITE/(number) $40
   call saveZeropage 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -94,7 +87,7 @@ animSprite: scope:[animSprite]  from main::@2
 animSprite::@return: scope:[animSprite]  from animSprite
   return 
   to:@return
-@9: scope:[]  from @4
+@9: scope:[]  from @begin
   call main 
   to:@10
 @10: scope:[]  from @9
@@ -103,13 +96,14 @@ animSprite::@return: scope:[animSprite]  from animSprite
 
 SYMBOL TABLE SSA
 (label) @10
-(label) @4
 (label) @9
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*)(number) $400
-(byte*) SINTABLE
-(byte*) SPRITE
+(const byte*) SINTABLE = kickasm {{ .for(var i=0;i<$100;i++)
+        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
+ }}
+(const byte*) SPRITE = kickasm {{ .fill $40,$ff  }}
 (const byte*) SPRITES_ENABLE = (byte*)(number) $d015
 (const byte*) SPRITES_XPOS = (byte*)(number) $d000
 (const byte*) SPRITES_YPOS = (byte*)(number) $d001
@@ -118,8 +112,6 @@ SYMBOL TABLE SSA
 (void()) animSprite()
 (label) animSprite::@return
 (void()) main()
-(byte*~) main::$0
-(byte~) main::$1
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -137,12 +129,11 @@ Adding number conversion cast (unumber) $64 in *((const byte*) SPRITES_YPOS + (n
 Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_YPOS + (number) 0) ← ((unumber)) (number) $64
 Adding number conversion cast (unumber) $64 in *((const byte*) SPRITES_XPOS + (number) 0) ← (number) $64
 Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_XPOS + (number) 0) ← ((unumber)) (number) $64
-Adding number conversion cast (unumber) $40 in (byte*~) main::$0 ← (byte*) SPRITE / (number) $40
+Adding number conversion cast (unumber) $40 in *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte*) SPRITE/(number) $40
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((const byte*) SPRITES_ENABLE) ← (unumber)(number) 1
 Inlining cast *((const byte*) SPRITES_YPOS + (unumber)(number) 0) ← (unumber)(number) $64
 Inlining cast *((const byte*) SPRITES_XPOS + (unumber)(number) 0) ← (unumber)(number) $64
-Inlining cast (byte~) main::$1 ← (byte)(byte*~) main::$0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53248
 Simplifying constant pointer cast (byte*) 53249
@@ -162,25 +153,10 @@ Finalized unsigned number type (byte) $64
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $40
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) SINTABLE = kickasm {{ .for(var i=0;i<$100;i++)
-        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
- }}
-Constant (const byte*) SPRITE = kickasm {{ .fill $40,$ff  }}
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SPRITES_YPOS in [4] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) $64
-Simplifying expression containing zero SPRITES_XPOS in [5] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte) $64
+Simplifying expression containing zero SPRITES_YPOS in [2] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) $64
+Simplifying expression containing zero SPRITES_XPOS in [3] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte) $64
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Constant right-side identified [4] (byte*~) main::$0 ← (const byte*) SPRITE / (byte) $40
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = SPRITE/$40
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) main::$1 = (byte)main::$0
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$1 = (byte)(const byte*) SPRITE/(byte) $40
-Constant inlined main::$0 = (const byte*) SPRITE/(byte) $40
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @9
 Adding NOP phi() at start of @10
 Adding NOP phi() at start of @end
@@ -189,12 +165,11 @@ Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@4
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to saveZeropage:11 sinZeropage:13 animSprite:15 restoreZeropage:17 
+Calls in [] to main:2 
+Calls in [main] to saveZeropage:10 sinZeropage:12 animSprite:14 restoreZeropage:16 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @10
 Culled Empty Block (label) main::@4
 Renumbering block @9 to @1
@@ -461,15 +436,15 @@ saveZeropage: {
     rts
 }
   // File Data
-  // Storage for saving/restoring zeropage
-  .align $100
-  ZP_STORAGE: .fill $100, 0
   // A 256-byte (co)sinus (with $ff in the first two entries)
   .align $100
 SINTABLE:
 .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*cos(toRadians(360*i/256)))
 
+  // Storage for saving/restoring zeropage
+  .align $100
+  ZP_STORAGE: .fill $100, 0
   // A single sprite to animate
   .align $40
 SPRITE:
@@ -655,15 +630,15 @@ saveZeropage: {
     rts
 }
   // File Data
-  // Storage for saving/restoring zeropage
-  .align $100
-  ZP_STORAGE: .fill $100, 0
   // A 256-byte (co)sinus (with $ff in the first two entries)
   .align $100
 SINTABLE:
 .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*cos(toRadians(360*i/256)))
 
+  // Storage for saving/restoring zeropage
+  .align $100
+  ZP_STORAGE: .fill $100, 0
   // A single sprite to animate
   .align $40
 SPRITE:
@@ -885,15 +860,15 @@ saveZeropage: {
     rts
 }
   // File Data
-  // Storage for saving/restoring zeropage
-  .align $100
-  ZP_STORAGE: .fill $100, 0
   // A 256-byte (co)sinus (with $ff in the first two entries)
   .align $100
 SINTABLE:
 .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*cos(toRadians(360*i/256)))
 
+  // Storage for saving/restoring zeropage
+  .align $100
+  ZP_STORAGE: .fill $100, 0
   // A single sprite to animate
   .align $40
 SPRITE:

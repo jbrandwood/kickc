@@ -291,11 +291,6 @@ sprites_irq::@return: scope:[sprites_irq]  from sprites_irq::@6
   (byte) irq_sprite_ptr#17 ← phi( @10/(byte) irq_sprite_ptr#0 )
   (byte) irq_raster_next#17 ← phi( @10/(byte) irq_raster_next#20 )
   (byte) irq_sprite_ypos#14 ← phi( @10/(byte) irq_sprite_ypos#18 )
-  (byte*) SIN ← kickasm {{ .var AMPL = 200-21
-    .for(var i=0; i<256; i++) {
-  	  .byte 51+AMPL/2+sin(toRadians([i*360]/256))*AMPL/2
-    }
- }}
   kickasm(location (const byte*) SIN_SPRITE) {{ .fill $40, $ff
  }}
   (byte) sin_idx#0 ← (number) 0
@@ -458,7 +453,7 @@ loop::@6: scope:[loop]  from loop::@5 loop::@6
   (byte) loop::idx#2 ← phi( loop::@5/(byte) loop::idx#0 loop::@6/(byte) loop::idx#1 )
   (byte) loop::s#2 ← phi( loop::@5/(byte) loop::s#0 loop::@6/(byte) loop::s#1 )
   (number~) loop::$1 ← (byte) loop::s#2 * (number) 2
-  *((const byte*) SPRITES_YPOS + (number~) loop::$1) ← *((byte*) SIN + (byte) loop::idx#2)
+  *((const byte*) SPRITES_YPOS + (number~) loop::$1) ← *((const byte*) SIN + (byte) loop::idx#2)
   (byte) loop::idx#1 ← (byte) loop::idx#2 + (number) $a
   (byte) loop::s#1 ← (byte) loop::s#2 + rangenext(4,7)
   (bool~) loop::$2 ← (byte) loop::s#1 != rangelast(4,7)
@@ -521,7 +516,11 @@ SYMBOL TABLE SSA
 (const byte) PROCPORT_DDR_MEMORY_MASK = (number) 7
 (const byte) PROCPORT_RAM_IO = (number) 5
 (const byte*) RASTER = (byte*)(number) $d012
-(byte*) SIN
+(const byte*) SIN = kickasm {{ .var AMPL = 200-21
+    .for(var i=0; i<256; i++) {
+  	  .byte 51+AMPL/2+sin(toRadians([i*360]/256))*AMPL/2
+    }
+ }}
 (const byte*) SIN_SPRITE = (byte*)(number) $2800
 (const byte*) SPRITES_COLS = (byte*)(number) $d027
 (const byte*) SPRITES_ENABLE = (byte*)(number) $d015
@@ -1192,9 +1191,9 @@ Simple Condition (bool~) sprites_irq::$4 [58] if(*((const byte*) RASTER)<(byte) 
 Simple Condition (bool~) sprites_irq::$1 [62] if((byte) render_screen_showing#0==(byte) 0) goto sprites_irq::@1
 Simple Condition (bool~) sprites_irq::$2 [80] if((byte) irq_cnt#1==(byte) 9) goto sprites_irq::@3
 Simple Condition (bool~) sprites_irq::$3 [97] if((byte) irq_cnt#1==(byte) $a) goto sprites_irq::@4
-Simple Condition (bool~) main::$8 [183] if((byte) main::s#1!=rangelast(4,7)) goto main::@1
-Simple Condition (bool~) loop::$0 [198] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@4
-Simple Condition (bool~) loop::$2 [208] if((byte) loop::s#1!=rangelast(4,7)) goto loop::@6
+Simple Condition (bool~) main::$8 [182] if((byte) main::s#1!=rangelast(4,7)) goto main::@1
+Simple Condition (bool~) loop::$0 [197] if(*((const byte*) RASTER)!=(byte) $ff) goto loop::@4
+Simple Condition (bool~) loop::$2 [207] if((byte) loop::s#1!=rangelast(4,7)) goto loop::@6
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [6] (byte) sprites_init::xpos#0 ← (unumber)(number) $18+(number) $f*(number) 8
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -1202,11 +1201,6 @@ Constant (const byte) sprites_init::xpos#0 = (unumber)$18+$f*8
 Constant (const byte) sprites_init::s#0 = 0
 Constant (const byte*) toSpritePtr1_sprite#0 = PLAYFIELD_SPRITES
 Constant (const byte*) sprites_irq::toSpritePtr2_sprite#0 = PLAYFIELD_SPRITES
-Constant (const byte*) SIN = kickasm {{ .var AMPL = 200-21
-    .for(var i=0; i<256; i++) {
-  	  .byte 51+AMPL/2+sin(toRadians([i*360]/256))*AMPL/2
-    }
- }}
 Constant (const byte) sin_idx#0 = 0
 Constant (const byte*) main::vicSelectGfxBank1_gfx#0 = PLAYFIELD_SCREEN_1
 Constant (const byte*) main::toD0181_screen#0 = PLAYFIELD_SCREEN_1
@@ -1224,14 +1218,14 @@ Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
 Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
 Constant (const word) main::toSpritePtr2_$0 = (word)main::toSpritePtr2_sprite#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [195] if(true) goto loop::@4
+if() condition always true - replacing block destination [194] if(true) goto loop::@4
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [15] sprites_init::s#1 ← ++ sprites_init::s#2 to ++
 Resolved ranged comparison value [17] if(sprites_init::s#1!=rangelast(0,3)) goto sprites_init::@1 to (number) 4
-Resolved ranged next value [181] main::s#1 ← ++ main::s#2 to ++
-Resolved ranged comparison value [183] if(main::s#1!=rangelast(4,7)) goto main::@1 to (number) 8
-Resolved ranged next value [206] loop::s#1 ← ++ loop::s#2 to ++
-Resolved ranged comparison value [208] if(loop::s#1!=rangelast(4,7)) goto loop::@6 to (number) 8
+Resolved ranged next value [180] main::s#1 ← ++ main::s#2 to ++
+Resolved ranged comparison value [182] if(main::s#1!=rangelast(4,7)) goto main::@1 to (number) 8
+Resolved ranged next value [205] loop::s#1 ← ++ loop::s#2 to ++
+Resolved ranged comparison value [207] if(loop::s#1!=rangelast(4,7)) goto loop::@6 to (number) 8
 Simplifying expression containing zero SPRITES_YPOS in [50] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) sprites_irq::ypos#0
 Simplifying expression containing zero PLAYFIELD_SPRITE_PTRS_1 in [64] *((const byte*) PLAYFIELD_SPRITE_PTRS_1 + (byte) 0) ← (byte) sprites_irq::ptr#0
 Simplifying expression containing zero PLAYFIELD_SPRITE_PTRS_2 in [71] *((const byte*) PLAYFIELD_SPRITE_PTRS_2 + (byte) 0) ← (byte) sprites_irq::ptr#0

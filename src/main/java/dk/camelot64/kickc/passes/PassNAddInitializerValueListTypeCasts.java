@@ -80,7 +80,7 @@ public class PassNAddInitializerValueListTypeCasts extends Pass2SsaOptimization 
             SymbolTypeStruct declaredStructType = (SymbolTypeStruct) declaredType;
             // Recursively cast all sub-elements
             StructDefinition structDefinition = declaredStructType.getStructDefinition(program.getScope());
-            Collection<Variable> memberDefinitions = structDefinition.getAllVariables(false);
+            Collection<Variable> memberDefinitions = structDefinition.getAllVars(false);
             int size = memberDefinitions.size();
             if(size!=valueList.getList().size()) {
                throw new CompileError(

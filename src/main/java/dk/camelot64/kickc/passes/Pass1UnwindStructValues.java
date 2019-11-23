@@ -206,7 +206,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   // Not inside another struct
                   StructDefinition structDefinition = ((SymbolTypeStruct) variable.getType()).getStructDefinition(getProgram().getScope());
                   StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef());
-                  for(Variable member : structDefinition.getAllVariables(false)) {
+                  for(Variable member : structDefinition.getAllVars(false)) {
                      String name = variable.getLocalName() + "_" + member.getLocalName();
                      Variable.MemoryArea memoryArea = (member.getType() instanceof SymbolTypePointer)?Variable.MemoryArea.ZEROPAGE_MEMORY:variable.getMemoryArea();
                      Variable memberVariable = scope.add(new Variable( false, name, scope, member.getType(), variable.getKind(), memoryArea, variable.getDataSegment()));

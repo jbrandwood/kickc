@@ -53,7 +53,7 @@ public class SymbolTypeStruct implements SymbolType {
     */
    public int calculateSizeBytes(StructDefinition structDefinition, ProgramScope programScope) {
       int sizeBytes = 0;
-      for(Variable member : structDefinition.getAllVariables(false)) {
+      for(Variable member : structDefinition.getAllVars(false)) {
          SymbolType memberType = member.getType();
          int memberSize = getMemberSizeBytes(memberType, member.getArraySpec(), programScope);
          sizeBytes += memberSize;

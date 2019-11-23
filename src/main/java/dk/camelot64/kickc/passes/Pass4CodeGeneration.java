@@ -572,7 +572,7 @@ public class Pass4CodeGeneration {
          ConstantStructValue structValue = (ConstantStructValue) value;
          for(SymbolVariableRef memberRef : structValue.getMembers()) {
             ConstantValue memberValue = structValue.getValue(memberRef);
-            Variable memberVariable = getScope().getVariable(memberRef);
+            Variable memberVariable = getScope().getVar(memberRef);
             addChunkData(dataChunk, memberValue, memberVariable.getType(), memberVariable.getArraySpec(), scopeRef);
          }
       } else if(valueType instanceof SymbolTypePointer && valueArraySpec!=null) {

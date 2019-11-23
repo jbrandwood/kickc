@@ -102,7 +102,7 @@ public class SymbolTypeInference {
          if(structType instanceof SymbolTypeStruct) {
             String typeName = ((SymbolTypeStruct) structType).getStructTypeName();
             StructDefinition structDefinition = symbols.getStructDefinition(typeName);
-            Variable structMember = structDefinition.getVariable(structMemberRef.getMemberName());
+            Variable structMember = structDefinition.getVar(structMemberRef.getMemberName());
             return structMember.getType();
          } else {
             throw new CompileError("Dot applied to non-struct "+ structMemberRef.getStruct().toString());

@@ -98,7 +98,7 @@ public class Pass2ConstantInitializerValueLists extends Pass2SsaOptimization {
          // Check that type of constant values match the struct member types
          SymbolTypeStruct declaredStructType = (SymbolTypeStruct) declaredType;
          StructDefinition structDefinition = declaredStructType.getStructDefinition(program.getScope());
-         Collection<Variable> memberDefs = structDefinition.getAllVariables(false);
+         Collection<Variable> memberDefs = structDefinition.getAllVars(false);
          if(memberDefs.size()!=constantValues.size()) {
             throw new CompileError(
                   "Struct initializer has wrong size ("+valueList.getList().size()+"), " +

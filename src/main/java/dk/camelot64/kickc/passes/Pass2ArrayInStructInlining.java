@@ -56,7 +56,7 @@ public class Pass2ArrayInStructInlining extends Pass2SsaOptimization {
          Value value = programValue.get();
          if(programValue instanceof ProgramValue.ProgramValueConstantStructMember) {
             SymbolVariableRef memberRef = ((ProgramValue.ProgramValueConstantStructMember) programValue).getMemberRef();
-            Variable structMemberVar = getScope().getVariable(memberRef);
+            Variable structMemberVar = getScope().getVar(memberRef);
             if(structMemberVar.isArray() && structMemberVar.getArraySpec().getArraySize() != null) {
                if(value instanceof ConstantValue) {
                   ConstantValue constantValue = (ConstantValue) value;

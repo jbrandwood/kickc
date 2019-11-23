@@ -569,28 +569,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       try {
          // Find kind
          Variable.Kind kind = directiveContext.getKind(declVarType, getCurrentScope(), false, declIsArray, declVarDirectives, statementSource);
-
-         // Handle struct member vars
-         if(declVarStructMember) {
-            if(initializer != null)
-               throw new CompileError("Initializers not supported inside structs.", statementSource);
-            else {
-               // Create struct member variable
-               Variable memberVar = getCurrentScope().addVariable(kind, varName, declVarType, defaultMemoryArea, currentDataSegment);
-               if(declIsArray) {
-                  memberVar.setArraySpec(new ArraySpec(declArraySize));
-               }
-               // Add directives
-               directiveContext.applyDirectives(memberVar, false, declIsArray, declVarDirectives, statementSource);
-               // Add comments to constant
-               memberVar.setComments(ensureUnusedComments(declVarComments));
-               return null;
-            }
-         }
-
          if(kind.equals(Variable.Kind.CONSTANT)) {
             // Create a Constant
-            ConstantValue initConstantValue = getConstantValue(initializer, declVarType, statementSource);
+            ConstantValue initConstantValue = getConstantValue(initializer, declVarType, declVarStructMember, statementSource);
             ArraySpec arraySpec = null;
             if(declIsArray) {
                arraySpec = new ArraySpec(declArraySize);
@@ -606,19 +587,26 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             Variable lValue = getCurrentScope().addVariable(kind, varName, declVarType, defaultMemoryArea, currentDataSegment);
             // Add directives
             directiveContext.applyDirectives(lValue, false, declIsArray, declVarDirectives, statementSource);
-            if(declVarStructMember && initializer != null)
-               throw new CompileError("Initializer not supported inside structs " + declVarType.getTypeName(), statementSource);
-            RValue initValue;
-            if(initializer != null) {
-               PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
-               initValue = (RValue) visit(initializer);
+            if(declVarStructMember) {
+               if(initializer != null) {
+                  throw new CompileError("Initializer not supported inside structs " + declVarType.getTypeName(), statementSource);
+               } else {
+                  // Struct members have no initializers
+                  return null;
+               }
             } else {
-               initValue = createZeroValue(declVarType, statementSource);
-            }
-            Statement initStmt = new StatementAssignment(lValue.getVariableRef(), initValue, statementSource, ensureUnusedComments(declVarComments));
-            sequence.addStatement(initStmt);
-            if(initializer != null) {
-               PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
+               RValue initValue;
+               if(initializer != null) {
+                  PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
+                  initValue = (RValue) visit(initializer);
+               } else {
+                  initValue = createZeroValue(declVarType, statementSource);
+               }
+               Statement initStmt = new StatementAssignment(lValue.getVariableRef(), initValue, statementSource, ensureUnusedComments(declVarComments));
+               sequence.addStatement(initStmt);
+               if(initializer != null) {
+                  PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
+               }
             }
          }
          return null;
@@ -636,10 +624,22 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     * @return The constant value.
     * @throws CompileError if the initializer does not resolve to a constant value
     */
-   private ConstantValue getConstantValue(KickCParser.ExprContext initializer, SymbolType type, StatementSource statementSource) {
+   private ConstantValue getConstantValue(KickCParser.ExprContext initializer, SymbolType type, boolean isStructMember, StatementSource statementSource) {
       if(initializer != null && PrePostModifierHandler.hasPrePostModifiers(this, initializer, statementSource)) {
          throw new CompileError("Constant value contains a pre/post-modifier.", statementSource);
       }
+
+      /*
+      if(isStructMember) {
+         if(initializer != null) {
+            throw new CompileError("Initializer not supported inside structs " + declVarType.getTypeName(), statementSource);
+         } else {
+            // Struct members have no initializers
+            return null;
+         }
+      }
+       */
+
       RValue initValue;
       if(initializer == null) {
          if(declIsArray) {

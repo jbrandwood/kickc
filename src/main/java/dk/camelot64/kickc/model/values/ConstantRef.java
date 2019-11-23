@@ -10,7 +10,7 @@ public class ConstantRef extends SymbolVariableRef implements ConstantValue {
 
    public ConstantRef(Variable constantVar) {
       super(constantVar.getFullName());
-      if(!constantVar.isConstant())
+      if(!constantVar.isKindConstant())
          throw new InternalError("VariableRef not allowed for non-constant "+constantVar.toString());
    }
 

@@ -36,9 +36,6 @@ public class Variable implements Symbol {
    /** The kind of the variable.  */
    private Kind kind;
 
-   /** True of the variable is a compile-time constant (previously ConstantVar) [ALL] TODO: Eliminate (use Kind.CONSTANT) */
-   private boolean isConstant;
-
    /** Non-null if teh variable is an array. */
    private ArraySpec arraySpec;
 
@@ -111,7 +108,6 @@ public class Variable implements Symbol {
     */
    public Variable(String name, Scope scope, SymbolType type, ArraySpec arraySpec, String dataSegment, ConstantValue value) {
       this.kind = Kind.CONSTANT;
-      this.isConstant = true;
       this.name = name;
       this.scope = scope;
       this.type = type;
@@ -132,8 +128,7 @@ public class Variable implements Symbol {
     * @param memoryArea  The memory area (zeropage/main memory)
     * @param dataSegment The data segment (in main memory)
     */
-   public Variable(boolean isConstant, String name, Scope scope, SymbolType type, Kind kind, MemoryArea memoryArea, String dataSegment) {
-      this.isConstant = isConstant;
+   public Variable(String name, Scope scope, SymbolType type, Kind kind, MemoryArea memoryArea, String dataSegment) {
       this.name = name;
       this.scope = scope;
       this.type = type;
@@ -144,8 +139,6 @@ public class Variable implements Symbol {
          this.nextPhiVersionNumber = 0;
       this.comments = new ArrayList<>();
       setFullName();
-      //if(isKindConstant()!=isConstant)
-      //   throw new RuntimeException("CONST ISSUE!");
    }
 
 
@@ -156,7 +149,7 @@ public class Variable implements Symbol {
     * @param version The version number
     */
    public Variable(Variable phiMaster, int version) {
-      this(false, phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), Kind.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
+      this(phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), Kind.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
       this.setArraySpec(phiMaster.getArraySpec());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
@@ -176,7 +169,7 @@ public class Variable implements Symbol {
     * @param original The original variable
     */
    public Variable(String name, Scope scope, Variable original) {
-      this(original.isConstant(), name, scope, original.getType(), original.getKind(), original.getMemoryArea(), original.getDataSegment());
+      this(name, scope, original.getType(), original.getKind(), original.getMemoryArea(), original.getDataSegment());
       this.setArraySpec(original.getArraySpec());
       this.setDeclaredAlignment(original.getDeclaredAlignment());
       this.setDeclaredAsRegister(original.isDeclaredAsRegister());
@@ -191,10 +184,6 @@ public class Variable implements Symbol {
 
    public Kind getKind() {
       return kind;
-   }
-
-   public void setKind(Kind kind) {
-      this.kind = kind;
    }
 
    public boolean isKindConstant() {
@@ -218,25 +207,16 @@ public class Variable implements Symbol {
    }
 
    /**
-    * True if the variable is a compile time constant. (Previously this was ConstantVar)
-    *
-    * @return True if the variable is a compile time constant.
-    */
-   public boolean isConstant() {
-      return isConstant;
-   }
-
-   /**
     * True if the variable is a not compile time constant. (Previously this was Variable)
     *
     * @return True if the variable is not a compile-time constant
     */
    public boolean isVariable() {
-      return !isConstant();
+      return !isKindConstant();
    }
 
    public SymbolVariableRef getRef() {
-      if(isConstant())
+      if(isKindConstant())
          return new ConstantRef(this);
       else
          return new VariableRef(this);

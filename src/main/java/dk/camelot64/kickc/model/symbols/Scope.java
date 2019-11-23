@@ -101,16 +101,16 @@ public abstract class Scope implements Symbol, Serializable {
    }
 
    public Variable addVariable(Variable.Kind kind, String name, SymbolType type, Variable.MemoryArea memoryArea, String dataSegment) {
-      return add(new Variable( false, name, this, type, kind, memoryArea, dataSegment));
+      return add(new Variable( name, this, type, kind, memoryArea, dataSegment));
    }
 
    public Variable addVariablePhiMaster(String name, SymbolType type, Variable.MemoryArea memoryArea, String dataSegment) {
-      return add(new Variable( false, name, this, type, Variable.Kind.PHI_MASTER, memoryArea, dataSegment));
+      return add(new Variable( name, this, type, Variable.Kind.PHI_MASTER, memoryArea, dataSegment));
    }
 
    public Variable addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
-      return add(new Variable( false, name, this, SymbolType.VAR, Variable.Kind.INTERMEDIATE, Variable.MemoryArea.ZEROPAGE_MEMORY, getSegmentData()));
+      return add(new Variable( name, this, SymbolType.VAR, Variable.Kind.INTERMEDIATE, Variable.MemoryArea.ZEROPAGE_MEMORY, getSegmentData()));
    }
 
    /**
@@ -168,8 +168,7 @@ public abstract class Scope implements Symbol, Serializable {
    }
 
    public Variable getVar(String name) {
-      Variable symbol = (Variable) getSymbol(name);
-      return symbol;
+      return (Variable) getSymbol(name);
    }
 
    public Variable getVar(SymbolVariableRef variableRef) {
@@ -188,7 +187,7 @@ public abstract class Scope implements Symbol, Serializable {
 
    public Variable getConstant(String name) {
       Variable symbol = (Variable) getSymbol(name);
-      if(symbol!=null && !symbol.isConstant()) throw new InternalError("Symbol is not a constant! "+symbol.toString());
+      if(symbol!=null && !symbol.isKindConstant()) throw new InternalError("Symbol is not a constant! "+symbol.toString());
       return symbol;
    }
 
@@ -236,7 +235,7 @@ public abstract class Scope implements Symbol, Serializable {
    public Collection<Variable> getAllConstants(boolean includeSubScopes) {
       Collection<Variable> vars = new ArrayList<>();
       getAllVars(includeSubScopes).stream().
-            filter(Variable::isConstant).
+            filter(variable -> variable.isKindConstant()).
             forEach(vars::add);
       return vars;
    }
@@ -396,7 +395,7 @@ public abstract class Scope implements Symbol, Serializable {
                      }
                   }
                }
-               if(symVar.isConstant() && symVar.getConstantValue()!=null) {
+               if(symVar.isKindConstant() && symVar.getConstantValue()!=null) {
                   res.append(" = " + symVar.getConstantValue().toString(program));
                }
                res.append("\n");

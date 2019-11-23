@@ -85,7 +85,7 @@ public class AsmFragmentInstance {
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }
-      } else if(boundValue instanceof Variable && ((Variable) boundValue).isConstant()) {
+      } else if(boundValue instanceof Variable && ((Variable) boundValue).isKindConstant()) {
          Variable constantVar = (Variable) boundValue;
          String constantValueAsm = AsmFormat.getAsmConstant(program, constantVar.getConstantRef(), 99, codeScopeRef);
          boolean constantValueZp = SymbolType.BYTE.equals(constantVar.getType());

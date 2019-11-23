@@ -70,7 +70,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                }
             } else if(symbol instanceof Variable) {
                Variable variable = (Variable) symbol;
-               if(variable.isConstant()) {
+               if(variable.isKindConstant()) {
                   String name = findLocalName(procedure, symbol);
                   Variable unwound = new Variable(name, procedure, (Variable) symbol);
                   procedure.add(unwound);

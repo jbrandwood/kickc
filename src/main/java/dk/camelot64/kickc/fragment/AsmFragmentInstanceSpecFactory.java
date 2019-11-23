@@ -506,7 +506,7 @@ public class AsmFragmentInstanceSpecFactory {
       // If the constant is already bound - reuse the index
       for(String boundName : bindings.keySet()) {
          Value boundValue = bindings.get(boundName);
-         if(boundValue instanceof ConstantValue || (boundValue instanceof Variable && ((Variable) boundValue).isConstant())) {
+         if(boundValue instanceof ConstantValue || (boundValue instanceof Variable && ((Variable) boundValue).isKindConstant())) {
             if(boundValue.equals(constant)) {
                return "c" + boundName.substring(boundName.length() - 1);
             }

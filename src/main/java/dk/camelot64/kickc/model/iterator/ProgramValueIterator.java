@@ -48,7 +48,7 @@ public class ProgramValueIterator {
     * @param programValueHandler The programValueHandler to execute
     */
    public static void execute(Variable variable, ProgramValueHandler programValueHandler) {
-      if(variable.isConstant()) {
+      if(variable.isKindConstant()) {
          execute(new ProgramValue.ProgramValueConstantVar(variable), programValueHandler, null, null, null);
       }
       if(variable.isArray()) {

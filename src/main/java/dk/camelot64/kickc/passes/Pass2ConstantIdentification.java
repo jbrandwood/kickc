@@ -214,7 +214,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    public static ConstantValue getConstant(RValue rValue) {
       if(rValue instanceof ConstantValue) {
          return (ConstantValue) rValue;
-      } else if(rValue instanceof Variable && ((Variable) rValue).isConstant()) {
+      } else if(rValue instanceof Variable && ((Variable) rValue).isKindConstant()) {
          Variable constantVar = (Variable) rValue;
          return constantVar.getConstantRef();
       } else if(rValue instanceof CastValue) {

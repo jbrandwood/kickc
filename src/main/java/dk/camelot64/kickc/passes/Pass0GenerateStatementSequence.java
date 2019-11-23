@@ -659,12 +659,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // Convert initializer value lists to constant if possible
       if((initValue instanceof ValueList)) {
          ProgramValue programValue = new ProgramValue.GenericValue(initValue);
-         PassNAddInitializerValueListTypeCasts.addValueCasts(type, declIsArray, programValue, program, statementSource);
+         ConstantValueLists.addValueCasts(type, declIsArray, programValue, program, statementSource);
          if(programValue.get() instanceof CastValue) {
             CastValue castValue = (CastValue) programValue.get();
             if(castValue.getValue() instanceof ValueList) {
                // Found value list with cast - look through all elements
-               ConstantValue constantValue = Pass2ConstantInitializerValueLists.getConstantValueFromList(castValue.getToType(), (ValueList) castValue.getValue(), program, statementSource);
+               ConstantValue constantValue = ConstantValueLists.getConstantValue(castValue.getToType(), (ValueList) castValue.getValue(), program, statementSource);
                if(constantValue != null) {
                   // Converted value list to constant!!
                   initValue = constantValue;

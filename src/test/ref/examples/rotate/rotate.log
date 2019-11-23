@@ -2474,6 +2474,7 @@ anim: {
     .label xr_1 = $30
     .label yr_1 = $36
     .label xpos = $39
+    // signed fixed[0.7]
     .label sprite_msb = 4
     .label ypos = $3d
     .label i2 = $3e
@@ -3222,14 +3223,22 @@ mulf_init: {
     .label __1 = $5f
     .label __4 = $60
     .label __5 = $61
+    // x/2
     .label c = $16
+    // Counter used for determining x%2==0
     .label sqr1_hi = $17
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $20
     .label sqr1_lo = $14
+    // sqr = (x*x)/4
     .label x_2 = $19
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $1d
+    // Fill mulf_sqr2 = g(x) = f(x-255) : If x-255<0 then g(x)=f(255-x) (because x*x = -x*-x)
+    // g(0) = f(255), g(1) = f(254), ..., g(254) = f(1), g(255) = f(0), g(256) = f(1), ..., g(510) = f(255), g(511) = f(256)
     .label x_255 = $1c
     .label sqr2_lo = $1a
+    //Start with g(0)=f(255)
     .label dir = $1f
     // [131] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
   __b1_from_mulf_init:
@@ -3950,6 +3959,7 @@ anim: {
     .label xr = $d
     .label yr = $f
     .label xpos = $11
+    // signed fixed[0.7]
     .label sprite_msb = $a
     .label i = 2
     .label angle = 7
@@ -4586,12 +4596,17 @@ init: {
   // mulf_init
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
+    // x/2
     .label c = 7
+    // Counter used for determining x%2==0
     .label sqr1_hi = 8
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $11
     .label sqr1_lo = 5
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $f
     .label sqr2_lo = $d
+    //Start with g(0)=f(255)
     .label dir = $a
     // [131] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
   __b1_from_mulf_init:
@@ -4976,7 +4991,7 @@ Removing instruction jmp __b8
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [150] bne __b4 to beq
+Fixing long branch [151] bne __b4 to beq
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -5333,6 +5348,7 @@ anim: {
     .label xr = $d
     .label yr = $f
     .label xpos = $11
+    // signed fixed[0.7]
     .label sprite_msb = $a
     .label i = 2
     .label angle = 7
@@ -5955,12 +5971,17 @@ init: {
   // mulf_init
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
+    // x/2
     .label c = 7
+    // Counter used for determining x%2==0
     .label sqr1_hi = 8
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $11
     .label sqr1_lo = 5
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $f
     .label sqr2_lo = $d
+    //Start with g(0)=f(255)
     .label dir = $a
     // [131] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
     // [131] phi (byte) mulf_init::x_2#3 = (byte) 0 [phi:mulf_init->mulf_init::@1#0] -- vbuxx=vbuc1 

@@ -15,6 +15,7 @@
   .const PI_HALF_u4f12 = $1922
   .const SIZEOF_SIGNED_WORD = 2
   .label print_line_cursor = $400
+  // Remainder after unsigned 16-bit division
   .label rem16u = $a
   .label print_char_cursor = $11
 main: {
@@ -193,6 +194,8 @@ sin16s_gen: {
     .label __2 = $14
     .label step = $16
     .label sintab = $a
+    // u[4.28]
+    // Iterate over the table
     .label x = 2
     .label i = $11
     jsr div32u16u
@@ -622,6 +625,8 @@ divr16u: {
 sin8s_gen: {
     .label step = $c
     .label sintab = $14
+    // u[4.12]
+    // Iterate over the table
     .label x = $20
     .label i = $e
     jsr div16u
@@ -682,6 +687,7 @@ sin8s: {
     .label x1 = $22
     .label x3 = $23
     .label usinx = $24
+    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     .label isUpper = $10
     lda.z x+1
     cmp #>PI_u4f12

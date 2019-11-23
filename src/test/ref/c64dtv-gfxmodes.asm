@@ -97,6 +97,19 @@
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
   .label print_char_cursor = 4
+  // The value of the DTV control register
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
   .label dtv_control = $d
   .label print_line_cursor = 9
 main: {
@@ -515,6 +528,7 @@ mode_8bpppixelcell: {
     .label PLANEB = $4000
     .label CHARGEN = $d000
     .label __3 = $e
+    // Screen Chars for Plane A (screen) - 16x16 repeating
     .label gfxa = $b
     .label ay = $d
     .label bits = 6
@@ -665,10 +679,13 @@ mode_sixsfred: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
+    // Colors for high 4 bits of 8bpp
     .label col = 4
     .label cy = $d
+    // Graphics for Plane A () - horizontal stripes every 2 pixels
     .label gfxa = 9
     .label ay = 2
+    // Graphics for Plane B - vertical stripes every 2 pixels
     .label gfxb = $b
     .label by = 3
     lda #DTV_HIGHCOLOR|DTV_LINEAR
@@ -813,10 +830,14 @@ mode_twoplanebitmap: {
     .label PLANEB = $6000
     .label COLORS = $8000
     .label __3 = $e
+    // Color for bits 11
+    // Colors for bits 01 / 10
     .label col = $b
     .label cy = 6
+    // Graphics for Plane A - horizontal stripes
     .label gfxa = 9
     .label ay = 7
+    // Graphics for Plane B - vertical stripes
     .label gfxb = 4
     .label by = 2
     lda #DTV_HIGHCOLOR|DTV_LINEAR
@@ -978,10 +999,13 @@ mode_sixsfred2: {
     .label PLANEB = $6000
     .label COLORS = $8000
     .label __3 = 7
+    // Colors for high 4 bits of 8bpp
     .label col = 9
     .label cy = 2
+    // Graphics for Plane A () - horizontal stripes every 2 pixels
     .label gfxa = 4
     .label ay = 3
+    // Graphics for Plane B - vertical stripes every 2 pixels
     .label gfxb = $b
     .label by = 6
     lda #DTV_LINEAR
@@ -1136,6 +1160,7 @@ mode_hicolmcchar: {
     // Charset ROM
     .label COLORS = $8400
     .label __3 = 7
+    // Char Colors and screen chars
     .label col = $b
     .label ch = 4
     .label cy = 3
@@ -1245,6 +1270,7 @@ mode_hicolecmchar: {
     // Charset ROM
     .label COLORS = $8400
     .label __3 = 8
+    // Char Colors and screen chars
     .label col = 4
     .label ch = $b
     .label cy = 6
@@ -1352,6 +1378,7 @@ mode_hicolstdchar: {
     // Charset ROM
     .label COLORS = $8400
     .label __3 = 8
+    // Char Colors and screen chars
     .label col = $b
     .label ch = 9
     .label cy = 7
@@ -1451,6 +1478,7 @@ mode_stdbitmap: {
     .label BITMAP = $6000
     .const lines_cnt = 9
     .label col2 = $d
+    // Bitmap Colors
     .label ch = 9
     .label cy = 7
     .label l = $e
@@ -1920,6 +1948,7 @@ mode_mcchar: {
     // Charset ROM
     .label COLORS = $d800
     .label __5 = $d
+    // Char Colors and screen chars
     .label col = $b
     .label ch = 4
     .label cy = 7
@@ -2032,6 +2061,7 @@ mode_ecmchar: {
     // Charset ROM
     .label COLORS = $d800
     .label __5 = $d
+    // Char Colors and screen chars
     .label col = $b
     .label ch = 4
     .label cy = 8
@@ -2141,6 +2171,7 @@ mode_stdchar: {
     // Charset ROM
     .label COLORS = $d800
     .label __5 = $e
+    // Char Colors and screen chars
     .label col = $b
     .label ch = 4
     .label cy = 6

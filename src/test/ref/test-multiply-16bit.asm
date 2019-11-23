@@ -994,12 +994,17 @@ muls16u: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
+    // x/2
     .label c = $12
+    // Counter used for determining x%2==0
     .label sqr1_hi = $13
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $1a
     .label sqr1_lo = $10
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $17
     .label sqr2_lo = $15
+    //Start with g(0)=f(255)
     .label dir = $19
     ldx #0
     lda #<mulf_sqr1_hi+1

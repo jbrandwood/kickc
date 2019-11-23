@@ -27,6 +27,7 @@
   .const SQRT_COUNT = $80
   /* Sqrt of COUNT */
   .label sieve = $1000
+  // Remainder after unsigned 16-bit division
   .label rem16u = $f
   .label print_char_cursor = $11
   .label print_line_cursor = 6

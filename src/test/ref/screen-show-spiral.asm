@@ -11,8 +11,12 @@
   .const FILL_CHAR = '@'
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
+  // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
+  // Head of the heap. Moved backward each malloc()
   .label heap_head = $f
+  // Squares for each byte value SQUARES[i] = i*i
+  // Initialized by init_squares()
   .label SQUARES = $11
   .label SCREEN_DIST = $b
   .label SCREEN_ANGLE = $d

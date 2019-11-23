@@ -784,12 +784,17 @@ mulf_init_asm: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
+    // x/2
     .label c = $f
+    // Counter used for determining x%2==0
     .label sqr1_hi = 6
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $d
     .label sqr1_lo = 4
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $a
     .label sqr2_lo = 8
+    //Start with g(0)=f(255)
     .label dir = $c
     ldx #0
     lda #<mulf_sqr1_hi+1

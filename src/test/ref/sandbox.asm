@@ -15,6 +15,8 @@ main: {
     .label __13 = $17
     .label __14 = $f
     .label v = 4
+    // test performance of 'div16u(10)'
+    // test performance of 'div10'
     .label u = 2
     lda #$17
     sta VICBANK
@@ -229,6 +231,7 @@ myprintf: {
     .label str = 6
     .label bDigits = $d
     .label bLen = $e
+    // formats
     .label b = $c
     .label bArg = 9
     .label w1 = 2

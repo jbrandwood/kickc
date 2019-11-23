@@ -1230,12 +1230,17 @@ bitmap_init: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
+    // x/2
     .label c = $12
+    // Counter used for determining x%2==0
     .label sqr1_hi = $16
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $1c
     .label sqr1_lo = $14
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $1a
     .label sqr2_lo = $18
+    //Start with g(0)=f(255)
     .label dir = $13
     ldx #0
     lda #<mulf_sqr1_hi+1

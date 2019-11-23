@@ -167,8 +167,12 @@
   .const form_fields_cnt = $24
   .label print_char_cursor = $b
   .label print_line_cursor = $e
+  // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = 8
+  // Counts down to blink for form cursor (it is inversed in the lower half)
+  // Always blink cursor in new field
   .label form_cursor_count = $10
+  // Current selected field in the form
   .label form_field_idx = 9
 main: {
     sei

@@ -32,6 +32,7 @@ sin8u_table: {
     .label sinx = $13
     .label sinx_sc = 9
     .label sintab = $11
+    // Iterate over the table
     .label x = $d
     .label i = $b
     jsr div16u
@@ -393,6 +394,7 @@ sin8s: {
     .label x1 = $14
     .label x3 = $15
     .label usinx = $16
+    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     .label isUpper = 8
     lda.z x+1
     cmp #>PI_u4f12

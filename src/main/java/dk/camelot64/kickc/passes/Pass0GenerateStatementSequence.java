@@ -267,7 +267,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
-      Variable param = new Variable( ctx.NAME().getText(), getCurrentScope(), type, Variable.Kind.PHI_MASTER, defaultMemoryArea, currentDataSegment);
+      Variable param = new Variable( ctx.NAME().getText(), Variable.Kind.PHI_MASTER, type, getCurrentScope(), defaultMemoryArea, currentDataSegment);
       // Add directives
       directiveContext.applyDirectives(param, true, false, directives, new StatementSource(ctx));
       exitDeclTypes();
@@ -577,7 +577,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                arraySpec = new ArraySpec(declArraySize);
             }
             Scope scope = getCurrentScope();
-            Variable constVar = new Variable(varName, scope, declVarType, arraySpec, currentDataSegment, initConstantValue);
+            Variable constVar = new Variable(varName, declVarType, arraySpec, scope, currentDataSegment, initConstantValue);
             scope.add(constVar);
             // Add comments to constant
             constVar.setComments(ensureUnusedComments(declVarComments));
@@ -715,7 +715,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       // Add a constant variable
       Scope scope = getCurrentScope();
-      Variable constVar = new Variable(varName, scope, declVarType, arraySpec, currentDataSegment, constantArrayKickAsm);
+      Variable constVar = new Variable(varName, declVarType, arraySpec, scope, currentDataSegment, constantArrayKickAsm);
       scope.add(constVar);
       // Add comments to constant
       constVar.setComments(ensureUnusedComments(declVarComments));
@@ -1542,7 +1542,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          Scope parentScope = getCurrentScope();
          while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
          for(Variable member : enumDefinition.getAllConstants(false)) {
-            parentScope.add(new Variable(member.getLocalName(), parentScope, SymbolType.BYTE, null, currentDataSegment, member.getConstantValue()));
+            parentScope.add(new Variable(member.getLocalName(), SymbolType.BYTE, null, parentScope, currentDataSegment, member.getConstantValue()));
          }
          return SymbolType.BYTE;
       } catch(CompileError e) {
@@ -1576,7 +1576,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             }
          }
       }
-      currentEnum.add(new Variable(memberName, getCurrentScope(), SymbolType.BYTE, null, currentDataSegment, enumValue));
+      currentEnum.add(new Variable(memberName, SymbolType.BYTE, null, getCurrentScope(), currentDataSegment, enumValue));
       return null;
    }
 

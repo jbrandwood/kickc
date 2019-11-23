@@ -43,6 +43,7 @@
   .const SIZEOF_SIGNED_WORD = 2
   .label BITMAP = $2000
   .label SCREEN = $400
+  // Remainder after unsigned 16-bit division
   .label rem16u = $c
   .label frame_cnt = $12
 __b1:
@@ -511,6 +512,8 @@ sin16s_gen2: {
     .label __9 = $1c
     .label step = $18
     .label sintab = $10
+    // u[4.28]
+    // Iterate over the table
     .label x = 4
     .label i = $e
     jsr div32u16u

@@ -19,6 +19,7 @@
   .const NOP = $ea
 .segment Code
 main: {
+    // Print message
     .label sc = 4
     .label msg = 2
     // Initialize screen memory

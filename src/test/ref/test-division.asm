@@ -4,7 +4,9 @@
 .pc = $80d "Program"
   .label print_char_cursor = 5
   .label print_line_cursor = $f
+  // Remainder after unsigned 16-bit division
   .label rem16u = $b
+  // Remainder after signed 16 bit division
   .label rem16s = $b
 main: {
     jsr print_cls

@@ -4,6 +4,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
+  // Remainder after unsigned 16-bit division
   .label rem16u = $17
   .label print_char_cursor = 3
   .label print_line_cursor = $b

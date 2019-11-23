@@ -12,7 +12,9 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -43,7 +45,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       for(VariableRef constRef : constVars) {
          Variable variable = getProgram().getScope().getVariable(constRef);
          ConstantVariableValue constVarVal = constants.get(constRef);
-         Scope constScope = variable.getScope();
+         Scope scope = variable.getScope();
          ConstantValue constVal = constVarVal.getConstantValue();
          SymbolType valueType = SymbolTypeInference.inferType(getScope(), constVal);
          SymbolType variableType = variable.getType();
@@ -68,27 +70,12 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                         "\n value definition: " + constVal.toString(getProgram())
             );
          }
-
-         Variable constantVar = new Variable(
-               variable.getName(),
-               constScope,
-               variableType,
-               variable.getArraySpec(),
-               variable.getDataSegment(), constVal
-         );
-         constantVar.setDeclaredAlignment(variable.getDeclaredAlignment());
-         constantVar.setDeclaredAsRegister(variable.isDeclaredAsRegister());
-         constantVar.setDeclaredRegister(variable.getDeclaredRegister());
-         constantVar.setDeclaredExport(variable.isDeclaredExport());
-         if(variable.getComments().size() > 0) {
-            constantVar.setComments(variable.getComments());
-         } else {
-            constantVar.setComments(constVarVal.getAssignment().getComments());
-         }
-         constScope.remove(variable);
-         constScope.add(constantVar);
-         constAliases.put(constRef, constantVar.getRef());
-         getLog().append("Constant " + constantVar.toString(getProgram()) + " = " + constantVar.getConstantValue());
+         scope.remove(variable);
+         Variable constVar = new Variable(variable, constVal);
+         constVar.getComments().addAll(constVarVal.getAssignment().getComments());
+         scope.add(constVar);
+         constAliases.put(constRef, constVar.getRef());
+         getLog().append("Constant " + constVar.toString(getProgram()) + " = " + constVar.getConstantValue());
       }
       // Remove assignments to constants in the code
       removeAssignments(getGraph(), constants.keySet());
@@ -180,7 +167,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
 
       // Look for constants among non-versioned variables
       for(Variable variable : getScope().getAllVariables(true)) {
-         if(variable.isVolatile() ||  !variable.isKindLoadStore())
+         if(variable.isVolatile() || !variable.isKindLoadStore())
             // Do not examine volatiles, non-constants or versioned variables
             continue;
          List<StatementLValue> assignments = getGraph().getAssignments(variable.getRef());

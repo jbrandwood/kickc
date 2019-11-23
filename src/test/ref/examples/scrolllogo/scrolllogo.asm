@@ -25,6 +25,7 @@
   .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
   .label LOGO = $2000
+  // Remainder after unsigned 16-bit division
   .label rem16u = $c
   .label xsin_idx = $23
 main: {
@@ -257,6 +258,8 @@ sin16s_gen2: {
     .label __9 = $19
     .label step = $15
     .label sintab = $c
+    // u[4.28]
+    // Iterate over the table
     .label x = 4
     .label i = $23
     jsr div32u16u

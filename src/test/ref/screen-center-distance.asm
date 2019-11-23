@@ -21,7 +21,10 @@
   .label SCREEN = $2800
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
+  // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
+  // Squares for each byte value SQUARES[i] = i*i
+  // Initialized by init_squares()
   .label SQUARES = malloc.return
 main: {
     .label BASE_SCREEN = $400

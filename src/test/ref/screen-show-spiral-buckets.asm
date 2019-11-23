@@ -20,8 +20,12 @@
   .const SIZEOF_POINTER = 2
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
+  // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
+  // Head of the heap. Moved backward each malloc()
   .label heap_head = 2
+  // Squares for each byte value SQUARES[i] = i*i
+  // Initialized by init_squares()
   .label SQUARES = 5
   .label SCREEN_DIST = $16
   .label SCREEN_ANGLE = $e
@@ -83,10 +87,12 @@ __b1:
 main: {
     .label bucket = $14
     .label bucket_size = $1b
+    // Animate a spiral walking through the buckets one at a time
     .label bucket_idx = $1a
     .label offset = $a
     .label fill = $16
     .label angle = $18
+    // Find the minimum unfilled angle in the current bucket
     .label min_angle = 4
     .label fill1 = 8
     .label min_offset = 8

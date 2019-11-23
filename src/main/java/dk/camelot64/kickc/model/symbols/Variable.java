@@ -36,9 +36,6 @@ public class Variable implements Symbol {
    /** The kind of the variable.  */
    private Kind kind;
 
-   /** Non-null if teh variable is an array. */
-   private ArraySpec arraySpec;
-
    /** The local name of the variable. [ALL] */
    private String name;
 
@@ -59,6 +56,9 @@ public class Variable implements Symbol {
 
    /** Specifies the register the variable must be put into during execution. [Only variables] */
    private Registers.Register declaredRegister;
+
+   /** Non-null if the variable is an array. */
+   private ArraySpec arraySpec;
 
    /** Specifies that the variable is declared as const */
    private boolean declaredConst;
@@ -99,48 +99,57 @@ public class Variable implements Symbol {
    }
 
    /**
-    * Create a compile-time constant variable
+    * Create a runtime variable
     * @param name The name
-    * @param scope The scope
+    * @param kind The storage strategy (PHI-master/PHI-version/Intermediate/load store/constant)
     * @param type The type
+    * @param scope The scope
+    * @param memoryArea  The memory area (zeropage/main memory)
     * @param dataSegment The data segment (in main memory)
-    * @param value The constant value
     */
-   public Variable(String name, Scope scope, SymbolType type, ArraySpec arraySpec, String dataSegment, ConstantValue value) {
-      this.kind = Kind.CONSTANT;
+   public Variable(String name, Kind kind, SymbolType type, Scope scope, MemoryArea memoryArea, String dataSegment) {
       this.name = name;
-      this.scope = scope;
+      this.kind = kind;
+      if(Kind.PHI_MASTER.equals(kind))
+         this.nextPhiVersionNumber = 0;
       this.type = type;
-      this.arraySpec = arraySpec;
+      this.scope = scope;
       this.dataSegment = dataSegment;
-      this.memoryArea = MemoryArea.MAIN_MEMORY;
-      this.constantValue = value;
+      this.memoryArea = memoryArea;
       this.comments = new ArrayList<>();
       setFullName();
    }
 
    /**
-    * Create a runtime variable
+    * Create a compile-time constant variable
     * @param name The name
-    * @param scope The scope
     * @param type The type
-    * @param kind The storage strategy (PHI-master/PHI-version/Intermediate/load store/constant)
-    * @param memoryArea  The memory area (zeropage/main memory)
+    * @param scope The scope
     * @param dataSegment The data segment (in main memory)
+    * @param value The constant value
     */
-   public Variable(String name, Scope scope, SymbolType type, Kind kind, MemoryArea memoryArea, String dataSegment) {
-      this.name = name;
-      this.scope = scope;
-      this.type = type;
-      this.dataSegment = dataSegment;
-      this.kind = kind;
-      this.memoryArea = memoryArea;
-      if(Kind.PHI_MASTER.equals(kind))
-         this.nextPhiVersionNumber = 0;
-      this.comments = new ArrayList<>();
-      setFullName();
+   public Variable(String name, SymbolType type, ArraySpec arraySpec, Scope scope, String dataSegment, ConstantValue value) {
+      this(name, Kind.CONSTANT, type, scope, MemoryArea.MAIN_MEMORY, dataSegment);
+      this.arraySpec = arraySpec;
+      this.constantValue = value;
    }
 
+   /**
+    * Create a constant version of a variable
+    * @param variable The variable to create a constant version of
+    * @param constVal The constant value
+    */
+   public Variable(Variable variable, ConstantValue constVal) {
+      this(variable.getName(),variable.getType(), variable.getArraySpec(), variable.getScope(), variable.getDataSegment(), constVal);
+      this.setDeclaredAlignment(variable.getDeclaredAlignment());
+      this.setDeclaredAsRegister(variable.isDeclaredAsRegister());
+      this.setDeclaredConst(variable.isDeclaredConst());
+      this.setDeclaredRegister(variable.getDeclaredRegister());
+      this.setDeclaredVolatile(variable.isDeclaredVolatile());
+      this.setDeclaredExport(variable.isDeclaredExport());
+      this.setInferredVolatile(variable.isInferredVolatile());
+      this.setComments(variable.getComments());
+   }
 
    /**
     * Create a version of a PHI master variable
@@ -149,7 +158,7 @@ public class Variable implements Symbol {
     * @param version The version number
     */
    public Variable(Variable phiMaster, int version) {
-      this(phiMaster.getName() + "#" + version, phiMaster.getScope(), phiMaster.getType(), Kind.PHI_VERSION, phiMaster.getMemoryArea(), phiMaster.getDataSegment());
+      this(phiMaster.getName() + "#" + version, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment());
       this.setArraySpec(phiMaster.getArraySpec());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
@@ -169,7 +178,7 @@ public class Variable implements Symbol {
     * @param original The original variable
     */
    public Variable(String name, Scope scope, Variable original) {
-      this(name, scope, original.getType(), original.getKind(), original.getMemoryArea(), original.getDataSegment());
+      this(name, original.getKind(), original.getType(), scope, original.getMemoryArea(), original.getDataSegment());
       this.setArraySpec(original.getArraySpec());
       this.setDeclaredAlignment(original.getDeclaredAlignment());
       this.setDeclaredAsRegister(original.isDeclaredAsRegister());

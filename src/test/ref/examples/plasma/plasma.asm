@@ -24,6 +24,7 @@
   .label CHARSET = $2000
   .label print_line_cursor = $400
   .label print_char_cursor = 9
+  // Plasma state variables
   .label c1A = $b
   .label c1B = $e
   .label c2A = $11

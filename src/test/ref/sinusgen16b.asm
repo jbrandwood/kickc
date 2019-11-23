@@ -14,6 +14,7 @@
   .const PI_HALF_u4f12 = $1922
   .const SIZEOF_SIGNED_WORD = 2
   .label print_line_cursor = $400
+  // Remainder after unsigned 16-bit division
   .label rem16u = 3
   .label print_char_cursor = $1f
 main: {
@@ -216,6 +217,8 @@ sin16s_genb: {
     .label __3 = $1f
     .label step = $13
     .label sintab = $11
+    // u[4.28]
+    // Iterate over the table
     .label x = 7
     .label i = $b
     jsr div32u16u
@@ -595,6 +598,8 @@ sin16s_gen: {
     .label __2 = $11
     .label step = $13
     .label sintab = $b
+    // u[4.28]
+    // Iterate over the table
     .label x = 7
     .label i = $19
     jsr div32u16u

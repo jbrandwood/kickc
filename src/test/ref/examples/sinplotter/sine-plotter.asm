@@ -33,6 +33,7 @@
   .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
   .label BITMAP = $2000
+  // Remainder after unsigned 16-bit division
   .label rem16u = $18
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
@@ -241,6 +242,8 @@ sin16s_gen2: {
     .label __9 = $18
     .label step = $14
     .label sintab = 6
+    // u[4.28]
+    // Iterate over the table
     .label x = 2
     .label i = $10
     jsr div32u16u

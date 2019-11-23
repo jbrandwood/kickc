@@ -24,12 +24,17 @@
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label print_line_cursor = $400
+  // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
+  // Head of the heap. Moved backward each malloc()
   .label heap_head = $18
+  // Squares for each byte value SQUARES[i] = i*i
+  // Initialized by init_squares()
   .label SQUARES = 9
   .label print_char_cursor = 7
   .label SCREEN_DIST = $b
   .label SCREEN_ANGLE = $d
+  // Offsets for the sines
   .label sin_offset_x = 2
   .label sin_offset_y = $f
 __b1:

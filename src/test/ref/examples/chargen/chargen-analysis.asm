@@ -70,7 +70,9 @@ main: {
     .label sc = 6
     .label i = 2
     .label ch = 5
+    // Which char canvas to use
     .label cur_pos = 3
+    // Is shift pressed
     .label shift = 4
     lda #<SCREEN
     sta.z sc

@@ -8,7 +8,9 @@
 main: {
     // Print points
     .label SCREEN = $400
+    // Fill points
     .label points = 2
+    // Fill points
     .label points_1 = 4
     .label i1 = 6
     ldx #0

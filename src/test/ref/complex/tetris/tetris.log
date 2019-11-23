@@ -12972,6 +12972,7 @@ Target platform is c64basic / MOS6502X
   // Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
+  // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = $5d
   .label render_screen_showing = 4
   .label score_bcd = $3b
@@ -12979,29 +12980,53 @@ Target platform is c64basic / MOS6502X
   .label irq_sprite_ypos = $77
   .label irq_sprite_ptr = $78
   .label irq_cnt = $79
+  // The rate of moving down the current piece (number of frames between moves if movedown is  not forced)
   .label current_movedown_slow = $40
   .label current_ypos = $38
+  // Position of top left corner of current moving piece on the playfield
   .label current_xpos = $48
+  // The curent piece orientation - each piece have 4 orientations (00/0x10/0x20/0x30).
+  // The orientation chooses one of the 4 sub-graphics of the piece.
   .label current_orientation = $45
+  // Pointer to the current piece in the current orientation. Updated each time current_orientation is updated.
   .label current_piece_gfx = $46
+  // The char of the current piece
   .label current_piece_char = $44
+  // Current level BCD-format
   .label level_bcd = $41
+  // The current moving piece. Points to the start of the piece definition.
   .label current_piece = $42
+  // Is the game over?
   .label game_over = $4b
+  // The index of the next moving piece. (0-6)
   .label next_piece_idx = $4a
+  // Current level in normal (non-BCD) format
   .label level = $3f
+  // The screen currently being rendered to. 0x00 for screen 1 / 0x20 for screen 2.
   .label render_screen_render = 3
+  // The screen currently to show next to the user. 0x00 for screen 1 / 0x20 for screen 2.
+  // Show showing screen 1 and rendering to screen 2
   .label render_screen_show = 2
   .label current_ypos_1 = $18
+  // The screen currently being rendered to. 0x00 for screen 1 / 0x20 for screen 2.
   .label render_screen_render_1 = $10
+  // The index of the next moving piece. (0-6)
   .label next_piece_idx_1 = $11
+  // Counts up to the next movedown of current piece
   .label current_movedown_counter = 5
+  // Current number of cleared lines in BCD-format
   .label lines_bcd = $39
+  // The current moving piece. Points to the start of the piece definition.
   .label current_piece_1 = $2c
+  // The screen currently being rendered to. 0x00 for screen 1 / 0x20 for screen 2.
   .label render_screen_render_2 = $23
+  // The screen currently being rendered to. 0x00 for screen 1 / 0x20 for screen 2.
   .label render_screen_render_3 = $19
+  // Position of top left corner of current moving piece on the playfield
   .label current_xpos_1 = $1a
+  // Pointer to the current piece in the current orientation. Updated each time current_orientation is updated.
   .label current_piece_gfx_1 = $1b
+  // The char of the current piece
   .label current_piece_char_1 = $1d
   // @begin
 __bbegin:
@@ -13979,6 +14004,7 @@ render_playfield: {
     .label __0 = $8b
     .label __3 = $8c
     .label screen_line = $26
+    // Do not render the top 2 lines.
     .label i = $25
     .label c = $28
     .label l = $24
@@ -14157,6 +14183,7 @@ play_move_rotate: {
     .label __7 = $99
     .label key_event = $93
     .label return = $94
+    // Handle keyboard events
     .label orientation = $2b
     .label return_1 = $2a
     // [183] if((byte) play_move_rotate::key_event#0==(const byte) KEY_Z) goto play_move_rotate::@1 -- vbuz1_eq_vbuc1_then_la1 
@@ -14279,7 +14306,15 @@ play_collision: {
     .label xpos = $2f
     .label ypos = $30
     .label orientation = $2e
+    // Below the playfield bottom
+    // Beyond left side of the playfield
+    // Beyond left side of the playfield
+    // Collision with a playfield cell
     .label return = $a7
+    // Below the playfield bottom
+    // Beyond left side of the playfield
+    // Beyond left side of the playfield
+    // Collision with a playfield cell
     .label return_1 = $a3
     .label piece_gfx = $9a
     .label yp = $30
@@ -14288,10 +14323,26 @@ play_collision: {
     .label xp = $33
     .label c = $34
     .label l = $31
+    // Below the playfield bottom
+    // Beyond left side of the playfield
+    // Beyond left side of the playfield
+    // Collision with a playfield cell
     .label return_2 = $ae
+    // Below the playfield bottom
+    // Beyond left side of the playfield
+    // Beyond left side of the playfield
+    // Collision with a playfield cell
     .label return_3 = $a1
+    // Below the playfield bottom
+    // Beyond left side of the playfield
+    // Beyond left side of the playfield
+    // Collision with a playfield cell
     .label return_4 = $97
     .label i_1 = $32
+    // Below the playfield bottom
+    // Beyond left side of the playfield
+    // Beyond left side of the playfield
+    // Collision with a playfield cell
     .label return_5 = $35
     // [203] (byte*) play_collision::piece_gfx#0 ← (byte*) current_piece#17 + (byte) play_collision::orientation#5 -- pbuz1=pbuz2_plus_vbuz3 
     lda.z orientation
@@ -14872,6 +14923,8 @@ play_spawn_current: {
     .label __7 = $ad
     .label current_piece_idx = $ac
     .label sid_rnd1_return = $b0
+    // Spawn a new next piece
+    // Pick a random piece (0-6)
     .label piece_idx = $4a
     // [288] (byte) play_spawn_current::current_piece_idx#0 ← (byte) next_piece_idx#17 -- vbuz1=vbuz2 
     // Move next piece into current
@@ -15195,6 +15248,7 @@ play_increase_level: {
 play_remove_lines: {
     .label return = $a9
     .label c = $bc
+    // Start both cursors at the end of the playfield
     .label r = $4f
     .label w = $52
     .label x = $50
@@ -15924,6 +15978,7 @@ play_init: {
     .label __2 = $d5
     .label __3 = $d6
     .label pli = $60
+    // Initialize the playfield line pointers;
     .label idx = $62
     .label j = $5f
     .label b = $63
@@ -16146,6 +16201,7 @@ sprites_init: {
 render_init: {
     .const vicSelectGfxBank1_toDd001_return = 3
     .label __5 = $d8
+    // Initialize the screen line pointers;
     .label li_1 = $67
     .label li_2 = $69
     .label i = $66
@@ -18088,6 +18144,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
+  // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = $13
   .label render_screen_showing = 2
   .label score_bcd = 3
@@ -18095,25 +18152,46 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label irq_sprite_ypos = $1d
   .label irq_sprite_ptr = $1e
   .label irq_cnt = $1f
+  // The rate of moving down the current piece (number of frames between moves if movedown is  not forced)
   .label current_movedown_slow = 8
   .label current_ypos = $18
+  // Position of top left corner of current moving piece on the playfield
   .label current_xpos = $2b
+  // The curent piece orientation - each piece have 4 orientations (00/0x10/0x20/0x30).
+  // The orientation chooses one of the 4 sub-graphics of the piece.
   .label current_orientation = $11
+  // Pointer to the current piece in the current orientation. Updated each time current_orientation is updated.
   .label current_piece_gfx = $19
+  // The char of the current piece
   .label current_piece_char = $26
+  // Current level BCD-format
   .label level_bcd = 9
+  // The current moving piece. Points to the start of the piece definition.
   .label current_piece = $2c
+  // Is the game over?
   .label game_over = $b
+  // The index of the next moving piece. (0-6)
   .label next_piece_idx = $a
+  // Current level in normal (non-BCD) format
   .label level = 7
+  // The screen currently being rendered to. 0x00 for screen 1 / 0x20 for screen 2.
   .label render_screen_render = $15
+  // The screen currently to show next to the user. 0x00 for screen 1 / 0x20 for screen 2.
+  // Show showing screen 1 and rendering to screen 2
   .label render_screen_show = $14
+  // Counts up to the next movedown of current piece
   .label current_movedown_counter = $c
+  // Current number of cleared lines in BCD-format
   .label lines_bcd = $16
+  // The current moving piece. Points to the start of the piece definition.
   .label current_piece_1 = $22
+  // The screen currently being rendered to. 0x00 for screen 1 / 0x20 for screen 2.
   .label render_screen_render_1 = $d
+  // Position of top left corner of current moving piece on the playfield
   .label current_xpos_1 = $e
+  // Pointer to the current piece in the current orientation. Updated each time current_orientation is updated.
   .label current_piece_gfx_1 = $24
+  // The char of the current piece
   .label current_piece_char_1 = $f
   // @begin
 __bbegin:
@@ -19001,6 +19079,7 @@ render_moving: {
 // Render the static playfield on the screen (all pieces already locked into place)
 render_playfield: {
     .label screen_line = $24
+    // Do not render the top 2 lines.
     .label i = $f
     .label c = $10
     .label l = $e
@@ -19152,6 +19231,7 @@ play_movement: {
 // Return non-zero if a render is needed
 // play_move_rotate(byte register(A) key_event)
 play_move_rotate: {
+    // Handle keyboard events
     .label orientation = $20
     // [183] if((byte) play_move_rotate::key_event#0==(const byte) KEY_Z) goto play_move_rotate::@1 -- vbuaa_eq_vbuc1_then_la1 
     cmp #KEY_Z
@@ -19780,6 +19860,8 @@ play_move_down: {
 // Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
     .label __7 = $2e
+    // Spawn a new next piece
+    // Pick a random piece (0-6)
     .label piece_idx = $a
     // [288] (byte) play_spawn_current::current_piece_idx#0 ← (byte) next_piece_idx#17 -- vbuxx=vbuz1 
     // Move next piece into current
@@ -20711,6 +20793,7 @@ render_show: {
 // Initialize play data tables
 play_init: {
     .label pli = $22
+    // Initialize the playfield line pointers;
     .label idx = $14
     // [458] phi from play_init to play_init::@1 [phi:play_init->play_init::@1]
   __b1_from_play_init:
@@ -20917,6 +21000,7 @@ sprites_init: {
 // Initialize rendering
 render_init: {
     .const vicSelectGfxBank1_toDd001_return = 3
+    // Initialize the screen line pointers;
     .label li_1 = $16
     .label li_2 = $2c
     jmp vicSelectGfxBank1
@@ -23362,6 +23446,7 @@ Score: 3353851
   // Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
+  // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = $13
   .label render_screen_showing = 2
   .label score_bcd = 3
@@ -23369,25 +23454,46 @@ Score: 3353851
   .label irq_sprite_ypos = $1d
   .label irq_sprite_ptr = $1e
   .label irq_cnt = $1f
+  // The rate of moving down the current piece (number of frames between moves if movedown is  not forced)
   .label current_movedown_slow = 8
   .label current_ypos = $18
+  // Position of top left corner of current moving piece on the playfield
   .label current_xpos = $2b
+  // The curent piece orientation - each piece have 4 orientations (00/0x10/0x20/0x30).
+  // The orientation chooses one of the 4 sub-graphics of the piece.
   .label current_orientation = $11
+  // Pointer to the current piece in the current orientation. Updated each time current_orientation is updated.
   .label current_piece_gfx = $19
+  // The char of the current piece
   .label current_piece_char = $26
+  // Current level BCD-format
   .label level_bcd = 9
+  // The current moving piece. Points to the start of the piece definition.
   .label current_piece = $2c
+  // Is the game over?
   .label game_over = $b
+  // The index of the next moving piece. (0-6)
   .label next_piece_idx = $a
+  // Current level in normal (non-BCD) format
   .label level = 7
+  // The screen currently being rendered to. 0x00 for screen 1 / 0x20 for screen 2.
   .label render_screen_render = $15
+  // The screen currently to show next to the user. 0x00 for screen 1 / 0x20 for screen 2.
+  // Show showing screen 1 and rendering to screen 2
   .label render_screen_show = $14
+  // Counts up to the next movedown of current piece
   .label current_movedown_counter = $c
+  // Current number of cleared lines in BCD-format
   .label lines_bcd = $16
+  // The current moving piece. Points to the start of the piece definition.
   .label current_piece_1 = $22
+  // The screen currently being rendered to. 0x00 for screen 1 / 0x20 for screen 2.
   .label render_screen_render_1 = $d
+  // Position of top left corner of current moving piece on the playfield
   .label current_xpos_1 = $e
+  // Pointer to the current piece in the current orientation. Updated each time current_orientation is updated.
   .label current_piece_gfx_1 = $24
+  // The char of the current piece
   .label current_piece_char_1 = $f
   // @begin
   // @1
@@ -24186,6 +24292,7 @@ render_moving: {
 // Render the static playfield on the screen (all pieces already locked into place)
 render_playfield: {
     .label screen_line = $24
+    // Do not render the top 2 lines.
     .label i = $f
     .label c = $10
     .label l = $e
@@ -24330,6 +24437,7 @@ play_movement: {
 // Return non-zero if a render is needed
 // play_move_rotate(byte register(A) key_event)
 play_move_rotate: {
+    // Handle keyboard events
     .label orientation = $20
     // if(key_event==KEY_Z)
     // [183] if((byte) play_move_rotate::key_event#0==(const byte) KEY_Z) goto play_move_rotate::@1 -- vbuaa_eq_vbuc1_then_la1 
@@ -24919,6 +25027,8 @@ play_move_down: {
 // Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
     .label __7 = $2e
+    // Spawn a new next piece
+    // Pick a random piece (0-6)
     .label piece_idx = $a
     // current_piece_idx = next_piece_idx
     // [288] (byte) play_spawn_current::current_piece_idx#0 ← (byte) next_piece_idx#17 -- vbuxx=vbuz1 
@@ -25780,6 +25890,7 @@ render_show: {
 // Initialize play data tables
 play_init: {
     .label pli = $22
+    // Initialize the playfield line pointers;
     .label idx = $14
     // [458] phi from play_init to play_init::@1 [phi:play_init->play_init::@1]
     // [458] phi (byte) play_init::idx#2 = (byte) 0 [phi:play_init->play_init::@1#0] -- vbuz1=vbuc1 
@@ -25996,6 +26107,7 @@ sprites_init: {
 // Initialize rendering
 render_init: {
     .const vicSelectGfxBank1_toDd001_return = 3
+    // Initialize the screen line pointers;
     .label li_1 = $16
     .label li_2 = $2c
     // render_init::vicSelectGfxBank1

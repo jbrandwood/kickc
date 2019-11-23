@@ -23,7 +23,9 @@
   .const sinlen_y = $c5
   .label sprites = $2000
   .label SCREEN = $400
+  // Current index within the progress cursor (0-7)
   .label progress_idx = $a
+  // Current position of the progress cursor
   .label progress_cursor = 2
   .label sin_idx_x = 6
   .label sin_idx_y = 8
@@ -486,9 +488,11 @@ gen_chargen_sprite: {
     .label sprite = $f
     .label chargen = $13
     .label bits = 5
+    // current sprite byte
     .label s_gen = 9
     .label x = 6
     .label y = 4
+    // Find the current chargen pixel (c)
     .label c = 8
     txa
     sta.z __0

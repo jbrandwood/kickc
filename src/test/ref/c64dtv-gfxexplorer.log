@@ -13993,9 +13993,15 @@ Target platform is c64basic / MOS6502X
   .const form_fields_cnt = $24
   .label print_char_cursor = $34
   .label print_line_cursor = $36
+  // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = $12
+  // Current keyboard modifiers (left shift, right shift, ctrl, commodore)
+  // Update the keyboard modifiers
   .label keyboard_modifiers = $f
+  // Counts down to blink for form cursor (it is inversed in the lower half)
+  // Always blink cursor in new field
   .label form_cursor_count = $1f
+  // Current selected field in the form
   .label form_field_idx = $20
   // @begin
 __bbegin:
@@ -14117,7 +14123,10 @@ gfx_mode: {
     .label __63 = $ea
     .label __64 = $eb
     .label __65 = $ec
+    // Show the GFX configuration
+    // DTV Graphics Mode
     .label dtv_control = 2
+    // VIC Graphics Mode
     .label vic_control = 3
     .label plane_a_offs = $9f
     .label plane_a = $a8
@@ -16565,8 +16574,10 @@ form_control: {
     .label __14 = $10d
     .label __15 = $10e
     .label __22 = $10f
+    // Return to refresh
     .label return = $103
     .label key_event = $10c
+    // Return to refresh
     .label return_1 = $2e
     // [359] (byte) form_field_ptr::field_idx#1 ← (byte) form_field_idx#28 -- vbuz1=vbuz2 
     lda.z form_field_idx
@@ -17989,6 +18000,7 @@ gfx_init_plane_8bppchunky: {
     .label c = $12b
     .label gfxb = $5e
     .label x = $5b
+    // 320x200 8bpp pixels for Plane
     .label gfxbCpuBank = $5d
     .label y = $5a
     // [583] call dtvSetCpuBankSegment1 
@@ -21453,8 +21465,12 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const form_fields_cnt = $24
   .label print_char_cursor = $b
   .label print_line_cursor = $e
+  // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = 8
+  // Counts down to blink for form cursor (it is inversed in the lower half)
+  // Always blink cursor in new field
   .label form_cursor_count = $10
+  // Current selected field in the form
   .label form_field_idx = 9
   // @begin
 __bbegin:
@@ -27616,15 +27632,15 @@ Removing unreachable instruction jmp __b9
 Removing unreachable instruction jmp __b14
 Removing unreachable instruction jmp b1
 Succesful ASM optimization Pass5UnreachableCodeElimination
-Fixing long branch [741] beq b6 to bne
-Fixing long branch [745] beq b7 to bne
-Fixing long branch [749] beq b8 to bne
-Fixing long branch [753] beq b9 to bne
-Fixing long branch [757] beq b10 to bne
-Fixing long branch [761] beq b11 to bne
-Fixing long branch [765] beq b12 to bne
-Fixing long branch [769] beq b13 to bne
-Fixing long branch [1332] bmi __b2 to bpl
+Fixing long branch [745] beq b6 to bne
+Fixing long branch [749] beq b7 to bne
+Fixing long branch [753] beq b8 to bne
+Fixing long branch [757] beq b9 to bne
+Fixing long branch [761] beq b10 to bne
+Fixing long branch [765] beq b11 to bne
+Fixing long branch [769] beq b12 to bne
+Fixing long branch [773] beq b13 to bne
+Fixing long branch [1336] bmi __b2 to bpl
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -29192,8 +29208,12 @@ Score: 10133385
   .const form_fields_cnt = $24
   .label print_char_cursor = $b
   .label print_line_cursor = $e
+  // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = 8
+  // Counts down to blink for form cursor (it is inversed in the lower half)
+  // Always blink cursor in new field
   .label form_cursor_count = $10
+  // Current selected field in the form
   .label form_field_idx = 9
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]

@@ -4,6 +4,7 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
+    // Working memory copy of string
     .label sc = 6
     .label camelot = 4
     .label sc2 = 2

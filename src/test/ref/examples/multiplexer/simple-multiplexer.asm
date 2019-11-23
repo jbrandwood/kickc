@@ -21,10 +21,16 @@
   // Location of screen & sprites
   .label SCREEN = $400
   .label SPRITE = $2000
+  // The address of the sprite pointers on the current screen (screen+$3f8).
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
+  // The MSB bit of the next sprite to use for showing
   .label plex_sprite_msb = 3
+  // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   .label plex_free_next = 5
+  // The index the next sprite to use for showing (sprites are used round-robin)
   .label plex_sprite_idx = 9
+  // The index in the PLEX tables of the next sprite to show
+  // Prepare for showing the sprites
   .label plex_show_idx = $a
 main: {
     sei
@@ -34,6 +40,7 @@ main: {
 }
 // The raster loop
 loop: {
+    // The current index into the y-sinus
     .label sin_idx = 2
     .label plexFreeNextYpos1_return = 8
     .label ss = 4
@@ -209,6 +216,7 @@ plexSort: {
 }
 // Initialize the program
 init: {
+    // Set the x-positions & pointers
     .label xp = 6
     lda #VIC_DEN|VIC_RSEL|3
     sta D011

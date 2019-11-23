@@ -1397,6 +1397,20 @@ Target platform is c64basic / MOS6502X
   .const GREEN = 5
   .label SCREEN = $400
   .label COLS = $d800
+  // Signed type and number
+  // a) If one operand is a signed type and the other a number.
+  //    The number becomes the smallest signed type that can hold its value (if one exists).
+  //    The two operands are then converted normally (using 2a or 2b).
+  // Unsigned type and positive number
+  // b) If one operand is an unsigned type and the other a positive number.
+  //    The number is converted to the smallest unsigned type that can hold the value.
+  //    The two operands are then converted normally (using 2a or 2b).
+  // Unsigned type and negative number
+  // If one operand is an unsigned type and the other a negative number.
+  // The number is first converted to the smallest signed type that can hold its value (if one exits).
+  // If the signed type is smaller than the unsigned type it is converted up to the size of the unsigned type.
+  // The signed type is finally converted to unsigned.
+  // The two unsigned operands are then finally converted to the size of the largest type (using 2b).
   .label idx = 4
   // @begin
 __bbegin:

@@ -48,6 +48,7 @@ anim: {
     .label xr = $d
     .label yr = $f
     .label xpos = $11
+    // signed fixed[0.7]
     .label sprite_msb = $a
     .label i = 2
     .label angle = 7
@@ -380,12 +381,17 @@ init: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
+    // x/2
     .label c = 7
+    // Counter used for determining x%2==0
     .label sqr1_hi = 8
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $11
     .label sqr1_lo = 5
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $f
     .label sqr2_lo = $d
+    //Start with g(0)=f(255)
     .label dir = $a
     ldx #0
     lda #<mulf_sqr1_hi+1

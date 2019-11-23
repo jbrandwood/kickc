@@ -11,6 +11,7 @@
   .label SCREEN = $2800
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
+    // Clear the screen by modifying the charset
     .label clear_char = 2
     jsr init_font_hex
     lda #toD0181_return

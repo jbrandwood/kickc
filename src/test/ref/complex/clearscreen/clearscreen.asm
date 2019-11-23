@@ -75,6 +75,7 @@
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
+  // Head of the heap. Moved backward each malloc()
   .label heap_head = $18
   .label SCREEN_COPY = 7
   .label SCREEN_DIST = 9
@@ -213,6 +214,7 @@ startProcessing: {
     .label spriteX = $13
     .label spriteY = $15
     .label spritePtr = $17
+    // Busy-wait while finding an empty slot in the PROCESSING array
     .label freeIdx = 2
     .label __44 = $e
     .label __45 = $c

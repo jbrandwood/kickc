@@ -152,6 +152,8 @@ memset: {
 sin8s_gen: {
     .label step = $e
     .label sintab = $c
+    // u[4.12]
+    // Iterate over the table
     .label x = $a
     .label i = 2
     jsr div16u
@@ -212,6 +214,7 @@ sin8s: {
     .label x1 = $10
     .label x3 = $11
     .label usinx = $12
+    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     .label isUpper = 4
     lda.z x+1
     cmp #>PI_u4f12

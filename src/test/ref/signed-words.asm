@@ -14,9 +14,11 @@
   .label SPRITES_PTR = SCREEN+$3f8
   .label SPRITE = $2000
   .const g = -5
+  // Reset y velocity
   .label yvel_init = 2
   .label yvel = 2
   .label yvel_1 = 4
+  // Reset position
   .label xpos = 6
   .label ypos = 8
   .label xvel = $a

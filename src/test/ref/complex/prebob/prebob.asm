@@ -316,20 +316,17 @@ bobCharsetFindOrAddGlyph: {
     lda.z glyph_id
     cmp.z bob_charset_next_id
     bne b1
-    ldx #0
+    ldy #0
   // Not found - add it
   __b7:
-    cpx #8
+    cpy #8
     bcc __b8
     inc.z bob_charset_next_id
     rts
   __b8:
-    stx.z $ff
-    txa
-    tay
     lda (bob_glyph),y
     sta (glyph_cursor),y
-    inx
+    iny
     jmp __b7
   b1:
     lda #0

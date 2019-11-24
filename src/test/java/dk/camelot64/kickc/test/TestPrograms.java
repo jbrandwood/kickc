@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPreBob() throws IOException, URISyntaxException {
+      compileAndCompare("complex/prebob/prebob");
+   }
+
+   @Test
    public void testUnaryPlus() throws IOException, URISyntaxException {
       compileAndCompare("unary-plus");
    }

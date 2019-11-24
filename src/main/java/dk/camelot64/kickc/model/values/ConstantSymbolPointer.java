@@ -48,12 +48,12 @@ public class ConstantSymbolPointer implements ConstantValue {
             if(variable.isKindPhiMaster()) {
                Collection<Variable> versions = variable.getScope().getVersions(variable);
                for(Variable version : versions) {
-                  if(variable.isVariable())
+                  if(variable.isVariable()) {
                      variable = version;
                      break;
+                  }
                }
             }
-
 
             Registers.Register allocation = variable.getAllocation();
             if(allocation != null && Registers.RegisterType.ZP_MEM.equals(allocation.getType())) {
@@ -64,7 +64,7 @@ public class ConstantSymbolPointer implements ConstantValue {
             }
          }
       }
-      // WE cannot calculate a literal value
+      // We cannot calculate a literal value
       throw new ConstantNotLiteral("Cannot calculate literal var pointer");
    }
 

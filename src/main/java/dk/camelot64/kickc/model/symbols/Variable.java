@@ -57,9 +57,6 @@ public class Variable implements Symbol {
    /** Specifies the register the variable must be put into during execution. [Only variables] */
    private Registers.Register declaredRegister;
 
-   /** Non-null if the variable is an array. */
-   private ArraySpec arraySpec;
-
    /** Specifies that the variable is declared as const */
    private boolean declaredConst;
 
@@ -75,7 +72,7 @@ public class Variable implements Symbol {
    /** Specifies that the variable must live in a register if possible (CPU register or ZP-address). */
    private boolean declaredAsRegister;
 
-   /** The memory area where the variable lives (if stored in memory). [Only variables] */
+   /** The memory area where the variable lives (if stored in memory). [Only variables and arrays] */
    private MemoryArea memoryArea;
 
    /** Comments preceding the procedure in the source code. [ALL] */
@@ -86,6 +83,9 @@ public class Variable implements Symbol {
 
    /** The constant value if the variable is a constant. Null otherwise. [Only constants] */
    private ConstantValue constantValue;
+
+   /** Non-null if the variable is an array. [Only constants that are arrays]*/
+   private ArraySpec arraySpec;
 
    /** The number of the next version (only used for PHI masters) [Only PHI masters] */
    private Integer nextPhiVersionNumber;
@@ -157,7 +157,7 @@ public class Variable implements Symbol {
     * @param phiMaster The PHI master variable.
     * @param version The version number
     */
-   public Variable(Variable phiMaster, int version) {
+   private Variable(Variable phiMaster, int version) {
       this(phiMaster.getName() + "#" + version, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment());
       this.setArraySpec(phiMaster.getArraySpec());
       this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());

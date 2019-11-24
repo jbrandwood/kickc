@@ -77,9 +77,10 @@ public class PassNStructAddressOfRewriting extends Pass2SsaOptimization {
       if(variable.isKindPhiMaster()) {
          Collection<Variable> versions = variable.getScope().getVersions(variable);
          for(Variable version : versions) {
-            if(variable.isVariable())
+            if(variable.isVariable()) {
                variable = version;
-            break;
+               break;
+            }
          }
       }
 

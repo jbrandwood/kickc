@@ -57,6 +57,9 @@ const char BOB_SHIFTS_Y = 8;
 // The size of a sub-table of BOB_TABLES
 const char BOB_SUBTABLE_SIZE =  BOB_SHIFTS_X*BOB_SHIFTS_Y;
 
+// The number of BOBs to render
+const char NUM_BOBS = 20;
+
 void main() {
     mulf_init();
 	prepareBobs();
@@ -80,9 +83,11 @@ void main() {
 	char angle = 0;
 	while(true) {
         do { } while (*RASTER<$f8);
+        *BORDERCOL = 0xf;
+        renderBobCleanup();
 	    signed char r = 30;
         char a = angle;
-        for(char i: 0..25) {
+        for(char i: 0..NUM_BOBS-1) {
             //kickasm {{ .break }}
             *BORDERCOL = 1;
             int x = mulf8s(r, COS[a]) + 75*0x100;
@@ -105,15 +110,22 @@ void main() {
 	*D018 = toD018(SCREEN_BASIC, CHARSET_BASIC);
 }
 
-// Table for getting BOB screen offset from the BOB Y-position
-unsigned int[0x20] RENDERBOB_YOFFSET;
+// Table used for deleting rendered BOB's. Contains pointers to first char of each BOB.
+char*[NUM_BOBS] RENDERBOB_CLEANUP;
+
+// Pointer to the next clean-up to add
+char** renderBobCleanupNext;
+
+// *40 Table unsigned int[0x20] MUL40 = { ((unsigned int)i)*40 };
+unsigned int[0x20] MUL40;
 
 // Initialize the tables used by renderBob()
 void renderBobInit() {
     for(char y: 0..0x1f)
-        RENDERBOB_YOFFSET[y] = ((unsigned int)y)*40;
+        MUL40[y] = ((unsigned int)y)*40;
+    for(char i: 0..NUM_BOBS-1)
+        RENDERBOB_CLEANUP[i] = BOB_SCREEN;
 }
-
 
 // Render a single BOB at a given x/y-position
 // X-position is 0-151. Each x-position is 2 pixels wide.
@@ -121,10 +133,10 @@ void renderBobInit() {
 void renderBob(char xpos, char ypos) {
 	char x_char_offset = xpos/BOB_SHIFTS_X;
 	char y_char_offset = ypos/BOB_SHIFTS_Y;
-	//unsigned int y_offset = (unsigned int)y_char_offset*40;
-	unsigned int y_offset = RENDERBOB_YOFFSET[y_char_offset];
+	unsigned int y_offset = MUL40[y_char_offset];
 	char* screen = BOB_SCREEN+y_offset+x_char_offset;
 	char bob_table_idx = (ypos&7)*BOB_SHIFTS_X+(xpos&3);
+	*renderBobCleanupNext++ = screen;
     screen[0]  = (BOB_TABLES+0*BOB_SUBTABLE_SIZE)[bob_table_idx];
     screen[40] = (BOB_TABLES+1*BOB_SUBTABLE_SIZE)[bob_table_idx];
     screen[80] = (BOB_TABLES+2*BOB_SUBTABLE_SIZE)[bob_table_idx];
@@ -134,6 +146,24 @@ void renderBob(char xpos, char ypos) {
     screen[2]  = (BOB_TABLES+6*BOB_SUBTABLE_SIZE)[bob_table_idx];
     screen[42] = (BOB_TABLES+7*BOB_SUBTABLE_SIZE)[bob_table_idx];
     screen[82] = (BOB_TABLES+8*BOB_SUBTABLE_SIZE)[bob_table_idx];
+}
+
+// Clean Up the rendered BOB's
+void renderBobCleanup() {
+    for(char i: 0..NUM_BOBS-1) {
+        char* screen = RENDERBOB_CLEANUP[i];
+        screen[0]  = 0;
+        screen[40]  = 0;
+        screen[80]  = 0;
+        screen[1]  = 0;
+        screen[41]  = 0;
+        screen[81]  = 0;
+        screen[2]  = 0;
+        screen[42]  = 0;
+        screen[82]  = 0;
+    }
+    // Prepare for next clean-up
+    renderBobCleanupNext = RENDERBOB_CLEANUP;
 }
 
 // Creates the pre-shifted bobs into BOB_CHARSET and populates the BOB_TABLES

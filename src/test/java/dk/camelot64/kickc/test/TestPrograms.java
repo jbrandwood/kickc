@@ -38,8 +38,13 @@ public class TestPrograms {
    }
 
    @Test
-   public void testPreBob() throws IOException, URISyntaxException {
-      compileAndCompare("complex/prebob/prebob");
+   public void testVogelBobs() throws IOException, URISyntaxException {
+      compileAndCompare("complex/prebob/vogel-bobs");
+   }
+
+   @Test
+   public void testVogelSprites() throws IOException, URISyntaxException {
+      compileAndCompare("complex/prebob/vogel-sprites");
    }
 
    @Test

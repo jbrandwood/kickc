@@ -29,9 +29,9 @@ signed char[0x140] align(0x40) SIN = kickasm {{
 signed char* COS = SIN+$40; // sin(x) = cos(x+PI/2)
 
 // The BASIC screen
-const char* SCREEN_BASIC = 0x0400;
+const char* BASIC_SCREEN = 0x0400;
 // The BASIC charset
-const char* CHARSET_BASIC = 0x1000;
+const char* BASIC_CHARSET = 0x1000;
 // The BOB screen
 const char* BOB_SCREEN = 0x2800;
 // The BOB charset
@@ -48,7 +48,7 @@ const char BOB_SHIFTS_Y = 8;
 const char BOB_SUBTABLE_SIZE =  BOB_SHIFTS_X*BOB_SHIFTS_Y;
 
 // The number of BOBs to render
-const char NUM_BOBS = 20;
+const char NUM_BOBS = 25;
 
 void main() {
     mulf_init();
@@ -58,25 +58,38 @@ void main() {
 	*D018 = toD018(BOB_SCREEN, BOB_CHARSET);
 	// Clear screen
 	memset(BOB_SCREEN, 0x00, 1000);
-	// Render Rotated BOBs
-	char angle = 0;
+
+	// Origin point
+	int origX = 0x0a00;
+	int origY = 0x0a00;
+	// Row and column offset vectors
+	int rowOffsetX = 0x0c00;
+	int rowOffsetY = 0x0100;
+	int colOffsetX = 0x0100;
+	int colOffsetY = 0x1800;
+	// Render Grid of BOBs
 	while(true) {
         do { } while (*RASTER<$f8);
         *BORDERCOL = 0xf;
         renderBobCleanup();
-	    signed char r = 30;
-        char a = angle;
-        for(char i: 0..NUM_BOBS-1) {
-            //kickasm {{ .break }}
-            *BORDERCOL = 1;
-            int x = mulf8s(r, COS[a]) + 75*0x100;
-            int y = mulf8s(r, SIN[a])*2 + 90*0x100;
-            *BORDERCOL = 2;
-            a += 98;
-            r += 3;
-            renderBob(>x, >y);
+        int rowX = origX;
+        int rowY = origY;
+        for(char col: 0..4) {
+            int x = rowX;
+            int y = rowY;
+            for(char row: 0..4) {
+                //kickasm {{ .break }}
+                *BORDERCOL = 1;
+                renderBob(>x, >y);
+                x += rowOffsetX;
+                y += rowOffsetY;
+                *BORDERCOL = 2;
+            }
+            rowX += colOffsetX;
+            rowY += colOffsetY;
         }
-        angle += 3;
+        origX += 0x0100;
+        rowOffsetY += 0x0080;
         *BORDERCOL = 0;
 	    if(keyboard_key_pressed(KEY_SPACE)) {
 	        break;
@@ -85,8 +98,8 @@ void main() {
 	// Wait for space release
 	while(keyboard_key_pressed(KEY_SPACE)) {}
 	// Return to BASIC
-	vicSelectGfxBank(SCREEN_BASIC);
-	*D018 = toD018(SCREEN_BASIC, CHARSET_BASIC);
+	vicSelectGfxBank(BASIC_SCREEN);
+	*D018 = toD018(BASIC_SCREEN, BASIC_CHARSET);
 }
 
 // Table used for deleting rendered BOB's. Contains pointers to first char of each BOB.
@@ -148,7 +161,7 @@ void renderBobCleanup() {
 // Creates the pre-shifted bobs into BOB_CHARSET and populates the BOB_TABLES
 // Modifies PROTO_BOB by shifting it around
 void prepareBobs() {
-    progress_init(SCREEN_BASIC);
+    progress_init(BASIC_SCREEN);
 	bob_charset_next_id = 0;
     // Ensure that glyph #0 is empty
     charsetFindOrAddGlyph(PROTO_BOB+48, BOB_CHARSET);

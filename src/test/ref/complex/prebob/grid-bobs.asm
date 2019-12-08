@@ -15,9 +15,9 @@
   .label CIA2_PORT_A_DDR = $dd02
   .const KEY_SPACE = $3c
   // The BASIC screen
-  .label SCREEN_BASIC = $400
+  .label BASIC_SCREEN = $400
   // The BASIC charset
-  .label CHARSET_BASIC = $1000
+  .label BASIC_CHARSET = $1000
   // The BOB screen
   .label BOB_SCREEN = $2800
   // The BOB charset
@@ -29,33 +29,37 @@
   // The size of a sub-table of BOB_TABLES
   .const BOB_SUBTABLE_SIZE = BOB_SHIFTS_X*BOB_SHIFTS_Y
   // The number of BOBs to render
-  .const NUM_BOBS = $14
+  .const NUM_BOBS = $19
   .const SIZEOF_POINTER = 2
-  .label COS = SIN+$40
   // BOB charset ID of the next glyph to be added
-  .label bob_charset_next_id = $d
+  .label bob_charset_next_id = $e
   // Current index within the progress cursor (0-7)
-  .label progress_idx = 3
+  .label progress_idx = 9
   // Current position of the progress cursor
-  .label progress_cursor = $b
+  .label progress_cursor = $17
   // Pointer to the next clean-up to add
   // Prepare for next clean-up
-  .label renderBobCleanupNext = 6
+  .label renderBobCleanupNext = $a
 main: {
+    .const origY = $a00
+    // Row and column offset vectors
+    .const rowOffsetX = $c00
+    .const colOffsetX = $100
+    .const colOffsetY = $1800
     .const vicSelectGfxBank1_toDd001_return = 3
     .const vicSelectGfxBank2_toDd001_return = 3
     .const toD0181_return = (>(BOB_SCREEN&$3fff)*4)|(>BOB_CHARSET)/4&$f
-    .const toD0182_return = (>(SCREEN_BASIC&$3fff)*4)|(>CHARSET_BASIC)/4&$f
-    .label __10 = $b
-    .label __12 = $b
-    .label __13 = $b
-    .label x = 8
-    .label y = $b
-    .label a = 4
-    .label r = 3
-    .label i = 5
-    // Render Rotated BOBs
-    .label angle = 2
+    .const toD0182_return = (>(BASIC_SCREEN&$3fff)*4)|(>BASIC_CHARSET)/4&$f
+    .label x = $13
+    .label y = 3
+    .label x_1 = 5
+    .label y_1 = 7
+    .label rowX = $13
+    .label rowY = 3
+    .label col = 2
+    // Origin point
+    .label origX = $15
+    .label rowOffsetY = $17
     jsr mulf_init
     jsr prepareBobs
     jsr renderBobInit
@@ -66,8 +70,15 @@ main: {
     lda #toD0181_return
     sta D018
     jsr memset
-    lda #0
-    sta.z angle
+    lda #<$100
+    sta.z rowOffsetY
+    lda #>$100
+    sta.z rowOffsetY+1
+    lda #<$a00
+    sta.z origX
+    lda #>$a00
+    sta.z origX+1
+  // Render Grid of BOBs
   __b2:
     lda RASTER
     cmp #$f8
@@ -75,75 +86,101 @@ main: {
     lda #$f
     sta BORDERCOL
     jsr renderBobCleanup
-    lda.z angle
-    sta.z a
+    lda.z origX
+    sta.z x
+    lda.z origX+1
+    sta.z x+1
     lda #0
-    sta.z i
+    sta.z col
     lda #<RENDERBOB_CLEANUP
     sta.z renderBobCleanupNext
     lda #>RENDERBOB_CLEANUP
     sta.z renderBobCleanupNext+1
-    lda #$1e
-    sta.z r
+    lda #<origY
+    sta.z y
+    lda #>origY
+    sta.z y+1
   __b4:
+    lda.z x
+    sta.z x_1
+    lda.z x+1
+    sta.z x_1+1
+    lda.z y
+    sta.z y_1
+    lda.z y+1
+    sta.z y_1+1
+    ldx #0
+  __b5:
     //kickasm {{ .break }}
     lda #1
     sta BORDERCOL
-    lda.z r
-    ldy.z a
-    ldx COS,y
-    jsr mulf8s
-    lda.z __10
+    lda.z x_1+1
+    sta.z renderBob.xpos
+    lda.z y_1+1
+    sta.z renderBob.ypos
+    jsr renderBob
     clc
-    adc #<$4b*$100
-    sta.z x
-    lda.z __10+1
-    adc #>$4b*$100
-    sta.z x+1
-    lda.z r
-    ldy.z a
-    ldx SIN,y
-    jsr mulf8s
-    asl.z __13
-    rol.z __13+1
+    lda.z x_1
+    adc #<rowOffsetX
+    sta.z x_1
+    lda.z x_1+1
+    adc #>rowOffsetX
+    sta.z x_1+1
+    lda.z y_1
     clc
-    lda.z y
-    adc #<$5a*$100
-    sta.z y
-    lda.z y+1
-    adc #>$5a*$100
-    sta.z y+1
+    adc.z rowOffsetY
+    sta.z y_1
+    lda.z y_1+1
+    adc.z rowOffsetY+1
+    sta.z y_1+1
     lda #2
     sta BORDERCOL
-    lax.z a
-    axs #-[$62]
-    stx.z a
-    lax.z r
-    axs #-[3]
-    stx.z r
-    lda.z x+1
-    sta.z renderBob.xpos
-    lda.z y+1
-    tax
-    jsr renderBob
-    inc.z i
-    lda #NUM_BOBS-1+1
-    cmp.z i
+    inx
+    cpx #5
+    bne __b5
+    clc
+    lda.z rowX
+    adc #<colOffsetX
+    sta.z rowX
+    lda.z rowX+1
+    adc #>colOffsetX
+    sta.z rowX+1
+    clc
+    lda.z rowY
+    adc #<colOffsetY
+    sta.z rowY
+    lda.z rowY+1
+    adc #>colOffsetY
+    sta.z rowY+1
+    inc.z col
+    lda #5
+    cmp.z col
     bne __b4
-    lax.z angle
-    axs #-[3]
-    stx.z angle
+    clc
+    lda.z origX
+    adc #<$100
+    sta.z origX
+    lda.z origX+1
+    adc #>$100
+    sta.z origX+1
+    clc
+    lda.z rowOffsetY
+    adc #<$80
+    sta.z rowOffsetY
+    lda.z rowOffsetY+1
+    adc #>$80
+    sta.z rowOffsetY+1
     lda #0
     sta BORDERCOL
     jsr keyboard_key_pressed
     cmp #0
-    bne __b6
+    bne __b8
     jmp __b2
   // Wait for space release
-  __b6:
+  __b8:
     jsr keyboard_key_pressed
     cmp #0
-    bne __b6
+    bne __b8
     lda #3
     sta CIA2_PORT_A_DDR
     lda #vicSelectGfxBank2_toDd001_return
@@ -178,19 +215,21 @@ keyboard_matrix_read: {
 // Render a single BOB at a given x/y-position
 // X-position is 0-151. Each x-position is 2 pixels wide.
 // Y-position is 0-183. Each y-position is 1 pixel high.
-// renderBob(byte zeropage($e) xpos, byte register(X) ypos)
+// renderBob(byte zeropage($d) xpos, byte zeropage($e) ypos)
 renderBob: {
-    .label __2 = $b
-    .label __5 = $d
-    .label xpos = $e
-    .label x_char_offset = $a
-    .label y_offset = $b
-    .label screen = $b
+    .label __2 = $10
+    .label __5 = $12
+    .label xpos = $d
+    .label ypos = $e
+    .label x_char_offset = $f
+    .label y_offset = $10
+    .label screen = $10
+    .label bob_table_idx = $12
     lda.z xpos
     lsr
     lsr
     sta.z x_char_offset
-    txa
+    lda.z ypos
     lsr
     lsr
     lsr
@@ -214,16 +253,16 @@ renderBob: {
     bcc !+
     inc.z screen+1
   !:
-    txa
-    and #7
+    lda #7
+    and.z ypos
     asl
     asl
     sta.z __5
     lda #3
     and.z xpos
     clc
-    adc.z __5
-    tax
+    adc.z bob_table_idx
+    sta.z bob_table_idx
     ldy #0
     lda.z screen
     sta (renderBobCleanupNext),y
@@ -237,112 +276,47 @@ renderBob: {
     bcc !+
     inc.z renderBobCleanupNext+1
   !:
-    lda BOB_TABLES,x
+    ldy.z bob_table_idx
+    lda BOB_TABLES,y
     ldy #0
     sta (screen),y
-    lda BOB_TABLES+1*BOB_SUBTABLE_SIZE,x
+    ldy.z bob_table_idx
+    lda BOB_TABLES+1*BOB_SUBTABLE_SIZE,y
     ldy #$28
     sta (screen),y
-    lda BOB_TABLES+2*BOB_SUBTABLE_SIZE,x
+    ldy.z bob_table_idx
+    lda BOB_TABLES+2*BOB_SUBTABLE_SIZE,y
     ldy #$50
     sta (screen),y
-    lda BOB_TABLES+3*BOB_SUBTABLE_SIZE,x
+    ldy.z bob_table_idx
+    lda BOB_TABLES+3*BOB_SUBTABLE_SIZE,y
     ldy #1
     sta (screen),y
-    lda BOB_TABLES+4*BOB_SUBTABLE_SIZE,x
+    ldy.z bob_table_idx
+    lda BOB_TABLES+4*BOB_SUBTABLE_SIZE,y
     ldy #$29
     sta (screen),y
-    lda BOB_TABLES+5*BOB_SUBTABLE_SIZE,x
+    ldy.z bob_table_idx
+    lda BOB_TABLES+5*BOB_SUBTABLE_SIZE,y
     ldy #$51
     sta (screen),y
-    lda BOB_TABLES+6*BOB_SUBTABLE_SIZE,x
+    ldy.z bob_table_idx
+    lda BOB_TABLES+6*BOB_SUBTABLE_SIZE,y
     ldy #2
     sta (screen),y
-    lda BOB_TABLES+7*BOB_SUBTABLE_SIZE,x
+    ldy.z bob_table_idx
+    lda BOB_TABLES+7*BOB_SUBTABLE_SIZE,y
     ldy #$2a
     sta (screen),y
-    lda BOB_TABLES+8*BOB_SUBTABLE_SIZE,x
+    ldy.z bob_table_idx
+    lda BOB_TABLES+8*BOB_SUBTABLE_SIZE,y
     ldy #$52
     sta (screen),y
     rts
 }
-// Fast multiply two signed bytes to a word result
-// mulf8s(signed byte register(A) a, signed byte register(X) b)
-mulf8s: {
-    .label return = $b
-    jsr mulf8u_prepare
-    stx.z mulf8s_prepared.b
-    jsr mulf8s_prepared
-    rts
-}
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8s_prepare(byte a)
-// mulf8s_prepared(signed byte zeropage($e) b)
-mulf8s_prepared: {
-    .label memA = $fd
-    .label m = $b
-    .label b = $e
-    lda.z b
-    jsr mulf8u_prepared
-    lda memA
-    cmp #0
-    bpl __b1
-    lda.z m+1
-    sec
-    sbc.z b
-    sta.z m+1
-  __b1:
-    lda.z b
-    cmp #0
-    bpl __b2
-    lda.z m+1
-    sec
-    sbc memA
-    sta.z m+1
-  __b2:
-    rts
-}
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8u_prepare(byte a)
-// mulf8u_prepared(byte register(A) b)
-mulf8u_prepared: {
-    .label resL = $fe
-    .label memB = $ff
-    .label return = $b
-    sta memB
-    tax
-    sec
-  sm1:
-    lda mulf_sqr1_lo,x
-  sm2:
-    sbc mulf_sqr2_lo,x
-    sta resL
-  sm3:
-    lda mulf_sqr1_hi,x
-  sm4:
-    sbc mulf_sqr2_hi,x
-    sta memB
-    lda resL
-    sta.z return
-    lda memB
-    sta.z return+1
-    rts
-}
-// Prepare for fast multiply with an unsigned byte to a word result
-// mulf8u_prepare(byte register(A) a)
-mulf8u_prepare: {
-    .label memA = $fd
-    sta memA
-    sta mulf8u_prepared.sm1+1
-    sta mulf8u_prepared.sm3+1
-    eor #$ff
-    sta mulf8u_prepared.sm2+1
-    sta mulf8u_prepared.sm4+1
-    rts
-}
 // Clean Up the rendered BOB's
 renderBobCleanup: {
-    .label screen = $f
+    .label screen = $13
     ldx #0
   __b1:
     txa
@@ -382,7 +356,7 @@ memset: {
     .const c = 0
     .const num = $3e8
     .label end = str+num
-    .label dst = 6
+    .label dst = $15
     lda #<str
     sta.z dst
     lda #>str
@@ -407,10 +381,10 @@ memset: {
 }
 // Initialize the tables used by renderBob()
 renderBobInit: {
-    .label __0 = $f
-    .label __1 = $f
-    .label __6 = $11
-    .label __7 = $f
+    .label __0 = $15
+    .label __1 = $15
+    .label __6 = $17
+    .label __7 = $15
     ldx #0
   __b1:
     txa
@@ -465,13 +439,13 @@ renderBobInit: {
 // Creates the pre-shifted bobs into BOB_CHARSET and populates the BOB_TABLES
 // Modifies PROTO_BOB by shifting it around
 prepareBobs: {
-    .label bob_table = $f
+    .label bob_table = 3
     .label shift_y = 2
     // Populate charset and tables
-    .label bob_glyph = 6
-    .label cell = $a
-    .label bob_table_idx = 4
-    .label shift_x = 5
+    .label bob_glyph = $13
+    .label cell = $12
+    .label bob_table_idx = $c
+    .label shift_x = $d
     jsr progress_init
     lda #<PROTO_BOB+$30
     sta.z charsetFindOrAddGlyph.glyph
@@ -483,9 +457,9 @@ prepareBobs: {
     lda #0
     sta.z bob_table_idx
     sta.z progress_idx
-    lda #<SCREEN_BASIC
+    lda #<BASIC_SCREEN
     sta.z progress_cursor
-    lda #>SCREEN_BASIC
+    lda #>BASIC_SCREEN
     sta.z progress_cursor+1
     lda #0
     sta.z shift_y
@@ -580,10 +554,10 @@ progress_inc: {
 }
 // Looks through a charset to find a glyph if present. If not present it is added.
 // Returns the glyph ID
-// charsetFindOrAddGlyph(byte* zeropage(6) glyph)
+// charsetFindOrAddGlyph(byte* zeropage($13) glyph)
 charsetFindOrAddGlyph: {
-    .label glyph = 6
-    .label glyph_cursor = $11
+    .label glyph = $13
+    .label glyph_cursor = 5
     lda #<BOB_CHARSET
     sta.z glyph_cursor
     lda #>BOB_CHARSET
@@ -636,8 +610,8 @@ charsetFindOrAddGlyph: {
 }
 // Shift PROTO_BOB right one X pixel
 protoBobShiftRight: {
-    .label carry = $e
-    .label i = $a
+    .label carry = $f
+    .label i = $12
     ldy #0
     ldx #0
     txa
@@ -708,17 +682,17 @@ progress_init: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = $d
+    .label c = 9
     // Counter used for determining x%2==0
-    .label sqr1_hi = $f
+    .label sqr1_hi = $a
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $b
-    .label sqr1_lo = 6
+    .label sqr = $15
+    .label sqr1_lo = 7
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = 8
-    .label sqr2_lo = $11
+    .label sqr2_hi = $13
+    .label sqr2_lo = $10
     //Start with g(0)=f(255)
-    .label dir = $e
+    .label dir = $c
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -848,14 +822,6 @@ PROTO_BOB:
 	.for (var x=0;x<3; x++)
     	.for (var y=0; y<24; y++)
             .byte pic.getSinglecolorByte(x,y)
-
-  // Sine and Cosine tables
-  // Angles: $00=0, $80=PI,$100=2*PI
-  // Sine/Cosine: signed fixed [-$7f,$7f]
-  .align $40
-SIN:
-.for(var i=0;i<$140;i++)
-        .byte >round($7fff*sin(i*2*PI/256))
 
   // Tables containing the char to use for a specific cell of a shifted BOB.
   // char_id = BOB_TABLES[cell*BOB_SUBTABLE_SIZE + shift_y*BOB_SHIFTS_X + shift_x];

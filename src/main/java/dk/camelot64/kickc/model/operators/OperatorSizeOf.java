@@ -42,7 +42,7 @@ public class OperatorSizeOf extends OperatorUnary {
       if(typeSizeConstant == null) {
          // Constant not found - create it
          long typeSize = type.getSizeBytes();
-         typeSizeConstant = new Variable(typeConstName, SymbolType.BYTE, null, programScope, Scope.SEGMENT_DATA_DEFAULT, new ConstantInteger(typeSize&0xff, SymbolType.BYTE));
+         typeSizeConstant = Variable.createConstant(typeConstName, SymbolType.BYTE, programScope, null, new ConstantInteger(typeSize&0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          programScope.add(typeSizeConstant);
       }
       return typeSizeConstant.getConstantRef();

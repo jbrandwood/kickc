@@ -72,17 +72,17 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                Variable variable = (Variable) symbol;
                if(variable.isKindConstant()) {
                   String name = findLocalName(procedure, symbol);
-                  Variable unwound = new Variable(name, procedure, (Variable) symbol);
+                  Variable unwound = Variable.createCopy(name, procedure, (Variable) symbol);
                   procedure.add(unwound);
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                } else if(variable.isKindPhiMaster() || variable.isKindConstant()) {
                   String name = findLocalName(procedure, symbol);
-                  Variable unwound = new Variable(name, procedure, (Variable) symbol);
+                  Variable unwound = Variable.createCopy(name, procedure, (Variable) symbol);
                   procedure.add(unwound);
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                } else if(variable.isKindIntermediate()) {
                   String name = procedure.allocateIntermediateVariableName();
-                  Variable unwound = new Variable(name, procedure, (Variable) symbol);
+                  Variable unwound = Variable.createCopy(name, procedure, (Variable) symbol);
                   procedure.add(unwound);
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                } else {

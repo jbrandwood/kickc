@@ -23,7 +23,7 @@ public class CallingConventionStack {
       if(returnOffsetConstant == null) {
          // Constant not found - create it
          long returnByteOffset = getReturnByteOffset(procedure);
-         returnOffsetConstant = new Variable(returnOffsetConstantName, SymbolType.BYTE, null, procedure, Scope.SEGMENT_DATA_DEFAULT, new ConstantInteger(returnByteOffset & 0xff, SymbolType.BYTE));
+         returnOffsetConstant = Variable.createConstant(returnOffsetConstantName, SymbolType.BYTE, procedure, null, new ConstantInteger(returnByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          procedure.add(returnOffsetConstant);
       }
       return returnOffsetConstant.getConstantRef();
@@ -42,7 +42,7 @@ public class CallingConventionStack {
       if(paramOffsetConstant == null) {
          // Constant not found - create it
          long paramByteOffset = getParameterByteOffset(procedure, parameter);
-         paramOffsetConstant = new Variable(paramOffsetConstantName, SymbolType.BYTE, null, procedure, Scope.SEGMENT_DATA_DEFAULT, new ConstantInteger(paramByteOffset & 0xff, SymbolType.BYTE));
+         paramOffsetConstant = Variable.createConstant(paramOffsetConstantName, SymbolType.BYTE, procedure, null, new ConstantInteger(paramByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          procedure.add(paramOffsetConstant);
       }
       return paramOffsetConstant.getConstantRef();
@@ -123,7 +123,7 @@ public class CallingConventionStack {
     */
    public static ConstantRef getStackBaseConstant(ProgramScope programScope) {
       long STACK_BASE_ADDRESS = 0x103L;
-      Variable stackBase = new Variable("STACK_BASE", SymbolType.WORD, null, programScope, Scope.SEGMENT_DATA_DEFAULT, new ConstantInteger(STACK_BASE_ADDRESS, SymbolType.WORD));
+      Variable stackBase = Variable.createConstant("STACK_BASE", SymbolType.WORD, programScope, null, new ConstantInteger(STACK_BASE_ADDRESS, SymbolType.WORD), Scope.SEGMENT_DATA_DEFAULT);
       programScope.add(stackBase);
       return stackBase.getConstantRef();
    }

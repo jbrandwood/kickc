@@ -79,12 +79,13 @@ public class AsmFragmentTemplate {
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
       {
-         Variable v1 = new Variable( "z1", Variable.Kind.PHI_VERSION, SymbolType.BYTE, scope, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
-         Variable v2 = new Variable( "z2", Variable.Kind.PHI_VERSION, SymbolType.BYTE, scope, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
-         Variable v3 = new Variable( "z3", Variable.Kind.PHI_VERSION, SymbolType.BYTE, scope, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
-         Variable v4 = new Variable( "z4", Variable.Kind.PHI_VERSION, SymbolType.BYTE, scope, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
-         Variable v5 = new Variable( "z5", Variable.Kind.PHI_VERSION, SymbolType.BYTE, scope, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
-         Variable v6 = new Variable( "z6", Variable.Kind.PHI_VERSION, SymbolType.BYTE, scope, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable master = Variable.createPhiMaster("z", SymbolType.BYTE, scope, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v1 = Variable.createPhiVersion(master, 1); v1.setName("z1");
+         Variable v2 = Variable.createPhiVersion(master, 2); v2.setName("z2");
+         Variable v3 = Variable.createPhiVersion(master, 3); v3.setName("z3");
+         Variable v4 = Variable.createPhiVersion(master, 4); v4.setName("z4");
+         Variable v5 = Variable.createPhiVersion(master, 5); v5.setName("z5");
+         Variable v6 = Variable.createPhiVersion(master, 6); v6.setName("z6");
          v1.setAllocation(new Registers.RegisterZpMem(2, 1));
          v2.setAllocation(new Registers.RegisterZpMem(4, 1));
          v3.setAllocation(new Registers.RegisterZpMem(6, 1));
@@ -99,12 +100,12 @@ public class AsmFragmentTemplate {
          if(signature.contains("z6")) bindings.put("z6", v6);
       }
       {
-         Variable v1 = new Variable( "m1", Variable.Kind.LOAD_STORE, SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v2 = new Variable( "m2", Variable.Kind.LOAD_STORE, SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v3 = new Variable( "m3", Variable.Kind.LOAD_STORE, SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v4 = new Variable( "m4", Variable.Kind.LOAD_STORE, SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v5 = new Variable( "m5", Variable.Kind.LOAD_STORE, SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
-         Variable v6 = new Variable( "m6", Variable.Kind.LOAD_STORE, SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v1 = Variable.createLoadStore("m1", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v2 = Variable.createLoadStore("m2", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v3 = Variable.createLoadStore("m3", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v4 = Variable.createLoadStore("m4", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v5 = Variable.createLoadStore("m5", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v6 = Variable.createLoadStore("m6", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
          v1.setAllocation(new Registers.RegisterMainMem(v1.getVariableRef(), 1, null));
          v2.setAllocation(new Registers.RegisterMainMem(v2.getVariableRef(), 1, null));
          v3.setAllocation(new Registers.RegisterMainMem(v3.getVariableRef(), 1, null));

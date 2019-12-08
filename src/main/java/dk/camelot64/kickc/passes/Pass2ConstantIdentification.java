@@ -71,7 +71,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
             );
          }
          scope.remove(variable);
-         Variable constVar = new Variable(variable, constVal);
+         Variable constVar = Variable.createConstant(variable, constVal);
          constVar.getComments().addAll(constVarVal.getAssignment().getComments());
          scope.add(constVar);
          constAliases.put(constRef, constVar.getRef());

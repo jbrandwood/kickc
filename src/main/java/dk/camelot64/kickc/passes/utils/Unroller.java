@@ -231,7 +231,7 @@ public class Unroller {
          if(definedVarRef.isIntermediate()) {
             Scope scope = definedVar.getScope();
             String name = scope.allocateIntermediateVariableName();
-            newVar = new Variable(name, scope, definedVar);
+            newVar = Variable.createCopy(name, scope, definedVar);
             scope.add(newVar);
          } else if(definedVarRef.isVersion()) {
             newVar = (definedVar).getVersionOf().createVersion();

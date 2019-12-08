@@ -4,6 +4,7 @@ import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
@@ -208,7 +209,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       Variable returnVar = null;
       if(!SymbolType.VOID.equals(type)) {
-         returnVar = procedure.addVariablePhiMaster("return", type, defaultMemoryArea, procedure.getSegmentData());
+         returnVar = procedure.add(Variable.createPhiMaster("return", type, procedure, defaultMemoryArea, procedure.getSegmentData()));
       }
       List<Variable> parameterList = new ArrayList<>();
       if(ctx.parameterListDecl() != null) {
@@ -267,7 +268,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visitDeclTypes(ctx.declTypes());
       SymbolType type = declVarType;
       List<Directive> directives = declVarDirectives;
-      Variable param = new Variable( ctx.NAME().getText(), Variable.Kind.PHI_MASTER, type, getCurrentScope(), defaultMemoryArea, currentDataSegment);
+      Variable param = Variable.createPhiMaster( ctx.NAME().getText(), type, getCurrentScope(), defaultMemoryArea, currentDataSegment);
       // Add directives
       directiveContext.applyDirectives(param, true, false, directives, new StatementSource(ctx));
       exitDeclTypes();
@@ -577,14 +578,22 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                arraySpec = new ArraySpec(declArraySize);
             }
             Scope scope = getCurrentScope();
-            Variable constVar = new Variable(varName, declVarType, arraySpec, scope, currentDataSegment, initConstantValue);
+            Variable constVar = Variable.createConstant(varName, declVarType, scope, arraySpec, initConstantValue, currentDataSegment);
             scope.add(constVar);
             // Add comments to constant
             constVar.setComments(ensureUnusedComments(declVarComments));
             directiveContext.applyDirectives(constVar, false, declIsArray, declVarDirectives, statementSource);
          } else {
             // Create variable
-            Variable lValue = getCurrentScope().addVariable(kind, varName, declVarType, defaultMemoryArea, currentDataSegment);
+            Variable lValue;
+            if(kind.equals(Variable.Kind.PHI_MASTER)) {
+               lValue = Variable.createPhiMaster(varName, declVarType, getCurrentScope(), defaultMemoryArea, currentDataSegment);
+            }  else if (kind.equals(Variable.Kind.LOAD_STORE)) {
+               lValue = Variable.createLoadStore(varName, declVarType, getCurrentScope(), defaultMemoryArea, currentDataSegment);
+            } else {
+               throw new InternalError("Unexpected variable kind! "+kind.name(), statementSource);
+            }
+            getCurrentScope().add(lValue);
             // Add directives
             directiveContext.applyDirectives(lValue, false, declIsArray, declVarDirectives, statementSource);
             if(declVarStructMember) {
@@ -715,7 +724,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       // Add a constant variable
       Scope scope = getCurrentScope();
-      Variable constVar = new Variable(varName, declVarType, arraySpec, scope, currentDataSegment, constantArrayKickAsm);
+      Variable constVar = Variable.createConstant(varName, declVarType, scope, arraySpec, constantArrayKickAsm, currentDataSegment);
       scope.add(constVar);
       // Add comments to constant
       constVar.setComments(ensureUnusedComments(declVarComments));
@@ -1236,7 +1245,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Variable lValue;
       if(varType != null) {
          try {
-            lValue = getCurrentScope().addVariablePhiMaster(varName, varType, defaultMemoryArea, currentDataSegment);
+            lValue = getCurrentScope().add(Variable.createPhiMaster(varName, varType, getCurrentScope(), defaultMemoryArea, currentDataSegment));
          } catch(CompileError e) {
             throw new CompileError(e.getMessage(), statementSource);
          }
@@ -1542,7 +1551,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          Scope parentScope = getCurrentScope();
          while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
          for(Variable member : enumDefinition.getAllConstants(false)) {
-            parentScope.add(new Variable(member.getLocalName(), SymbolType.BYTE, null, parentScope, currentDataSegment, member.getConstantValue()));
+            parentScope.add(Variable.createConstant(member.getLocalName(), SymbolType.BYTE, parentScope, null, member.getConstantValue(), currentDataSegment));
          }
          return SymbolType.BYTE;
       } catch(CompileError e) {
@@ -1576,7 +1585,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             }
          }
       }
-      currentEnum.add(new Variable(memberName, SymbolType.BYTE, null, getCurrentScope(), currentDataSegment, enumValue));
+      currentEnum.add(Variable.createConstant(memberName, SymbolType.BYTE, getCurrentScope(), null, enumValue, currentDataSegment));
       return null;
    }
 
@@ -1661,7 +1670,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       scopeStack.push(typedefScope);
       SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
       String typedefName = ctx.NAME().getText();
-      typedefScope.addVariablePhiMaster(typedefName, type, defaultMemoryArea, currentDataSegment);
+      typedefScope.add(Variable.createPhiMaster(typedefName, type, typedefScope, defaultMemoryArea, currentDataSegment));
       scopeStack.pop();
       return null;
    }

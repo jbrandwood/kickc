@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.ConstantRef;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
@@ -14,12 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/** A Variable symbol (can either be a runtime variable or a compile-time constant)*/
+/** A Variable symbol (can either be a runtime variable or a compile-time constant) */
 public class Variable implements Symbol {
 
    /**
     * The kind of the variable. The kind is the most significant property of the variable since it drives most of the behavior.
-    *
+    * <p>
     * The value depends on the directives memory/register/volatile/const - and on the compilers optimization decisions.
     * <ul>
     * <li>PHI_MASTER variables are turned into PHI-versions and PHI-nodes are used for them throughout the entire program. The PHI-master itself is only an information container and does not live in memory at runtime.</li>
@@ -33,7 +34,7 @@ public class Variable implements Symbol {
       PHI_MASTER, PHI_VERSION, INTERMEDIATE, LOAD_STORE, CONSTANT
    }
 
-   /** The kind of the variable.  */
+   /** The kind of the variable. */
    private Kind kind;
 
    /** The local name of the variable. [ALL] */
@@ -42,13 +43,13 @@ public class Variable implements Symbol {
    /** Full name of variable including scope (scope::name or name) [ALL] */
    private String fullName;
 
-   /** A short name used for the variable in ASM code. If possible variable names of variables are shortened in ASM code. This is possible, when several versions of the var use the same register. [ALL]*/
+   /** A short name used for the variable in ASM code. If possible variable names of variables are shortened in ASM code. This is possible, when several versions of the var use the same register. [ALL] */
    private String asmName;
 
    /** The scope containing the variable. [ALL] */
    private Scope scope;
 
-   /** The type of the variable. VAR means the type is unknown, and has not been inferred yet. [ALL]*/
+   /** The type of the variable. VAR means the type is unknown, and has not been inferred yet. [ALL] */
    private SymbolType type;
 
    /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. [Only Variables in memory and arrays] */
@@ -60,7 +61,7 @@ public class Variable implements Symbol {
    /** Specifies that the variable is declared as const */
    private boolean declaredConst;
 
-   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only Variables]*/
+   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only Variables] */
    private boolean declaredVolatile;
 
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only variables] TODO: Remove this */
@@ -84,7 +85,7 @@ public class Variable implements Symbol {
    /** The constant value if the variable is a constant. Null otherwise. [Only constants] */
    private ConstantValue constantValue;
 
-   /** Non-null if the variable is an array. [Only constants that are arrays]*/
+   /** Non-null if the variable is an array. [Only constants that are arrays] */
    private ArraySpec arraySpec;
 
    /** The number of the next version (only used for PHI masters) [Only PHI masters] */
@@ -99,21 +100,26 @@ public class Variable implements Symbol {
    }
 
    /**
-    * Create a runtime variable
+    * Create a variable (or constant)
+    *
     * @param name The name
     * @param kind The storage strategy (PHI-master/PHI-version/Intermediate/load store/constant)
     * @param type The type
     * @param scope The scope
-    * @param memoryArea  The memory area (zeropage/main memory)
+    * @param memoryArea The memory area (zeropage/main memory)
     * @param dataSegment The data segment (in main memory)
+    * @param arraySpec The array specification of the variable (if it is an array)
+    * @param constantValue The constant value of the variable (if it is constant)
     */
-   public Variable(String name, Kind kind, SymbolType type, Scope scope, MemoryArea memoryArea, String dataSegment) {
+   private Variable(String name, Kind kind, SymbolType type, Scope scope, MemoryArea memoryArea, String dataSegment, ArraySpec arraySpec, ConstantValue constantValue) {
       this.name = name;
       this.kind = kind;
       if(Kind.PHI_MASTER.equals(kind))
          this.nextPhiVersionNumber = 0;
       this.type = type;
       this.scope = scope;
+      this.arraySpec = arraySpec;
+      this.constantValue = constantValue;
       this.dataSegment = dataSegment;
       this.memoryArea = memoryArea;
       this.comments = new ArrayList<>();
@@ -121,74 +127,132 @@ public class Variable implements Symbol {
    }
 
    /**
-    * Create a compile-time constant variable
+    * Create an intermediate variable. The type will initially be set to {@link SymbolType#VAR}.
+    *
     * @param name The name
-    * @param type The type
     * @param scope The scope
     * @param dataSegment The data segment (in main memory)
-    * @param value The constant value
+    * @return The new intermediate variable
     */
-   public Variable(String name, SymbolType type, ArraySpec arraySpec, Scope scope, String dataSegment, ConstantValue value) {
-      this(name, Kind.CONSTANT, type, scope, MemoryArea.MAIN_MEMORY, dataSegment);
-      this.arraySpec = arraySpec;
-      this.constantValue = value;
+   public static Variable createIntermediate(String name, Scope scope, String dataSegment) {
+      return new Variable(name, Kind.INTERMEDIATE, SymbolType.VAR, scope, MemoryArea.ZEROPAGE_MEMORY, dataSegment, null, null);
    }
 
    /**
-    * Create a constant version of a variable
-    * @param variable The variable to create a constant version of
-    * @param constVal The constant value
+    * Create a load/store variable
+    *
+    * @param name The name
+    * @param type The type
+    * @param scope The scope
+    * @param memoryArea The memory area (zeropage/main memory)
+    * @param dataSegment The data segment (in main memory)
+    * @return The new PHI-master variable
     */
-   public Variable(Variable variable, ConstantValue constVal) {
-      this(variable.getName(),variable.getType(), variable.getArraySpec(), variable.getScope(), variable.getDataSegment(), constVal);
-      this.setDeclaredAlignment(variable.getDeclaredAlignment());
-      this.setDeclaredAsRegister(variable.isDeclaredAsRegister());
-      this.setDeclaredConst(variable.isDeclaredConst());
-      this.setDeclaredRegister(variable.getDeclaredRegister());
-      this.setDeclaredVolatile(variable.isDeclaredVolatile());
-      this.setDeclaredExport(variable.isDeclaredExport());
-      this.setInferredVolatile(variable.isInferredVolatile());
-      this.setComments(variable.getComments());
+   public static Variable createLoadStore(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
+      return new Variable(name, Kind.LOAD_STORE, type, scope, memoryArea, dataSegment, null, null);
+   }
+
+   /**
+    * Create a PHI master variable
+    *
+    * @param name The name
+    * @param type The type
+    * @param scope The scope
+    * @param memoryArea The memory area (zeropage/main memory)
+    * @param dataSegment The data segment (in main memory)
+    * @return The new PHI-master variable
+    */
+   public static Variable createPhiMaster(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
+      return new Variable(name, Kind.PHI_MASTER, type, scope, memoryArea, dataSegment, null, null);
    }
 
    /**
     * Create a version of a PHI master variable
     *
     * @param phiMaster The PHI master variable.
-    * @param version The version number
+    * @param versionNum The version number
     */
-   private Variable(Variable phiMaster, int version) {
-      this(phiMaster.getName() + "#" + version, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment());
-      this.setArraySpec(phiMaster.getArraySpec());
-      this.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
-      this.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
-      this.setDeclaredConst(phiMaster.isDeclaredConst());
-      this.setDeclaredRegister(phiMaster.getDeclaredRegister());
-      this.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
-      this.setDeclaredExport(phiMaster.isDeclaredExport());
-      this.setInferredVolatile(phiMaster.isInferredVolatile());
-      this.setComments(phiMaster.getComments());
+   public static Variable createPhiVersion(Variable phiMaster, int versionNum) {
+      Variable version = new Variable(phiMaster.getName() + "#" + versionNum, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment(), phiMaster.getArraySpec(), null);
+      version.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
+      version.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
+      version.setDeclaredConst(phiMaster.isDeclaredConst());
+      version.setDeclaredRegister(phiMaster.getDeclaredRegister());
+      version.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
+      version.setDeclaredExport(phiMaster.isDeclaredExport());
+      version.setInferredVolatile(phiMaster.isInferredVolatile());
+      version.setComments(phiMaster.getComments());
+      return version;
+   }
+
+   /**
+    * Create a compile-time constant variable
+    *
+    * @param name The name
+    * @param type The type
+    * @param scope The scope
+    * @param value The constant value
+    * @param dataSegment The data segment (in main memory)
+    */
+   public static Variable createConstant(String name, SymbolType type, Scope scope, ArraySpec arraySpec, ConstantValue value, String dataSegment) {
+      return new Variable(name, Kind.CONSTANT, type, scope, MemoryArea.MAIN_MEMORY, dataSegment, arraySpec, value);
+   }
+
+   /**
+    * Create a constant version of a variable. Used when a variable is determined to be constant during the compile.
+    *
+    * @param variable The variable to create a constant version of
+    * @param constVal The constant value
+    */
+   public static Variable createConstant(Variable variable, ConstantValue constVal) {
+      Variable constVar = createConstant(variable.getName(), variable.getType(), variable.getScope(), variable.getArraySpec(), constVal, variable.getDataSegment());
+      constVar.setDeclaredAlignment(variable.getDeclaredAlignment());
+      constVar.setDeclaredAsRegister(variable.isDeclaredAsRegister());
+      constVar.setDeclaredConst(variable.isDeclaredConst());
+      constVar.setDeclaredRegister(variable.getDeclaredRegister());
+      constVar.setDeclaredVolatile(variable.isDeclaredVolatile());
+      constVar.setDeclaredExport(variable.isDeclaredExport());
+      constVar.setInferredVolatile(variable.isInferredVolatile());
+      constVar.setComments(variable.getComments());
+      return constVar;
    }
 
    /**
     * Create a copy of a variable with a different name in a different scope
     *
-    * @param name The name
-    * @param scope The scope
+    * @param name The name for the new variable
+    * @param scope The scope for the new variable
     * @param original The original variable
     */
-   public Variable(String name, Scope scope, Variable original) {
-      this(name, original.getKind(), original.getType(), scope, original.getMemoryArea(), original.getDataSegment());
-      this.setArraySpec(original.getArraySpec());
-      this.setDeclaredAlignment(original.getDeclaredAlignment());
-      this.setDeclaredAsRegister(original.isDeclaredAsRegister());
-      this.setDeclaredConst(original.isDeclaredConst());
-      this.setDeclaredVolatile(original.isDeclaredVolatile());
-      this.setDeclaredExport(original.isDeclaredExport());
-      this.setDeclaredRegister(original.getDeclaredRegister());
-      this.setInferredVolatile(original.isInferredVolatile());
-      this.setComments(original.getComments());
-      this.setConstantValue(original.getConstantValue());
+   public static Variable createCopy(String name, Scope scope, Variable original) {
+      Variable copy = new Variable(name, original.getKind(), original.getType(), scope, original.getMemoryArea(), original.getDataSegment(), original.getArraySpec(), original.getConstantValue());
+      copy.setDeclaredAlignment(original.getDeclaredAlignment());
+      copy.setDeclaredAsRegister(original.isDeclaredAsRegister());
+      copy.setDeclaredConst(original.isDeclaredConst());
+      copy.setDeclaredVolatile(original.isDeclaredVolatile());
+      copy.setDeclaredExport(original.isDeclaredExport());
+      copy.setDeclaredRegister(original.getDeclaredRegister());
+      copy.setInferredVolatile(original.isInferredVolatile());
+      copy.setComments(original.getComments());
+      return copy;
+   }
+
+   /**
+    * Create a variable representing a single member of a struct variable.
+    * @param structVar The variable that holds a struct value.
+    * @param memberDefinition The definition of the struct member
+    * @return The new unwound variable representing the member of the struct
+    */
+   public static Variable createStructMemberUnwound(Variable structVar, Variable memberDefinition) {
+      String name = structVar.getLocalName() + "_" + memberDefinition.getLocalName();
+      Variable.MemoryArea memoryArea = (memberDefinition.getType() instanceof SymbolTypePointer) ? Variable.MemoryArea.ZEROPAGE_MEMORY : structVar.getMemoryArea();
+      Variable memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), null, null);
+      memberVariable.setArraySpec(memberDefinition.getArraySpec());
+      memberVariable.setDeclaredVolatile(structVar.isDeclaredVolatile());
+      memberVariable.setInferredVolatile(structVar.isInferredVolatile());
+      memberVariable.setDeclaredConst(structVar.isDeclaredConst());
+      memberVariable.setDeclaredExport(structVar.isDeclaredExport());
+      return memberVariable;
    }
 
    public Kind getKind() {
@@ -252,7 +316,7 @@ public class Variable implements Symbol {
    public Variable createVersion() {
       if(!isKindPhiMaster())
          throw new InternalError("Cannot version non-PHI variable " + this.toString());
-      Variable version = new Variable(this, nextPhiVersionNumber++);
+      Variable version = Variable.createPhiVersion(this, nextPhiVersionNumber++);
       getScope().add(version);
       return version;
    }
@@ -271,7 +335,7 @@ public class Variable implements Symbol {
    }
 
    public boolean isArray() {
-      return arraySpec!=null;
+      return arraySpec != null;
    }
 
    public ArraySpec getArraySpec() {

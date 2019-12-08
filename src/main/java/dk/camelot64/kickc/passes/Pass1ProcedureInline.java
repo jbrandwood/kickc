@@ -300,7 +300,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          if(procSymbol instanceof Variable) {
             Variable procVar = (Variable) procSymbol;
             String inlineVarName = getInlineSymbolName(procedure, procSymbol, serial);
-            Variable inlineVar = new Variable(inlineVarName, callScope, procVar);
+            Variable inlineVar = Variable.createCopy(inlineVarName, callScope, procVar);
             callScope.add(inlineVar);
          } else if(procSymbol instanceof Label) {
             String inlineLabelName = getInlineSymbolName(procedure, procSymbol, serial);

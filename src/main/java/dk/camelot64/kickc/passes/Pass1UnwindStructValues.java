@@ -207,14 +207,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   StructDefinition structDefinition = ((SymbolTypeStruct) variable.getType()).getStructDefinition(getProgram().getScope());
                   StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef());
                   for(Variable member : structDefinition.getAllVars(false)) {
-                     String name = variable.getLocalName() + "_" + member.getLocalName();
-                     Variable.MemoryArea memoryArea = (member.getType() instanceof SymbolTypePointer)?Variable.MemoryArea.ZEROPAGE_MEMORY:variable.getMemoryArea();
-                     Variable memberVariable = scope.add(new Variable(  name, variable.getKind(), member.getType(), scope, memoryArea, variable.getDataSegment()));
-                     memberVariable.setArraySpec(member.getArraySpec());
-                     memberVariable.setDeclaredVolatile(variable.isDeclaredVolatile());
-                     memberVariable.setInferredVolatile(variable.isInferredVolatile());
-                     memberVariable.setDeclaredConst(variable.isDeclaredConst());
-                     memberVariable.setDeclaredExport(variable.isDeclaredExport());
+                     Variable memberVariable = Variable.createStructMemberUnwound(variable, member);
+                     scope.add(memberVariable);
                      variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
                      getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
                   }

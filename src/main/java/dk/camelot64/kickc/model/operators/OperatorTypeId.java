@@ -47,7 +47,7 @@ public class OperatorTypeId extends OperatorUnary {
       if(typeIdConstant == null) {
          // Constant not found - create it
          long typeSize = getTypeId(type);
-         typeIdConstant = new Variable(typeConstName, SymbolType.BYTE, null, programScope, Scope.SEGMENT_DATA_DEFAULT, new ConstantInteger(typeSize));
+         typeIdConstant = Variable.createConstant(typeConstName, SymbolType.BYTE, programScope, null, new ConstantInteger(typeSize), Scope.SEGMENT_DATA_DEFAULT);
          programScope.add(typeIdConstant);
       }
       return typeIdConstant.getConstantRef();

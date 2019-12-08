@@ -26,10 +26,9 @@ main: {
   b1:
     ldy #0
   __b3:
-    lda (line),y
-    cmp #'a'
-    beq __b5
     lda #'a'
+    cmp (line),y
+    beq __b5
     sta (line),y
     iny
     cpy #$28

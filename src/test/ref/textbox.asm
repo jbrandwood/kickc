@@ -159,8 +159,8 @@ textbox: {
     iny
     ldx #0
   __b3:
-    lda (text),y
-    cmp #$20
+    lda #$20
+    cmp (text),y
     beq __b5
     lda (text),y
     cmp #0

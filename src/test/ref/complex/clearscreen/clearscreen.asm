@@ -501,8 +501,8 @@ getCharToProcess: {
   __b1:
     ldy #0
   __b2:
-    lda (screen_line),y
-    cmp #' '
+    lda #' '
+    cmp (screen_line),y
     bne !__b11+
     jmp __b11
   !__b11:
@@ -1027,9 +1027,9 @@ processChars: {
     bne !-
   !e:
     sta.z bitmask
+    lda #STATUS_FREE
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
-    lda (processing),y
-    cmp #STATUS_FREE
+    cmp (processing),y
     bne !__b2+
     jmp __b2
   !__b2:

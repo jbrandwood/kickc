@@ -296,9 +296,9 @@ main: {
     // main::@3
   __b3:
     // [10] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@5 -- pbuz1_derefidx_vbuz2_eq_vbuc1_then_la1 
+    lda #'a'
     ldy.z i
-    lda (line),y
-    cmp #'a'
+    cmp (line),y
     beq __b5
     jmp __b4
     // main::@4
@@ -424,8 +424,8 @@ main: {
     // main::@3
   __b3:
     // [10] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@5 -- pbuz1_derefidx_vbuyy_eq_vbuc1_then_la1 
-    lda (line),y
-    cmp #'a'
+    lda #'a'
+    cmp (line),y
     beq __b5
     jmp __b4
     // main::@4
@@ -487,6 +487,8 @@ Relabelling long label __b3_from___b2 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #'a'
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -513,7 +515,7 @@ reg byte y [ main::i#2 main::i#1 ]
 
 
 FINAL ASSEMBLER
-Score: 3256
+Score: 3056
 
   // File Comments
 // Tests break statement in a simple loop
@@ -572,13 +574,12 @@ main: {
   __b3:
     // if(line[i]=='a')
     // [10] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@5 -- pbuz1_derefidx_vbuyy_eq_vbuc1_then_la1 
-    lda (line),y
-    cmp #'a'
+    lda #'a'
+    cmp (line),y
     beq __b5
     // main::@4
     // line[i] = 'a'
     // [11] *((byte*) main::line#2 + (byte) main::i#2) ← (byte) 'a' -- pbuz1_derefidx_vbuyy=vbuc1 
-    lda #'a'
     sta (line),y
     // for( byte i: 0..39)
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 

@@ -4,9 +4,28 @@
 .pc = $80d "Program"
   .label screen = $400
 main: {
+    lda #<screen
+    sta.z print2.at
+    lda #>screen
+    sta.z print2.at+1
+    lda #<msg
+    sta.z print2.msg
+    lda #>msg
+    sta.z print2.msg+1
+    jsr print2
+    lda #<screen+$50
+    sta.z print2.at
+    lda #>screen+$50
+    sta.z print2.at+1
+    lda #<msg1
+    sta.z print2.msg
+    lda #>msg1
+    sta.z print2.msg+1
     jsr print2
     rts
     msg: .text "hello"
+    .byte 0
+    msg1: .text "world"
     .byte 0
 }
 // print2(byte* zeropage($fa) at, byte* zeropage($fc) msg)
@@ -15,16 +34,8 @@ print2: {
     .label msg = $fc
     .label at = $fa
     ldx #0
-    lda #<screen
-    sta.z at
-    lda #>screen
-    sta.z at+1
     txa
     sta.z i
-    lda #<main.msg
-    sta.z msg
-    lda #>main.msg
-    sta.z msg+1
   __b1:
     ldy.z i
     lda (msg),y

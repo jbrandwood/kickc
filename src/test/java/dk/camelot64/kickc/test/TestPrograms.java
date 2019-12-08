@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testGridBobs() throws IOException, URISyntaxException {
+      compileAndCompare("complex/prebob/grid-bobs");
+   }
+
+   @Test
    public void testVogelBobs() throws IOException, URISyntaxException {
       compileAndCompare("complex/prebob/vogel-bobs");
    }

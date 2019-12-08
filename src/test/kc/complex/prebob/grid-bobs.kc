@@ -28,13 +28,6 @@ signed char[0x140] align(0x40) SIN = kickasm {{
 
 signed char* COS = SIN+$40; // sin(x) = cos(x+PI/2)
 
-// Vogel Sunflower polar coordinates
-align(0x100) const char[] VOGEL_THETA = kickasm {{
-    .const PHI = (1+sqrt(5))/2
-    .fill 100, round(mod(256*i/(PHI*PHI),256))
-}};
-align(0x100) const char[] VOGEL_R = kickasm {{ .fill 100, round(sqrt(i)*15) }};
-
 // The BASIC screen
 const char* SCREEN_BASIC = 0x0400;
 // The BASIC charset
@@ -63,17 +56,6 @@ void main() {
 	renderBobInit();
 	vicSelectGfxBank(BOB_SCREEN);
 	*D018 = toD018(BOB_SCREEN, BOB_CHARSET);
-	/*
-	// Clear screen
-	memset(BOB_SCREEN, 0x00, 1000);
-	// Display a BOB grid
-	for(char x: 0..7)
-	    for(char y: 0..3)
-            renderBob(x*12+y, y*24+x);
-	// Wait for space
-	while(!keyboard_key_pressed(KEY_SPACE)) {}
-	while(keyboard_key_pressed(KEY_SPACE)) {}
-	*/
 	// Clear screen
 	memset(BOB_SCREEN, 0x00, 1000);
 	// Render Rotated BOBs
@@ -169,7 +151,7 @@ void prepareBobs() {
     progress_init(SCREEN_BASIC);
 	bob_charset_next_id = 0;
     // Ensure that glyph #0 is empty
-    bobCharsetFindOrAddGlyph(PROTO_BOB+48);
+    charsetFindOrAddGlyph(PROTO_BOB+48, BOB_CHARSET);
 	char bob_table_idx = 0;
 	for(char shift_y=0;shift_y<BOB_SHIFTS_Y;shift_y++) {
 		for(char shift_x=0;shift_x<BOB_SHIFTS_X;shift_x++) {
@@ -178,7 +160,7 @@ void prepareBobs() {
 			char* bob_table = BOB_TABLES + bob_table_idx;
 			for(char cell = 0; cell<9; cell++) {
 				// Look for an existing char in BOB_CHARSET 
-				*bob_table = bobCharsetFindOrAddGlyph(bob_glyph);
+				*bob_table = charsetFindOrAddGlyph(bob_glyph, BOB_CHARSET);
 				// Move to the next glyph
 				bob_glyph+=8;
 				// Move to the next sub-table
@@ -188,17 +170,17 @@ void prepareBobs() {
 			// Move to the next bob table idx
 			bob_table_idx++;
 			// Shift PROTO_BOB right twice
-			shiftProtoBobRight();
-			shiftProtoBobRight();
+			protoBobShiftRight();
+			protoBobShiftRight();
 		}
         // Shift PROTO_BOB down and 8px left
-		shiftProtoBobDown();
+		protoBobShiftDown();
 	}
 }
 
 
 // Shift PROTO_BOB right one X pixel
-void shiftProtoBobRight() {
+void protoBobShiftRight() {
 	char carry = 0;
 	char j = 0;
 	for(char i=0;i<3*3*8;i++) {
@@ -219,7 +201,7 @@ void shiftProtoBobRight() {
 
 // Shift PROTO_BOB down one Y pixel
 // At the same time restore PROTO_BOB X by shifting 8 pixels left
-void shiftProtoBobDown() {
+void protoBobShiftDown() {
 	for(char i=23;i>0;i--) {
 		PROTO_BOB[i] = (PROTO_BOB+23)[i];
 		(PROTO_BOB+24)[i] = (PROTO_BOB+47)[i];
@@ -233,16 +215,15 @@ void shiftProtoBobDown() {
 // BOB charset ID of the next glyph to be added
 char bob_charset_next_id;
 
-// Looks through BOB_CHARSET to find the passed bob glyph if present.
-// If not present it is added
+// Looks through a charset to find a glyph if present. If not present it is added.
 // Returns the glyph ID
-char bobCharsetFindOrAddGlyph(char* bob_glyph) {
-	char* glyph_cursor = BOB_CHARSET;
+char charsetFindOrAddGlyph(char* glyph, char* charset) {
+	char* glyph_cursor = charset;
 	char glyph_id = 0;
 	while(glyph_id!=bob_charset_next_id) {
 		char found = 1;
 		for(char i=0;i<8;i++) {
-			if(glyph_cursor[i]!=bob_glyph[i]) {
+			if(glyph_cursor[i]!=glyph[i]) {
 				found = 0;
 				break;
 			}
@@ -253,7 +234,7 @@ char bobCharsetFindOrAddGlyph(char* bob_glyph) {
 	}
 	// Not found - add it
 	for(char i=0;i<8;i++)
-		glyph_cursor[i]=bob_glyph[i];	
+		glyph_cursor[i]=glyph[i];
 	bob_charset_next_id++;
 	return glyph_id;
 }

@@ -474,12 +474,12 @@ prepareBobs: {
     .label shift_x = 5
     jsr progress_init
     lda #<PROTO_BOB+$30
-    sta.z bobCharsetFindOrAddGlyph.bob_glyph
+    sta.z charsetFindOrAddGlyph.glyph
     lda #>PROTO_BOB+$30
-    sta.z bobCharsetFindOrAddGlyph.bob_glyph+1
+    sta.z charsetFindOrAddGlyph.glyph+1
     lda #0
     sta.z bob_charset_next_id
-    jsr bobCharsetFindOrAddGlyph
+    jsr charsetFindOrAddGlyph
     lda #0
     sta.z bob_table_idx
     sta.z progress_idx
@@ -501,7 +501,7 @@ prepareBobs: {
     lda.z shift_x
     cmp #BOB_SHIFTS_X
     bcc __b3
-    jsr shiftProtoBobDown
+    jsr protoBobShiftDown
     inc.z shift_y
     jmp __b1
   __b3:
@@ -523,12 +523,12 @@ prepareBobs: {
     cmp #9
     bcc __b6
     inc.z bob_table_idx
-    jsr shiftProtoBobRight
-    jsr shiftProtoBobRight
+    jsr protoBobShiftRight
+    jsr protoBobShiftRight
     inc.z shift_x
     jmp __b2
   __b6:
-    jsr bobCharsetFindOrAddGlyph
+    jsr charsetFindOrAddGlyph
     txa
     // Look for an existing char in BOB_CHARSET 
     ldy #0
@@ -578,12 +578,11 @@ progress_inc: {
     // Progress characters
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
-// Looks through BOB_CHARSET to find the passed bob glyph if present.
-// If not present it is added
+// Looks through a charset to find a glyph if present. If not present it is added.
 // Returns the glyph ID
-// bobCharsetFindOrAddGlyph(byte* zeropage(6) bob_glyph)
-bobCharsetFindOrAddGlyph: {
-    .label bob_glyph = 6
+// charsetFindOrAddGlyph(byte* zeropage(6) glyph)
+charsetFindOrAddGlyph: {
+    .label glyph = 6
     .label glyph_cursor = $11
     lda #<BOB_CHARSET
     sta.z glyph_cursor
@@ -601,7 +600,7 @@ bobCharsetFindOrAddGlyph: {
     inc.z bob_charset_next_id
     rts
   __b8:
-    lda (bob_glyph),y
+    lda (glyph),y
     sta (glyph_cursor),y
     iny
     jmp __b7
@@ -614,7 +613,7 @@ bobCharsetFindOrAddGlyph: {
     jmp __b5
   __b3:
     lda (glyph_cursor),y
-    cmp (bob_glyph),y
+    cmp (glyph),y
     beq __b4
     lda #0
   __b5:
@@ -636,7 +635,7 @@ bobCharsetFindOrAddGlyph: {
     jmp __b2
 }
 // Shift PROTO_BOB right one X pixel
-shiftProtoBobRight: {
+protoBobShiftRight: {
     .label carry = $e
     .label i = $a
     ldy #0
@@ -682,7 +681,7 @@ shiftProtoBobRight: {
 }
 // Shift PROTO_BOB down one Y pixel
 // At the same time restore PROTO_BOB X by shifting 8 pixels left
-shiftProtoBobDown: {
+protoBobShiftDown: {
     ldx #$17
   __b1:
     cpx #0

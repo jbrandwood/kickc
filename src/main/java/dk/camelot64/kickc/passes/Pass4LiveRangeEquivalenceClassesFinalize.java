@@ -130,7 +130,7 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
                // No preference usable - create a new one
                chosen = liveRangeEquivalenceClassSet.getOrCreateEquivalenceClass(lValVar);
             }
-            getLog().append("Added variable " + lValVar + " to zero page equivalence class " + chosen);
+            getLog().append("Added variable " + lValVar + " to live range equivalence class " + chosen);
          }
       }
 

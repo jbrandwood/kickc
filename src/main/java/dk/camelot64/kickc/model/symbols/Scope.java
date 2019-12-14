@@ -116,7 +116,7 @@ public abstract class Scope implements Symbol, Serializable {
       for(Symbol symbol : symbols.values()) {
          if(symbol instanceof Variable) {
             Variable variable = (Variable) symbol;
-            if(variable.isVariable() && variable.isKindPhiVersion() && variable.getVersionOf().equals(unversioned)) {
+            if(variable.isVariable() && variable.isKindPhiVersion() && variable.getPhiMaster().equals(unversioned)) {
                versions.add(variable);
             }
          }
@@ -365,6 +365,13 @@ public abstract class Scope implements Symbol, Serializable {
             if(!onlyVars || symVar.isVariable()) {
                // Output if not instructed to only output variables - or if it is a variable
                res.append(symbol.toString(program));
+               if(symVar.isArray()) {
+                  res.append("[");
+                  if(symVar.getArraySize()!=null) {
+                     res.append(symVar.getArraySize().toString(program));
+                  }
+                  res.append("] ");
+               }
                if(symVar.getAsmName() != null && !symVar.getName().equals(symVar.getAsmName())) {
                   res.append(" " + symVar.getAsmName());
                }

@@ -3,11 +3,11 @@ Fixing struct type size struct foo to 14
 Setting inferred volatile on symbol affected by address-of (struct foo*) main::barp ← &(struct foo) bar
 Created struct value member variable (byte) bar_thing1
 Created struct value member variable (byte) bar_thing2
-Created struct value member variable (byte*) bar_thing3
+Created struct value member variable (const byte*) bar_thing3
 Converted struct value to member variables (struct foo) bar
 Adding struct value list initializer (byte) bar_thing1 ← (byte) 'a'
 Adding struct value list initializer (byte) bar_thing2 ← (byte) 'b'
-Adding struct value list initializer (byte*) bar_thing3 ← (string) "qwe"
+Adding struct value list initializer (const byte*) bar_thing3 ← (string) "qwe"
 Rewriting struct pointer member access *((struct foo*) main::barp).thing1
 Rewriting struct pointer member access *((struct foo*) main::barp).thing2
 Rewriting struct pointer member access *((struct foo*) main::barp).thing3
@@ -18,8 +18,8 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) bar_thing1 ← (byte) 'a'
   (byte) bar_thing2 ← (byte) 'b'
-  (byte*) bar_thing3 ← (const string) $0
-  (struct foo) bar ← struct-unwound {(byte) bar_thing1, (byte) bar_thing2, (byte*) bar_thing3}
+  (const byte*) bar_thing3 ← (const string) $0
+  (struct foo) bar ← struct-unwound {(byte) bar_thing1, (byte) bar_thing2, (const byte*) bar_thing3}
   to:@1
 
 (void()) main()
@@ -65,7 +65,7 @@ SYMBOL TABLE SSA
 (struct foo) bar loadstore
 (byte) bar_thing1 loadstore
 (byte) bar_thing2 loadstore
-(byte*) bar_thing3 loadstore
+(const byte*) bar_thing3 loadstore
 (byte) foo::thing1
 (byte) foo::thing2
 (const byte*) foo::thing3 = { fill( $c, 0) }
@@ -117,7 +117,7 @@ Resolved ranged comparison value [18] if(main::j#1!=rangelast(0,$b)) goto main::
 Simplifying expression containing zero (byte*)main::barp in 
 Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((const byte*) main::$1)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (struct foo) bar and assignment [3] (struct foo) bar ← struct-unwound {(byte) bar_thing1, (byte) bar_thing2, (byte*) bar_thing3}
+Eliminating unused variable (struct foo) bar and assignment [3] (struct foo) bar ← struct-unwound {(byte) bar_thing1, (byte) bar_thing2, (const byte*) bar_thing3}
 Eliminating unused constant (const byte) OFFSET_STRUCT_FOO_THING1
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) $c in if((byte) main::j#1!=(number) $c) goto main::@1
@@ -173,7 +173,7 @@ FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] (byte) bar_thing1 ← (byte) 'a'
   [1] (byte) bar_thing2 ← (byte) 'b'
-  [2] (byte*) bar_thing3 ← (const string) $0
+  [2] (const byte*) bar_thing3 ← (const string) $0
   to:@1
 @1: scope:[]  from @begin
   [3] phi()
@@ -203,7 +203,7 @@ main::@return: scope:[main]  from main::@1
 VARIABLE REGISTER WEIGHTS
 (byte) bar_thing1 loadstore 20.0
 (byte) bar_thing2 loadstore 20.0
-(byte*) bar_thing3 loadstore 20.0
+(const byte*) bar_thing3 loadstore 20.0
 (byte) foo::thing1
 (byte) foo::thing2
 (void()) main()
@@ -253,7 +253,7 @@ __bbegin:
   // [1] (byte) bar_thing2 ← (byte) 'b' -- vbum1=vbuc1 
   lda #'b'
   sta bar_thing2
-  // [2] (byte*) bar_thing3 ← (const string) $0 -- pbuz1=pbuc1 
+  // [2] (const byte*) bar_thing3 ← (const string) $0 -- pbuz1=pbuc1 
   lda #<__0
   sta.z bar_thing3
   lda #>__0
@@ -326,7 +326,7 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) bar_thing1 ← (byte) 'a' [ ] (  [ ] ) always clobbers reg byte a 
 Statement [1] (byte) bar_thing2 ← (byte) 'b' [ ] (  [ ] ) always clobbers reg byte a 
-Statement [2] (byte*) bar_thing3 ← (const string) $0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [2] (const byte*) bar_thing3 ← (const string) $0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp) [ ] ( main:4 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2) [ ] ( main:4 [ ] ) always clobbers reg byte a 
 Statement [9] *((const byte*) main::SCREEN + (byte) main::i#4) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING3 + (byte) main::j#2) [ main::j#2 main::i#4 ] ( main:4 [ main::j#2 main::i#4 ] ) always clobbers reg byte a 
@@ -334,7 +334,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::j
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::i#4 main::i#3 ]
 Statement [0] (byte) bar_thing1 ← (byte) 'a' [ ] (  [ ] ) always clobbers reg byte a 
 Statement [1] (byte) bar_thing2 ← (byte) 'b' [ ] (  [ ] ) always clobbers reg byte a 
-Statement [2] (byte*) bar_thing3 ← (const string) $0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [2] (const byte*) bar_thing3 ← (const string) $0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp) [ ] ( main:4 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2) [ ] ( main:4 [ ] ) always clobbers reg byte a 
 Statement [9] *((const byte*) main::SCREEN + (byte) main::i#4) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING3 + (byte) main::j#2) [ main::j#2 main::i#4 ] ( main:4 [ main::j#2 main::i#4 ] ) always clobbers reg byte a 
@@ -378,7 +378,7 @@ __bbegin:
   // [1] (byte) bar_thing2 ← (byte) 'b' -- vbum1=vbuc1 
   lda #'b'
   sta bar_thing2
-  // [2] (byte*) bar_thing3 ← (const string) $0 -- pbuz1=pbuc1 
+  // [2] (const byte*) bar_thing3 ← (const string) $0 -- pbuz1=pbuc1 
   lda #<__0
   sta.z bar_thing3
   lda #>__0
@@ -471,7 +471,7 @@ FINAL SYMBOL TABLE
 (const byte) OFFSET_STRUCT_FOO_THING3 = (byte) 2
 (byte) bar_thing1 loadstore mem[1] 20.0
 (byte) bar_thing2 loadstore mem[1] 20.0
-(byte*) bar_thing3 loadstore zp[2]:2 20.0
+(const byte*) bar_thing3 loadstore zp[2]:2 20.0
 (byte) foo::thing1
 (byte) foo::thing2
 (const byte*) foo::thing3 = { fill( $c, 0) }
@@ -517,7 +517,7 @@ __bbegin:
   // [1] (byte) bar_thing2 ← (byte) 'b' -- vbum1=vbuc1 
   lda #'b'
   sta bar_thing2
-  // [2] (byte*) bar_thing3 ← (const string) $0 -- pbuz1=pbuc1 
+  // [2] (const byte*) bar_thing3 ← (const string) $0 -- pbuz1=pbuc1 
   lda #<__0
   sta.z bar_thing3
   lda #>__0

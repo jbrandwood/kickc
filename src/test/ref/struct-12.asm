@@ -23,10 +23,8 @@ main: {
     rts
     jesper_name: .text "jesper"
     .byte 0
-    .fill $39, 0
     henriette_name: .text "henriette"
     .byte 0
-    .fill $36, 0
 }
 // print_person(byte register(X) person_id, byte* zeropage(2) person_name)
 print_person: {

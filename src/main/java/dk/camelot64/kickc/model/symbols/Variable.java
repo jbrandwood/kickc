@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.ConstantRef;
 import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
@@ -15,7 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/** A Variable symbol (can either be a runtime variable or a compile-time constant) */
+/** A Variable symbol (can either be a runtime variable or a compile-time constant).
+ * <p>
+ * Array values are implemented as {@link Kind#CONSTANT}s with the array data in {@link #getConstantValue()} and the declared size in {@link #getArraySpec()}.
+ * Struct values are implemented as {@link Kind#LOAD_STORE}s with the initial data in {@link #getConstantValue()} and the strategy for accessing it in {@link #getStructStrategy()}.
+ * </p>
+ **/
 public class Variable implements Symbol {
 
    /**
@@ -27,7 +33,7 @@ public class Variable implements Symbol {
     * <li>PHI_VERSION variables are versions of a PHI-master. A PHI-version lives in memory or a register at runtime.</li>
     * <li>INTERMEDIATE variables are created when expressions are broken into smaller statements. The type of intermediate variables must be inferred by the compiler. An intermediate variable lives in memory or a register at runtime.</li>
     * <li>LOAD_STORE variables are accessed through load/store operations. They can have hardcoded memory addresses. A load/store-variable lives in memory or a register at runtime</li>
-    * <li>CONSTANT variables are compile-time constants. They do not live in memory at runtime. An array is a compile-time constant pointer. The array itself lives in memory but the pointer does not.
+    * <li>CONSTANT variables are compile-time constants. They do not live in memory at runtime. As a special case arrays are compile-time constants. The array itself lives in memory. The variable holding the array cannot be assigned and hence is constant.
     * </ul>
     **/
    public enum Kind {
@@ -73,6 +79,11 @@ public class Variable implements Symbol {
    /** Specifies that the variable must live in a register if possible (CPU register or ZP-address). */
    private boolean declaredAsRegister;
 
+   /** Memory area used for storing the variable (if is is stored in memory). */
+   public enum MemoryArea {
+      ZEROPAGE_MEMORY, MAIN_MEMORY
+   }
+
    /** The memory area where the variable lives (if stored in memory). [Only variables and arrays] */
    private MemoryArea memoryArea;
 
@@ -88,16 +99,22 @@ public class Variable implements Symbol {
    /** Non-null if the variable is an array. [Only constants that are arrays] */
    private ArraySpec arraySpec;
 
+   /** Strategy for handling a struct variable during compilation. */
+   public enum StructStrategy {
+      /** The struct is stored in memory and accessed using OFFSET's */
+      CSTANDARD,
+      /** The struct is unwound and handled as if each member was a separate variable. */
+      UNWINDING
+   }
+
+   /** Non-null if the variable is a struct value. Strategy for how to handle the struct value. [Only constants that are structs] */
+   private StructStrategy structStrategy;
+
    /** The number of the next version (only used for PHI masters) [Only PHI masters] */
    private Integer nextPhiVersionNumber;
 
    /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. [Only variables - not constants and not PHI masters] */
    private Registers.Register allocation;
-
-   /** Memory area used for storing the variable (if is is stored in memory). */
-   public enum MemoryArea {
-      ZEROPAGE_MEMORY, MAIN_MEMORY
-   }
 
    /**
     * Create a variable (or constant)
@@ -111,7 +128,7 @@ public class Variable implements Symbol {
     * @param arraySpec The array specification of the variable (if it is an array)
     * @param constantValue The constant value of the variable (if it is constant)
     */
-   private Variable(String name, Kind kind, SymbolType type, Scope scope, MemoryArea memoryArea, String dataSegment, ArraySpec arraySpec, ConstantValue constantValue) {
+   private Variable(String name, Kind kind, SymbolType type, Scope scope, MemoryArea memoryArea, String dataSegment, ArraySpec arraySpec, StructStrategy structStrategy, ConstantValue constantValue) {
       this.name = name;
       this.kind = kind;
       if(Kind.PHI_MASTER.equals(kind))
@@ -119,6 +136,7 @@ public class Variable implements Symbol {
       this.type = type;
       this.scope = scope;
       this.arraySpec = arraySpec;
+      this.structStrategy = structStrategy;
       this.constantValue = constantValue;
       this.dataSegment = dataSegment;
       this.memoryArea = memoryArea;
@@ -135,7 +153,7 @@ public class Variable implements Symbol {
     * @return The new intermediate variable
     */
    public static Variable createIntermediate(String name, Scope scope, String dataSegment) {
-      return new Variable(name, Kind.INTERMEDIATE, SymbolType.VAR, scope, MemoryArea.ZEROPAGE_MEMORY, dataSegment, null, null);
+      return new Variable(name, Kind.INTERMEDIATE, SymbolType.VAR, scope, MemoryArea.ZEROPAGE_MEMORY, dataSegment, null, null, null);
    }
 
    /**
@@ -149,7 +167,7 @@ public class Variable implements Symbol {
     * @return The new PHI-master variable
     */
    public static Variable createLoadStore(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
-      return new Variable(name, Kind.LOAD_STORE, type, scope, memoryArea, dataSegment, null, null);
+      return new Variable(name, Kind.LOAD_STORE, type, scope, memoryArea, dataSegment, null, null, null);
    }
 
    /**
@@ -163,7 +181,7 @@ public class Variable implements Symbol {
     * @return The new PHI-master variable
     */
    public static Variable createPhiMaster(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
-      return new Variable(name, Kind.PHI_MASTER, type, scope, memoryArea, dataSegment, null, null);
+      return new Variable(name, Kind.PHI_MASTER, type, scope, memoryArea, dataSegment, null, null, null);
    }
 
    /**
@@ -173,7 +191,9 @@ public class Variable implements Symbol {
     * @param versionNum The version number
     */
    public static Variable createPhiVersion(Variable phiMaster, int versionNum) {
-      Variable version = new Variable(phiMaster.getName() + "#" + versionNum, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment(), phiMaster.getArraySpec(), null);
+      if(!phiMaster.isKindPhiMaster())
+         throw new InternalError("Cannot version non-PHI variable " + phiMaster.toString());
+      Variable version = new Variable(phiMaster.getName() + "#" + versionNum, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment(), phiMaster.getArraySpec(), phiMaster.getStructStrategy(), null);
       version.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       version.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       version.setDeclaredConst(phiMaster.isDeclaredConst());
@@ -186,26 +206,38 @@ public class Variable implements Symbol {
    }
 
    /**
+    * Creates a new PHI-version from a PHI-master
+    *
+    * @return The new version of the PHI master
+    */
+   public Variable createVersion() {
+      Variable version = Variable.createPhiVersion(this, nextPhiVersionNumber++);
+      getScope().add(version);
+      return version;
+   }
+
+   /**
     * Create a compile-time constant variable
     *
     * @param name The name
     * @param type The type
     * @param scope The scope
-    * @param value The constant value
+    * @param arraySpec The array specification (if an array)
+    * @param constantValue The constant value
     * @param dataSegment The data segment (in main memory)
     */
-   public static Variable createConstant(String name, SymbolType type, Scope scope, ArraySpec arraySpec, ConstantValue value, String dataSegment) {
-      return new Variable(name, Kind.CONSTANT, type, scope, MemoryArea.MAIN_MEMORY, dataSegment, arraySpec, value);
+   public static Variable createConstant(String name, SymbolType type, Scope scope, ArraySpec arraySpec, ConstantValue constantValue, String dataSegment) {
+      return new Variable(name, Kind.CONSTANT, type, scope, MemoryArea.MAIN_MEMORY, dataSegment, arraySpec, null, constantValue);
    }
 
    /**
     * Create a constant version of a variable. Used when a variable is determined to be constant during the compile.
     *
     * @param variable The variable to create a constant version of
-    * @param constVal The constant value
+    * @param constantValue The constant value
     */
-   public static Variable createConstant(Variable variable, ConstantValue constVal) {
-      Variable constVar = createConstant(variable.getName(), variable.getType(), variable.getScope(), variable.getArraySpec(), constVal, variable.getDataSegment());
+   public static Variable createConstant(Variable variable, ConstantValue constantValue) {
+      Variable constVar = createConstant(variable.getName(), variable.getType(), variable.getScope(), variable.getArraySpec(), constantValue, variable.getDataSegment());
       constVar.setDeclaredAlignment(variable.getDeclaredAlignment());
       constVar.setDeclaredAsRegister(variable.isDeclaredAsRegister());
       constVar.setDeclaredConst(variable.isDeclaredConst());
@@ -225,7 +257,7 @@ public class Variable implements Symbol {
     * @param original The original variable
     */
    public static Variable createCopy(String name, Scope scope, Variable original) {
-      Variable copy = new Variable(name, original.getKind(), original.getType(), scope, original.getMemoryArea(), original.getDataSegment(), original.getArraySpec(), original.getConstantValue());
+      Variable copy = new Variable(name, original.getKind(), original.getType(), scope, original.getMemoryArea(), original.getDataSegment(), original.getArraySpec(), original.getStructStrategy(), original.getConstantValue());
       copy.setDeclaredAlignment(original.getDeclaredAlignment());
       copy.setDeclaredAsRegister(original.isDeclaredAsRegister());
       copy.setDeclaredConst(original.isDeclaredConst());
@@ -239,20 +271,44 @@ public class Variable implements Symbol {
 
    /**
     * Create a variable representing a single member of a struct variable.
+    *
     * @param structVar The variable that holds a struct value.
     * @param memberDefinition The definition of the struct member
+    * @param isParameter True if the structVar is a parameter to a procedure
     * @return The new unwound variable representing the member of the struct
     */
-   public static Variable createStructMemberUnwound(Variable structVar, Variable memberDefinition) {
+   public static Variable createStructMemberUnwound(Variable structVar, Variable memberDefinition, boolean isParameter) {
       String name = structVar.getLocalName() + "_" + memberDefinition.getLocalName();
       Variable.MemoryArea memoryArea = (memberDefinition.getType() instanceof SymbolTypePointer) ? Variable.MemoryArea.ZEROPAGE_MEMORY : structVar.getMemoryArea();
-      Variable memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), null, null);
-      memberVariable.setArraySpec(memberDefinition.getArraySpec());
+      Variable memberVariable;
+      if(isParameter && memberDefinition.isArray()) {
+         // Array struct members are converted to pointers when unwound (use same kind as the struct variable)
+         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), null, null, null);
+      } else if(memberDefinition.isKindConstant()) {
+         // Constant members are unwound as constants
+         memberVariable = new Variable(name, Kind.CONSTANT, memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(), memberDefinition.getStructStrategy(), memberDefinition.getConstantValue());
+      } else {
+         // For others the kind is preserved from the member definition
+         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(), memberDefinition.getStructStrategy(), memberDefinition.getConstantValue());
+      }
       memberVariable.setDeclaredVolatile(structVar.isDeclaredVolatile());
       memberVariable.setInferredVolatile(structVar.isInferredVolatile());
       memberVariable.setDeclaredConst(structVar.isDeclaredConst());
       memberVariable.setDeclaredExport(structVar.isDeclaredExport());
       return memberVariable;
+   }
+
+   /**
+    * If the variable is a PHI-version of a PHI-master variable this returns the  PHI-master variable.
+    *
+    * @return The  PHI-master variable. Null if this is not a PHI-version.
+    */
+   public Variable getPhiMaster() {
+      if(!isKindPhiVersion())
+         throw new InternalError("Cannot get PHI-master for non-PHI-version variable " + this.toString());
+      String name = getName();
+      String versionOfName = name.substring(0, name.indexOf("#"));
+      return getScope().getVariable(versionOfName);
    }
 
    public Kind getKind() {
@@ -309,33 +365,22 @@ public class Variable implements Symbol {
    }
 
    /**
-    * Creates a new PHI-version from a PHI-master
-    *
-    * @return The new version of the PHI master
+    * Determines if the variable is an array
+    * @return True if the variable is an array.
     */
-   public Variable createVersion() {
-      if(!isKindPhiMaster())
-         throw new InternalError("Cannot version non-PHI variable " + this.toString());
-      Variable version = Variable.createPhiVersion(this, nextPhiVersionNumber++);
-      getScope().add(version);
-      return version;
+   public boolean isArray() {
+      return arraySpec != null;
    }
 
    /**
-    * If the variable is a version of a variable returns the original variable.
-    *
-    * @return The original variable. Null if this is not a version.
+    * If the variable is an array with a declared size this returns the size
+    * @return The size of the array if declared. Null if not an array or an array without a declared size.
     */
-   public Variable getVersionOf() {
-      if(!isKindPhiVersion())
-         throw new InternalError("Cannot get master for non-PHI version variable " + this.toString());
-      String name = getName();
-      String versionOfName = name.substring(0, name.indexOf("#"));
-      return getScope().getVariable(versionOfName);
-   }
-
-   public boolean isArray() {
-      return arraySpec != null;
+   public ConstantValue getArraySize() {
+      if(arraySpec!=null)
+         return arraySpec.getArraySize();
+      else
+         return null;
    }
 
    public ArraySpec getArraySpec() {
@@ -344,6 +389,18 @@ public class Variable implements Symbol {
 
    public void setArraySpec(ArraySpec arraySpec) {
       this.arraySpec = arraySpec;
+   }
+
+   public boolean isStruct() {
+      return type instanceof SymbolTypeStruct;
+   }
+
+   public StructStrategy getStructStrategy() {
+      return structStrategy;
+   }
+
+   public void setStructStrategy(StructStrategy structStrategy) {
+      this.structStrategy = structStrategy;
    }
 
    public Registers.Register getAllocation() {

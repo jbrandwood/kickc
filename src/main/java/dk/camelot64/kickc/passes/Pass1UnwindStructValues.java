@@ -76,7 +76,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   if(structMemberRef.getStruct() instanceof VariableRef) {
                      StructUnwinding.StructMemberUnwinding memberVariables = getStructMemberUnwinding(structMemberRef.getStruct(), currentStmt, stmtIt, currentBlock);
                      if(memberVariables != null && memberVariables != POSTPONE_UNWINDING) {
-                        LValue structMemberVariable = memberVariables.getMemberUnwinding(structMemberRef.getMemberName());
+                        RValue structMemberVariable = memberVariables.getMemberUnwinding(structMemberRef.getMemberName());
                         getLog().append("Replacing struct member reference " + structMemberRef.toString(getProgram()) + " with member unwinding reference " + structMemberVariable.toString(getProgram()));
                         programValue.set(structMemberVariable);
                         modified.set(true);
@@ -171,7 +171,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                StructUnwinding structUnwinding = getProgram().getStructUnwinding();
                StructUnwinding.VariableUnwinding parameterUnwinding = structUnwinding.getVariableUnwinding(parameter.getRef());
                for(String memberName : parameterUnwinding.getMemberNames()) {
-                  VariableRef memberUnwinding = (VariableRef) parameterUnwinding.getMemberUnwinding(memberName);
+                  SymbolVariableRef memberUnwinding = (SymbolVariableRef) parameterUnwinding.getMemberUnwinding(memberName);
                   unwoundParameterNames.add(memberUnwinding.getLocalName());
                   procedureUnwound = true;
                }
@@ -207,7 +207,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   StructDefinition structDefinition = ((SymbolTypeStruct) variable.getType()).getStructDefinition(getProgram().getScope());
                   StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef());
                   for(Variable member : structDefinition.getAllVars(false)) {
-                     Variable memberVariable = Variable.createStructMemberUnwound(variable, member);
+                     boolean isParameter = scope instanceof Procedure && ((Procedure) scope).getParameters().contains(variable);
+                     Variable memberVariable = Variable.createStructMemberUnwound(variable, member, isParameter);
                      scope.add(memberVariable);
                      variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
                      getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
@@ -243,12 +244,12 @@ public class Pass1UnwindStructValues extends Pass1Base {
             List<RValue> membersUnwound = new ArrayList<>();
             stmtIt.previous();
             for(String memberName : memberUnwinding.getMemberNames()) {
-               VariableRef memberVarRef = (VariableRef) memberUnwinding.getMemberUnwinding(memberName);
+               SymbolVariableRef memberVarRef = (SymbolVariableRef) memberUnwinding.getMemberUnwinding(memberName);
                membersUnwound.add(memberVarRef);
                Variable memberVar = getScope().getVariable(memberVarRef);
                StatementSource statementSource = assignment.getSource();
                RValue initValue = Pass0GenerateStatementSequence.createZeroValue(memberVar.getType(), statementSource);
-               Statement initStmt = new StatementAssignment(memberVarRef, initValue, statementSource, Comment.NO_COMMENTS);
+               Statement initStmt = new StatementAssignment((LValue) memberVarRef, initValue, statementSource, Comment.NO_COMMENTS);
                stmtIt.add(initStmt);
                getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));
             }
@@ -270,7 +271,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
             List<RValue> membersUnwound = new ArrayList<>();
             int idx = 0;
             for(String memberName : memberUnwinding.getMemberNames()) {
-               LValue memberLvalue = memberUnwinding.getMemberUnwinding(memberName);
+               LValue memberLvalue = (LValue) memberUnwinding.getMemberUnwinding(memberName);
                membersUnwound.add(memberLvalue);
                Statement initStmt = new StatementAssignment(memberLvalue, valueList.getList().get(idx++), assignment.getSource(), Comment.NO_COMMENTS);
                stmtIt.add(initStmt);
@@ -300,8 +301,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   List<RValue> membersUnwound = new ArrayList<>();
                   stmtIt.previous();
                   for(String memberName : memberUnwinding.getMemberNames()) {
-                     LValue assignedMemberVarRef = memberUnwinding.getMemberUnwinding(memberName);
-                     LValue sourceMemberVarRef = sourceMemberUnwinding.getMemberUnwinding(memberName);
+                     LValue assignedMemberVarRef = (LValue) memberUnwinding.getMemberUnwinding(memberName);
+                     RValue sourceMemberVarRef = sourceMemberUnwinding.getMemberUnwinding(memberName);
                      membersUnwound.add(assignedMemberVarRef);
                      Statement copyStmt = new StatementAssignment(assignedMemberVarRef, sourceMemberVarRef, assignment.getSource(), Comment.NO_COMMENTS);
                      stmtIt.add(copyStmt);

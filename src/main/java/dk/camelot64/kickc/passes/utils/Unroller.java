@@ -176,7 +176,7 @@ public class Unroller {
       if(origVarRef.isIntermediate()) {
          newVarRef = scope.addVariableIntermediate().getRef();
       } else {
-         newVarRef = (origVar).getVersionOf().createVersion().getRef();
+         newVarRef = (origVar).getPhiMaster().createVersion().getRef();
       }
       return newVarRef;
    }
@@ -234,7 +234,7 @@ public class Unroller {
             newVar = Variable.createCopy(name, scope, definedVar);
             scope.add(newVar);
          } else if(definedVarRef.isVersion()) {
-            newVar = (definedVar).getVersionOf().createVersion();
+            newVar = (definedVar).getPhiMaster().createVersion();
          } else {
             throw new RuntimeException("Error! Variable is not versioned or intermediate " + definedVar.toString(program));
          }

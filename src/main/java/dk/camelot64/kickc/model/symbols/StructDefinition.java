@@ -43,7 +43,7 @@ public class StructDefinition extends Scope {
          if(structMember.equals(member)) {
             break;
          } else {
-            byteOffset += SymbolTypeStruct.getMemberSizeBytes(structMember.getType(), structMember.getArraySpec(), programScope);
+            byteOffset += SymbolTypeStruct.getMemberSizeBytes(structMember.getType(), structMember.getArraySize(), programScope);
          }
       }
       return byteOffset;

@@ -588,7 +588,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             Variable lValue;
             if(kind.equals(Variable.Kind.PHI_MASTER)) {
                lValue = Variable.createPhiMaster(varName, declVarType, getCurrentScope(), defaultMemoryArea, currentDataSegment);
-            }  else if (kind.equals(Variable.Kind.LOAD_STORE)) {
+            } else if (kind.equals(Variable.Kind.LOAD_STORE)) {
                lValue = Variable.createLoadStore(varName, declVarType, getCurrentScope(), defaultMemoryArea, currentDataSegment);
             } else {
                throw new InternalError("Unexpected variable kind! "+kind.name(), statementSource);

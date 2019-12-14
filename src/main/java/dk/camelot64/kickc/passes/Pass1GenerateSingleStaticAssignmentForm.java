@@ -134,7 +134,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private void updateBlockVersions(VariableRef lValue, Map<Variable, Variable> blockVersions) {
       Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValue);
       if(variable.isKindPhiVersion()) {
-         blockVersions.put(variable.getVersionOf(), variable);
+         blockVersions.put(variable.getPhiMaster(), variable);
       }
    }
 
@@ -201,7 +201,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                   if(phiVariable.isEmpty()) {
                      VariableRef phiLValVarRef = phiVariable.getVariable();
                      Variable versioned = getScope().getVariable(phiLValVarRef);
-                     Variable unversioned = versioned.getVersionOf();
+                     Variable unversioned = versioned.getPhiMaster();
                      List<ControlFlowBlock> predecessors = getPhiPredecessors(block, getProgram());
                      for(ControlFlowBlock predecessor : predecessors) {
                         LabelRef predecessorLabel = predecessor.getLabel();
@@ -299,7 +299,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          if(lValueVar.isKindPhiVersion()) {
             Variable versioned = lValueVar;
             LabelRef label = block.getLabel();
-            Variable unversioned = versioned.getVersionOf();
+            Variable unversioned = versioned.getPhiMaster();
             Map<Variable, Variable> blockMap = symbolMap.get(label);
             if(blockMap == null) {
                blockMap = new LinkedHashMap<>();

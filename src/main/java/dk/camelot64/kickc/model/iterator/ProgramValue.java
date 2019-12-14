@@ -936,7 +936,7 @@ public interface ProgramValue {
 
       @Override
       public Value get() {
-         return variable.getArraySpec().getArraySize();
+         return variable.getArraySize();
       }
 
       @Override

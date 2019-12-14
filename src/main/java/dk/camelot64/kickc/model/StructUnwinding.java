@@ -1,8 +1,7 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
-import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -68,8 +67,8 @@ public class StructUnwinding {
        * @param memberName The member name
        * @return The new variable
        */
-      public LValue getMemberUnwinding(String memberName) {
-         return (LValue) this.memberUnwinding.get(memberName);
+      public RValue getMemberUnwinding(String memberName) {
+         return this.memberUnwinding.get(memberName);
       }
    }
 
@@ -84,11 +83,11 @@ public class StructUnwinding {
       List<String> getMemberNames();
 
       /**
-       * Get the LValue that a specific member was unwound to
+       * Get the RValue that a specific member was unwound to
        *
        * @param memberName The member name
        * @return The unwinding of the member
        */
-      LValue getMemberUnwinding(String memberName);
+      RValue getMemberUnwinding(String memberName);
    }
 }

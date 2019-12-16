@@ -90,7 +90,7 @@ public class AsmFragmentInstance {
          String constantValueAsm = AsmFormat.getAsmConstant(program, constantVar.getConstantRef(), 99, codeScopeRef);
          boolean constantValueZp = SymbolType.BYTE.equals(constantVar.getType());
          if(!constantValueZp) {
-            constantValueZp = isConstantValueZp(constantVar.getConstantValue());
+            constantValueZp = isConstantValueZp(constantVar.getInitValue());
          }
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if(boundValue instanceof ConstantValue) {
@@ -127,7 +127,7 @@ public class AsmFragmentInstance {
       }
       if(boundConst instanceof ConstantRef) {
          Variable reffedConstant = program.getScope().getConstant((ConstantRef) boundConst);
-         return isConstantValueZp(reffedConstant.getConstantValue());
+         return isConstantValueZp(reffedConstant.getInitValue());
       }
       if(boundConst instanceof ConstantCastValue) {
          SymbolType toType = ((ConstantCastValue) boundConst).getToType();

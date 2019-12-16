@@ -394,8 +394,8 @@ public abstract class Scope implements Symbol, Serializable {
                      }
                   }
                }
-               if(symVar.isKindConstant() && symVar.getConstantValue()!=null) {
-                  res.append(" = " + symVar.getConstantValue().toString(program));
+               if(symVar.getInitValue()!=null) {
+                  res.append(" = " + symVar.getInitValue().toString(program));
                }
                res.append("\n");
             }

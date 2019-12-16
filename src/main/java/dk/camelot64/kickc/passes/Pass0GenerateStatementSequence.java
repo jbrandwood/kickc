@@ -48,7 +48,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** The memory area used by default for variables. */
    private Variable.MemoryArea defaultMemoryArea;
    /** Context used for adding directives to variables. */
-   private DirectiveParserContext directiveContext;
+   private VariableBuilderContext directiveContext;
 
    public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program) {
       this.cParser = cParser;
@@ -57,7 +57,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.sequence = program.getStatementSequence();
       this.scopeStack = new Stack<>();
       this.defaultMemoryArea = Variable.MemoryArea.ZEROPAGE_MEMORY;
-      this.directiveContext = new DirectiveParserContext();
+      this.directiveContext = new VariableBuilderContext();
       scopeStack.push(program.getScope());
    }
 
@@ -1551,7 +1551,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          Scope parentScope = getCurrentScope();
          while(parentScope instanceof StructDefinition) parentScope = parentScope.getScope();
          for(Variable member : enumDefinition.getAllConstants(false)) {
-            parentScope.add(Variable.createConstant(member.getLocalName(), SymbolType.BYTE, parentScope, null, member.getConstantValue(), currentDataSegment));
+            parentScope.add(Variable.createConstant(member.getLocalName(), SymbolType.BYTE, parentScope, null, member.getInitValue(), currentDataSegment));
          }
          return SymbolType.BYTE;
       } catch(CompileError e) {
@@ -1576,7 +1576,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             enumValue = new ConstantInteger(0L, SymbolType.BYTE);
          } else {
             Variable prevEnumMember = values.get(values.size() - 1);
-            ConstantValue prevValue = prevEnumMember.getConstantValue();
+            ConstantValue prevValue = prevEnumMember.getInitValue();
             if(prevValue instanceof ConstantInteger) {
                enumValue = new ConstantInteger(((ConstantInteger) prevValue).getInteger() + 1, SymbolType.BYTE);
             } else {

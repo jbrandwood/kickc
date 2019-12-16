@@ -11,61 +11,11 @@ import dk.camelot64.kickc.model.values.VariableRef;
 import java.util.List;
 
 /**
- * The parser directive context is used for determining which directives to apply to a variable.
+ * Used for creating {@link Variable}s with the right properties based on all their directives
  */
-public class DirectiveParserContext {
+public class VariableBuilderContext {
 
-   /** The different scopes deciding directive defaults. */
-   public enum DirectiveScope {
-      GLOBAL, LOCAL, PARAMETER, MEMBER;
-
-      private static DirectiveScope getFor(Scope scope, boolean isParameter) {
-         if(isParameter) {
-            return PARAMETER;
-         }
-         if(ScopeRef.ROOT.equals(scope.getRef())) {
-            return GLOBAL;
-         } else if(scope instanceof Procedure) {
-            return LOCAL;
-         } else if(scope instanceof StructDefinition) {
-            return MEMBER;
-         } else if(scope instanceof BlockScope) {
-            return getFor(scope.getScope(), false);
-         } else {
-            throw new InternalError("Scope type not handled " + scope);
-         }
-      }
-   }
-
-   /** The different types deciding directive defaults. */
-   public enum DirectiveType {
-      INTEGER, POINTER, ARRAY, STRUCT;
-
-      /**
-       * Get a directive type from a variable type.
-       *
-       * @param type The variable type
-       * @return The directive type
-       */
-      public static DirectiveType getFor(SymbolType type) {
-         if(SymbolType.isInteger(type)) {
-            return INTEGER;
-         } else if(SymbolType.BOOLEAN.equals(type)) {
-            return INTEGER;
-         } else if(SymbolType.STRING.equals(type)) {
-            return ARRAY;
-         } else if(type instanceof SymbolTypePointer) {
-            return POINTER;
-         } else if(type instanceof SymbolTypeStruct) {
-            return STRUCT;
-         } else {
-            throw new InternalError("Variable type not handled " + type);
-         }
-      }
-   }
-
-
-   public DirectiveParserContext() {
+   public VariableBuilderContext() {
    }
 
    /**
@@ -84,7 +34,6 @@ public class DirectiveParserContext {
          if(!hasDirective(Directive.Volatile.class, sourceDirectives))
             return Variable.Kind.CONSTANT;
       // Look for array (which is implicitly const
-      DirectiveType directiveType = DirectiveType.getFor(type);
       if(isArray)
          return Variable.Kind.CONSTANT;
       // It is not a constant - determine PHI_MASTER vs LOAD_STORE
@@ -108,7 +57,6 @@ public class DirectiveParserContext {
     * @param source The source line (for exceptions)
     */
    public void applyDirectives(Variable lValue, boolean isParameter, boolean isArray, List<Directive> sourceDirectives, StatementSource source) {
-      DirectiveType directiveType = DirectiveType.getFor(lValue.getType());
       if(hasDirective(Directive.Const.class, sourceDirectives))
          lValue.setDeclaredConst(true);
       if(isArray)
@@ -159,10 +107,7 @@ public class DirectiveParserContext {
             throw new CompileError("Error! Cannot align variable that is not a string or an array " + lValue.toString(), source);
          }
       }
-
       // TODO: Add strategy for selecting main memory for non-pointer local variables
-      //DirectiveScope directiveScope = DirectiveScope.getFor(lValue.getScope(), isParameter);
-
    }
 
    /**

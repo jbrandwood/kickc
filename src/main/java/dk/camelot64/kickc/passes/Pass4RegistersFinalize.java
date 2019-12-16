@@ -116,7 +116,7 @@ public class Pass4RegistersFinalize extends Pass2Base {
             }
          }
          for(Variable constantVar : scope.getAllConstants(false)) {
-            Registers.Register allocation = new Registers.RegisterConstant(constantVar.getConstantValue());
+            Registers.Register allocation = new Registers.RegisterConstant(constantVar.getInitValue());
             shortenAsmName(shortNames, constantVar, allocation);
          }
       }

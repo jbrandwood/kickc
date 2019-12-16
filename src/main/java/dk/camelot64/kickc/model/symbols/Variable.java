@@ -18,8 +18,8 @@ import java.util.Objects;
 
 /** A Variable symbol (can either be a runtime variable or a compile-time constant).
  * <p>
- * Array values are implemented as {@link Kind#CONSTANT}s with the array data in {@link #getConstantValue()} and the declared size in {@link #getArraySpec()}.
- * Struct values are implemented as {@link Kind#LOAD_STORE}s with the initial data in {@link #getConstantValue()} and the strategy for accessing it in {@link #getStructStrategy()}.
+ * Array values are implemented as {@link Kind#CONSTANT}s with the array data in {@link #getInitValue()} and the declared size in {@link #getArraySpec()}.
+ * Struct values are implemented as {@link Kind#LOAD_STORE}s with the initial data in {@link #getInitValue()} or as {@link Kind#PHI_MASTER}s that will be unwound to member variables during compilation.
  * </p>
  **/
 public class Variable implements Symbol {
@@ -93,22 +93,11 @@ public class Variable implements Symbol {
    /** The data segment to put the variable into (if it is allocated in memory). [Only variables stored in memory and arrays] */
    private String dataSegment;
 
-   /** The constant value if the variable is a constant. Null otherwise. [Only constants] */
-   private ConstantValue constantValue;
+   /** The initial compiletime-value of the variable. Null if no initial value present. [Constants, Arrays, global/local-static loadstore-variables ] */
+   private ConstantValue initValue;
 
    /** Non-null if the variable is an array. [Only constants that are arrays] */
    private ArraySpec arraySpec;
-
-   /** Strategy for handling a struct variable during compilation. */
-   public enum StructStrategy {
-      /** The struct is stored in memory and accessed using OFFSET's */
-      CSTANDARD,
-      /** The struct is unwound and handled as if each member was a separate variable. */
-      UNWINDING
-   }
-
-   /** Non-null if the variable is a struct value. Strategy for how to handle the struct value. [Only constants that are structs] */
-   private StructStrategy structStrategy;
 
    /** The number of the next version (only used for PHI masters) [Only PHI masters] */
    private Integer nextPhiVersionNumber;
@@ -126,9 +115,9 @@ public class Variable implements Symbol {
     * @param memoryArea The memory area (zeropage/main memory)
     * @param dataSegment The data segment (in main memory)
     * @param arraySpec The array specification of the variable (if it is an array)
-    * @param constantValue The constant value of the variable (if it is constant)
+    * @param initValue The constant value of the variable (if it is constant)
     */
-   private Variable(String name, Kind kind, SymbolType type, Scope scope, MemoryArea memoryArea, String dataSegment, ArraySpec arraySpec, StructStrategy structStrategy, ConstantValue constantValue) {
+   private Variable(String name, Kind kind, SymbolType type, Scope scope, MemoryArea memoryArea, String dataSegment, ArraySpec arraySpec, ConstantValue initValue) {
       this.name = name;
       this.kind = kind;
       if(Kind.PHI_MASTER.equals(kind))
@@ -136,8 +125,7 @@ public class Variable implements Symbol {
       this.type = type;
       this.scope = scope;
       this.arraySpec = arraySpec;
-      this.structStrategy = structStrategy;
-      this.constantValue = constantValue;
+      this.initValue = initValue;
       this.dataSegment = dataSegment;
       this.memoryArea = memoryArea;
       this.comments = new ArrayList<>();
@@ -153,7 +141,7 @@ public class Variable implements Symbol {
     * @return The new intermediate variable
     */
    public static Variable createIntermediate(String name, Scope scope, String dataSegment) {
-      return new Variable(name, Kind.INTERMEDIATE, SymbolType.VAR, scope, MemoryArea.ZEROPAGE_MEMORY, dataSegment, null, null, null);
+      return new Variable(name, Kind.INTERMEDIATE, SymbolType.VAR, scope, MemoryArea.ZEROPAGE_MEMORY, dataSegment, null, null);
    }
 
    /**
@@ -167,7 +155,7 @@ public class Variable implements Symbol {
     * @return The new PHI-master variable
     */
    public static Variable createLoadStore(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
-      return new Variable(name, Kind.LOAD_STORE, type, scope, memoryArea, dataSegment, null, null, null);
+      return new Variable(name, Kind.LOAD_STORE, type, scope, memoryArea, dataSegment, null, null);
    }
 
    /**
@@ -181,7 +169,7 @@ public class Variable implements Symbol {
     * @return The new PHI-master variable
     */
    public static Variable createPhiMaster(String name, SymbolType type, Scope scope, Variable.MemoryArea memoryArea, String dataSegment) {
-      return new Variable(name, Kind.PHI_MASTER, type, scope, memoryArea, dataSegment, null, null, null);
+      return new Variable(name, Kind.PHI_MASTER, type, scope, memoryArea, dataSegment, null, null);
    }
 
    /**
@@ -193,7 +181,7 @@ public class Variable implements Symbol {
    public static Variable createPhiVersion(Variable phiMaster, int versionNum) {
       if(!phiMaster.isKindPhiMaster())
          throw new InternalError("Cannot version non-PHI variable " + phiMaster.toString());
-      Variable version = new Variable(phiMaster.getName() + "#" + versionNum, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment(), phiMaster.getArraySpec(), phiMaster.getStructStrategy(), null);
+      Variable version = new Variable(phiMaster.getName() + "#" + versionNum, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment(), phiMaster.getArraySpec(), null);
       version.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
       version.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
       version.setDeclaredConst(phiMaster.isDeclaredConst());
@@ -227,7 +215,7 @@ public class Variable implements Symbol {
     * @param dataSegment The data segment (in main memory)
     */
    public static Variable createConstant(String name, SymbolType type, Scope scope, ArraySpec arraySpec, ConstantValue constantValue, String dataSegment) {
-      return new Variable(name, Kind.CONSTANT, type, scope, MemoryArea.MAIN_MEMORY, dataSegment, arraySpec, null, constantValue);
+      return new Variable(name, Kind.CONSTANT, type, scope, MemoryArea.MAIN_MEMORY, dataSegment, arraySpec, constantValue);
    }
 
    /**
@@ -257,7 +245,7 @@ public class Variable implements Symbol {
     * @param original The original variable
     */
    public static Variable createCopy(String name, Scope scope, Variable original) {
-      Variable copy = new Variable(name, original.getKind(), original.getType(), scope, original.getMemoryArea(), original.getDataSegment(), original.getArraySpec(), original.getStructStrategy(), original.getConstantValue());
+      Variable copy = new Variable(name, original.getKind(), original.getType(), scope, original.getMemoryArea(), original.getDataSegment(), original.getArraySpec(), original.getInitValue());
       copy.setDeclaredAlignment(original.getDeclaredAlignment());
       copy.setDeclaredAsRegister(original.isDeclaredAsRegister());
       copy.setDeclaredConst(original.isDeclaredConst());
@@ -283,13 +271,13 @@ public class Variable implements Symbol {
       Variable memberVariable;
       if(isParameter && memberDefinition.isArray()) {
          // Array struct members are converted to pointers when unwound (use same kind as the struct variable)
-         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), null, null, null);
+         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), null, null);
       } else if(memberDefinition.isKindConstant()) {
          // Constant members are unwound as constants
-         memberVariable = new Variable(name, Kind.CONSTANT, memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(), memberDefinition.getStructStrategy(), memberDefinition.getConstantValue());
+         memberVariable = new Variable(name, Kind.CONSTANT, memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(), memberDefinition.getInitValue());
       } else {
          // For others the kind is preserved from the member definition
-         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(), memberDefinition.getStructStrategy(), memberDefinition.getConstantValue());
+         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(),  memberDefinition.getInitValue());
       }
       memberVariable.setDeclaredVolatile(structVar.isDeclaredVolatile());
       memberVariable.setInferredVolatile(structVar.isInferredVolatile());
@@ -395,14 +383,6 @@ public class Variable implements Symbol {
       return type instanceof SymbolTypeStruct;
    }
 
-   public StructStrategy getStructStrategy() {
-      return structStrategy;
-   }
-
-   public void setStructStrategy(StructStrategy structStrategy) {
-      this.structStrategy = structStrategy;
-   }
-
    public Registers.Register getAllocation() {
       return allocation;
    }
@@ -411,12 +391,12 @@ public class Variable implements Symbol {
       this.allocation = allocation;
    }
 
-   public ConstantValue getConstantValue() {
-      return constantValue;
+   public ConstantValue getInitValue() {
+      return initValue;
    }
 
-   public void setConstantValue(ConstantValue value) {
-      this.constantValue = value;
+   public void setInitValue(ConstantValue value) {
+      this.initValue = value;
    }
 
    public String getDataSegment() {
@@ -573,9 +553,9 @@ public class Variable implements Symbol {
    public String toString(Program program) {
       return new StringBuilder()
             .append("(")
-            .append((constantValue != null) ? "const " : "")
+            .append((initValue != null) ? "const " : "")
             .append(getType().getTypeName())
-            .append((constantValue == null && isKindIntermediate()) ? "~" : "")
+            .append((initValue == null && isKindIntermediate()) ? "~" : "")
             .append(") ")
             .append(getFullName()).toString();
    }

@@ -23,7 +23,7 @@ public class ConstantRef extends SymbolVariableRef implements ConstantValue {
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
       Variable constantVar = scope.getConstant(this);
-      ConstantValue constantVarValue = constantVar.getConstantValue();
+      ConstantValue constantVarValue = constantVar.getInitValue();
       return constantVarValue.calculateLiteral(scope);
    }
 }

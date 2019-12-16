@@ -608,21 +608,22 @@ public interface ProgramValue {
 
    }
 
-   class ProgramValueConstantVar implements ProgramValue {
+   /** The initial value of a variable. */
+   class ProgramValueInitValue implements ProgramValue {
       private final Variable constantVar;
 
-      ProgramValueConstantVar(Variable constantVar) {
+      ProgramValueInitValue(Variable constantVar) {
          this.constantVar = constantVar;
       }
 
       @Override
       public Value get() {
-         return constantVar.getConstantValue();
+         return constantVar.getInitValue();
       }
 
       @Override
       public void set(Value val) {
-         constantVar.setConstantValue((ConstantValue) val);
+         constantVar.setInitValue((ConstantValue) val);
       }
 
    }

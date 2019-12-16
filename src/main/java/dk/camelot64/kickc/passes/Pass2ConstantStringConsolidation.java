@@ -36,7 +36,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
       // Build a map with all constant strings
       Map<ConstantString, List<Variable>> constantStringMap = new LinkedHashMap<>();
       for(Variable constVar : getScope().getAllConstants(true)) {
-         ConstantValue constVal = constVar.getConstantValue();
+         ConstantValue constVal = constVar.getInitValue();
          if(constVal instanceof ConstantString) {
             ConstantString constString = (ConstantString) constVal;
             List<Variable> constantVars = constantStringMap.computeIfAbsent(constString, k -> new ArrayList<>());
@@ -101,7 +101,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
       // Modify all other constants to be references to the root constant
       for(Variable constantVar : constantVars) {
          if(!constantVar.equals(rootConstant)) {
-            constantVar.setConstantValue(new ConstantRef(rootConstant));
+            constantVar.setInitValue(new ConstantRef(rootConstant));
             modified = true;
          }
       }

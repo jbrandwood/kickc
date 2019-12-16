@@ -92,8 +92,8 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       Collection<Variable> allConstants = getProgram().getScope().getAllConstants(true);
       for(Variable constant : allConstants) {
          if(constant.getRef().isIntermediate()) {
-            if(!(constant.getType().equals(SymbolType.STRING)) && !(constant.getConstantValue() instanceof ConstantArray)) {
-               unnamed.put(constant.getConstantRef(), constant.getConstantValue());
+            if(!(constant.getType().equals(SymbolType.STRING)) && !(constant.getInitValue() instanceof ConstantArray)) {
+               unnamed.put(constant.getConstantRef(), constant.getInitValue());
             }
          }
       }
@@ -110,14 +110,14 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       ProgramScope programScope = getProgram().getScope();
       Collection<Variable> allConstants = programScope.getAllConstants(true);
       for(Variable constant : allConstants) {
-         ConstantValue constantValue = constant.getConstantValue();
+         ConstantValue constantValue = constant.getInitValue();
          if(constantValue instanceof ConstantRef) {
             if(((ConstantRef) constantValue).isIntermediate()) {
                // The value is an intermediate constant - replace all uses of the intermediate with uses of the referrer instead.
-               aliases.put((ConstantRef) constant.getConstantValue(), constant.getConstantRef());
-               constant.setConstantValue(programScope.getConstant((ConstantRef) constantValue).getConstantValue());
+               aliases.put((ConstantRef) constant.getInitValue(), constant.getConstantRef());
+               constant.setInitValue(programScope.getConstant((ConstantRef) constantValue).getInitValue());
             } else {
-               aliases.put(constant.getConstantRef(), constant.getConstantValue());
+               aliases.put(constant.getConstantRef(), constant.getInitValue());
             }
          }
       }
@@ -142,13 +142,13 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
             Collection<Symbol> scopeSymbols = constant.getScope().getAllSymbols();
             for(Symbol symbol : scopeSymbols) {
                if(symbol.getRef().isVersion() && symbol.getRef().getFullNameUnversioned().equals(baseName)) {
-                  ConstantValue value = constant.getConstantValue();
+                  ConstantValue value = constant.getInitValue();
                   if(symbol instanceof Variable && ((Variable) symbol).isVariable()) {
                      aliases.put(constant.getConstantRef(), value);
                      getLog().append("Inlining constant with var siblings " + constant);
                      break;
                   } else if(symbol instanceof Variable && ((Variable) symbol).isKindConstant()) {
-                     ConstantValue otherValue = ((Variable) symbol).getConstantValue();
+                     ConstantValue otherValue = ((Variable) symbol).getInitValue();
                      if(!otherValue.equals(value) && !(value instanceof ConstantString) && !(value instanceof ConstantArray) && !(otherValue instanceof ConstantRef)) {
                         aliases.put(constant.getConstantRef(), value);
                         getLog().append("Inlining constant with different constant siblings " + constant);

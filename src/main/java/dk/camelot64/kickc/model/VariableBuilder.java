@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * Used for creating a {@link Variable} with the right properties based on the declaration incl. all directives and configuration.
- *
+ * <p>
  * Holds information about the variable while it is being built.
  */
 public class VariableBuilder {
@@ -55,6 +55,7 @@ public class VariableBuilder {
 
    /**
     * Is the type is a simple integer type.
+    *
     * @return True if the type is a simple integer type.
     */
    boolean isTypeInteger() {
@@ -63,6 +64,7 @@ public class VariableBuilder {
 
    /**
     * Is the type is a pointer type.
+    *
     * @return True if the type is a pointer type.
     */
    boolean isTypePointer() {
@@ -71,32 +73,53 @@ public class VariableBuilder {
 
    /**
     * Is the type is a struct type.
+    *
     * @return True if the type is a struct type.
     */
    boolean isTypeStruct() {
       return type instanceof SymbolTypeStruct;
    }
 
-   /** The different scopes deciding directive defaults. */
-   public enum DirectiveScope {
-      GLOBAL, LOCAL, PARAMETER, MEMBER;
+   /**
+    * Is the variable a global variable
+    *
+    * @return true if the variable is in the global scope
+    */
+   boolean isScopeGlobal() {
+      return ScopeRef.ROOT.equals(scope.getRef());
+   }
 
-      private static DirectiveScope getFor(Scope scope, boolean isParameter) {
-         if(isParameter) {
-            return PARAMETER;
-         }
-         if(ScopeRef.ROOT.equals(scope.getRef())) {
-            return GLOBAL;
-         } else if(scope instanceof Procedure) {
-            return LOCAL;
-         } else if(scope instanceof StructDefinition) {
-            return MEMBER;
-         } else if(scope instanceof BlockScope) {
-            return getFor(scope.getScope(), false);
-         } else {
-            throw new InternalError("Scope type not handled " + scope);
-         }
-      }
+   /**
+    * Is the variable a function parameter
+    *
+    * @return true if the variable is a function parameter
+    */
+   boolean isScopeParameter() {
+      Scope s = scope;
+      while(s instanceof BlockScope)
+         s = s.getScope();
+      return (s instanceof Procedure) && isParameter;
+   }
+
+   /**
+    * Is the variable a local variable in a function
+    *
+    * @return true if the variable is in a function scope
+    */
+   boolean isScopeLocal() {
+      Scope s = scope;
+      while(s instanceof BlockScope)
+         s = s.getScope();
+      return (s instanceof Procedure) && !isParameter;
+   }
+
+   /**
+    * Is the variable a member of a struct definition
+    *
+    * @return true if the variable is a struct definition member
+    */
+   boolean isScopeMember() {
+      return scope instanceof StructDefinition;
    }
 
    public VariableBuilder() {

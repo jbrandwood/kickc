@@ -52,7 +52,7 @@ public class VariableBuilder {
     */
    public Variable build() {
       Variable variable = new Variable(varName, getKind(), type, scope, getMemoryArea(), dataSegment, arraySpec, null);
-      variable.setNoModify(this.isConstant());
+      variable.setNoModify(this.isNoModify());
       variable.setVolatile(this.isVolatile());
       variable.setExport(this.isExport());
       variable.setOptimize(this.isOptimize());

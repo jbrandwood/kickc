@@ -52,16 +52,16 @@ public class VariableBuilder {
     */
    public Variable build() {
       Variable variable = new Variable(varName, getKind(), type, scope, getMemoryArea(), dataSegment, arraySpec, null);
-      variable.setDeclaredConst(this.isConstant());
-      variable.setDeclaredVolatile(this.isVolatile());
-      variable.setDeclaredExport(this.isExport());
-      variable.setDeclaredAsRegister(this.isOptimize());
-      variable.setDeclaredRegister(this.getRegister());
-      if(variable.getDeclaredRegister() instanceof Registers.RegisterMainMem) {
-         ((Registers.RegisterMainMem) variable.getDeclaredRegister()).setVariableRef(variable.getVariableRef());
+      variable.setNoModify(this.isConstant());
+      variable.setVolatile(this.isVolatile());
+      variable.setExport(this.isExport());
+      variable.setOptimize(this.isOptimize());
+      variable.setRegister(this.getRegister());
+      if(variable.getRegister() instanceof Registers.RegisterMainMem) {
+         ((Registers.RegisterMainMem) variable.getRegister()).setVariableRef(variable.getVariableRef());
       }
       variable.setMemoryArea(this.getMemoryArea());
-      variable.setDeclaredAlignment(this.getAlignment());
+      variable.setMemoryAlignment(this.getAlignment());
       scope.add(variable);
       return variable;
    }

@@ -44,10 +44,10 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   if(variable == null) {
                      // Already deleted
                      eliminate = true;
-                  } else if(!variable.isVolatile() && !variable.isDeclaredExport()) {
+                  } else if(!variable.isAnyVolatile() && !variable.isExport()) {
                      // Not volatile
                      eliminate = true;
-                  } else if(variable.isVolatile() && variable.getType() instanceof SymbolTypeStruct) {
+                  } else if(variable.isAnyVolatile() && variable.getType() instanceof SymbolTypeStruct) {
                      if(assignment.getOperator()==null && assignment.getrValue2() instanceof StructUnwoundPlaceholder) {
                         eliminate = true;
                      }
@@ -72,7 +72,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                LValue lValue = call.getlValue();
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  if(!variable.isVolatile()) {
+                  if(!variable.isAnyVolatile()) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
                      }
@@ -88,7 +88,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                LValue lValue = call.getlValue();
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  if(!variable.isVolatile()) {
+                  if(!variable.isAnyVolatile()) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
                      }
@@ -104,7 +104,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                LValue lValue = call.getlValue();
                if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  if(!variable.isVolatile()) {
+                  if(!variable.isAnyVolatile()) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
                      }
@@ -123,7 +123,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   VariableRef variableRef = phiVariable.getVariable();
                   if(referenceInfos.isUnused(variableRef)) {
                      Variable variable = getScope().getVariable(variableRef);
-                     if(!variable.isVolatile()) {
+                     if(!variable.isAnyVolatile()) {
                         if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                            getLog().append("Eliminating unused variable - keeping the phi block " + variableRef.toString(getProgram()));
                         }
@@ -143,7 +143,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
       for(Variable constant : allConstants) {
          if(!(constant.getScope() instanceof EnumDefinition) && !(constant.getScope() instanceof StructDefinition)) {
             if(referenceInfos.isUnused(constant.getRef())) {
-               if(constant.isDeclaredExport()) {
+               if(constant.isExport()) {
                   // Do not eliminate constants declared as export
                   continue;
                }

@@ -37,7 +37,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
       List<Statement> removeStmt = new ArrayList<>();
       for(Variable variable : getProgram().getScope().getAllVariables(true)) {
          SymbolVariableRef variableRef = variable.getRef();
-         if(!variable.isDeclaredConst() && !variable.isVolatile() && !variableRef.isIntermediate()) {
+         if(!variable.isNoModify() && !variable.isAnyVolatile() && !variableRef.isIntermediate()) {
             if(variable.getScope() instanceof StructDefinition)
                // Skip structs
                continue;

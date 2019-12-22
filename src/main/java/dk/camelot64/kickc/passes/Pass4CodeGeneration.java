@@ -477,7 +477,7 @@ public class Pass4CodeGeneration {
             // Add any comments
             generateComments(asm, constantVar.getComments());
             // Add any alignment
-            Integer declaredAlignment = constantVar.getDeclaredAlignment();
+            Integer declaredAlignment = constantVar.getMemoryAlignment();
             if(declaredAlignment != null) {
                String alignment = AsmFormat.getAsmNumber(declaredAlignment);
                asm.addDataAlignment(alignment);
@@ -522,7 +522,7 @@ public class Pass4CodeGeneration {
                   // Add any comments
                   generateComments(asm, variable.getComments());
                   // Add any alignment
-                  Integer declaredAlignment = variable.getDeclaredAlignment();
+                  Integer declaredAlignment = variable.getMemoryAlignment();
                   if(declaredAlignment != null) {
                      String alignment = AsmFormat.getAsmNumber(declaredAlignment);
                      asm.addDataAlignment(alignment);

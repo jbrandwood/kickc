@@ -18,7 +18,7 @@ public class Pass1AssertNoConstParams extends Pass1Base {
    public boolean step() {
       for(Procedure procedure : getScope().getAllProcedures(true)) {
          for(Variable parameter : procedure.getParameters()) {
-            if(parameter.isDeclaredConst()) {
+            if(parameter.isNoModify()) {
                throw new CompileError("Error! Const parameters not supported "+parameter.getName()+" in "+ procedure.getFullName()+"()");
             }
          }

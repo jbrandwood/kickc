@@ -137,7 +137,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                if(lValue instanceof VariableRef) {
                   VariableRef varRef = (VariableRef) lValue;
                   Variable var = getScope().getVariable(varRef);
-                  if(var.isVolatile() || var.isKindLoadStore())
+                  if(var.isAnyVolatile() || var.isKindLoadStore())
                      // Do not examine volatiles and non-versioned variables
                      continue;
                   ConstantValue constant = getConstant(assignment.getrValue2());
@@ -153,7 +153,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                      if(getConstant(phiRValue.getrValue()) != null) {
                         VariableRef varRef = phiVariable.getVariable();
                         Variable var = getScope().getVariable(varRef);
-                        if(var.isVolatile() || var.isKindLoadStore())
+                        if(var.isAnyVolatile() || var.isKindLoadStore())
                            // Do not examine volatiles and non-versioned variables
                            continue;
                         ConstantValue constant = getConstant(phiRValue.getrValue());
@@ -167,7 +167,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
 
       // Look for constants among non-versioned variables
       for(Variable variable : getScope().getAllVariables(true)) {
-         if(variable.isVolatile() || !variable.isKindLoadStore())
+         if(variable.isAnyVolatile() || !variable.isKindLoadStore())
             // Do not examine volatiles, non-constants or versioned variables
             continue;
          List<StatementLValue> assignments = getGraph().getAssignments(variable.getRef());

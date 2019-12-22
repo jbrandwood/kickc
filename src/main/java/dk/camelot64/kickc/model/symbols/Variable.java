@@ -58,26 +58,20 @@ public class Variable implements Symbol {
    /** The type of the variable. VAR means the type is unknown, and has not been inferred yet. [ALL] */
    private SymbolType type;
 
-   /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. [Only Variables in memory and arrays] */
-   private Integer declaredAlignment;
-
-   /** Specifies the register the variable must be put into during execution. [Only variables] */
-   private Registers.Register declaredRegister;
-
-   /** Specifies that the variable is declared as const */
-   private boolean declaredConst;
+   /** Specifies that the variable is not allowed to be modified (const keyword) */
+   private boolean noModify;
 
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only Variables] */
-   private boolean declaredVolatile;
+   private boolean isVolatile;
 
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only variables] TODO: Remove this */
    private boolean inferredVolatile;
 
    /** Specifies that the variable must always be added to the output ASM even if it is never used anywhere. */
-   private boolean declaredExport;
+   private boolean export;
 
-   /** Specifies that the variable must live in a register if possible (CPU register or ZP-address). */
-   private boolean declaredAsRegister;
+   /** Specifies that the shoulw be optimized (register keyword). */
+   private boolean optimize;
 
    /** Memory area used for storing the variable (if is is stored in memory). */
    public enum MemoryArea {
@@ -87,11 +81,17 @@ public class Variable implements Symbol {
    /** The memory area where the variable lives (if stored in memory). [Only variables and arrays] */
    private MemoryArea memoryArea;
 
-   /** Comments preceding the procedure in the source code. [ALL] */
-   private List<Comment> comments;
+   /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. [Only Variables in memory and arrays] */
+   private Integer memoryAlignment;
 
    /** The data segment to put the variable into (if it is allocated in memory). [Only variables stored in memory and arrays] */
    private String dataSegment;
+
+   /** Specifies the hard-coded register the variable must be put into during execution. [Only variables] */
+   private Registers.Register register;
+
+   /** Comments preceding the procedure in the source code. [ALL] */
+   private List<Comment> comments;
 
    /** The initial compiletime-value of the variable. Null if no initial value present. [Constants, Arrays, global/local-static loadstore-variables ] */
    private ConstantValue initValue;
@@ -182,12 +182,12 @@ public class Variable implements Symbol {
       if(!phiMaster.isKindPhiMaster())
          throw new InternalError("Cannot version non-PHI variable " + phiMaster.toString());
       Variable version = new Variable(phiMaster.getName() + "#" + versionNum, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment(), phiMaster.getArraySpec(), null);
-      version.setDeclaredAlignment(phiMaster.getDeclaredAlignment());
-      version.setDeclaredAsRegister(phiMaster.isDeclaredAsRegister());
-      version.setDeclaredConst(phiMaster.isDeclaredConst());
-      version.setDeclaredRegister(phiMaster.getDeclaredRegister());
-      version.setDeclaredVolatile(phiMaster.isDeclaredVolatile());
-      version.setDeclaredExport(phiMaster.isDeclaredExport());
+      version.setMemoryAlignment(phiMaster.getMemoryAlignment());
+      version.setOptimize(phiMaster.isOptimize());
+      version.setNoModify(phiMaster.isNoModify());
+      version.setRegister(phiMaster.getRegister());
+      version.setVolatile(phiMaster.isVolatile());
+      version.setExport(phiMaster.isExport());
       version.setInferredVolatile(phiMaster.isInferredVolatile());
       version.setComments(phiMaster.getComments());
       return version;
@@ -226,12 +226,12 @@ public class Variable implements Symbol {
     */
    public static Variable createConstant(Variable variable, ConstantValue constantValue) {
       Variable constVar = new Variable(variable.getName(), Kind.CONSTANT, variable.getType(), variable.getScope(), MemoryArea.MAIN_MEMORY, variable.getDataSegment(), variable.getArraySpec(), constantValue);
-      constVar.setDeclaredAlignment(variable.getDeclaredAlignment());
-      constVar.setDeclaredAsRegister(variable.isDeclaredAsRegister());
-      constVar.setDeclaredConst(variable.isDeclaredConst());
-      constVar.setDeclaredRegister(variable.getDeclaredRegister());
-      constVar.setDeclaredVolatile(variable.isDeclaredVolatile());
-      constVar.setDeclaredExport(variable.isDeclaredExport());
+      constVar.setMemoryAlignment(variable.getMemoryAlignment());
+      constVar.setOptimize(variable.isOptimize());
+      constVar.setNoModify(variable.isNoModify());
+      constVar.setRegister(variable.getRegister());
+      constVar.setVolatile(variable.isVolatile());
+      constVar.setExport(variable.isExport());
       constVar.setInferredVolatile(variable.isInferredVolatile());
       constVar.setComments(variable.getComments());
       return constVar;
@@ -246,12 +246,12 @@ public class Variable implements Symbol {
     */
    public static Variable createCopy(String name, Scope scope, Variable original) {
       Variable copy = new Variable(name, original.getKind(), original.getType(), scope, original.getMemoryArea(), original.getDataSegment(), original.getArraySpec(), original.getInitValue());
-      copy.setDeclaredAlignment(original.getDeclaredAlignment());
-      copy.setDeclaredAsRegister(original.isDeclaredAsRegister());
-      copy.setDeclaredConst(original.isDeclaredConst());
-      copy.setDeclaredVolatile(original.isDeclaredVolatile());
-      copy.setDeclaredExport(original.isDeclaredExport());
-      copy.setDeclaredRegister(original.getDeclaredRegister());
+      copy.setMemoryAlignment(original.getMemoryAlignment());
+      copy.setOptimize(original.isOptimize());
+      copy.setNoModify(original.isNoModify());
+      copy.setVolatile(original.isVolatile());
+      copy.setExport(original.isExport());
+      copy.setRegister(original.getRegister());
       copy.setInferredVolatile(original.isInferredVolatile());
       copy.setComments(original.getComments());
       return copy;
@@ -279,10 +279,10 @@ public class Variable implements Symbol {
          // For others the kind is preserved from the member definition
          memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(),  memberDefinition.getInitValue());
       }
-      memberVariable.setDeclaredVolatile(structVar.isDeclaredVolatile());
+      memberVariable.setVolatile(structVar.isVolatile());
       memberVariable.setInferredVolatile(structVar.isInferredVolatile());
-      memberVariable.setDeclaredConst(structVar.isDeclaredConst());
-      memberVariable.setDeclaredExport(structVar.isDeclaredExport());
+      memberVariable.setNoModify(structVar.isNoModify());
+      memberVariable.setExport(structVar.isExport());
       return memberVariable;
    }
 
@@ -460,36 +460,36 @@ public class Variable implements Symbol {
       }
    }
 
-   public boolean isDeclaredConst() {
-      return declaredConst;
+   public boolean isNoModify() {
+      return noModify;
    }
 
-   public void setDeclaredConst(boolean declaredConst) {
-      this.declaredConst = declaredConst;
+   public void setNoModify(boolean noModify) {
+      this.noModify = noModify;
    }
 
-   public Integer getDeclaredAlignment() {
-      return declaredAlignment;
+   public Integer getMemoryAlignment() {
+      return memoryAlignment;
    }
 
-   public void setDeclaredAlignment(Integer declaredAlignment) {
-      this.declaredAlignment = declaredAlignment;
+   public void setMemoryAlignment(Integer memoryAlignment) {
+      this.memoryAlignment = memoryAlignment;
    }
 
-   public Registers.Register getDeclaredRegister() {
-      return declaredRegister;
+   public Registers.Register getRegister() {
+      return register;
    }
 
-   public void setDeclaredRegister(Registers.Register declaredRegister) {
-      this.declaredRegister = declaredRegister;
+   public void setRegister(Registers.Register register) {
+      this.register = register;
    }
 
-   public boolean isDeclaredVolatile() {
-      return declaredVolatile;
+   public boolean isVolatile() {
+      return isVolatile;
    }
 
-   public void setDeclaredVolatile(boolean declaredVolatile) {
-      this.declaredVolatile = declaredVolatile;
+   public void setVolatile(boolean aVolatile) {
+      this.isVolatile = aVolatile;
    }
 
    public void setInferredVolatile(boolean inferredVolatile) {
@@ -500,24 +500,24 @@ public class Variable implements Symbol {
       return inferredVolatile;
    }
 
-   public boolean isVolatile() {
-      return declaredVolatile || inferredVolatile;
+   public boolean isAnyVolatile() {
+      return isVolatile || inferredVolatile;
    }
 
-   public boolean isDeclaredExport() {
-      return declaredExport;
+   public boolean isExport() {
+      return export;
    }
 
-   public void setDeclaredExport(boolean declaredExport) {
-      this.declaredExport = declaredExport;
+   public void setExport(boolean export) {
+      this.export = export;
    }
 
-   public boolean isDeclaredAsRegister() {
-      return declaredAsRegister;
+   public boolean isOptimize() {
+      return optimize;
    }
 
-   public void setDeclaredAsRegister(boolean declaredAsRegister) {
-      this.declaredAsRegister = declaredAsRegister;
+   public void setOptimize(boolean optimize) {
+      this.optimize = optimize;
    }
 
    public MemoryArea getMemoryArea() {

@@ -28,15 +28,15 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
          int bytes = -1;
          for(VariableRef varRef : equivalenceClass.getVariables()) {
             Variable variable = getProgram().getScope().getVariable(varRef);
-            if(variable.getDeclaredRegister() != null) {
-               if(declaredRegister != null && !declaredRegister.equals(variable.getDeclaredRegister())) {
+            if(variable.getRegister() != null) {
+               if(declaredRegister != null && !declaredRegister.equals(variable.getRegister())) {
                   throw new CompileError("Equivalence class has variables with different declared registers \n" +
                         " - equivalence class: " + equivalenceClass.toString(true) + "\n" +
                         " - one register: " + declaredRegister.toString() + "\n" +
-                        " - other register: " + variable.getDeclaredRegister().toString()
+                        " - other register: " + variable.getRegister().toString()
                   );
                }
-               declaredRegister = variable.getDeclaredRegister();
+               declaredRegister = variable.getRegister();
                bytes = variable.getType().getSizeBytes();
             }
          }
@@ -78,7 +78,7 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
    private boolean varVolatile(LiveRangeEquivalenceClass equivalenceClass) {
       for(VariableRef variableRef : equivalenceClass.getVariables()) {
          Variable variable = getSymbols().getVariable(variableRef);
-         if(variable.isVolatile() || variable.isKindLoadStore()) {
+         if(variable.isAnyVolatile() || variable.isKindLoadStore()) {
             return true;
          }
       }

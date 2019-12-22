@@ -38,7 +38,7 @@ public class Pass2IdenticalPhiElimination extends Pass2SsaOptimization {
                   for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                      if(phiRValue.getrValue() instanceof SymbolVariableRef) {
                         Variable symbolVar = (Variable) getScope().getSymbol((SymbolVariableRef) phiRValue.getrValue());
-                        if(symbolVar.getDeclaredRegister() != null) { //TODO: Handle register/memory/storage strategy differently!
+                        if(symbolVar.getRegister() != null) { //TODO: Handle register/memory/storage strategy differently!
                            // Do not collapse PHI's for variables with declared registers (this prevents procedure parameters from being turned into constants)
                            identical = false;
                            break;

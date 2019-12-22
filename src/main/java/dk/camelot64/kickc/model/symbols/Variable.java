@@ -553,9 +553,9 @@ public class Variable implements Symbol {
    public String toString(Program program) {
       return new StringBuilder()
             .append("(")
-            .append((initValue != null) ? "const " : "")
+            .append(isKindConstant() ? "const " : "")
             .append(getType().getTypeName())
-            .append((initValue == null && isKindIntermediate()) ? "~" : "")
+            .append(isKindIntermediate() ? "~" : "")
             .append(") ")
             .append(getFullName()).toString();
    }

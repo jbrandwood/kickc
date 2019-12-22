@@ -506,10 +506,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    /** Holds the declared type when descending into a Variable Declaration. */
    private SymbolType declVarType = null;
-   /** Holds the information about whether the declared variable is an array. */
-   private boolean declIsArray = false;
-   /** Holds the information about the size of the declared variable. */
-   private ConstantValue declArraySize = null;
+   /** Holds the information about whether the declared variable is an array and the size of the array if it is. */
+   private ArraySpec declArraySpec;
    /** Holds the declared directives when descending into a Variable Declaration. */
    private List<Directive> declVarDirectives = null;
    /** Holds the declared comments when descending into a Variable Declaration. */
@@ -539,8 +537,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.declVarType = null;
       this.declVarDirectives = null;
       this.declVarComments = null;
-      this.declIsArray = false;
-      this.declArraySize = null;
+      this.declArraySpec = null;
    }
 
    @Override
@@ -566,17 +563,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       try {
          String varName = ctx.NAME().getText();
          KickCParser.ExprContext initializer = ctx.expr();
-         ArraySpec arraySpec = null;
-         if(declIsArray) {
-            arraySpec = new ArraySpec(declArraySize);
-         }
          if(declVarStructMember && (initializer != null))
             throw new CompileError("Initializer not supported inside structs " + declVarType.getTypeName(), statementSource);
          if(initializer != null)
             PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
          RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
-         initValue = Initializers.getInitValue(initValue, declVarType, declIsArray, declArraySize, program, statementSource);
-         VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, declVarType, arraySpec, declVarDirectives, currentDataSegment);
+         initValue = Initializers.getInitValue(initValue, declVarType, declArraySpec, program, statementSource);
+         VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, declVarType, declArraySpec, declVarDirectives, currentDataSegment);
          Variable variable = varBuilder.build();
          if(variable.isKindConstant()) {
             // Set constant value
@@ -600,7 +593,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /**
     * Ensure that tha initializer value is a constant. Fail if it is not
     *
-    * @param initValue The initializer value (result from {@link Initializers#getInitValue(RValue, SymbolType, boolean, ConstantValue, Program, StatementSource)})
+    * @param initValue The initializer value (result from {@link Initializers#getInitValue(RValue, SymbolType, ArraySpec, Program, StatementSource)})
     * @param initializer The initializer
     * @param statementSource The source line
     * @return The constant initializer value
@@ -621,7 +614,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx) {
       String varName = ctx.NAME().getText();
       StatementSource statementSource = new StatementSource(ctx);
-      if(!(this.declVarType instanceof SymbolTypePointer) || !declIsArray) {
+      if(!(this.declVarType instanceof SymbolTypePointer) || declArraySpec==null) {
          throw new CompileError("KickAsm initializers only supported for arrays " + declVarType.getTypeName(), statementSource);
       }
       // Add KickAsm statement
@@ -641,13 +634,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypePointer) this.declVarType).getElementType(), kasm.getKickAsmCode(), kasm.getUses());
       // Remove the KickAsm statement
       sequence.getStatements().remove(sequence.getStatements().size() - 1);
-      ArraySpec arraySpec = null;
-      if(declIsArray) {
-         arraySpec = new ArraySpec(declArraySize);
-      }
       // Add a constant variable
       Scope scope = getCurrentScope();
-      VariableBuilder varBuilder = new VariableBuilder(varName, scope, declIsArray, declVarType, arraySpec, declVarDirectives, currentDataSegment);
+      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, declVarType, declArraySpec, declVarDirectives, currentDataSegment);
       Variable variable = varBuilder.build();
       // Set constant value
       variable.setInitValue(getConstInitValue(constantArrayKickAsm, null, statementSource));
@@ -1540,12 +1529,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
       if(ctx.expr() != null) {
          RValue sizeVal = (RValue) visit(ctx.expr());
-         declIsArray = true;
-         declArraySize = (ConstantValue) sizeVal;
+         declArraySpec = new ArraySpec((ConstantValue) sizeVal);
          return new SymbolTypePointer(elementType);
       } else {
-         declIsArray = true;
-         declArraySize = null;
+         declArraySpec = new ArraySpec();
          return new SymbolTypePointer(elementType);
       }
    }

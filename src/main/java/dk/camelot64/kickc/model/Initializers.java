@@ -3,6 +3,7 @@ package dk.camelot64.kickc.model;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementSource;
+import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
@@ -46,17 +47,17 @@ public class Initializers {
     * @param statementSource The statement (used in exceptions.
     * @return The constant init-value. Null if the value cannot be turned into a constant init-value.
     */
-   public static RValue getInitValue(RValue initValue, SymbolType type, boolean isArray, ConstantValue arraySize, Program program, StatementSource statementSource) {
+   public static RValue getInitValue(RValue initValue, SymbolType type, ArraySpec arraySpec, Program program, StatementSource statementSource) {
       // TODO: Handle struct members
       // Create zero-initializers if null
       if(initValue == null) {
-         if(isArray) {
+         if(arraySpec!=null) {
             // Add an zero-filled array initializer
             SymbolTypePointer typePointer = (SymbolTypePointer) type;
-            if(arraySize == null) {
+            if(arraySpec.getArraySize() == null) {
                throw new CompileError("Error! Array has no declared size. ", statementSource);
             }
-            initValue = new ConstantArrayFilled(typePointer.getElementType(), arraySize);
+            initValue = new ConstantArrayFilled(typePointer.getElementType(), arraySpec.getArraySize());
          } else {
             // Add an zero-value
             initValue = createZeroValue(type, statementSource);
@@ -65,7 +66,7 @@ public class Initializers {
       // Convert initializer value lists to constant if possible
       if((initValue instanceof ValueList)) {
          ProgramValue programValue = new ProgramValue.GenericValue(initValue);
-         addValueCasts(type, isArray, programValue, program, statementSource);
+         addValueCasts(type, arraySpec!=null, programValue, program, statementSource);
          if(programValue.get() instanceof CastValue) {
             CastValue castValue = (CastValue) programValue.get();
             if(castValue.getValue() instanceof ValueList) {

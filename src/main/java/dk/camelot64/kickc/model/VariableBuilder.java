@@ -15,6 +15,9 @@ import java.util.List;
  */
 public class VariableBuilder {
 
+   /** The variable name. */
+   private String varName;
+
    /** The scope of the variable. */
    private Scope scope;
 
@@ -30,12 +33,46 @@ public class VariableBuilder {
    /** The directives of the variable declaration. */
    private List<Directive> directives;
 
-   public VariableBuilder(Scope scope, boolean isParameter, SymbolType type, ArraySpec arraySpec, List<Directive> directives) {
+   /** The data segment. */
+   private String dataSegment;
+
+   public VariableBuilder(String varName, Scope scope, boolean isParameter, SymbolType type, ArraySpec arraySpec, List<Directive> directives, String dataSegment) {
+      this.varName = varName;
       this.scope = scope;
       this.isParameter = isParameter;
       this.type = type;
       this.arraySpec = arraySpec;
       this.directives = directives;
+      this.dataSegment = dataSegment;
+   }
+
+   /**
+    * Build the variable with the properties derived from type, scope, directives and configuration.
+    * @return The variable
+    */
+   public Variable build() {
+      Variable variable;
+      if(isConstant()) {
+         variable = Variable.createConstant(varName, type, scope, arraySpec, null, dataSegment);
+      } else if(this.isSingleStaticAssignment()) {
+         // Create single-static-assignment PHI-master variable
+         variable = Variable.createPhiMaster(varName, type, scope, getMemoryArea(), dataSegment);
+      } else {
+         // Create multiple-assignment variable
+         variable = Variable.createLoadStore(varName, type, scope, getMemoryArea(), dataSegment);
+      }
+      variable.setDeclaredConst(this.isConstant());
+      variable.setDeclaredVolatile(this.isVolatile());
+      variable.setDeclaredExport(this.isExport());
+      variable.setDeclaredAsRegister(this.isOptimize());
+      variable.setDeclaredRegister(this.getRegister());
+      if(variable.getDeclaredRegister() instanceof Registers.RegisterMainMem) {
+         ((Registers.RegisterMainMem) variable.getDeclaredRegister()).setVariableRef(variable.getVariableRef());
+      }
+      variable.setMemoryArea(this.getMemoryArea());
+      variable.setDeclaredAlignment(this.getAlignment());
+      scope.add(variable);
+      return variable;
    }
 
    /**
@@ -174,7 +211,8 @@ public class VariableBuilder {
       return hasDirective(Directive.ToConst.class);
    }
 
-   /** Declared as export (__export keyword)
+   /**
+    * Declared as export (__export keyword)
     *
     * @return true if declared as export
     */
@@ -243,13 +281,14 @@ public class VariableBuilder {
 
    /**
     * Get any memory-alignment of the variables data
-    * @return
+    *
+    * @return The memory alignment
     */
    public Integer getAlignment() {
       Directive.Align alignDirective = findDirective(Directive.Align.class);
       if(alignDirective != null) {
          if(isArray()) {
-             return alignDirective.alignment;
+            return alignDirective.alignment;
          } else {
             // TODO: Add information about which variable (name) and the offending source line
             throw new CompileError("Error! Cannot align variable that is not an array.");
@@ -294,11 +333,10 @@ public class VariableBuilder {
     * Examines whether a specific directive is present in the source
     *
     * @param directiveClass The class of the type to look for
-    * @param directives The list of directives to search
     * @param <DirectiveClass> The class of the type to look for
     * @return true if the directive if found. false otherwise.
     */
-   private <DirectiveClass extends Directive> boolean hasDirective(Class<DirectiveClass> directiveClass) {
+   public <DirectiveClass extends Directive> boolean hasDirective(Class<DirectiveClass> directiveClass) {
       return findDirective(directiveClass) != null;
    }
 
@@ -306,7 +344,6 @@ public class VariableBuilder {
     * Look for a specific directive type in a list of directives
     *
     * @param directiveClass The class of the type to look for
-    * @param directives The list of directives to search
     * @param <DirectiveClass> The class of the type to look for
     * @return The directive if found. null if not found.
     */

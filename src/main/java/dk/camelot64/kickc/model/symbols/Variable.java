@@ -125,9 +125,9 @@ public class Variable implements Symbol {
       this.type = type;
       this.scope = scope;
       this.arraySpec = arraySpec;
-      this.initValue = initValue;
       this.dataSegment = dataSegment;
       this.memoryArea = memoryArea;
+      this.initValue = initValue;
       this.comments = new ArrayList<>();
       setFullName();
    }

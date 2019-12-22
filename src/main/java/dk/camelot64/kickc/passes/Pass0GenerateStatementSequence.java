@@ -47,8 +47,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private Stack<Scope> scopeStack;
    /** The memory area used by default for variables. */
    private Variable.MemoryArea defaultMemoryArea;
-   /** Context used for adding directives to variables. */
-   private VariableBuilderContext directiveContext;
 
    public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program) {
       this.cParser = cParser;
@@ -57,7 +55,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.sequence = program.getStatementSequence();
       this.scopeStack = new Stack<>();
       this.defaultMemoryArea = Variable.MemoryArea.ZEROPAGE_MEMORY;
-      this.directiveContext = new VariableBuilderContext();
       scopeStack.push(program.getScope());
    }
 
@@ -266,11 +263,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) {
       this.visitDeclTypes(ctx.declTypes());
-      SymbolType type = declVarType;
-      List<Directive> directives = declVarDirectives;
-      Variable param = Variable.createPhiMaster(ctx.NAME().getText(), type, getCurrentScope(), defaultMemoryArea, currentDataSegment);
-      // Add directives
-      directiveContext.applyDirectives(param, true, false, directives, new StatementSource(ctx));
+      String varName = ctx.NAME().getText();
+      VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, declVarType, null, declVarDirectives, currentDataSegment);
+      // TODO: const parameter pointer should be no-modify!
+      if(varBuilder.hasDirective(Directive.Const.class))
+         throw new CompileError("Error! Const parameters not supported " + varName + " in " + getCurrentScope().getFullName() + "()");
+      Variable param = varBuilder.build();
       exitDeclTypes();
       return param;
    }
@@ -578,56 +576,18 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
          RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
          initValue = Initializers.getInitValue(initValue, declVarType, declIsArray, declArraySize, program, statementSource);
-         VariableBuilder varBuilder = new VariableBuilder(getCurrentScope(), false, declVarType, arraySpec, declVarDirectives);
-         if(varBuilder.isConstant()) {
-            Scope scope = getCurrentScope();
+         VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, declVarType, arraySpec, declVarDirectives, currentDataSegment);
+         Variable variable = varBuilder.build();
+         if(variable.isKindConstant()) {
+            // Set constant value
             ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
-            Variable constVar = Variable.createConstant(varName, declVarType, scope, arraySpec, constInitValue, currentDataSegment);
-            constVar.setDeclaredConst(varBuilder.isConstant());
-            constVar.setDeclaredVolatile(varBuilder.isVolatile());
-            constVar.setDeclaredExport(varBuilder.isExport());
-            constVar.setDeclaredAsRegister(varBuilder.isOptimize());
-            constVar.setDeclaredRegister(varBuilder.getRegister());
-            constVar.setMemoryArea(varBuilder.getMemoryArea());
-            constVar.setDeclaredAlignment(varBuilder.getAlignment());
-            scope.add(constVar);
+            variable.setInitValue(constInitValue);
             // Add comments to constant
-            constVar.setComments(ensureUnusedComments(declVarComments));
-         } else if(varBuilder.isSingleStaticAssignment()) {
-            // Create SSA  PHI-master variable
-            Variable lValue = Variable.createPhiMaster(varName, declVarType, getCurrentScope(), defaultMemoryArea, currentDataSegment);
-            lValue.setDeclaredConst(varBuilder.isConstant());
-            lValue.setDeclaredVolatile(varBuilder.isVolatile());
-            lValue.setDeclaredExport(varBuilder.isExport());
-            lValue.setDeclaredAsRegister(varBuilder.isOptimize());
-            lValue.setDeclaredRegister(varBuilder.getRegister());
-            if(lValue.getDeclaredRegister() instanceof Registers.RegisterMainMem) {
-               ((Registers.RegisterMainMem) lValue.getDeclaredRegister()).setVariableRef(lValue.getVariableRef());
-            }
-            lValue.setMemoryArea(varBuilder.getMemoryArea());
-            lValue.setDeclaredAlignment(varBuilder.getAlignment());
-            getCurrentScope().add(lValue);
-            if(!declVarStructMember) {
-               Statement initStmt = new StatementAssignment(lValue.getVariableRef(), initValue, statementSource, ensureUnusedComments(declVarComments));
-               sequence.addStatement(initStmt);
-            }
-         } else {
-            Variable lValue = Variable.createLoadStore(varName, declVarType, getCurrentScope(), defaultMemoryArea, currentDataSegment);
-            lValue.setDeclaredConst(varBuilder.isConstant());
-            lValue.setDeclaredVolatile(varBuilder.isVolatile());
-            lValue.setDeclaredExport(varBuilder.isExport());
-            lValue.setDeclaredAsRegister(varBuilder.isOptimize());
-            lValue.setDeclaredRegister(varBuilder.getRegister());
-            if(lValue.getDeclaredRegister() instanceof Registers.RegisterMainMem) {
-               ((Registers.RegisterMainMem) lValue.getDeclaredRegister()).setVariableRef(lValue.getVariableRef());
-            }
-            lValue.setMemoryArea(varBuilder.getMemoryArea());
-            lValue.setDeclaredAlignment(varBuilder.getAlignment());
-            getCurrentScope().add(lValue);
-            if(!declVarStructMember) {
-               Statement initStmt = new StatementAssignment(lValue.getVariableRef(), initValue, statementSource, ensureUnusedComments(declVarComments));
-               sequence.addStatement(initStmt);
-            }
+            variable.setComments(ensureUnusedComments(declVarComments));
+         }
+         if(!variable.isKindConstant() && !declVarStructMember) {
+            Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, statementSource, ensureUnusedComments(declVarComments));
+            sequence.addStatement(initStmt);
          }
          if(initializer != null)
             PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
@@ -687,11 +647,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       // Add a constant variable
       Scope scope = getCurrentScope();
-      Variable constVar = Variable.createConstant(varName, declVarType, scope, arraySpec, constantArrayKickAsm, currentDataSegment);
-      scope.add(constVar);
+      VariableBuilder varBuilder = new VariableBuilder(varName, scope, declIsArray, declVarType, arraySpec, declVarDirectives, currentDataSegment);
+      Variable variable = varBuilder.build();
+      // Set constant value
+      variable.setInitValue(getConstInitValue(constantArrayKickAsm, null, statementSource));
       // Add comments to constant
-      constVar.setComments(ensureUnusedComments(declVarComments));
-      directiveContext.applyDirectives(constVar, false, declIsArray, declVarDirectives, statementSource);
+      variable.setComments(ensureUnusedComments(declVarComments));
       return null;
    }
 
@@ -1171,25 +1132,17 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       BlockScope blockScope = getCurrentScope().addBlockScope();
       scopeStack.push(blockScope);
       loopStack.push(new Loop(blockScope, false));
-
       StatementSource statementSource = StatementSource.forRanged(ctx);
-
       // Create / find declared loop variable
       if(ctx.declTypes() != null) {
          this.visitDeclTypes(ctx.declTypes());
       }
       SymbolType varType = declVarType;
-      List<Directive> varDirectives = declVarDirectives;
       String varName = ctx.NAME().getText();
       Variable lValue;
       if(varType != null) {
-         try {
-            lValue = getCurrentScope().add(Variable.createPhiMaster(varName, varType, getCurrentScope(), defaultMemoryArea, currentDataSegment));
-         } catch(CompileError e) {
-            throw new CompileError(e.getMessage(), statementSource);
-         }
-         // Add directives
-         directiveContext.applyDirectives(lValue, false, false, varDirectives, statementSource);
+         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, null, declVarDirectives, currentDataSegment);
+         lValue = varBuilder.build();
       } else {
          lValue = getCurrentScope().getVariable(varName);
          if(lValue == null) {

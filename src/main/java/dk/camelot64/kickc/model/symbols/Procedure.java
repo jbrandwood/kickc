@@ -103,7 +103,6 @@ public class Procedure extends Scope {
    public void setParameters(List<Variable> parameters) {
       this.parameterNames = new ArrayList<>();
       for(Variable parameter : parameters) {
-         add(parameter);
          parameterNames.add(parameter.getLocalName());
       }
    }

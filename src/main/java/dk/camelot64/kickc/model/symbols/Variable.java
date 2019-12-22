@@ -117,7 +117,7 @@ public class Variable implements Symbol {
     * @param arraySpec The array specification of the variable (if it is an array)
     * @param initValue The constant value of the variable (if it is constant)
     */
-   private Variable(String name, Kind kind, SymbolType type, Scope scope, MemoryArea memoryArea, String dataSegment, ArraySpec arraySpec, ConstantValue initValue) {
+   public Variable(String name, Kind kind, SymbolType type, Scope scope, MemoryArea memoryArea, String dataSegment, ArraySpec arraySpec, ConstantValue initValue) {
       this.name = name;
       this.kind = kind;
       if(Kind.PHI_MASTER.equals(kind))
@@ -225,7 +225,7 @@ public class Variable implements Symbol {
     * @param constantValue The constant value
     */
    public static Variable createConstant(Variable variable, ConstantValue constantValue) {
-      Variable constVar = createConstant(variable.getName(), variable.getType(), variable.getScope(), variable.getArraySpec(), constantValue, variable.getDataSegment());
+      Variable constVar = new Variable(variable.getName(), Kind.CONSTANT, variable.getType(), variable.getScope(), MemoryArea.MAIN_MEMORY, variable.getDataSegment(), variable.getArraySpec(), constantValue);
       constVar.setDeclaredAlignment(variable.getDeclaredAlignment());
       constVar.setDeclaredAsRegister(variable.isDeclaredAsRegister());
       constVar.setDeclaredConst(variable.isDeclaredConst());

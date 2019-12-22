@@ -51,16 +51,7 @@ public class VariableBuilder {
     * @return The variable
     */
    public Variable build() {
-      Variable variable;
-      if(isConstant()) {
-         variable = Variable.createConstant(varName, type, scope, arraySpec, null, dataSegment);
-      } else if(this.isSingleStaticAssignment()) {
-         // Create single-static-assignment PHI-master variable
-         variable = Variable.createPhiMaster(varName, type, scope, getMemoryArea(), dataSegment);
-      } else {
-         // Create multiple-assignment variable
-         variable = Variable.createLoadStore(varName, type, scope, getMemoryArea(), dataSegment);
-      }
+      Variable variable = new Variable(varName, getKind(), type, scope, getMemoryArea(), dataSegment, arraySpec, null);
       variable.setDeclaredConst(this.isConstant());
       variable.setDeclaredVolatile(this.isVolatile());
       variable.setDeclaredExport(this.isExport());

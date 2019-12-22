@@ -61,17 +61,20 @@ public class Variable implements Symbol {
    /** Specifies that the variable is not allowed to be modified (const keyword) */
    private boolean noModify;
 
-   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only Variables] */
+   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). (volatile keyword) [Only Variables] */
    private boolean isVolatile;
 
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only variables] TODO: Remove this */
    private boolean inferredVolatile;
 
-   /** Specifies that the variable must always be added to the output ASM even if it is never used anywhere. */
+   /** Specifies that the variable must always be added to the output ASM even if it is never used anywhere. (export keyword) */
    private boolean export;
 
-   /** Specifies that the shoulw be optimized (register keyword). */
+   /** Specifies that the should be optimized (register keyword). */
    private boolean optimize;
+
+   /** Specifies the hard-coded register the variable must be put into during execution. [Only variables] */
+   private Registers.Register register;
 
    /** Memory area used for storing the variable (if is is stored in memory). */
    public enum MemoryArea {
@@ -87,17 +90,14 @@ public class Variable implements Symbol {
    /** The data segment to put the variable into (if it is allocated in memory). [Only variables stored in memory and arrays] */
    private String dataSegment;
 
-   /** Specifies the hard-coded register the variable must be put into during execution. [Only variables] */
-   private Registers.Register register;
-
    /** Comments preceding the procedure in the source code. [ALL] */
    private List<Comment> comments;
 
-   /** The initial compiletime-value of the variable. Null if no initial value present. [Constants, Arrays, global/local-static loadstore-variables ] */
-   private ConstantValue initValue;
-
    /** Non-null if the variable is an array. [Only constants that are arrays] */
    private ArraySpec arraySpec;
+
+   /** The initial compiletime-value of the variable. Null if no initial value present. [Constants, Arrays, global/local-static loadstore-variables ] */
+   private ConstantValue initValue;
 
    /** The number of the next version (only used for PHI masters) [Only PHI masters] */
    private Integer nextPhiVersionNumber;

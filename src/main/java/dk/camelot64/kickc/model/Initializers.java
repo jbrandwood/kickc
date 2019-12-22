@@ -86,7 +86,6 @@ public class Initializers {
       return initValue;
    }
 
-
    /**
     * Add casts to a value based on the declared type of the symbol. Recurses to all sub-values.
     *
@@ -249,7 +248,7 @@ public class Initializers {
                throw new CompileError("Initializer element " + constantValue.toString(program) + " does not match needed type "+SymbolType.BYTE, source);
          return new ConstantBinary(new ConstantBinary(constantValues.get(0), Operators.MULTIPLY, new ConstantInteger(0x100L, SymbolType.WORD)), Operators.PLUS, constantValues.get(1));
       } else if(declaredType.equals(SymbolType.DWORD) && constantValues.size()==2){
-         // An inline word
+         // An inline dword
          for(ConstantValue constantValue : constantValues)
             if(!SymbolTypeConversion.assignmentTypeMatch(SymbolType.WORD, constantValue.getType(program.getScope())))
                throw new CompileError("Initializer element " + constantValue.toString(program) + " does not match needed type "+SymbolType.WORD, source);

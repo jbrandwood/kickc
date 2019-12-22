@@ -299,7 +299,7 @@ public class Variable implements Symbol {
       return getScope().getVariable(versionOfName);
    }
 
-   public Kind getKind() {
+   private Kind getKind() {
       return kind;
    }
 
@@ -468,40 +468,12 @@ public class Variable implements Symbol {
       this.noModify = noModify;
    }
 
-   public Integer getMemoryAlignment() {
-      return memoryAlignment;
-   }
-
-   public void setMemoryAlignment(Integer memoryAlignment) {
-      this.memoryAlignment = memoryAlignment;
-   }
-
-   public Registers.Register getRegister() {
-      return register;
-   }
-
-   public void setRegister(Registers.Register register) {
-      this.register = register;
-   }
-
    public boolean isVolatile() {
       return isVolatile;
    }
 
    public void setVolatile(boolean aVolatile) {
       this.isVolatile = aVolatile;
-   }
-
-   public void setInferredVolatile(boolean inferredVolatile) {
-      this.inferredVolatile = inferredVolatile;
-   }
-
-   public boolean isInferredVolatile() {
-      return inferredVolatile;
-   }
-
-   public boolean isAnyVolatile() {
-      return isVolatile || inferredVolatile;
    }
 
    public boolean isExport() {
@@ -520,6 +492,14 @@ public class Variable implements Symbol {
       this.optimize = optimize;
    }
 
+   public Registers.Register getRegister() {
+      return register;
+   }
+
+   public void setRegister(Registers.Register register) {
+      this.register = register;
+   }
+
    public MemoryArea getMemoryArea() {
       return memoryArea;
    }
@@ -534,6 +514,26 @@ public class Variable implements Symbol {
 
    public boolean isMemoryAreaMain() {
       return MemoryArea.MAIN_MEMORY.equals(getMemoryArea());
+   }
+
+   public Integer getMemoryAlignment() {
+      return memoryAlignment;
+   }
+
+   public void setMemoryAlignment(Integer memoryAlignment) {
+      this.memoryAlignment = memoryAlignment;
+   }
+
+   public void setInferredVolatile(boolean inferredVolatile) {
+      this.inferredVolatile = inferredVolatile;
+   }
+
+   public boolean isInferredVolatile() {
+      return inferredVolatile;
+   }
+
+   public boolean isAnyVolatile() {
+      return isVolatile || inferredVolatile;
    }
 
    public List<Comment> getComments() {

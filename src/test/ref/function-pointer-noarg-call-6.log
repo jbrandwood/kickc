@@ -1,22 +1,39 @@
-Resolved forward reference fn1 to (void()) fn1()
 Identified constant variable (void()*) main::cls
-Culled Empty Block (label) main::@4
-Culled Empty Block (label) main::@3
-Culled Empty Block (label) main::@5
-Culled Empty Block (label) main::@6
-Culled Empty Block (label) @1
 Culled Empty Block (label) fn1::@4
 Culled Empty Block (label) fn1::@3
 Culled Empty Block (label) fn1::@5
 Culled Empty Block (label) fn1::@6
+Culled Empty Block (label) @1
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@2
 
+(void()) fn1()
+fn1: scope:[fn1]  from
+  (byte*) fn1::screen#0 ← (byte*)(number) $400
+  to:fn1::@1
+fn1::@1: scope:[fn1]  from fn1 fn1::@2
+  (byte*) fn1::screen#2 ← phi( fn1/(byte*) fn1::screen#0 fn1::@2/(byte*) fn1::screen#1 )
+  (bool~) fn1::$0 ← (byte*) fn1::screen#2 < (number) $400+(number) $3e8
+  if((bool~) fn1::$0) goto fn1::@2
+  to:fn1::@return
+fn1::@2: scope:[fn1]  from fn1::@1
+  (byte*) fn1::screen#3 ← phi( fn1::@1/(byte*) fn1::screen#2 )
+  *((byte*) fn1::screen#3) ← ++ *((byte*) fn1::screen#3)
+  (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#3
+  to:fn1::@1
+fn1::@return: scope:[fn1]  from fn1::@1
+  return 
+  to:@return
+
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) main::cols#0 ← ((byte*)) (number) $d800
+  (byte*) main::cols#0 ← (byte*)(number) $d800
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte*) main::cols#2 ← phi( main/(byte*) main::cols#0 main::@2/(byte*) main::cols#1 )
@@ -30,24 +47,6 @@ main::@2: scope:[main]  from main::@1
   (byte*) main::cols#1 ← ++ (byte*) main::cols#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
-
-(void()) fn1()
-fn1: scope:[fn1]  from
-  (byte*) fn1::screen#0 ← ((byte*)) (number) $400
-  to:fn1::@1
-fn1::@1: scope:[fn1]  from fn1 fn1::@2
-  (byte*) fn1::screen#2 ← phi( fn1/(byte*) fn1::screen#0 fn1::@2/(byte*) fn1::screen#1 )
-  (bool~) fn1::$0 ← (byte*) fn1::screen#2 < (number) $400+(number) $3e8
-  if((bool~) fn1::$0) goto fn1::@2
-  to:fn1::@return
-fn1::@2: scope:[fn1]  from fn1::@1
-  (byte*) fn1::screen#3 ← phi( fn1::@1/(byte*) fn1::screen#2 )
-  *((byte*) fn1::screen#3) ← ++ *((byte*) fn1::screen#3)
-  (byte*) fn1::screen#1 ← ++ (byte*) fn1::screen#3
-  to:fn1::@1
-fn1::@return: scope:[fn1]  from fn1::@1
   return 
   to:@return
 @2: scope:[]  from @begin
@@ -84,30 +83,27 @@ SYMBOL TABLE SSA
 (byte*) main::cols#2
 (byte*) main::cols#3
 
-Adding number conversion cast (unumber) $d800+$3e8 in (bool~) main::$0 ← (byte*) main::cols#2 < (number) $d800+(number) $3e8
 Adding number conversion cast (unumber) $400+$3e8 in (bool~) fn1::$0 ← (byte*) fn1::screen#2 < (number) $400+(number) $3e8
+Adding number conversion cast (unumber) $d800+$3e8 in (bool~) main::$0 ← (byte*) main::cols#2 < (number) $d800+(number) $3e8
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::cols#0 ← (byte*)(number) $d800
-Inlining cast (byte*) fn1::screen#0 ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 55296
 Successful SSA optimization PassNCastSimplification
-Alias (byte*) main::cols#2 = (byte*) main::cols#3 
 Alias (byte*) fn1::screen#2 = (byte*) fn1::screen#3 
+Alias (byte*) main::cols#2 = (byte*) main::cols#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [3] if((byte*) main::cols#2<(word)(number) $d800+(number) $3e8) goto main::@2
-Simple Condition (bool~) fn1::$0 [12] if((byte*) fn1::screen#2<(word)(number) $400+(number) $3e8) goto fn1::@2
+Simple Condition (bool~) fn1::$0 [3] if((byte*) fn1::screen#2<(word)(number) $400+(number) $3e8) goto fn1::@2
+Simple Condition (bool~) main::$0 [11] if((byte*) main::cols#2<(word)(number) $d800+(number) $3e8) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::cols#0 = (byte*) 55296
 Constant (const byte*) fn1::screen#0 = (byte*) 1024
+Constant (const byte*) main::cols#0 = (byte*) 55296
 Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function [5] call fn1 
+Replacing constant pointer function [13] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant (const void()*) main::cls
 Successful SSA optimization PassNEliminateUnusedVars
-Inlining constant with var siblings (const byte*) main::cols#0
 Inlining constant with var siblings (const byte*) fn1::screen#0
+Inlining constant with var siblings (const byte*) main::cols#0
 Constant inlined fn1::screen#0 = (byte*) 1024
 Constant inlined main::cols#0 = (byte*) 55296
 Successful SSA optimization Pass2ConstantInlining

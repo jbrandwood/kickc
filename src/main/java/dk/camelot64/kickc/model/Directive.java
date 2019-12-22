@@ -19,6 +19,10 @@ public interface Directive {
    class Register implements Directive {
    }
 
+   /** Variable declared static. */
+   class Static implements Directive {
+   }
+
    /** Function declared inline. */
    class Inline implements Directive {
    }
@@ -29,6 +33,14 @@ public interface Directive {
 
    /** Variable declared as export. */
    class Export implements Directive {
+   }
+
+   /** Variable declared as pointer to volatile ( volatile * )  */
+   class ToVolatile implements Directive {
+   }
+
+   /** Variable declared as pointer to const ( const * )  */
+   class ToConst implements Directive {
    }
 
    /** Variable __ssa */

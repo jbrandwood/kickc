@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConstantWithPrePost() throws IOException, URISyntaxException {
+      assertError("constant-prepost", "Constant value contains a pre/post-modifier");
+   }
+
+   @Test
    public void testGridBobs() throws IOException, URISyntaxException {
       compileAndCompare("complex/prebob/grid-bobs");
    }
@@ -2837,6 +2842,11 @@ public class TestPrograms {
    @Test
    public void testInlineAssignment() throws IOException, URISyntaxException {
       compileAndCompare("inline-assignment");
+   }
+
+   @Test
+   public void testInlineDWord0() throws IOException, URISyntaxException {
+      compileAndCompare("inline-dword-0");
    }
 
    @Test

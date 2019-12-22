@@ -347,6 +347,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
                return new StructMemberUnwindingPointerDerefSimple((PointerDereferenceSimple) value, structType.getStructDefinition(getScope()), stmtIt, currentBlock, currentStmt);
             } else if(value instanceof PointerDereferenceIndexed) {
                return new StructMemberUnwindingPointerDerefIndexed((PointerDereferenceIndexed) value, structType.getStructDefinition(getScope()), stmtIt, currentBlock, currentStmt);
+            } else if(value instanceof ConstantStructValue) {
+               return new StructMemberUnwindingConstantValue((ConstantStructValue) value, structType.getStructDefinition(getScope()), stmtIt, currentBlock, currentStmt);
             } else {
                throw new InternalError("Struct unwinding not implemented for " + value.toString(getProgram()));
             }
@@ -449,5 +451,39 @@ public class Pass1UnwindStructValues extends Pass1Base {
          return new PointerDereferenceIndexed(memberAddress.getRef(), pointerDeref.getIndex());
       }
    }
+
+   /** Unwinding for a simple pointer deref to a struct. */
+   private class StructMemberUnwindingConstantValue implements StructUnwinding.StructMemberUnwinding {
+      private final ConstantStructValue constantStructValue;
+      private final StructDefinition structDefinition;
+      private final ControlFlowBlock currentBlock;
+      private final ListIterator<Statement> stmtIt;
+      private final Statement currentStmt;
+
+      StructMemberUnwindingConstantValue(ConstantStructValue constantStructValue, StructDefinition structDefinition, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock, Statement currentStmt) {
+         this.constantStructValue = constantStructValue;
+         this.structDefinition = structDefinition;
+         this.currentBlock = currentBlock;
+         this.stmtIt = stmtIt;
+         this.currentStmt = currentStmt;
+      }
+
+      @Override
+      public List<String> getMemberNames() {
+         Collection<Variable> structMemberVars = structDefinition.getAllVariables(false);
+         ArrayList<String> memberNames = new ArrayList<>();
+         for(Variable structMemberVar : structMemberVars) {
+            memberNames.add(structMemberVar.getLocalName());
+         }
+         return memberNames;
+      }
+
+      @Override
+      public RValue getMemberUnwinding(String memberName) {
+         Variable member = structDefinition.getMember(memberName);
+         return constantStructValue.getValue(member.getRef());
+      }
+   }
+
 
 }

@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.iterator.ProgramValue;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
@@ -54,6 +55,20 @@ public class ConstantValueLists {
             for(int i = 0; i < size; i++) {
                Variable memberDef = memberDefIt.next();
                exprModified |= addValueCasts(memberDef.getType(), memberDef.isArray(), new ProgramValue.ProgramValueListElement(valueList, i), program, source);
+            }
+            // Add a cast to the value list itself
+            programValue.set(new CastValue(declaredType, valueList));
+         } else if(declaredType.equals(SymbolType.WORD) && valueList.getList().size()==2){
+            // An inline word { byte, byte}
+            for(int i = 0; i < valueList.getList().size(); i++) {
+               exprModified |= addValueCasts(SymbolType.BYTE, false, new ProgramValue.ProgramValueListElement(valueList, i), program, source);
+            }
+            // Add a cast to the value list itself
+            programValue.set(new CastValue(declaredType, valueList));
+         } else if(declaredType.equals(SymbolType.DWORD) && valueList.getList().size()==2){
+            // An inline dword { byte, byte}
+            for(int i = 0; i < valueList.getList().size(); i++) {
+               exprModified |= addValueCasts(SymbolType.WORD, false, new ProgramValue.ProgramValueListElement(valueList, i), program, source);
             }
             // Add a cast to the value list itself
             programValue.set(new CastValue(declaredType, valueList));
@@ -153,6 +168,18 @@ public class ConstantValueLists {
             memberValues.put(memberDef.getRef(), memberValue);
          }
          return new ConstantStructValue(declaredStructType, memberValues);
+      } else if(declaredType.equals(SymbolType.WORD) && constantValues.size()==2){
+         // An inline word
+         for(ConstantValue constantValue : constantValues)
+            if(!SymbolTypeConversion.assignmentTypeMatch(SymbolType.BYTE, constantValue.getType(program.getScope())))
+               throw new CompileError("Initializer element " + constantValue.toString(program) + " does not match needed type "+SymbolType.BYTE, source);
+         return new ConstantBinary(new ConstantBinary(constantValues.get(0), Operators.MULTIPLY, new ConstantInteger(0x100L, SymbolType.WORD)), Operators.PLUS, constantValues.get(1));
+      } else if(declaredType.equals(SymbolType.DWORD) && constantValues.size()==2){
+         // An inline word
+         for(ConstantValue constantValue : constantValues)
+            if(!SymbolTypeConversion.assignmentTypeMatch(SymbolType.WORD, constantValue.getType(program.getScope())))
+               throw new CompileError("Initializer element " + constantValue.toString(program) + " does not match needed type "+SymbolType.WORD, source);
+         return new ConstantBinary(new ConstantBinary(constantValues.get(0), Operators.MULTIPLY, new ConstantInteger(0x10000L, SymbolType.DWORD)), Operators.PLUS, constantValues.get(1));
       } else {
          throw new InternalError("Not supported " + declaredType);
       }

@@ -1,24 +1,12 @@
-Resolved forward reference hello to (void()) hello()
 Warning! Adding boolean cast to non-boolean condition *((const byte*) msg + (byte) hello::i)
 Identified constant variable (void()*) main::f
-Culled Empty Block (label) @1
 Culled Empty Block (label) do10::@2
 Culled Empty Block (label) hello::@2
+Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@2
-
-(void()) main()
-main: scope:[main]  from @3
-  (void()*) do10::fn#0 ← (const void()*) main::f
-  call do10 
-  to:main::@1
-main::@1: scope:[main]  from main
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  return 
-  to:@return
+  to:@1
 
 (void()) do10((void()*) do10::fn)
 do10: scope:[do10]  from main
@@ -36,7 +24,7 @@ do10::@1: scope:[do10]  from do10 do10::@1
 do10::@return: scope:[do10]  from do10::@1
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   (byte) idx#0 ← (number) 0
   to:@3
 
@@ -59,8 +47,19 @@ hello::@return: scope:[hello]  from hello::@1
   (byte) idx#2 ← (byte) idx#4
   return 
   to:@return
-@3: scope:[]  from @2
-  (byte) idx#6 ← phi( @2/(byte) idx#0 )
+
+(void()) main()
+main: scope:[main]  from @3
+  (void()*) do10::fn#0 ← (const void()*) main::f
+  call do10 
+  to:main::@1
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@3: scope:[]  from @1
+  (byte) idx#6 ← phi( @1/(byte) idx#0 )
   call main 
   to:@4
 @4: scope:[]  from @3
@@ -68,7 +67,7 @@ hello::@return: scope:[hello]  from hello::@1
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(label) @2
+(label) @1
 (label) @3
 (label) @4
 (label) @begin
@@ -131,17 +130,17 @@ Identical Phi Values (void()*) do10::fn#2 (void()*) do10::fn#0
 Identical Phi Values (void()*) do10::fn#1 (void()*) do10::fn#2
 Identical Phi Values (byte) idx#5 (byte) idx#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) do10::$1 [9] if((byte) do10::i#1!=rangelast(0,9)) goto do10::@1
-Simple Condition (bool~) hello::$0 [19] if((byte) 0!=*((const byte*) msg + (byte) hello::i#1)) goto hello::@1
+Simple Condition (bool~) do10::$1 [6] if((byte) do10::i#1!=rangelast(0,9)) goto do10::@1
+Simple Condition (bool~) hello::$0 [16] if((byte) 0!=*((const byte*) msg + (byte) hello::i#1)) goto hello::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const void()*) do10::fn#0 = main::f
 Constant (const byte) do10::i#0 = 0
 Constant (const byte) hello::i#0 = 0
+Constant (const void()*) do10::fn#0 = main::f
 Successful SSA optimization Pass2ConstantIdentification
-Replacing constant pointer function [6] call hello 
+Replacing constant pointer function [3] call hello 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
-Resolved ranged next value [7] do10::i#1 ← ++ do10::i#2 to ++
-Resolved ranged comparison value [9] if(do10::i#1!=rangelast(0,9)) goto do10::@1 to (number) $a
+Resolved ranged next value [4] do10::i#1 ← ++ do10::i#2 to ++
+Resolved ranged comparison value [6] if(do10::i#1!=rangelast(0,9)) goto do10::@1 to (number) $a
 Eliminating unused constant (const void()*) do10::fn#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const void()*) main::f
@@ -181,7 +180,6 @@ Culled Empty Block (label) @4
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) do10::@3
 Culled Empty Block (label) hello::@3
-Renumbering block @2 to @1
 Renumbering block @3 to @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2

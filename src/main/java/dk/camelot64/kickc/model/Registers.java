@@ -83,6 +83,10 @@ public class Registers {
          return variableRef;
       }
 
+      public void setVariableRef(VariableRef variableRef) {
+         this.variableRef = variableRef;
+      }
+
       @Override
       public RegisterType getType() {
          return RegisterType.MAIN_MEM;

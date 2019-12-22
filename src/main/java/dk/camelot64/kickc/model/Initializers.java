@@ -10,11 +10,84 @@ import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
-/** Utility methods for finding constant struct/array values from {@link dk.camelot64.kickc.model.values.ValueList}. */
-public class ConstantValueLists {
+/** Utility methods for initializing variables */
+public class Initializers {
 
    /**
-    * Add cast to a value inside a value list initializer based on the declared type of the symbol.
+    * Create a statement that initializes a variable with the default (zero) value. The statement has to be added to the program by the caller.
+    *
+    * @param type The type of the variable
+    * @param statementSource The source line
+    * @return The new statement
+    */
+   public static RValue createZeroValue(SymbolType type, StatementSource statementSource) {
+      if(type instanceof SymbolTypeIntegerFixed) {
+         // Add an zero value initializer
+         return new ConstantInteger(0L, type);
+      } else if(type instanceof SymbolTypePointer) {
+         // Add an zero value initializer
+         SymbolTypePointer typePointer = (SymbolTypePointer) type;
+         return new ConstantPointer(0L, typePointer.getElementType());
+      } else if(type instanceof SymbolTypeStruct) {
+         // Add an zero-struct initializer
+         SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
+         return new StructZero(typeStruct);
+      } else {
+         throw new CompileError("Default initializer not implemented for type " + type.getTypeName(), statementSource);
+      }
+   }
+
+   /**
+    * Get a value for initializing a variable from an expression.
+    * If possible the value is converted to a ConstantValue.
+    *
+    * @param initValue The parsed init expression value (may be null)
+    * @param type The type of the constant variable (used for creating zero values)
+    * @param statementSource The statement (used in exceptions.
+    * @return The constant init-value. Null if the value cannot be turned into a constant init-value.
+    */
+   public static RValue getInitValue(RValue initValue, SymbolType type, boolean isArray, ConstantValue arraySize, Program program, StatementSource statementSource) {
+      // TODO: Handle struct members
+      // Create zero-initializers if null
+      if(initValue == null) {
+         if(isArray) {
+            // Add an zero-filled array initializer
+            SymbolTypePointer typePointer = (SymbolTypePointer) type;
+            if(arraySize == null) {
+               throw new CompileError("Error! Array has no declared size. ", statementSource);
+            }
+            initValue = new ConstantArrayFilled(typePointer.getElementType(), arraySize);
+         } else {
+            // Add an zero-value
+            initValue = createZeroValue(type, statementSource);
+         }
+      }
+      // Convert initializer value lists to constant if possible
+      if((initValue instanceof ValueList)) {
+         ProgramValue programValue = new ProgramValue.GenericValue(initValue);
+         addValueCasts(type, isArray, programValue, program, statementSource);
+         if(programValue.get() instanceof CastValue) {
+            CastValue castValue = (CastValue) programValue.get();
+            if(castValue.getValue() instanceof ValueList) {
+               // Found value list with cast - look through all elements
+               ConstantValue constantValue = convertToConstant(castValue.getToType(), (ValueList) castValue.getValue(), program, statementSource);
+               if(constantValue != null) {
+                  // Converted value list to constant!!
+                  initValue = constantValue;
+               }
+            }
+         }
+      }
+      // Add pointer cast to integers
+      if(type instanceof SymbolTypePointer && initValue instanceof ConstantValue && SymbolType.isInteger(((ConstantValue) initValue).getType(program.getScope()))) {
+         initValue = new ConstantCastValue(type, (ConstantValue) initValue);
+      }
+      return initValue;
+   }
+
+
+   /**
+    * Add casts to a value based on the declared type of the symbol. Recurses to all sub-values.
     *
     * @param declaredType The declared type of the value
     * @param isArray true if the declared variable is an array
@@ -22,7 +95,7 @@ public class ConstantValueLists {
     * @param source The current statement
     * @return true if anything was modified
     */
-   public static boolean addValueCasts(SymbolType declaredType, boolean isArray, ProgramValue programValue, Program program, StatementSource source) {
+   static boolean addValueCasts(SymbolType declaredType, boolean isArray, ProgramValue programValue, Program program, StatementSource source) {
       boolean exprModified = false;
       Value value = programValue.get();
       if(value instanceof ValueList) {
@@ -103,7 +176,7 @@ public class ConstantValueLists {
     * @param valueList The list of values
     * @return The constant value if all list elements are constant. null if elements are not constant
     */
-   public static ConstantValue getConstantValue(SymbolType declaredType, ValueList valueList, Program program, StatementSource source) {
+   static ConstantValue convertToConstant(SymbolType declaredType, ValueList valueList, Program program, StatementSource source) {
       // Examine whether all list elements are constant
       List<RValue> values = valueList.getList();
       List<ConstantValue> constantValues = new ArrayList<>();
@@ -115,7 +188,7 @@ public class ConstantValueLists {
             // Recursion may be needed
             CastValue castValue = (CastValue) elmValue;
             if(castValue.getValue() instanceof ValueList) {
-               ConstantValue constantValue = getConstantValue(castValue.getToType(), (ValueList) castValue.getValue(), program, source);
+               ConstantValue constantValue = convertToConstant(castValue.getToType(), (ValueList) castValue.getValue(), program, source);
                if(constantValue != null) {
                   constantValues.add(constantValue);
                } else {
@@ -184,4 +257,5 @@ public class ConstantValueLists {
          throw new InternalError("Not supported " + declaredType);
       }
    }
+
 }

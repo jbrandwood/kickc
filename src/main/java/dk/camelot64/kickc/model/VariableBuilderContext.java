@@ -1,11 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.StatementSource;
-import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeStruct;
-import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.List;
@@ -16,37 +12,6 @@ import java.util.List;
 public class VariableBuilderContext {
 
    public VariableBuilderContext() {
-   }
-
-   /**
-    * Find the variable kind for a declared variable (not used for intermediates or PHI-versions)
-    *
-    * @param type The type of the variable
-    * @param scope The scope
-    * @param isParameter true if the variable is a procedure parameter
-    * @param sourceDirectives The directives in the source code
-    * @param source The source line (for exceptions)
-    * @return The variable kind
-    */
-   public Variable.Kind getKind(SymbolType type, Scope scope, boolean isParameter, boolean isArray, List<Directive> sourceDirectives, StatementSource source) {
-      // Look for const without volatile
-      if(hasDirective(Directive.Const.class, sourceDirectives))
-         if(!hasDirective(Directive.Volatile.class, sourceDirectives))
-            return Variable.Kind.CONSTANT;
-      // Look for array (which is implicitly const
-      if(isArray)
-         return Variable.Kind.CONSTANT;
-      // It is not a constant - determine PHI_MASTER vs LOAD_STORE
-      if(hasDirective(Directive.FormSsa.class, sourceDirectives))
-         return Variable.Kind.PHI_MASTER;
-      if(hasDirective(Directive.FormMa.class, sourceDirectives))
-         return Variable.Kind.LOAD_STORE;
-      if(hasDirective(Directive.Register.class, sourceDirectives))
-         return Variable.Kind.PHI_MASTER;
-      if(hasDirective(Directive.NamedRegister.class, sourceDirectives))
-         return Variable.Kind.PHI_MASTER;
-      // TODO: Add strategy for selecting LOAD_STORE for global vars
-      return Variable.Kind.PHI_MASTER;
    }
 
    /**

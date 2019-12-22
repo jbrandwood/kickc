@@ -248,7 +248,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                membersUnwound.add(memberVarRef);
                Variable memberVar = getScope().getVariable(memberVarRef);
                StatementSource statementSource = assignment.getSource();
-               RValue initValue = Pass0GenerateStatementSequence.createZeroValue(memberVar.getType(), statementSource);
+               RValue initValue = Initializers.createZeroValue(memberVar.getType(), statementSource);
                Statement initStmt = new StatementAssignment((LValue) memberVarRef, initValue, statementSource, Comment.NO_COMMENTS);
                stmtIt.add(initStmt);
                getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));

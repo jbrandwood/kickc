@@ -3,13 +3,13 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmClobber;
-import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.types.*;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCParser;
@@ -565,77 +565,69 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDeclVariableInitExpr(KickCParser.DeclVariableInitExprContext ctx) {
       StatementSource statementSource = new StatementSource(ctx);
-      String varName = ctx.NAME().getText();
-      KickCParser.ExprContext initializer = ctx.expr();
-      ArraySpec arraySpec = null;
-      if(declIsArray) {
-         arraySpec = new ArraySpec(declArraySize);
-      }
-      if(initializer != null)
-         PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
-      RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
-      initValue = getInitValue(initValue, declVarType, declIsArray, declArraySize, program, statementSource);
-
-      VariableBuilder varBuilder = new VariableBuilder(getCurrentScope(), false, declVarType, arraySpec, declVarDirectives);
       try {
-         // Find kind
-         Variable.Kind kind = directiveContext.getKind(declVarType, getCurrentScope(), false, declIsArray, declVarDirectives, statementSource);
-         if(kind.equals(Variable.Kind.CONSTANT)) {
-            // Create a Constant
-            ConstantValue initConstantValue = getConstantValue(initializer, declVarType, declVarStructMember, statementSource);
+         String varName = ctx.NAME().getText();
+         KickCParser.ExprContext initializer = ctx.expr();
+         ArraySpec arraySpec = null;
+         if(declIsArray) {
+            arraySpec = new ArraySpec(declArraySize);
+         }
+         if(declVarStructMember && (initializer != null))
+            throw new CompileError("Initializer not supported inside structs " + declVarType.getTypeName(), statementSource);
+         if(initializer != null)
+            PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
+         RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
+         initValue = Initializers.getInitValue(initValue, declVarType, declIsArray, declArraySize, program, statementSource);
+         VariableBuilder varBuilder = new VariableBuilder(getCurrentScope(), false, declVarType, arraySpec, declVarDirectives);
+         if(varBuilder.isConstant()) {
             Scope scope = getCurrentScope();
-            Variable constVar = Variable.createConstant(varName, declVarType, scope, arraySpec, initConstantValue, currentDataSegment);
+            ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
+            Variable constVar = Variable.createConstant(varName, declVarType, scope, arraySpec, constInitValue, currentDataSegment);
+            constVar.setDeclaredConst(varBuilder.isConstant());
+            constVar.setDeclaredVolatile(varBuilder.isVolatile());
+            constVar.setDeclaredExport(varBuilder.isExport());
+            constVar.setDeclaredAsRegister(varBuilder.isOptimize());
+            constVar.setDeclaredRegister(varBuilder.getRegister());
+            constVar.setMemoryArea(varBuilder.getMemoryArea());
+            constVar.setDeclaredAlignment(varBuilder.getAlignment());
             scope.add(constVar);
             // Add comments to constant
             constVar.setComments(ensureUnusedComments(declVarComments));
-            directiveContext.applyDirectives(constVar, false, declIsArray, declVarDirectives, statementSource);
-            assert varBuilder.getKind().equals(constVar.getKind());
-            assert varBuilder.isArray() == constVar.isArray();
-            assert varBuilder.isVolatile() == constVar.isDeclaredVolatile();
-            assert varBuilder.isOptimize() == constVar.isDeclaredAsRegister();
-            assert varBuilder.isExport() == constVar.isDeclaredExport();
-            assert varBuilder.isConstant() == constVar.isDeclaredConst();
-            assert varBuilder.getMemoryArea() == constVar.getMemoryArea();
-            assert Objects.equals(varBuilder.getAlignment(), constVar.getDeclaredAlignment());
-            assert Objects.equals(varBuilder.getRegister(), constVar.getDeclaredRegister());
-         } else {
-            // Create variable
-            Variable lValue;
-            if(kind.equals(Variable.Kind.PHI_MASTER)) {
-               lValue = Variable.createPhiMaster(varName, declVarType, getCurrentScope(), defaultMemoryArea, currentDataSegment);
-            } else if(kind.equals(Variable.Kind.LOAD_STORE)) {
-               lValue = Variable.createLoadStore(varName, declVarType, getCurrentScope(), defaultMemoryArea, currentDataSegment);
-            } else {
-               throw new InternalError("Unexpected variable kind! " + kind.name(), statementSource);
+         } else if(varBuilder.isSingleStaticAssignment()) {
+            // Create SSA  PHI-master variable
+            Variable lValue = Variable.createPhiMaster(varName, declVarType, getCurrentScope(), defaultMemoryArea, currentDataSegment);
+            lValue.setDeclaredConst(varBuilder.isConstant());
+            lValue.setDeclaredVolatile(varBuilder.isVolatile());
+            lValue.setDeclaredExport(varBuilder.isExport());
+            lValue.setDeclaredAsRegister(varBuilder.isOptimize());
+            lValue.setDeclaredRegister(varBuilder.getRegister());
+            if(lValue.getDeclaredRegister() instanceof Registers.RegisterMainMem) {
+               ((Registers.RegisterMainMem) lValue.getDeclaredRegister()).setVariableRef(lValue.getVariableRef());
             }
+            lValue.setMemoryArea(varBuilder.getMemoryArea());
+            lValue.setDeclaredAlignment(varBuilder.getAlignment());
             getCurrentScope().add(lValue);
-            // Add directives
-            directiveContext.applyDirectives(lValue, false, declIsArray, declVarDirectives, statementSource);
-            if(declVarStructMember) {
-               if(initializer != null) {
-                  throw new CompileError("Initializer not supported inside structs " + declVarType.getTypeName(), statementSource);
-               }
-            } else {
-               if(initializer == null) {
-                  initValue = createZeroValue(declVarType, statementSource);
-               }
+            if(!declVarStructMember) {
                Statement initStmt = new StatementAssignment(lValue.getVariableRef(), initValue, statementSource, ensureUnusedComments(declVarComments));
                sequence.addStatement(initStmt);
             }
-            assert varBuilder.getKind().equals(lValue.getKind());
-            assert varBuilder.isArray() == lValue.isArray();
-            assert varBuilder.isVolatile() == lValue.isDeclaredVolatile();
-            assert varBuilder.isOptimize() == lValue.isDeclaredAsRegister();
-            assert varBuilder.isExport() == lValue.isDeclaredExport();
-            assert varBuilder.isConstant() == lValue.isDeclaredConst();
-            assert varBuilder.getMemoryArea() == lValue.getMemoryArea();
-            assert Objects.equals(varBuilder.getAlignment(), lValue.getDeclaredAlignment());
-            if(varBuilder.getRegister() instanceof Registers.RegisterMainMem) {
-               assert Objects.equals(varBuilder.getRegister().getType(), lValue.getDeclaredRegister().getType());
-               assert Objects.equals(varBuilder.getRegister().getBytes(), lValue.getDeclaredRegister().getBytes());
-               assert Objects.equals(((Registers.RegisterMainMem) varBuilder.getRegister()).getAddress(), ((Registers.RegisterMainMem) lValue.getDeclaredRegister()).getAddress());
-            } else
-               assert Objects.equals(varBuilder.getRegister(), lValue.getDeclaredRegister());
+         } else {
+            Variable lValue = Variable.createLoadStore(varName, declVarType, getCurrentScope(), defaultMemoryArea, currentDataSegment);
+            lValue.setDeclaredConst(varBuilder.isConstant());
+            lValue.setDeclaredVolatile(varBuilder.isVolatile());
+            lValue.setDeclaredExport(varBuilder.isExport());
+            lValue.setDeclaredAsRegister(varBuilder.isOptimize());
+            lValue.setDeclaredRegister(varBuilder.getRegister());
+            if(lValue.getDeclaredRegister() instanceof Registers.RegisterMainMem) {
+               ((Registers.RegisterMainMem) lValue.getDeclaredRegister()).setVariableRef(lValue.getVariableRef());
+            }
+            lValue.setMemoryArea(varBuilder.getMemoryArea());
+            lValue.setDeclaredAlignment(varBuilder.getAlignment());
+            getCurrentScope().add(lValue);
+            if(!declVarStructMember) {
+               Statement initStmt = new StatementAssignment(lValue.getVariableRef(), initValue, statementSource, ensureUnusedComments(declVarComments));
+               sequence.addStatement(initStmt);
+            }
          }
          if(initializer != null)
             PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
@@ -646,77 +638,23 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    /**
-    * Get a constant value from an initializer
+    * Ensure that tha initializer value is a constant. Fail if it is not
     *
-    * @param initializer The initializer (may be null)
-    * @param type The type of the constant variable (used for creating zero values)
-    * @param statementSource The statement (used in exceptions.
-    * @return The constant value.
-    * @throws CompileError if the initializer does not resolve to a constant value
+    * @param initValue The initializer value (result from {@link Initializers#getInitValue(RValue, SymbolType, boolean, ConstantValue, Program, StatementSource)})
+    * @param initializer The initializer
+    * @param statementSource The source line
+    * @return The constant initializer value
     */
-   private ConstantValue getConstantValue(KickCParser.ExprContext initializer, SymbolType type, boolean isStructMember, StatementSource statementSource) {
+   private ConstantValue getConstInitValue(RValue initValue, KickCParser.ExprContext initializer, StatementSource statementSource) {
       if(initializer != null && PrePostModifierHandler.hasPrePostModifiers(this, initializer, statementSource)) {
          throw new CompileError("Constant value contains a pre/post-modifier.", statementSource);
       }
-      RValue initValue = null;
-      if(initializer != null)
-         initValue = (RValue) visit(initializer);
       if(initValue instanceof ForwardVariableRef) {
          throw new CompileError("Variable used before being defined " + initValue.toString(), statementSource);
       }
-      RValue constInitValue = getInitValue(initValue, type, declIsArray, declArraySize, program, statementSource);
-      if(constInitValue instanceof ConstantValue)
-         return (ConstantValue) constInitValue;
-      else
-         return null;
-   }
-
-   /**
-    * Get a value for initializing a variable from an expression.
-    * If possible the value is converted to a ConstantValue.
-    *
-    * @param initValue The parsed init expression value (may be null)
-    * @param type The type of the constant variable (used for creating zero values)
-    * @param statementSource The statement (used in exceptions.
-    * @return The constant init-value. Null if the value cannot be turned into a constant init-value.
-    */
-   private static RValue getInitValue(RValue initValue, SymbolType type, boolean isArray, ConstantValue arraySize, Program program, StatementSource statementSource) {
-      // TODO: Handle struct members
-      // Create zero-initializers if null
-      if(initValue == null) {
-         if(isArray) {
-            // Add an zero-filled array initializer
-            SymbolTypePointer typePointer = (SymbolTypePointer) type;
-            if(arraySize == null) {
-               throw new CompileError("Error! Array has no declared size. ", statementSource);
-            }
-            initValue = new ConstantArrayFilled(typePointer.getElementType(), arraySize);
-         } else {
-            // Add an zero-value
-            initValue = createZeroValue(type, statementSource);
-         }
-      }
-      // Convert initializer value lists to constant if possible
-      if((initValue instanceof ValueList)) {
-         ProgramValue programValue = new ProgramValue.GenericValue(initValue);
-         ConstantValueLists.addValueCasts(type, isArray, programValue, program, statementSource);
-         if(programValue.get() instanceof CastValue) {
-            CastValue castValue = (CastValue) programValue.get();
-            if(castValue.getValue() instanceof ValueList) {
-               // Found value list with cast - look through all elements
-               ConstantValue constantValue = ConstantValueLists.getConstantValue(castValue.getToType(), (ValueList) castValue.getValue(), program, statementSource);
-               if(constantValue != null) {
-                  // Converted value list to constant!!
-                  initValue = constantValue;
-               }
-            }
-         }
-      }
-      // Add pointer cast to integers
-      if(type instanceof SymbolTypePointer && initValue instanceof ConstantValue && SymbolType.isInteger(((ConstantValue) initValue).getType(program.getScope()))) {
-         initValue = new ConstantCastValue(type, (ConstantValue) initValue);
-      }
-      return initValue;
+      if(!(initValue instanceof ConstantValue))
+         throw new CompileError("Initializer is not a constant value " + initValue.toString(), statementSource);
+      return (ConstantValue) initValue;
    }
 
    @Override
@@ -755,30 +693,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       constVar.setComments(ensureUnusedComments(declVarComments));
       directiveContext.applyDirectives(constVar, false, declIsArray, declVarDirectives, statementSource);
       return null;
-   }
-
-   /**
-    * Create a statement that initializes a variable with the default (zero) value. The statement has to be added to the program by the caller.
-    *
-    * @param type The type of the variable
-    * @param statementSource The source line
-    * @return The new statement
-    */
-   static RValue createZeroValue(SymbolType type, StatementSource statementSource) {
-      if(type instanceof SymbolTypeIntegerFixed) {
-         // Add an zero value initializer
-         return new ConstantInteger(0L, type);
-      } else if(type instanceof SymbolTypePointer) {
-         // Add an zero value initializer
-         SymbolTypePointer typePointer = (SymbolTypePointer) type;
-         return new ConstantPointer(0L, typePointer.getElementType());
-      } else if(type instanceof SymbolTypeStruct) {
-         // Add an zero-struct initializer
-         SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
-         return new StructZero(typeStruct);
-      } else {
-         throw new CompileError("Default initializer not implemented for type " + type.getTypeName(), statementSource);
-      }
    }
 
    /**

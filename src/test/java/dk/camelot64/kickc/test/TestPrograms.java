@@ -38,13 +38,33 @@ public class TestPrograms {
    }
 
    @Test
-   public void testNomodify0() throws IOException, URISyntaxException {
-      assertError("nomodify-0", "Constants can not be modified");
+   public void testNomodify5() throws IOException, URISyntaxException {
+      assertError("nomodify-5", "const variable may not be modified");
+   }
+
+   @Test
+   public void testNomodify4() throws IOException, URISyntaxException {
+      compileAndCompare("nomodify-4");
+   }
+
+   @Test
+   public void testNomodify3() throws IOException, URISyntaxException {
+      compileAndCompare("nomodify-3");
+   }
+
+   @Test
+   public void testNomodify2() throws IOException, URISyntaxException {
+      assertError("nomodify-2", "const variable may not be modified");
    }
 
    @Test
    public void testNomodify1() throws IOException, URISyntaxException {
       assertError("nomodify-1", "const variable may not be modified");
+   }
+
+   @Test
+   public void testNomodify0() throws IOException, URISyntaxException {
+      assertError("nomodify-0", "Constants can not be modified");
    }
 
    @Test

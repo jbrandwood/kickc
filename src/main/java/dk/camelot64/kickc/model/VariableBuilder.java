@@ -48,6 +48,7 @@ public class VariableBuilder {
 
    /**
     * Build the variable with the properties derived from type, scope, directives and configuration.
+    *
     * @return The variable
     */
    public Variable build() {
@@ -222,11 +223,15 @@ public class VariableBuilder {
     */
    public boolean isSingleStaticAssignment() {
       if(hasDirective(Directive.FormMa.class))
+         // the __ma directive forces multiple-assignment
          return false;
-      else if(!isConstant())
-         return true;
+      else if(isNoModify())
+         // (volatile) no-modify variables must be load/store
+         // TODO: Change to isVolatile()!
+         return false;
       else
-         return false;
+         // All others are single-static-assignment (by default)
+         return true;
    }
 
    /**

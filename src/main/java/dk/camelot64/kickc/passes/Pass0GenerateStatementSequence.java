@@ -266,8 +266,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       String varName = ctx.NAME().getText();
       VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, declVarType, null, declVarDirectives, currentDataSegment);
       // TODO: const parameter pointer should be no-modify!
-      if(varBuilder.hasDirective(Directive.Const.class))
-         throw new CompileError("Error! Const parameters not supported " + varName + " in " + getCurrentScope().getFullName() + "()");
+      //if(varBuilder.hasDirective(Directive.Const.class))
+      //   throw new CompileError("Error! Const parameters not supported " + varName + " in " + getCurrentScope().getFullName() + "()");
       Variable param = varBuilder.build();
       exitDeclTypes();
       return param;

@@ -73,12 +73,12 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
                               // First add shifts
                               Variable varShift = scope.addVariableIntermediate();
                               varShift.setType(resultType);
-                              stmtIt.add(new StatementAssignment((LValue) varShift.getRef(), building, Operators.SHIFT_LEFT, new ConstantInteger(shiftCount, SymbolType.BYTE), assignment.getSource(), Comment.NO_COMMENTS));
+                              stmtIt.add(new StatementAssignment((LValue) varShift.getRef(), building, Operators.SHIFT_LEFT, new ConstantInteger(shiftCount, SymbolType.BYTE), true, assignment.getSource(), Comment.NO_COMMENTS));
                               shiftCount = 0;
                               // Then add rvalue1
                               Variable varAdd = scope.addVariableIntermediate();
                               varAdd.setType(resultType);
-                              stmtIt.add(new StatementAssignment((LValue) varAdd.getRef(), varShift.getRef(), Operators.PLUS, assignment.getrValue1(), assignment.getSource(), Comment.NO_COMMENTS));
+                              stmtIt.add(new StatementAssignment((LValue) varAdd.getRef(), varShift.getRef(), Operators.PLUS, assignment.getrValue1(), true, assignment.getSource(), Comment.NO_COMMENTS));
                               building = varAdd.getRef();
                               remains -= powVal;
                            }
@@ -92,7 +92,7 @@ public class Pass2MultiplyToShiftRewriting extends Pass2SsaOptimization {
                         if(shiftCount>0) {
                            Variable varShift = scope.addVariableIntermediate();
                            varShift.setType(resultType);
-                           stmtIt.add(new StatementAssignment((LValue) varShift.getRef(), building, Operators.SHIFT_LEFT, new ConstantInteger(shiftCount, SymbolType.BYTE), assignment.getSource(), Comment.NO_COMMENTS));
+                           stmtIt.add(new StatementAssignment((LValue) varShift.getRef(), building, Operators.SHIFT_LEFT, new ConstantInteger(shiftCount, SymbolType.BYTE), true, assignment.getSource(), Comment.NO_COMMENTS));
                            building = varShift.getRef();
                         }
                         stmtIt.next();

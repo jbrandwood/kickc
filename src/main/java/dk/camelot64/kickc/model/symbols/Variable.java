@@ -16,7 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/** A Variable symbol (can either be a runtime variable or a compile-time constant).
+/**
+ * A Variable symbol (can either be a runtime variable or a compile-time constant).
  * <p>
  * Array values are implemented as {@link Kind#CONSTANT}s with the array data in {@link #getInitValue()} and the declared size in {@link #getArraySpec()}.
  * Struct values are implemented as {@link Kind#LOAD_STORE}s with the initial data in {@link #getInitValue()} or as {@link Kind#PHI_MASTER}s that will be unwound to member variables during compilation.
@@ -277,7 +278,7 @@ public class Variable implements Symbol {
          memberVariable = new Variable(name, Kind.CONSTANT, memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(), memberDefinition.getInitValue());
       } else {
          // For others the kind is preserved from the member definition
-         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(),  memberDefinition.getInitValue());
+         memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(), memberDefinition.getInitValue());
       }
       memberVariable.setVolatile(structVar.isVolatile());
       memberVariable.setInferredVolatile(structVar.isInferredVolatile());
@@ -354,6 +355,7 @@ public class Variable implements Symbol {
 
    /**
     * Determines if the variable is an array
+    *
     * @return True if the variable is an array.
     */
    public boolean isArray() {
@@ -362,10 +364,11 @@ public class Variable implements Symbol {
 
    /**
     * If the variable is an array with a declared size this returns the size
+    *
     * @return The size of the array if declared. Null if not an array or an array without a declared size.
     */
    public ConstantValue getArraySize() {
-      if(arraySpec!=null)
+      if(arraySpec != null)
          return arraySpec.getArraySize();
       else
          return null;

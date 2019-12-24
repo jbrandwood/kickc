@@ -83,7 +83,7 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
       statementLValue.setlValue((LValue) tmpVarRef);
       PassNTypeInference.updateInferedTypeLValue(getProgram(), statementLValue);
       // Insert an extra "set low" assignment statement
-      Statement setLoHiAssignment = new StatementAssignment(loHiVar, loHiVar, loHiOperator, tmpVarRef, statementLValue.getSource(), new ArrayList<>());
+      Statement setLoHiAssignment = new StatementAssignment(loHiVar, loHiVar, loHiOperator, tmpVarRef, true, statementLValue.getSource(), new ArrayList<>());
       statementsIt.add(setLoHiAssignment);
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("Fixing lo/hi-lvalue with new tmpVar " + tmpVarRef + " " + statementLValue.toString());

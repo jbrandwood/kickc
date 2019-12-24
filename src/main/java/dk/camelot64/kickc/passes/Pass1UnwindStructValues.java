@@ -249,7 +249,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                Variable memberVar = getScope().getVariable(memberVarRef);
                StatementSource statementSource = assignment.getSource();
                RValue initValue = Initializers.createZeroValue(memberVar.getType(), statementSource);
-               Statement initStmt = new StatementAssignment((LValue) memberVarRef, initValue, statementSource, Comment.NO_COMMENTS);
+               Statement initStmt = new StatementAssignment((LValue) memberVarRef, initValue, assignment.isInitialAssignment(), statementSource, Comment.NO_COMMENTS);
                stmtIt.add(initStmt);
                getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));
             }
@@ -273,7 +273,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
             for(String memberName : memberUnwinding.getMemberNames()) {
                LValue memberLvalue = (LValue) memberUnwinding.getMemberUnwinding(memberName);
                membersUnwound.add(memberLvalue);
-               Statement initStmt = new StatementAssignment(memberLvalue, valueList.getList().get(idx++), assignment.getSource(), Comment.NO_COMMENTS);
+               Statement initStmt = new StatementAssignment(memberLvalue, valueList.getList().get(idx++), assignment.isInitialAssignment(), assignment.getSource(), Comment.NO_COMMENTS);
                stmtIt.add(initStmt);
                getLog().append("Adding struct value list initializer " + initStmt.toString(getProgram(), false));
             }
@@ -304,7 +304,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                      LValue assignedMemberVarRef = (LValue) memberUnwinding.getMemberUnwinding(memberName);
                      RValue sourceMemberVarRef = sourceMemberUnwinding.getMemberUnwinding(memberName);
                      membersUnwound.add(assignedMemberVarRef);
-                     Statement copyStmt = new StatementAssignment(assignedMemberVarRef, sourceMemberVarRef, assignment.getSource(), Comment.NO_COMMENTS);
+                     Statement copyStmt = new StatementAssignment(assignedMemberVarRef, sourceMemberVarRef, assignment.isInitialAssignment(), assignment.getSource(), Comment.NO_COMMENTS);
                      stmtIt.add(copyStmt);
                      getLog().append("Adding struct value member variable copy " + copyStmt.toString(getProgram(), false));
                   }
@@ -405,7 +405,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
          memberAddress.setType(new SymbolTypePointer(member.getType()));
          CastValue structTypedPointer = new CastValue(new SymbolTypePointer(member.getType()), pointerDeref.getPointer());
          // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
-         stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+         stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
          // Unwind to *(ptr_struct+OFFSET_STRUCT_NAME_MEMBER)
          return new PointerDereferenceSimple(memberAddress.getRef());
       }
@@ -446,7 +446,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
          memberAddress.setType(new SymbolTypePointer(member.getType()));
          CastValue structTypedPointer = new CastValue(new SymbolTypePointer(member.getType()), pointerDeref.getPointer());
          // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
-         stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+         stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
          // Unwind to *(ptr_struct+OFFSET_STRUCT_NAME_MEMBER[idx]
          return new PointerDereferenceIndexed(memberAddress.getRef(), pointerDeref.getIndex());
       }

@@ -67,7 +67,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       for(int i = 0; i < parameterDecls.size(); i++) {
          Variable parameterDecl = parameterDecls.get(i);
          RValue parameterValue = parameterValues.get(i);
-         addStatementToCurrentBlock(new StatementAssignment((LValue) parameterDecl.getRef(), parameterValue, origCall.getSource(), Comment.NO_COMMENTS));
+         addStatementToCurrentBlock(new StatementAssignment((LValue) parameterDecl.getRef(), parameterValue, true, origCall.getSource(), Comment.NO_COMMENTS));
       }
       String procedureName = origCall.getProcedureName();
       Variable procReturnVar = procedure.getVariable("return");
@@ -102,7 +102,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       splitCurrentBlock(splitBlockNewLabelRef);
       splitBlockMap.put(this.getOrigBlock().getLabel(), splitBlockNewLabelRef);
       if(!SymbolType.VOID.equals(procedure.getReturnType()) && origCall.getlValue() != null) {
-         addStatementToCurrentBlock(new StatementAssignment(origCall.getlValue(), procReturnVarRef, origCall.getSource(), Comment.NO_COMMENTS));
+         addStatementToCurrentBlock(new StatementAssignment(origCall.getlValue(), procReturnVarRef, origCall.isInitialAssignment(), origCall.getSource(), Comment.NO_COMMENTS));
       } else {
          // No return type. Remove variable receiving the result.
          LValue lValue = origCall.getlValue();
@@ -117,7 +117,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       for(VariableRef modifiedVar : modifiedVars) {
          if(getScope().getVariable(modifiedVar).isKindLoadStore())
             continue;
-         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, origCall.getSource(), Comment.NO_COMMENTS));
+         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, false, origCall.getSource(), Comment.NO_COMMENTS));
       }
       return null;
    }
@@ -136,7 +136,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       for(VariableRef modifiedVar : modifiedVars) {
          if(getScope().getVariable(modifiedVar).isKindLoadStore())
             continue;
-         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, orig.getSource(), Comment.NO_COMMENTS));
+         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, false, orig.getSource(), Comment.NO_COMMENTS));
       }
       return super.visitReturn(orig);
    }

@@ -38,6 +38,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testNomodify0() throws IOException, URISyntaxException {
+      assertError("nomodify-0", "Constants can not be modified");
+   }
+
+   @Test
+   public void testNomodify1() throws IOException, URISyntaxException {
+      assertError("nomodify-1", "const variable may not be modified");
+   }
+
+   @Test
    public void testConstantWithPrePost() throws IOException, URISyntaxException {
       assertError("constant-prepost", "Constant value contains a pre/post-modifier");
    }

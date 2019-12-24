@@ -87,7 +87,7 @@ public class Pass2FixInlineConstructors extends Pass2SsaOptimization {
       // Move backward - to insert before the current statement
       stmtIt.previous();
       // Add assignment of the new tmpVar
-      StatementAssignment assignment = new StatementAssignment((LValue) tmpVar.getRef(), new CastValue(subType, listValues.get(0)), constructOperator, new CastValue(subType, listValues.get(1)), currentStmt.getSource(), Comment.NO_COMMENTS);
+      StatementAssignment assignment = new StatementAssignment((LValue) tmpVar.getRef(), new CastValue(subType, listValues.get(0)), constructOperator, new CastValue(subType, listValues.get(1)), true, currentStmt.getSource(), Comment.NO_COMMENTS);
       stmtIt.add(assignment);
       // Move back before the current statement
       stmtIt.next();

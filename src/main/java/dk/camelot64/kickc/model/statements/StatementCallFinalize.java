@@ -21,6 +21,8 @@ public class StatementCallFinalize extends StatementBase implements StatementLVa
    private LValue lValue;
    /** The procedure called. */
    private ProcedureRef procedure;
+   /** This is the initial assignment of the lValue. */
+   private boolean initialAssignment;
 
    public StatementCallFinalize(LValue lValue, ProcedureRef procedure, StatementSource source, List<Comment> comments) {
       super(null, source, comments);
@@ -42,6 +44,15 @@ public class StatementCallFinalize extends StatementBase implements StatementLVa
 
    public void setProcedure(ProcedureRef procedure) {
       this.procedure = procedure;
+   }
+
+   @Override
+   public boolean isInitialAssignment() {
+      return initialAssignment;
+   }
+
+   public void setInitialAssignment(boolean initialAssignment) {
+      this.initialAssignment = initialAssignment;
    }
 
    @Override

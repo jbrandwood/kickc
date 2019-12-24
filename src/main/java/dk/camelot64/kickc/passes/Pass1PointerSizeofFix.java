@@ -73,7 +73,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                      Variable idx2Var = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
                      idx2Var.setType(SymbolTypeInference.inferType(getScope(), deref.getIndex()));
                      ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
-                     StatementAssignment idx2 = new StatementAssignment((LValue) idx2Var.getRef(), deref.getIndex(), Operators.MULTIPLY, sizeOfTargetType, currentStmt.getSource(), Comment.NO_COMMENTS);
+                     StatementAssignment idx2 = new StatementAssignment((LValue) idx2Var.getRef(), deref.getIndex(), Operators.MULTIPLY, sizeOfTargetType, true, currentStmt.getSource(), Comment.NO_COMMENTS);
                      stmtIt.previous();
                      stmtIt.add(idx2);
                      stmtIt.next();
@@ -117,7 +117,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                      tmpVar.setType(SymbolTypeInference.inferType(getScope(), assignment.getlValue()));
                      assignment.setlValue((LValue) tmpVar.getRef());
                      ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
-                     stmtIt.add(new StatementAssignment(lValue, tmpVar.getRef(), Operators.DIVIDE, sizeOfTargetType, assignment.getSource(), Comment.NO_COMMENTS));
+                     stmtIt.add(new StatementAssignment(lValue, tmpVar.getRef(), Operators.DIVIDE, sizeOfTargetType, assignment.isInitialAssignment(), assignment.getSource(), Comment.NO_COMMENTS));
                   }
                }
 
@@ -129,7 +129,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                   tmpVar.setType(SymbolTypeInference.inferType(getScope(), assignment.getrValue2()));
                   stmtIt.remove();
                   ConstantRef sizeOfTargetType = OperatorSizeOf.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
-                  stmtIt.add(new StatementAssignment((LValue) tmpVar.getRef(), assignment.getrValue2(), Operators.MULTIPLY, sizeOfTargetType, assignment.getSource(), Comment.NO_COMMENTS));
+                  stmtIt.add(new StatementAssignment((LValue) tmpVar.getRef(), assignment.getrValue2(), Operators.MULTIPLY, sizeOfTargetType, true, assignment.getSource(), Comment.NO_COMMENTS));
                   stmtIt.add(assignment);
                   assignment.setrValue2(tmpVar.getRef());
                }

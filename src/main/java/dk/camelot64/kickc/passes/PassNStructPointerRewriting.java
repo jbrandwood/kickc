@@ -49,7 +49,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   memberAddress1.setType(memberType);
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();
-                  stmtIt.add(new StatementAssignment((LValue) memberAddress1.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+                  stmtIt.add(new StatementAssignment((LValue) memberAddress1.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
                   stmtIt.next();
                   // Replace (*ptr_struct).x with *($1)
                   programValue.set(memberAddress1.getRef());
@@ -62,7 +62,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   memberAddress.setType(new SymbolTypePointer(memberType));
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();
-                  stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+                  stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
                   stmtIt.next();
                   // Replace (*ptr_struct).x with *($1)
                   programValue.set(new PointerDereferenceSimple(memberAddress.getRef()));
@@ -91,8 +91,8 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   memberAddress2.setType(memberType);
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();
-                  stmtIt.add(new StatementAssignment((LValue) memberAddress1.getRef(), structTypedPointer, Operators.PLUS, ((PointerDereferenceIndexed) struct).getIndex(), currentStmt.getSource(), currentStmt.getComments()));
-                  stmtIt.add(new StatementAssignment((LValue) memberAddress2.getRef(), memberAddress1.getRef(), Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+                  stmtIt.add(new StatementAssignment((LValue) memberAddress1.getRef(), structTypedPointer, Operators.PLUS, ((PointerDereferenceIndexed) struct).getIndex(), true, currentStmt.getSource(), currentStmt.getComments()));
+                  stmtIt.add(new StatementAssignment((LValue) memberAddress2.getRef(), memberAddress1.getRef(), Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
                   stmtIt.next();
                   // Replace ptr_struct[idx].x with ($1)[idx]
                   programValue.set(memberAddress2.getRef());
@@ -106,7 +106,7 @@ public class PassNStructPointerRewriting extends Pass2SsaOptimization {
                   memberAddress.setType(new SymbolTypePointer(memberType));
                   // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
                   stmtIt.previous();
-                  stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, currentStmt.getSource(), currentStmt.getComments()));
+                  stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
                   stmtIt.next();
                   // Replace ptr_struct[idx].x with ($1)[idx]
                   programValue.set(new PointerDereferenceIndexed(memberAddress.getRef(), ((PointerDereferenceIndexed) struct).getIndex()));

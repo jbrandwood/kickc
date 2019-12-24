@@ -113,7 +113,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          Variable procReturnVar = procedure.getVariable("return");
          String inlinedReturnVarName = getInlineSymbolName(procedure, procReturnVar, serial);
          Variable inlinedReturnVar = callScope.getVariable(inlinedReturnVarName);
-         restBlock.addStatement(new StatementAssignment(call.getlValue(), inlinedReturnVar.getRef(), call.getSource(), Comment.NO_COMMENTS));
+         restBlock.addStatement(new StatementAssignment(call.getlValue(), inlinedReturnVar.getRef(), false, call.getSource(), Comment.NO_COMMENTS));
       } else {
          // Remove the tmp var receiving the result
          LValue lValue = call.getlValue();
@@ -188,7 +188,7 @@ public class Pass1ProcedureInline extends Pass1Base {
       Statement inlinedStatement;
       if(procStatement instanceof StatementAssignment) {
          StatementAssignment procAssignment = (StatementAssignment) procStatement;
-         inlinedStatement = new StatementAssignment(procAssignment.getlValue(), procAssignment.getrValue1(), procAssignment.getOperator(), procAssignment.getrValue2(), procAssignment.getSource(), Comment.NO_COMMENTS);
+         inlinedStatement = new StatementAssignment(procAssignment.getlValue(), procAssignment.getrValue1(), procAssignment.getOperator(), procAssignment.getrValue2(), procAssignment.isInitialAssignment(), procAssignment.getSource(), Comment.NO_COMMENTS);
       } else if(procStatement instanceof StatementCall) {
          StatementCall procCall = (StatementCall) procStatement;
          StatementCall inlinedCall = new StatementCall(procCall.getlValue(), procCall.getProcedureName(), new ArrayList<>(procCall.getParameters()), procCall.getSource(), Comment.NO_COMMENTS);
@@ -281,7 +281,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          String inlineParameterVarName = getInlineSymbolName(procedure, parameterDecl, serial);
          Variable inlineParameterVar = callScope.getVariable(inlineParameterVarName);
          RValue parameterValue = parameterValues.get(i);
-         statementsIt.add(new StatementAssignment((VariableRef)inlineParameterVar.getRef(), parameterValue, call.getSource(), Comment.NO_COMMENTS));
+         statementsIt.add(new StatementAssignment((VariableRef)inlineParameterVar.getRef(), parameterValue, true, call.getSource(), Comment.NO_COMMENTS));
       }
    }
 

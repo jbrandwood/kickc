@@ -34,7 +34,7 @@ public class Pass2DeInlineWordDerefIdx extends Pass2SsaOptimization {
                Scope currentScope = getScope().getScope(currentBlock.getScope());
                Variable tmpVar = currentScope.addVariableIntermediate();
                stmtIt.previous();
-               StatementAssignment tmpVarAssignment = new StatementAssignment((LValue) tmpVar.getRef(), dereferenceIndexed.getPointer(), Operators.PLUS, indexValue, currentStmt.getSource(), Comment.NO_COMMENTS);
+               StatementAssignment tmpVarAssignment = new StatementAssignment((LValue) tmpVar.getRef(), dereferenceIndexed.getPointer(), Operators.PLUS, indexValue, true, currentStmt.getSource(), Comment.NO_COMMENTS);
                stmtIt.add(tmpVarAssignment);
                stmtIt.next();
                programValue.set(new PointerDereferenceSimple(tmpVar.getRef()));

@@ -386,6 +386,7 @@ public class Unroller {
                valueToNew(assignment.getrValue1(), varsOriginalToCopied),
                assignment.getOperator(),
                valueToNew(assignment.getrValue2(), varsOriginalToCopied),
+               assignment.isInitialAssignment(),
                assignment.getSource(),
                Comment.NO_COMMENTS
          );

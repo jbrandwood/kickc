@@ -169,7 +169,7 @@ public class Compiler {
       new Pass1StructTypeSizeFix(program).execute();
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
-      new Pass1AssertNoConstParams(program).execute();
+      new Pass1AssertNoModifyVars(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");

@@ -64,7 +64,7 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
          if(returnVarFinal == null) {
             throw new RuntimeException("Error! Cannot find final return variable for " + procedure.getFullName());
          }
-         StatementAssignment returnAssignment = new StatementAssignment(origCall.getlValue(), returnVarFinal, origCall.getSource(), new ArrayList<>());
+         StatementAssignment returnAssignment = new StatementAssignment(origCall.getlValue(), returnVarFinal, origCall.isInitialAssignment(), origCall.getSource(), new ArrayList<>());
          addStatementToCurrentBlock(returnAssignment);
       }
 

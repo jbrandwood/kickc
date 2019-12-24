@@ -24,6 +24,8 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
    private ProcedureRef procedure;
    /** The parameter values passed to the procedure. */
    private List<RValue> parameters;
+   /** This is the initial assignment of the lValue. */
+   private boolean initialAssignment;
 
    public StatementCall(LValue lValue, String procedureName, List<RValue> parameters, StatementSource source, List<Comment> comments) {
       super(null, source, comments);
@@ -70,6 +72,15 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
 
    public void clearParameters() {
       this.parameters = null;
+   }
+
+   @Override
+   public boolean isInitialAssignment() {
+      return initialAssignment;
+   }
+
+   public void setInitialAssignment(boolean initialAssignment) {
+      this.initialAssignment = initialAssignment;
    }
 
    @Override

@@ -120,7 +120,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
             Scope blockScope = symbols.getScope(currentScope);
             Variable tmpVar = blockScope.addVariableIntermediate();
             tmpVar.setType(toType);
-            StatementAssignment newAssignment = new StatementAssignment((LValue) tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue1(), assignment.getSource(), Comment.NO_COMMENTS);
+            StatementAssignment newAssignment = new StatementAssignment((LValue) tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue1(), true, assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setrValue1(tmpVar.getRef());
             stmtIt.previous();
             stmtIt.add(newAssignment);
@@ -136,7 +136,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
             Scope blockScope = symbols.getScope(currentScope);
             Variable tmpVar = blockScope.addVariableIntermediate();
             tmpVar.setType(toType);
-            StatementAssignment newAssignment = new StatementAssignment((LValue) tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue2(), assignment.getSource(), Comment.NO_COMMENTS);
+            StatementAssignment newAssignment = new StatementAssignment((LValue) tmpVar.getRef(), Operators.getCastUnary(toType), assignment.getrValue2(), true, assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setrValue2(tmpVar.getRef());
             stmtIt.previous();
             stmtIt.add(newAssignment);
@@ -261,7 +261,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
             Variable tmpVar = blockScope.addVariableIntermediate();
             SymbolType rightType = SymbolTypeInference.inferType(symbols, getRight());
             tmpVar.setType(rightType);
-            StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.getSource(), Comment.NO_COMMENTS);
+            StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.isInitialAssignment(), assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setlValue((LValue) tmpVar.getRef());
             stmtIt.add(newAssignment);
          }
@@ -276,7 +276,7 @@ public interface ProgramExpressionBinary extends ProgramExpression {
             Variable tmpVar = blockScope.addVariableIntermediate();
             SymbolType rightType = SymbolTypeInference.inferType(symbols, getRight());
             tmpVar.setType(rightType);
-            StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.getSource(), Comment.NO_COMMENTS);
+            StatementAssignment newAssignment = new StatementAssignment(assignment.getlValue(), Operators.getCastUnary(toType), tmpVar.getRef(), assignment.isInitialAssignment(), assignment.getSource(), Comment.NO_COMMENTS);
             assignment.setlValue((LValue) tmpVar.getRef());
             stmtIt.add(newAssignment);
          }

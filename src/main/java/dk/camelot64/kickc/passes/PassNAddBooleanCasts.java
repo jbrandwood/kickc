@@ -80,7 +80,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
       }  else {
          nullValue = new ConstantInteger(0L, SymbolType.NUMBER);
       }
-      stmtIt.add(new StatementAssignment((LValue) tmpVar.getRef(), nullValue, Operators.NEQ, rValue, currentStmt.getSource(), Comment.NO_COMMENTS));
+      stmtIt.add(new StatementAssignment((LValue) tmpVar.getRef(), nullValue, Operators.NEQ, rValue, true, currentStmt.getSource(), Comment.NO_COMMENTS));
       stmtIt.next();
       return tmpVar;
    }

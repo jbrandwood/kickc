@@ -39,7 +39,7 @@ public class PassNUnwindLValueLists extends Pass2SsaOptimization {
                   for(int i = 0; i < lValueList.getList().size(); i++) {
                      LValue lValue = (LValue) lValueList.getList().get(i);
                      RValue rValue = (RValue) rValueList.getList().get(i);
-                     stmtIt.add(new StatementAssignment(lValue, rValue, assignment.getSource(), Comment.NO_COMMENTS));
+                     stmtIt.add(new StatementAssignment(lValue, rValue, assignment.isInitialAssignment(), assignment.getSource(), Comment.NO_COMMENTS));
                   }
                   getLog().append("Unwinding list assignment "+assignment.toString(getProgram(), false));
                   modified = true;

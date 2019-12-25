@@ -29,6 +29,7 @@ void main() {
     char status = loadFileToMemory(8, "SPRITE", LOAD_SPRITE);
     if(status!=0xff) {
         *BORDERCOL = 0x02;
+        error(status);
     }
     // Show the loaded sprite on screen
     *SPRITES_ENABLE = %00000001;
@@ -37,6 +38,30 @@ void main() {
     SPRITES_XPOS[0] = 0x15;
     SPRITES_YPOS[0] = 0x33;
 }
+
+// Load a file to memory
+// Returns a status:
+// - 0xff: Success
+// - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
+char loadFileToMemory( char device, char* filename, char* address) {
+    setnam(filename);
+    setlfs(device);
+    return load(address, false);
+}
+
+// Basic ERROR function
+// ERROR. Show error.
+void error(char err) {
+    const char* errCode = 0xff;
+    *errCode = err;
+    asm {
+        // Basic SHOWERR function
+        // Input: X = Error Code
+        ldx errCode
+        jsr $a437
+    }
+}
+
 
 // Kernal SETNAM function
 // SETNAM. Set file name parameters.
@@ -95,21 +120,6 @@ char load(char* address, bool verify) {
 }
 
 
-// Load a file to memory
-// Returns a status:
-// - 0xff: Success
-// - other: Kernal Error Code
-char loadFileToMemory( char device, char* filename, char* address) {
-    setnam(filename);
-    setlfs(device);
-    return load(address, false);
-}
 
-/*
-        ; A = $05 (DEVICE NOT PRESENT)
-        ; A = $04 (FILE NOT FOUND)
-        ; A = $1D (LOAD ERROR)
-        ; A = $00 (BREAK, RUN/STOP has been pressed during loading)
-*/
 
 

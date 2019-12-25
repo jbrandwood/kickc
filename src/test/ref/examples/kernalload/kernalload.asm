@@ -30,10 +30,13 @@
 main: {
     .const toSpritePtr1_return = LOAD_SPRITE/$40
     jsr loadFileToMemory
-    cmp #$ff
+    tax
+    cpx #$ff
     beq __b1
     lda #2
     sta BORDERCOL
+    txa
+    jsr error
   __b1:
     // Show the loaded sprite on screen
     lda #1
@@ -52,10 +55,20 @@ main: {
     .byte 0
 }
 .segment Code
+// Basic ERROR function
+// ERROR. Show error.
+// error(byte register(A) err)
+error: {
+    .label errCode = $ff
+    sta errCode
+    tax
+    jsr $a437
+    rts
+}
 // Load a file to memory
 // Returns a status:
 // - 0xff: Success
-// - other: Kernal Error Code
+// - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
 loadFileToMemory: {
     .label device = 8
     jsr setnam

@@ -38,6 +38,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testVolatile1() throws IOException, URISyntaxException {
+      compileAndCompare("volatile-1");
+   }
+
+   @Test
+   public void testVolatile0() throws IOException, URISyntaxException {
+      compileAndCompare("volatile-0");
+   }
+
+   @Test
    public void testNomodify5() throws IOException, URISyntaxException {
       assertError("nomodify-5", "const variable may not be modified");
    }

@@ -169,7 +169,8 @@ public abstract class Scope implements Symbol, Serializable {
 
    public Variable getVariable(String name) {
       Variable symbol = (Variable) getSymbol(name);
-      if(symbol!=null && !symbol.isVariable()) throw new InternalError("Symbol is not a variable! "+symbol.toString());
+      if(symbol!=null && !symbol.isVariable())
+         throw new InternalError("Symbol is not a variable! "+symbol.toString());
       return symbol;
    }
 

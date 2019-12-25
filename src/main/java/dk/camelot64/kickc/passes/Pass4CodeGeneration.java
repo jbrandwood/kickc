@@ -276,7 +276,10 @@ public class Pass4CodeGeneration {
          signature.append(param.getType().getTypeName()).append(" ");
          if(allocation instanceof Registers.RegisterZpMem) {
             Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) allocation;
-            signature.append("zeropage(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(")");
+            signature.append("zp(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(")");
+         } else if(allocation instanceof Registers.RegisterMainMem) {
+            Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
+            signature.append("mem(").append(AsmFormat.getAsmNumber(registerMainMem.getAddress())).append(")");
          } else if(allocation instanceof Registers.RegisterAByte) {
             signature.append("register(A)");
          } else if(allocation instanceof Registers.RegisterXByte) {

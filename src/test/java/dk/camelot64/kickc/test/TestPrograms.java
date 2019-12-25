@@ -38,6 +38,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testRegister0() throws IOException, URISyntaxException {
+      compileAndCompare("register-0");
+   }
+
+   @Test
+   public void testAddress6() throws IOException, URISyntaxException {
+      compileAndCompare("address-6");
+   }
+
+   @Test
+   public void testAddress5() throws IOException, URISyntaxException {
+      compileAndCompare("address-5");
+   }
+
+   @Test
    public void testAddress4() throws IOException, URISyntaxException {
       compileAndCompare("address-4");
    }

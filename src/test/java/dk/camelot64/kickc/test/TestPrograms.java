@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testVolatile2() throws IOException, URISyntaxException {
+      compileAndCompare("volatile-2");
+   }
+
+   @Test
    public void testVolatile1() throws IOException, URISyntaxException {
       compileAndCompare("volatile-1");
    }

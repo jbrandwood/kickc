@@ -1609,7 +1609,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitExprAssignment(KickCParser.ExprAssignmentContext ctx) {
       Object val = visit(ctx.expr(0));
       if(val instanceof ConstantRef) {
-         throw new CompileError("Error! Constants can not be modified " + val.toString(), new StatementSource(ctx));
+         throw new CompileError("const variable may not be modified " + val.toString(), new StatementSource(ctx));
       }
       if(!(val instanceof LValue)) {
          throw new CompileError("Error! Illegal assignment Lvalue " + val.toString(), new StatementSource(ctx));

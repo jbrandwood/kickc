@@ -64,7 +64,7 @@ public class TestPrograms {
 
    @Test
    public void testNomodify0() throws IOException, URISyntaxException {
-      assertError("nomodify-0", "Constants can not be modified");
+      assertError("nomodify-0", "const variable may not be modified");
    }
 
    @Test

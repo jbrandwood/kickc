@@ -4,6 +4,7 @@ Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - 
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
 Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
@@ -26,13 +27,13 @@ Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
-Culled Empty Block (label) @13
+Culled Empty Block (label) @12
 Culled Empty Block (label) @14
+Culled Empty Block (label) @15
 Culled Empty Block (label) print_str::@4
 Culled Empty Block (label) print_str::@3
 Culled Empty Block (label) print_str::@5
 Culled Empty Block (label) print_str::@6
-Culled Empty Block (label) @15
 Culled Empty Block (label) @16
 Culled Empty Block (label) @17
 Culled Empty Block (label) @18
@@ -54,13 +55,14 @@ Culled Empty Block (label) @33
 Culled Empty Block (label) @34
 Culled Empty Block (label) @35
 Culled Empty Block (label) @36
+Culled Empty Block (label) @37
 Culled Empty Block (label) main::@42
 Culled Empty Block (label) main::@44
-Culled Empty Block (label) @37
+Culled Empty Block (label) @38
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@12
+  to:@13
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from print_cls
@@ -105,11 +107,11 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#3
   return 
   to:@return
-@12: scope:[]  from @begin
+@13: scope:[]  from @begin
   (byte*) print_screen#0 ← (byte*)(number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@38
+  to:@39
 
 (void()) print_str((byte*) print_str::str)
 print_str: scope:[print_str]  from printu::@2
@@ -222,10 +224,10 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   to:@return
 
 (void()) main()
-main: scope:[main]  from @38
-  (byte*) print_char_cursor#96 ← phi( @38/(byte*) print_char_cursor#118 )
-  (byte*) print_line_cursor#26 ← phi( @38/(byte*) print_line_cursor#33 )
-  (byte*) print_screen#3 ← phi( @38/(byte*) print_screen#4 )
+main: scope:[main]  from @39
+  (byte*) print_char_cursor#96 ← phi( @39/(byte*) print_char_cursor#118 )
+  (byte*) print_line_cursor#26 ← phi( @39/(byte*) print_line_cursor#33 )
+  (byte*) print_screen#3 ← phi( @39/(byte*) print_screen#4 )
   call print_cls 
   to:main::@45
 main::@45: scope:[main]  from main
@@ -1022,24 +1024,24 @@ printu::@return: scope:[printu]  from printu::@6
   (byte*) print_char_cursor#45 ← (byte*) print_char_cursor#90
   return 
   to:@return
-@38: scope:[]  from @12
-  (byte*) print_screen#4 ← phi( @12/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#118 ← phi( @12/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#33 ← phi( @12/(byte*) print_line_cursor#0 )
+@39: scope:[]  from @13
+  (byte*) print_screen#4 ← phi( @13/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#118 ← phi( @13/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#33 ← phi( @13/(byte*) print_line_cursor#0 )
   call main 
-  to:@39
-@39: scope:[]  from @38
-  (byte*) print_char_cursor#91 ← phi( @38/(byte*) print_char_cursor#38 )
-  (byte*) print_line_cursor#24 ← phi( @38/(byte*) print_line_cursor#11 )
+  to:@40
+@40: scope:[]  from @39
+  (byte*) print_char_cursor#91 ← phi( @39/(byte*) print_char_cursor#38 )
+  (byte*) print_line_cursor#24 ← phi( @39/(byte*) print_line_cursor#11 )
   (byte*) print_line_cursor#12 ← (byte*) print_line_cursor#24
   (byte*) print_char_cursor#46 ← (byte*) print_char_cursor#91
   to:@end
-@end: scope:[]  from @39
+@end: scope:[]  from @40
 
 SYMBOL TABLE SSA
-(label) @12
-(label) @38
+(label) @13
 (label) @39
+(label) @40
 (label) @begin
 (label) @end
 (const byte) RADIX::BINARY = (number) 2
@@ -2508,9 +2510,9 @@ Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting main::@71(between main::@70 and main::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @12
-Adding NOP phi() at start of @38
+Adding NOP phi() at start of @13
 Adding NOP phi() at start of @39
+Adding NOP phi() at start of @40
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@45
@@ -2655,8 +2657,8 @@ Coalesced [293] print_str::str#6 ← print_str::str#0
 Coalesced [294] print_char_cursor#142 ← print_char_cursor#1
 Coalesced [307] memset::dst#4 ← memset::dst#1
 Coalesced down to 32 phi equivalence classes
-Culled Empty Block (label) @12
-Culled Empty Block (label) @39
+Culled Empty Block (label) @13
+Culled Empty Block (label) @40
 Culled Empty Block (label) main::@45
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_ln::@3
@@ -2665,7 +2667,7 @@ Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) memset::@2
 Culled Empty Block (label) memset::@1
-Renumbering block @38 to @1
+Renumbering block @39 to @1
 Renumbering block memset::@4 to memset::@1
 Renumbering block memset::@5 to memset::@2
 Renumbering block main::@43 to main::@42

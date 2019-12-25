@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testKernalLoad() throws IOException, URISyntaxException {
+      compileAndCompare("examples/kernalload/kernalload");
+   }
+
+   @Test
    public void testVolatile1() throws IOException, URISyntaxException {
       compileAndCompare("volatile-1");
    }

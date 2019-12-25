@@ -2,6 +2,7 @@ Fixing pointer increment (signed word*) sin16s_gen::sintab ← ++ (signed word*)
 Fixing pointer increment (signed word*) sin16s_gen2::sintab ← ++ (signed word*) sin16s_gen2::sintab
 Fixing pointer addition (signed word*~) loop::$2 ← (const signed word*) xsin + (word) xsin_idx
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) LOGO
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
@@ -50,6 +51,7 @@ Culled Empty Block (label) memset::@8
 Culled Empty Block (label) memset::@9
 Culled Empty Block (label) memset::@3
 Culled Empty Block (label) @27
+Culled Empty Block (label) @28
 Culled Empty Block (label) main::toD0181_@1
 Culled Empty Block (label) loop::@2
 Culled Empty Block (label) loop::@12
@@ -60,7 +62,7 @@ Culled Empty Block (label) loop::@7
 Culled Empty Block (label) loop::@8
 Culled Empty Block (label) loop::@9
 Culled Empty Block (label) loop::@14
-Culled Empty Block (label) @30
+Culled Empty Block (label) @31
 Culled Empty Block (label) render_logo::@10
 Culled Empty Block (label) render_logo::@11
 Culled Empty Block (label) render_logo::@9
@@ -84,7 +86,7 @@ CONTROL FLOW GRAPH SSA
   to:@6
 @6: scope:[]  from @begin
   (word) rem16u#0 ← (number) 0
-  to:@28
+  to:@29
 
 (word()) divr16u((word) divr16u::dividend , (word) divr16u::divisor , (word) divr16u::rem)
 divr16u: scope:[divr16u]  from div32u16u div32u16u::@2
@@ -605,7 +607,7 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#4
   return 
   to:@return
-@28: scope:[]  from @6
+@29: scope:[]  from @6
   (word) rem16u#31 ← phi( @6/(word) rem16u#0 )
   kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
@@ -613,12 +615,12 @@ memset::@return: scope:[memset]  from memset::@1
             .for(var cp=0; cp<8; cp++)
                 .byte logoPic.getMulticolorByte(x,cp+y*8)
  }}
-  to:@29
+  to:@30
 
 (void()) main()
-main: scope:[main]  from @31
-  (word) xsin_idx#26 ← phi( @31/(word) xsin_idx#16 )
-  (word) rem16u#37 ← phi( @31/(word) rem16u#25 )
+main: scope:[main]  from @32
+  (word) xsin_idx#26 ← phi( @32/(word) xsin_idx#16 )
+  (word) rem16u#37 ← phi( @32/(word) rem16u#25 )
   asm { sei  }
   *((const byte*) BORDERCOL) ← (const byte) WHITE
   *((const byte*) BGCOL2) ← (const byte) DARK_GREY
@@ -712,10 +714,10 @@ main::@return: scope:[main]  from main::@7
   (word) xsin_idx#1 ← (word) xsin_idx#8
   return 
   to:@return
-@29: scope:[]  from @28
-  (word) rem16u#28 ← phi( @28/(word) rem16u#31 )
+@30: scope:[]  from @29
+  (word) rem16u#28 ← phi( @29/(word) rem16u#31 )
   (word) xsin_idx#2 ← (number) 0
-  to:@31
+  to:@32
 
 (void()) loop()
 loop: scope:[loop]  from main::@6
@@ -905,24 +907,24 @@ render_logo::@33: scope:[render_logo]  from render_logo::@32
 render_logo::@return: scope:[render_logo]  from render_logo::@12 render_logo::@29
   return 
   to:@return
-@31: scope:[]  from @29
-  (word) xsin_idx#16 ← phi( @29/(word) xsin_idx#2 )
-  (word) rem16u#25 ← phi( @29/(word) rem16u#28 )
+@32: scope:[]  from @30
+  (word) xsin_idx#16 ← phi( @30/(word) xsin_idx#2 )
+  (word) rem16u#25 ← phi( @30/(word) rem16u#28 )
   call main 
-  to:@32
-@32: scope:[]  from @31
-  (word) xsin_idx#12 ← phi( @31/(word) xsin_idx#1 )
-  (word) rem16u#19 ← phi( @31/(word) rem16u#9 )
+  to:@33
+@33: scope:[]  from @32
+  (word) xsin_idx#12 ← phi( @32/(word) xsin_idx#1 )
+  (word) rem16u#19 ← phi( @32/(word) rem16u#9 )
   (word) rem16u#10 ← (word) rem16u#19
   (word) xsin_idx#6 ← (word) xsin_idx#12
   to:@end
-@end: scope:[]  from @32
+@end: scope:[]  from @33
 
 SYMBOL TABLE SSA
-(label) @28
 (label) @29
-(label) @31
+(label) @30
 (label) @32
+(label) @33
 (label) @6
 (label) @begin
 (label) @end
@@ -3060,9 +3062,9 @@ Added new block during phi lifting divr16u::@9(between divr16u::@1 and divr16u::
 Added new block during phi lifting divr16u::@10(between divr16u::@2 and divr16u::@3)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @6
-Adding NOP phi() at start of @29
-Adding NOP phi() at start of @31
+Adding NOP phi() at start of @30
 Adding NOP phi() at start of @32
+Adding NOP phi() at start of @33
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::toD0181
 Adding NOP phi() at start of main::toD0181_@return
@@ -3149,8 +3151,8 @@ Coalesced [278] divr16u::rem#15 ← divr16u::rem#0
 Coalesced [288] memset::dst#5 ← memset::dst#1
 Coalesced down to 26 phi equivalence classes
 Culled Empty Block (label) @6
-Culled Empty Block (label) @29
-Culled Empty Block (label) @32
+Culled Empty Block (label) @30
+Culled Empty Block (label) @33
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@7
@@ -3172,8 +3174,8 @@ Culled Empty Block (label) divr16u::@8
 Culled Empty Block (label) divr16u::@10
 Culled Empty Block (label) divr16u::@9
 Culled Empty Block (label) memset::@1
-Renumbering block @28 to @1
-Renumbering block @31 to @2
+Renumbering block @29 to @1
+Renumbering block @32 to @2
 Renumbering block div32u16u::@2 to div32u16u::@1
 Renumbering block div32u16u::@3 to div32u16u::@2
 Renumbering block mul16u::@4 to mul16u::@3

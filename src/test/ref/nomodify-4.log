@@ -6,11 +6,11 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte) print::c ← (byte) 'a'
+  (byte) print::c#0 ← (byte) 'a'
   call print 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) print::c ← (byte) 'b'
+  (byte) print::c#1 ← (byte) 'b'
   call print 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -21,7 +21,8 @@ main::@return: scope:[main]  from main::@2
 
 (void()) print((byte) print::c)
 print: scope:[print]  from main main::@1
-  *((const byte*) SCREEN) ← (byte) print::c
+  (byte) print::c#2 ← phi( main/(byte) print::c#0 main::@1/(byte) print::c#1 )
+  *((const byte*) SCREEN) ← (byte) print::c#2
   to:print::@return
 print::@return: scope:[print]  from print
   return 
@@ -45,27 +46,42 @@ SYMBOL TABLE SSA
 (label) main::@return
 (void()) print((byte) print::c)
 (label) print::@return
-(byte) print::c loadstore
+(byte) print::c
+(byte) print::c#0
+(byte) print::c#1
+(byte) print::c#2
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
+Constant (const byte) print::c#0 = 'a'
+Constant (const byte) print::c#1 = 'b'
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with var siblings (const byte) print::c#0
+Inlining constant with var siblings (const byte) print::c#1
+Constant inlined print::c#0 = (byte) 'a'
+Constant inlined print::c#1 = (byte) 'b'
+Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to print:6 print:8 
 
-Created 0 initial phi equivalence classes
-Coalesced down to 0 phi equivalence classes
+Created 1 initial phi equivalence classes
+Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@2
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -80,11 +96,11 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (byte) print::c ← (byte) 'a'
+  [4] phi()
   [5] call print 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] (byte) print::c ← (byte) 'b'
+  [6] phi()
   [7] call print 
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -93,23 +109,25 @@ main::@return: scope:[main]  from main::@1
 
 (void()) print((byte) print::c)
 print: scope:[print]  from main main::@1
-  [9] *((const byte*) SCREEN) ← (byte) print::c
+  [9] (byte) print::c#2 ← phi( main/(byte) 'a' main::@1/(byte) 'b' )
+  [10] *((const byte*) SCREEN) ← (byte) print::c#2
   to:print::@return
 print::@return: scope:[print]  from print
-  [10] return 
+  [11] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (void()) print((byte) print::c)
-(byte) print::c loadstore 3.0
+(byte) print::c
+(byte) print::c#2 2.0
 
 Initial phi equivalence classes
-Added variable print::c to live range equivalence class [ print::c ]
+[ print::c#2 ]
 Complete equivalence classes
-[ print::c ]
-Allocated zp[1]:2 [ print::c ]
+[ print::c#2 ]
+Allocated zp[1]:2 [ print::c#2 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -129,6 +147,8 @@ __b1_from___bbegin:
   // @1
 __b1:
   // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
 __bend_from___b1:
@@ -137,18 +157,24 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] (byte) print::c ← (byte) 'a' -- vbuz1=vbuc1 
+    // [5] call print 
+    // [9] phi from main to print [phi:main->print]
+  print_from_main:
+    // [9] phi (byte) print::c#2 = (byte) 'a' [phi:main->print#0] -- vbuz1=vbuc1 
     lda #'a'
     sta.z print.c
-    // [5] call print 
     jsr print
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) print::c ← (byte) 'b' -- vbuz1=vbuc1 
+    // [7] call print 
+    // [9] phi from main::@1 to print [phi:main::@1->print]
+  print_from___b1:
+    // [9] phi (byte) print::c#2 = (byte) 'b' [phi:main::@1->print#0] -- vbuz1=vbuc1 
     lda #'b'
     sta.z print.c
-    // [7] call print 
     jsr print
     jmp __breturn
     // main::@return
@@ -157,35 +183,31 @@ main: {
     rts
 }
   // print
+// print(byte zeropage(2) c)
 print: {
     .label c = 2
-    // [9] *((const byte*) SCREEN) ← (byte) print::c -- _deref_pbuc1=vbuz1 
+    // [10] *((const byte*) SCREEN) ← (byte) print::c#2 -- _deref_pbuc1=vbuz1 
     lda.z c
     sta SCREEN
     jmp __breturn
     // print::@return
   __breturn:
-    // [10] return 
+    // [11] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte) print::c ← (byte) 'a' [ print::c ] ( main:2 [ print::c ] ) always clobbers reg byte a 
-Statement [6] (byte) print::c ← (byte) 'b' [ print::c ] ( main:2 [ print::c ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN) ← (byte) print::c [ ] ( main:2::print:5 [ ] main:2::print:7 [ ] ) always clobbers reg byte a 
-Potential registers zp[1]:2 [ print::c ] : zp[1]:2 , 
+Potential registers zp[1]:2 [ print::c#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print] 3: zp[1]:2 [ print::c ] 
+Uplift Scope [print] 2: zp[1]:2 [ print::c#2 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [print] best 62 combination zp[1]:2 [ print::c ] 
-Uplifting [main] best 62 combination 
-Uplifting [] best 62 combination 
-Attempting to uplift remaining variables inzp[1]:2 [ print::c ]
-Uplifting [print] best 62 combination zp[1]:2 [ print::c ] 
+Uplifting [print] best 53 combination reg byte a [ print::c#2 ] 
+Uplifting [main] best 53 combination 
+Uplifting [] best 53 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -204,6 +226,8 @@ __b1_from___bbegin:
   // @1
 __b1:
   // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
 __bend_from___b1:
@@ -212,18 +236,22 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] (byte) print::c ← (byte) 'a' -- vbuz1=vbuc1 
-    lda #'a'
-    sta.z print.c
     // [5] call print 
+    // [9] phi from main to print [phi:main->print]
+  print_from_main:
+    // [9] phi (byte) print::c#2 = (byte) 'a' [phi:main->print#0] -- vbuaa=vbuc1 
+    lda #'a'
     jsr print
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) print::c ← (byte) 'b' -- vbuz1=vbuc1 
-    lda #'b'
-    sta.z print.c
     // [7] call print 
+    // [9] phi from main::@1 to print [phi:main::@1->print]
+  print_from___b1:
+    // [9] phi (byte) print::c#2 = (byte) 'b' [phi:main::@1->print#0] -- vbuaa=vbuc1 
+    lda #'b'
     jsr print
     jmp __breturn
     // main::@return
@@ -232,15 +260,14 @@ main: {
     rts
 }
   // print
+// print(byte register(A) c)
 print: {
-    .label c = 2
-    // [9] *((const byte*) SCREEN) ← (byte) print::c -- _deref_pbuc1=vbuz1 
-    lda.z c
+    // [10] *((const byte*) SCREEN) ← (byte) print::c#2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     jmp __breturn
     // print::@return
   __breturn:
-    // [10] return 
+    // [11] return 
     rts
 }
   // File Data
@@ -255,9 +282,13 @@ Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __bbegin with __b1
 Removing instruction __bbegin:
 Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
 Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction print_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __bend:
+Removing instruction print_from_main:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __breturn:
@@ -278,13 +309,14 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (void()) print((byte) print::c)
 (label) print::@return
-(byte) print::c loadstore zp[1]:2 3.0
+(byte) print::c
+(byte) print::c#2 reg byte a 2.0
 
-zp[1]:2 [ print::c ]
+reg byte a [ print::c#2 ]
 
 
 FINAL ASSEMBLER
-Score: 41
+Score: 32
 
   // File Comments
 // Test that a nomodify parameter works
@@ -298,22 +330,24 @@ Score: 41
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
   // [3] phi from @1 to @end [phi:@1->@end]
   // @end
   // main
 main: {
     // print('a')
-    // [4] (byte) print::c ← (byte) 'a' -- vbuz1=vbuc1 
-    lda #'a'
-    sta.z print.c
     // [5] call print 
+    // [9] phi from main to print [phi:main->print]
+    // [9] phi (byte) print::c#2 = (byte) 'a' [phi:main->print#0] -- vbuaa=vbuc1 
+    lda #'a'
     jsr print
+    // [6] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // print('b')
-    // [6] (byte) print::c ← (byte) 'b' -- vbuz1=vbuc1 
-    lda #'b'
-    sta.z print.c
     // [7] call print 
+    // [9] phi from main::@1 to print [phi:main::@1->print]
+    // [9] phi (byte) print::c#2 = (byte) 'b' [phi:main::@1->print#0] -- vbuaa=vbuc1 
+    lda #'b'
     jsr print
     // main::@return
     // }
@@ -321,15 +355,14 @@ main: {
     rts
 }
   // print
+// print(byte register(A) c)
 print: {
-    .label c = 2
     // *SCREEN = c
-    // [9] *((const byte*) SCREEN) ← (byte) print::c -- _deref_pbuc1=vbuz1 
-    lda.z c
+    // [10] *((const byte*) SCREEN) ← (byte) print::c#2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // print::@return
     // }
-    // [10] return 
+    // [11] return 
     rts
 }
   // File Data

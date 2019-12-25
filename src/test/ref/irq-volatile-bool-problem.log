@@ -12,7 +12,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (bool) framedone#12 ← phi( @2/(bool) framedone#11 )
   asm { sei  }
   *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
   *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
@@ -22,30 +21,25 @@ main: scope:[main]  from @2
   asm { cli  }
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@7
-  (bool) framedone#9 ← phi( main/(bool) framedone#12 main::@2/(bool) framedone#13 main::@7/(bool) framedone#0 )
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (bool) framedone#13 ← phi( main::@1/(bool) framedone#9 )
   (bool~) main::$0 ← *((const byte*) RASTER) < (number) $14
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@1
   to:main::@7
 main::@7: scope:[main]  from main::@2
-  (bool) framedone#0 ← true
+  (bool) framedone ← true
   to:main::@1
 main::@return: scope:[main]  from main::@1
-  (bool) framedone#6 ← phi( main::@1/(bool) framedone#9 )
-  (bool) framedone#1 ← (bool) framedone#6
   return 
   to:@return
 @1: scope:[]  from @begin
-  (bool) framedone#2 ← false
+  (bool) framedone ← false
   to:@2
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  (bool) framedone#14 ← phi( @2/(bool) framedone#11 )
   *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
   (bool~) irq::$1 ← *((const byte*) RASTER) > (number) $32
@@ -53,24 +47,18 @@ irq: scope:[irq]  from
   if((bool~) irq::$2) goto irq::@1
   to:irq::@2
 irq::@1: scope:[irq]  from irq irq::@2
-  (bool) framedone#10 ← phi( irq/(bool) framedone#14 irq::@2/(bool) framedone#3 )
   *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
   to:irq::@return
 irq::@2: scope:[irq]  from irq
-  (bool) framedone#3 ← false
+  (bool) framedone ← false
   to:irq::@1
 irq::@return: scope:[irq]  from irq::@1
-  (bool) framedone#7 ← phi( irq::@1/(bool) framedone#10 )
-  (bool) framedone#4 ← (bool) framedone#7
   return 
   to:@return
 @2: scope:[]  from @1
-  (bool) framedone#11 ← phi( @1/(bool) framedone#2 )
   call main 
   to:@3
 @3: scope:[]  from @2
-  (bool) framedone#8 ← phi( @2/(bool) framedone#1 )
-  (bool) framedone#5 ← (bool) framedone#8
   to:@end
 @end: scope:[]  from @3
 
@@ -89,22 +77,7 @@ SYMBOL TABLE SSA
 (const void()**) KERNEL_IRQ = (void()**)(number) $314
 (const byte*) RASTER = (byte*)(number) $d012
 (const byte*) VIC_CONTROL = (byte*)(number) $d011
-(bool) framedone
-(bool) framedone#0
-(bool) framedone#1
-(bool) framedone#10
-(bool) framedone#11
-(bool) framedone#12
-(bool) framedone#13
-(bool) framedone#14
-(bool) framedone#2
-(bool) framedone#3
-(bool) framedone#4
-(bool) framedone#5
-(bool) framedone#6
-(bool) framedone#7
-(bool) framedone#8
-(bool) framedone#9
+(bool) framedone loadstore
 interrupt(KERNEL_MIN)(void()) irq()
 (bool~) irq::$1
 (bool~) irq::$2
@@ -143,24 +116,15 @@ Finalized unsigned number type (byte) $fd
 Finalized unsigned number type (byte) $14
 Finalized unsigned number type (byte) $32
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [12] (bool~) main::$1 ← *((const byte*) RASTER) >= (byte) $14 from [11] (bool~) main::$0 ← *((const byte*) RASTER) < (byte) $14
-Inversing boolean not [23] (bool~) irq::$2 ← *((const byte*) RASTER) <= (byte) $32 from [22] (bool~) irq::$1 ← *((const byte*) RASTER) > (byte) $32
+Inversing boolean not [9] (bool~) main::$1 ← *((const byte*) RASTER) >= (byte) $14 from [8] (bool~) main::$0 ← *((const byte*) RASTER) < (byte) $14
+Inversing boolean not [17] (bool~) irq::$2 ← *((const byte*) RASTER) <= (byte) $32 from [16] (bool~) irq::$1 ← *((const byte*) RASTER) > (byte) $32
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (bool) framedone#1 = (bool) framedone#13 (bool) framedone#9 (bool) framedone#6 
-Alias (bool) framedone#10 = (bool) framedone#7 (bool) framedone#4 
-Alias (bool) framedone#11 = (bool) framedone#2 
-Alias (bool) framedone#5 = (bool) framedone#8 
-Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (bool) framedone#12 (bool) framedone#11
-Identical Phi Values (bool) framedone#14 (bool) framedone#11
-Identical Phi Values (bool) framedone#5 (bool) framedone#1
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [13] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1
-Simple Condition (bool~) irq::$2 [24] if(*((const byte*) RASTER)<=(byte) $32) goto irq::@1
+Simple Condition (bool~) main::$1 [10] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1
+Simple Condition (bool~) irq::$2 [18] if(*((const byte*) RASTER)<=(byte) $32) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-if() condition always true - replacing block destination [9] if(true) goto main::@2
+if() condition always true - replacing block destination [7] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Rewriting conditional comparison [24] if(*((const byte*) RASTER)<=(byte) $32) goto irq::@1
+Rewriting conditional comparison [18] if(*((const byte*) RASTER)<=(byte) $32) goto irq::@1
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $32+1 in if(*((const byte*) RASTER)<(byte) $32+(number) 1) goto irq::@1
@@ -171,26 +135,20 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Added new block during phi lifting main::@9(between main::@2 and main::@1)
-Added new block during phi lifting irq::@3(between irq and irq::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@1
 CALL GRAPH
 Calls in [] to main:3 
 
-Created 2 initial phi equivalence classes
-Coalesced [13] framedone#15 ← framedone#11
-Coalesced [17] framedone#17 ← framedone#0
-Coalesced (already) [18] framedone#16 ← framedone#1
-Coalesced [23] framedone#19 ← framedone#3
-Coalesced [27] framedone#18 ← framedone#11
-Coalesced down to 1 phi equivalence classes
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
 Culled Empty Block (label) @3
-Culled Empty Block (label) main::@9
-Culled Empty Block (label) irq::@3
-Renumbering block main::@7 to main::@3
+Culled Empty Block (label) main::@1
+Renumbering block main::@2 to main::@1
+Renumbering block main::@7 to main::@2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -200,7 +158,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  [1] (bool) framedone#11 ← false
+  [1] (bool) framedone ← false
   to:@2
 @2: scope:[]  from @1
   [2] phi()
@@ -219,49 +177,40 @@ main: scope:[main]  from @2
   [10] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   asm { cli  }
   to:main::@1
-main::@1: scope:[main]  from main main::@2 main::@3
-  [12] (bool) framedone#1 ← phi( main/(bool) framedone#11 main::@2/(bool) framedone#1 main::@3/(bool) framedone#0 )
+main::@1: scope:[main]  from main main::@1 main::@2
+  [12] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [13] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  [14] (bool) framedone#0 ← true
+  [13] (bool) framedone ← true
   to:main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  [15] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
-  [16] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
-  [17] if(*((const byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1
+  [14] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  [15] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
+  [16] if(*((const byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1
   to:irq::@2
 irq::@2: scope:[irq]  from irq
-  [18] (bool) framedone#3 ← false
+  [17] (bool) framedone ← false
   to:irq::@1
 irq::@1: scope:[irq]  from irq irq::@2
-  [19] (bool) framedone#10 ← phi( irq/(bool) framedone#11 irq::@2/(bool) framedone#3 )
-  [20] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
+  [18] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@1
-  [21] return 
+  [19] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
-(bool) framedone
-(bool) framedone#0 22.0
-(bool) framedone#1 107.5
-(bool) framedone#10 40.0
-(bool) framedone#11 0.5
-(bool) framedone#3 4.0
+(bool) framedone loadstore 150.0
 interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 
 Initial phi equivalence classes
-[ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ]
+Added variable framedone to live range equivalence class [ framedone ]
 Complete equivalence classes
-[ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ]
-Allocated zp[1]:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ]
+[ framedone ]
+Allocated zp[1]:2 [ framedone ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -288,7 +237,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (bool) framedone#11 ← false -- vboz1=vboc1 
+  // [1] (bool) framedone ← false -- vboz1=vboc1 
   lda #0
   sta.z framedone
   // [2] phi from @1 to @2 [phi:@1->@2]
@@ -331,88 +280,76 @@ main: {
     sta KERNEL_IRQ+1
     // asm { cli  }
     cli
-    // [12] phi from main main::@2 main::@3 to main::@1 [phi:main/main::@2/main::@3->main::@1]
-  __b1_from_main:
-  __b1_from___b2:
-  __b1_from___b3:
-    // [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@2/main::@3->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
+    // [12] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    lda RASTER
+    cmp #$14
+    bcs __b1
     jmp __b2
     // main::@2
   __b2:
-    // [13] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
-    lda RASTER
-    cmp #$14
-    bcs __b1_from___b2
-    jmp __b3
-    // main::@3
-  __b3:
-    // [14] (bool) framedone#0 ← true -- vboz1=vboc1 
+    // [13] (bool) framedone ← true -- vboz1=vboc1 
     lda #1
     sta.z framedone
-    jmp __b1_from___b3
+    jmp __b1
 }
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [15] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [14] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-    // [16] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [15] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [17] if(*((const byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    // [16] if(*((const byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$32+1
-    bcc __b1_from_irq
+    bcc __b1
     jmp __b2
     // irq::@2
   __b2:
-    // [18] (bool) framedone#3 ← false -- vboz1=vboc1 
+    // [17] (bool) framedone ← false -- vboz1=vboc1 
     lda #0
     sta.z framedone
-    // [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
-  __b1_from_irq:
-  __b1_from___b2:
-    // [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
     jmp __b1
     // irq::@1
   __b1:
-    // [20] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [18] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     jmp __breturn
     // irq::@return
   __breturn:
-    // [21] return  - exit interrupt(KERNEL_MIN)
+    // [19] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (bool) framedone#11 ← false [ framedone#11 ] (  [ framedone#11 ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR [ framedone#11 ] ( main:3 [ framedone#11 ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f [ framedone#11 ] ( main:3 [ framedone#11 ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) RASTER) ← (byte) $fd [ framedone#11 ] ( main:3 [ framedone#11 ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER [ framedone#11 ] ( main:3 [ framedone#11 ] ) always clobbers reg byte a 
-Statement [10] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ framedone#11 ] ( main:3 [ framedone#11 ] ) always clobbers reg byte a 
-Statement [13] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1 [ framedone#1 ] ( main:3 [ framedone#1 ] ) always clobbers reg byte a 
-Statement [14] (bool) framedone#0 ← true [ framedone#0 ] ( main:3 [ framedone#0 ] ) always clobbers reg byte a 
-Statement [16] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ framedone#11 ] (  [ framedone#11 ] ) always clobbers reg byte a 
-Statement [17] if(*((const byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 [ framedone#11 ] (  [ framedone#11 ] ) always clobbers reg byte a 
-Statement [18] (bool) framedone#3 ← false [ framedone#3 ] (  [ framedone#3 ] ) always clobbers reg byte a 
-Potential registers zp[1]:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ] : zp[1]:2 , 
+Statement [1] (bool) framedone ← false [ ] (  [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) RASTER) ← (byte) $fd [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [10] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [12] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1 [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [13] (bool) framedone ← true [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [15] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ ] (  [ ] ) always clobbers reg byte a 
+Statement [16] if(*((const byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [17] (bool) framedone ← false [ ] (  [ ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ framedone ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 174: zp[1]:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ] 
+Uplift Scope [] 150: zp[1]:2 [ framedone ] 
 Uplift Scope [main] 
 Uplift Scope [irq] 
 
-Uplifting [] best 1694 combination zp[1]:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ] 
-Uplifting [main] best 1694 combination 
-Uplifting [irq] best 1694 combination 
-Attempting to uplift remaining variables inzp[1]:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ]
-Uplifting [] best 1694 combination zp[1]:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ] 
+Uplifting [] best 1367 combination zp[1]:2 [ framedone ] 
+Uplifting [main] best 1367 combination 
+Uplifting [irq] best 1367 combination 
+Attempting to uplift remaining variables inzp[1]:2 [ framedone ]
+Uplifting [] best 1367 combination zp[1]:2 [ framedone ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -438,7 +375,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (bool) framedone#11 ← false -- vboz1=vboc1 
+  // [1] (bool) framedone ← false -- vboz1=vboc1 
   lda #0
   sta.z framedone
   // [2] phi from @1 to @2 [phi:@1->@2]
@@ -481,60 +418,48 @@ main: {
     sta KERNEL_IRQ+1
     // asm { cli  }
     cli
-    // [12] phi from main main::@2 main::@3 to main::@1 [phi:main/main::@2/main::@3->main::@1]
-  __b1_from_main:
-  __b1_from___b2:
-  __b1_from___b3:
-    // [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@2/main::@3->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
+    // [12] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    lda RASTER
+    cmp #$14
+    bcs __b1
     jmp __b2
     // main::@2
   __b2:
-    // [13] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
-    lda RASTER
-    cmp #$14
-    bcs __b1_from___b2
-    jmp __b3
-    // main::@3
-  __b3:
-    // [14] (bool) framedone#0 ← true -- vboz1=vboc1 
+    // [13] (bool) framedone ← true -- vboz1=vboc1 
     lda #1
     sta.z framedone
-    jmp __b1_from___b3
+    jmp __b1
 }
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [15] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [14] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
-    // [16] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [15] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [17] if(*((const byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    // [16] if(*((const byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$32+1
-    bcc __b1_from_irq
+    bcc __b1
     jmp __b2
     // irq::@2
   __b2:
-    // [18] (bool) framedone#3 ← false -- vboz1=vboc1 
+    // [17] (bool) framedone ← false -- vboz1=vboc1 
     lda #0
     sta.z framedone
-    // [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
-  __b1_from_irq:
-  __b1_from___b2:
-    // [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
     jmp __b1
     // irq::@1
   __b1:
-    // [20] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [18] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     jmp __breturn
     // irq::@return
   __breturn:
-    // [21] return  - exit interrupt(KERNEL_MIN)
+    // [19] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
   // File Data
@@ -545,28 +470,18 @@ Removing instruction jmp __b2
 Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b2
-Removing instruction jmp __b3
 Removing instruction jmp __b2
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __bbegin with __b1
-Replacing label __b1_from___b2 with __b2
-Replacing label __b1_from___b3 with __b2
-Replacing label __b1_from_irq with __b1
 Removing instruction __bbegin:
 Removing instruction __b2_from___b1:
 Removing instruction __bend_from___b2:
-Removing instruction __b1_from_main:
-Removing instruction __b1_from___b2:
-Removing instruction __b1_from___b3:
-Removing instruction __b1:
-Removing instruction __b1_from_irq:
-Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b2:
 Removing instruction __bend:
-Removing instruction __b3:
+Removing instruction __b2:
 Removing instruction __b2:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -587,12 +502,7 @@ FINAL SYMBOL TABLE
 (const void()**) KERNEL_IRQ = (void()**) 788
 (const byte*) RASTER = (byte*) 53266
 (const byte*) VIC_CONTROL = (byte*) 53265
-(bool) framedone
-(bool) framedone#0 framedone zp[1]:2 22.0
-(bool) framedone#1 framedone zp[1]:2 107.5
-(bool) framedone#10 framedone zp[1]:2 40.0
-(bool) framedone#11 framedone zp[1]:2 0.5
-(bool) framedone#3 framedone zp[1]:2 4.0
+(bool) framedone loadstore zp[1]:2 150.0
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@1
 (label) irq::@2
@@ -600,9 +510,8 @@ interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 (label) main::@1
 (label) main::@2
-(label) main::@3
 
-zp[1]:2 [ framedone#10 framedone#1 framedone#11 framedone#0 framedone#3 ]
+zp[1]:2 [ framedone ]
 
 
 FINAL ASSEMBLER
@@ -630,7 +539,7 @@ Score: 1025
   // @1
 __b1:
   // framedone = false
-  // [1] (bool) framedone#11 ← false -- vboz1=vboc1 
+  // [1] (bool) framedone ← false -- vboz1=vboc1 
   lda #0
   sta.z framedone
   // [2] phi from @1 to @2 [phi:@1->@2]
@@ -675,53 +584,48 @@ main: {
     // asm
     // asm { cli  }
     cli
-    // [12] phi from main main::@2 main::@3 to main::@1 [phi:main/main::@2/main::@3->main::@1]
-    // [12] phi (bool) framedone#1 = (bool) framedone#11 [phi:main/main::@2/main::@3->main::@1#0] -- register_copy 
     // main::@1
-    // main::@2
-  __b2:
+  __b1:
     // if(*RASTER<20)
-    // [13] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    // [12] if(*((const byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
-    bcs __b2
-    // main::@3
+    bcs __b1
+    // main::@2
     // framedone = true
-    // [14] (bool) framedone#0 ← true -- vboz1=vboc1 
+    // [13] (bool) framedone ← true -- vboz1=vboc1 
     lda #1
     sta.z framedone
-    jmp __b2
+    jmp __b1
 }
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
     // (*BGCOL)++;
-    // [15] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [14] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // *IRQ_STATUS = IRQ_RASTER
-    // [16] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [15] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // if (*RASTER>50)
-    // [17] if(*((const byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    // [16] if(*((const byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$32+1
     bcc __b1
     // irq::@2
     // framedone = false
-    // [18] (bool) framedone#3 ← false -- vboz1=vboc1 
+    // [17] (bool) framedone ← false -- vboz1=vboc1 
     lda #0
     sta.z framedone
-    // [19] phi from irq irq::@2 to irq::@1 [phi:irq/irq::@2->irq::@1]
-    // [19] phi (bool) framedone#10 = (bool) framedone#11 [phi:irq/irq::@2->irq::@1#0] -- register_copy 
     // irq::@1
   __b1:
     // (*BGCOL)--;
-    // [20] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [18] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     // irq::@return
     // }
-    // [21] return  - exit interrupt(KERNEL_MIN)
+    // [19] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
   // File Data

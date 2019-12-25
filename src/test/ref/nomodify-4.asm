@@ -5,16 +5,13 @@
   .label SCREEN = $400
 main: {
     lda #'a'
-    sta.z print.c
     jsr print
     lda #'b'
-    sta.z print.c
     jsr print
     rts
 }
+// print(byte register(A) c)
 print: {
-    .label c = 2
-    lda.z c
     sta SCREEN
     rts
 }

@@ -10,61 +10,48 @@ Culled Empty Block (label) irq::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) col#0 ← (number) 0
+  (byte) col ← (number) 0
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte) col#16 ← phi( @2/(byte) col#15 )
   *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@7
-  (byte) col#14 ← phi( main/(byte) col#16 main::@2/(byte) col#7 main::@7/(byte) col#1 )
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) col#7 ← phi( main::@1/(byte) col#14 )
-  (bool~) main::$0 ← (byte) col#7 > (number) $a
+  (bool~) main::$0 ← (byte) col > (number) $a
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@1
   to:main::@7
 main::@7: scope:[main]  from main::@2
-  (byte) col#1 ← (number) 0
+  (byte) col ← (number) 0
   to:main::@1
 main::@return: scope:[main]  from main::@1
-  (byte) col#8 ← phi( main::@1/(byte) col#14 )
-  (byte) col#2 ← (byte) col#8
   return 
   to:@return
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  (byte) col#9 ← phi( @2/(byte) col#15 )
   asm { lda$dc0d  }
-  *((const byte*) BGCOL) ← (byte) col#9
-  (bool~) irq::$0 ← (byte) col#9 != (number) 0
+  *((const byte*) BGCOL) ← (byte) col
+  (bool~) irq::$0 ← (byte) col != (number) 0
   if((bool~) irq::$0) goto irq::@1
   to:irq::@3
 irq::@1: scope:[irq]  from irq
-  (byte) col#10 ← phi( irq/(byte) col#9 )
-  (byte) col#3 ← ++ (byte) col#10
+  (byte) col ← ++ (byte) col
   to:irq::@return
 irq::@3: scope:[irq]  from irq
-  (byte) col#11 ← phi( irq/(byte) col#9 )
-  (byte) col#4 ← (byte) col#11 + (number) 2
+  (byte) col ← (byte) col + (number) 2
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@1 irq::@3
-  (byte) col#12 ← phi( irq::@1/(byte) col#3 irq::@3/(byte) col#4 )
-  (byte) col#5 ← (byte) col#12
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte) col#15 ← phi( @begin/(byte) col#0 )
   call main 
   to:@3
 @3: scope:[]  from @2
-  (byte) col#13 ← phi( @2/(byte) col#2 )
-  (byte) col#6 ← (byte) col#13
   to:@end
 @end: scope:[]  from @3
 
@@ -75,24 +62,7 @@ SYMBOL TABLE SSA
 (label) @end
 (const byte*) BGCOL = (byte*)(number) $d020
 (const void()**) KERNEL_IRQ = (void()**)(number) $314
-(byte) col
-(byte) col#0
-(byte) col#1
-(byte) col#10
-(byte) col#11
-(byte) col#12
-(byte) col#13
-(byte) col#14
-(byte) col#15
-(byte) col#16
-(byte) col#2
-(byte) col#3
-(byte) col#4
-(byte) col#5
-(byte) col#6
-(byte) col#7
-(byte) col#8
-(byte) col#9
+(byte) col loadstore
 interrupt(KERNEL_MIN)(void()) irq()
 (bool~) irq::$0
 (label) irq::@1
@@ -106,14 +76,14 @@ interrupt(KERNEL_MIN)(void()) irq()
 (label) main::@7
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in (byte) col#0 ← (number) 0
-Adding number conversion cast (unumber) $a in (bool~) main::$0 ← (byte) col#7 > (number) $a
-Adding number conversion cast (unumber) 0 in (byte) col#1 ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) irq::$0 ← (byte) col#9 != (number) 0
-Adding number conversion cast (unumber) 2 in (byte) col#4 ← (byte) col#11 + (number) 2
+Adding number conversion cast (unumber) 0 in (byte) col ← (number) 0
+Adding number conversion cast (unumber) $a in (bool~) main::$0 ← (byte) col > (number) $a
+Adding number conversion cast (unumber) 0 in (byte) col ← (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) irq::$0 ← (byte) col != (number) 0
+Adding number conversion cast (unumber) 2 in (byte) col ← (byte) col + (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) col#0 ← (unumber)(number) 0
-Inlining cast (byte) col#1 ← (unumber)(number) 0
+Inlining cast (byte) col ← (unumber)(number) 0
+Inlining cast (byte) col ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 53280
@@ -129,59 +99,45 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [7] (bool~) main::$1 ← (byte) col#7 <= (byte) $a from [6] (bool~) main::$0 ← (byte) col#7 > (byte) $a
+Inversing boolean not [4] (bool~) main::$1 ← (byte) col <= (byte) $a from [3] (bool~) main::$0 ← (byte) col > (byte) $a
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte) col#14 = (byte) col#7 (byte) col#8 (byte) col#2 
-Alias (byte) col#10 = (byte) col#9 (byte) col#11 
-Alias (byte) col#12 = (byte) col#5 
-Alias (byte) col#0 = (byte) col#15 
-Alias (byte) col#13 = (byte) col#6 
-Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) col#16 (byte) col#0
-Identical Phi Values (byte) col#10 (byte) col#0
-Identical Phi Values (byte) col#13 (byte) col#14
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [8] if((byte) col#14<=(byte) $a) goto main::@1
-Simple Condition (bool~) irq::$0 [17] if((byte) col#0!=(byte) 0) goto irq::@1
+Simple Condition (bool~) main::$1 [5] if((byte) col<=(byte) $a) goto main::@1
+Simple Condition (bool~) irq::$0 [11] if((byte) col!=(byte) 0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-if() condition always true - replacing block destination [4] if(true) goto main::@2
+if() condition always true - replacing block destination [2] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Rewriting conditional comparison [8] if((byte) col#14<=(byte) $a) goto main::@1
+Rewriting conditional comparison [5] if((byte) col<=(byte) $a) goto main::@1
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Adding number conversion cast (unumber) $a+1 in if((byte) col#14<(byte) $a+(number) 1) goto main::@1
-Adding number conversion cast (unumber) 1 in if((byte) col#14<(unumber)(byte) $a+(number) 1) goto main::@1
+Adding number conversion cast (unumber) $a+1 in if((byte) col<(byte) $a+(number) 1) goto main::@1
+Adding number conversion cast (unumber) 1 in if((byte) col<(unumber)(byte) $a+(number) 1) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast (byte) $a+(unumber)(number) 1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Added new block during phi lifting main::@9(between main::@2 and main::@1)
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@1
 CALL GRAPH
 Calls in [] to main:2 
 
-Created 2 initial phi equivalence classes
-Coalesced [6] col#17 ← col#0
-Coalesced [10] col#19 ← col#1
-Coalesced (already) [11] col#18 ← col#14
-Coalesced [16] col#21 ← col#4
-Coalesced [20] col#20 ← col#3
-Coalesced down to 2 phi equivalence classes
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
 Culled Empty Block (label) @3
-Culled Empty Block (label) main::@9
+Culled Empty Block (label) main::@1
 Renumbering block @2 to @1
-Renumbering block main::@7 to main::@3
+Renumbering block main::@2 to main::@1
+Renumbering block main::@7 to main::@2
 Renumbering block irq::@3 to irq::@2
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) col#0 ← (byte) 0
+  [0] (byte) col ← (byte) 0
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -194,52 +150,40 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
-main::@1: scope:[main]  from main main::@2 main::@3
-  [5] (byte) col#14 ← phi( main/(byte) col#0 main::@2/(byte) col#14 main::@3/(byte) col#1 )
+main::@1: scope:[main]  from main main::@1 main::@2
+  [5] if((byte) col<(byte) $a+(byte) 1) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1
-  to:main::@3
-main::@3: scope:[main]  from main::@2
-  [7] (byte) col#1 ← (byte) 0
+  [6] (byte) col ← (byte) 0
   to:main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
-  [9] *((const byte*) BGCOL) ← (byte) col#0
-  [10] if((byte) col#0!=(byte) 0) goto irq::@1
+  [8] *((const byte*) BGCOL) ← (byte) col
+  [9] if((byte) col!=(byte) 0) goto irq::@1
   to:irq::@2
 irq::@2: scope:[irq]  from irq
-  [11] (byte) col#4 ← (byte) col#0 + (byte) 2
+  [10] (byte) col ← (byte) col + (byte) 2
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@1 irq::@2
-  [12] (byte) col#12 ← phi( irq::@1/(byte) col#3 irq::@2/(byte) col#4 )
-  [13] return 
+  [11] return 
   to:@return
 irq::@1: scope:[irq]  from irq
-  [14] (byte) col#3 ← ++ (byte) col#0
+  [12] (byte) col ← ++ (byte) col
   to:irq::@return
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) col
-(byte) col#0 1.9999999999999998
-(byte) col#1 22.0
-(byte) col#12 40.0
-(byte) col#14 158.0
-(byte) col#3 4.0
-(byte) col#4 4.0
+(byte) col loadstore 17.999999999999996
 interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 
 Initial phi equivalence classes
-[ col#14 col#0 col#1 ]
-[ col#12 col#3 col#4 ]
-Coalescing volatile variable equivalence classes [ col#14 col#0 col#1 ] and [ col#12 col#3 col#4 ]
+Added variable col to live range equivalence class [ col ]
 Complete equivalence classes
-[ col#14 col#0 col#1 col#12 col#3 col#4 ]
-Allocated zp[1]:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ]
+[ col ]
+Allocated zp[1]:2 [ col ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -256,7 +200,7 @@ Target platform is c64basic / MOS6502X
   .label col = 2
   // @begin
 __bbegin:
-  // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) col ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -278,87 +222,75 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-    // [5] phi from main main::@2 main::@3 to main::@1 [phi:main/main::@2/main::@3->main::@1]
-  __b1_from_main:
-  __b1_from___b2:
-  __b1_from___b3:
-    // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@2/main::@3->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
+    // [5] if((byte) col<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z col
+    cmp #$a+1
+    bcc __b1
     jmp __b2
     // main::@2
   __b2:
-    // [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z col
-    cmp #$a+1
-    bcc __b1_from___b2
-    jmp __b3
-    // main::@3
-  __b3:
-    // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
+    // [6] (byte) col ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z col
-    jmp __b1_from___b3
+    jmp __b1
 }
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
     // asm { lda$dc0d  }
     lda $dc0d
-    // [9] *((const byte*) BGCOL) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+    // [8] *((const byte*) BGCOL) ← (byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BGCOL
-    // [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
+    // [9] if((byte) col!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
     lda.z col
     cmp #0
     bne __b1
     jmp __b2
     // irq::@2
   __b2:
-    // [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+    // [10] (byte) col ← (byte) col + (byte) 2 -- vbuz1=vbuz1_plus_2 
     lda.z col
     clc
     adc #2
     sta.z col
-    // [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
-  __breturn_from___b1:
-  __breturn_from___b2:
-    // [12] phi (byte) col#12 = (byte) col#3 [phi:irq::@1/irq::@2->irq::@return#0] -- register_copy 
     jmp __breturn
     // irq::@return
   __breturn:
-    // [13] return  - exit interrupt(KERNEL_MIN)
+    // [11] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
     // irq::@1
   __b1:
-    // [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
+    // [12] (byte) col ← ++ (byte) col -- vbuz1=_inc_vbuz1 
     inc.z col
-    jmp __breturn_from___b1
+    jmp __breturn
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) col#0 ← (byte) 0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
-Statement [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ col#0 ] ( main:2 [ col#0 ] ) always clobbers reg byte a 
-Statement [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 [ col#14 ] ( main:2 [ col#14 ] ) always clobbers reg byte a 
-Statement [7] (byte) col#1 ← (byte) 0 [ col#1 ] ( main:2 [ col#1 ] ) always clobbers reg byte a 
+Statement [0] (byte) col ← (byte) 0 [ col ] (  [ col ] ) always clobbers reg byte a 
+Statement [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ col ] ( main:2 [ col ] ) always clobbers reg byte a 
+Statement [5] if((byte) col<(byte) $a+(byte) 1) goto main::@1 [ col ] ( main:2 [ col ] ) always clobbers reg byte a 
+Statement [6] (byte) col ← (byte) 0 [ col ] ( main:2 [ col ] ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [9] *((const byte*) BGCOL) ← (byte) col#0 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
-Statement [10] if((byte) col#0!=(byte) 0) goto irq::@1 [ col#0 ] (  [ col#0 ] ) always clobbers reg byte a 
-Statement [11] (byte) col#4 ← (byte) col#0 + (byte) 2 [ col#4 ] (  [ col#4 ] ) always clobbers reg byte a 
-Potential registers zp[1]:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] : zp[1]:2 , 
+Statement [8] *((const byte*) BGCOL) ← (byte) col [ col ] (  [ col ] ) always clobbers reg byte a 
+Statement [9] if((byte) col!=(byte) 0) goto irq::@1 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [10] (byte) col ← (byte) col + (byte) 2 [ ] (  [ ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ col ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 230: zp[1]:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] 
+Uplift Scope [] 18: zp[1]:2 [ col ] 
 Uplift Scope [main] 
 Uplift Scope [irq] 
 
-Uplifting [] best 1534 combination zp[1]:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] 
-Uplifting [main] best 1534 combination 
-Uplifting [irq] best 1534 combination 
-Attempting to uplift remaining variables inzp[1]:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ]
-Uplifting [] best 1534 combination zp[1]:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ] 
+Uplifting [] best 1207 combination zp[1]:2 [ col ] 
+Uplifting [main] best 1207 combination 
+Uplifting [irq] best 1207 combination 
+Attempting to uplift remaining variables inzp[1]:2 [ col ]
+Uplifting [] best 1207 combination zp[1]:2 [ col ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -374,7 +306,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label col = 2
   // @begin
 __bbegin:
-  // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) col ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -396,63 +328,51 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-    // [5] phi from main main::@2 main::@3 to main::@1 [phi:main/main::@2/main::@3->main::@1]
-  __b1_from_main:
-  __b1_from___b2:
-  __b1_from___b3:
-    // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@2/main::@3->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
+    // [5] if((byte) col<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z col
+    cmp #$a+1
+    bcc __b1
     jmp __b2
     // main::@2
   __b2:
-    // [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z col
-    cmp #$a+1
-    bcc __b1_from___b2
-    jmp __b3
-    // main::@3
-  __b3:
-    // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
+    // [6] (byte) col ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z col
-    jmp __b1_from___b3
+    jmp __b1
 }
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
     // asm { lda$dc0d  }
     lda $dc0d
-    // [9] *((const byte*) BGCOL) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+    // [8] *((const byte*) BGCOL) ← (byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BGCOL
-    // [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
+    // [9] if((byte) col!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
     lda.z col
     cmp #0
     bne __b1
     jmp __b2
     // irq::@2
   __b2:
-    // [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+    // [10] (byte) col ← (byte) col + (byte) 2 -- vbuz1=vbuz1_plus_2 
     lda.z col
     clc
     adc #2
     sta.z col
-    // [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
-  __breturn_from___b1:
-  __breturn_from___b2:
-    // [12] phi (byte) col#12 = (byte) col#3 [phi:irq::@1/irq::@2->irq::@return#0] -- register_copy 
     jmp __breturn
     // irq::@return
   __breturn:
-    // [13] return  - exit interrupt(KERNEL_MIN)
+    // [11] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
     // irq::@1
   __b1:
-    // [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
+    // [12] (byte) col ← ++ (byte) col -- vbuz1=_inc_vbuz1 
     inc.z col
-    jmp __breturn_from___b1
+    jmp __breturn
 }
   // File Data
 
@@ -461,25 +381,15 @@ Removing instruction jmp __b1
 Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b2
-Removing instruction jmp __b3
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label __b1_from___b2 with __b2
-Replacing label __b1_from___b3 with __b2
-Replacing label __breturn_from___b1 with __breturn
 Removing instruction __b1_from___bbegin:
 Removing instruction __bend_from___b1:
-Removing instruction __b1_from_main:
-Removing instruction __b1_from___b2:
-Removing instruction __b1_from___b3:
-Removing instruction __b1:
-Removing instruction __breturn_from___b1:
-Removing instruction __breturn_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b1:
 Removing instruction __bend:
-Removing instruction __b3:
+Removing instruction __b2:
 Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Skipping double jump to $ea81 in jmp __breturn
@@ -497,13 +407,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte*) BGCOL = (byte*) 53280
 (const void()**) KERNEL_IRQ = (void()**) 788
-(byte) col
-(byte) col#0 col zp[1]:2 1.9999999999999998
-(byte) col#1 col zp[1]:2 22.0
-(byte) col#12 col zp[1]:2 40.0
-(byte) col#14 col zp[1]:2 158.0
-(byte) col#3 col zp[1]:2 4.0
-(byte) col#4 col zp[1]:2 4.0
+(byte) col loadstore zp[1]:2 17.999999999999996
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@1
 (label) irq::@2
@@ -511,9 +415,8 @@ interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 (label) main::@1
 (label) main::@2
-(label) main::@3
 
-zp[1]:2 [ col#14 col#0 col#1 col#12 col#3 col#4 ]
+zp[1]:2 [ col ]
 
 
 FINAL ASSEMBLER
@@ -533,7 +436,7 @@ Score: 895
   // @begin
 __bbegin:
   // col = 0
-  // [0] (byte) col#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) col ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -551,22 +454,19 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-    // [5] phi from main main::@2 main::@3 to main::@1 [phi:main/main::@2/main::@3->main::@1]
-    // [5] phi (byte) col#14 = (byte) col#0 [phi:main/main::@2/main::@3->main::@1#0] -- register_copy 
     // main::@1
-    // main::@2
-  __b2:
+  __b1:
     // if(col>10)
-    // [6] if((byte) col#14<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [5] if((byte) col<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z col
     cmp #$a+1
-    bcc __b2
-    // main::@3
+    bcc __b1
+    // main::@2
     // col = 0
-    // [7] (byte) col#1 ← (byte) 0 -- vbuz1=vbuc1 
+    // [6] (byte) col ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z col
-    jmp __b2
+    jmp __b1
 }
   // irq
 irq: {
@@ -575,30 +475,28 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // *BGCOL = col
-    // [9] *((const byte*) BGCOL) ← (byte) col#0 -- _deref_pbuc1=vbuz1 
+    // [8] *((const byte*) BGCOL) ← (byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BGCOL
     // if(col!=0)
-    // [10] if((byte) col#0!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
+    // [9] if((byte) col!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
     lda.z col
     cmp #0
     bne __b1
     // irq::@2
     // col += 2
-    // [11] (byte) col#4 ← (byte) col#0 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+    // [10] (byte) col ← (byte) col + (byte) 2 -- vbuz1=vbuz1_plus_2 
     clc
     adc #2
     sta.z col
-    // [12] phi from irq::@1 irq::@2 to irq::@return [phi:irq::@1/irq::@2->irq::@return]
-    // [12] phi (byte) col#12 = (byte) col#3 [phi:irq::@1/irq::@2->irq::@return#0] -- register_copy 
     // irq::@return
     // }
-    // [13] return  - exit interrupt(KERNEL_MIN)
+    // [11] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
     // irq::@1
   __b1:
     // col++;
-    // [14] (byte) col#3 ← ++ (byte) col#0 -- vbuz1=_inc_vbuz1 
+    // [12] (byte) col ← ++ (byte) col -- vbuz1=_inc_vbuz1 
     inc.z col
     jmp $ea81
 }

@@ -57,11 +57,11 @@
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .label SIN_SPRITE = $2800
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
-  .label render_screen_showing = 5
-  .label irq_raster_next = 6
-  .label irq_sprite_ypos = 7
-  .label irq_sprite_ptr = 8
-  .label irq_cnt = 9
+  .label render_screen_showing = 4
+  .label irq_raster_next = 5
+  .label irq_sprite_ypos = 6
+  .label irq_sprite_ptr = 7
+  .label irq_cnt = 8
   .label sin_idx = 3
 __b1:
   // The screen currently being showed to the user. 0x00 for screen 1 / 0x20 for screen 2.
@@ -219,7 +219,7 @@ sprites_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES/$40
-    .label raster_sprite_gfx_modify = 4
+    .label raster_sprite_gfx_modify = 9
     sta rega+1
     stx regx+1
     //(*BGCOL)++;

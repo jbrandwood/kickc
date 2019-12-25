@@ -43,9 +43,9 @@
   .const SIZEOF_SIGNED_WORD = 2
   .label BITMAP = $2000
   .label SCREEN = $400
+  .label frame_cnt = $12
   // Remainder after unsigned 16-bit division
   .label rem16u = $c
-  .label frame_cnt = $12
 __b1:
   // Counts frames - updated by the IRQ
   lda #1

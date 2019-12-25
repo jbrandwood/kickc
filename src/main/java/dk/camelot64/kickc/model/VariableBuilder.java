@@ -225,9 +225,8 @@ public class VariableBuilder {
       if(hasDirective(Directive.FormMa.class))
          // the __ma directive forces multiple-assignment
          return false;
-      else if(isNoModify())
-         // (volatile) no-modify variables must be load/store
-         // TODO: Change to isVolatile()!
+      else if(isVolatile())
+         // volatile variables must be load/store
          return false;
       else
          // All others are single-static-assignment (by default)

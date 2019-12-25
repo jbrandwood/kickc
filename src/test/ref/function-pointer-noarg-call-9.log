@@ -3,33 +3,28 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) idx#0 ← (number) 0
+  (byte) idx ← (number) 0
   to:@2
 
 (void()) fn1()
 fn1: scope:[fn1]  from
-  (byte) idx#3 ← phi( @2/(byte) idx#6 )
-  (byte) idx#1 ← ++ (byte) idx#3
+  (byte) idx ← ++ (byte) idx
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
-  (byte) idx#4 ← phi( fn1/(byte) idx#1 )
-  (byte) idx#2 ← (byte) idx#4
   return 
   to:@return
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte) idx#5 ← phi( @2/(byte) idx#6 )
   call *((const void()*) main::f) 
-  *((const byte*) SCREEN + (byte) idx#5) ← (byte) 'a'
+  *((const byte*) SCREEN + (byte) idx) ← (byte) 'a'
   call *((const void()*) main::f) 
-  *((const byte*) SCREEN + (byte) idx#5) ← (byte) 'a'
+  *((const byte*) SCREEN + (byte) idx) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte) idx#6 ← phi( @begin/(byte) idx#0 )
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -44,35 +39,22 @@ SYMBOL TABLE SSA
 (const byte*) SCREEN = (byte*)(number) $400
 (void()) fn1()
 (label) fn1::@return
-(byte) idx
-(byte) idx#0
-(byte) idx#1
-(byte) idx#2
-(byte) idx#3
-(byte) idx#4
-(byte) idx#5
-(byte) idx#6
+(byte) idx loadstore
 (void()) main()
 (label) main::@return
 (const void()*) main::f = &(void()) fn1()
 
-Adding number conversion cast (unumber) 0 in (byte) idx#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (byte) idx ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) idx#0 ← (unumber)(number) 0
+Inlining cast (byte) idx ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte) idx#1 = (byte) idx#4 (byte) idx#2 
-Alias (byte) idx#0 = (byte) idx#6 
-Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) idx#3 (byte) idx#0
-Identical Phi Values (byte) idx#5 (byte) idx#0
-Successful SSA optimization Pass2IdenticalPhiElimination
-Replacing constant pointer function [7] call fn1 
-Replacing constant pointer function [9] call fn1 
+Replacing constant pointer function [3] call fn1 
+Replacing constant pointer function [5] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant (const void()*) main::f
 Successful SSA optimization PassNEliminateUnusedVars
@@ -94,7 +76,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) idx#0 ← (byte) 0
+  [0] (byte) idx ← (byte) 0
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -107,9 +89,9 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi()
   [5] call fn1 
-  [6] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a'
+  [6] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a'
   [7] call fn1 
-  [8] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a'
+  [8] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [9] return 
@@ -117,7 +99,7 @@ main::@return: scope:[main]  from main
 
 (void()) fn1()
 fn1: scope:[fn1]  from main
-  [10] (byte) idx#1 ← ++ (byte) idx#0
+  [10] (byte) idx ← ++ (byte) idx
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   [11] return 
@@ -126,16 +108,14 @@ fn1::@return: scope:[fn1]  from fn1
 
 VARIABLE REGISTER WEIGHTS
 (void()) fn1()
-(byte) idx
-(byte) idx#0 1.0
-(byte) idx#1 20.0
+(byte) idx loadstore 2.5
 (void()) main()
 
 Initial phi equivalence classes
-Coalescing volatile variable equivalence classes [ idx#0 ] and [ idx#1 ]
+Added variable idx to live range equivalence class [ idx ]
 Complete equivalence classes
-[ idx#0 idx#1 ]
-Allocated zp[1]:2 [ idx#0 idx#1 ]
+[ idx ]
+Allocated zp[1]:2 [ idx ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -150,7 +130,7 @@ Target platform is c64basic / MOS6502X
   .label idx = 2
   // @begin
 __bbegin:
-  // [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -171,13 +151,13 @@ __bend:
 main: {
     // [5] call fn1 
     jsr fn1
-    // [6] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [6] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
     // [7] call fn1 
     jsr fn1
-    // [8] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
@@ -189,7 +169,7 @@ main: {
 }
   // fn1
 fn1: {
-    // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
+    // [10] (byte) idx ← ++ (byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     jmp __breturn
     // fn1::@return
@@ -200,21 +180,21 @@ fn1: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) idx#0 ← (byte) 0 [ idx#0 ] (  [ idx#0 ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' [ idx#0 ] ( main:2 [ idx#0 ] ) always clobbers reg byte a reg byte y 
-Statement [8] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
-Potential registers zp[1]:2 [ idx#0 idx#1 ] : zp[1]:2 , 
+Statement [0] (byte) idx ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Statement [8] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Potential registers zp[1]:2 [ idx ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 21: zp[1]:2 [ idx#0 idx#1 ] 
+Uplift Scope [] 2.5: zp[1]:2 [ idx ] 
 Uplift Scope [fn1] 
 Uplift Scope [main] 
 
-Uplifting [] best 72 combination zp[1]:2 [ idx#0 idx#1 ] 
+Uplifting [] best 72 combination zp[1]:2 [ idx ] 
 Uplifting [fn1] best 72 combination 
 Uplifting [main] best 72 combination 
-Attempting to uplift remaining variables inzp[1]:2 [ idx#0 idx#1 ]
-Uplifting [] best 72 combination zp[1]:2 [ idx#0 idx#1 ] 
+Attempting to uplift remaining variables inzp[1]:2 [ idx ]
+Uplifting [] best 72 combination zp[1]:2 [ idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -228,7 +208,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label idx = 2
   // @begin
 __bbegin:
-  // [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -249,13 +229,13 @@ __bend:
 main: {
     // [5] call fn1 
     jsr fn1
-    // [6] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [6] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
     // [7] call fn1 
     jsr fn1
-    // [8] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
@@ -267,7 +247,7 @@ main: {
 }
   // fn1
 fn1: {
-    // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
+    // [10] (byte) idx ← ++ (byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     jmp __breturn
     // fn1::@return
@@ -302,13 +282,11 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN = (byte*) 1024
 (void()) fn1()
 (label) fn1::@return
-(byte) idx
-(byte) idx#0 idx zp[1]:2 1.0
-(byte) idx#1 idx zp[1]:2 20.0
+(byte) idx loadstore zp[1]:2 2.5
 (void()) main()
 (label) main::@return
 
-zp[1]:2 [ idx#0 idx#1 ]
+zp[1]:2 [ idx ]
 
 
 FINAL ASSEMBLER
@@ -326,7 +304,7 @@ Score: 66
   // @begin
 __bbegin:
   // idx = 0
-  // [0] (byte) idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -343,7 +321,7 @@ main: {
     // [5] call fn1 
     jsr fn1
     // SCREEN[idx] = 'a'
-    // [6] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [6] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
@@ -351,7 +329,7 @@ main: {
     // [7] call fn1 
     jsr fn1
     // SCREEN[idx] = 'a'
-    // [8] *((const byte*) SCREEN + (byte) idx#0) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
@@ -363,7 +341,7 @@ main: {
   // fn1
 fn1: {
     // idx++;
-    // [10] (byte) idx#1 ← ++ (byte) idx#0 -- vbuz1=_inc_vbuz1 
+    // [10] (byte) idx ← ++ (byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // fn1::@return
     // }

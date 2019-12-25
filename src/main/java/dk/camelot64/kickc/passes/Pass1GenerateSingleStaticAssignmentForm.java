@@ -82,8 +82,8 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private void versionAssignment(VariableRef lValueRef, ProgramValue programLValue, StatementSource source) {
       Variable assignedVar = getScope().getVariable(lValueRef);
       if(assignedVar.isKindPhiMaster()) {
-         if(assignedVar.isNoModify())
-            throw new InternalError("Error! Constants can not be versioned ", source);
+         if(assignedVar.isVolatile())
+            throw new InternalError("Error! Volatiles can not be versioned ", source);
          Variable version = assignedVar.createVersion();
          programLValue.set(version.getRef());
       }
@@ -157,7 +157,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          if(rValueVar.isKindPhiMaster()) {
             // rValue needs versioning - look for version in statements
             Variable rSymbol = rValueVar;
-            if(rSymbol.isNoModify()) {
+            if(rSymbol.isKindConstant()) {
                // A constant - find the single created version
                Scope scope = rSymbol.getScope();
                Collection<Variable> versions = scope.getVersions(rSymbol);

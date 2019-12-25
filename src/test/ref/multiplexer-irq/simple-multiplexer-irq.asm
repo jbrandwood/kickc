@@ -33,10 +33,10 @@
   .label SPRITE = $2000
   // The address of the sprite pointers on the current screen (screen+$3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
-  .label plex_show_idx = 7
-  .label plex_sprite_idx = 6
-  .label plex_sprite_msb = 9
-  .label plex_free_next = 8
+  .label plex_show_idx = 6
+  .label plex_sprite_idx = 7
+  .label plex_sprite_msb = 8
+  .label plex_free_next = 9
   .label framedone = $a
 __b1:
   // The index in the PLEX tables of the next sprite to show
@@ -232,7 +232,7 @@ plex_irq: {
     sta BORDERCOL
   __b3:
     jsr plexShowSprite
-    ldy.z plexShowSprite.plexFreeAdd1___2
+    ldy.z plex_free_next
     ldx PLEX_FREE_YPOS,y
     lda RASTER
     clc
@@ -262,8 +262,6 @@ plex_irq: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label __6 = 6
-    .label plexFreeAdd1___2 = 8
     .label plex_sprite_idx2 = $d
     lda.z plex_sprite_idx
     asl
@@ -279,8 +277,9 @@ plexShowSprite: {
     sta PLEX_FREE_YPOS,y
     ldx.z plex_free_next
     inx
-    lda #7
-    sax.z plexFreeAdd1___2
+    txa
+    and #7
+    sta.z plex_free_next
     ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
@@ -303,8 +302,9 @@ plexShowSprite: {
   __b2:
     ldx.z plex_sprite_idx
     inx
-    lda #7
-    sax.z __6
+    txa
+    and #7
+    sta.z plex_sprite_idx
     inc.z plex_show_idx
     asl.z plex_sprite_msb
     lda.z plex_sprite_msb

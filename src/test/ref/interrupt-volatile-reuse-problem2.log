@@ -8,7 +8,7 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) col1#0 ← (number) 0
+  (byte) col1 ← (number) 0
   to:@2
 
 (void()) main()
@@ -59,19 +59,15 @@ main::@return: scope:[main]  from main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  (byte) col1#3 ← phi( @2/(byte) col1#5 )
   *((const byte*) IRQ_STATUS) ← (number) 1
   asm { lda$dc0d  }
-  *((const byte*) SCREEN + (number) $28) ← (byte) col1#3
-  (byte) col1#1 ← ++ (byte) col1#3
+  *((const byte*) SCREEN + (number) $28) ← (byte) col1
+  (byte) col1 ← ++ (byte) col1
   to:irq::@return
 irq::@return: scope:[irq]  from irq
-  (byte) col1#4 ← phi( irq/(byte) col1#1 )
-  (byte) col1#2 ← (byte) col1#4
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte) col1#5 ← phi( @begin/(byte) col1#0 )
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -86,13 +82,7 @@ SYMBOL TABLE SSA
 (const byte*) IRQ_STATUS = (byte*)(number) $d019
 (const void()**) KERNEL_IRQ = (void()**)(number) $314
 (const byte*) SCREEN = (byte*)(number) $400
-(byte) col1
-(byte) col1#0
-(byte) col1#1
-(byte) col1#2
-(byte) col1#3
-(byte) col1#4
-(byte) col1#5
+(byte) col1 loadstore
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -127,11 +117,11 @@ interrupt(KERNEL_MIN)(void()) irq()
 (byte) main::y#3
 (byte) main::y#4
 
-Adding number conversion cast (unumber) 0 in (byte) col1#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in (byte) col1 ← (number) 0
 Adding number conversion cast (unumber) 1 in *((const byte*) IRQ_STATUS) ← (number) 1
-Adding number conversion cast (unumber) $28 in *((const byte*) SCREEN + (number) $28) ← (byte) col1#3
+Adding number conversion cast (unumber) $28 in *((const byte*) SCREEN + (number) $28) ← (byte) col1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) col1#0 ← (unumber)(number) 0
+Inlining cast (byte) col1 ← (unumber)(number) 0
 Inlining cast *((const byte*) IRQ_STATUS) ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (void()**) 788
@@ -147,12 +137,9 @@ Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::y#2 = (byte) main::y#3 
 Alias (byte) main::x#2 = (byte) main::x#5 (byte) main::x#3 
-Alias (byte) col1#1 = (byte) col1#4 (byte) col1#2 
-Alias (byte) col1#0 = (byte) col1#5 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) main::y#2 (byte) main::y#4
 Identical Phi Values (byte) main::x#2 (byte) main::x#4
-Identical Phi Values (byte) col1#3 (byte) col1#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte) main::x#4 (byte) main::x#6
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -229,7 +216,7 @@ Adding NOP phi() at start of main::@6
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) col1#0 ← (byte) 0
+  [0] (byte) col1 ← (byte) 0
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -271,8 +258,8 @@ interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   [17] *((const byte*) IRQ_STATUS) ← (byte) 1
   asm { lda$dc0d  }
-  [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1#0
-  [20] (byte) col1#1 ← ++ (byte) col1#0
+  [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1
+  [20] (byte) col1 ← ++ (byte) col1
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   [21] return 
@@ -280,9 +267,7 @@ irq::@return: scope:[irq]  from irq
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) col1
-(byte) col1#0 2.0
-(byte) col1#1 20.0
+(byte) col1 loadstore 4.0
 interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 (byte~) main::$0 20002.0
@@ -300,18 +285,18 @@ Initial phi equivalence classes
 [ main::x#6 main::x#1 ]
 [ main::y#4 main::y#1 ]
 [ main::a#2 main::a#1 ]
-Coalescing volatile variable equivalence classes [ col1#0 ] and [ col1#1 ]
+Added variable col1 to live range equivalence class [ col1 ]
 Added variable main::$0 to live range equivalence class [ main::$0 ]
 Complete equivalence classes
 [ main::x#6 main::x#1 ]
 [ main::y#4 main::y#1 ]
 [ main::a#2 main::a#1 ]
-[ col1#0 col1#1 ]
+[ col1 ]
 [ main::$0 ]
 Allocated zp[1]:2 [ main::x#6 main::x#1 ]
 Allocated zp[1]:3 [ main::y#4 main::y#1 ]
 Allocated zp[1]:4 [ main::a#2 main::a#1 ]
-Allocated zp[1]:5 [ col1#0 col1#1 ]
+Allocated zp[1]:5 [ col1 ]
 Allocated zp[1]:6 [ main::$0 ]
 
 INITIAL ASM
@@ -329,7 +314,7 @@ Target platform is c64basic / MOS6502X
   .label col1 = 5
   // @begin
 __bbegin:
-  // [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col1
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -441,10 +426,10 @@ irq: {
     sta IRQ_STATUS
     // asm { lda$dc0d  }
     lda $dc0d
-    // [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
+    // [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 -- _deref_pbuc1=vbuz1 
     lda.z col1
     sta SCREEN+$28
-    // [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
+    // [20] (byte) col1 ← ++ (byte) col1 -- vbuz1=_inc_vbuz1 
     inc.z col1
     jmp __breturn
     // irq::@return
@@ -455,42 +440,42 @@ irq: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) col1#0 ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [0] (byte) col1 ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [8] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 [ main::x#6 main::y#4 main::a#2 main::$0 ] ( main:2 [ main::x#6 main::y#4 main::a#2 main::$0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::x#6 main::x#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::y#4 main::y#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::a#2 main::a#1 ]
-Statement [17] *((const byte*) IRQ_STATUS) ← (byte) 1 [ col1#0 ] (  [ col1#0 ] ) always clobbers reg byte a 
+Statement [17] *((const byte*) IRQ_STATUS) ← (byte) 1 [ col1 ] (  [ col1 ] ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1#0 [ col1#0 ] (  [ col1#0 ] ) always clobbers reg byte a 
-Statement [0] (byte) col1#0 ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [0] (byte) col1 ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [8] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 [ main::x#6 main::y#4 main::a#2 main::$0 ] ( main:2 [ main::x#6 main::y#4 main::a#2 main::$0 ] ) always clobbers reg byte a 
-Statement [17] *((const byte*) IRQ_STATUS) ← (byte) 1 [ col1#0 ] (  [ col1#0 ] ) always clobbers reg byte a 
+Statement [17] *((const byte*) IRQ_STATUS) ← (byte) 1 [ col1 ] (  [ col1 ] ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1#0 [ col1#0 ] (  [ col1#0 ] ) always clobbers reg byte a 
+Statement [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 [ ] (  [ ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::x#6 main::x#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::y#4 main::y#1 ] : zp[1]:3 , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::a#2 main::a#1 ] : zp[1]:4 , reg byte x , reg byte y , 
-Potential registers zp[1]:5 [ col1#0 col1#1 ] : zp[1]:5 , 
+Potential registers zp[1]:5 [ col1 ] : zp[1]:5 , 
 Potential registers zp[1]:6 [ main::$0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 25,002.5: zp[1]:4 [ main::a#2 main::a#1 ] 20,002: zp[1]:6 [ main::$0 ] 3,502: zp[1]:3 [ main::y#4 main::y#1 ] 1,194.67: zp[1]:2 [ main::x#6 main::x#1 ] 
-Uplift Scope [] 22: zp[1]:5 [ col1#0 col1#1 ] 
+Uplift Scope [] 4: zp[1]:5 [ col1 ] 
 Uplift Scope [irq] 
 
 Uplifting [main] best 323337 combination reg byte y [ main::a#2 main::a#1 ] reg byte a [ main::$0 ] zp[1]:3 [ main::y#4 main::y#1 ] reg byte x [ main::x#6 main::x#1 ] 
 Limited combination testing to 100 combinations of 108 possible.
-Uplifting [] best 323337 combination zp[1]:5 [ col1#0 col1#1 ] 
+Uplifting [] best 323337 combination zp[1]:5 [ col1 ] 
 Uplifting [irq] best 323337 combination 
 Attempting to uplift remaining variables inzp[1]:3 [ main::y#4 main::y#1 ]
 Uplifting [main] best 323337 combination zp[1]:3 [ main::y#4 main::y#1 ] 
-Attempting to uplift remaining variables inzp[1]:5 [ col1#0 col1#1 ]
-Uplifting [] best 323337 combination zp[1]:5 [ col1#0 col1#1 ] 
+Attempting to uplift remaining variables inzp[1]:5 [ col1 ]
+Uplifting [] best 323337 combination zp[1]:5 [ col1 ] 
 Allocated (was zp[1]:3) zp[1]:2 [ main::y#4 main::y#1 ]
-Allocated (was zp[1]:5) zp[1]:3 [ col1#0 col1#1 ]
+Allocated (was zp[1]:5) zp[1]:3 [ col1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -506,7 +491,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label col1 = 3
   // @begin
 __bbegin:
-  // [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col1
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -608,10 +593,10 @@ irq: {
     sta IRQ_STATUS
     // asm { lda$dc0d  }
     lda $dc0d
-    // [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
+    // [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 -- _deref_pbuc1=vbuz1 
     lda.z col1
     sta SCREEN+$28
-    // [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
+    // [20] (byte) col1 ← ++ (byte) col1 -- vbuz1=_inc_vbuz1 
     inc.z col1
     jmp __breturn
     // irq::@return
@@ -672,9 +657,7 @@ FINAL SYMBOL TABLE
 (const byte*) IRQ_STATUS = (byte*) 53273
 (const void()**) KERNEL_IRQ = (void()**) 788
 (const byte*) SCREEN = (byte*) 1024
-(byte) col1
-(byte) col1#0 col1 zp[1]:3 2.0
-(byte) col1#1 col1 zp[1]:3 20.0
+(byte) col1 loadstore zp[1]:3 4.0
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -698,7 +681,7 @@ interrupt(KERNEL_MIN)(void()) irq()
 reg byte x [ main::x#6 main::x#1 ]
 zp[1]:2 [ main::y#4 main::y#1 ]
 reg byte y [ main::a#2 main::a#1 ]
-zp[1]:3 [ col1#0 col1#1 ]
+zp[1]:3 [ col1 ]
 reg byte a [ main::$0 ]
 
 
@@ -719,7 +702,7 @@ Score: 223704
   // @begin
 __bbegin:
   // col1 = 0
-  // [0] (byte) col1#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col1
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -806,11 +789,11 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // SCREEN[40] = col1++
-    // [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1#0 -- _deref_pbuc1=vbuz1 
+    // [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 -- _deref_pbuc1=vbuz1 
     lda.z col1
     sta SCREEN+$28
     // SCREEN[40] = col1++;
-    // [20] (byte) col1#1 ← ++ (byte) col1#0 -- vbuz1=_inc_vbuz1 
+    // [20] (byte) col1 ← ++ (byte) col1 -- vbuz1=_inc_vbuz1 
     inc.z col1
     // irq::@return
     // }

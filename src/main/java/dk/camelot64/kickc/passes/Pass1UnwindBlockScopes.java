@@ -4,7 +4,10 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.SymbolRef;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
+import dk.camelot64.kickc.model.values.Value;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,12 +73,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                }
             } else if(symbol instanceof Variable) {
                Variable variable = (Variable) symbol;
-               if(variable.isKindConstant()) {
-                  String name = findLocalName(procedure, symbol);
-                  Variable unwound = Variable.createCopy(name, procedure, (Variable) symbol);
-                  procedure.add(unwound);
-                  unwoundSymbols.put(symbol.getRef(), unwound.getRef());
-               } else if(variable.isKindPhiMaster() || variable.isKindConstant()) {
+               if(variable.isKindPhiMaster() || variable.isKindConstant() || variable.isKindLoadStore()) {
                   String name = findLocalName(procedure, symbol);
                   Variable unwound = Variable.createCopy(name, procedure, (Variable) symbol);
                   procedure.add(unwound);

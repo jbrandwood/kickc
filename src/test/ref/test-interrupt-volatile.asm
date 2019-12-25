@@ -14,9 +14,9 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  __b2:
+  __b1:
     inc.z col
-    jmp __b2
+    jmp __b1
 }
 irq: {
     lda $dc0d

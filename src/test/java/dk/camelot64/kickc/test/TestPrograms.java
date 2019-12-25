@@ -38,8 +38,28 @@ public class TestPrograms {
    }
 
    @Test
-   public void testKernalLoad() throws IOException, URISyntaxException {
-      compileAndCompare("examples/kernalload/kernalload");
+   public void testAddress4() throws IOException, URISyntaxException {
+      compileAndCompare("address-4");
+   }
+
+   @Test
+   public void testAddress3() throws IOException, URISyntaxException {
+      compileAndCompare("address-3");
+   }
+
+   @Test
+   public void testAddress2() throws IOException, URISyntaxException {
+      compileAndCompare("address-2");
+   }
+
+   @Test
+   public void testAddress1() throws IOException, URISyntaxException {
+      compileAndCompare("address-1");
+   }
+
+   @Test
+   public void testAddress0() throws IOException, URISyntaxException {
+      compileAndCompare("address-0");
    }
 
    @Test
@@ -85,6 +105,11 @@ public class TestPrograms {
    @Test
    public void testNomodify0() throws IOException, URISyntaxException {
       assertError("nomodify-0", "const variable may not be modified");
+   }
+
+   @Test
+   public void testKernalLoad() throws IOException, URISyntaxException {
+      compileAndCompare("examples/kernalload/kernalload");
    }
 
    @Test
@@ -3242,7 +3267,7 @@ public class TestPrograms {
 
    @Test
    public void testAssignConst() throws IOException, URISyntaxException {
-      assertError("assign-const", "Constants can not be modified");
+      assertError("assign-const", "const variable may not be modified");
    }
 
    @Test

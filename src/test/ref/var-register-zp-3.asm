@@ -30,9 +30,9 @@ main: {
 }
 // print2(byte* zeropage($fa) at, byte* zeropage($fc) msg)
 print2: {
-    .label i = 2
-    .label msg = $fc
     .label at = $fa
+    .label msg = $fc
+    .label i = 2
     ldx #0
     txa
     sta.z i

@@ -261,25 +261,31 @@ public class Pass4CodeGeneration {
       signature.append(" ").append(procedure.getLocalName()).append("(");
       int i = 0;
       for(Variable parameter : procedure.getParameters()) {
-         List<Variable> versions = new ArrayList<>(procedure.getVersions(parameter));
-         if(versions.size() > 0) {
-            Variable param = versions.get(0);
-            Registers.Register allocation = param.getAllocation();
-            if(i++ > 0) signature.append(", ");
-            signature.append(param.getType().getTypeName()).append(" ");
-            if(allocation instanceof Registers.RegisterZpMem) {
-               Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) allocation;
-               signature.append("zeropage(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(")");
-            } else if(allocation instanceof Registers.RegisterAByte) {
-               signature.append("register(A)");
-            } else if(allocation instanceof Registers.RegisterXByte) {
-               signature.append("register(X)");
-            } else if(allocation instanceof Registers.RegisterYByte) {
-               signature.append("register(Y)");
-            }
-            signature.append(" ");
-            signature.append(parameter.getLocalName());
+         Variable param = parameter;
+         if(param.isKindPhiMaster()) {
+            List<Variable> versions = new ArrayList<>(procedure.getVersions(parameter));
+            if(versions.size() > 0)
+               param = versions.get(0);
+            else
+               // Parameter optimized away to a constant or unused
+               continue;
          }
+
+         Registers.Register allocation = param.getAllocation();
+         if(i++ > 0) signature.append(", ");
+         signature.append(param.getType().getTypeName()).append(" ");
+         if(allocation instanceof Registers.RegisterZpMem) {
+            Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) allocation;
+            signature.append("zeropage(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(")");
+         } else if(allocation instanceof Registers.RegisterAByte) {
+            signature.append("register(A)");
+         } else if(allocation instanceof Registers.RegisterXByte) {
+            signature.append("register(X)");
+         } else if(allocation instanceof Registers.RegisterYByte) {
+            signature.append("register(Y)");
+         }
+         signature.append(" ");
+         signature.append(parameter.getLocalName());
       }
       signature.append(")");
       if(i > 0) {
@@ -575,7 +581,7 @@ public class Pass4CodeGeneration {
             Variable memberVariable = getScope().getVar(memberRef);
             addChunkData(dataChunk, memberValue, memberVariable.getType(), memberVariable.getArraySpec(), scopeRef);
          }
-      } else if(valueType instanceof SymbolTypePointer && valueArraySpec!=null) {
+      } else if(valueType instanceof SymbolTypePointer && valueArraySpec != null) {
          SymbolTypePointer constTypeArray = (SymbolTypePointer) valueType;
          SymbolType elementType = constTypeArray.getElementType();
 
@@ -609,8 +615,8 @@ public class Pass4CodeGeneration {
             // default - larger then 256
             int bytes = 1023;
             Integer declaredSize = getArrayDeclaredSize(valueArraySpec.getArraySize());
-            if(declaredSize!=null) {
-                  bytes = declaredSize * elementType.getSizeBytes();
+            if(declaredSize != null) {
+               bytes = declaredSize * elementType.getSizeBytes();
             }
             dataChunk.addDataKickAsm(bytes, kickAsm.getKickAsmCode(), getEncoding(value));
             dataNumElements = bytes;

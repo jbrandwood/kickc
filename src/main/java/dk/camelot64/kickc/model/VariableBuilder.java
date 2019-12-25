@@ -225,6 +225,9 @@ public class VariableBuilder {
       if(hasDirective(Directive.FormMa.class))
          // the __ma directive forces multiple-assignment
          return false;
+      else if(hasDirective(Directive.Address.class))
+         // the __address directive forces multiple-assignment
+         return false;
       else if(isVolatile())
          // volatile variables must be load/store
          return false;

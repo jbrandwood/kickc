@@ -1,47 +1,34 @@
-// Test declaring a variable as register on a specific ZP address
+// Test declaring a variable as at a hard-coded address
+// Incrementing a load/store variable will result in cause two *SIZEOF's
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
+    .const ch = $102
     .label i = 2
-    .label j = 4
-    .label __1 = 6
-    .label k = 6
     lda #0
     sta.z i
-    sta.z j
-    sta.z j+1
   __b1:
     lda.z i
-    cmp #4
+    cmp #8
     bcc __b2
     rts
   __b2:
     lda.z i
     asl
     tay
-    lda.z j
+    lda #<ch
     sta SCREEN,y
-    lda.z j+1
+    lda #>ch
     sta SCREEN+1,y
     inc.z i
-    inc.z j
-    bne !+
-    inc.z j+1
-  !:
-    lda.z i
-    sta.z __1
-    lda #0
-    sta.z __1+1
-    asl.z k
-    rol.z k+1
     lda.z i
     asl
     tay
-    lda.z k
+    lda #<ch
     sta SCREEN,y
-    lda.z k+1
+    lda #>ch
     sta SCREEN+1,y
     inc.z i
     jmp __b1

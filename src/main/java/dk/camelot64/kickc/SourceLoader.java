@@ -42,6 +42,8 @@ public class SourceLoader {
          String outputFileName = new File(program.getFileName()).getName();
          String linkScript = new String(Files.readAllBytes(filePath));
          linkScript = linkScript.replace("%O", outputFileName);
+         linkScript = linkScript.replace("%_O", outputFileName.toLowerCase());
+         linkScript = linkScript.replace("%^O", outputFileName.toUpperCase());
          program.setLinkScript(filePath, linkScript);
          program.setTargetPlatform(TargetPlatform.CUSTOM);
       } catch(IOException e) {

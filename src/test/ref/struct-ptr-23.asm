@@ -20,7 +20,7 @@ main: {
     jsr print_person
     rts
 }
-// print_person(struct Person* zeropage(2) person)
+// print_person(struct Person* zp(2) person)
 print_person: {
     .label __3 = 4
     .label __4 = 2

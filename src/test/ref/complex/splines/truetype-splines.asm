@@ -60,7 +60,7 @@ main: {
     stx.z angle
     jmp __b2
 }
-// show_letter(byte zeropage($12) angle)
+// show_letter(byte zp($12) angle)
 show_letter: {
     .label angle = $12
     .label to_x = 2
@@ -265,7 +265,7 @@ bitmap_plot_spline_8seg: {
     rts
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zeropage($c) x1, word zeropage($e) y1, word zeropage($20) x2, word zeropage($22) y2)
+// bitmap_line(word zp($c) x1, word zp($e) y1, word zp($20) x2, word zp($22) y2)
 bitmap_line: {
     .label x = $c
     .label y = $e
@@ -457,7 +457,7 @@ bitmap_line: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zeropage($c) x, byte register(X) y)
+// bitmap_plot(word zp($c) x, byte register(X) y)
 bitmap_plot: {
     .label __1 = $1e
     .label plotter = $1c
@@ -489,7 +489,7 @@ bitmap_plot: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zeropage($10) w)
+// sgn_u16(word zp($10) w)
 sgn_u16: {
     .label w = $10
     .label return = 4
@@ -509,7 +509,7 @@ sgn_u16: {
     rts
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// abs_u16(word zeropage(6) w)
+// abs_u16(word zp(6) w)
 abs_u16: {
     .label w = 6
     .label return = 6
@@ -533,7 +533,7 @@ abs_u16: {
 // Point values must be within [-200 ; 1ff] for the calculation to not overflow.
 // A quadratic spline is a curve defined by 3 points: P0, P1 and P2.
 // The curve connects P0 to P2 through a smooth curve that moves towards P1, but does usually not touch it.
-// spline_8segB(signed word zeropage($c) p0_x, signed word zeropage($e) p0_y, signed word zeropage($20) p1_x, signed word zeropage($22) p1_y, signed word zeropage($14) p2_x, signed word zeropage($16) p2_y)
+// spline_8segB(signed word zp($c) p0_x, signed word zp($e) p0_y, signed word zp($20) p1_x, signed word zp($22) p1_y, signed word zp($14) p2_x, signed word zp($16) p2_y)
 spline_8segB: {
     .label __0 = $1e
     .label __1 = $1e
@@ -829,7 +829,7 @@ spline_8segB: {
     rts
 }
 // 2D-rotate a vector by an angle
-// rotate(signed word zeropage(2) vector_x, signed word zeropage(4) vector_y, byte register(Y) angle)
+// rotate(signed word zp(2) vector_x, signed word zp(4) vector_y, byte register(Y) angle)
 rotate: {
     .label __1 = 8
     .label __2 = $18
@@ -941,7 +941,7 @@ rotate: {
 }
 // Fast multiply two signed words to a signed double word result
 // Fixes offsets introduced by using unsigned multiplication
-// mulf16s(signed word zeropage(6) a, signed word zeropage($10) b)
+// mulf16s(signed word zp(6) a, signed word zp($10) b)
 mulf16s: {
     .label __9 = $20
     .label __13 = $22
@@ -1000,7 +1000,7 @@ mulf16s: {
 }
 // Fast multiply two unsigned words to a double word result
 // Done in assembler to utilize fast addition A+X
-// mulf16u(word zeropage($1e) a, word zeropage($20) b)
+// mulf16u(word zp($1e) a, word zp($20) b)
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -1146,7 +1146,7 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($e) str, byte register(X) c, word zeropage($c) num)
+// memset(void* zp($e) str, byte register(X) c, word zp($c) num)
 memset: {
     .label end = $c
     .label dst = $e

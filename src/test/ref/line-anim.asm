@@ -75,7 +75,7 @@ main: {
     jmp __b2
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zeropage($a) x, byte register(X) y)
+// bitmap_plot(word zp($a) x, byte register(X) y)
 bitmap_plot: {
     .label __1 = $e
     .label x = $a
@@ -106,7 +106,7 @@ bitmap_plot: {
     rts
 }
 // Initialize the points to be animated
-// point_init(byte zeropage($12) point_idx)
+// point_init(byte zp($12) point_idx)
 point_init: {
     .label __3 = 6
     .label __4 = $c
@@ -259,7 +259,7 @@ point_init: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zeropage(8) divisor, signed word zeropage(6) rem)
+// divr16s(signed word zp(8) divisor, signed word zp(6) rem)
 divr16s: {
     .label remu = 6
     .label divisoru = 8
@@ -313,7 +313,7 @@ divr16s: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(2) dividend, word zeropage(8) divisor, word zeropage(6) rem)
+// divr16u(word zp(2) dividend, word zp(8) divisor, word zp(6) rem)
 divr16u: {
     .label rem = 6
     .label dividend = 2
@@ -367,7 +367,7 @@ divr16u: {
     rts
 }
 // Fill the screen with a specific char
-// screen_fill(byte* zeropage(4) screen)
+// screen_fill(byte* zp(4) screen)
 screen_fill: {
     .const ch = $10
     .label screen = 4

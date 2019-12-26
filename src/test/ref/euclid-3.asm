@@ -70,7 +70,7 @@ main: {
     jsr print_euclid
     rts
 }
-// print_euclid(byte zeropage(2) a, byte zeropage(3) b)
+// print_euclid(byte zp(2) a, byte zp(3) b)
 print_euclid: {
     .label b = 3
     .label a = 2
@@ -138,7 +138,7 @@ print_char: {
   !:
     rts
 }
-// euclid(byte zeropage(2) a, byte register(X) b)
+// euclid(byte zp(2) a, byte register(X) b)
 euclid: {
     .label a = 2
   __b1:

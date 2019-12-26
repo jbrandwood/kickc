@@ -32,7 +32,7 @@ main: {
     rts
 }
 // Calculate least common denominator using euclids subtraction method
-// euclid(byte zeropage(2) a, byte register(X) b)
+// euclid(byte zp(2) a, byte register(X) b)
 euclid: {
     .label a = 2
   __b1:

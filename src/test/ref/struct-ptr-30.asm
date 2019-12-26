@@ -28,7 +28,7 @@ main: {
     bne __b1
     rts
 }
-// print(byte zeropage(3) p_x, signed word zeropage(4) p_y)
+// print(byte zp(3) p_x, signed word zp(4) p_y)
 print: {
     .label p_x = 3
     .label p_y = 4

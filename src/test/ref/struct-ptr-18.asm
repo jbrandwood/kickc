@@ -32,7 +32,7 @@ main: {
     bne __b1
     rts
 }
-// print(byte zeropage(3) p_x, byte zeropage(4) p_y)
+// print(byte zp(3) p_x, byte zp(4) p_y)
 print: {
     .label p_x = 3
     .label p_y = 4

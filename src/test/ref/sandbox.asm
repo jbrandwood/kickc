@@ -146,7 +146,7 @@ main: {
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// div16u(word zeropage(2) dividend)
+// div16u(word zp(2) dividend)
 div16u: {
     .label divisor = $a
     .label return = 4
@@ -162,7 +162,7 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(6) dividend, word zeropage($17) rem)
+// divr16u(word zp(6) dividend, word zp($17) rem)
 divr16u: {
     .label rem = $17
     .label dividend = 6
@@ -226,7 +226,7 @@ Print: {
   done:
     rts
 }
-// myprintf(byte* zeropage(6) str, word zeropage(2) w1, word zeropage(4) w2, word zeropage($17) w3)
+// myprintf(byte* zp(6) str, word zp(2) w1, word zp(4) w2, word zp($17) w3)
 myprintf: {
     .label str = 6
     .label bDigits = $d
@@ -485,7 +485,7 @@ myprintf: {
     jmp __b32
     buf6: .fill 6, 0
 }
-// utoa(word zeropage($11) value, byte* zeropage($13) dst)
+// utoa(word zp($11) value, byte* zp($13) dst)
 utoa: {
     .label value = $11
     .label dst = $13
@@ -602,7 +602,7 @@ utoa: {
     jmp __b1
 }
 // simple 'utoa' without using multiply or divide
-// append(byte* zeropage($13) dst, word zeropage($11) value, word zeropage($15) sub)
+// append(byte* zp($13) dst, word zp($11) value, word zp($15) sub)
 append: {
     .label value = $11
     .label return = $11
@@ -636,7 +636,7 @@ append: {
     sta.z value+1
     jmp __b1
 }
-// div10(word zeropage($13) val)
+// div10(word zp($13) val)
 div10: {
     .label __0 = $13
     .label __2 = $15

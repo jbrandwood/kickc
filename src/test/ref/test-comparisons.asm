@@ -403,7 +403,7 @@ print_ln: {
   !:
     rts
 }
-// printu(byte zeropage(2) a, byte* zeropage(4) op, byte zeropage(6) b, byte register(X) res)
+// printu(byte zp(2) a, byte* zp(4) op, byte zp(6) b, byte register(X) res)
 printu: {
     .label a = 2
     .label b = 6
@@ -435,7 +435,7 @@ print_char: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage(9) b)
+// print_byte(byte zp(9) b)
 print_byte: {
     .label b = 9
     lda.z b
@@ -454,7 +454,7 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(4) str)
+// print_str(byte* zp(4) str)
 print_str: {
     .label str = 4
   __b1:

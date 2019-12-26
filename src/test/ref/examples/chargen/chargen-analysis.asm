@@ -396,7 +396,7 @@ keyboard_get_keycode: {
     rts
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zeropage($a) str, byte* zeropage($c) at)
+// print_str_at(byte* zp($a) str, byte* zp($c) at)
 print_str_at: {
     .label at = $c
     .label str = $a

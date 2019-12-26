@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testRegister1() throws IOException, URISyntaxException {
+      assertError("register-1", "Unknown register");
+   }
+
+   @Test
    public void testRegister0() throws IOException, URISyntaxException {
       compileAndCompare("register-0");
    }

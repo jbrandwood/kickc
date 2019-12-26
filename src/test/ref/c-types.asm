@@ -82,7 +82,7 @@ print_ln: {
     rts
 }
 // Print a signed dword as HEX
-// print_sdword(signed dword zeropage(2) dw)
+// print_sdword(signed dword zp(2) dw)
 print_sdword: {
     .label dw = 2
     lda.z dw+3
@@ -126,7 +126,7 @@ print_char: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zeropage(2) dw)
+// print_dword(dword zp(2) dw)
 print_dword: {
     .label dw = 2
     lda.z dw+2
@@ -142,7 +142,7 @@ print_dword: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(8) w)
+// print_word(word zp(8) w)
 print_word: {
     .label w = 8
     lda.z w+1
@@ -171,7 +171,7 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(8) str)
+// print_str(byte* zp(8) str)
 print_str: {
     .label str = 8
   __b1:
@@ -232,7 +232,7 @@ testInt: {
     .byte 0
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage(8) w)
+// print_sword(signed word zp(8) w)
 print_sword: {
     .label w = 8
     lda.z w+1

@@ -366,7 +366,7 @@ render_score: {
 // - offset: offset on the screen
 // - bcd: The BCD-value to render
 // - only_low: if non-zero only renders the low digit
-// render_bcd(byte* zeropage($23) screen, word zeropage($21) offset, byte register(X) bcd, byte register(Y) only_low)
+// render_bcd(byte* zp($23) screen, word zp($21) offset, byte register(X) bcd, byte register(Y) only_low)
 render_bcd: {
     .const ZERO_CHAR = $35
     .label screen = $23
@@ -576,7 +576,7 @@ render_playfield: {
 // Perform any movement of the current piece
 // key_event is the next keyboard_event() og 0xff if no keyboard event is pending
 // Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
-// play_movement(byte zeropage($1f) key_event)
+// play_movement(byte zp($1f) key_event)
 play_movement: {
     .label render = $11
     .label return = $11
@@ -652,7 +652,7 @@ play_move_rotate: {
 }
 // Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
 // Returns information about the type of the collision detected
-// play_collision(byte zeropage($20) xpos, byte zeropage($c) ypos, byte register(X) orientation)
+// play_collision(byte zp($20) xpos, byte zp($c) ypos, byte register(X) orientation)
 play_collision: {
     .label xpos = $20
     .label ypos = $c
@@ -1120,7 +1120,7 @@ play_lock_current: {
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
-// keyboard_event_pressed(byte zeropage($11) keycode)
+// keyboard_event_pressed(byte zp($11) keycode)
 keyboard_event_pressed: {
     .label row_bits = $2d
     .label keycode = $11
@@ -1466,7 +1466,7 @@ render_init: {
 }
 // Copy the original screen data to the passed screen
 // Also copies colors to 0xd800
-// render_screen_original(byte* zeropage($23) screen)
+// render_screen_original(byte* zp($23) screen)
 render_screen_original: {
     .const SPACE = 0
     .label screen = $23

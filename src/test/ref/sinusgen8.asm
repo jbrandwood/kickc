@@ -33,7 +33,7 @@ main: {
     .byte 0
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(6) str)
+// print_str(byte* zp(6) str)
 print_str: {
     .label str = 6
     lda #<main.str
@@ -61,7 +61,7 @@ print_str: {
     jmp __b1
 }
 // Print a signed byte as HEX
-// print_sbyte(signed byte zeropage(4) b)
+// print_sbyte(signed byte zp(4) b)
 print_sbyte: {
     .label b = 4
     lda.z b
@@ -93,7 +93,7 @@ print_char: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage(4) b)
+// print_byte(byte zp(4) b)
 print_byte: {
     .label b = 4
     lda.z b
@@ -148,7 +148,7 @@ memset: {
 // Generate signed byte sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin8s_gen(signed byte* zeropage($c) sintab)
+// sin8s_gen(signed byte* zp($c) sintab)
 sin8s_gen: {
     .label step = $e
     .label sintab = $c
@@ -205,7 +205,7 @@ sin8s_gen: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zeropage(6) x)
+// sin8s(word zp(6) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
@@ -317,7 +317,7 @@ sin8s: {
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage(5) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp(5) select)
 mulu8_sel: {
     .label __0 = 6
     .label __1 = 6
@@ -383,7 +383,7 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($c) dividend, word zeropage($a) rem)
+// divr16u(word zp($c) dividend, word zp($a) rem)
 divr16u: {
     .label rem = $a
     .label dividend = $c

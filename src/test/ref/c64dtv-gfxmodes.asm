@@ -1579,7 +1579,7 @@ mode_stdbitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zeropage(6) x0, byte register(X) x1, byte zeropage(8) y0, byte zeropage(3) y1)
+// bitmap_line(byte zp(6) x0, byte register(X) x1, byte zp(8) y0, byte zp(3) y1)
 bitmap_line: {
     .label xd = 7
     .label x0 = 6
@@ -1685,7 +1685,7 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte zeropage(2) x, byte zeropage(8) y, byte zeropage(6) x1, byte zeropage(7) xd, byte zeropage($d) yd)
+// bitmap_line_xdyi(byte zp(2) x, byte zp(8) y, byte zp(6) x1, byte zp(7) xd, byte zp($d) yd)
 bitmap_line_xdyi: {
     .label x = 2
     .label y = 8
@@ -1746,7 +1746,7 @@ bitmap_plot: {
     sta (plotter),y
     rts
 }
-// bitmap_line_ydxi(byte zeropage(2) y, byte register(X) x, byte zeropage(3) y1, byte zeropage($d) yd, byte zeropage(7) xd)
+// bitmap_line_ydxi(byte zp(2) y, byte register(X) x, byte zp(3) y1, byte zp($d) yd, byte zp(7) xd)
 bitmap_line_ydxi: {
     .label y = 2
     .label y1 = 3
@@ -1780,7 +1780,7 @@ bitmap_line_ydxi: {
     bne __b1
     rts
 }
-// bitmap_line_xdyd(byte zeropage(2) x, byte zeropage(8) y, byte zeropage(6) x1, byte zeropage(7) xd, byte zeropage($d) yd)
+// bitmap_line_xdyd(byte zp(2) x, byte zp(8) y, byte zp(6) x1, byte zp(7) xd, byte zp($d) yd)
 bitmap_line_xdyd: {
     .label x = 2
     .label y = 8
@@ -1815,7 +1815,7 @@ bitmap_line_xdyd: {
     bne __b1
     rts
 }
-// bitmap_line_ydxd(byte zeropage(2) y, byte register(X) x, byte zeropage(8) y1, byte zeropage($d) yd, byte zeropage(7) xd)
+// bitmap_line_ydxd(byte zp(2) y, byte register(X) x, byte zp(8) y1, byte zp($d) yd, byte zp(7) xd)
 bitmap_line_ydxd: {
     .label y = 2
     .label y1 = 8
@@ -2264,7 +2264,7 @@ mode_stdchar: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// print_str_lines(byte* zeropage($b) str)
+// print_str_lines(byte* zp($b) str)
 print_str_lines: {
     .label str = $b
     lda #<menu.SCREEN

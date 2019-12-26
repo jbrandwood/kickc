@@ -175,7 +175,7 @@ anim: {
     jmp __b2
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zeropage($13) dw)
+// print_dword_at(dword zp($13) dw)
 print_dword_at: {
     .label dw = $13
     lda.z dw+2
@@ -199,7 +199,7 @@ print_dword_at: {
     rts
 }
 // Print a word as HEX at a specific position
-// print_word_at(word zeropage(3) w, byte* zeropage(5) at)
+// print_word_at(word zp(3) w, byte* zp(5) at)
 print_word_at: {
     .label w = 3
     .label at = 5
@@ -219,7 +219,7 @@ print_word_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage(2) b, byte* zeropage(5) at)
+// print_byte_at(byte zp(2) b, byte* zp(5) at)
 print_byte_at: {
     .label b = 2
     .label at = 5
@@ -250,7 +250,7 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zeropage(8) at)
+// print_char_at(byte register(X) ch, byte* zp(8) at)
 print_char_at: {
     .label at = 8
     txa

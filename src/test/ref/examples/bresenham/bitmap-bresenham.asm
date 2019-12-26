@@ -50,7 +50,7 @@ lines: {
     jmp __b1
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zeropage(3) x0, byte zeropage(5) x1, byte zeropage(2) y0, byte register(Y) y1)
+// bitmap_line(byte zp(3) x0, byte zp(5) x1, byte zp(2) y0, byte register(Y) y1)
 bitmap_line: {
     .label xd = $d
     .label yd = 7
@@ -150,7 +150,7 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte register(X) x, byte zeropage(2) y, byte zeropage(3) x1, byte zeropage($d) xd, byte zeropage(4) yd)
+// bitmap_line_xdyi(byte register(X) x, byte zp(2) y, byte zp(3) x1, byte zp($d) xd, byte zp(4) yd)
 bitmap_line_xdyi: {
     .label __6 = 7
     .label y = 2
@@ -211,7 +211,7 @@ bitmap_plot: {
     sta (plotter),y
     rts
 }
-// bitmap_line_ydxi(byte zeropage($c) y, byte register(X) x, byte zeropage(2) y1, byte zeropage(4) yd, byte zeropage($d) xd)
+// bitmap_line_ydxi(byte zp($c) y, byte register(X) x, byte zp(2) y1, byte zp(4) yd, byte zp($d) xd)
 bitmap_line_ydxi: {
     .label y = $c
     .label y1 = 2
@@ -244,7 +244,7 @@ bitmap_line_ydxi: {
     bne __b1
     rts
 }
-// bitmap_line_xdyd(byte register(X) x, byte zeropage(2) y, byte zeropage(5) x1, byte zeropage($d) xd, byte zeropage(7) yd)
+// bitmap_line_xdyd(byte register(X) x, byte zp(2) y, byte zp(5) x1, byte zp($d) xd, byte zp(7) yd)
 bitmap_line_xdyd: {
     .label __6 = $c
     .label y = 2
@@ -279,7 +279,7 @@ bitmap_line_xdyd: {
     bne __b1
     rts
 }
-// bitmap_line_ydxd(byte zeropage($c) y, byte register(X) x, byte zeropage(2) y1, byte zeropage(7) yd, byte zeropage($d) xd)
+// bitmap_line_ydxd(byte zp($c) y, byte register(X) x, byte zp(2) y1, byte zp(7) yd, byte zp($d) xd)
 bitmap_line_ydxd: {
     .label y = $c
     .label y1 = 2

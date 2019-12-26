@@ -31,7 +31,7 @@ main: {
     sta (screen),y
     rts
 }
-// setscreen(byte* zeropage(2) val)
+// setscreen(byte* zp(2) val)
 setscreen: {
     .label val = 2
     lda.z val

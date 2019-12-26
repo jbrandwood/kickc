@@ -51,7 +51,7 @@ main: {
     rts
 }
 // Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zeropage(4) value, byte* zeropage(2) dst)
+// utoa16w(word zp(4) value, byte* zp(2) dst)
 utoa16w: {
     .label dst = 2
     .label value = 4

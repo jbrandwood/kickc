@@ -28,7 +28,7 @@ main: {
     msg1: .text "world"
     .byte 0
 }
-// print2(byte* zeropage($fa) at, byte* zeropage($fc) msg)
+// print2(byte* zp($fa) at, byte* zp($fc) msg)
 print2: {
     .label at = $fa
     .label msg = $fc
@@ -51,7 +51,7 @@ print2: {
     inc.z i
     jmp __b1
 }
-// print_char(byte* zeropage($fa) at, byte register(X) idx, byte register(A) ch)
+// print_char(byte* zp($fa) at, byte register(X) idx, byte register(A) ch)
 print_char: {
     .label at = $fa
     stx.z $ff

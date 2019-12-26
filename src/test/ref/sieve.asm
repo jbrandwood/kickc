@@ -278,7 +278,7 @@ print_char: {
     rts
 }
 // Print a word as DECIMAL
-// print_word_decimal(word zeropage($d) w)
+// print_word_decimal(word zp($d) w)
 print_word_decimal: {
     .label w = $d
     lda.z w
@@ -294,7 +294,7 @@ print_word_decimal: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage($f) str)
+// print_str(byte* zp($f) str)
 print_str: {
     .label str = $f
   __b1:
@@ -322,7 +322,7 @@ print_str: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zeropage(2) value, byte* zeropage(4) buffer)
+// utoa(word zp(2) value, byte* zp(4) buffer)
 utoa: {
     .const max_digits = 5
     .label digit_value = $19
@@ -390,7 +390,7 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zeropage(4) buffer, word zeropage(2) value, word zeropage($19) sub)
+// utoa_append(byte* zp(4) buffer, word zp(2) value, word zp($19) sub)
 utoa_append: {
     .label buffer = 4
     .label value = 2
@@ -442,7 +442,7 @@ print_ln: {
     rts
 }
 // Print a dword as DECIMAL
-// print_dword_decimal(dword zeropage(9) w)
+// print_dword_decimal(dword zp(9) w)
 print_dword_decimal: {
     .label w = 9
     jsr ultoa
@@ -458,7 +458,7 @@ print_dword_decimal: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zeropage(9) value, byte* zeropage($d) buffer)
+// ultoa(dword zp(9) value, byte* zp($d) buffer)
 ultoa: {
     .const max_digits = $a
     .label digit_value = $15
@@ -540,7 +540,7 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zeropage($d) buffer, dword zeropage(9) value, dword zeropage($15) sub)
+// ultoa_append(byte* zp($d) buffer, dword zp(9) value, dword zp($15) sub)
 ultoa_append: {
     .label buffer = $d
     .label value = 9
@@ -587,7 +587,7 @@ ultoa_append: {
 }
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
 // The 16-bit word remainder can be found in rem16u after the division
-// div32u16u(dword zeropage(9) dividend)
+// div32u16u(dword zp(9) dividend)
 div32u16u: {
     .label divisor = CLOCKS_PER_SEC/$64
     .label quotient_hi = $19
@@ -625,7 +625,7 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($11) dividend, word zeropage($f) rem)
+// divr16u(word zp($11) dividend, word zp($f) rem)
 divr16u: {
     .label rem = $f
     .label dividend = $11
@@ -717,7 +717,7 @@ clock_start: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($11) str, byte register(X) c, word zeropage($f) num)
+// memset(void* zp($11) str, byte register(X) c, word zp($f) num)
 memset: {
     .label end = $f
     .label dst = $11

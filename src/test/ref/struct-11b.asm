@@ -17,7 +17,7 @@ main: {
     jsr print_person
     rts
 }
-// print_person(byte* zeropage(2) person_initials)
+// print_person(byte* zp(2) person_initials)
 print_person: {
     .label person_initials = 2
     ldy #0

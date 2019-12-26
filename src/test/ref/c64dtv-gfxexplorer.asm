@@ -641,7 +641,7 @@ keyboard_event_scan: {
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
-// keyboard_event_pressed(byte zeropage($d) keycode)
+// keyboard_event_pressed(byte zp($d) keycode)
 keyboard_event_pressed: {
     .label row_bits = $1f
     .label keycode = $d
@@ -1151,7 +1151,7 @@ render_preset_name: {
     .byte 0
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zeropage(6) str, byte* zeropage($b) at)
+// print_str_at(byte* zp(6) str, byte* zp($b) at)
 print_str_at: {
     .label at = $b
     .label str = 6
@@ -1449,7 +1449,7 @@ form_set_screen: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// print_str_lines(byte* zeropage(6) str)
+// print_str_lines(byte* zp(6) str)
 print_str_lines: {
     .label str = 6
     lda.z print_set_screen.screen
@@ -1517,7 +1517,7 @@ print_cls: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($b) str)
+// memset(void* zp($b) str)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -1550,7 +1550,7 @@ memset: {
     jmp __b2
 }
 // Set the screen to print on. Also resets current line/char cursor.
-// print_set_screen(byte* zeropage($e) screen)
+// print_set_screen(byte* zp($e) screen)
 print_set_screen: {
     .label screen = $e
     rts
@@ -1590,7 +1590,7 @@ gfx_init_plane_full: {
     rts
 }
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
-// gfx_init_plane_fill(dword zeropage(2) plane_addr, byte zeropage(8) fill)
+// gfx_init_plane_fill(dword zp(2) plane_addr, byte zp(8) fill)
 gfx_init_plane_fill: {
     .label __0 = $12
     .label __1 = $16
@@ -1993,7 +1993,7 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zeropage(9) x0, byte register(X) x1, byte zeropage($d) y0, byte zeropage($11) y1)
+// bitmap_line(byte zp(9) x0, byte register(X) x1, byte zp($d) y0, byte zp($11) y1)
 bitmap_line: {
     .label xd = $1f
     .label x0 = 9
@@ -2099,7 +2099,7 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte zeropage($a) x, byte zeropage($d) y, byte zeropage(9) x1, byte zeropage($1f) xd, byte zeropage($10) yd)
+// bitmap_line_xdyi(byte zp($a) x, byte zp($d) y, byte zp(9) x1, byte zp($1f) xd, byte zp($10) yd)
 bitmap_line_xdyi: {
     .label x = $a
     .label y = $d
@@ -2160,7 +2160,7 @@ bitmap_plot: {
     sta (plotter),y
     rts
 }
-// bitmap_line_ydxi(byte zeropage($a) y, byte register(X) x, byte zeropage($11) y1, byte zeropage(9) yd, byte zeropage($1f) xd)
+// bitmap_line_ydxi(byte zp($a) y, byte register(X) x, byte zp($11) y1, byte zp(9) yd, byte zp($1f) xd)
 bitmap_line_ydxi: {
     .label y = $a
     .label y1 = $11
@@ -2194,7 +2194,7 @@ bitmap_line_ydxi: {
     bne __b1
     rts
 }
-// bitmap_line_xdyd(byte zeropage($10) x, byte zeropage($d) y, byte zeropage(9) x1, byte zeropage($1f) xd, byte zeropage($a) yd)
+// bitmap_line_xdyd(byte zp($10) x, byte zp($d) y, byte zp(9) x1, byte zp($1f) xd, byte zp($a) yd)
 bitmap_line_xdyd: {
     .label x = $10
     .label y = $d
@@ -2229,7 +2229,7 @@ bitmap_line_xdyd: {
     bne __b1
     rts
 }
-// bitmap_line_ydxd(byte zeropage($10) y, byte register(X) x, byte zeropage($d) y1, byte zeropage($a) yd, byte zeropage($1f) xd)
+// bitmap_line_ydxd(byte zp($10) y, byte register(X) x, byte zp($d) y1, byte zp($a) yd, byte zp($1f) xd)
 bitmap_line_ydxd: {
     .label y = $10
     .label y1 = $d

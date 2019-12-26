@@ -215,7 +215,7 @@ keyboard_matrix_read: {
 // Render a single BOB at a given x/y-position
 // X-position is 0-151. Each x-position is 2 pixels wide.
 // Y-position is 0-183. Each y-position is 1 pixel high.
-// renderBob(byte zeropage($d) xpos, byte zeropage($e) ypos)
+// renderBob(byte zp($d) xpos, byte zp($e) ypos)
 renderBob: {
     .label __2 = $10
     .label __5 = $12
@@ -554,7 +554,7 @@ progress_inc: {
 }
 // Looks through a charset to find a glyph if present. If not present it is added.
 // Returns the glyph ID
-// charsetFindOrAddGlyph(byte* zeropage($13) glyph)
+// charsetFindOrAddGlyph(byte* zp($13) glyph)
 charsetFindOrAddGlyph: {
     .label glyph = $13
     .label glyph_cursor = 5

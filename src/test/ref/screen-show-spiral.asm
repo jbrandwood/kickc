@@ -161,7 +161,7 @@ main: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage(9) screen)
+// init_angle_screen(byte* zp(9) screen)
 init_angle_screen: {
     .label __11 = $18
     .label screen = 9
@@ -263,7 +263,7 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($f) x, signed word zeropage($11) y)
+// atan2_16(signed word zp($f) x, signed word zp($11) y)
 atan2_16: {
     .label __2 = $14
     .label __7 = $16
@@ -451,7 +451,7 @@ atan2_16: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
-// init_dist_screen(byte* zeropage(3) screen)
+// init_dist_screen(byte* zp(3) screen)
 init_dist_screen: {
     .label screen = 3
     .label screen_bottomline = 7
@@ -552,7 +552,7 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($16) val)
+// sqrt(word zp($16) val)
 sqrt: {
     .label __1 = 9
     .label __3 = 9
@@ -580,7 +580,7 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($16) key, word* zeropage(9) items, byte register(X) num)
+// bsearch16u(word zp($16) key, word* zp(9) items, byte register(X) num)
 bsearch16u: {
     .label __2 = 9
     .label pivot = $18
@@ -723,7 +723,7 @@ init_squares: {
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zeropage($11) size)
+// malloc(word zp($11) size)
 malloc: {
     .label mem = $11
     .label size = $11

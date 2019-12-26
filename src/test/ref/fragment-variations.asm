@@ -50,7 +50,7 @@ main: {
     sta screen+1*SIZEOF_DWORD+3
     rts
 }
-// mul16u(word zeropage(6) a)
+// mul16u(word zp(6) a)
 mul16u: {
     .label return = 2
     .label mb = 2

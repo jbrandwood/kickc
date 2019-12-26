@@ -37,7 +37,7 @@ main: {
     bne __b1
     rts
 }
-// print(signed word* zeropage(4) p)
+// print(signed word* zp(4) p)
 print: {
     .label p = 4
     lda.z idx

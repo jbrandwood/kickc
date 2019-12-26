@@ -118,7 +118,7 @@ loop: {
     dec BORDERCOL
     jmp __b1
 }
-// render_logo(signed word zeropage($12) xpos)
+// render_logo(signed word zp($12) xpos)
 render_logo: {
     .label __3 = $19
     .label xpos = $12
@@ -249,7 +249,7 @@ render_logo: {
 // Generate signed word sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen2(signed word* zeropage($c) sintab)
+// sin16s_gen2(signed word* zp($c) sintab)
 sin16s_gen2: {
     .const min = -$140
     .const max = $140
@@ -334,7 +334,7 @@ sin16s_gen2: {
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zeropage($10) a)
+// mul16s(signed word zp($10) a)
 mul16s: {
     .label __9 = $1f
     .label __16 = $1f
@@ -375,7 +375,7 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($e) a, word zeropage($19) b)
+// mul16u(word zp($e) a, word zp($19) b)
 mul16u: {
     .label mb = $1b
     .label a = $e
@@ -423,7 +423,7 @@ mul16u: {
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zeropage(8) x)
+// sin16s(dword zp(8) x)
 sin16s: {
     .label __4 = $1b
     .label x = 8
@@ -607,7 +607,7 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage($12) v1, word zeropage($19) v2, byte register(X) select)
+// mulu16_sel(word zp($12) v1, word zp($19) v2, byte register(X) select)
 mulu16_sel: {
     .label __0 = 8
     .label __1 = 8
@@ -680,7 +680,7 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($19) dividend, word zeropage($c) rem)
+// divr16u(word zp($19) dividend, word zp($c) rem)
 divr16u: {
     .label rem = $c
     .label dividend = $19
@@ -731,7 +731,7 @@ divr16u: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($10) str, byte register(X) c)
+// memset(void* zp($10) str, byte register(X) c)
 memset: {
     .label end = $23
     .label dst = $10

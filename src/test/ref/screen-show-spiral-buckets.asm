@@ -226,7 +226,7 @@ main: {
     jmp __b8
 }
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
-// init_buckets(byte* zeropage($16) screen)
+// init_buckets(byte* zp($16) screen)
 init_buckets: {
     .label __4 = 5
     .label __7 = $22
@@ -407,7 +407,7 @@ init_buckets: {
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zeropage(5) size)
+// malloc(word zp(5) size)
 malloc: {
     .label mem = 5
     .label size = 5
@@ -426,7 +426,7 @@ malloc: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the center
-// init_angle_screen(byte* zeropage($1e) screen)
+// init_angle_screen(byte* zp($1e) screen)
 init_angle_screen: {
     .label __11 = $a
     .label screen = $1e
@@ -528,7 +528,7 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($20) x, signed word zeropage($22) y)
+// atan2_16(signed word zp($20) x, signed word zp($22) y)
 atan2_16: {
     .label __2 = 5
     .label __7 = 8
@@ -717,7 +717,7 @@ atan2_16: {
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
 // Utilizes symmetry around the center
-// init_dist_screen(byte* zeropage(8) screen)
+// init_dist_screen(byte* zp(8) screen)
 init_dist_screen: {
     .label screen = 8
     .label screen_bottomline = $a
@@ -818,7 +818,7 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($1e) val)
+// sqrt(word zp($1e) val)
 sqrt: {
     .label __1 = $c
     .label __3 = $c
@@ -846,7 +846,7 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($1e) key, word* zeropage($c) items, byte register(X) num)
+// bsearch16u(word zp($1e) key, word* zp($c) items, byte register(X) num)
 bsearch16u: {
     .label __2 = $c
     .label pivot = $20

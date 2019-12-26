@@ -71,7 +71,7 @@ print_ln: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage(2) w)
+// print_sword(signed word zp(2) w)
 print_sword: {
     .label w = 2
     lda.z w+1
@@ -105,7 +105,7 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(2) w)
+// print_word(word zp(2) w)
 print_word: {
     .label w = 2
     lda.z w+1
@@ -117,7 +117,7 @@ print_word: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage(6) b)
+// print_byte(byte zp(6) b)
 print_byte: {
     .label b = 6
     lda.z b

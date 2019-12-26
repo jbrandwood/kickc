@@ -1,7 +1,7 @@
 // Load a file to memory using the C64 KERNAL LOAD functions
 // The kernalload.ld link file creates a D64 disk image containing the executable and the sprite.
 // To execute the program succesfully you must mount the D64 disk image and execute the kernalload.PRG program
-  // Load a file to memory using the C64 KERNAL LOAD functions
+  // Create a D64 disk containing the program and a sprite file
 .file [name="kernalload.prg", type="prg", segments="Program"]
 .disk [filename="kernalload.d64", name="DISK", id=1] {
         [name="KERNALLOAD", type="prg", segments="Program"],
@@ -129,7 +129,7 @@ setnam: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zeropage(2) str)
+// strlen(byte* zp(2) str)
 strlen: {
     .label len = 4
     .label str = 2

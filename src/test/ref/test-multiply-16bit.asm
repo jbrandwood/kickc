@@ -146,7 +146,7 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage($1a) str)
+// print_str(byte* zp($1a) str)
 print_str: {
     .label str = $1a
   __b1:
@@ -169,7 +169,7 @@ print_str: {
   !:
     jmp __b1
 }
-// mul16s_error(signed word zeropage($e) a, signed word zeropage($10) b, signed dword zeropage(2) ms, signed dword zeropage(6) mn, signed dword zeropage($a) mf)
+// mul16s_error(signed word zp($e) a, signed word zp($10) b, signed dword zp(2) ms, signed dword zp(6) mn, signed dword zp($a) mf)
 mul16s_error: {
     .label a = $e
     .label b = $10
@@ -232,7 +232,7 @@ mul16s_error: {
     .byte 0
 }
 // Print a signed dword as HEX
-// print_sdword(signed dword zeropage(2) dw)
+// print_sdword(signed dword zp(2) dw)
 print_sdword: {
     .label dw = 2
     lda.z dw+3
@@ -276,7 +276,7 @@ print_char: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zeropage(2) dw)
+// print_dword(dword zp(2) dw)
 print_dword: {
     .label dw = 2
     lda.z dw+2
@@ -292,7 +292,7 @@ print_dword: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage($e) w)
+// print_word(word zp($e) w)
 print_word: {
     .label w = $e
     lda.z w+1
@@ -321,7 +321,7 @@ print_byte: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage($e) w)
+// print_sword(signed word zp($e) w)
 print_sword: {
     .label w = $e
     lda.z w+1
@@ -345,7 +345,7 @@ print_sword: {
 }
 // Fast multiply two signed words to a signed double word result
 // Fixes offsets introduced by using unsigned multiplication
-// mulf16s(signed word zeropage($e) a, signed word zeropage($10) b)
+// mulf16s(signed word zp($e) a, signed word zp($10) b)
 mulf16s: {
     .label __9 = $1c
     .label __13 = $1e
@@ -404,7 +404,7 @@ mulf16s: {
 }
 // Fast multiply two unsigned words to a double word result
 // Done in assembler to utilize fast addition A+X
-// mulf16u(word zeropage($1c) a, word zeropage($1e) b)
+// mulf16u(word zp($1c) a, word zp($1e) b)
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
@@ -524,7 +524,7 @@ mulf16u: {
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zeropage($e) a, signed word zeropage($10) b)
+// mul16s(signed word zp($e) a, signed word zp($10) b)
 mul16s: {
     .label __9 = $1c
     .label __13 = $1e
@@ -589,7 +589,7 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($17) a, word zeropage($1a) b)
+// mul16u(word zp($17) a, word zp($1a) b)
 mul16u: {
     .label mb = $a
     .label a = $17
@@ -637,7 +637,7 @@ mul16u: {
 }
 // Slow multiplication of signed words
 // Perform a signed multiplication by repeated addition/subtraction
-// muls16s(signed word zeropage($e) a, signed word zeropage($10) b)
+// muls16s(signed word zp($e) a, signed word zp($10) b)
 muls16s: {
     .label m = 2
     .label j = $1c
@@ -870,7 +870,7 @@ mul16u_compare: {
     str1: .text "word multiply results match!"
     .byte 0
 }
-// mul16u_error(word zeropage($e) a, word zeropage($1e) b, dword zeropage(2) ms, dword zeropage(6) mn, dword zeropage($a) mf)
+// mul16u_error(word zp($e) a, word zp($1e) b, dword zp(2) ms, dword zp(6) mn, dword zp($a) mf)
 mul16u_error: {
     .label a = $e
     .label b = $1e
@@ -938,7 +938,7 @@ mul16u_error: {
 }
 // Slow multiplication of unsigned words
 // Calculate an unsigned multiplication by repeated addition
-// muls16u(word zeropage($1c) a, word zeropage($1e) b)
+// muls16u(word zp($1c) a, word zp($1e) b)
 muls16u: {
     .label return = 2
     .label m = 2

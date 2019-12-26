@@ -58,7 +58,7 @@ main: {
     rts
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zeropage($d) dw)
+// print_dword_at(dword zp($d) dw)
 print_dword_at: {
     .label dw = $d
     lda.z dw+2
@@ -82,7 +82,7 @@ print_dword_at: {
     rts
 }
 // Print a word as HEX at a specific position
-// print_word_at(word zeropage(4) w, byte* zeropage(9) at)
+// print_word_at(word zp(4) w, byte* zp(9) at)
 print_word_at: {
     .label w = 4
     .label at = 9
@@ -102,7 +102,7 @@ print_word_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage($c) b, byte* zeropage(9) at)
+// print_byte_at(byte zp($c) b, byte* zp(9) at)
 print_byte_at: {
     .label b = $c
     .label at = 9
@@ -133,7 +133,7 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zeropage(2) at)
+// print_char_at(byte register(X) ch, byte* zp(2) at)
 print_char_at: {
     .label at = 2
     txa
@@ -262,7 +262,7 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($13) val)
+// sqrt(word zp($13) val)
 sqrt: {
     .label __1 = 2
     .label __3 = 2
@@ -286,7 +286,7 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($13) key, word* zeropage(2) items, byte register(X) num)
+// bsearch16u(word zp($13) key, word* zp(2) items, byte register(X) num)
 bsearch16u: {
     .label __2 = 2
     .label pivot = $15
@@ -457,7 +457,7 @@ clock_start: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage(9) charset)
+// init_font_hex(byte* zp(9) charset)
 init_font_hex: {
     .label __0 = $19
     .label idx = $c

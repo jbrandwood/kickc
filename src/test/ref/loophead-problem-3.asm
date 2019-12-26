@@ -20,7 +20,7 @@ main: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($a) a)
+// mul16u(word zp($a) a)
 mul16u: {
     .const b = $7b
     .label a = $a

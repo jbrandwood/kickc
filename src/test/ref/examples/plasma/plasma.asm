@@ -80,7 +80,7 @@ main: {
     jmp __b4
 }
 // Render plasma to the passed screen
-// doplasma(byte* zeropage(9) screen)
+// doplasma(byte* zp(9) screen)
 doplasma: {
     .label c1a = 4
     .label c1b = 5

@@ -116,7 +116,7 @@ main: {
     jmp __b2
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zeropage(3) x, byte register(X) y)
+// bitmap_plot(word zp(3) x, byte register(X) y)
 bitmap_plot: {
     .label __1 = $a
     .label plotter = 8
@@ -202,7 +202,7 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage(5) str, byte register(X) c, word zeropage(3) num)
+// memset(void* zp(5) str, byte register(X) c, word zp(3) num)
 memset: {
     .label end = 3
     .label dst = 5

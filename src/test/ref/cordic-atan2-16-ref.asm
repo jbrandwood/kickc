@@ -98,7 +98,7 @@ main: {
     jmp __b5
 }
 // Print a word as HEX
-// print_word(word zeropage($c) w)
+// print_word(word zp($c) w)
 print_word: {
     .label w = $c
     lda.z w+1
@@ -160,7 +160,7 @@ diff: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($15) x, signed word zeropage($17) y)
+// atan2_16(signed word zp($15) x, signed word zp($17) y)
 atan2_16: {
     .label __2 = $11
     .label __7 = 4
@@ -347,7 +347,7 @@ atan2_16: {
     jmp __b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($f) charset)
+// init_font_hex(byte* zp($f) charset)
 init_font_hex: {
     .label __0 = $19
     .label idx = $14

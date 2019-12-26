@@ -200,7 +200,7 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage($e) w)
+// print_word(word zp($e) w)
 print_word: {
     .label w = $e
     lda.z w+1
@@ -212,7 +212,7 @@ print_word: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zeropage($a) dw)
+// print_dword(dword zp($a) dw)
 print_dword: {
     .label dw = $a
     lda.z dw+2

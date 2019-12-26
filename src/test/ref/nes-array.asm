@@ -40,7 +40,7 @@ main: {
     sta SCREEN+SIZEOF_SIGNED_WORD+1
     rts
 }
-// foo(byte register(X) x, signed word* zeropage(2) y)
+// foo(byte register(X) x, signed word* zp(2) y)
 foo: {
     .label return = 2
     .label y = 2

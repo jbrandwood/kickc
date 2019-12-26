@@ -20,7 +20,7 @@ main: {
     jsr line
     rts
 }
-// line(byte zeropage(2) x1)
+// line(byte zp(2) x1)
 line: {
     .label x1 = 2
   __b1:

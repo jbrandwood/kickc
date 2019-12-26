@@ -35,7 +35,7 @@ print_set_screen: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zeropage($e) dw)
+// print_dword(dword zp($e) dw)
 print_dword: {
     .label dw = $e
     lda.z dw+2
@@ -51,7 +51,7 @@ print_dword: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(2) w)
+// print_word(word zp(2) w)
 print_word: {
     .label w = 2
     lda.z w+1

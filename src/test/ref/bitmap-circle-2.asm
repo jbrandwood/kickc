@@ -68,7 +68,7 @@ main: {
     sta.z i+1
     jmp __b1
 }
-// circle(signed word zeropage(2) r)
+// circle(signed word zp(2) r)
 circle: {
     .const xc = $a0
     .const yc = $64
@@ -296,7 +296,7 @@ circle: {
     sta.z p+1
     jmp __b4
 }
-// plot(signed word zeropage($a) x, signed word zeropage($c) y)
+// plot(signed word zp($a) x, signed word zp($c) y)
 plot: {
     .label __8 = $e
     .label __11 = $c
@@ -412,7 +412,7 @@ plot: {
     rts
 }
 // Fill some memory with a value
-// fill(signed word zeropage(6) size, byte register(X) val)
+// fill(signed word zp(6) size, byte register(X) val)
 fill: {
     .label end = 6
     .label addr = 8

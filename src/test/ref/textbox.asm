@@ -92,7 +92,7 @@ main: {
   !:
     jmp __b4
 }
-// textbox(byte zeropage(2) x1, byte zeropage(3) y1, byte zeropage(4) x2, byte zeropage(5) y2, byte* zeropage(6) text)
+// textbox(byte zp(2) x1, byte zp(3) y1, byte zp(4) x2, byte zp(5) y2, byte* zp(6) text)
 textbox: {
     .label __8 = $d
     .label __17 = $a
@@ -245,7 +245,7 @@ textbox: {
     inx
     jmp __b3
 }
-// draw_window(byte zeropage(2) x1, byte zeropage(3) y1, byte zeropage(4) x2, byte zeropage(5) y2)
+// draw_window(byte zp(2) x1, byte zp(3) y1, byte zp(4) x2, byte zp(5) y2)
 draw_window: {
     .label __2 = $f
     .label __3 = $b

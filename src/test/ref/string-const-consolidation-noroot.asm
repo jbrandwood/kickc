@@ -15,7 +15,7 @@ main: {
     rex1: .text "rex"
     .byte 0
 }
-// print(byte* zeropage(4) string)
+// print(byte* zp(4) string)
 print: {
     .label string = 4
     lda #<main.rex1

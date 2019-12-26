@@ -106,7 +106,7 @@ testSimpleTypes: {
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
-// assertType(byte register(Y) t1, byte zeropage(4) t2)
+// assertType(byte register(Y) t1, byte zp(4) t2)
 assertType: {
     .label t2 = 4
     tya

@@ -244,7 +244,7 @@ keyboard_matrix_read: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage($a) str)
+// print_str(byte* zp($a) str)
 print_str: {
     .label str = $a
   __b1:
@@ -293,7 +293,7 @@ print_ln: {
     jmp __b1
 }
 // Print the contents of a file entry
-// printEntry(byte* zeropage(2) entry)
+// printEntry(byte* zp(2) entry)
 printEntry: {
     .label entry = 2
     lda.z print_line_cursor
@@ -602,7 +602,7 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage($a) w)
+// print_word(word zp($a) w)
 print_word: {
     .label w = $a
     lda.z w+1
@@ -615,7 +615,7 @@ print_word: {
 }
 // Set all values in the passed struct
 // Sets the values to n, n+1, n... to help test that everything works as intended
-// initEntry(byte* zeropage(4) entry, byte register(X) n)
+// initEntry(byte* zp(4) entry, byte register(X) n)
 initEntry: {
     .label __1 = 8
     .label __3 = $a

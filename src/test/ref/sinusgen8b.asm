@@ -74,7 +74,7 @@ main: {
     .byte 0
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage($a) str)
+// print_str(byte* zp($a) str)
 print_str: {
     .label str = $a
     lda #<main.str
@@ -102,7 +102,7 @@ print_str: {
     jmp __b1
 }
 // Print a signed byte as HEX
-// print_sbyte(signed byte zeropage($10) b)
+// print_sbyte(signed byte zp($10) b)
 print_sbyte: {
     .label b = $10
     lda.z b
@@ -134,7 +134,7 @@ print_char: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage($10) b)
+// print_byte(byte zp($10) b)
 print_byte: {
     .label b = $10
     lda.z b
@@ -189,7 +189,7 @@ memset: {
 // Generate signed (large) word sinus table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen(signed word* zeropage($a) sintab)
+// sin16s_gen(signed word* zp($a) sintab)
 sin16s_gen: {
     .label __2 = $14
     .label step = $16
@@ -266,7 +266,7 @@ sin16s_gen: {
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zeropage(6) x)
+// sin16s(dword zp(6) x)
 sin16s: {
     .label __4 = $1a
     .label x = 6
@@ -450,7 +450,7 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage($c) v1, word zeropage($e) v2, byte register(X) select)
+// mulu16_sel(word zp($c) v1, word zp($e) v2, byte register(X) select)
 mulu16_sel: {
     .label __0 = 6
     .label __1 = 6
@@ -480,7 +480,7 @@ mulu16_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($20) a, word zeropage($e) b)
+// mul16u(word zp($20) a, word zp($e) b)
 mul16u: {
     .label a = $20
     .label mb = $1a
@@ -568,7 +568,7 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($14) dividend, word zeropage($a) rem)
+// divr16u(word zp($14) dividend, word zp($a) rem)
 divr16u: {
     .label rem = $a
     .label dividend = $14
@@ -621,7 +621,7 @@ divr16u: {
 // Generate signed byte sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin8s_gen(signed byte* zeropage($14) sintab)
+// sin8s_gen(signed byte* zp($14) sintab)
 sin8s_gen: {
     .label step = $c
     .label sintab = $14
@@ -678,7 +678,7 @@ sin8s_gen: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zeropage($11) x)
+// sin8s(word zp($11) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
@@ -790,7 +790,7 @@ sin8s: {
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage($13) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($13) select)
 mulu8_sel: {
     .label __0 = $11
     .label __1 = $11

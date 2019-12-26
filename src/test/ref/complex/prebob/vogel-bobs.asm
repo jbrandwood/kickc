@@ -178,7 +178,7 @@ keyboard_matrix_read: {
 // Render a single BOB at a given x/y-position
 // X-position is 0-151. Each x-position is 2 pixels wide.
 // Y-position is 0-183. Each y-position is 1 pixel high.
-// renderBob(byte zeropage($e) xpos, byte register(X) ypos)
+// renderBob(byte zp($e) xpos, byte register(X) ypos)
 renderBob: {
     .label __2 = $b
     .label __5 = $d
@@ -277,7 +277,7 @@ mulf8s: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
-// mulf8s_prepared(signed byte zeropage($e) b)
+// mulf8s_prepared(signed byte zp($e) b)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = $b
@@ -581,7 +581,7 @@ progress_inc: {
 // Looks through BOB_CHARSET to find the passed bob glyph if present.
 // If not present it is added
 // Returns the glyph ID
-// bobCharsetFindOrAddGlyph(byte* zeropage(6) bob_glyph)
+// bobCharsetFindOrAddGlyph(byte* zp(6) bob_glyph)
 bobCharsetFindOrAddGlyph: {
     .label bob_glyph = 6
     .label glyph_cursor = $11

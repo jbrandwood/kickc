@@ -187,7 +187,7 @@ main: {
     jmp __b1
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($1e) center_x, byte zeropage($b) center_y)
+// startProcessing(byte zp($1e) center_x, byte zp($b) center_y)
 startProcessing: {
     .label __0 = $c
     .label __1 = $c
@@ -658,7 +658,7 @@ initSprites: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage($18) screen)
+// init_angle_screen(byte* zp($18) screen)
 init_angle_screen: {
     .label __11 = $10
     .label screen = $18
@@ -760,7 +760,7 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($1a) x, signed word zeropage($1c) y)
+// atan2_16(signed word zp($1a) x, signed word zp($1c) y)
 atan2_16: {
     .label __2 = $c
     .label __7 = $e

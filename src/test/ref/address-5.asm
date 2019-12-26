@@ -22,7 +22,7 @@ main: {
     jsr print
     rts
 }
-// print(byte zeropage(2) ch)
+// print(byte zp(2) ch)
 print: {
     .label ch = 2
     ldx idx

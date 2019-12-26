@@ -27,7 +27,7 @@ main: {
     bne __b1
     rts
 }
-// position_sprite(byte zeropage(4) spriteno, word zeropage(2) x)
+// position_sprite(byte zp(4) spriteno, word zp(2) x)
 position_sprite: {
     .const y = $32
     .label spriteno = 4

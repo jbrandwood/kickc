@@ -104,7 +104,7 @@ main: {
     jmp __b2
 }
 // Render plasma to the passed screen
-// doplasma(byte* zeropage(7) screen)
+// doplasma(byte* zp(7) screen)
 doplasma: {
     .label angle = 3
     .label dist = 5
@@ -189,7 +189,7 @@ doplasma: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage(3) str, byte register(X) c)
+// memset(void* zp(3) str, byte register(X) c)
 memset: {
     .label end = $1a
     .label dst = 3
@@ -359,7 +359,7 @@ sid_rnd_init: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage(5) screen)
+// init_angle_screen(byte* zp(5) screen)
 init_angle_screen: {
     .label __11 = $10
     .label screen = 5
@@ -461,7 +461,7 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($14) x, signed word zeropage($16) y)
+// atan2_16(signed word zp($14) x, signed word zp($16) y)
 atan2_16: {
     .label __2 = 7
     .label __7 = $1a
@@ -649,7 +649,7 @@ atan2_16: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
-// init_dist_screen(byte* zeropage(3) screen)
+// init_dist_screen(byte* zp(3) screen)
 init_dist_screen: {
     .label screen = 3
     .label screen_bottomline = 5
@@ -750,7 +750,7 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($16) val)
+// sqrt(word zp($16) val)
 sqrt: {
     .label __1 = 7
     .label __3 = 7
@@ -778,7 +778,7 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($16) key, word* zeropage(7) items, byte register(X) num)
+// bsearch16u(word zp($16) key, word* zp(7) items, byte register(X) num)
 bsearch16u: {
     .label __2 = 7
     .label pivot = $18
@@ -921,7 +921,7 @@ init_squares: {
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zeropage(9) size)
+// malloc(word zp(9) size)
 malloc: {
     .label mem = 9
     .label size = 9

@@ -13,7 +13,7 @@ main: {
     jsr print
     rts
 }
-// print(byte* zeropage(4) string)
+// print(byte* zp(4) string)
 print: {
     .label string = 4
     lda #<rex1

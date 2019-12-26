@@ -96,7 +96,7 @@ main: {
     .byte 0
 }
 // Decimal utoa() without using multiply or divide
-// utoa10w(word zeropage(2) value, byte* zeropage(6) dst)
+// utoa10w(word zp(2) value, byte* zp(6) dst)
 utoa10w: {
     .label value = 2
     .label digit = 8
@@ -177,7 +177,7 @@ utoa10w: {
     jmp __b1
 }
 // Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zeropage(2) value, byte* zeropage(4) dst)
+// utoa16w(word zp(2) value, byte* zp(4) dst)
 utoa16w: {
     .label dst = 4
     .label value = 2

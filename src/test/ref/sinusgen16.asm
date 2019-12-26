@@ -72,7 +72,7 @@ main: {
     .byte 0
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(2) str)
+// print_str(byte* zp(2) str)
 print_str: {
     .label str = 2
   __b1:
@@ -96,7 +96,7 @@ print_str: {
     jmp __b1
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage(8) w)
+// print_sword(signed word zp(8) w)
 print_sword: {
     .label w = 8
     lda.z w+1
@@ -130,7 +130,7 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(8) w)
+// print_word(word zp(8) w)
 print_word: {
     .label w = 8
     lda.z w+1
@@ -195,7 +195,7 @@ memset: {
 // Generate signed (large) word sinus table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen(signed word* zeropage(8) sintab)
+// sin16s_gen(signed word* zp(8) sintab)
 sin16s_gen: {
     .label __2 = $a
     .label step = $14
@@ -272,7 +272,7 @@ sin16s_gen: {
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zeropage($c) x)
+// sin16s(dword zp($c) x)
 sin16s: {
     .label __4 = $18
     .label x = $c
@@ -456,7 +456,7 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage($10) v1, word zeropage($12) v2, byte register(X) select)
+// mulu16_sel(word zp($10) v1, word zp($12) v2, byte register(X) select)
 mulu16_sel: {
     .label __0 = $c
     .label __1 = $c
@@ -486,7 +486,7 @@ mulu16_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($1c) a, word zeropage($12) b)
+// mul16u(word zp($1c) a, word zp($12) b)
 mul16u: {
     .label a = $1c
     .label mb = $18
@@ -574,7 +574,7 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($12) dividend, word zeropage($10) rem)
+// divr16u(word zp($12) dividend, word zp($10) rem)
 divr16u: {
     .label rem = $10
     .label dividend = $12

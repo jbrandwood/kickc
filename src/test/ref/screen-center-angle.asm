@@ -53,7 +53,7 @@ main: {
     rts
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zeropage($12) dw)
+// print_dword_at(dword zp($12) dw)
 print_dword_at: {
     .label dw = $12
     lda.z dw+2
@@ -77,7 +77,7 @@ print_dword_at: {
     rts
 }
 // Print a word as HEX at a specific position
-// print_word_at(word zeropage(2) w, byte* zeropage(4) at)
+// print_word_at(word zp(2) w, byte* zp(4) at)
 print_word_at: {
     .label w = 2
     .label at = 4
@@ -97,7 +97,7 @@ print_word_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage($1b) b, byte* zeropage(4) at)
+// print_byte_at(byte zp($1b) b, byte* zp(4) at)
 print_byte_at: {
     .label b = $1b
     .label at = 4
@@ -128,7 +128,7 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zeropage(6) at)
+// print_char_at(byte register(X) ch, byte* zp(6) at)
 print_char_at: {
     .label at = 6
     txa
@@ -251,7 +251,7 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($16) x, signed word zeropage($18) y)
+// atan2_16(signed word zp($16) x, signed word zp($18) y)
 atan2_16: {
     .label __2 = 6
     .label __7 = $a
@@ -460,7 +460,7 @@ clock_start: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($d) charset)
+// init_font_hex(byte* zp($d) charset)
 init_font_hex: {
     .label __0 = $1b
     .label idx = $1a

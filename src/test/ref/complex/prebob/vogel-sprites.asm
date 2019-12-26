@@ -329,7 +329,7 @@ mulf8s: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
-// mulf8s_prepared(signed byte zeropage($12) b)
+// mulf8s_prepared(signed byte zp($12) b)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 7

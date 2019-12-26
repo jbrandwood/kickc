@@ -101,7 +101,7 @@ main: {
     rts
 }
 // Print a signed byte as hex at a specific screen position
-// print_sbyte_at(signed byte zeropage(8) b, byte* zeropage(6) at)
+// print_sbyte_at(signed byte zp(8) b, byte* zp(6) at)
 print_sbyte_at: {
     .label b = 8
     .label at = 6
@@ -129,7 +129,7 @@ print_sbyte_at: {
     jmp __b2
 }
 // Print a single char
-// print_char_at(byte zeropage(9) ch, byte* zeropage(6) at)
+// print_char_at(byte zp(9) ch, byte* zp(6) at)
 print_char_at: {
     .label at = 6
     .label ch = 9
@@ -139,7 +139,7 @@ print_char_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage(8) b, byte* zeropage(6) at)
+// print_byte_at(byte zp(8) b, byte* zp(6) at)
 print_byte_at: {
     .label b = 8
     .label at = 6

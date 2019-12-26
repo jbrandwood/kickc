@@ -46,7 +46,7 @@ main: {
     jmp __b1
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zeropage($a) x2)
+// bitmap_line(word zp($a) x2)
 bitmap_line: {
     .const x1 = 0
     .const y1 = 0
@@ -245,7 +245,7 @@ bitmap_line: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zeropage($e) x, byte register(X) y)
+// bitmap_plot(word zp($e) x, byte register(X) y)
 bitmap_plot: {
     .label __1 = $16
     .label plotter = $14
@@ -277,7 +277,7 @@ bitmap_plot: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zeropage(4) w)
+// sgn_u16(word zp(4) w)
 sgn_u16: {
     .label w = 4
     .label return = 6
@@ -297,7 +297,7 @@ sgn_u16: {
     rts
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// abs_u16(word zeropage(8) w)
+// abs_u16(word zp(8) w)
 abs_u16: {
     .label w = 8
     .label return = 8
@@ -344,7 +344,7 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($c) str, byte register(X) c, word zeropage($a) num)
+// memset(void* zp($c) str, byte register(X) c, word zp($a) num)
 memset: {
     .label end = $a
     .label dst = $c

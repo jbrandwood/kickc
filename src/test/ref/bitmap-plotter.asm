@@ -46,7 +46,7 @@ plots: {
     inx
     jmp __b1
 }
-// plot(byte zeropage(7) x, byte zeropage(2) y)
+// plot(byte zp(7) x, byte zp(2) y)
 plot: {
     .label x = 7
     .label y = 2

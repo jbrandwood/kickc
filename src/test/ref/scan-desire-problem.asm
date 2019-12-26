@@ -239,7 +239,7 @@ init: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage(4) str, byte register(X) c)
+// memset(void* zp(4) str, byte register(X) c)
 memset: {
     .label end = $15
     .label dst = 4

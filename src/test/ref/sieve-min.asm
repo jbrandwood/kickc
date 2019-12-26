@@ -143,7 +143,7 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(2) w)
+// print_word(word zp(2) w)
 print_word: {
     .label w = 2
     lda.z w+1

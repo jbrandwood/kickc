@@ -70,7 +70,7 @@ main: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($11) x, signed word zeropage($13) y)
+// atan2_16(signed word zp($11) x, signed word zp($13) y)
 atan2_16: {
     .label __2 = $b
     .label __7 = $d
@@ -257,7 +257,7 @@ atan2_16: {
     jmp __b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($b) charset)
+// init_font_hex(byte* zp($b) charset)
 init_font_hex: {
     .label __0 = $15
     .label idx = $10

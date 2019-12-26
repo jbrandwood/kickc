@@ -32,7 +32,7 @@ main: {
     jsr print
     rts
 }
-// print(byte* zeropage(4) msg)
+// print(byte* zp(4) msg)
 print: {
     .label msg = 4
   __b1:
@@ -53,7 +53,7 @@ print: {
     bne __b1
     rts
 }
-// strip(byte* zeropage(8) p, byte register(X) c)
+// strip(byte* zp(8) p, byte register(X) c)
 strip: {
     .label dest = 6
     .label p = 8

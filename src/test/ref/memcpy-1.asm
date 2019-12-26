@@ -91,7 +91,7 @@ main: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zeropage(6) destination, void* zeropage(4) source, word zeropage(8) num)
+// memcpy(void* zp(6) destination, void* zp(4) source, word zp(8) num)
 memcpy: {
     .label src_end = 8
     .label dst = 6

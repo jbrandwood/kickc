@@ -248,7 +248,7 @@ main: {
     jmp __b7
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zeropage($1c) x, byte register(X) y)
+// bitmap_plot(word zp($1c) x, byte register(X) y)
 bitmap_plot: {
     .label __1 = $15
     .label plotter = $13
@@ -280,7 +280,7 @@ bitmap_plot: {
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zeropage(4) a, signed word zeropage($24) b)
+// mul16s(signed word zp(4) a, signed word zp($24) b)
 mul16s: {
     .label __9 = $15
     .label __13 = $22
@@ -345,7 +345,7 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($15) a, word zeropage($13) b)
+// mul16u(word zp($15) a, word zp($13) b)
 mul16u: {
     .label mb = $1e
     .label a = $15
@@ -447,7 +447,7 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($e) str, byte register(X) c, word zeropage(4) num)
+// memset(void* zp($e) str, byte register(X) c, word zp(4) num)
 memset: {
     .label end = 4
     .label dst = $e
@@ -532,7 +532,7 @@ bitmap_init: {
 // Generate signed word sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen2(signed word* zeropage($10) sintab)
+// sin16s_gen2(signed word* zp($10) sintab)
 sin16s_gen2: {
     .label wavelength = $200
     .const min = -$1001
@@ -623,7 +623,7 @@ sin16s_gen2: {
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zeropage($a) x)
+// sin16s(dword zp($a) x)
 sin16s: {
     .label __4 = $1e
     .label x = $a
@@ -807,7 +807,7 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zeropage($13) v1, word zeropage(2) v2, byte register(X) select)
+// mulu16_sel(word zp($13) v1, word zp(2) v2, byte register(X) select)
 mulu16_sel: {
     .label __0 = $a
     .label __1 = $a
@@ -880,7 +880,7 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($e) dividend, word zeropage($15) rem)
+// divr16u(word zp($e) dividend, word zp($15) rem)
 divr16u: {
     .label rem = $15
     .label dividend = $e

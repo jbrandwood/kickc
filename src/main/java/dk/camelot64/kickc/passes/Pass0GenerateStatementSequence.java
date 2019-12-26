@@ -557,6 +557,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDeclVariableInitExpr(KickCParser.DeclVariableInitExprContext ctx) {
       StatementSource statementSource = new StatementSource(ctx);
+      StatementSource declSource = new StatementSource((ParserRuleContext) ctx.parent.parent);
       try {
          String varName = ctx.NAME().getText();
          KickCParser.ExprContext initializer = ctx.expr();
@@ -583,7 +584,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
          return null;
       } catch(CompileError e) {
-         throw new CompileError(e.getMessage(), statementSource);
+         throw new CompileError(e.getMessage(), declSource);
       }
    }
 

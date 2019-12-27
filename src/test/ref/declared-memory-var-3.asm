@@ -6,19 +6,18 @@
   .const OFFSET_STRUCT_FOO_THING2 = 1
 __bbegin:
   lda #'a'
-  sta bar_thing1
+  sta bar
   lda #'b'
-  sta bar_thing2
+  sta bar+OFFSET_STRUCT_FOO_THING2
   jsr main
   rts
 main: {
     .label SCREEN = $400
-    .label barp = bar_thing1
+    .label barp = bar
     lda barp
     sta SCREEN
     lda barp+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     rts
 }
-  bar_thing1: .byte 0
-  bar_thing2: .byte 0
+  bar: .byte 0, 0

@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
 
@@ -45,30 +47,28 @@ public class StructUnwinding {
    public static class VariableUnwinding implements StructMemberUnwinding {
 
       /** Maps member names to the unwound variables. */
-      Map<String, SymbolVariableRef> memberUnwinding = new LinkedHashMap<>();
+      Map<String, RValue> memberUnwinding = new LinkedHashMap<>();
+
+      /** Maps member names to the unwound variable types. */
+      Map<String, SymbolType> typesUnwinding = new LinkedHashMap<>();
 
       /** Set how a member variable was unwound to a specific (new) variable. */
-      public void setMemberUnwinding(String memberName, SymbolVariableRef memberVariableUnwound) {
+      public void setMemberUnwinding(String memberName, RValue memberVariableUnwound, SymbolType memberType) {
          this.memberUnwinding.put(memberName, memberVariableUnwound);
+         this.typesUnwinding.put(memberName, memberType);
       }
 
-      /**
-       * Get the names of the members of the struct
-       *
-       * @return the names
-       */
       public List<String> getMemberNames() {
          return new ArrayList<>(memberUnwinding.keySet());
       }
 
-      /**
-       * Get the (new) variable that a specific member was unwound to
-       *
-       * @param memberName The member name
-       * @return The new variable
-       */
-      public RValue getMemberUnwinding(String memberName) {
+      public RValue getMemberUnwinding(String memberName, ProgramScope programScope) {
          return this.memberUnwinding.get(memberName);
+      }
+
+      @Override
+      public SymbolType getMemberType(String memberName) {
+         return this.typesUnwinding.get(memberName);
       }
    }
 
@@ -86,8 +86,16 @@ public class StructUnwinding {
        * Get the RValue that a specific member was unwound to
        *
        * @param memberName The member name
+       * @param programScope The program scope
        * @return The unwinding of the member
        */
-      RValue getMemberUnwinding(String memberName);
+      RValue getMemberUnwinding(String memberName, ProgramScope programScope);
+
+      /**
+       * Get the type of a specific member
+       * @param memberName The name of the struct member
+       * @return The type of the member
+       */
+      SymbolType getMemberType(String memberName);
    }
 }

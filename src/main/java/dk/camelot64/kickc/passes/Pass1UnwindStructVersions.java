@@ -45,7 +45,7 @@ public class Pass1UnwindStructVersions extends Pass1Base {
                      while(memberDefIt.hasNext()) {
                         Variable memberVar = memberDefIt.next();
                         RValue memberVal = memberUnwoundIt.next();
-                        versionedUnwinding.setMemberUnwinding(memberVar.getLocalName(), (VariableRef) memberVal);
+                        versionedUnwinding.setMemberUnwinding(memberVar.getLocalName(), memberVal, memberVar.getType());
                      }
                      getLog().append("Adding versioned struct unwinding for "+assignment.getlValue().toString(getProgram()));
                      modified = true;

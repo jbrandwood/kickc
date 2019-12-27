@@ -1,12 +1,10 @@
 Setting inferred volatile on symbol affected by address-of (struct Point*) main::q ← &(struct Point) main::p
-Created struct value member variable (byte) main::p_x
-Created struct value member variable (byte) main::p_y
-Converted struct value to member variables (struct Point) main::p
-Adding struct value member variable copy (byte) main::p_x ← (byte)(number) 2
-Adding struct value member variable copy (byte) main::p_y ← (byte)(number) 3
+Adding struct value member variable copy *((byte*~) main::$0) ← (byte)(number) 2
+Adding struct value member variable copy *((byte*~) main::$1) ← (byte)(number) 3
 Rewriting struct pointer member access *((struct Point*) main::q).x
 Rewriting struct pointer member access *((struct Point*) main::q).y
 Identified constant variable (struct Point*) main::q
+Adding versioned struct unwinding for (struct Point) main::p
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -14,13 +12,15 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::p_x ← (byte)(number) 2
-  (byte) main::p_y ← (byte)(number) 3
-  (struct Point) main::p ← struct-unwound {(byte) main::p_x, (byte) main::p_y}
-  (byte*~) main::$0 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
-  *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$0)
-  (byte*~) main::$1 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
-  *((const byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$1)
+  (byte*~) main::$0 ← (byte*)&(struct Point) main::p + (const byte) OFFSET_STRUCT_POINT_X
+  *((byte*~) main::$0) ← (byte)(number) 2
+  (byte*~) main::$1 ← (byte*)&(struct Point) main::p + (const byte) OFFSET_STRUCT_POINT_Y
+  *((byte*~) main::$1) ← (byte)(number) 3
+  (struct Point) main::p ← struct-unwound {*((byte*~) main::$0), *((byte*~) main::$1)}
+  (byte*~) main::$2 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
+  *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$2)
+  (byte*~) main::$3 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
+  *((const byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$3)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -44,15 +44,15 @@ SYMBOL TABLE SSA
 (void()) main()
 (byte*~) main::$0
 (byte*~) main::$1
+(byte*~) main::$2
+(byte*~) main::$3
 (label) main::@return
 (const byte*) main::SCREEN = (byte*)(number) $400
 (struct Point) main::p loadstore
-(byte) main::p_x loadstore
-(byte) main::p_y loadstore
 (const struct Point*) main::q = &(struct Point) main::p
 
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$0)
-Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$1)
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$2)
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$3)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 2
@@ -63,22 +63,27 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Rewriting struct address-of to first member &(struct Point) main::p
-Successful SSA optimization PassNStructAddressOfRewriting
-Constant right-side identified [3] (byte*~) main::$0 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [5] (byte*~) main::$1 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
+Removing C-classic struct-unwound assignment [4] (struct Point) main::p ← struct-unwound {*((byte*~) main::$0), *((byte*~) main::$1)}
+Constant right-side identified [0] (byte*~) main::$0 ← (byte*)&(struct Point) main::p + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [2] (byte*~) main::$1 ← (byte*)&(struct Point) main::p + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [5] (byte*~) main::$2 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [7] (byte*~) main::$3 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = (byte*)main::q+OFFSET_STRUCT_POINT_X
-Constant (const byte*) main::$1 = (byte*)main::q+OFFSET_STRUCT_POINT_Y
+Constant (const byte*) main::$0 = (byte*)&main::p+OFFSET_STRUCT_POINT_X
+Constant (const byte*) main::$1 = (byte*)&main::p+OFFSET_STRUCT_POINT_Y
+Constant (const byte*) main::$2 = (byte*)main::q+OFFSET_STRUCT_POINT_X
+Constant (const byte*) main::$3 = (byte*)main::q+OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero (byte*)&main::p in 
 Simplifying expression containing zero (byte*)main::q in 
-Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← *((const byte*) main::$0)
+Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (byte) 0) ← *((const byte*) main::$2)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (struct Point) main::p and assignment [2] (struct Point) main::p ← struct-unwound {(byte) main::p_x, (byte) main::p_y}
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined main::$1 = (byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y
-Constant inlined main::$0 = (byte*)(const struct Point*) main::q
+Constant inlined main::$3 = (byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y
+Constant inlined main::$1 = (byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y
+Constant inlined main::$2 = (byte*)(const struct Point*) main::q
+Constant inlined main::$0 = (byte*)&(struct Point) main::p
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -109,8 +114,8 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (byte) main::p_x ← (byte) 2
-  [5] (byte) main::p_y ← (byte) 3
+  [4] *((byte*)&(struct Point) main::p) ← (byte) 2
+  [5] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3
   [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q)
   [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y)
   to:main::@return
@@ -123,17 +128,13 @@ VARIABLE REGISTER WEIGHTS
 (byte) Point::x
 (byte) Point::y
 (void()) main()
-(byte) main::p_x loadstore 20.0
-(byte) main::p_y loadstore 20.0
+(struct Point) main::p loadstore
 
 Initial phi equivalence classes
-Added variable main::p_x to live range equivalence class [ main::p_x ]
-Added variable main::p_y to live range equivalence class [ main::p_y ]
+Added variable main::p to live range equivalence class [ main::p ]
 Complete equivalence classes
-[ main::p_x ]
-[ main::p_y ]
-Allocated zp[1]:2 [ main::p_x ]
-Allocated zp[1]:3 [ main::p_y ]
+[ main::p ]
+Allocated zp[2]:2 [ main::p ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -162,15 +163,14 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    .label q = p_x
-    .label p_x = 2
-    .label p_y = 3
-    // [4] (byte) main::p_x ← (byte) 2 -- vbuz1=vbuc1 
+    .label q = p
+    .label p = 2
+    // [4] *((byte*)&(struct Point) main::p) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
-    sta.z p_x
-    // [5] (byte) main::p_y ← (byte) 3 -- vbuz1=vbuc1 
+    sta.z p
+    // [5] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
-    sta.z p_y
+    sta p+OFFSET_STRUCT_POINT_Y
     // [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) -- _deref_pbuc1=_deref_pbuc2 
     lda.z q
     sta SCREEN
@@ -186,25 +186,20 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte) main::p_x ← (byte) 2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] (byte) main::p_y ← (byte) 3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((byte*)&(struct Point) main::p) ← (byte) 2 [ main::p ] ( main:2 [ main::p ] ) always clobbers reg byte a 
+Statement [5] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y) [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp[1]:2 [ main::p_x ] : zp[1]:2 , 
-Potential registers zp[1]:3 [ main::p_y ] : zp[1]:3 , 
+Potential registers zp[2]:2 [ main::p ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 20: zp[1]:2 [ main::p_x ] 20: zp[1]:3 [ main::p_y ] 
 Uplift Scope [Point] 
+Uplift Scope [main] 0: zp[2]:2 [ main::p ] 
 Uplift Scope [] 
 
-Uplifting [main] best 46 combination zp[1]:2 [ main::p_x ] zp[1]:3 [ main::p_y ] 
-Uplifting [Point] best 46 combination 
-Uplifting [] best 46 combination 
-Attempting to uplift remaining variables inzp[1]:2 [ main::p_x ]
-Uplifting [main] best 46 combination zp[1]:2 [ main::p_x ] 
-Attempting to uplift remaining variables inzp[1]:3 [ main::p_y ]
-Uplifting [main] best 46 combination zp[1]:3 [ main::p_y ] 
+Uplifting [Point] best 47 combination 
+Uplifting [main] best 47 combination zp[2]:2 [ main::p ] 
+Uplifting [] best 47 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -232,15 +227,14 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    .label q = p_x
-    .label p_x = 2
-    .label p_y = 3
-    // [4] (byte) main::p_x ← (byte) 2 -- vbuz1=vbuc1 
+    .label q = p
+    .label p = 2
+    // [4] *((byte*)&(struct Point) main::p) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
-    sta.z p_x
-    // [5] (byte) main::p_y ← (byte) 3 -- vbuz1=vbuc1 
+    sta.z p
+    // [5] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
-    sta.z p_y
+    sta p+OFFSET_STRUCT_POINT_Y
     // [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) -- _deref_pbuc1=_deref_pbuc2 
     lda.z q
     sta SCREEN
@@ -284,16 +278,14 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (const byte*) main::SCREEN = (byte*) 1024
-(byte) main::p_x loadstore zp[1]:2 20.0
-(byte) main::p_y loadstore zp[1]:3 20.0
-(const struct Point*) main::q = (struct Point*)&(byte) main::p_x
+(struct Point) main::p loadstore zp[2]:2
+(const struct Point*) main::q = &(struct Point) main::p
 
-zp[1]:2 [ main::p_x ]
-zp[1]:3 [ main::p_y ]
+zp[2]:2 [ main::p ]
 
 
 FINAL ASSEMBLER
-Score: 31
+Score: 32
 
   // File Comments
 // Minimal struct -  using address-of
@@ -312,16 +304,15 @@ Score: 31
   // main
 main: {
     .label SCREEN = $400
-    .label q = p_x
-    .label p_x = 2
-    .label p_y = 3
+    .label q = p
+    .label p = 2
     // p = { 2, 3 }
-    // [4] (byte) main::p_x ← (byte) 2 -- vbuz1=vbuc1 
+    // [4] *((byte*)&(struct Point) main::p) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
-    sta.z p_x
-    // [5] (byte) main::p_y ← (byte) 3 -- vbuz1=vbuc1 
+    sta.z p
+    // [5] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
-    sta.z p_y
+    sta p+OFFSET_STRUCT_POINT_Y
     // SCREEN[0] = q->x
     // [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) -- _deref_pbuc1=_deref_pbuc2 
     lda.z q

@@ -1128,6 +1128,61 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStruct23() throws IOException, URISyntaxException {
+      compileAndCompare("struct-23");
+   }
+
+   @Test
+   public void testStruct22() throws IOException, URISyntaxException {
+      compileAndCompare("struct-22");
+   }
+
+   @Test
+   public void testStruct21() throws IOException, URISyntaxException {
+      compileAndCompare("struct-21");
+   }
+
+   @Test
+   public void testStruct20() throws IOException, URISyntaxException {
+      compileAndCompare("struct-20");
+   }
+
+   @Test
+   public void testStruct19() throws IOException, URISyntaxException {
+      compileAndCompare("struct-19");
+   }
+
+   @Test
+   public void testStruct18() throws IOException, URISyntaxException {
+      compileAndCompare("struct-18");
+   }
+
+   @Test
+   public void testStruct17() throws IOException, URISyntaxException {
+      compileAndCompare("struct-17");
+   }
+
+   @Test
+   public void testStruct16() throws IOException, URISyntaxException {
+      compileAndCompare("struct-16");
+   }
+
+   @Test
+   public void testStruct15() throws IOException, URISyntaxException {
+      compileAndCompare("struct-15");
+   }
+
+   @Test
+   public void testStruct14() throws IOException, URISyntaxException {
+      compileAndCompare("struct-14");
+   }
+
+   @Test
+   public void testStruct13() throws IOException, URISyntaxException {
+      compileAndCompare("struct-13");
+   }
+
+   @Test
    public void testStruct12() throws IOException, URISyntaxException {
       compileAndCompare("struct-12", log());
    }
@@ -1194,7 +1249,7 @@ public class TestPrograms {
 
    @Test
    public void testStruct0() throws IOException, URISyntaxException {
-      compileAndCompare("struct-0", log());
+      compileAndCompare("struct-0");
    }
 
    @Test

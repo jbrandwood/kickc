@@ -14,6 +14,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.Collection;
+import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -28,6 +29,8 @@ public class PassNStructAddressOfRewriting extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       AtomicBoolean modified = new AtomicBoolean(false);
+
+      // Examine all expressions
       ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          Value value = programValue.get();
          if(value instanceof ConstantSymbolPointer) {
@@ -36,11 +39,11 @@ public class PassNStructAddressOfRewriting extends Pass2SsaOptimization {
             Symbol toSymbol = getScope().getSymbol(toSymbolRef);
             if(toSymbol.getType() instanceof SymbolTypeStruct) {
                RValue rewrite = rewriteStructAddressOf((VariableRef) toSymbol.getRef());
-               if(rewrite!=null) {
+               if(rewrite != null) {
                   programValue.set(rewrite);
+                  getLog().append("Rewriting struct address-of to first member " + value.toString(getProgram()));
+                  modified.set(true);
                }
-               getLog().append("Rewriting struct address-of to first member "+value.toString(getProgram()));
-               modified.set(true);
             }
          }
       });
@@ -50,21 +53,37 @@ public class PassNStructAddressOfRewriting extends Pass2SsaOptimization {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               if(Operators.ADDRESS_OF.equals(assignment.getOperator()) ) {
+               if(Operators.ADDRESS_OF.equals(assignment.getOperator())) {
                   RValue rValue = assignment.getrValue2();
                   if(rValue instanceof SymbolVariableRef) {
                      Symbol toSymbol = getScope().getSymbol((SymbolVariableRef) rValue);
                      if(toSymbol.getType() instanceof SymbolTypeStruct) {
                         RValue rewrite = rewriteStructAddressOf((VariableRef) toSymbol.getRef());
-                        if(rewrite!=null) {
+                        if(rewrite != null) {
                            assignment.setOperator(null);
                            assignment.setrValue2(rewrite);
-                           getLog().append("Rewriting struct address-of to first member "+assignment.toString(getProgram(), false));
+                           getLog().append("Rewriting struct address-of to first member " + assignment.toString(getProgram(), false));
                         }
                         modified.set(true);
                      }
                   }
                }
+            }
+         }
+      }
+
+      // Remove all StructUnwoundPlaceholder assignments for C-classic structs
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         ListIterator<Statement> stmtIt = block.getStatements().listIterator();
+         while(stmtIt.hasNext()) {
+            Statement statement = stmtIt.next();
+            if(statement instanceof StatementAssignment) {
+               StatementAssignment assignment = (StatementAssignment) statement;
+               if(assignment.getrValue2() instanceof StructUnwoundPlaceholder && assignment.getlValue() instanceof VariableRef)
+                  if(getScope().getVariable((SymbolVariableRef) assignment.getlValue()).isStructClassic()) {
+                     getLog().append("Removing C-classic struct-unwound assignment "+assignment.toString(getProgram(), false));
+                     stmtIt.remove();
+                  }
             }
          }
       }
@@ -90,8 +109,11 @@ public class PassNStructAddressOfRewriting extends Pass2SsaOptimization {
          if(assignment.getrValue2() instanceof StructUnwoundPlaceholder) {
             // Found placeholder assignment!
             StructUnwoundPlaceholder placeholder = (StructUnwoundPlaceholder) assignment.getrValue2();
-            SymbolRef firstMember = (SymbolRef) placeholder.getUnwoundMembers().get(0);
-            return new ConstantCastValue(new SymbolTypePointer(placeholder.getTypeStruct()), new ConstantSymbolPointer(firstMember));
+            RValue firstUnwoundMember = placeholder.getUnwoundMembers().get(0);
+            if(firstUnwoundMember instanceof SymbolRef) {
+               SymbolRef firstMember = (SymbolRef) firstUnwoundMember;
+               return new ConstantCastValue(new SymbolTypePointer(placeholder.getTypeStruct()), new ConstantSymbolPointer(firstMember));
+            }
          }
       }
       return null;

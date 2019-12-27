@@ -5,13 +5,12 @@
   .const OFFSET_STRUCT_POINT_Y = 1
 main: {
     .label SCREEN = $400
-    .label q = p_x
-    .label p_x = 2
-    .label p_y = 3
+    .label q = p
+    .label p = 2
     lda #2
-    sta.z p_x
+    sta.z p
     lda #3
-    sta.z p_y
+    sta p+OFFSET_STRUCT_POINT_Y
     jsr set
     lda.z q
     sta SCREEN

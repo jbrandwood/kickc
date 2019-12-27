@@ -539,6 +539,27 @@ public class Variable implements Symbol {
       return isVolatile || inferredVolatile;
    }
 
+   /**
+    * Is the variable a struct that should be unwound to member variables
+    *
+    * @return true if an unwinding struct
+    */
+   public boolean isStructUnwind() {
+      if(getType() instanceof SymbolTypeStruct)
+         return isKindPhiMaster() || isKindIntermediate() || isKindPhiVersion();
+      else
+         return false;
+   }
+
+   /**
+    * Is the variable a struct that should be handled using C Classic memory layout
+    *
+    * @return true if an classic struct
+    */
+   public boolean isStructClassic() {
+      return getType() instanceof SymbolTypeStruct && isKindLoadStore();
+   }
+
    public List<Comment> getComments() {
       return comments;
    }

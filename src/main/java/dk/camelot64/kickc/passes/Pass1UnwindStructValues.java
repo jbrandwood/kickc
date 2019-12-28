@@ -489,7 +489,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
       @Override
       public List<String> getMemberNames() {
-         Collection<Variable> structMemberVars = structDefinition.getAllVariables(false);
+         Collection<Variable> structMemberVars = structDefinition.getAllVars(false);
          ArrayList<String> memberNames = new ArrayList<>();
          for(Variable structMemberVar : structMemberVars) {
             memberNames.add(structMemberVar.getLocalName());

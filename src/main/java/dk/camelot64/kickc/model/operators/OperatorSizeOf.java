@@ -49,6 +49,22 @@ public class OperatorSizeOf extends OperatorUnary {
    }
 
    /**
+    * Fix the size value of the constant variable if needed.
+    * Sizes for structs and other complex types is not known until late in Pass1, so they may need fixing.
+    * @param programScope The program scope (used for finding/adding the constant).
+    * @param type The type to get the variable for
+    */
+   public static void fixSizeOfConstantVar(ProgramScope programScope, SymbolType type) {
+      String typeConstName = getSizeofConstantName(type);
+      Variable typeSizeConstant = programScope.getConstant(typeConstName);
+      if(typeSizeConstant != null) {
+         // Constant found - update it
+         long typeSize = type.getSizeBytes();
+         typeSizeConstant.setInitValue(new ConstantInteger(typeSize&0xff, SymbolType.BYTE));
+      }
+   }
+
+   /**
     * Get the name of the constant variable containing the size of a specific type
     *
     * @param type The type to get the variable for

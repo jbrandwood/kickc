@@ -612,7 +612,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx) {
       String varName = ctx.NAME().getText();
       StatementSource statementSource = new StatementSource(ctx);
-      if(!(this.declVarType instanceof SymbolTypePointer) || declArraySpec==null) {
+      if(!(this.declVarType instanceof SymbolTypePointer) || declArraySpec == null) {
          throw new CompileError("KickAsm initializers only supported for arrays " + declVarType.getTypeName(), statementSource);
       }
       // Add KickAsm statement
@@ -1147,7 +1147,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(rangeFirstValue instanceof ConstantInteger) ((ConstantInteger) rangeFirstValue).setType(varType);
          if(rangeLastValue instanceof ConstantInteger) ((ConstantInteger) rangeLastValue).setType(varType);
       }
-      boolean initialAssignment = (declVarType!=null);
+      boolean initialAssignment = (declVarType != null);
       Statement stmtInit = new StatementAssignment((LValue) lValue.getRef(), rangeFirstValue, initialAssignment, statementSource, Comment.NO_COMMENTS);
       sequence.addStatement(stmtInit);
       // Add label
@@ -1952,7 +1952,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       sequence.addStatement(new StatementLabel(trueLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
       RValue trueValue = (RValue) this.visit(ctx.expr(1));
       SymbolVariableRef trueVar = getCurrentScope().addVariableIntermediate().getRef();
-      sequence.addStatement(new StatementAssignment((LValue) trueVar,  trueValue, true, new StatementSource(ctx), Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementAssignment((LValue) trueVar, trueValue, true, new StatementSource(ctx), Comment.NO_COMMENTS));
       LabelRef trueExitLabel = sequence.getCurrentBlockLabel();
       sequence.addStatement(new StatementLabel(endJumpLabel.getRef(), new StatementSource(ctx), Comment.NO_COMMENTS));
       StatementPhiBlock phiBlock = new StatementPhiBlock(Comment.NO_COMMENTS);

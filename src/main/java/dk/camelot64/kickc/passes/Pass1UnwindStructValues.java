@@ -502,15 +502,26 @@ public class Pass1UnwindStructValues extends Pass1Base {
          ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(programScope, structDefinition, memberName);
          Variable member = structDefinition.getMember(memberName);
          Scope scope = programScope.getScope(currentBlock.getScope());
-         Variable memberAddress = scope.addVariableIntermediate();
-         memberAddress.setType(new SymbolTypePointer(member.getType()));
-         ConstantSymbolPointer structPointer = new ConstantSymbolPointer(variable.getRef());
-         CastValue structTypedPointer = new CastValue(new SymbolTypePointer(member.getType()), structPointer);
-         // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
-         stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
-         // Unwind to *(ptr_struct+OFFSET_STRUCT_NAME_MEMBER)
-         return new PointerDereferenceSimple(memberAddress.getRef());
-
+         if(member.isArray()) {
+            SymbolTypePointer arrayType = (SymbolTypePointer) member.getType();
+            //memberAddress.setArraySpec(member.getArraySpec());
+            //memberAddress.setType(member.getType());
+            ConstantSymbolPointer structPointer = new ConstantSymbolPointer(variable.getRef());
+            ConstantCastValue structTypedPointer = new ConstantCastValue(new SymbolTypePointer(arrayType.getElementType()), structPointer);
+            // Calculate member address  (element*)&struct + OFFSET_STRUCT_NAME_MEMBER
+            ConstantBinary memberArrayPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
+            // Unwind to *(ptr_struct+OFFSET_STRUCT_NAME_MEMBER)
+            return memberArrayPointer;
+         }  else {
+            Variable memberAddress = scope.addVariableIntermediate();
+            memberAddress.setType(new SymbolTypePointer(member.getType()));
+            ConstantSymbolPointer structPointer = new ConstantSymbolPointer(variable.getRef());
+            CastValue structTypedPointer = new CastValue(new SymbolTypePointer(member.getType()), structPointer);
+            // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
+            stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
+            // Unwind to *(ptr_struct+OFFSET_STRUCT_NAME_MEMBER)
+            return new PointerDereferenceSimple(memberAddress.getRef());
+         }
       }
 
       @Override

@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
@@ -34,8 +36,8 @@ public class StructUnwinding {
     * @param ref The variable to add information for
     * @return The new information about the unwinding.
     */
-   public VariableUnwinding createVariableUnwinding(SymbolVariableRef ref) {
-      VariableUnwinding existing = structVariables.put(ref, new VariableUnwinding());
+   public VariableUnwinding createVariableUnwinding(SymbolVariableRef ref, StructDefinition structDefinition) {
+      VariableUnwinding existing = structVariables.put(ref, new VariableUnwinding(structDefinition));
       if(existing != null) {
          throw new InternalError("ERROR! Struct unwinding was already created once! " + ref.toString());
       }
@@ -46,16 +48,19 @@ public class StructUnwinding {
    /** Information about how a single struct variable was unwound. */
    public static class VariableUnwinding implements StructMemberUnwinding {
 
-      /** Maps member names to the unwound variables. */
-      Map<String, RValue> memberUnwinding = new LinkedHashMap<>();
+      StructDefinition structDefinition;
 
-      /** Maps member names to the unwound variable types. */
-      Map<String, SymbolType> typesUnwinding = new LinkedHashMap<>();
+      /** Maps member names to the unwound variables. */
+      Map<String, RValue> memberUnwinding;
+
+      public VariableUnwinding(StructDefinition structDefinition) {
+         this.structDefinition = structDefinition;
+         memberUnwinding = new LinkedHashMap<>();
+      }
 
       /** Set how a member variable was unwound to a specific (new) variable. */
-      public void setMemberUnwinding(String memberName, RValue memberVariableUnwound, SymbolType memberType) {
+      public void setMemberUnwinding(String memberName, RValue memberVariableUnwound) {
          this.memberUnwinding.put(memberName, memberVariableUnwound);
-         this.typesUnwinding.put(memberName, memberType);
       }
 
       public List<String> getMemberNames() {
@@ -68,7 +73,12 @@ public class StructUnwinding {
 
       @Override
       public SymbolType getMemberType(String memberName) {
-         return this.typesUnwinding.get(memberName);
+         return structDefinition.getMember(memberName).getType();
+      }
+
+      @Override
+      public ArraySpec getArraySpec(String memberName) {
+         return structDefinition.getMember(memberName).getArraySpec();
       }
    }
 
@@ -97,5 +107,12 @@ public class StructUnwinding {
        * @return The type of the member
        */
       SymbolType getMemberType(String memberName);
+
+      /**
+       * Get the array nature of a specific member
+       * @param memberName The member name
+       * @return The array nature of the member
+       */
+      ArraySpec getArraySpec(String memberName);
    }
 }

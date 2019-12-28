@@ -1,26 +1,22 @@
-Adding struct value member variable copy *((byte*~) $0) ← (byte) 'a'
-Adding struct value member variable copy *((byte*~) $1) ← (byte) 'b'
-Replacing struct member reference (struct foo) bar.thing1 with member unwinding reference *((byte*~) main::$0)
-Replacing struct member reference (struct foo) bar.thing2 with member unwinding reference *((byte*~) main::$1)
+Adding struct value member variable copy *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1) ← (byte) 'a'
+Adding struct value member variable copy *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) ← (byte) 'b'
+Replacing struct member reference (struct foo) bar.thing1 with member unwinding reference *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1)
+Replacing struct member reference (struct foo) bar.thing2 with member unwinding reference *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2)
 Adding versioned struct unwinding for (struct foo) bar
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*~) $0 ← (byte*)&(struct foo) bar + (const byte) OFFSET_STRUCT_FOO_THING1
-  *((byte*~) $0) ← (byte) 'a'
-  (byte*~) $1 ← (byte*)&(struct foo) bar + (const byte) OFFSET_STRUCT_FOO_THING2
-  *((byte*~) $1) ← (byte) 'b'
-  (struct foo) bar ← struct-unwound {*((byte*~) $0), *((byte*~) $1)}
+  *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1) ← (byte) 'a'
+  *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) ← (byte) 'b'
+  (struct foo) bar ← struct-unwound {*((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1), *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2)}
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
   (byte) main::i#0 ← (number) 0
-  *((const byte*) main::SCREEN + (byte) main::i#0) ← *((byte*~) main::$0)
-  (byte*~) main::$0 ← (byte*)&(struct foo) bar + (const byte) OFFSET_STRUCT_FOO_THING1
+  *((const byte*) main::SCREEN + (byte) main::i#0) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1)
   (byte) main::i#1 ← ++ (byte) main::i#0
-  *((const byte*) main::SCREEN + (byte) main::i#1) ← *((byte*~) main::$1)
-  (byte*~) main::$1 ← (byte*)&(struct foo) bar + (const byte) OFFSET_STRUCT_FOO_THING2
+  *((const byte*) main::SCREEN + (byte) main::i#1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2)
   (byte) main::i#2 ← ++ (byte) main::i#1
   to:main::@return
 main::@return: scope:[main]  from main
@@ -34,8 +30,6 @@ main::@return: scope:[main]  from main
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(byte*~) $0
-(byte*~) $1
 (label) @1
 (label) @2
 (label) @begin
@@ -46,8 +40,6 @@ SYMBOL TABLE SSA
 (byte) foo::thing1
 (byte) foo::thing2
 (void()) main()
-(byte*~) main::$0
-(byte*~) main::$1
 (label) main::@return
 (const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
@@ -64,21 +56,12 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Removing C-classic struct-unwound assignment [4] (struct foo) bar ← struct-unwound {*((byte*~) $0), *((byte*~) $1)}
-Constant right-side identified [0] (byte*~) $0 ← (byte*)&(struct foo) bar + (const byte) OFFSET_STRUCT_FOO_THING1
-Constant right-side identified [2] (byte*~) $1 ← (byte*)&(struct foo) bar + (const byte) OFFSET_STRUCT_FOO_THING2
-Constant right-side identified [7] (byte*~) main::$0 ← (byte*)&(struct foo) bar + (const byte) OFFSET_STRUCT_FOO_THING1
-Constant right-side identified [10] (byte*~) main::$1 ← (byte*)&(struct foo) bar + (const byte) OFFSET_STRUCT_FOO_THING2
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) $0 = (byte*)&bar+OFFSET_STRUCT_FOO_THING1
-Constant (const byte*) $1 = (byte*)&bar+OFFSET_STRUCT_FOO_THING2
+Removing C-classic struct-unwound assignment [2] (struct foo) bar ← struct-unwound {*((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1), *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2)}
 Constant (const byte) main::i#0 = 0
-Constant (const byte*) main::$0 = (byte*)&bar+OFFSET_STRUCT_FOO_THING1
-Constant (const byte*) main::$1 = (byte*)&bar+OFFSET_STRUCT_FOO_THING2
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)&bar in 
-Simplifying expression containing zero (byte*)&bar in 
-Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((const byte*) main::$0)
+Simplifying expression containing zero (byte*)&bar in [0] *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1) ← (byte) 'a'
+Simplifying expression containing zero (byte*)&bar in [4] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1)
+Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)&(struct foo) bar)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) main::i#2 and assignment [5] (byte) main::i#2 ← ++ (byte) main::i#1
 Eliminating unused constant (const byte) OFFSET_STRUCT_FOO_THING1
@@ -91,10 +74,6 @@ Inlining constant with different constant siblings (const byte) main::i#0
 Inlining constant with different constant siblings (const byte) main::i#1
 Constant inlined main::i#0 = (byte) 0
 Constant inlined main::i#1 = ++(byte) 0
-Constant inlined main::$1 = (byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2
-Constant inlined $0 = (byte*)&(struct foo) bar
-Constant inlined $1 = (byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2
-Constant inlined main::$0 = (byte*)&(struct foo) bar
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+++0)
 Successful SSA optimization Pass2ConstantAdditionElimination

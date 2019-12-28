@@ -43,12 +43,12 @@ public class Pass1UnwindStructVariables extends Pass1Base {
                if(!(scope instanceof StructDefinition)) {
                   // Not inside another struct
                   StructDefinition structDefinition = ((SymbolTypeStruct) variable.getType()).getStructDefinition(getProgram().getScope());
-                  StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef());
+                  StructUnwinding.VariableUnwinding variableUnwinding = structUnwinding.createVariableUnwinding(variable.getRef(), structDefinition);
                   for(Variable member : structDefinition.getAllVars(false)) {
                      boolean isParameter = scope instanceof Procedure && ((Procedure) scope).getParameters().contains(variable);
                      Variable memberVariable = Variable.createStructMemberUnwound(variable, member, isParameter);
                      scope.add(memberVariable);
-                     variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef(), memberVariable.getType());
+                     variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
                      getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
                   }
                   getLog().append("Converted struct value to member variables " + variable.toString(getProgram()));

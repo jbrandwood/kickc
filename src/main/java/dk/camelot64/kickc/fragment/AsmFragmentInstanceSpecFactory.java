@@ -367,6 +367,22 @@ public class AsmFragmentInstanceSpecFactory {
          SymbolType type = ((StackPullValue) value).getType();
          String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
          return "_stackpull" + typeShortName + "_";
+      } else if(value instanceof MemsetValue) {
+         MemsetValue memsetValue = (MemsetValue) value;
+         ConstantValue sizeConst = memsetValue.getSize();
+         if(sizeConst.getType(program.getScope()).equals(SymbolType.NUMBER)) {
+            SymbolType fixedIntegerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(sizeConst, program.getScope());
+            sizeConst = new ConstantCastValue(fixedIntegerType, sizeConst);
+         }
+         return "_memset_" + bind(sizeConst);
+      } else if(value instanceof MemcpyValue) {
+         MemcpyValue memcpyValue = (MemcpyValue) value;
+         ConstantValue sizeConst = memcpyValue.getSize();
+         if(sizeConst.getType(program.getScope()).equals(SymbolType.NUMBER)) {
+            SymbolType fixedIntegerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(sizeConst, program.getScope());
+            sizeConst = new ConstantCastValue(fixedIntegerType, sizeConst);
+         }
+         return bind(memcpyValue.getSource()) + "_memcpy_" + "_" + bind(sizeConst);
       }
       throw new RuntimeException("Binding of value type not supported " + value.toString(program));
    }

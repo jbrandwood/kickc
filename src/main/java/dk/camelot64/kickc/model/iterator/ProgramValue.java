@@ -795,6 +795,69 @@ public interface ProgramValue {
 
    }
 
+   /** Value inside a memset value . */
+   class ProgramValueMemsetValue implements ProgramValue {
+      private final MemsetValue memsetValue;
+
+      ProgramValueMemsetValue(MemsetValue memsetValue) {
+         this.memsetValue = memsetValue;
+      }
+
+      @Override
+      public Value get() {
+         return memsetValue.getSize();
+      }
+
+      @Override
+      public void set(Value val) {
+         memsetValue.setSize((ConstantRef) val);
+      }
+
+   }
+
+   /** Size inside a memcpy value . */
+   class ProgramValueMempySize implements ProgramValue {
+
+      private final MemcpyValue memcpyValue;
+
+      ProgramValueMempySize(MemcpyValue memcpyValue) {
+         this.memcpyValue = memcpyValue;
+      }
+
+      @Override
+      public Value get() {
+         return memcpyValue.getSize();
+      }
+
+      @Override
+      public void set(Value val) {
+         memcpyValue.setSize((ConstantRef) val);
+      }
+
+   }
+
+   /** Source inside a memcpy value . */
+   class ProgramValueMempySource implements ProgramValue {
+
+      private final MemcpyValue memcpyValue;
+
+      ProgramValueMempySource(MemcpyValue memcpyValue) {
+         this.memcpyValue = memcpyValue;
+      }
+
+      @Override
+      public Value get() {
+         return memcpyValue.getSource();
+      }
+
+      @Override
+      public void set(Value val) {
+         memcpyValue.setSource((RValue) val);
+      }
+
+   }
+
+
    /**
     * Pointer inside a pointer derefence value.
     */

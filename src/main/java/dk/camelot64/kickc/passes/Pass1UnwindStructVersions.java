@@ -34,10 +34,10 @@ public class Pass1UnwindStructVersions extends Pass1Base {
                if(assignment.getOperator() == null && assignment.getlValue() instanceof VariableRef && assignment.getrValue2() instanceof StructUnwoundPlaceholder) {
                   VariableRef structVarRef = (VariableRef) assignment.getlValue();
                   if(structUnwinding.getVariableUnwinding(structVarRef) == null) {
-                     StructUnwinding.VariableUnwinding versionedUnwinding = structUnwinding.createVariableUnwinding(structVarRef);
                      StructUnwoundPlaceholder placeholder = (StructUnwoundPlaceholder) assignment.getrValue2();
                      SymbolTypeStruct typeStruct = placeholder.getTypeStruct();
                      StructDefinition structDefinition = typeStruct.getStructDefinition(getProgram().getScope());
+                     StructUnwinding.VariableUnwinding versionedUnwinding = structUnwinding.createVariableUnwinding(structVarRef, structDefinition);
                      Collection<Variable> members = structDefinition.getAllVariables(false);
                      Iterator<Variable> memberDefIt = members.iterator();
                      List<RValue> unwoundMembers = placeholder.getUnwoundMembers();
@@ -45,7 +45,7 @@ public class Pass1UnwindStructVersions extends Pass1Base {
                      while(memberDefIt.hasNext()) {
                         Variable memberVar = memberDefIt.next();
                         RValue memberVal = memberUnwoundIt.next();
-                        versionedUnwinding.setMemberUnwinding(memberVar.getLocalName(), memberVal, memberVar.getType());
+                        versionedUnwinding.setMemberUnwinding(memberVar.getLocalName(), memberVal);
                      }
                      getLog().append("Adding versioned struct unwinding for "+assignment.getlValue().toString(getProgram()));
                      modified = true;

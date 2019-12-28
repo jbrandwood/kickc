@@ -247,6 +247,11 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueParamValue((ParamValue) value));
       } else if(value instanceof StackIdxValue) {
          subValues.add(new ProgramValue.ProgramValueStackIdxValue((StackIdxValue) value));
+      } else if(value instanceof MemsetValue) {
+         subValues.add(new ProgramValue.ProgramValueMemsetValue((MemsetValue) value));
+      } else if(value instanceof MemcpyValue) {
+         subValues.add(new ProgramValue.ProgramValueMempySize((MemcpyValue) value));
+         subValues.add(new ProgramValue.ProgramValueMempySource((MemcpyValue) value));
       } else if(value == null ||
             value instanceof SymbolVariableRef ||
             value instanceof Variable ||

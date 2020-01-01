@@ -432,8 +432,7 @@ public class TestPrograms {
 
    @Test
    public void testFunctionAsArray() throws IOException, URISyntaxException {
-      compileAndCompare("function-as-array", log().verboseParse().verboseCreateSsa());
-      assertError("function-as-array", "Cannot infer pointer element type from type: void()");
+      assertError("function-as-array", "Error! Dereferencing a non-pointer type void()");
    }
 
    @Test
@@ -503,7 +502,7 @@ public class TestPrograms {
 
    @Test
    public void testCastError() throws IOException, URISyntaxException {
-      assertError("cast-error", "cannot be assigned from");
+      assertError("cast-error", "Error! Dereferencing a non-pointer type number");
    }
 
    @Test

@@ -199,6 +199,7 @@ public class Compiler {
 
       new Pass1EarlyConstantIdentification(program).execute();
       new PassNAssertConstantModification(program).execute();
+      new PassNAssertTypeDeref(program).check();
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("CONTROL FLOW GRAPH BEFORE INLINING");
@@ -258,6 +259,7 @@ public class Compiler {
    private void pass2AssertSSA() {
       List<Pass2SsaAssertion> assertions = new ArrayList<>();
       //assertions.add(new Pass2AssertNoLValueObjectEquality(program));
+      assertions.add(new PassNAssertTypeDeref(program));
       assertions.add(new Pass2AssertTypeMatch(program));
       assertions.add(new Pass2AssertSymbols(program));
       assertions.add(new Pass2AssertBlocks(program));

@@ -4,8 +4,7 @@ import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.SymbolVariableRef;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -80,6 +79,12 @@ public class StructUnwinding {
       public ArraySpec getArraySpec(String memberName) {
          return structDefinition.getMember(memberName).getArraySpec();
       }
+
+      @Override
+      public RValue getMemberArrayUnwinding(String memberName, ProgramScope scope, ConstantValue arraySize) {
+         throw new RuntimeException("TODO: Implement!");
+      }
+
    }
 
    /** Information about how members of an struct Lvalue is unwound. */
@@ -114,5 +119,15 @@ public class StructUnwinding {
        * @return The array nature of the member
        */
       ArraySpec getArraySpec(String memberName);
+
+      /**
+       * Get unwinding value to use as RValue when for copying/setting an array member value
+       * @param memberName The name of the member
+       * @param scope The program scope
+       * @param arraySize The declared size of the array
+       * @return The value to use as RValue
+       */
+      RValue getMemberArrayUnwinding(String memberName, ProgramScope scope, ConstantValue arraySize);
+
    }
 }

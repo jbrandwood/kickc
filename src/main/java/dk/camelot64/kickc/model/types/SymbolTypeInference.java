@@ -23,6 +23,8 @@ public class SymbolTypeInference {
       } else if(rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;
          type = rSymbol.getType();
+      } else if(rValue instanceof LvalueIntermediate) {
+         return inferType(symbols, ((LvalueIntermediate) rValue).getVariable());
       } else if(rValue instanceof ConstantInteger) {
          return ((ConstantInteger) rValue).getType(symbols);
       } else if(rValue instanceof ConstantString) {

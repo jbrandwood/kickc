@@ -95,8 +95,7 @@ __b1:
 main: {
     .label dst = 3
     .label src = $1c
-    .label i = 2
-    .label center_y = $b
+    .label center_y = $1e
     lda.z SCREEN_DIST
     sta.z init_angle_screen.screen
     lda.z SCREEN_DIST+1
@@ -118,39 +117,39 @@ main: {
     lda.z src
     cmp #<SCREEN+$3e8
     bne __b2
-    lda #0
-    sta.z i
+    ldx #0
   // Init processing array
   __b3:
-    lda.z i
+    txa
     asl
+    stx.z $ff
     clc
-    adc.z i
+    adc.z $ff
     asl
+    stx.z $ff
     clc
-    adc.z i
+    adc.z $ff
     asl
-    tax
-    lda #0
-    sta PROCESSING,x
-    sta PROCESSING+1,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_COL,x
-    lda #STATUS_FREE
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,x
+    tay
     lda #<0
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,x
-    inc.z i
-    lda #NUM_PROCESSING-1+1
-    cmp.z i
+    sta PROCESSING,y
+    sta PROCESSING+1,y
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,y
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,y
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,y
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,y
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,y
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,y
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,y
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,y
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_COL,y
+    lda #STATUS_FREE
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,y
+    lda #<0
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,y
+    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,y
+    inx
+    cpx #NUM_PROCESSING-1+1
     bne __b3
     jsr initSprites
     jsr setupRasterIrq
@@ -187,7 +186,7 @@ main: {
     jmp __b1
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zp($1e) center_x, byte zp($b) center_y)
+// startProcessing(byte zp($b) center_x, byte zp($1e) center_y)
 startProcessing: {
     .label __0 = $c
     .label __1 = $c
@@ -202,8 +201,8 @@ startProcessing: {
     .label __16 = $15
     .label __17 = $15
     .label __21 = $18
-    .label center_x = $1e
-    .label center_y = $b
+    .label center_x = $b
+    .label center_y = $1e
     .label i = 2
     .label offset = $c
     .label colPtr = $10
@@ -438,9 +437,9 @@ startProcessing: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
     lda.z __21+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
-    lda #$3c
+    lda #<$3c
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,x
-    lda #0
+    lda #>$3c
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,x
     lda.z freeIdx
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
@@ -477,11 +476,11 @@ getCharToProcess: {
     .label screen_line = $1c
     .label dist_line = 3
     .label y = 2
-    .label return_x = $17
-    .label return_y = $b
-    .label closest_dist = $12
-    .label closest_x = $17
-    .label closest_y = $b
+    .label return_x = $12
+    .label return_y = $17
+    .label closest_dist = $b
+    .label closest_x = $12
+    .label closest_y = $17
     .label __12 = $1a
     .label __13 = $18
     lda.z SCREEN_COPY
@@ -670,7 +669,7 @@ init_angle_screen: {
     .label ang_w = $1e
     .label x = $12
     .label xb = $17
-    .label y = 2
+    .label y = $b
     lda.z screen
     clc
     adc #<$28*$c

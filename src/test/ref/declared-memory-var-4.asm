@@ -5,21 +5,22 @@
 .pc = $80d "Program"
   .const OFFSET_STRUCT_FOO_THING2 = 1
   .const OFFSET_STRUCT_FOO_THING3 = 2
-  .label bar_thing3 = 2
 __bbegin:
   lda #'a'
-  sta bar_thing1
+  sta bar
   lda #'b'
-  sta bar_thing2
-  lda #<__0
-  sta.z bar_thing3
-  lda #>__0
-  sta.z bar_thing3+1
+  sta bar+OFFSET_STRUCT_FOO_THING2
+  ldy #$c
+!:
+  lda __0-1,y
+  sta bar+OFFSET_STRUCT_FOO_THING3-1,y
+  dey
+  bne !-
   jsr main
   rts
 main: {
     .label SCREEN = $400
-    .label barp = bar_thing1
+    .label barp = bar
     lda barp
     sta SCREEN
     lda barp+OFFSET_STRUCT_FOO_THING2
@@ -37,5 +38,5 @@ main: {
 }
   __0: .text "qwe"
   .byte 0
-  bar_thing1: .byte 0
-  bar_thing2: .byte 0
+  .fill 8, 0
+  bar: .byte 0, 0

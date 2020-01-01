@@ -22,11 +22,11 @@ main: {
     sta point1+OFFSET_STRUCT_POINT_INITIALS+1
     lda.z point1
     sta.z point2
-    ldx #2
+    ldy #2
   !:
-    lda point1+OFFSET_STRUCT_POINT_INITIALS-1,x
-    sta point2+OFFSET_STRUCT_POINT_INITIALS-1,x
-    dex
+    lda point1+OFFSET_STRUCT_POINT_INITIALS-1,y
+    sta point2+OFFSET_STRUCT_POINT_INITIALS-1,y
+    dey
     bne !-
     lda.z point2
     sta SCREEN

@@ -382,7 +382,7 @@ public class AsmFragmentInstanceSpecFactory {
             SymbolType fixedIntegerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(sizeConst, program.getScope());
             sizeConst = new ConstantCastValue(fixedIntegerType, sizeConst);
          }
-         return bind(memcpyValue.getSource()) + "_memcpy_" + "_" + bind(sizeConst);
+         return bind(memcpyValue.getSource()) + "_memcpy_" + bind(sizeConst);
       }
       throw new RuntimeException("Binding of value type not supported " + value.toString(program));
    }

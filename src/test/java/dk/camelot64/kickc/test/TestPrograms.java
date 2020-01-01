@@ -1129,12 +1129,12 @@ public class TestPrograms {
 
    @Test
    public void testStruct28() throws IOException, URISyntaxException {
-      compileAndCompare("struct-28", log());
+      compileAndCompare("struct-28");
    }
 
    @Test
    public void testStruct27() throws IOException, URISyntaxException {
-      compileAndCompare("struct-27", log());
+      compileAndCompare("struct-27");
    }
 
    @Test

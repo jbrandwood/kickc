@@ -174,7 +174,9 @@ __b1:
   // Current score in BCD-format
   sta.z score_bcd
   sta.z score_bcd+1
+  lda #<0>>$10
   sta.z score_bcd+2
+  lda #>0>>$10
   sta.z score_bcd+3
 // Original Color Data
   // The raster line of the next IRQ
@@ -1676,16 +1678,6 @@ sprites_irq: {
   // The playfield.  0 is empty non-zero is color.
   // The playfield is layed out line by line, meaning the first 10 bytes are line 1, the next 10 line 2 and so forth,
   playfield: .fill PLAYFIELD_LINES*PLAYFIELD_COLS, 0
-  // The color #1 to use for the pieces for each level
-  PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
-  // The color #2 to use for the pieces for each level
-  PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
-  // Pointers to the screen address for rendering each playfield line
-  // The lines for screen 1 is aligned with 0x80 and screen 2 with 0x40 - so XOR'ing with 0x40 gives screen 2 lines.
-  .align $80
-  screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
-  .align $40
-  screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
   // The T-piece
   .align $40
   PIECE_T: .byte 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0
@@ -1716,6 +1708,16 @@ sprites_irq: {
   // The initial X/Y for each piece
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
+  // The color #1 to use for the pieces for each level
+  PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
+  // The color #2 to use for the pieces for each level
+  PIECES_COLORS_2: .byte CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE, CYAN, LIGHT_GREEN, PINK, LIGHT_GREEN, LIGHT_GREEN, LIGHT_BLUE, DARK_GREY, PURPLE, RED, ORANGE
+  // Pointers to the screen address for rendering each playfield line
+  // The lines for screen 1 is aligned with 0x80 and screen 2 with 0x40 - so XOR'ing with 0x40 gives screen 2 lines.
+  .align $80
+  screen_lines_1: .fill 2*PLAYFIELD_LINES, 0
+  .align $40
+  screen_lines_2: .fill 2*PLAYFIELD_LINES, 0
   // Pointers to the playfield address for each playfield line
   playfield_lines: .fill 2*PLAYFIELD_LINES, 0
   // Indixes into the playfield  for each playfield line

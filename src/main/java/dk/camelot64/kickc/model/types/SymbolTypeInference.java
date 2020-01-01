@@ -17,6 +17,8 @@ public class SymbolTypeInference {
       SymbolType type = null;
       if(rValue instanceof SymbolVariableRef) {
          Variable variable = symbols.getVar((SymbolVariableRef) rValue);
+         if(variable==null)
+            throw new CompileError("Unknown variable "+rValue.toString());
          type = variable.getType();
       } else if(rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;
@@ -47,7 +49,7 @@ public class SymbolTypeInference {
          } else if(pointerType.equals(SymbolType.STRING)) {
             return SymbolType.BYTE;
          } else {
-            throw new CompileError("Cannot infer pointer element type from type: " + pointerType);
+            return SymbolType.VAR;
          }
       } else if(rValue instanceof ConstantArrayList) {
          return new SymbolTypePointer(((ConstantArrayList) rValue).getElementType());

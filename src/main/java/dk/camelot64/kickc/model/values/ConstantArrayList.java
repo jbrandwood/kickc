@@ -13,13 +13,19 @@ import java.util.List;
  */
 public class ConstantArrayList implements ConstantArray {
 
+   /** The element list. */
    private List<ConstantValue> list;
 
+   /** Type of the elements. */
    private SymbolType elementType;
 
-   public ConstantArrayList(List<ConstantValue> list, SymbolType elementType) {
+   /** Array size (from declaration) */
+   private ConstantValue size;
+
+   public ConstantArrayList(List<ConstantValue> list, SymbolType elementType, ConstantValue size) {
       this.list = list;
       this.elementType = elementType;
+      this.size = size;
    }
 
    @Override
@@ -33,6 +39,15 @@ public class ConstantArrayList implements ConstantArray {
 
    public List<ConstantValue> getElements() {
       return list;
+   }
+
+   @Override
+   public ConstantValue getSize() {
+      return size;
+   }
+
+   public void setSize(ConstantValue size) {
+      this.size = size;
    }
 
    @Override

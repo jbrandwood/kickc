@@ -10,8 +10,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (signed word) main::lasti#0 ← (number) -1
-  (signed word) main::i#0 ← (number) 0
+  (signed word) main::lasti#0 ← (signed word) -1
+  (signed word) main::i#0 ← (signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (signed word) main::lasti#3 ← phi( main/(signed word) main::lasti#0 main::@2/(signed word) main::lasti#1 )
@@ -60,20 +60,11 @@ SYMBOL TABLE SSA
 (signed word) main::lasti#3
 (const byte*) main::screen = (byte*)(number) $400
 
-Adding number conversion cast (snumber) -1 in (signed word) main::lasti#0 ← (number) -1
-Adding number conversion cast (snumber) 0 in (signed word) main::i#0 ← (number) 0
 Adding number conversion cast (snumber) $a in (bool~) main::$0 ← (signed word) main::i#2 < (number) $a
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (signed word) main::lasti#0 ← (snumber)(number) -1
-Inlining cast (signed word) main::i#0 ← (snumber)(number) 0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast -1
-Simplifying constant integer cast 0
 Simplifying constant integer cast $a
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type (signed byte) -1
-Finalized signed number type (signed byte) 0
 Finalized signed number type (signed byte) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (phi-usage) (signed word) main::i#2 = (signed word) main::i#3 (signed word) main::lasti#1 
@@ -92,8 +83,8 @@ Successful SSA optimization Pass2DeInlineWordDerefIdx
 Alias candidate removed (phi-usage) (signed word) main::lasti#1 = (signed word) main::i#2 
 Inlining constant with var siblings (const signed word) main::lasti#0
 Inlining constant with var siblings (const signed word) main::i#0
-Constant inlined main::i#0 = (signed byte) 0
-Constant inlined main::lasti#0 = (signed byte) -1
+Constant inlined main::i#0 = (signed word) 0
+Constant inlined main::lasti#0 = (signed word) -1
 Successful SSA optimization Pass2ConstantInlining
 Alias candidate removed (phi-usage) (signed word) main::lasti#1 = (signed word) main::i#2 
 Alias candidate removed (phi-usage) (signed word) main::lasti#1 = (signed word) main::i#2 
@@ -131,8 +122,8 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (signed word) main::lasti#2 ← phi( main/(signed byte) -1 main::@2/(signed word) main::lasti#1 )
-  [5] (signed word) main::i#2 ← phi( main/(signed byte) 0 main::@2/(signed word) main::i#1 )
+  [5] (signed word) main::lasti#2 ← phi( main/(signed word) -1 main::@2/(signed word) main::lasti#1 )
+  [5] (signed word) main::i#2 ← phi( main/(signed word) 0 main::@2/(signed word) main::i#1 )
   [6] if((signed word) main::i#2<(signed byte) $a) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -208,12 +199,12 @@ main: {
     .label __2 = 7
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (signed word) main::lasti#2 = (signed byte) -1 [phi:main->main::@1#0] -- vwsz1=vbsc1 
+    // [5] phi (signed word) main::lasti#2 = (signed word) -1 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<-1
     sta.z lasti
     lda #>-1
     sta.z lasti+1
-    // [5] phi (signed word) main::i#2 = (signed byte) 0 [phi:main->main::@1#1] -- vwsz1=vbsc1 
+    // [5] phi (signed word) main::i#2 = (signed word) 0 [phi:main->main::@1#1] -- vwsz1=vwsc1 
     lda #<0
     sta.z i
     lda #>0
@@ -329,12 +320,12 @@ main: {
     .label __2 = 6
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (signed word) main::lasti#2 = (signed byte) -1 [phi:main->main::@1#0] -- vwsz1=vbsc1 
+    // [5] phi (signed word) main::lasti#2 = (signed word) -1 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<-1
     sta.z lasti
     lda #>-1
     sta.z lasti+1
-    // [5] phi (signed word) main::i#2 = (signed byte) 0 [phi:main->main::@1#1] -- vwsz1=vbsc1 
+    // [5] phi (signed word) main::i#2 = (signed word) 0 [phi:main->main::@1#1] -- vwsz1=vwsc1 
     lda #<0
     sta.z i
     lda #>0
@@ -467,11 +458,11 @@ main: {
     .label i = 2
     .label __2 = 6
     // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (signed word) main::lasti#2 = (signed byte) -1 [phi:main->main::@1#0] -- vwsz1=vbsc1 
+    // [5] phi (signed word) main::lasti#2 = (signed word) -1 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<-1
     sta.z lasti
     sta.z lasti+1
-    // [5] phi (signed word) main::i#2 = (signed byte) 0 [phi:main->main::@1#1] -- vwsz1=vbsc1 
+    // [5] phi (signed word) main::i#2 = (signed word) 0 [phi:main->main::@1#1] -- vwsz1=vwsc1 
     lda #<0
     sta.z i
     sta.z i+1

@@ -267,11 +267,14 @@ sin16s_gen2: {
     sta.z sintab
     lda #>xsin
     sta.z sintab+1
-    lda #0
+    lda #<0
     sta.z x
     sta.z x+1
+    lda #<0>>$10
     sta.z x+2
+    lda #>0>>$10
     sta.z x+3
+    lda #<0
     sta.z i
     sta.z i+1
   // u[4.28]
@@ -346,13 +349,9 @@ mul16s: {
     lda.z a+1
     sta.z mul16u.a+1
     lda #<sin16s_gen2.ampl
-    sta.z mul16u.mb
+    sta.z mul16u.b
     lda #>sin16s_gen2.ampl
-    sta.z mul16u.mb+1
-    lda #<sin16s_gen2.ampl>>$10
-    sta.z mul16u.mb+2
-    lda #>sin16s_gen2.ampl>>$10
-    sta.z mul16u.mb+3
+    sta.z mul16u.b+1
     jsr mul16u
     lda.z a+1
     bpl __b2
@@ -382,10 +381,18 @@ mul16u: {
     .label res = 8
     .label return = 8
     .label b = $19
+    lda.z b
+    sta.z mb
+    lda.z b+1
+    sta.z mb+1
     lda #0
+    sta.z mb+2
+    sta.z mb+3
     sta.z res
     sta.z res+1
+    lda #<0>>$10
     sta.z res+2
+    lda #>0>>$10
     sta.z res+3
   __b1:
     lda.z a
@@ -619,13 +626,6 @@ mulu16_sel: {
     sta.z mul16u.a
     lda.z v1+1
     sta.z mul16u.a+1
-    lda.z mul16u.b
-    sta.z mul16u.mb
-    lda.z mul16u.b+1
-    sta.z mul16u.mb+1
-    lda #0
-    sta.z mul16u.mb+2
-    sta.z mul16u.mb+3
     jsr mul16u
     cpx #0
     beq !e+

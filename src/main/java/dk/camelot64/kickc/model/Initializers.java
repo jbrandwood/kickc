@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.ArraySpec;
@@ -21,240 +20,232 @@ public class Initializers {
     * @param statementSource The source line
     * @return The new statement
     */
-   public static RValue createZeroValue(SymbolType type, StatementSource statementSource) {
-      if(type instanceof SymbolTypeIntegerFixed) {
+   public static RValue createZeroValue(ValueTypeSpec typeSpec, StatementSource statementSource) {
+      if(typeSpec.getType() instanceof SymbolTypeIntegerFixed) {
          // Add an zero value initializer
-         return new ConstantInteger(0L, type);
-      } else if(type instanceof SymbolTypePointer) {
-         // Add an zero value initializer
-         SymbolTypePointer typePointer = (SymbolTypePointer) type;
-         return new ConstantPointer(0L, typePointer.getElementType());
-      } else if(type instanceof SymbolTypeStruct) {
+         return new ConstantInteger(0L, typeSpec.getType());
+      } else if(typeSpec.getType() instanceof SymbolTypeStruct) {
          // Add an zero-struct initializer
-         SymbolTypeStruct typeStruct = (SymbolTypeStruct) type;
+         SymbolTypeStruct typeStruct = (SymbolTypeStruct) typeSpec.getType();
          return new StructZero(typeStruct);
+      } else if(typeSpec.getType() instanceof SymbolTypePointer) {
+         SymbolTypePointer typePointer = (SymbolTypePointer) typeSpec.getType();
+         if(typeSpec.getArraySpec() == null) {
+            // Add an zero value initializer
+            return new ConstantPointer(0L, typePointer.getElementType());
+         } else {
+            // Add an zero-filled array initializer
+            if(typeSpec.getArraySpec().getArraySize() == null) {
+               throw new CompileError("Error! Array has no declared size. ", statementSource);
+            }
+            return new ConstantArrayFilled(typePointer.getElementType(), typeSpec.getArraySpec().getArraySize());
+         }
       } else {
-         throw new CompileError("Default initializer not implemented for type " + type.getTypeName(), statementSource);
+         throw new CompileError("Default initializer not implemented for type " + typeSpec.getType().getTypeName(), statementSource);
       }
    }
 
-   /**
-    * Get a value for initializing a variable from an expression.
-    * If possible the value is converted to a ConstantValue.
-    *
-    * @param initValue The parsed init expression value (may be null)
-    * @param type The type of the constant variable (used for creating zero values)
-    * @param statementSource The statement (used in exceptions.
-    * @return The constant init-value. Null if the value cannot be turned into a constant init-value.
-    */
-   public static RValue getInitValue(RValue initValue, SymbolType type, ArraySpec arraySpec, Program program, StatementSource statementSource) {
-      // TODO: Handle struct members
-      // Create zero-initializers if null
-      if(initValue == null) {
-         if(arraySpec!=null) {
-            // Add an zero-filled array initializer
-            SymbolTypePointer typePointer = (SymbolTypePointer) type;
-            if(arraySpec.getArraySize() == null) {
-               throw new CompileError("Error! Array has no declared size. ", statementSource);
-            }
-            initValue = new ConstantArrayFilled(typePointer.getElementType(), arraySpec.getArraySize());
-         } else {
-            // Add an zero-value
-            initValue = createZeroValue(type, statementSource);
-         }
+   /** Specifies type properties for a value. Holds normal type and array specification. */
+   public static class ValueTypeSpec {
+
+      SymbolType type;
+
+      ArraySpec arraySpec;
+
+      public ValueTypeSpec(SymbolType type, ArraySpec arraySpec) {
+         this.type = type;
+         this.arraySpec = arraySpec;
       }
-      // Convert initializer value lists to constant if possible
-      if((initValue instanceof ValueList)) {
-         ProgramValue programValue = new ProgramValue.GenericValue(initValue);
-         addValueCasts(type, arraySpec!=null, programValue, program, statementSource);
-         if(programValue.get() instanceof CastValue) {
-            CastValue castValue = (CastValue) programValue.get();
-            if(castValue.getValue() instanceof ValueList) {
-               // Found value list with cast - look through all elements
-               ConstantValue constantValue = convertToConstant(castValue.getToType(), (ValueList) castValue.getValue(), program, statementSource);
-               if(constantValue != null) {
-                  // Converted value list to constant!!
-                  initValue = constantValue;
+
+      public SymbolType getType() {
+         return type;
+      }
+
+      public ArraySpec getArraySpec() {
+         return arraySpec;
+      }
+   }
+
+
+   /**
+    * Convert as much as possible of the passed value to a constant. Will convert the entire value if possible. If not all sub-values are converted as possible.
+    *
+    * @param initValue The value to convert
+    * @param typeSpec The specified type of the value (including any array properties)
+    * @param program The program
+    * @param source The statement source (for error messages)
+    * @return The constantified value. A {@link ConstantValue} is possible
+    */
+   public static RValue constantify(RValue initValue, ValueTypeSpec typeSpec, Program program, StatementSource source) {
+      if(initValue == null) {
+         // Add an zero-value
+         initValue = createZeroValue(typeSpec, source);
+      } else if(initValue instanceof ForwardVariableRef) {
+         // Do not constantify
+      } else if(initValue instanceof ValueList) {
+         ValueList initList = (ValueList) initValue;
+         if(typeSpec.getType() instanceof SymbolTypePointer && typeSpec.getArraySpec() != null) {
+            // Type is an array
+            initValue = constantifyArray(initList, (SymbolTypePointer) typeSpec.getType(), typeSpec.getArraySpec(), program, source);
+         } else if(typeSpec.getType() instanceof SymbolTypeStruct) {
+            // Type is a struct
+            initValue = constantifyStruct(initList, (SymbolTypeStruct) typeSpec.getType(), program, source);
+         } else if(typeSpec.getType().equals(SymbolType.WORD) && initList.getList().size() == 2) {
+            // Type is an inline word
+            initValue = constantifyWord(initList, program, source);
+         } else if(typeSpec.getType().equals(SymbolType.DWORD) && initList.getList().size() == 2) {
+            // Type is an inline dword
+            initValue = constantifyDWord(initList, program, source);
+         } else {
+            throw new InternalError("Unknown value list type " + typeSpec.getType());
+         }
+      } else if(SymbolType.isInteger(typeSpec.getType())) {
+         if(initValue instanceof ConstantInteger) {
+            Long integer = ((ConstantInteger) initValue).getInteger();
+            if(typeSpec.getType() instanceof SymbolTypeIntegerFixed) {
+               SymbolTypeIntegerFixed typeIntegerFixed = (SymbolTypeIntegerFixed) typeSpec.getType();
+               if(!typeIntegerFixed.contains(integer)) {
+                  throw new CompileError( "Constant init-value has a non-matching type \n type: " + typeSpec.getType().toString() +"\n value: " + initValue.toString(), source);
                }
+            }
+            initValue = new ConstantInteger(integer, typeSpec.getType());
+         } else if(initValue instanceof ConstantValue) {
+            SymbolType initValueType = ((ConstantValue) initValue).getType(program.getScope());
+            if(!initValueType.equals(typeSpec.getType()))
+               initValue = new ConstantCastValue(typeSpec.getType(), (ConstantValue) initValue);
+         } else {
+            SymbolType inferredType = SymbolTypeInference.inferType(program.getScope(), initValue);
+            if(!inferredType.equals(typeSpec.getType()) && !inferredType.equals(SymbolType.VAR)) {
+               if(SymbolTypeConversion.assignmentTypeMatch(typeSpec.getType(), inferredType))
+                  initValue = new CastValue(typeSpec.getType(), initValue);
+               else
+                  throw new CompileError("ERROR! Type mismatch (" + typeSpec.getType().getTypeName() + ") cannot be assigned from (" + inferredType.getTypeName() + ").", source);
             }
          }
       }
       // Add pointer cast to integers
-      if(type instanceof SymbolTypePointer && initValue instanceof ConstantValue && SymbolType.isInteger(((ConstantValue) initValue).getType(program.getScope()))) {
-         initValue = new ConstantCastValue(type, (ConstantValue) initValue);
+      if(typeSpec.getType() instanceof SymbolTypePointer && initValue instanceof ConstantValue && SymbolType.isInteger(((ConstantValue) initValue).getType(program.getScope()))) {
+         initValue = new ConstantCastValue(typeSpec.getType(), (ConstantValue) initValue);
       }
       return initValue;
    }
 
-   /**
-    * Add casts to a value based on the declared type of the symbol. Recurses to all sub-values.
-    *
-    * @param declaredType The declared type of the value
-    * @param isArray true if the declared variable is an array
-    * @param programValue The value wrapped in a program value
-    * @param source The current statement
-    * @return true if anything was modified
-    */
-   static boolean addValueCasts(SymbolType declaredType, boolean isArray, ProgramValue programValue, Program program, StatementSource source) {
-      boolean exprModified = false;
-      Value value = programValue.get();
-      if(value instanceof ValueList) {
-         ValueList valueList = (ValueList) value;
-         if(declaredType instanceof SymbolTypePointer && isArray) {
-            SymbolTypePointer declaredArrayType = (SymbolTypePointer) declaredType;
-            // Recursively cast all sub-elements
-            SymbolType declaredElmType = declaredArrayType.getElementType();
-            int size = valueList.getList().size();
-            // TODO: Check declared array size vs. actual size
-            for(int i = 0; i < size; i++) {
-               exprModified |= addValueCasts(declaredElmType, false, new ProgramValue.ProgramValueListElement(valueList, i), program, source);
-            }
-            // Add a cast to the value list itself
-            programValue.set(new CastValue(declaredType, valueList));
-         } else if(declaredType instanceof SymbolTypeStruct) {
-            SymbolTypeStruct declaredStructType = (SymbolTypeStruct) declaredType;
-            // Recursively cast all sub-elements
-            StructDefinition structDefinition = declaredStructType.getStructDefinition(program.getScope());
-            Collection<Variable> memberDefinitions = structDefinition.getAllVars(false);
-            int size = memberDefinitions.size();
-            if(size != valueList.getList().size()) {
-               throw new CompileError(
-                     "Struct initializer has wrong size (" + valueList.getList().size() + "), " +
-                           "which does not match the number of members in " + declaredStructType.getTypeName() + " (" + size + " members).\n" +
-                           " Struct initializer: " + valueList.toString(program),
-                     source);
-            }
-            Iterator<Variable> memberDefIt = memberDefinitions.iterator();
-            for(int i = 0; i < size; i++) {
-               Variable memberDef = memberDefIt.next();
-               exprModified |= addValueCasts(memberDef.getType(), memberDef.isArray(), new ProgramValue.ProgramValueListElement(valueList, i), program, source);
-            }
-            // Add a cast to the value list itself
-            programValue.set(new CastValue(declaredType, valueList));
-         } else if(declaredType.equals(SymbolType.WORD) && valueList.getList().size()==2){
-            // An inline word { byte, byte}
-            for(int i = 0; i < valueList.getList().size(); i++) {
-               exprModified |= addValueCasts(SymbolType.BYTE, false, new ProgramValue.ProgramValueListElement(valueList, i), program, source);
-            }
-            // Add a cast to the value list itself
-            programValue.set(new CastValue(declaredType, valueList));
-         } else if(declaredType.equals(SymbolType.DWORD) && valueList.getList().size()==2){
-            // An inline dword { byte, byte}
-            for(int i = 0; i < valueList.getList().size(); i++) {
-               exprModified |= addValueCasts(SymbolType.WORD, false, new ProgramValue.ProgramValueListElement(valueList, i), program, source);
-            }
-            // Add a cast to the value list itself
-            programValue.set(new CastValue(declaredType, valueList));
-         } else {
-            // TODO: Handle word/dword initializers
-            throw new InternalError("Type not handled! " + declaredType);
-         }
-      } else {
-         SymbolType valueType = SymbolTypeInference.inferType(program.getScope(), (RValue) value);
-         if(SymbolType.NUMBER.equals(valueType) || SymbolType.VAR.equals(valueType)) {
-            // Check if the value fits.
-            if(!SymbolTypeConversion.assignmentTypeMatch(declaredType, valueType)) {
-               throw new CompileError("Declared type " + declaredType + " does not match element type " + valueType, source);
-            }
-            // TODO: Test if the value matches the declared type!
-            // Add a cast to the value
-            if(value instanceof ConstantValue) {
-               programValue.set(new ConstantCastValue(declaredType, (ConstantValue) value));
-            } else {
-               programValue.set(new CastValue(declaredType, (RValue) value));
-            }
-            exprModified = true;
-         }
+   private static RValue constantifyWord(ValueList valueList, Program program, StatementSource source) {
+      boolean allConst = true;
+      List<RValue> constantifiedList = new ArrayList<>();
+      for(RValue elementValue : valueList.getList()) {
+         RValue constantifiedElement = constantify(elementValue, new ValueTypeSpec(SymbolType.BYTE, null), program, source);
+         constantifiedList.add(constantifiedElement);
+         if(!(constantifiedElement instanceof ConstantValue))
+            allConst = false;
       }
-      return exprModified;
+      if(allConst) {
+         ConstantValue hiByte = (ConstantValue) constantifiedList.get(0);
+         ConstantValue loByte = (ConstantValue) constantifiedList.get(1);
+         return new ConstantBinary(new ConstantBinary(hiByte, Operators.MULTIPLY, new ConstantInteger(0x100L, SymbolType.WORD)), Operators.PLUS, loByte);
+      } else {
+         return new CastValue(SymbolType.WORD, new ValueList(constantifiedList));
+      }
+   }
+
+   private static RValue constantifyDWord(ValueList valueList, Program program, StatementSource source) {
+      boolean allConst = true;
+      List<RValue> constantifiedList = new ArrayList<>();
+      for(RValue elementValue : valueList.getList()) {
+         RValue constantifiedElement = constantify(elementValue, new ValueTypeSpec(SymbolType.WORD, null), program, source);
+         constantifiedList.add(constantifiedElement);
+         if(!(constantifiedElement instanceof ConstantValue))
+            allConst = false;
+      }
+      if(allConst) {
+         ConstantValue hiWord = (ConstantValue) constantifiedList.get(0);
+         ConstantValue loWord = (ConstantValue) constantifiedList.get(1);
+         return new ConstantBinary(new ConstantBinary(hiWord, Operators.MULTIPLY, new ConstantInteger(0x10000L, SymbolType.DWORD)), Operators.PLUS, loWord);
+      } else {
+         return new CastValue(SymbolType.DWORD, new ValueList(constantifiedList));
+      }
    }
 
    /**
-    * Convert a value list (with casts) to a constant value of the declared type - if all sub-values are constant. Otherwise returns null.
+    * Convert as much as possible of a struct to constants.
     *
-    * @param declaredType The type of the lvalue
-    * @param valueList The list of values
-    * @return The constant value if all list elements are constant. null if elements are not constant
+    * @param valueList The value list
+    * @param structType The struct type
+    * @param program The program
+    * @param source The source line
+    * @return The constantified value
     */
-   static ConstantValue convertToConstant(SymbolType declaredType, ValueList valueList, Program program, StatementSource source) {
-      // Examine whether all list elements are constant
-      List<RValue> values = valueList.getList();
-      List<ConstantValue> constantValues = new ArrayList<>();
-      for(RValue elmValue : values) {
-         if(elmValue instanceof ConstantValue) {
-            ConstantValue constantValue = (ConstantValue) elmValue;
-            constantValues.add(constantValue);
-         } else if(elmValue instanceof CastValue) {
-            // Recursion may be needed
-            CastValue castValue = (CastValue) elmValue;
-            if(castValue.getValue() instanceof ValueList) {
-               ConstantValue constantValue = convertToConstant(castValue.getToType(), (ValueList) castValue.getValue(), program, source);
-               if(constantValue != null) {
-                  constantValues.add(constantValue);
-               } else {
-                  // A non-constant was found - exit
-                  return null;
-               }
-            } else {
-               // A non-constant was found - exit
-               return null;
-            }
-         } else {
-            // A non-constant was found - exit
-            return null;
-         }
+   private static RValue constantifyStruct(ValueList valueList, SymbolTypeStruct structType, Program program, StatementSource source) {
+      // Recursively cast all sub-elements
+      StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
+      Collection<Variable> memberDefinitions = structDefinition.getAllVars(false);
+      int size = memberDefinitions.size();
+      if(size != valueList.getList().size()) {
+         throw new CompileError(
+               "Struct initializer has wrong size (" + valueList.getList().size() + "), " +
+                     "which does not match the number of members in " + structType.getTypeName() + " (" + size + " members).\n" +
+                     " Struct initializer: " + valueList.toString(program),
+               source);
       }
-      // All elements are constant - convert to constant of declared type
-      if(declaredType instanceof SymbolTypePointer) {
-         // Check that type of constant values match the array element type
-         SymbolType declaredElementType = ((SymbolTypePointer) declaredType).getElementType();
-         for(ConstantValue constantValue : constantValues) {
-            SymbolType elmType = constantValue.getType(program.getScope());
-            if(!elmType.equals(declaredElementType)) {
-               throw new CompileError("Initializer element " + constantValue.toString(program) + " does not match array type " + declaredType.getTypeName(), source);
-            }
-         }
-         // Return the constant array
-         return new ConstantArrayList(constantValues, declaredElementType);
-      } else if(declaredType instanceof SymbolTypeStruct) {
-         // Check that type of constant values match the struct member types
-         SymbolTypeStruct declaredStructType = (SymbolTypeStruct) declaredType;
-         StructDefinition structDefinition = declaredStructType.getStructDefinition(program.getScope());
-         Collection<Variable> memberDefs = structDefinition.getAllVars(false);
-         if(memberDefs.size() != constantValues.size()) {
-            throw new CompileError(
-                  "Struct initializer has wrong size (" + valueList.getList().size() + "), " +
-                        "which does not match the number of members in " + declaredStructType.getTypeName() + " (\"+size+\" members).\n" +
-                        " Struct initializer: " + valueList.toString(program),
-                  source);
-         }
-         Iterator<Variable> memberDefIt = memberDefs.iterator();
-         LinkedHashMap<SymbolVariableRef, ConstantValue> memberValues = new LinkedHashMap<>();
-         for(int i = 0; i < constantValues.size(); i++) {
-            Variable memberDef = memberDefIt.next();
-            SymbolType declaredElementType = memberDef.getType();
-            ConstantValue memberValue = constantValues.get(i);
-            SymbolType elmType = memberValue.getType(program.getScope());
-            if(!SymbolTypeConversion.assignmentTypeMatch(declaredElementType, elmType)) {
-               throw new CompileError("Initializer element " + memberValue.toString(program) + " does not match struct member type " + memberDef.toString(program), source);
-            }
-            memberValues.put(memberDef.getRef(), memberValue);
-         }
-         return new ConstantStructValue(declaredStructType, memberValues);
-      } else if(declaredType.equals(SymbolType.WORD) && constantValues.size()==2){
-         // An inline word
-         for(ConstantValue constantValue : constantValues)
-            if(!SymbolTypeConversion.assignmentTypeMatch(SymbolType.BYTE, constantValue.getType(program.getScope())))
-               throw new CompileError("Initializer element " + constantValue.toString(program) + " does not match needed type "+SymbolType.BYTE, source);
-         return new ConstantBinary(new ConstantBinary(constantValues.get(0), Operators.MULTIPLY, new ConstantInteger(0x100L, SymbolType.WORD)), Operators.PLUS, constantValues.get(1));
-      } else if(declaredType.equals(SymbolType.DWORD) && constantValues.size()==2){
-         // An inline dword
-         for(ConstantValue constantValue : constantValues)
-            if(!SymbolTypeConversion.assignmentTypeMatch(SymbolType.WORD, constantValue.getType(program.getScope())))
-               throw new CompileError("Initializer element " + constantValue.toString(program) + " does not match needed type "+SymbolType.WORD, source);
-         return new ConstantBinary(new ConstantBinary(constantValues.get(0), Operators.MULTIPLY, new ConstantInteger(0x10000L, SymbolType.DWORD)), Operators.PLUS, constantValues.get(1));
+
+      boolean allConst = true;
+      // Constantified values in a list
+      List<RValue> constantifiedList = new ArrayList<>();
+      // Map filled if all member values become constant
+      LinkedHashMap<SymbolVariableRef, ConstantValue> constMemberMap = new LinkedHashMap<>();
+      Iterator<Variable> memberDefIt = memberDefinitions.iterator();
+      Iterator<RValue> valueIt = valueList.getList().iterator();
+      for(int i = 0; i < size; i++) {
+         Variable memberDef = memberDefIt.next();
+         RValue memberValue = valueIt.next();
+         RValue constantifiedMemberValue = constantify(memberValue, new ValueTypeSpec(memberDef.getType(), memberDef.getArraySpec()), program, source);
+         constantifiedList.add(constantifiedMemberValue);
+         if(constantifiedMemberValue instanceof ConstantValue)
+            constMemberMap.put(memberDef.getRef(), (ConstantValue) constantifiedMemberValue);
+         else
+            allConst = false;
+      }
+      if(allConst) {
+         // Constant struct
+         return new ConstantStructValue(structType, constMemberMap);
       } else {
-         throw new InternalError("Not supported " + declaredType);
+         // Constantified list with a cast
+         return new CastValue(structType, new ValueList(constantifiedList));
+      }
+   }
+
+   /**
+    * Convert as much of an array to constant as possible. Also zero-pads the value-list to the declared array length (if possible).
+    *
+    * @param valueList The list of values
+    * @param arrayType The pointer type of the array
+    * @param arraySpec The array spec holding the array size.
+    * @param program The program
+    * @param source The source line
+    * @return The constantified value
+    */
+   private static RValue constantifyArray(ValueList valueList, SymbolTypePointer arrayType, ArraySpec arraySpec, Program program, StatementSource source) {
+      SymbolType elementType = arrayType.getElementType();
+      // TODO: Handle array of array
+      ValueTypeSpec elementTypeSpec = new ValueTypeSpec(elementType, null);
+      boolean allConst = true;
+      List<RValue> constantifiedList = new ArrayList<>();
+      for(RValue elementValue : valueList.getList()) {
+         RValue constantifiedElement = constantify(elementValue, elementTypeSpec, program, source);
+         constantifiedList.add(constantifiedElement);
+         if(!(constantifiedElement instanceof ConstantValue))
+            allConst = false;
+      }
+      if(allConst) {
+         // Convert to ConstantArrayList (throwing away the array size)
+         ArrayList<ConstantValue> constElementList = new ArrayList<>();
+         for(RValue rValue : constantifiedList) {
+            constElementList.add((ConstantValue) rValue);
+         }
+         return new ConstantArrayList(constElementList, elementType, arraySpec.getArraySize());
+      } else {
+         // Convert to a ValueList with a cast to the pointer-type (throwing away the array size)
+         return new CastValue(arrayType, new ValueList(constantifiedList));
       }
    }
 

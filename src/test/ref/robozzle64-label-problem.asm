@@ -15,10 +15,6 @@ main: {
     sta.z y
   __b1:
     ldx.z y
-    lda #<mul8u.b
-    sta.z mul8u.mb
-    lda #>mul8u.b
-    sta.z mul8u.mb+1
     jsr mul8u
     ldy #0
     lda.z z1
@@ -27,10 +23,6 @@ main: {
     lda.z z1+1
     sta (screen),y
     ldx.z y
-    lda #<mul8u.b
-    sta.z mul8u.mb
-    lda #>mul8u.b
-    sta.z mul8u.mb+1
     jsr mul8u
     ldy #SIZEOF_WORD
     lda.z z2
@@ -54,10 +46,13 @@ main: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a)
 mul8u: {
-    .label b = $28
     .label mb = 7
     .label res = 5
     .label return = 5
+    lda #<$28
+    sta.z mb
+    lda #>$28
+    sta.z mb+1
     lda #<0
     sta.z res
     sta.z res+1

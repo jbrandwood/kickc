@@ -566,7 +566,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(initializer != null)
             PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
          RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
-         initValue = Initializers.getInitValue(initValue, declVarType, declArraySpec, program, statementSource);
+         initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(declVarType, declArraySpec), program, statementSource);
          VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, declVarType, declArraySpec, declVarDirectives, currentDataSegment);
          Variable variable = varBuilder.build();
          if(variable.isKindConstant()) {
@@ -591,7 +591,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /**
     * Ensure that tha initializer value is a constant. Fail if it is not
     *
-    * @param initValue The initializer value (result from {@link Initializers#getInitValue(RValue, SymbolType, ArraySpec, Program, StatementSource)})
+    * @param initValue The initializer value (result from {@link Initializers#constantify(RValue, Initializers.ValueTypeSpec, Program, StatementSource)}
     * @param initializer The initializer
     * @param statementSource The source line
     * @return The constant initializer value
@@ -629,7 +629,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(kasm.getDeclaredClobber() != null) {
          throw new CompileError("KickAsm initializers does not support 'clobbers' directive.", statementSource);
       }
-      ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypePointer) this.declVarType).getElementType(), kasm.getKickAsmCode(), kasm.getUses());
+      ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypePointer) this.declVarType).getElementType(), kasm.getKickAsmCode(), kasm.getUses(), declArraySpec.getArraySize());
       // Remove the KickAsm statement
       sequence.getStatements().remove(sequence.getStatements().size() - 1);
       // Add a constant variable

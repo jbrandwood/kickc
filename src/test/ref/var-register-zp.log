@@ -12,8 +12,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::i ← (number) 0
-  (signed word) main::j ← (number) 0
+  (byte) main::i ← (byte) 0
+  (signed word) main::j ← (signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (bool~) main::$0 ← (byte) main::i < (number) 4
@@ -62,24 +62,16 @@ SYMBOL TABLE SSA
 (signed word) main::k
 (signed word) main::k#0
 
-Adding number conversion cast (unumber) 0 in (byte) main::i ← (number) 0
-Adding number conversion cast (snumber) 0 in (signed word) main::j ← (number) 0
 Adding number conversion cast (unumber) 4 in (bool~) main::$0 ← (byte) main::i < (number) 4
 Adding number conversion cast (snumber) 2 in (number~) main::$2 ← (signed word~) main::$1 * (number) 2
 Adding number conversion cast (snumber) main::$2 in (number~) main::$2 ← (signed word~) main::$1 * (snumber)(number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::i ← (unumber)(number) 0
-Inlining cast (signed word) main::j ← (snumber)(number) 0
 Inlining cast (signed word~) main::$1 ← (signed word)(byte) main::i
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (signed word*) 1024
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant integer cast 4
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized signed number type (signed byte) 0
 Finalized unsigned number type (byte) 4
 Finalized signed number type (signed byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
@@ -122,7 +114,7 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   [4] (byte) main::i ← (byte) 0
-  [5] (signed word) main::j ← (signed byte) 0
+  [5] (signed word) main::j ← (signed word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [6] if((byte) main::i<(byte) 4) goto main::@2
@@ -207,7 +199,7 @@ main: {
     // [4] (byte) main::i ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [5] (signed word) main::j ← (signed byte) 0 -- vwsz1=vbsc1 
+    // [5] (signed word) main::j ← (signed word) 0 -- vwsz1=vwsc1 
     lda #<0
     sta.z j
     lda #>0
@@ -273,7 +265,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte) main::i ← (byte) 0 [ main::i ] ( main:2 [ main::i ] ) always clobbers reg byte a 
-Statement [5] (signed word) main::j ← (signed byte) 0 [ main::i main::j ] ( main:2 [ main::i main::j ] ) always clobbers reg byte a 
+Statement [5] (signed word) main::j ← (signed word) 0 [ main::i main::j ] ( main:2 [ main::i main::j ] ) always clobbers reg byte a 
 Statement [6] if((byte) main::i<(byte) 4) goto main::@2 [ main::i main::j ] ( main:2 [ main::i main::j ] ) always clobbers reg byte a 
 Statement [8] (byte~) main::$3 ← (byte) main::i << (byte) 1 [ main::j main::$3 ] ( main:2 [ main::j main::$3 ] ) always clobbers reg byte a 
 Statement [9] *((const signed word*) SCREEN + (byte~) main::$3) ← (signed word) main::j [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -330,7 +322,7 @@ main: {
     // [4] (byte) main::i ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [5] (signed word) main::j ← (signed byte) 0 -- vwsz1=vbsc1 
+    // [5] (signed word) main::j ← (signed word) 0 -- vwsz1=vwsc1 
     lda #<0
     sta.z j
     lda #>0
@@ -463,7 +455,7 @@ main: {
     lda #0
     sta.z i
     // j=0
-    // [5] (signed word) main::j ← (signed byte) 0 -- vwsz1=vbsc1 
+    // [5] (signed word) main::j ← (signed word) 0 -- vwsz1=vwsc1 
     sta.z j
     sta.z j+1
     // main::@1

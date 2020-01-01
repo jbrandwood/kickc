@@ -305,9 +305,8 @@ mode_8bppchunkybmm: {
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
     // Linear Graphics Plane B Counter
-    lda #<PLANEB&$ffff
+    lda #0
     sta DTV_PLANEB_START_LO
-    lda #>PLANEB&$ffff
     sta DTV_PLANEB_START_MI
     lda #<PLANEB>>$10
     sta DTV_PLANEB_START_HI

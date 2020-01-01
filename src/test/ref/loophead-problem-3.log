@@ -21,8 +21,8 @@ CONTROL FLOW GRAPH SSA
 mul16u: scope:[mul16u]  from main
   (word) mul16u::a#5 ← phi( main/(word) mul16u::a#1 )
   (word) mul16u::b#1 ← phi( main/(word) mul16u::b#0 )
-  (dword) mul16u::res#0 ← (number) 0
-  (dword) mul16u::mb#0 ← (word) mul16u::b#1
+  (dword) mul16u::res#0 ← (dword) 0
+  (dword) mul16u::mb#0 ← (dword)(word) mul16u::b#1
   to:mul16u::@1
 mul16u::@1: scope:[mul16u]  from mul16u mul16u::@4
   (dword) mul16u::mb#5 ← phi( mul16u/(dword) mul16u::mb#0 mul16u::@4/(dword) mul16u::mb#1 )
@@ -159,7 +159,6 @@ SYMBOL TABLE SSA
 (dword) mul16u::return#3
 (dword) mul16u::return#4
 
-Adding number conversion cast (unumber) 0 in (dword) mul16u::res#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) mul16u::$0 ← (word) mul16u::a#2 != (number) 0
 Adding number conversion cast (unumber) 1 in (number~) mul16u::$1 ← (word) mul16u::a#3 & (number) 1
 Adding number conversion cast (unumber) mul16u::$1 in (number~) mul16u::$1 ← (word) mul16u::a#3 & (unumber)(number) 1
@@ -169,13 +168,11 @@ Adding number conversion cast (unumber) 1 in (dword~) mul16u::$6 ← (dword) mul
 Adding number conversion cast (unumber) 4 in (word) mul16u::a#1 ← (number) 4
 Adding number conversion cast (unumber) $7b in (word) mul16u::b#0 ← (number) $7b
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (dword) mul16u::res#0 ← (unumber)(number) 0
 Inlining cast (word) mul16u::a#1 ← (unumber)(number) 4
 Inlining cast (word) mul16u::b#0 ← (unumber)(number) $7b
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
@@ -184,7 +181,6 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 4
 Simplifying constant integer cast $7b
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
@@ -196,7 +192,6 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) mul16u::$1 ← (word) mul16u::a#3 & (byte) 1
 Inversing boolean not [9] (bool~) mul16u::$3 ← (byte~) mul16u::$1 == (byte) 0 from [8] (bool~) mul16u::$2 ← (byte~) mul16u::$1 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (dword) mul16u::mb#0 = (word) mul16u::b#1 
 Alias (word) mul16u::a#2 = (word) mul16u::a#3 (word) mul16u::a#6 
 Alias (dword) mul16u::mb#3 = (dword) mul16u::mb#4 (dword) mul16u::mb#5 
 Alias (dword) mul16u::res#2 = (dword) mul16u::res#5 (dword) mul16u::res#4 (dword) mul16u::return#0 (dword) mul16u::res#3 (dword) mul16u::return#3 (dword) mul16u::return#1 
@@ -210,7 +205,7 @@ Successful SSA optimization Pass2AliasElimination
 Alias (word) mul16u::a#2 = (word) mul16u::a#4 
 Alias (dword) mul16u::mb#2 = (dword) mul16u::mb#3 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (dword) mul16u::mb#0 (word) mul16u::b#0
+Identical Phi Values (word) mul16u::b#1 (word) mul16u::b#0
 Identical Phi Values (word) mul16u::a#5 (word) mul16u::a#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) mul16u::$0 [5] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2
@@ -220,9 +215,13 @@ Constant (const dword) mul16u::res#0 = 0
 Constant (const word) mul16u::a#1 = 4
 Constant (const word) mul16u::b#0 = $7b
 Successful SSA optimization Pass2ConstantIdentification
+Constant (const dword) mul16u::mb#0 = (dword)mul16u::b#0
+Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const dword) mul16u::res#0
 Inlining constant with var siblings (const word) mul16u::a#1
-Constant inlined mul16u::res#0 = (byte) 0
+Inlining constant with var siblings (const dword) mul16u::mb#0
+Constant inlined mul16u::mb#0 = (dword)(const word) mul16u::b#0
+Constant inlined mul16u::res#0 = (dword) 0
 Constant inlined mul16u::a#1 = (byte) 4
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting mul16u::@10(between mul16u::@2 and mul16u::@4)
@@ -290,8 +289,8 @@ mul16u: scope:[mul16u]  from main
   [14] phi()
   to:mul16u::@1
 mul16u::@1: scope:[mul16u]  from mul16u mul16u::@3
-  [15] (dword) mul16u::mb#2 ← phi( mul16u/(const word) mul16u::b#0 mul16u::@3/(dword) mul16u::mb#1 )
-  [15] (dword) mul16u::res#2 ← phi( mul16u/(byte) 0 mul16u::@3/(dword) mul16u::res#6 )
+  [15] (dword) mul16u::mb#2 ← phi( mul16u/(dword)(const word) mul16u::b#0 mul16u::@3/(dword) mul16u::mb#1 )
+  [15] (dword) mul16u::res#2 ← phi( mul16u/(dword) 0 mul16u::@3/(dword) mul16u::res#6 )
   [15] (word) mul16u::a#2 ← phi( mul16u/(byte) 4 mul16u::@3/(word) mul16u::a#0 )
   [16] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2
   to:mul16u::@return
@@ -460,7 +459,7 @@ mul16u: {
     .label return = $c
     // [15] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
   __b1_from_mul16u:
-    // [15] phi (dword) mul16u::mb#2 = (const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
+    // [15] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
     lda #<b
     sta.z mb
     lda #>b
@@ -469,12 +468,14 @@ mul16u: {
     sta.z mb+2
     lda #>b>>$10
     sta.z mb+3
-    // [15] phi (dword) mul16u::res#2 = (byte) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vbuc1 
-    lda #0
+    // [15] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
+    lda #<0
     sta.z res
-    lda #0
+    lda #>0
     sta.z res+1
+    lda #<0>>$10
     sta.z res+2
+    lda #>0>>$10
     sta.z res+3
     // [15] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
     lda #<4
@@ -569,9 +570,9 @@ Uplift Scope [mul16u] 38.83: zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1
 Uplift Scope [main] 4: zp[4]:16 [ main::result#0 ] 4: zp[1]:22 [ main::$2 ] 4: zp[1]:23 [ main::$3 ] 2: zp[2]:20 [ main::kaputt#0 ] 
 Uplift Scope [] 
 
-Uplifting [mul16u] best 1617 combination zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] zp[4]:8 [ mul16u::mb#2 mul16u::mb#1 ] reg byte a [ mul16u::$1 ] zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] zp[4]:12 [ mul16u::return#2 ] 
-Uplifting [main] best 1605 combination zp[4]:16 [ main::result#0 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] zp[2]:20 [ main::kaputt#0 ] 
-Uplifting [] best 1605 combination 
+Uplifting [mul16u] best 1657 combination zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] zp[4]:8 [ mul16u::mb#2 mul16u::mb#1 ] reg byte a [ mul16u::$1 ] zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] zp[4]:12 [ mul16u::return#2 ] 
+Uplifting [main] best 1645 combination zp[4]:16 [ main::result#0 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] zp[2]:20 [ main::kaputt#0 ] 
+Uplifting [] best 1645 combination 
 Coalescing zero page register [ zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] ] with [ zp[4]:12 [ mul16u::return#2 ] ] - score: 1
 Coalescing zero page register [ zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#2 ] ] with [ zp[4]:16 [ main::result#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:20 [ main::kaputt#0 ] ] with [ zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] ]
@@ -649,7 +650,7 @@ mul16u: {
     .label return = 2
     // [15] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
   __b1_from_mul16u:
-    // [15] phi (dword) mul16u::mb#2 = (const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
+    // [15] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
     lda #<b
     sta.z mb
     lda #>b
@@ -658,12 +659,14 @@ mul16u: {
     sta.z mb+2
     lda #>b>>$10
     sta.z mb+3
-    // [15] phi (dword) mul16u::res#2 = (byte) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vbuc1 
-    lda #0
+    // [15] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
+    lda #<0
     sta.z res
-    lda #0
+    lda #>0
     sta.z res+1
+    lda #<0>>$10
     sta.z res+2
+    lda #>0>>$10
     sta.z res+3
     // [15] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
     lda #<4
@@ -742,7 +745,7 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b4
 Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda #0
+Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __bbegin with __b1
 Replacing label __b3_from___b2 with __b3
@@ -814,7 +817,7 @@ reg byte a [ mul16u::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 1399
+Score: 1439
 
   // File Comments
 // Program where loop-head optimization produces wrong return value
@@ -879,7 +882,7 @@ mul16u: {
     .label res = 2
     .label return = 2
     // [15] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
-    // [15] phi (dword) mul16u::mb#2 = (const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
+    // [15] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
     lda #<b
     sta.z mb
     lda #>b
@@ -888,11 +891,13 @@ mul16u: {
     sta.z mb+2
     lda #>b>>$10
     sta.z mb+3
-    // [15] phi (dword) mul16u::res#2 = (byte) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vbuc1 
-    lda #0
+    // [15] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
+    lda #<0
     sta.z res
     sta.z res+1
+    lda #<0>>$10
     sta.z res+2
+    lda #>0>>$10
     sta.z res+3
     // [15] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
     lda #<4

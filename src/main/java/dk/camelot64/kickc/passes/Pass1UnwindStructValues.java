@@ -202,7 +202,11 @@ public class Pass1UnwindStructValues extends Pass1Base {
       }
 
       if(assignment.getOperator() == null) {
-         if(assignment.getrValue2() instanceof StructZero && assignment.getlValue() instanceof VariableRef) {
+         RValue rValue = assignment.getrValue2();
+         if(rValue instanceof CastValue) {
+            rValue = ((CastValue) rValue).getValue();
+         }
+         if(rValue instanceof StructZero && assignment.getlValue() instanceof VariableRef) {
             // Zero-initializing a struct - unwind to assigning zero to each member!
             List<RValue> membersUnwound = new ArrayList<>();
             stmtIt.previous();
@@ -223,7 +227,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   membersUnwound.add(memberVarRef);
                   StatementSource statementSource = assignment.getSource();
                   SymbolType memberType = memberUnwinding.getMemberType(memberName);
-                  RValue initValue = Initializers.createZeroValue(memberType, statementSource);
+                  ArraySpec memberArraySpec = memberUnwinding.getArraySpec(memberName);
+                  RValue initValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(memberType, memberArraySpec), statementSource);
                   Statement initStmt = new StatementAssignment(memberVarRef, initValue, assignment.isInitialAssignment(), statementSource, Comment.NO_COMMENTS);
                   stmtIt.add(initStmt);
                   getLog().append("Adding struct value member variable default initializer " + initStmt.toString(getProgram(), false));
@@ -237,9 +242,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
                stmtIt.remove();
             }
             return true;
-         } else if(assignment.getrValue2() instanceof ValueList) {
+         } else if(rValue instanceof ValueList) {
             // Initializing struct with a value list - unwind to assigning each member with a value from the list
-            ValueList valueList = (ValueList) assignment.getrValue2();
+            ValueList valueList = (ValueList) rValue;
             if(memberUnwinding.getMemberNames().size() != valueList.getList().size()) {
                throw new CompileError("Struct initialization list has wrong size. Need  " + memberUnwinding.getMemberNames().size() + " got " + valueList.getList().size(), assignment);
             }
@@ -262,13 +267,13 @@ public class Pass1UnwindStructValues extends Pass1Base {
             }
             return true;
          } else {
-            if(assignment.getrValue2() instanceof StructUnwoundPlaceholder)
+            if(rValue instanceof StructUnwoundPlaceholder)
                return false;
             SymbolTypeStruct structType = (SymbolTypeStruct) SymbolTypeInference.inferType(getScope(), assignment.getlValue());
-            SymbolType sourceType = SymbolTypeInference.inferType(getScope(), assignment.getrValue2());
+            SymbolType sourceType = SymbolTypeInference.inferType(getScope(), rValue);
             if(sourceType.equals(structType)) {
                // Copying a struct - unwind to assigning each member!
-               StructUnwinding.StructMemberUnwinding sourceMemberUnwinding = getStructMemberUnwinding(assignment.getrValue2(), assignment, stmtIt, currentBlock);
+               StructUnwinding.StructMemberUnwinding sourceMemberUnwinding = getStructMemberUnwinding(rValue, assignment, stmtIt, currentBlock);
                if(sourceMemberUnwinding == null) {
                   throw new CompileError("Incompatible struct assignment " + assignment.toString(getProgram(), false), assignment);
                } else if(sourceMemberUnwinding == POSTPONE_UNWINDING) {

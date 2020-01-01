@@ -432,6 +432,7 @@ public class TestPrograms {
 
    @Test
    public void testFunctionAsArray() throws IOException, URISyntaxException {
+      compileAndCompare("function-as-array", log().verboseParse().verboseCreateSsa());
       assertError("function-as-array", "Cannot infer pointer element type from type: void()");
    }
 
@@ -502,7 +503,7 @@ public class TestPrograms {
 
    @Test
    public void testCastError() throws IOException, URISyntaxException {
-      assertError("cast-error", "Cannot infer pointer element type from type");
+      assertError("cast-error", "cannot be assigned from");
    }
 
    @Test
@@ -3422,7 +3423,7 @@ public class TestPrograms {
 
    @Test
    public void testInvalidConstType() throws IOException, URISyntaxException {
-      assertError("invalid-consttype", "Constant variable has a non-matching type", false);
+      assertError("invalid-consttype", "Constant init-value has a non-matching type", false);
    }
 
    @Test

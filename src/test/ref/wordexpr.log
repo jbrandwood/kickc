@@ -6,7 +6,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word) main::b#0 ← (number) 0
+  (word) main::b#0 ← (word) 0
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -47,16 +47,9 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 
-Adding number conversion cast (unumber) 0 in (word) main::b#0 ← (number) 0
 Adding number conversion cast (unumber) $28*8 in (number~) main::$0 ← (word) main::b#2 + (number) $28*(number) 8
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (word) main::b#2 + (unumber)(number) $28*(number) 8
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word) main::b#0 ← (unumber)(number) 0
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
-Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in (unumber~) main::$0 ← (word) main::b#2 + (word)(number) $28*(number) 8
 Alias (word) main::b#1 = (word~) main::$0 
 Successful SSA optimization Pass2AliasElimination
@@ -76,7 +69,7 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const word) main::b#0
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
-Constant inlined main::b#0 = (byte) 0
+Constant inlined main::b#0 = (word) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
@@ -115,7 +108,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [5] (word) main::b#2 ← phi( main/(byte) 0 main::@1/(word) main::b#1 )
+  [5] (word) main::b#2 ← phi( main/(word) 0 main::@1/(word) main::b#1 )
   [6] (word) main::b#1 ← (word) main::b#2 + (word)(number) $28*(number) 8
   [7] (byte) main::i#1 ← ++ (byte) main::i#2
   [8] if((byte) main::i#1!=(byte) $b) goto main::@1
@@ -177,7 +170,7 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [5] phi (word) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vwuz1=vbuc1 
+    // [5] phi (word) main::b#2 = (word) 0 [phi:main->main::@1#1] -- vwuz1=vwuc1 
     lda #<0
     sta.z b
     lda #>0
@@ -257,7 +250,7 @@ main: {
   __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi (word) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vwuz1=vbuc1 
+    // [5] phi (word) main::b#2 = (word) 0 [phi:main->main::@1#1] -- vwuz1=vwuc1 
     lda #<0
     sta.z b
     lda #>0
@@ -361,7 +354,7 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi (word) main::b#2 = (byte) 0 [phi:main->main::@1#1] -- vwuz1=vbuc1 
+    // [5] phi (word) main::b#2 = (word) 0 [phi:main->main::@1#1] -- vwuz1=vwuc1 
     txa
     sta.z b
     sta.z b+1

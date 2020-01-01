@@ -35,10 +35,12 @@ mul16u: {
     sta.z mb+2
     lda #>b>>$10
     sta.z mb+3
-    lda #0
+    lda #<0
     sta.z res
     sta.z res+1
+    lda #<0>>$10
     sta.z res+2
+    lda #>0>>$10
     sta.z res+3
     lda #<4
     sta.z a

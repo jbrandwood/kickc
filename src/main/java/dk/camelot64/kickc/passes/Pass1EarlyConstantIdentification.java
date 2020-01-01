@@ -85,14 +85,13 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
       SymbolType variableType = variable.getType();
 
       if(!SymbolTypeConversion.assignmentTypeMatch(variableType, valueType) || SymbolType.NUMBER.equals(valueType)) {
-         boolean typeOk = false;
          ConstantLiteral constantLiteral = null;
          try {
             constantLiteral = constantValue.calculateLiteral(getScope());
          } catch(ConstantNotLiteral e) {
             // ignore
          }
-         String literalStr = (constantLiteral == null) ? "null" : constantLiteral.toString(getProgram());
+         boolean typeOk = false;
          if(SymbolType.NUMBER.equals(valueType)) {
             if(variableType instanceof SymbolTypeIntegerFixed && constantLiteral instanceof ConstantInteger) {
                SymbolTypeIntegerFixed variableTypeInt = (SymbolTypeIntegerFixed) variableType;
@@ -108,6 +107,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
             }
          }
          if(!typeOk) {
+            String literalStr = (constantLiteral == null) ? "null" : constantLiteral.toString(getProgram());
             throw new CompileError(
                   "Constant variable has a non-matching type \n variable: " + variable.toString(getProgram()) +
                         "\n value: (" + valueType.toString() + ") " + literalStr +

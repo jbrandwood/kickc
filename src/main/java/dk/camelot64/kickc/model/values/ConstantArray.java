@@ -9,4 +9,6 @@ public interface ConstantArray extends ConstantValue {
 
    SymbolType getElementType();
 
+   ConstantValue getSize();
+
 }

@@ -280,9 +280,6 @@ mul8s: {
     .label a = $c
     ldx.z a
     tya
-    sta.z mul8u.mb
-    lda #0
-    sta.z mul8u.mb+1
     jsr mul8u
     lda.z a
     cmp #0
@@ -308,7 +305,9 @@ mul8u: {
     .label mb = $d
     .label res = 8
     .label return = 8
-    lda #<0
+    sta.z mb
+    lda #0
+    sta.z mb+1
     sta.z res
     sta.z res+1
   __b1:
@@ -496,9 +495,6 @@ mul8u_compare: {
     jsr mulf8u
     ldx.z a
     lda.z b
-    sta.z mul8u.mb
-    lda #0
-    sta.z mul8u.mb+1
     jsr mul8u
     lda.z ms
     cmp.z mf

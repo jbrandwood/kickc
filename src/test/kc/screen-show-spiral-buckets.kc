@@ -16,6 +16,22 @@ const byte* SCREEN_FILL = 0x0400;
 // Char to fill with
 const byte FILL_CHAR = '*';
 
+// The number of buckets in our bucket sort
+const byte NUM_BUCKETS = 0x30;
+
+// Array containing the bucket size for each of the distance buckets
+byte* BUCKET_SIZES = malloc(NUM_BUCKETS*sizeof(byte));
+
+// Buckets containing screen indices for each distance from the center.
+// BUCKETS[dist] is an array of words containing screen indices.
+// The size of the array BUCKETS[dist] is BUCKET_SIZES[dist]
+word** BUCKETS = malloc(NUM_BUCKETS*sizeof(word*));
+
+// Current index into each bucket. Used while populating the buckets. (After population the end the values will be equal to the bucket sizes)
+byte* BUCKET_IDX = malloc(NUM_BUCKETS*sizeof(byte));
+
+
+
 void main() {
     asm { sei }
     init_dist_screen(SCREEN_DIST);
@@ -65,20 +81,6 @@ void main() {
     while(true)
         (*(COLS+999))++;
 }
-
-// The number of buckets in our bucket sort
-const byte NUM_BUCKETS = 0x30;
-
-// Array containing the bucket size for each of the distance buckets
-byte* BUCKET_SIZES = malloc(NUM_BUCKETS*sizeof(byte));
-
-// Buckets containing screen indices for each distance from the center.
-// BUCKETS[dist] is an array of words containing screen indices.
-// The size of the array BUCKETS[dist] is BUCKET_SIZES[dist]
-word** BUCKETS = malloc(NUM_BUCKETS*sizeof(word*));
-
-// Current index into each bucket. Used while populating the buckets. (After population the end the values will be equal to the bucket sizes)
-byte* BUCKET_IDX = malloc(NUM_BUCKETS*sizeof(byte));
 
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
 void init_buckets(byte* screen) {

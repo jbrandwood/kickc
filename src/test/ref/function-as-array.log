@@ -1,7 +1,11 @@
+Resolved forward reference new_ball to (void()) new_ball((byte) new_ball::i)
+Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@1
+  to:@2
+
+(void()) main()
 main: scope:[main]  from @2
   (byte) new_ball::i#0 ← (number) 0
   call new_ball 
@@ -11,17 +15,16 @@ main::@1: scope:[main]  from main
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte[$10]) BALLS#0 ← { fill( $10, 0) }
-  to:@2
+
+(void()) new_ball((byte) new_ball::i)
 new_ball: scope:[new_ball]  from main
   (byte) new_ball::i#1 ← phi( main/(byte) new_ball::i#0 )
-  *((byte[$10]) BALLS#0 + (byte) new_ball::i#1) ← ++ *((byte[$10]) BALLS#0 + (byte) new_ball::i#1)
+  *((const byte*) BALLS + (byte) new_ball::i#1) ← ++ *((const byte*) BALLS + (byte) new_ball::i#1)
   to:new_ball::@return
 new_ball::@return: scope:[new_ball]  from new_ball
   return 
   to:@return
-@2: scope:[]  from @1
+@2: scope:[]  from @begin
   call main 
   to:@3
 @3: scope:[]  from @2
@@ -29,13 +32,11 @@ new_ball::@return: scope:[new_ball]  from new_ball
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(label) @1
 (label) @2
 (label) @3
 (label) @begin
 (label) @end
-(byte[$10]) BALLS
-(byte[$10]) BALLS#0
+(const byte*) BALLS[(number) $10]  = { fill( $10, 0) }
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -55,30 +56,25 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values (byte) new_ball::i#1 (byte) new_ball::i#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [3] (byte[$10]) BALLS#0 ← { fill( $10, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) new_ball::i#0 = 0
-Constant (const byte[$10]) BALLS#0 = { fill( $10, 0) }
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero BALLS#0 in [5] *((const byte[$10]) BALLS#0 + (const byte) new_ball::i#0) ← ++ *((const byte[$10]) BALLS#0 + (const byte) new_ball::i#0)
-Simplifying expression containing zero BALLS#0 in [5] *((const byte[$10]) BALLS#0 + (const byte) new_ball::i#0) ← ++ *((const byte[$10]) BALLS#0)
+Simplifying expression containing zero BALLS in [4] *((const byte*) BALLS + (const byte) new_ball::i#0) ← ++ *((const byte*) BALLS + (const byte) new_ball::i#0)
+Simplifying expression containing zero BALLS in [4] *((const byte*) BALLS + (const byte) new_ball::i#0) ← ++ *((const byte*) BALLS)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) new_ball::i#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to new_ball:7 
+Calls in [] to main:2 
+Calls in [main] to new_ball:6 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @1
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@1
 Renumbering block @2 to @1
@@ -97,6 +93,8 @@ FINAL CONTROL FLOW GRAPH
   to:@end
 @end: scope:[]  from @1
   [3] phi()
+
+(void()) main()
 main: scope:[main]  from @1
   [4] phi()
   [5] call new_ball 
@@ -104,8 +102,10 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   [6] return 
   to:@return
+
+(void()) new_ball((byte) new_ball::i)
 new_ball: scope:[new_ball]  from main
-  [7] *((const byte[$10]) BALLS#0) ← ++ *((const byte[$10]) BALLS#0)
+  [7] *((const byte*) BALLS) ← ++ *((const byte*) BALLS)
   to:new_ball::@return
 new_ball::@return: scope:[new_ball]  from new_ball
   [8] return 
@@ -113,7 +113,6 @@ new_ball::@return: scope:[new_ball]  from new_ball
 
 
 VARIABLE REGISTER WEIGHTS
-(byte[$10]) BALLS
 (void()) main()
 (void()) new_ball((byte) new_ball::i)
 (byte) new_ball::i
@@ -122,48 +121,49 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-Target platform is c64basic
+Target platform is c64basic / MOS6502X
   // File Comments
 // Tests treating a function like an array
 // Should produce an error
+// https://gitlab.com/camelot/kickc/issues/276
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call new_ball 
     jsr new_ball
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [6] return 
     rts
 }
   // new_ball
 new_ball: {
-    // [7] *((const byte[$10]) BALLS#0) ← ++ *((const byte[$10]) BALLS#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *((const byte*) BALLS) ← ++ *((const byte*) BALLS) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BALLS
-    jmp breturn
+    jmp __breturn
     // new_ball::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -185,44 +185,45 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests treating a function like an array
 // Should produce an error
+// https://gitlab.com/camelot/kickc/issues/276
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(bbegin)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   // @begin
-bbegin:
+__bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
-b1_from_bbegin:
-  jmp b1
+__b1_from___bbegin:
+  jmp __b1
   // @1
-b1:
+__b1:
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-main_from_b1:
+main_from___b1:
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
-bend_from_b1:
-  jmp bend
+__bend_from___b1:
+  jmp __bend
   // @end
-bend:
+__bend:
   // main
 main: {
     // [5] call new_ball 
     jsr new_ball
-    jmp breturn
+    jmp __breturn
     // main::@return
-  breturn:
+  __breturn:
     // [6] return 
     rts
 }
   // new_ball
 new_ball: {
-    // [7] *((const byte[$10]) BALLS#0) ← ++ *((const byte[$10]) BALLS#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *((const byte*) BALLS) ← ++ *((const byte*) BALLS) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BALLS
-    jmp breturn
+    jmp __breturn
     // new_ball::@return
-  breturn:
+  __breturn:
     // [8] return 
     rts
 }
@@ -230,32 +231,32 @@ new_ball: {
   BALLS: .fill $10, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp b1
-Removing instruction jmp bend
-Removing instruction jmp breturn
-Removing instruction jmp breturn
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction b1_from_bbegin:
-Removing instruction b1:
-Removing instruction main_from_b1:
-Removing instruction bend_from_b1:
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction bend:
-Removing instruction breturn:
-Removing instruction breturn:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
 Succesful ASM optimization Pass5SkipBegin
-Removing instruction bbegin:
+Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte[$10]) BALLS
-(const byte[$10]) BALLS#0 BALLS = { fill( $10, 0) }
+(const byte*) BALLS[(number) $10]  = { fill( $10, 0) }
 (void()) main()
 (label) main::@return
 (void()) new_ball((byte) new_ball::i)
@@ -270,6 +271,7 @@ Score: 24
   // File Comments
 // Tests treating a function like an array
 // Should produce an error
+// https://gitlab.com/camelot/kickc/issues/276
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -295,7 +297,7 @@ main: {
   // new_ball
 new_ball: {
     // BALLS[i]++;
-    // [7] *((const byte[$10]) BALLS#0) ← ++ *((const byte[$10]) BALLS#0) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *((const byte*) BALLS) ← ++ *((const byte*) BALLS) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BALLS
     // new_ball::@return
     // }

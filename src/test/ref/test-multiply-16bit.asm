@@ -146,9 +146,9 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($1a) str)
+// print_str(byte* zp($1c) str)
 print_str: {
-    .label str = $1a
+    .label str = $1c
   __b1:
     ldy #0
     lda (str),y
@@ -347,10 +347,10 @@ print_sword: {
 // Fixes offsets introduced by using unsigned multiplication
 // mulf16s(signed word zp($e) a, signed word zp($10) b)
 mulf16s: {
-    .label __9 = $1c
-    .label __13 = $1e
-    .label __16 = $1c
-    .label __17 = $1e
+    .label __9 = $18
+    .label __13 = $1a
+    .label __16 = $18
+    .label __17 = $1a
     .label m = $a
     .label return = $a
     .label a = $e
@@ -404,14 +404,14 @@ mulf16s: {
 }
 // Fast multiply two unsigned words to a double word result
 // Done in assembler to utilize fast addition A+X
-// mulf16u(word zp($1c) a, word zp($1e) b)
+// mulf16u(word zp($18) a, word zp($1a) b)
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
     .label memR = $fc
     .label return = $a
-    .label a = $1c
-    .label b = $1e
+    .label a = $18
+    .label b = $1a
     lda.z a
     sta memA
     lda.z a+1
@@ -526,10 +526,10 @@ mulf16u: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zp($e) a, signed word zp($10) b)
 mul16s: {
-    .label __9 = $1c
-    .label __13 = $1e
-    .label __16 = $1c
-    .label __17 = $1e
+    .label __9 = $1a
+    .label __13 = $1c
+    .label __16 = $1a
+    .label __17 = $1c
     .label m = 6
     .label return = 6
     .label a = $e
@@ -542,13 +542,6 @@ mul16s: {
     sta.z mul16u.b
     lda.z b+1
     sta.z mul16u.b+1
-    lda.z mul16u.b
-    sta.z mul16u.mb
-    lda.z mul16u.b+1
-    sta.z mul16u.mb+1
-    lda #0
-    sta.z mul16u.mb+2
-    sta.z mul16u.mb+3
     jsr mul16u
     lda.z a+1
     bpl __b1
@@ -589,18 +582,25 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zp($17) a, word zp($1a) b)
+// mul16u(word zp($1c) a, word zp($1a) b)
 mul16u: {
     .label mb = $a
-    .label a = $17
+    .label a = $1c
     .label res = 6
     .label b = $1a
     .label return = 6
-    .label b_1 = $1e
+    lda.z b
+    sta.z mb
+    lda.z b+1
+    sta.z mb+1
     lda #0
+    sta.z mb+2
+    sta.z mb+3
     sta.z res
     sta.z res+1
+    lda #<0>>$10
     sta.z res+2
+    lda #>0>>$10
     sta.z res+3
   __b1:
     lda.z a
@@ -640,9 +640,9 @@ mul16u: {
 // muls16s(signed word zp($e) a, signed word zp($10) b)
 muls16s: {
     .label m = 2
-    .label j = $1c
+    .label j = $18
     .label return = 2
-    .label i = $1e
+    .label i = $1a
     .label a = $e
     .label b = $10
     lda.z a+1
@@ -652,11 +652,14 @@ muls16s: {
     lda.z a
     beq b2
   !:
-    lda #0
+    lda #<0
     sta.z m
     sta.z m+1
+    lda #<0>>$10
     sta.z m+2
+    lda #>0>>$10
     sta.z m+3
+    lda #<0
     sta.z j
     sta.z j+1
   __b3:
@@ -668,10 +671,12 @@ muls16s: {
     bne __b4
     rts
   b2:
-    lda #0
+    lda #<0
     sta.z return
     sta.z return+1
+    lda #<0>>$10
     sta.z return+2
+    lda #>0>>$10
     sta.z return+3
     rts
   __b4:
@@ -700,11 +705,14 @@ muls16s: {
   !:
     jmp __b3
   b3:
-    lda #0
+    lda #<0
     sta.z m
     sta.z m+1
+    lda #<0>>$10
     sta.z m+2
+    lda #>0>>$10
     sta.z m+3
+    lda #<0
     sta.z i
     sta.z i+1
   __b5:
@@ -744,8 +752,8 @@ muls16s: {
 }
 // Perform many possible word multiplications (slow and fast) and compare the results
 mul16u_compare: {
-    .label a = $1c
-    .label b = $1e
+    .label a = $18
+    .label b = $1a
     .label ms = 2
     .label mn = 6
     .label mf = $a
@@ -787,13 +795,6 @@ mul16u_compare: {
     sta.z mul16u.a
     lda.z a+1
     sta.z mul16u.a+1
-    lda.z mul16u.b_1
-    sta.z mul16u.mb
-    lda.z mul16u.b_1+1
-    sta.z mul16u.mb+1
-    lda #0
-    sta.z mul16u.mb+2
-    sta.z mul16u.mb+3
     jsr mul16u
     jsr mulf16u
     lda.z ms
@@ -842,9 +843,7 @@ mul16u_compare: {
   __b5:
     iny
     cpy #$10
-    beq !__b2+
-    jmp __b2
-  !__b2:
+    bne __b2
     inc.z i
     lda #$10
     cmp.z i
@@ -870,10 +869,10 @@ mul16u_compare: {
     str1: .text "word multiply results match!"
     .byte 0
 }
-// mul16u_error(word zp($e) a, word zp($1e) b, dword zp(2) ms, dword zp(6) mn, dword zp($a) mf)
+// mul16u_error(word zp($e) a, word zp($1a) b, dword zp(2) ms, dword zp(6) mn, dword zp($a) mf)
 mul16u_error: {
     .label a = $e
-    .label b = $1e
+    .label b = $1a
     .label ms = 2
     .label mn = 6
     .label mf = $a
@@ -938,23 +937,26 @@ mul16u_error: {
 }
 // Slow multiplication of unsigned words
 // Calculate an unsigned multiplication by repeated addition
-// muls16u(word zp($1c) a, word zp($1e) b)
+// muls16u(word zp($18) a, word zp($1a) b)
 muls16u: {
     .label return = 2
     .label m = 2
     .label i = $e
-    .label a = $1c
-    .label b = $1e
+    .label a = $18
+    .label b = $1a
     lda.z a
     bne !+
     lda.z a+1
     beq b1
   !:
-    lda #0
+    lda #<0
     sta.z m
     sta.z m+1
+    lda #<0>>$10
     sta.z m+2
+    lda #>0>>$10
     sta.z m+3
+    lda #<0
     sta.z i
     sta.z i+1
   __b2:
@@ -966,10 +968,12 @@ muls16u: {
     bne __b3
     rts
   b1:
-    lda #0
+    lda #<0
     sta.z return
     sta.z return+1
+    lda #<0>>$10
     sta.z return+2
+    lda #>0>>$10
     sta.z return+3
     rts
   __b3:
@@ -999,13 +1003,13 @@ mulf_init: {
     // Counter used for determining x%2==0
     .label sqr1_hi = $13
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $1a
+    .label sqr = $18
     .label sqr1_lo = $10
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $17
+    .label sqr2_hi = $1c
     .label sqr2_lo = $15
     //Start with g(0)=f(255)
-    .label dir = $19
+    .label dir = $17
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -1119,7 +1123,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $1a
+    .label dst = $1c
     lda #<str
     sta.z dst
     lda #>str

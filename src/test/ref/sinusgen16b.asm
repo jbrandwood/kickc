@@ -226,11 +226,14 @@ sin16s_genb: {
     sta.z sintab
     lda #>main.sintab2
     sta.z sintab+1
-    lda #0
+    lda #<0
     sta.z x
     sta.z x+1
+    lda #<0>>$10
     sta.z x+2
+    lda #>0>>$10
     sta.z x+3
+    lda #<0
     sta.z i
     sta.z i+1
   // u[4.28]
@@ -454,8 +457,8 @@ mulu16_sel: {
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
 // mul16u(word zp($17) a, word zp(5) b)
 mul16u: {
-    .label a = $17
     .label mb = $1b
+    .label a = $17
     .label res = $d
     .label b = 5
     .label return = $d
@@ -468,7 +471,9 @@ mul16u: {
     sta.z mb+3
     sta.z res
     sta.z res+1
+    lda #<0>>$10
     sta.z res+2
+    lda #>0>>$10
     sta.z res+3
   __b1:
     lda.z a
@@ -607,11 +612,14 @@ sin16s_gen: {
     sta.z sintab
     lda #>main.sintab1
     sta.z sintab+1
-    lda #0
+    lda #<0
     sta.z x
     sta.z x+1
+    lda #<0>>$10
     sta.z x+2
+    lda #>0>>$10
     sta.z x+3
+    lda #<0
     sta.z i
     sta.z i+1
   // u[4.28]

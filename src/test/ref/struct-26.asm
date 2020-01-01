@@ -24,9 +24,9 @@ main: {
     sta.z point2
     ldx #2
   !:
+    lda point1+OFFSET_STRUCT_POINT_INITIALS-1,x
+    sta point2+OFFSET_STRUCT_POINT_INITIALS-1,x
     dex
-    lda point1+OFFSET_STRUCT_POINT_INITIALS,x
-    sta point2+OFFSET_STRUCT_POINT_INITIALS,x
     bne !-
     lda.z point2
     sta SCREEN

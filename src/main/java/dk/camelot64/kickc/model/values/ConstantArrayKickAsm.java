@@ -22,10 +22,19 @@ public class ConstantArrayKickAsm implements ConstantArray {
    /** Variables/constants used by the kickasm code. */
    private List<SymbolRef> uses;
 
-   public ConstantArrayKickAsm(SymbolType elementType, String kickAsmCode, List<SymbolRef> uses) {
+   /** Array size (from declaration) */
+   private ConstantValue size;
+
+   public ConstantArrayKickAsm(SymbolType elementType, String kickAsmCode, List<SymbolRef> uses, ConstantValue size) {
       this.elementType = elementType;
       this.kickAsmCode = kickAsmCode;
       this.uses = uses;
+      this.size = size;
+   }
+
+   @Override
+   public ConstantValue getSize() {
+      return size;
    }
 
    public List<SymbolRef> getUses() {

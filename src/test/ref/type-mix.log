@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (signed word) main::w#0 ← (number) 0
+  (signed word) main::w#0 ← (signed word) 0
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -52,17 +52,12 @@ SYMBOL TABLE SSA
 (signed word) main::w#1
 (signed word) main::w#2
 
-Adding number conversion cast (snumber) 0 in (signed word) main::w#0 ← (number) 0
 Adding number conversion cast (snumber) $c in (number~) main::$0 ← (signed word) main::w#2 - (number) $c
 Adding number conversion cast (snumber) main::$0 in (number~) main::$0 ← (signed word) main::w#2 - (snumber)(number) $c
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (signed word) main::w#0 ← (snumber)(number) 0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 0
 Simplifying constant integer cast $c
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type (signed byte) 0
 Finalized signed number type (signed byte) $c
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to signed word in (snumber~) main::$0 ← (signed word) main::w#2 - (signed byte) $c
@@ -84,7 +79,7 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const signed word) main::w#0
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
-Constant inlined main::w#0 = (signed byte) 0
+Constant inlined main::w#0 = (signed word) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
@@ -123,7 +118,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [5] (signed word) main::w#2 ← phi( main/(signed byte) 0 main::@1/(signed word) main::w#1 )
+  [5] (signed word) main::w#2 ← phi( main/(signed word) 0 main::@1/(signed word) main::w#1 )
   [6] (signed word) main::w#1 ← (signed word) main::w#2 - (signed byte) $c
   [7] (byte~) main::$1 ← < (signed word) main::w#1
   [8] *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$1
@@ -193,7 +188,7 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [5] phi (signed word) main::w#2 = (signed byte) 0 [phi:main->main::@1#1] -- vwsz1=vbsc1 
+    // [5] phi (signed word) main::w#2 = (signed word) 0 [phi:main->main::@1#1] -- vwsz1=vwsc1 
     lda #<0
     sta.z w
     lda #>0
@@ -284,7 +279,7 @@ main: {
   __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi (signed word) main::w#2 = (signed byte) 0 [phi:main->main::@1#1] -- vwsz1=vbsc1 
+    // [5] phi (signed word) main::w#2 = (signed word) 0 [phi:main->main::@1#1] -- vwsz1=vwsc1 
     lda #<0
     sta.z w
     lda #>0
@@ -396,7 +391,7 @@ main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi (signed word) main::w#2 = (signed byte) 0 [phi:main->main::@1#1] -- vwsz1=vbsc1 
+    // [5] phi (signed word) main::w#2 = (signed word) 0 [phi:main->main::@1#1] -- vwsz1=vwsc1 
     txa
     sta.z w
     sta.z w+1

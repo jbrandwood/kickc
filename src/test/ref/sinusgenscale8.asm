@@ -335,10 +335,7 @@ mul8su: {
     .label m = 9
     tya
     tax
-    lda #<b
-    sta.z mul8u.mb
-    lda #>b
-    sta.z mul8u.mb+1
+    lda #b
     jsr mul8u
     cpy #0
     bpl __b1
@@ -355,7 +352,9 @@ mul8u: {
     .label mb = 6
     .label res = 9
     .label return = 9
-    lda #<0
+    sta.z mb
+    lda #0
+    sta.z mb+1
     sta.z res
     sta.z res+1
   __b1:
@@ -503,9 +502,6 @@ mulu8_sel: {
     .label __1 = 9
     .label select = $13
     tya
-    sta.z mul8u.mb
-    lda #0
-    sta.z mul8u.mb+1
     jsr mul8u
     ldy.z select
     beq !e+

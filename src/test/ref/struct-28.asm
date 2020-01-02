@@ -1,4 +1,4 @@
-// Minimal struct with C-Standard behavior - member is array, copy assignment (not supported yet)
+// Minimal struct with C-Standard behavior - member is array, copy assignment
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

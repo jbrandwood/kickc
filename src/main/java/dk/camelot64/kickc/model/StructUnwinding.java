@@ -66,23 +66,29 @@ public class StructUnwinding {
          return new ArrayList<>(memberUnwinding.keySet());
       }
 
-      public RValue getMemberUnwinding(String memberName, ProgramScope programScope) {
-         return this.memberUnwinding.get(memberName);
-      }
-
       @Override
-      public SymbolType getMemberType(String memberName) {
-         return structDefinition.getMember(memberName).getType();
-      }
+      public RValueUnwinding getMemberUnwinding(String memberName) {
+         return new RValueUnwinding() {
+            @Override
+            public SymbolType getType() {
+               return structDefinition.getMember(memberName).getType();
+            }
 
-      @Override
-      public ArraySpec getArraySpec(String memberName) {
-         return structDefinition.getMember(memberName).getArraySpec();
-      }
+            @Override
+            public ArraySpec getArraySpec() {
+               return structDefinition.getMember(memberName).getArraySpec();
+            }
 
-      @Override
-      public RValue getMemberArrayUnwinding(String memberName, ProgramScope scope, ConstantValue arraySize) {
-         throw new RuntimeException("TODO: Implement!");
+            @Override
+            public RValue getUnwinding(ProgramScope programScope) {
+               return memberUnwinding.get(memberName);
+            }
+
+            @Override
+            public RValue getArrayUnwinding(ProgramScope scope, ConstantValue arraySize) {
+               throw new RuntimeException("TODO: Implement!");
+            }
+         };
       }
 
    }
@@ -98,36 +104,48 @@ public class StructUnwinding {
       List<String> getMemberNames();
 
       /**
-       * Get the RValue that a specific member was unwound to
+       * Get the RValue unwinding to use for copying a single member of the struct
        *
        * @param memberName The member name
+       * @return The unwinding of the member
+       */
+      RValueUnwinding getMemberUnwinding(String memberName);
+
+   }
+
+   /**
+    * Unwinding value used for copying a value from one variable to another.
+    */
+   public interface RValueUnwinding {
+
+      /**
+       * Get the type of the value
+       * @return The type of the value
+       */
+      SymbolType getType();
+
+      /**
+       * Get the array nature of the value
+       * @return The array nature of the value
+       */
+      ArraySpec getArraySpec();
+
+      /**
+       * Get the RValue to use in the assignment as LValue - and as RValue if the member is a not an array value
+       *
        * @param programScope The program scope
        * @return The unwinding of the member
        */
-      RValue getMemberUnwinding(String memberName, ProgramScope programScope);
+      RValue getUnwinding(ProgramScope programScope);
 
       /**
-       * Get the type of a specific member
-       * @param memberName The name of the struct member
-       * @return The type of the member
-       */
-      SymbolType getMemberType(String memberName);
-
-      /**
-       * Get the array nature of a specific member
-       * @param memberName The member name
-       * @return The array nature of the member
-       */
-      ArraySpec getArraySpec(String memberName);
-
-      /**
-       * Get unwinding value to use as RValue when for copying/setting an array member value
-       * @param memberName The name of the member
+       * Get Rvalue to use when for copying/setting an array value. Typically returns  memset/memcpy commands.
        * @param scope The program scope
        * @param arraySize The declared size of the array
        * @return The value to use as RValue
        */
-      RValue getMemberArrayUnwinding(String memberName, ProgramScope scope, ConstantValue arraySize);
+      RValue getArrayUnwinding(ProgramScope scope, ConstantValue arraySize);
 
    }
+
 }

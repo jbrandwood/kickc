@@ -4,7 +4,10 @@ import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.passes.unwinding.RValueUnwinding;
+import dk.camelot64.kickc.passes.unwinding.StructMemberUnwinding;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -70,7 +73,7 @@ public class StructUnwinding {
       public RValueUnwinding getMemberUnwinding(String memberName) {
          return new RValueUnwinding() {
             @Override
-            public SymbolType getType() {
+            public SymbolType getSymbolType() {
                return structDefinition.getMember(memberName).getType();
             }
 
@@ -85,66 +88,22 @@ public class StructUnwinding {
             }
 
             @Override
-            public RValue getArrayUnwinding(ProgramScope scope, ConstantValue arraySize) {
+            public boolean isBulkCopyable() {
+               return getArraySpec()!=null || getSymbolType() instanceof SymbolTypeStruct;
+            }
+
+            @Override
+            public LValue getBulkLValue(ProgramScope scope) {
+               final RValue unwinding = getUnwinding(scope);
+               return new PointerDereferenceSimple(unwinding);
+            }
+
+            @Override
+            public RValue getBulkRValue(ProgramScope scope) {
                throw new RuntimeException("TODO: Implement!");
             }
          };
       }
-
-   }
-
-   /** Information about how members of an struct Lvalue is unwound. */
-   public interface StructMemberUnwinding {
-
-      /**
-       * Get the names of the members of the struct
-       *
-       * @return the names
-       */
-      List<String> getMemberNames();
-
-      /**
-       * Get the RValue unwinding to use for copying a single member of the struct
-       *
-       * @param memberName The member name
-       * @return The unwinding of the member
-       */
-      RValueUnwinding getMemberUnwinding(String memberName);
-
-   }
-
-   /**
-    * Unwinding value used for copying a value from one variable to another.
-    */
-   public interface RValueUnwinding {
-
-      /**
-       * Get the type of the value
-       * @return The type of the value
-       */
-      SymbolType getType();
-
-      /**
-       * Get the array nature of the value
-       * @return The array nature of the value
-       */
-      ArraySpec getArraySpec();
-
-      /**
-       * Get the RValue to use in the assignment as LValue - and as RValue if the member is a not an array value
-       *
-       * @param programScope The program scope
-       * @return The unwinding of the member
-       */
-      RValue getUnwinding(ProgramScope programScope);
-
-      /**
-       * Get Rvalue to use when for copying/setting an array value. Typically returns  memset/memcpy commands.
-       * @param scope The program scope
-       * @param arraySize The declared size of the array
-       * @return The value to use as RValue
-       */
-      RValue getArrayUnwinding(ProgramScope scope, ConstantValue arraySize);
 
    }
 

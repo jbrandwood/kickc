@@ -89,7 +89,7 @@ public class StructUnwinding {
 
             @Override
             public boolean isBulkCopyable() {
-               return getArraySpec()!=null || getSymbolType() instanceof SymbolTypeStruct;
+               return getArraySpec()!=null;
             }
 
             @Override

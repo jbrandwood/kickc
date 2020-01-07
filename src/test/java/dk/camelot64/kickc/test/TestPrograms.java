@@ -1199,7 +1199,7 @@ public class TestPrograms {
 
    @Test
    public void testStruct17() throws IOException, URISyntaxException {
-      compileAndCompare("struct-17", log());
+      compileAndCompare("struct-17");
    }
 
    @Test

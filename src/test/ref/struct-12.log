@@ -14,10 +14,10 @@ Created struct value member variable (byte*) print_person::person_name
 Converted struct value to member variables (struct Person) print_person::person
 Converted procedure struct value parameter to member unwinding (void()) print_person((byte) print_person::person_id , (byte*) print_person::person_name)
 Adding struct value member variable copy (byte) main::jesper_id ← (byte) 4
-Adding struct value member variable copy *((const byte*) main::jesper_name) ← memcpy(*((const byte*) $0), (number) $40)
+Adding struct value member variable copy *((const byte*) main::jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40)
 Converted procedure struct value parameter to member unwinding in call (void~) main::$0 ← call print_person (byte) main::jesper_id (const byte*) main::jesper_name 
 Adding struct value member variable copy (byte) main::henriette_id ← (byte) 7
-Adding struct value member variable copy *((const byte*) main::henriette_name) ← memcpy(*((const byte*) $1), (number) $40)
+Adding struct value member variable copy *((const byte*) main::henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40)
 Converted procedure struct value parameter to member unwinding in call (void~) main::$1 ← call print_person (byte) main::henriette_id (const byte*) main::henriette_name 
 Replacing struct member reference (struct Person) print_person::person.id with member unwinding reference (byte) print_person::person_id
 Replacing struct member reference (struct Person) print_person::person.name with member unwinding reference (byte*) print_person::person_name
@@ -36,7 +36,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte) idx#18 ← phi( @2/(byte) idx#20 )
-  *((const byte*) main::jesper_name) ← memcpy(*((const byte*) $0), (number) $40)
+  *((const byte*) main::jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40)
   (byte) print_person::person_id#0 ← (const byte) main::jesper_id
   (byte*) print_person::person_name#0 ← (const byte*) main::jesper_name
   call print_person 
@@ -44,7 +44,7 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   (byte) idx#10 ← phi( main/(byte) idx#8 )
   (byte) idx#0 ← (byte) idx#10
-  *((const byte*) main::henriette_name) ← memcpy(*((const byte*) $1), (number) $40)
+  *((const byte*) main::henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40)
   (byte) print_person::person_id#1 ← (const byte) main::henriette_id
   (byte*) print_person::person_name#1 ← (const byte*) main::henriette_name
   call print_person 
@@ -254,11 +254,11 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::jesper_name) ← memcpy(*((const byte*) $0), (number) $40)
+  [4] *((const byte*) main::jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40)
   [5] call print_person 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] *((const byte*) main::henriette_name) ← memcpy(*((const byte*) $1), (number) $40)
+  [6] *((const byte*) main::henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40)
   [7] call print_person 
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -367,7 +367,7 @@ __bend:
 main: {
     .const jesper_id = 4
     .const henriette_id = 7
-    // [4] *((const byte*) main::jesper_name) ← memcpy(*((const byte*) $0), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+    // [4] *((const byte*) main::jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
     ldy #$40
   !:
     lda __0-1,y
@@ -392,7 +392,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) main::henriette_name) ← memcpy(*((const byte*) $1), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+    // [6] *((const byte*) main::henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
     ldy #$40
   !:
     lda __1-1,y
@@ -501,8 +501,8 @@ print_person: {
   .fill $36, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::jesper_name) ← memcpy(*((const byte*) $0), (number) $40) [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
-Statement [6] *((const byte*) main::henriette_name) ← memcpy(*((const byte*) $1), (number) $40) [ idx#16 ] ( main:2 [ idx#16 ] ) always clobbers reg byte a reg byte y 
+Statement [4] *((const byte*) main::jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40) [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Statement [6] *((const byte*) main::henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40) [ idx#16 ] ( main:2 [ idx#16 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ idx#13 idx#16 ]
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ idx#13 idx#16 ]
 Statement [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) [ idx#13 print_person::person_name#4 ] ( main:2::print_person:5 [ idx#13 print_person::person_name#4 ] main:2::print_person:7 [ idx#13 print_person::person_name#4 ] ) always clobbers reg byte a 
@@ -513,8 +513,8 @@ Removing always clobbered register reg byte a as potential for zp[1]:6 [ print_p
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ idx#14 idx#5 idx#6 ]
 Statement [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' [ idx#14 ] ( main:2::print_person:5 [ idx#14 ] main:2::print_person:7 [ idx#14 ] ) always clobbers reg byte a 
 Statement [19] *((const byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) [ print_person::person_name#4 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person_name#4 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person_name#4 print_person::i#2 idx#14 ] ) always clobbers reg byte a 
-Statement [4] *((const byte*) main::jesper_name) ← memcpy(*((const byte*) $0), (number) $40) [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
-Statement [6] *((const byte*) main::henriette_name) ← memcpy(*((const byte*) $1), (number) $40) [ idx#16 ] ( main:2 [ idx#16 ] ) always clobbers reg byte a reg byte y 
+Statement [4] *((const byte*) main::jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40) [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Statement [6] *((const byte*) main::henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40) [ idx#16 ] ( main:2 [ idx#16 ] ) always clobbers reg byte a reg byte y 
 Statement [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) [ idx#13 print_person::person_name#4 ] ( main:2::print_person:5 [ idx#13 print_person::person_name#4 ] main:2::print_person:7 [ idx#13 print_person::person_name#4 ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ print_person::person_name#4 idx#4 ] ( main:2::print_person:5 [ print_person::person_name#4 idx#4 ] main:2::print_person:7 [ print_person::person_name#4 idx#4 ] ) always clobbers reg byte a 
 Statement [15] if((byte) 0!=*((byte*) print_person::person_name#4 + (byte) print_person::i#2)) goto print_person::@2 [ print_person::person_name#4 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ print_person::person_name#4 print_person::i#2 idx#14 ] main:2::print_person:7 [ print_person::person_name#4 print_person::i#2 idx#14 ] ) always clobbers reg byte a 
@@ -571,7 +571,7 @@ __bend:
 main: {
     .const jesper_id = 4
     .const henriette_id = 7
-    // [4] *((const byte*) main::jesper_name) ← memcpy(*((const byte*) $0), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+    // [4] *((const byte*) main::jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
     ldy #$40
   !:
     lda __0-1,y
@@ -595,7 +595,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) main::henriette_name) ← memcpy(*((const byte*) $1), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+    // [6] *((const byte*) main::henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
     ldy #$40
   !:
     lda __1-1,y
@@ -789,7 +789,7 @@ main: {
     .const jesper_id = 4
     .const henriette_id = 7
     // jesper = { 4, "jesper" }
-    // [4] *((const byte*) main::jesper_name) ← memcpy(*((const byte*) $0), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+    // [4] *((const byte*) main::jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
     ldy #$40
   !:
     lda __0-1,y
@@ -812,7 +812,7 @@ main: {
     jsr print_person
     // main::@1
     // henriette = { 7, "henriette" }
-    // [6] *((const byte*) main::henriette_name) ← memcpy(*((const byte*) $1), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+    // [6] *((const byte*) main::henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
     ldy #$40
   !:
     lda __1-1,y

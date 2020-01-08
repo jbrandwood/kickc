@@ -1,13 +1,10 @@
-Adding struct value member variable copy *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1) ← (byte) 'a'
-Adding struct value member variable copy *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) ← (byte) 'b'
+Adding struct value member variable copy *(&(struct foo) bar) ← memcpy(*(&(const struct foo) $0), struct foo, (const byte) SIZEOF_STRUCT_FOO)
 Replacing struct member reference (struct foo) bar.thing1 with member unwinding reference *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1)
 Replacing struct member reference (struct foo) bar.thing2 with member unwinding reference *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1) ← (byte) 'a'
-  *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) ← (byte) 'b'
-  (struct foo) bar ← struct-unwound {*((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1), *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2)}
+  *(&(struct foo) bar) ← memcpy(*(&(const struct foo) $0), struct foo, (const byte) SIZEOF_STRUCT_FOO)
   to:@1
 
 (void()) main()
@@ -29,12 +26,14 @@ main::@return: scope:[main]  from main
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(const struct foo) $0 = { thing1: (byte) 'a', thing2: (byte) 'b' }
 (label) @1
 (label) @2
 (label) @begin
 (label) @end
 (const byte) OFFSET_STRUCT_FOO_THING1 = (byte) 0
 (const byte) OFFSET_STRUCT_FOO_THING2 = (byte) 1
+(const byte) SIZEOF_STRUCT_FOO = (byte) 2
 (struct foo) bar loadstore
 (byte) foo::thing1
 (byte) foo::thing2
@@ -48,17 +47,15 @@ SYMBOL TABLE SSA
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Removing C-classic struct-unwound assignment [2] (struct foo) bar ← struct-unwound {*((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1), *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2)}
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)&bar in [0] *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1) ← (byte) 'a'
-Simplifying expression containing zero (byte*)&bar in [4] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1)
-Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)&(struct foo) bar)
+Simplifying expression containing zero (byte*)&bar in [2] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1)
+Simplifying expression containing zero main::SCREEN in [2] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)&(struct foo) bar)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) main::i#2 and assignment [5] (byte) main::i#2 ← ++ (byte) main::i#1
+Eliminating unused variable (byte) main::i#2 and assignment [4] (byte) main::i#2 ← ++ (byte) main::i#1
 Eliminating unused constant (const byte) OFFSET_STRUCT_FOO_THING1
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [3] (byte) main::i#1 ← ++ (const byte) main::i#0
+Constant right-side identified [2] (byte) main::i#1 ← ++ (const byte) main::i#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::i#1 = ++main::i#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -75,7 +72,7 @@ Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:3 
+Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
@@ -85,23 +82,22 @@ Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] *((byte*)&(struct foo) bar) ← (byte) 'a'
-  [1] *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) ← (byte) 'b'
+  [0] *(&(struct foo) bar) ← memcpy(*(&(const struct foo) $0), struct foo, (const byte) SIZEOF_STRUCT_FOO)
   to:@1
 @1: scope:[]  from @begin
-  [2] phi()
-  [3] call main 
+  [1] phi()
+  [2] call main 
   to:@end
 @end: scope:[]  from @1
-  [4] phi()
+  [3] phi()
 
 (void()) main()
 main: scope:[main]  from @1
-  [5] *((const byte*) main::SCREEN) ← *((byte*)&(struct foo) bar)
-  [6] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2)
+  [4] *((const byte*) main::SCREEN) ← *((byte*)&(struct foo) bar)
+  [5] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2)
   to:main::@return
 main::@return: scope:[main]  from main
-  [7] return 
+  [6] return 
   to:@return
 
 
@@ -128,23 +124,25 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const SIZEOF_STRUCT_FOO = 2
   .const OFFSET_STRUCT_FOO_THING2 = 1
   // @begin
 __bbegin:
-  // [0] *((byte*)&(struct foo) bar) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-  lda #'a'
-  sta bar
-  // [1] *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
-  lda #'b'
-  sta bar+OFFSET_STRUCT_FOO_THING2
-  // [2] phi from @begin to @1 [phi:@begin->@1]
+  // [0] *(&(struct foo) bar) ← memcpy(*(&(const struct foo) $0), struct foo, (const byte) SIZEOF_STRUCT_FOO) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+  ldy #SIZEOF_STRUCT_FOO
+!:
+  lda __0-1,y
+  sta bar-1,y
+  dey
+  bne !-
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
   // @1
 __b1:
-  // [3] call main 
+  // [2] call main 
   jsr main
-  // [4] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 __bend_from___b1:
   jmp __bend
   // @end
@@ -152,26 +150,26 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [5] *((const byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) -- _deref_pbuc1=_deref_pbuc2 
     lda bar
     sta SCREEN
-    // [6] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
     lda bar+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [6] return 
     rts
 }
   // File Data
-  bar: .byte 0, 0
+  __0: .byte 'a', 'b'
+  bar: .fill SIZEOF_STRUCT_FOO, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((byte*)&(struct foo) bar) ← (byte) 'a' [ bar ] (  [ bar ] ) always clobbers reg byte a 
-Statement [1] *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) ← (byte) 'b' [ bar ] (  [ bar ] ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) [ bar ] ( main:3 [ bar ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Statement [0] *(&(struct foo) bar) ← memcpy(*(&(const struct foo) $0), struct foo, (const byte) SIZEOF_STRUCT_FOO) [ bar ] (  [ bar ] ) always clobbers reg byte a reg byte y 
+Statement [4] *((const byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) [ bar ] ( main:2 [ bar ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Potential registers mem[2] [ bar ] : mem[2] , 
 
 REGISTER UPLIFT SCOPES
@@ -179,9 +177,9 @@ Uplift Scope [foo]
 Uplift Scope [main] 
 Uplift Scope [] 0: mem[2] [ bar ] 
 
-Uplifting [foo] best 49 combination 
-Uplifting [main] best 49 combination 
-Uplifting [] best 49 combination mem[2] [ bar ] 
+Uplifting [foo] best 53 combination 
+Uplifting [main] best 53 combination 
+Uplifting [] best 53 combination mem[2] [ bar ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -192,23 +190,25 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const SIZEOF_STRUCT_FOO = 2
   .const OFFSET_STRUCT_FOO_THING2 = 1
   // @begin
 __bbegin:
-  // [0] *((byte*)&(struct foo) bar) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-  lda #'a'
-  sta bar
-  // [1] *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
-  lda #'b'
-  sta bar+OFFSET_STRUCT_FOO_THING2
-  // [2] phi from @begin to @1 [phi:@begin->@1]
+  // [0] *(&(struct foo) bar) ← memcpy(*(&(const struct foo) $0), struct foo, (const byte) SIZEOF_STRUCT_FOO) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+  ldy #SIZEOF_STRUCT_FOO
+!:
+  lda __0-1,y
+  sta bar-1,y
+  dey
+  bne !-
+  // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
   // @1
 __b1:
-  // [3] call main 
+  // [2] call main 
   jsr main
-  // [4] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
 __bend_from___b1:
   jmp __bend
   // @end
@@ -216,20 +216,21 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [5] *((const byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) -- _deref_pbuc1=_deref_pbuc2 
     lda bar
     sta SCREEN
-    // [6] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
     lda bar+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [6] return 
     rts
 }
   // File Data
-  bar: .byte 0, 0
+  __0: .byte 'a', 'b'
+  bar: .fill SIZEOF_STRUCT_FOO, 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -247,10 +248,12 @@ Adding RTS to root block
 Succesful ASM optimization Pass5AddMainRts
 
 FINAL SYMBOL TABLE
+(const struct foo) $0 = { thing1: (byte) 'a', thing2: (byte) 'b' }
 (label) @1
 (label) @begin
 (label) @end
 (const byte) OFFSET_STRUCT_FOO_THING2 = (byte) 1
+(const byte) SIZEOF_STRUCT_FOO = (byte) 2
 (struct foo) bar loadstore mem[2]
 (byte) foo::thing1
 (byte) foo::thing2
@@ -263,7 +266,7 @@ mem[2] [ bar ]
 
 
 FINAL ASSEMBLER
-Score: 46
+Score: 50
 
   // File Comments
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
@@ -273,39 +276,42 @@ Score: 46
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const SIZEOF_STRUCT_FOO = 2
   .const OFFSET_STRUCT_FOO_THING2 = 1
   // @begin
 __bbegin:
   // bar = { 'a', 'b' }
-  // [0] *((byte*)&(struct foo) bar) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-  lda #'a'
-  sta bar
-  // [1] *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
-  lda #'b'
-  sta bar+OFFSET_STRUCT_FOO_THING2
-  // [2] phi from @begin to @1 [phi:@begin->@1]
+  // [0] *(&(struct foo) bar) ← memcpy(*(&(const struct foo) $0), struct foo, (const byte) SIZEOF_STRUCT_FOO) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+  ldy #SIZEOF_STRUCT_FOO
+!:
+  lda __0-1,y
+  sta bar-1,y
+  dey
+  bne !-
+  // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
-  // [3] call main 
+  // [2] call main 
   jsr main
   rts
-  // [4] phi from @1 to @end [phi:@1->@end]
+  // [3] phi from @1 to @end [phi:@1->@end]
   // @end
   // main
 main: {
     .label SCREEN = $400
     // SCREEN[i++] = bar.thing1
-    // [5] *((const byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) -- _deref_pbuc1=_deref_pbuc2 
     lda bar
     sta SCREEN
     // SCREEN[i++] = bar.thing2
-    // [6] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
     lda bar+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     // main::@return
     // }
-    // [7] return 
+    // [6] return 
     rts
 }
   // File Data
-  bar: .byte 0, 0
+  __0: .byte 'a', 'b'
+  bar: .fill SIZEOF_STRUCT_FOO, 0
 

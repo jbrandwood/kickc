@@ -3,17 +3,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
+  .const SIZEOF_STRUCT_FOO = $e
   .const OFFSET_STRUCT_FOO_THING2 = 1
   .const OFFSET_STRUCT_FOO_THING3 = 2
 __bbegin:
-  lda #'a'
-  sta bar
-  lda #'b'
-  sta bar+OFFSET_STRUCT_FOO_THING2
-  ldy #$c
+  ldy #SIZEOF_STRUCT_FOO
 !:
   lda __0-1,y
-  sta bar+OFFSET_STRUCT_FOO_THING3-1,y
+  sta bar-1,y
   dey
   bne !-
   jsr main
@@ -36,7 +33,8 @@ main: {
     bne __b1
     rts
 }
-  __0: .text "qwe"
+  __0: .byte 'a', 'b'
+  .text "qwe"
   .byte 0
   .fill 8, 0
-  bar: .byte 0, 0
+  bar: .fill SIZEOF_STRUCT_FOO, 0

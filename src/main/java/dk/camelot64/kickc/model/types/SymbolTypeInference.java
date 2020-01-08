@@ -118,9 +118,9 @@ public class SymbolTypeInference {
       } else if(rValue instanceof StackIdxValue) {
          return SymbolType.BYTE;
       } else if(rValue instanceof MemsetValue) {
-         return SymbolType.BYTE;
+         return ((MemsetValue) rValue).getType();
       } else if(rValue instanceof MemcpyValue) {
-         return SymbolType.BYTE;
+         return ((MemcpyValue) rValue).getType();
       } else if(rValue instanceof StructUnwoundPlaceholder) {
          return ((StructUnwoundPlaceholder) rValue).getTypeStruct();
       } else if(rValue instanceof ConstantStructValue) {

@@ -14,9 +14,9 @@ Created struct value member variable (byte*) print_person::person_name
 Converted struct value to member variables (struct Person) print_person::person
 Converted procedure struct value parameter to member unwinding (void()) print_person((byte) print_person::person_id , (byte*) print_person::person_name)
 Adding struct value member variable copy (byte) jesper_id ← (byte) 4
-Adding struct value member variable copy *((const byte*) jesper_name) ← memcpy(*((const byte*) $0), (number) $40)
+Adding struct value member variable copy *((const byte*) jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40)
 Adding struct value member variable copy (byte) henriette_id ← (byte) 7
-Adding struct value member variable copy *((const byte*) henriette_name) ← memcpy(*((const byte*) $1), (number) $40)
+Adding struct value member variable copy *((const byte*) henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40)
 Converted procedure struct value parameter to member unwinding in call (void~) main::$0 ← call print_person (byte) jesper_id (const byte*) jesper_name 
 Converted procedure struct value parameter to member unwinding in call (void~) main::$1 ← call print_person (byte) henriette_id (const byte*) henriette_name 
 Replacing struct member reference (struct Person) print_person::person.id with member unwinding reference (byte) print_person::person_id
@@ -31,8 +31,8 @@ Culled Empty Block (label) print_person::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  *((const byte*) jesper_name) ← memcpy(*((const byte*) $0), (number) $40)
-  *((const byte*) henriette_name) ← memcpy(*((const byte*) $1), (number) $40)
+  *((const byte*) jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40)
+  *((const byte*) henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40)
   to:@1
 
 (void()) main()
@@ -244,8 +244,8 @@ Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] *((const byte*) jesper_name) ← memcpy(*((const byte*) $0), (number) $40)
-  [1] *((const byte*) henriette_name) ← memcpy(*((const byte*) $1), (number) $40)
+  [0] *((const byte*) jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40)
+  [1] *((const byte*) henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40)
   to:@1
 @1: scope:[]  from @begin
   [2] phi()
@@ -355,14 +355,14 @@ Target platform is c64basic / MOS6502X
   .label idx_2 = 3
   // @begin
 __bbegin:
-  // [0] *((const byte*) jesper_name) ← memcpy(*((const byte*) $0), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+  // [0] *((const byte*) jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
   ldy #$40
 !:
   lda __0-1,y
   sta jesper_name-1,y
   dey
   bne !-
-  // [1] *((const byte*) henriette_name) ← memcpy(*((const byte*) $1), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+  // [1] *((const byte*) henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
   ldy #$40
 !:
   lda __1-1,y
@@ -507,8 +507,8 @@ print_person: {
   .fill $36, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte*) jesper_name) ← memcpy(*((const byte*) $0), (number) $40) [ ] (  [ ] ) always clobbers reg byte a reg byte y 
-Statement [1] *((const byte*) henriette_name) ← memcpy(*((const byte*) $1), (number) $40) [ ] (  [ ] ) always clobbers reg byte a reg byte y 
+Statement [0] *((const byte*) jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40) [ ] (  [ ] ) always clobbers reg byte a reg byte y 
+Statement [1] *((const byte*) henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40) [ ] (  [ ] ) always clobbers reg byte a reg byte y 
 Statement [11] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) [ idx#13 print_person::person_name#4 ] ( main:3::print_person:6 [ idx#13 print_person::person_name#4 ] main:3::print_person:8 [ idx#13 print_person::person_name#4 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ idx#13 idx#16 ]
 Statement [13] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ print_person::person_name#4 idx#4 ] ( main:3::print_person:6 [ print_person::person_name#4 idx#4 ] main:3::print_person:8 [ print_person::person_name#4 idx#4 ] ) always clobbers reg byte a 
@@ -518,8 +518,8 @@ Removing always clobbered register reg byte a as potential for zp[1]:6 [ print_p
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ idx#14 idx#5 idx#6 ]
 Statement [17] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' [ idx#14 ] ( main:3::print_person:6 [ idx#14 ] main:3::print_person:8 [ idx#14 ] ) always clobbers reg byte a 
 Statement [20] *((const byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) [ print_person::person_name#4 print_person::i#2 idx#14 ] ( main:3::print_person:6 [ print_person::person_name#4 print_person::i#2 idx#14 ] main:3::print_person:8 [ print_person::person_name#4 print_person::i#2 idx#14 ] ) always clobbers reg byte a 
-Statement [0] *((const byte*) jesper_name) ← memcpy(*((const byte*) $0), (number) $40) [ ] (  [ ] ) always clobbers reg byte a reg byte y 
-Statement [1] *((const byte*) henriette_name) ← memcpy(*((const byte*) $1), (number) $40) [ ] (  [ ] ) always clobbers reg byte a reg byte y 
+Statement [0] *((const byte*) jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40) [ ] (  [ ] ) always clobbers reg byte a reg byte y 
+Statement [1] *((const byte*) henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40) [ ] (  [ ] ) always clobbers reg byte a reg byte y 
 Statement [11] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) [ idx#13 print_person::person_name#4 ] ( main:3::print_person:6 [ idx#13 print_person::person_name#4 ] main:3::print_person:8 [ idx#13 print_person::person_name#4 ] ) always clobbers reg byte a 
 Statement [13] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ print_person::person_name#4 idx#4 ] ( main:3::print_person:6 [ print_person::person_name#4 idx#4 ] main:3::print_person:8 [ print_person::person_name#4 idx#4 ] ) always clobbers reg byte a 
 Statement [16] if((byte) 0!=*((byte*) print_person::person_name#4 + (byte) print_person::i#2)) goto print_person::@2 [ print_person::person_name#4 print_person::i#2 idx#14 ] ( main:3::print_person:6 [ print_person::person_name#4 print_person::i#2 idx#14 ] main:3::print_person:8 [ print_person::person_name#4 print_person::i#2 idx#14 ] ) always clobbers reg byte a 
@@ -558,14 +558,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const henriette_id = 7
   // @begin
 __bbegin:
-  // [0] *((const byte*) jesper_name) ← memcpy(*((const byte*) $0), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+  // [0] *((const byte*) jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
   ldy #$40
 !:
   lda __0-1,y
   sta jesper_name-1,y
   dey
   bne !-
-  // [1] *((const byte*) henriette_name) ← memcpy(*((const byte*) $1), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+  // [1] *((const byte*) henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
   ldy #$40
 !:
   lda __1-1,y
@@ -785,7 +785,7 @@ Score: 426
   // @begin
 __bbegin:
   // jesper = { 4, "jesper" }
-  // [0] *((const byte*) jesper_name) ← memcpy(*((const byte*) $0), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+  // [0] *((const byte*) jesper_name) ← memcpy(*(&(const byte*) $0), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
   ldy #$40
 !:
   lda __0-1,y
@@ -793,7 +793,7 @@ __bbegin:
   dey
   bne !-
   // henriette = { 7, "henriette" }
-  // [1] *((const byte*) henriette_name) ← memcpy(*((const byte*) $1), (number) $40) -- _deref_pbuc1=_deref_pbuc2_memcpy_vbuc3 
+  // [1] *((const byte*) henriette_name) ← memcpy(*(&(const byte*) $1), byte, (number) $40) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
   ldy #$40
 !:
   lda __1-1,y

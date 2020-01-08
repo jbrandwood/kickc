@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
+import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
@@ -312,6 +313,8 @@ public class Pass4CodeGeneration {
       ConstantValue constantValue = constantVar.getInitValue();
       if(constantValue instanceof ConstantArray) {
          return true;
+      } else if(constantValue instanceof ConstantStructValue) {
+         return true;
       } else {
          try {
             ConstantLiteral literal = constantValue.calculateLiteral(getScope());
@@ -492,7 +495,7 @@ public class Pass4CodeGeneration {
                asm.addDataAlignment(alignment);
             }
             ConstantValue constantValue = constantVar.getInitValue();
-            if(constantValue instanceof ConstantArray || constantValue instanceof ConstantString) {
+            if(constantValue instanceof ConstantArray || constantValue instanceof ConstantString || constantValue instanceof ConstantStructValue) {
                AsmDataChunk asmDataChunk = new AsmDataChunk();
                addChunkData(asmDataChunk, constantValue, constantVar.getType(), constantVar.getArraySpec(), scopeRef);
                asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
@@ -537,7 +540,8 @@ public class Pass4CodeGeneration {
                      asm.addDataAlignment(alignment);
                   }
                   AsmDataChunk asmDataChunk = new AsmDataChunk();
-                  addChunkData(asmDataChunk, ZeroConstantValues.zeroValue(variable.getType(), getScope()), variable.getType(), variable.getArraySpec(), scopeRef);
+                  ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(variable.getType(), variable.getArraySpec()), null);
+                  addChunkData(asmDataChunk, zeroValue, variable.getType(), variable.getArraySpec(), scopeRef);
                   asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
                   added.add(variable.getAsmName());
                }
@@ -577,12 +581,20 @@ public class Pass4CodeGeneration {
     */
    private void addChunkData(AsmDataChunk dataChunk, ConstantValue value, SymbolType valueType, ArraySpec valueArraySpec, ScopeRef scopeRef) {
       if(valueType instanceof SymbolTypeStruct) {
-         // Add each struct member recursively
-         ConstantStructValue structValue = (ConstantStructValue) value;
-         for(SymbolVariableRef memberRef : structValue.getMembers()) {
-            ConstantValue memberValue = structValue.getValue(memberRef);
-            Variable memberVariable = getScope().getVar(memberRef);
-            addChunkData(dataChunk, memberValue, memberVariable.getType(), memberVariable.getArraySpec(), scopeRef);
+         if(value instanceof ConstantStructValue) {
+            // Add each struct member recursively
+            ConstantStructValue structValue = (ConstantStructValue) value;
+            for(SymbolVariableRef memberRef : structValue.getMembers()) {
+               ConstantValue memberValue = structValue.getValue(memberRef);
+               Variable memberVariable = getScope().getVar(memberRef);
+               addChunkData(dataChunk, memberValue, memberVariable.getType(), memberVariable.getArraySpec(), scopeRef);
+            }
+         } else if(value instanceof StructZero) {
+            final SymbolTypeStruct typeStruct = ((StructZero) value).getTypeStruct();
+            final ConstantRef structSize = OperatorSizeOf.getSizeOfConstantVar(getScope(), typeStruct);
+            String totalSizeBytesAsm = AsmFormat.getAsmConstant(program, structSize, 99, scopeRef);
+            int totalSizeBytes = typeStruct.getSizeBytes();
+            dataChunk.addDataFilled(AsmDataNumeric.Type.BYTE, totalSizeBytesAsm, totalSizeBytes, "0", null);
          }
       } else if(valueType instanceof SymbolTypePointer && valueArraySpec != null) {
          SymbolTypePointer constTypeArray = (SymbolTypePointer) valueType;
@@ -652,7 +664,7 @@ public class Pass4CodeGeneration {
             Integer declaredSize = getArrayDeclaredSize(valueArraySpec.getArraySize());
             if(declaredSize != null && declaredSize > dataNumElements) {
                int padding = declaredSize - dataNumElements;
-               ConstantValue zeroValue = ZeroConstantValues.zeroValue(elementType, program.getScope());
+               ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(elementType, valueArraySpec), null);
                if(zeroValue instanceof ConstantInteger) {
                   dataChunk.addDataFilled(getNumericType(elementType), AsmFormat.getAsmNumber(padding), padding, AsmFormat.getAsmConstant(program, zeroValue, 99, scopeRef), getEncoding(zeroValue));
                } else {

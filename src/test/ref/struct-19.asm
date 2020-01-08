@@ -3,25 +3,32 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
+  .const SIZEOF_STRUCT_VECTOR = 4
+  .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_VECTOR_Q = 2
   .const OFFSET_STRUCT_POINT_Y = 1
 main: {
     .label v = 2
     .label p1 = 6
     .label p2 = 8
+    ldy #SIZEOF_STRUCT_VECTOR
     lda #0
-    sta.z v
-    sta v+OFFSET_STRUCT_POINT_Y
-    sta v+OFFSET_STRUCT_VECTOR_Q
-    sta v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y
-    lda #2
-    sta.z p1
-    lda #3
-    sta p1+OFFSET_STRUCT_POINT_Y
-    lda #4
-    sta.z p2
-    lda #5
-    sta p2+OFFSET_STRUCT_POINT_Y
+  !:
+    dey
+    sta v,y
+    bne !-
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda __0-1,y
+    sta p1-1,y
+    dey
+    bne !-
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda __1-1,y
+    sta p2-1,y
+    dey
+    bne !-
     lda.z p1
     sta.z v
     lda p1+OFFSET_STRUCT_POINT_Y
@@ -40,3 +47,5 @@ main: {
     sta SCREEN+3
     rts
 }
+  __0: .byte 2, 3
+  __1: .byte 4, 5

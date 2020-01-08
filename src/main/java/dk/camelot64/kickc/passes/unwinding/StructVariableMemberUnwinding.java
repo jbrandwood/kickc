@@ -129,7 +129,7 @@ public class StructVariableMemberUnwinding implements StructMemberUnwinding {
             @Override
             public RValue getBulkRValue(ProgramScope scope) {
                RValue memberArrayPointer = getUnwinding(scope);
-               return new MemcpyValue(new PointerDereferenceSimple(memberArrayPointer), getArraySpec().getArraySize());
+               return new MemcpyValue(new PointerDereferenceSimple(memberArrayPointer), getArraySpec().getArraySize(), getSymbolType());
             }
          };
 

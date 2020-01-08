@@ -1,10 +1,12 @@
 package dk.camelot64.kickc.passes.unwinding;
 
+import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.*;
 
 /** Unwinding a constant value. */
@@ -36,7 +38,7 @@ public class ConstantValueUnwinding implements RValueUnwinding {
 
    @Override
    public boolean isBulkCopyable() {
-      return getArraySpec()!=null;
+      return getArraySpec()!=null || value instanceof ConstantStructValue;
    }
 
    @Override
@@ -44,12 +46,21 @@ public class ConstantValueUnwinding implements RValueUnwinding {
       throw new InternalError("Not a valid LValue!");
    }
 
+   private ConstantValue getByteSize(ProgramScope scope) {
+      return getArraySpec()!=null?getArraySpec().getArraySize(): OperatorSizeOf.getSizeOfConstantVar(scope, getSymbolType());
+   }
+
    @Override
    public RValue getBulkRValue(ProgramScope scope) {
       String constName = scope.allocateIntermediateVariableName();
       Variable constVar = Variable.createConstant(constName, symbolType, scope, getArraySpec(), value, Scope.SEGMENT_DATA_DEFAULT);
       scope.add(constVar);
-      return new MemcpyValue(new PointerDereferenceSimple(constVar.getRef()), getArraySpec().getArraySize());
+      if(getArraySpec()!=null) {
+         final SymbolType elementType = ((SymbolTypePointer) getSymbolType()).getElementType();
+         return new MemcpyValue(new PointerDereferenceSimple(new ConstantSymbolPointer(constVar.getRef())), getByteSize(scope), elementType);
+      }  else {
+         return new MemcpyValue(new PointerDereferenceSimple(new ConstantSymbolPointer(constVar.getRef())), getByteSize(scope), getSymbolType());
+      }
    }
 
 }

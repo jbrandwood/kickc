@@ -205,11 +205,17 @@ public class Pass1UnwindStructValues extends Pass1Base {
          boolean initialAssignment = assignment.isInitialAssignment();
          StatementSource source = assignment.getSource();
 
+         // Check if this is already a bulk assignment
+         if(assignment.getrValue2() instanceof MemcpyValue || assignment.getrValue2() instanceof MemsetValue)
+            return false;
+
          // Check for bulk assignable values
          if(isBulkAssignable(lValue) && isBulkAssignable(rValue)) {
             RValueUnwinding lValueUnwinding = getValueUnwinding(lValue, assignment, stmtIt, currentBlock);
             RValueUnwinding rValueUnwinding = getValueUnwinding(rValue, assignment, stmtIt, currentBlock);
             unwindAssignment(lValueUnwinding, rValueUnwinding, null, stmtIt, initialAssignment, source);
+            stmtIt.remove();
+            return true;
          }
 
          // Check for struct unwinding
@@ -294,7 +300,6 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @return true if the value is bulk assignable
     */
    private boolean isBulkAssignable(RValue value) {
-      /*
       if(value instanceof SymbolVariableRef) {
          Variable var = getScope().getVar((SymbolVariableRef) value);
          if(var.isStructClassic())
@@ -309,8 +314,6 @@ public class Pass1UnwindStructValues extends Pass1Base {
          return true;
       // TODO: Add support for arrays
       // Not bulk assignable
-      
-       */
       return false;
    }
 

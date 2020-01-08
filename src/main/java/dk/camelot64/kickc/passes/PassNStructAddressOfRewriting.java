@@ -38,7 +38,7 @@ public class PassNStructAddressOfRewriting extends Pass2SsaOptimization {
             SymbolRef toSymbolRef = constantSymbolPointer.getToSymbol();
             Symbol toSymbol = getScope().getSymbol(toSymbolRef);
             if(toSymbol.getType() instanceof SymbolTypeStruct) {
-               RValue rewrite = rewriteStructAddressOf((VariableRef) toSymbol.getRef());
+               RValue rewrite = rewriteStructAddressOf((SymbolVariableRef) toSymbol.getRef());
                if(rewrite != null) {
                   programValue.set(rewrite);
                   getLog().append("Rewriting struct address-of to first member " + value.toString(getProgram()));
@@ -58,7 +58,7 @@ public class PassNStructAddressOfRewriting extends Pass2SsaOptimization {
                   if(rValue instanceof SymbolVariableRef) {
                      Symbol toSymbol = getScope().getSymbol((SymbolVariableRef) rValue);
                      if(toSymbol.getType() instanceof SymbolTypeStruct) {
-                        RValue rewrite = rewriteStructAddressOf((VariableRef) toSymbol.getRef());
+                        RValue rewrite = rewriteStructAddressOf((SymbolVariableRef) toSymbol.getRef());
                         if(rewrite != null) {
                            assignment.setOperator(null);
                            assignment.setrValue2(rewrite);
@@ -90,8 +90,13 @@ public class PassNStructAddressOfRewriting extends Pass2SsaOptimization {
       return modified.get();
    }
 
-   private RValue rewriteStructAddressOf(VariableRef toSymbol) {
-      Variable variable = getScope().getVariable(toSymbol);
+   private RValue rewriteStructAddressOf(SymbolVariableRef toSymbol) {
+      Variable variable = getScope().getVar(toSymbol);
+
+      // Constant struct values do not need rewriting
+      if(variable.isKindConstant())
+         return null;
+
       // Hacky way to handle PHI-masters
       if(variable.isKindPhiMaster()) {
          Collection<Variable> versions = variable.getScope().getVersions(variable);

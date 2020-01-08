@@ -3,14 +3,13 @@
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label SCREEN = $400
+  .const SIZEOF_STRUCT_POINT = 3
   .const OFFSET_STRUCT_POINT_INITIALS = 1
 __bbegin:
-  lda #2
-  sta point1
-  tay
+  ldy #SIZEOF_STRUCT_POINT
 !:
   lda __0-1,y
-  sta point1+OFFSET_STRUCT_POINT_INITIALS-1,y
+  sta point1-1,y
   dey
   bne !-
   jsr main
@@ -24,5 +23,5 @@ main: {
     sta SCREEN+2
     rts
 }
-  __0: .byte 'j', 'g'
-  point1: .byte 0
+  __0: .byte 2, 'j', 'g'
+  point1: .fill SIZEOF_STRUCT_POINT, 0

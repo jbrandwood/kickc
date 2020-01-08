@@ -3,12 +3,15 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
+  .const SIZEOF_STRUCT_FOO = 2
   .const OFFSET_STRUCT_FOO_THING2 = 1
 __bbegin:
-  lda #'a'
-  sta bar
-  lda #'b'
-  sta bar+OFFSET_STRUCT_FOO_THING2
+  ldy #SIZEOF_STRUCT_FOO
+!:
+  lda __0-1,y
+  sta bar-1,y
+  dey
+  bne !-
   jsr main
   rts
 main: {
@@ -20,4 +23,5 @@ main: {
     sta SCREEN+1
     rts
 }
-  bar: .byte 0, 0
+  __0: .byte 'a', 'b'
+  bar: .fill SIZEOF_STRUCT_FOO, 0

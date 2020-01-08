@@ -4,6 +4,7 @@
 .pc = $80d "Program"
   .label SCREEN = $400
   .const OFFSET_STRUCT_POINT_Y = 1
+  .const SIZEOF_STRUCT_POINT = 3
   .label idx = 2
 main: {
     lda #0
@@ -52,7 +53,5 @@ print: {
   .word $83f
   .byte 3
   .word $107e
-  .byte 0
-  .word 0
-  .byte 0
-  .word 0
+  .fill SIZEOF_STRUCT_POINT, 0
+  .fill SIZEOF_STRUCT_POINT, 0

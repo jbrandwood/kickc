@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes.unwinding;
 
+import dk.camelot64.kickc.model.Initializers;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.symbols.ArraySpec;
@@ -30,12 +31,12 @@ public class ZeroValueUnwinding implements RValueUnwinding {
 
    @Override
    public RValue getUnwinding(ProgramScope programScope) {
-      return ZeroConstantValues.zeroValue(getSymbolType(), programScope);
+      return Initializers.createZeroValue(new Initializers.ValueTypeSpec(getSymbolType(), getArraySpec()), null);
    }
 
    @Override
    public boolean isBulkCopyable() {
-      return arraySpec!=null;
+      return arraySpec!=null || symbolType instanceof SymbolTypeStruct;
    }
 
    @Override
@@ -53,7 +54,7 @@ public class ZeroValueUnwinding implements RValueUnwinding {
       } else {
          throw new InternalError("Bulk unwinding of zero value not handled "+symbolType.getTypeName());
       }
-      return new MemsetValue(byteSize);
+      return new MemsetValue(byteSize, getSymbolType());
    }
 
 }

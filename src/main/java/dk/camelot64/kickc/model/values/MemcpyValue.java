@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model.values;
 
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.types.SymbolType;
 
 /** Value representing intrinsic call to memcpy(dest, src, size). */
 public class MemcpyValue implements RValue {
@@ -11,9 +12,13 @@ public class MemcpyValue implements RValue {
    /** The constant holding the size to set to zero. */
    private ConstantValue size;
 
-   public MemcpyValue(RValue source, ConstantValue size) {
+   /** The type of the value, */
+   private SymbolType type;
+
+   public MemcpyValue(RValue source, ConstantValue size, SymbolType type) {
       this.source = source;
       this.size = size;
+      this.type = type;
    }
 
    public ConstantValue getSize() {
@@ -32,9 +37,13 @@ public class MemcpyValue implements RValue {
       this.source = source;
    }
 
+   public SymbolType getType() {
+      return type;
+   }
+
    @Override
    public String toString(Program program) {
-      return "memcpy("+source.toString(program)+", "+size.toString(program)+")";
+      return "memcpy("+source.toString(program)+", "+type.getTypeName()+", "+size.toString(program)+")";
    }
 
 

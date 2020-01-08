@@ -9,8 +9,12 @@ public class MemsetValue implements RValue {
    /** The constant holding the size to set to zero. */
    private ConstantValue size;
 
-   public MemsetValue(ConstantValue size) {
+   /** The type of the value. */
+   private SymbolType type;
+
+   public MemsetValue(ConstantValue size, SymbolType type) {
       this.size = size;
+      this.type = type;
    }
 
    public ConstantValue getSize() {
@@ -21,9 +25,13 @@ public class MemsetValue implements RValue {
       this.size = size;
    }
 
+   public SymbolType getType() {
+      return type;
+   }
+
    @Override
    public String toString(Program program) {
-      return "memset("+size.toString(program)+")";
+      return "memset("+type.getTypeName()+", "+size.toString(program)+")";
    }
 
 

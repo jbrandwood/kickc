@@ -20,7 +20,7 @@ public class Initializers {
     * @param statementSource The source line
     * @return The new statement
     */
-   public static RValue createZeroValue(ValueTypeSpec typeSpec, StatementSource statementSource) {
+   public static ConstantValue createZeroValue(ValueTypeSpec typeSpec, StatementSource statementSource) {
       if(typeSpec.getType() instanceof SymbolTypeIntegerFixed) {
          // Add an zero value initializer
          return new ConstantInteger(0L, typeSpec.getType());

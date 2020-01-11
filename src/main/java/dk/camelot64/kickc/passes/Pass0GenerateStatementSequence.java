@@ -569,17 +569,16 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(declVarType, declArraySpec), program, statementSource);
          VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, declVarType, declArraySpec, declVarDirectives, currentDataSegment);
          Variable variable = varBuilder.build();
-         if(variable.isKindConstant()) {
-            // Set constant value
-            ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
-            variable.setInitValue(constInitValue);
-            // Add comments to constant
-            variable.setComments(ensureUnusedComments(declVarComments));
-         }
-         if(!variable.isKindConstant() && !declVarStructMember) {
-            Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, statementSource, ensureUnusedComments(declVarComments));
-            sequence.addStatement(initStmt);
-         }
+            if(variable.isKindConstant() || (variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !declVarStructMember)) {
+               // Set constant value
+               ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
+               variable.setInitValue(constInitValue);
+               // Add comments to constant
+               variable.setComments(ensureUnusedComments(declVarComments));
+            } else if(!variable.isKindConstant() && !declVarStructMember) {
+               Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, statementSource, ensureUnusedComments(declVarComments));
+               sequence.addStatement(initStmt);
+            }
          if(initializer != null)
             PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
          return null;

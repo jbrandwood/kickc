@@ -267,10 +267,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
       if(lValueUnwinding.isBulkCopyable() && rValueUnwinding.isBulkCopyable()) {
          // Use bulk unwinding for a struct member that is an array
          stmtIt.previous();
-         //RValue lValueMemberVarPointer = lValueUnwinding.getBulkLValue(getScope());
-         //LValue lValueMemberVarRef = new PointerDereferenceSimple(lValueMemberVarPointer);
-         //if(rValueUnwinding.getArraySpec()==null || !lValueUnwinding.getArraySpec().equals(rValueUnwinding.getArraySpec()))
-         //   throw new RuntimeException("ArraySpec mismatch!");
+         if(lValueUnwinding.getArraySpec()!=null)
+            if(rValueUnwinding.getArraySpec()==null || !lValueUnwinding.getArraySpec().equals(rValueUnwinding.getArraySpec()))
+               throw new RuntimeException("ArraySpec mismatch!");
          LValue lValueMemberVarRef = lValueUnwinding.getBulkLValue(getScope());
          RValue rValueBulkUnwinding = rValueUnwinding.getBulkRValue(getScope());
          if(lValueUnwoundList != null)

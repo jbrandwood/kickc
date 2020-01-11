@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
@@ -21,6 +22,8 @@ public class Pass3AssertArrayLengths extends Pass2SsaAssertion {
    public void check() throws AssertionFailed {
       Collection<Variable> allConstants = getScope().getAllConstants(true);
       for(Variable constantVar : allConstants) {
+         if(constantVar.getScope() instanceof StructDefinition)
+            continue;
          SymbolType constantType = constantVar.getType();
          if(constantVar.isArray() && constantVar.getArraySize() != null) {
             ConstantValue declaredSize = constantVar.getArraySize();

@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
@@ -34,7 +35,14 @@ public class Pass1AssertUsedVars extends Pass1Base {
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
 
       ControlFlowBlock beginBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
-      assertUsedVars(beginBlock, null, referenceInfos, new LinkedHashSet<>(), new LinkedHashSet<>());
+      final LinkedHashSet<SymbolVariableRef> defined = new LinkedHashSet<>();
+      // Add all variables with an init-value
+      for(Variable var : getScope().getAllVars(true)) {
+         if(var.getInitValue()!=null) {
+            defined.add(var.getRef());
+         }
+      }
+      assertUsedVars(beginBlock, null, referenceInfos, defined, new LinkedHashSet<>());
       getProgram().clearVariableReferenceInfos();
       getProgram().clearStatementIndices();
       return false;

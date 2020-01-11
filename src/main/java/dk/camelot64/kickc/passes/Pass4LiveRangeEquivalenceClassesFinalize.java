@@ -55,10 +55,13 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
       EquivalenceClassAdder equivalenceClassAdder = new EquivalenceClassAdder(liveRangeEquivalenceClassSet);
       equivalenceClassAdder.visitGraph(getGraph());
 
-      // Add any remaining struct load/store variables
-      for(Variable variable : getSymbols().getAllVariables(true)) 
-         if(variable.isStructClassic())
-            addToEquivalenceClassSet(variable.getVariableRef(), new ArrayList<>(), liveRangeEquivalenceClassSet );
+      // Add any load/store variables with an initializer - and load/store struct  variables
+      for(Variable variable : getSymbols().getAllVariables(true)) {
+         if(variable.isKindLoadStore() && variable.getInitValue()!=null)
+            addToEquivalenceClassSet(variable.getVariableRef(), new ArrayList<>(), liveRangeEquivalenceClassSet);
+         else if(variable.isStructClassic())
+            addToEquivalenceClassSet(variable.getVariableRef(), new ArrayList<>(), liveRangeEquivalenceClassSet);
+      }
 
       getLog().append("Complete equivalence classes");
       for(LiveRangeEquivalenceClass liveRangeEquivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {

@@ -569,7 +569,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(declVarType, declArraySpec), program, statementSource);
          VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, declVarType, declArraySpec, declVarDirectives, currentDataSegment);
          Variable variable = varBuilder.build();
-            if(variable.isKindConstant() || (variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !declVarStructMember)) {
+         if(variable.isKindConstant() || (variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !declVarStructMember && variable.getRegister()==null)) {
                // Set constant value
                ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
                variable.setInitValue(constInitValue);

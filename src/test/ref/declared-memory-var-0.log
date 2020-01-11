@@ -2,7 +2,6 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) idx ← (byte) 0
   to:@1
 
 (void()) main()
@@ -33,7 +32,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*)(number) $400
-(byte) idx loadstore
+(byte) idx loadstore = (byte) 0
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -45,12 +44,12 @@ SYMBOL TABLE SSA
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$0 [7] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
+Simple Condition (bool~) main::$0 [6] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [5] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [7] if(main::i#1!=rangelast(0,5)) goto main::@1 to (number) 6
+Resolved ranged next value [4] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [6] if(main::i#1!=rangelast(0,5)) goto main::@1 to (number) 6
 Adding number conversion cast (unumber) 6 in if((byte) main::i#1!=(number) 6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
@@ -61,6 +60,7 @@ Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -73,13 +73,14 @@ Coalesced [12] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @2
 Culled Empty Block (label) main::@3
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) idx ← (byte) 0
+  [0] phi()
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -105,7 +106,7 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) idx loadstore 5.0
+(byte) idx loadstore 4.714285714285714 = (byte) 0
 (void()) main()
 (byte) main::i
 (byte) main::i#1 16.5
@@ -132,9 +133,6 @@ Target platform is c64basic / MOS6502X
   .label SCREEN = $400
   // @begin
 __bbegin:
-  // [0] (byte) idx ← (byte) 0 -- vbum1=vbuc1 
-  lda #0
-  sta idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -189,24 +187,22 @@ main: {
   idx: .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ idx main::i#2 ] ( main:2 [ idx main::i#2 ] ) always clobbers reg byte a 
-Statement [0] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] ) always clobbers reg byte a 
+Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ main::i#2 idx ] ( main:2 [ main::i#2 idx ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ idx main::i#2 ] ( main:2 [ idx main::i#2 ] ) always clobbers reg byte a 
+Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ main::i#2 idx ] ( main:2 [ main::i#2 idx ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers mem[1] [ idx ] : mem[1] , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 31.17: zp[1]:2 [ main::i#2 main::i#1 ] 
-Uplift Scope [] 5: mem[1] [ idx ] 
+Uplift Scope [] 4.71: mem[1] [ idx ] 
 
-Uplifting [main] best 409 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 409 combination mem[1] [ idx ] 
+Uplifting [main] best 403 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 403 combination mem[1] [ idx ] 
 Attempting to uplift remaining variables inmem[1] [ idx ]
-Uplifting [] best 409 combination mem[1] [ idx ] 
+Uplifting [] best 403 combination mem[1] [ idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -219,9 +215,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // @begin
 __bbegin:
-  // [0] (byte) idx ← (byte) 0 -- vbum1=vbuc1 
-  lda #0
-  sta idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -277,28 +270,32 @@ Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __bbegin with __b1
 Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
 Removing instruction __b1_from___bbegin:
 Removing instruction main_from___b1:
 Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b1:
 Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*) 1024
-(byte) idx loadstore mem[1] 5.0
+(byte) idx loadstore mem[1] 4.714285714285714 = (byte) 0
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -311,28 +308,21 @@ mem[1] [ idx ]
 
 
 FINAL ASSEMBLER
-Score: 319
+Score: 301
 
   // File Comments
 // Test declaring a variable as "__mem __notssa", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-__bbegin:
-  // idx
-  // [0] (byte) idx ← (byte) 0 -- vbum1=vbuc1 
-  lda #0
-  sta idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-  jsr main
-  rts
   // [3] phi from @1 to @end [phi:@1->@end]
   // @end
   // main

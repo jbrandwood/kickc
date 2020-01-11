@@ -1,14 +1,12 @@
 Fixing struct type size struct Point to 3
 Fixing struct type SIZE_OF struct Point to 3
 Fixing struct type SIZE_OF struct Point to 3
-Adding struct value member variable copy *(&(struct Point) point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Replacing struct member reference (struct Point) point1.x with member unwinding reference *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X)
 Replacing struct member reference (struct Point) point1.initials with member unwinding reference (byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS
 Replacing struct member reference (struct Point) point1.initials with member unwinding reference (byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  *(&(struct Point) point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   to:@1
 
 (void()) main()
@@ -28,7 +26,6 @@ main::@return: scope:[main]  from main
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(const struct Point) $0 = { x: (byte) 2, initials: { (byte) 'j', (byte) 'g' } }
 (label) @1
 (label) @2
 (label) @begin
@@ -38,10 +35,9 @@ SYMBOL TABLE SSA
 (const byte*) Point::initials[(number) 2]  = { fill( 2, 0) }
 (byte) Point::x
 (const byte*) SCREEN = (byte*)(number) $400
-(const byte) SIZEOF_STRUCT_POINT = (byte) 3
 (void()) main()
 (label) main::@return
-(struct Point) point1 loadstore
+(struct Point) point1 loadstore = { x: (byte) 2, initials: { (byte) 'j', (byte) 'g' } }
 
 Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X)
 Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (number) 0)
@@ -62,9 +58,9 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero (byte*)&point1 in [1] *((const byte*) SCREEN + (byte) 0) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (byte) 0) ← *((byte*)&(struct Point) point1)
-Simplifying expression containing zero (byte*)&point1+OFFSET_STRUCT_POINT_INITIALS in [2] *((const byte*) SCREEN + (byte) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (byte) 0)
+Simplifying expression containing zero (byte*)&point1 in [0] *((const byte*) SCREEN + (byte) 0) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero SCREEN in [0] *((const byte*) SCREEN + (byte) 0) ← *((byte*)&(struct Point) point1)
+Simplifying expression containing zero (byte*)&point1+OFFSET_STRUCT_POINT_INITIALS in [1] *((const byte*) SCREEN + (byte) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
@@ -72,6 +68,7 @@ Consolidated array index constant in *(SCREEN+1)
 Consolidated array index constant in *((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS+1)
 Consolidated array index constant in *(SCREEN+2)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -81,12 +78,13 @@ Calls in [] to main:2
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] *(&(struct Point) point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  [0] phi()
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -109,7 +107,7 @@ main::@return: scope:[main]  from main
 VARIABLE REGISTER WEIGHTS
 (byte) Point::x
 (void()) main()
-(struct Point) point1 loadstore
+(struct Point) point1 loadstore = { x: (byte) 2, initials: { (byte) 'j', (byte) 'g' } }
 
 Initial phi equivalence classes
 Added variable point1 to live range equivalence class [ point1 ]
@@ -127,17 +125,9 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  .const SIZEOF_STRUCT_POINT = 3
   .const OFFSET_STRUCT_POINT_INITIALS = 1
   // @begin
 __bbegin:
-  // [0] *(&(struct Point) point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
-  ldy #SIZEOF_STRUCT_POINT
-!:
-  lda __0-1,y
-  sta point1-1,y
-  dey
-  bne !-
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -168,11 +158,9 @@ main: {
     rts
 }
   // File Data
-  __0: .byte 2, 'j', 'g'
-  point1: .fill SIZEOF_STRUCT_POINT, 0
+  point1: .byte 2, 'j', 'g'
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *(&(struct Point) point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) [ point1 ] (  [ point1 ] ) always clobbers reg byte a reg byte y 
 Statement [4] *((const byte*) SCREEN) ← *((byte*)&(struct Point) point1) [ point1 ] ( main:2 [ point1 ] ) always clobbers reg byte a 
 Statement [5] *((const byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) [ point1 ] ( main:2 [ point1 ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -183,9 +171,9 @@ Uplift Scope [Point]
 Uplift Scope [main] 
 Uplift Scope [] 0: mem[3] [ point1 ] 
 
-Uplifting [Point] best 61 combination 
-Uplifting [main] best 61 combination 
-Uplifting [] best 61 combination mem[3] [ point1 ] 
+Uplifting [Point] best 45 combination 
+Uplifting [main] best 45 combination 
+Uplifting [] best 45 combination mem[3] [ point1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -196,17 +184,9 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  .const SIZEOF_STRUCT_POINT = 3
   .const OFFSET_STRUCT_POINT_INITIALS = 1
   // @begin
 __bbegin:
-  // [0] *(&(struct Point) point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
-  ldy #SIZEOF_STRUCT_POINT
-!:
-  lda __0-1,y
-  sta point1-1,y
-  dey
-  bne !-
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -237,26 +217,28 @@ main: {
     rts
 }
   // File Data
-  __0: .byte 2, 'j', 'g'
-  point1: .fill SIZEOF_STRUCT_POINT, 0
+  point1: .byte 2, 'j', 'g'
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
 Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
 Removing instruction __b1_from___bbegin:
 Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b1:
 Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const struct Point) $0 = { x: (byte) 2, initials: { (byte) 'j', (byte) 'g' } }
 (label) @1
 (label) @begin
 (label) @end
@@ -264,42 +246,29 @@ FINAL SYMBOL TABLE
 (const byte*) Point::initials[(number) 2]  = { fill( 2, 0) }
 (byte) Point::x
 (const byte*) SCREEN = (byte*) 1024
-(const byte) SIZEOF_STRUCT_POINT = (byte) 3
 (void()) main()
 (label) main::@return
-(struct Point) point1 loadstore mem[3]
+(struct Point) point1 loadstore mem[3] = { x: (byte) 2, initials: { (byte) 'j', (byte) 'g' } }
 
 mem[3] [ point1 ]
 
 
 FINAL ASSEMBLER
-Score: 58
+Score: 30
 
   // File Comments
 // Minimal struct with C-Standard behavior - global main-mem struct should be initialized in data, not code
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  .const SIZEOF_STRUCT_POINT = 3
   .const OFFSET_STRUCT_POINT_INITIALS = 1
   // @begin
-__bbegin:
-  // point1 = { 2, { 'j', 'g' } }
-  // [0] *(&(struct Point) point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
-  ldy #SIZEOF_STRUCT_POINT
-!:
-  lda __0-1,y
-  sta point1-1,y
-  dey
-  bne !-
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
-  jsr main
-  rts
   // [3] phi from @1 to @end [phi:@1->@end]
   // @end
   // main
@@ -322,6 +291,5 @@ main: {
     rts
 }
   // File Data
-  __0: .byte 2, 'j', 'g'
-  point1: .fill SIZEOF_STRUCT_POINT, 0
+  point1: .byte 2, 'j', 'g'
 

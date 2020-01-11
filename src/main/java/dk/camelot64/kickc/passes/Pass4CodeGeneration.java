@@ -539,17 +539,13 @@ public class Pass4CodeGeneration {
                      String alignment = AsmFormat.getAsmNumber(declaredAlignment);
                      asm.addDataAlignment(alignment);
                   }
-                  if(variable.getInitValue()!=null) {
+                  if(variable.getInitValue() != null) {
                      // Variable has a constant init Value
                      ConstantValue constantValue = variable.getInitValue();
-                     if(constantValue instanceof ConstantArray || constantValue instanceof ConstantString || constantValue instanceof ConstantStructValue || constantValue instanceof StructZero) {
-                        AsmDataChunk asmDataChunk = new AsmDataChunk();
-                        addChunkData(asmDataChunk, constantValue, variable.getType(), variable.getArraySpec(), scopeRef);
-                        asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
-                     } else {
-                        throw new InternalError("Constant Variable not handled " + variable.toString(program));
-                     }
-                  }  else {
+                     AsmDataChunk asmDataChunk = new AsmDataChunk();
+                     addChunkData(asmDataChunk, constantValue, variable.getType(), variable.getArraySpec(), scopeRef);
+                     asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
+                  } else {
                      // Zero-fill variable
                      AsmDataChunk asmDataChunk = new AsmDataChunk();
                      ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(variable.getType(), variable.getArraySpec()), null);

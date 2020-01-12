@@ -222,6 +222,10 @@ public class VariableBuilder {
     * @return true if the variable is single-static-assignment
     */
    public boolean isSingleStaticAssignment() {
+      if(hasDirective(Directive.FormSsa.class))
+         // the __ssa directive forces single-static-assignment
+         //TODO: FAIL if combined with __ma, __address() or volatile!
+         return true;
       if(hasDirective(Directive.FormMa.class))
          // the __ma directive forces multiple-assignment
          return false;
@@ -230,6 +234,9 @@ public class VariableBuilder {
          return false;
       else if(isVolatile())
          // volatile variables must be load/store
+         return false;
+      else if(isTypeStruct() && isScopeGlobal())
+         // global struct variables must be load/store
          return false;
       else
          // All others are single-static-assignment (by default)
@@ -262,10 +269,6 @@ public class VariableBuilder {
    public Variable.MemoryArea getMemoryArea() {
       if(isConstant())
          return Variable.MemoryArea.MAIN_MEMORY;
-      else if(!isConstant() && isOptimize())
-         return Variable.MemoryArea.ZEROPAGE_MEMORY;
-      else if(isArray())
-         return Variable.MemoryArea.MAIN_MEMORY;
       else if(hasDirective(Directive.MemZp.class))
          return Variable.MemoryArea.ZEROPAGE_MEMORY;
       else if(hasDirective(Directive.MemMain.class))
@@ -273,6 +276,12 @@ public class VariableBuilder {
       Directive.Address addressDirective = findDirective(Directive.Address.class);
       if(addressDirective != null)
          return (addressDirective.address < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;
+      else if(!isConstant() && isOptimize())
+         return Variable.MemoryArea.ZEROPAGE_MEMORY;
+      else if(isArray())
+         return Variable.MemoryArea.MAIN_MEMORY;
+      else if(isTypeStruct() && isScopeGlobal())
+         return Variable.MemoryArea.MAIN_MEMORY;
       else
          return Variable.MemoryArea.ZEROPAGE_MEMORY;
    }

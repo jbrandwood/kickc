@@ -1,15 +1,10 @@
 Setting inferred volatile on symbol affected by address-of (struct A*) main::a ← &(struct A) aa
-Created struct value member variable (byte) aa_b
-Converted struct value to member variables (struct A) aa
-Adding struct value member variable copy (byte) aa_b ← (byte) 1
 Rewriting struct pointer member access *((struct A*) main::a).b
 Warning! Adding boolean cast to non-boolean sub-expression *((byte*~) main::$2)
 Identified constant variable (struct A*) main::a
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) aa_b#0 ← (byte) 1
-  (struct A) aa#0 ← struct-unwound {(byte) aa_b#0}
   to:@1
 
 (void()) main()
@@ -43,10 +38,7 @@ SYMBOL TABLE SSA
 (label) @end
 (byte) A::b
 (const byte) OFFSET_STRUCT_A_B = (byte) 0
-(struct A) aa
-(struct A) aa#0
-(byte) aa_b
-(byte) aa_b#0
+(struct A) aa loadstore = { b: (byte) 1 }
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -65,24 +57,22 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [4] (bool~) main::$0 ← (byte) 0 == *((byte*~) main::$2) from [3] (bool~) main::$3 ← (byte) 0 != *((byte*~) main::$2)
-Inversing boolean not [5] (bool~) main::$1 ← (byte) 0 != *((byte*~) main::$2) from [4] (bool~) main::$0 ← (byte) 0 == *((byte*~) main::$2)
+Inversing boolean not [2] (bool~) main::$0 ← (byte) 0 == *((byte*~) main::$2) from [1] (bool~) main::$3 ← (byte) 0 != *((byte*~) main::$2)
+Inversing boolean not [3] (bool~) main::$1 ← (byte) 0 != *((byte*~) main::$2) from [2] (bool~) main::$0 ← (byte) 0 == *((byte*~) main::$2)
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) main::$1 [6] if((byte) 0!=*((byte*~) main::$2)) goto main::@1
+Simple Condition (bool~) main::$1 [4] if((byte) 0!=*((byte*~) main::$2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting struct address-of to first member &(struct A) aa
-Successful SSA optimization PassNStructAddressOfRewriting
-Constant right-side identified [2] (byte*~) main::$2 ← (byte*)(const struct A*) main::a + (const byte) OFFSET_STRUCT_A_B
+Constant right-side identified [0] (byte*~) main::$2 ← (byte*)(const struct A*) main::a + (const byte) OFFSET_STRUCT_A_B
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$2 = (byte*)main::a+OFFSET_STRUCT_A_B
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero (byte*)main::a in 
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (struct A) aa#0 and assignment [1] (struct A) aa#0 ← struct-unwound {(byte) aa_b#0}
 Eliminating unused constant (const byte) OFFSET_STRUCT_A_B
 Successful SSA optimization PassNEliminateUnusedVars
 Constant inlined main::$2 = (byte*)(const struct A*) main::a
 Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -92,12 +82,13 @@ Calls in [] to main:2
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) aa_b#0 ← (byte) 1
+  [0] phi()
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -123,15 +114,14 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (byte) A::b
-(struct A) aa
-(byte) aa_b
-(byte) aa_b#0 20.0
+(struct A) aa loadstore = { b: (byte) 1 }
 (void()) main()
 
 Initial phi equivalence classes
+Added variable aa to live range equivalence class [ aa ]
 Complete equivalence classes
-[ aa_b#0 ]
-Allocated zp[1]:2 [ aa_b#0 ]
+[ aa ]
+Allocated mem[1] [ aa ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -143,12 +133,8 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label aa_b = 2
   // @begin
 __bbegin:
-  // [0] (byte) aa_b#0 ← (byte) 1 -- vbuz1=vbuc1 
-  lda #1
-  sta.z aa_b
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -164,10 +150,10 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    .label a = aa_b
+    .label a = aa
     // [4] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
     lda #0
-    cmp.z a
+    cmp a
     bne __b1
     jmp __b2
     // main::@2
@@ -189,23 +175,23 @@ main: {
     rts
 }
   // File Data
+  aa: .byte 1
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) aa_b#0 ← (byte) 1 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [4] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [5] *((const byte*) main::SCREEN) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp[1]:2 [ aa_b#0 ] : zp[1]:2 , 
+Potential registers mem[1] [ aa ] : mem[1] , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 20: zp[1]:2 [ aa_b#0 ] 
 Uplift Scope [A] 
 Uplift Scope [main] 
+Uplift Scope [] 0: mem[1] [ aa ] 
 
-Uplifting [] best 48 combination zp[1]:2 [ aa_b#0 ] 
-Uplifting [A] best 48 combination 
-Uplifting [main] best 48 combination 
-Attempting to uplift remaining variables inzp[1]:2 [ aa_b#0 ]
-Uplifting [] best 48 combination zp[1]:2 [ aa_b#0 ] 
+Uplifting [A] best 44 combination 
+Uplifting [main] best 44 combination 
+Uplifting [] best 44 combination mem[1] [ aa ] 
+Attempting to uplift remaining variables inmem[1] [ aa ]
+Uplifting [] best 44 combination mem[1] [ aa ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -216,12 +202,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label aa_b = 2
   // @begin
 __bbegin:
-  // [0] (byte) aa_b#0 ← (byte) 1 -- vbuz1=vbuc1 
-  lda #1
-  sta.z aa_b
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -237,10 +219,10 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    .label a = aa_b
+    .label a = aa
     // [4] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
     lda #0
-    cmp.z a
+    cmp a
     bne __b1
     jmp __b2
     // main::@2
@@ -262,6 +244,7 @@ main: {
     rts
 }
   // File Data
+  aa: .byte 1
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -270,18 +253,21 @@ Removing instruction jmp __b2
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
 Removing instruction __b1_from___bbegin:
 Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b1:
 Removing instruction __bend:
 Removing instruction __b2:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Skipping double jump to !a+ in bne __b1
 Succesful ASM optimization Pass5DoubleJumpElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
+Removing instruction __b1:
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -290,52 +276,42 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte) A::b
-(struct A) aa
-(byte) aa_b
-(byte) aa_b#0 aa_b zp[1]:2 20.0
+(struct A) aa loadstore mem[1] = { b: (byte) 1 }
 (void()) main()
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (const byte*) main::SCREEN = (byte*) 1024
-(const struct A*) main::a = (struct A*)&(byte) aa_b#0
+(const struct A*) main::a = &(struct A) aa
 
-zp[1]:2 [ aa_b#0 ]
+mem[1] [ aa ]
 
 
 FINAL ASSEMBLER
-Score: 39
+Score: 23
 
   // File Comments
 // Test parsing a negated struct reference - which causes problems with the ASMREL labels !a++
 // https://gitlab.com/camelot/kickc/issues/266
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label aa_b = 2
   // @begin
-__bbegin:
-  // aa = { 1 }
-  // [0] (byte) aa_b#0 ← (byte) 1 -- vbuz1=vbuc1 
-  lda #1
-  sta.z aa_b
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
-  jsr main
-  rts
   // [3] phi from @1 to @end [phi:@1->@end]
   // @end
   // main
 main: {
     .label SCREEN = $400
-    .label a = aa_b
+    .label a = aa
     // if(!a->b)
     // [4] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
     lda #0
-    cmp.z a
+    cmp a
     bne !a+
     // main::@2
     // *SCREEN = 'a'
@@ -354,4 +330,5 @@ main: {
     rts
 }
   // File Data
+  aa: .byte 1
 

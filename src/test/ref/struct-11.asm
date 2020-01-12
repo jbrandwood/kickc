@@ -1,39 +1,22 @@
 // Example of a struct containing an array
-// Works because the struct is only handled as a value
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
-  .const jesper_id = 4
-  .const henriette_id = 7
-__bbegin:
-  ldy #$40
-!:
-  lda __0-1,y
-  sta jesper_name-1,y
-  dey
-  bne !-
-  ldy #$40
-!:
-  lda __1-1,y
-  sta henriette_name-1,y
-  dey
-  bne !-
-  jsr main
-  rts
+  .const OFFSET_STRUCT_PERSON_NAME = 1
 main: {
-    lda #<jesper_name
+    ldx jesper
+    lda #<jesper+OFFSET_STRUCT_PERSON_NAME
     sta.z print_person.person_name
-    lda #>jesper_name
+    lda #>jesper+OFFSET_STRUCT_PERSON_NAME
     sta.z print_person.person_name+1
     ldy #0
-    ldx #jesper_id
     jsr print_person
-    lda #<henriette_name
+    ldx henriette
+    lda #<henriette+OFFSET_STRUCT_PERSON_NAME
     sta.z print_person.person_name
-    lda #>henriette_name
+    lda #>henriette+OFFSET_STRUCT_PERSON_NAME
     sta.z print_person.person_name+1
-    ldx #henriette_id
     jsr print_person
     rts
 }
@@ -68,11 +51,11 @@ print_person: {
 }
   DIGIT: .text "0123456789"
   .byte 0
-  jesper_name: .fill $40, 0
-  henriette_name: .fill $40, 0
-  __0: .text "jesper"
+  jesper: .byte 4
+  .text "jesper"
   .byte 0
   .fill $39, 0
-  __1: .text "henriette"
+  henriette: .byte 7
+  .text "henriette"
   .byte 0
   .fill $36, 0

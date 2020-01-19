@@ -98,18 +98,16 @@ ifunc: {
     lda.z xsqr+3
     adc.z delta+3
     sta.z xsqr+3
-    lda #2
+    lda.z delta
     clc
-    adc.z delta
+    adc #2
     sta.z delta
-    lda.z delta+1
-    adc #0
-    sta.z delta+1
-    lda.z delta+2
-    adc #0
-    sta.z delta+2
-    lda.z delta+3
-    adc #0
-    sta.z delta+3
+    bcc !+
+    inc.z delta+1
+    bne !+
+    inc.z delta+2
+    bne !+
+    inc.z delta+3
+  !:
     jmp __b1
 }

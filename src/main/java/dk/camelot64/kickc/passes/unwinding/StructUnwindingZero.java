@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes.unwinding;
 
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.StructZero;
@@ -9,11 +10,11 @@ import java.util.Collection;
 import java.util.List;
 
 /** Unwinding for StructZero */
-public class StructMemberUnwindingZero implements StructMemberUnwinding {
+public class StructUnwindingZero implements StructUnwinding {
    private StructZero structZero;
    private StructDefinition structDefinition;
 
-   public StructMemberUnwindingZero(StructZero structZero, StructDefinition structDefinition) {
+   public StructUnwindingZero(StructZero structZero, StructDefinition structDefinition) {
       this.structZero = structZero;
       this.structDefinition = structDefinition;
    }
@@ -29,9 +30,9 @@ public class StructMemberUnwindingZero implements StructMemberUnwinding {
    }
 
    @Override
-   public RValueUnwinding getMemberUnwinding(String memberName) {
+   public RValueUnwinding getMemberUnwinding(String memberName, ProgramScope programScope) {
       Variable member = structDefinition.getMember(memberName);
-      return new ZeroValueUnwinding(member.getType(), member.getArraySpec());
+      return new RValueUnwindingZero(member.getType(), member.getArraySpec());
    }
 
 }

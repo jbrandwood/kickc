@@ -7,12 +7,12 @@ import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
 
 /** Value unwinding that just returns a non-unwindable RValue. */
-class SimpleRValueUnwinding implements RValueUnwinding {
+class RValueUnwindingSimple implements RValueUnwinding {
    private final SymbolType type;
    private final ArraySpec arraySpec;
    private final RValue memberValue;
 
-   public SimpleRValueUnwinding(SymbolType type, ArraySpec arraySpec, RValue memberValue) {
+   public RValueUnwindingSimple(SymbolType type, ArraySpec arraySpec, RValue memberValue) {
       this.type = type;
       this.arraySpec = arraySpec;
       this.memberValue = memberValue;

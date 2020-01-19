@@ -4,10 +4,9 @@ import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.unwinding.RValueUnwinding;
-import dk.camelot64.kickc.passes.unwinding.StructMemberUnwinding;
+import dk.camelot64.kickc.passes.unwinding.StructUnwinding;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,7 +16,7 @@ import java.util.Map;
 /**
  * Keeps track of all struct variables that have been unwound into member variables.
  */
-public class StructUnwinding {
+public class StructVariableMemberUnwinding {
 
    /** Maps struct variables to unwinding of each member. */
    Map<SymbolVariableRef, VariableUnwinding> structVariables = new LinkedHashMap<>();
@@ -48,7 +47,7 @@ public class StructUnwinding {
 
 
    /** Information about how a single struct variable was unwound. */
-   public static class VariableUnwinding implements StructMemberUnwinding {
+   public static class VariableUnwinding implements StructUnwinding {
 
       StructDefinition structDefinition;
 
@@ -70,7 +69,7 @@ public class StructUnwinding {
       }
 
       @Override
-      public RValueUnwinding getMemberUnwinding(String memberName) {
+      public RValueUnwinding getMemberUnwinding(String memberName, ProgramScope programScope) {
          return new RValueUnwinding() {
             @Override
             public SymbolType getSymbolType() {

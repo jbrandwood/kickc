@@ -9,11 +9,11 @@ import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 
 /** Value unwinding for a variable. */
-public class StructVariableValueUnwinding implements RValueUnwinding {
+public class RValueUnwindingStructVariable implements RValueUnwinding {
 
    private final Variable variable;
 
-   public StructVariableValueUnwinding(Variable variable) {
+   public RValueUnwindingStructVariable(Variable variable) {
       this.variable = variable;
    }
 
@@ -29,8 +29,7 @@ public class StructVariableValueUnwinding implements RValueUnwinding {
 
    @Override
    public RValue getUnwinding(ProgramScope programScope) {
-      ConstantSymbolPointer pointer = new ConstantSymbolPointer(variable.getRef());
-      return pointer;
+      return new ConstantSymbolPointer(variable.getRef());
    }
 
    @Override
@@ -41,8 +40,7 @@ public class StructVariableValueUnwinding implements RValueUnwinding {
    @Override
    public LValue getBulkLValue(ProgramScope scope) {
       ConstantSymbolPointer pointer = new ConstantSymbolPointer(variable.getRef());
-      LValue pointerDeref = new PointerDereferenceSimple(pointer);
-      return pointerDeref;
+      return new PointerDereferenceSimple(pointer);
    }
 
    private ConstantValue getByteSize(ProgramScope scope) {
@@ -55,6 +53,5 @@ public class StructVariableValueUnwinding implements RValueUnwinding {
       LValue pointerDeref = new PointerDereferenceSimple(pointer);
       return new MemcpyValue(pointerDeref, getByteSize(scope), getSymbolType());
    }
-
 
 }

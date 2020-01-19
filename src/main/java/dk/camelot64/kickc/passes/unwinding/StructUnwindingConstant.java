@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes.unwinding;
 
 import dk.camelot64.kickc.model.symbols.ArraySpec;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -12,11 +13,11 @@ import java.util.Collection;
 import java.util.List;
 
 /** Member unwinding for constant struct value. */
-public class StructMemberUnwindingConstantValue implements StructMemberUnwinding {
+public class StructUnwindingConstant implements StructUnwinding {
    private final ConstantStructValue constantStructValue;
    private final StructDefinition structDefinition;
 
-   public StructMemberUnwindingConstantValue(ConstantStructValue constantStructValue, StructDefinition structDefinition) {
+   public StructUnwindingConstant(ConstantStructValue constantStructValue, StructDefinition structDefinition) {
       this.constantStructValue = constantStructValue;
       this.structDefinition = structDefinition;
    }
@@ -32,12 +33,12 @@ public class StructMemberUnwindingConstantValue implements StructMemberUnwinding
    }
 
    @Override
-   public RValueUnwinding getMemberUnwinding(String memberName) {
+   public RValueUnwinding getMemberUnwinding(String memberName, ProgramScope programScope) {
       final Variable member = structDefinition.getMember(memberName);
       final SymbolType type = member.getType();
       final ArraySpec arraySpec = member.getArraySpec();
       final ConstantValue memberValue = constantStructValue.getValue(member.getRef());
-      return new ConstantValueUnwinding(type, arraySpec, memberValue);
+      return new RValueUnwindingConstant(type, arraySpec, memberValue);
    }
 
 }

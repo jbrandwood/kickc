@@ -10,12 +10,12 @@ import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.*;
 
 /** Unwinding a constant value. */
-public class ConstantValueUnwinding implements RValueUnwinding {
+public class RValueUnwindingConstant implements RValueUnwinding {
    private final SymbolType symbolType;
    private final ArraySpec arraySpec;
    private final ConstantValue value;
 
-   public ConstantValueUnwinding(SymbolType symbolType, ArraySpec arraySpec, ConstantValue value) {
+   public RValueUnwindingConstant(SymbolType symbolType, ArraySpec arraySpec, ConstantValue value) {
       this.symbolType = symbolType;
       this.arraySpec = arraySpec;
       this.value = value;

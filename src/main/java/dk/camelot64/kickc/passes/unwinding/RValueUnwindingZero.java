@@ -10,11 +10,11 @@ import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 
 /** Assignment unwinding for a zero value. */
-public class ZeroValueUnwinding implements RValueUnwinding {
+public class RValueUnwindingZero implements RValueUnwinding {
    private final SymbolType symbolType;
    private final ArraySpec arraySpec;
 
-   public ZeroValueUnwinding(SymbolType symbolType, ArraySpec arraySpec) {
+   public RValueUnwindingZero(SymbolType symbolType, ArraySpec arraySpec) {
       this.symbolType = symbolType;
       this.arraySpec = arraySpec;
    }

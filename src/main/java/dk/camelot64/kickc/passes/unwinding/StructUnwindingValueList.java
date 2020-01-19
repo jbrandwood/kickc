@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes.unwinding;
 
 import dk.camelot64.kickc.model.symbols.ArraySpec;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -12,12 +13,12 @@ import java.util.Collection;
 import java.util.List;
 
 /** Member unwinding for a struct valueList. */
-public class StructMemberUnwindingValueList implements StructMemberUnwinding {
+public class StructUnwindingValueList implements StructUnwinding {
 
    private final StructDefinition structDefinition;
    private final ValueList valueList;
 
-   public StructMemberUnwindingValueList(ValueList valueList, StructDefinition structDefinition) {
+   public StructUnwindingValueList(ValueList valueList, StructDefinition structDefinition) {
       this.valueList = valueList;
       this.structDefinition = structDefinition;
    }
@@ -33,12 +34,12 @@ public class StructMemberUnwindingValueList implements StructMemberUnwinding {
    }
 
    @Override
-   public RValueUnwinding getMemberUnwinding(String memberName) {
+   public RValueUnwinding getMemberUnwinding(String memberName, ProgramScope programScope) {
       final SymbolType type = structDefinition.getMember(memberName).getType();
       final ArraySpec arraySpec = structDefinition.getMember(memberName).getArraySpec();
       int memberIndex = getMemberNames().indexOf(memberName);
       final RValue memberValue = valueList.getList().get(memberIndex);
-      return new SimpleRValueUnwinding(type, arraySpec, memberValue);
+      return new RValueUnwindingSimple(type, arraySpec, memberValue);
    }
 
 }

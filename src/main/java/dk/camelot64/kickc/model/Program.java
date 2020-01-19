@@ -7,12 +7,10 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.SymbolVariableRef;
 import dk.camelot64.kickc.passes.calcs.*;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +61,7 @@ public class Program {
    /** Variables modified inside procedures. PASS 1 (STATIC) */
    private ProcedureModifiedVars procedureModifiedVars;
    /** Struct values unwound to individual variables. PASS 1 (STATIC) */
-   private StructUnwinding structUnwinding;
+   private StructVariableMemberUnwinding structVariableMemberUnwinding;
 
    /** The main scope. PASS 0-5 (DYNAMIC) */
    private ProgramScope scope;
@@ -119,7 +117,7 @@ public class Program {
       this.imported = null;
       this.statementSequence = null;
       this.procedureModifiedVars = null;
-      this.structUnwinding = null;
+      this.structVariableMemberUnwinding = null;
    }
 
    /**
@@ -219,12 +217,12 @@ public class Program {
       this.targetPlatform = targetPlatform;
    }
 
-   public StructUnwinding getStructUnwinding() {
-      return structUnwinding;
+   public StructVariableMemberUnwinding getStructVariableMemberUnwinding() {
+      return structVariableMemberUnwinding;
    }
 
-   public void setStructUnwinding(StructUnwinding structUnwinding) {
-      this.structUnwinding = structUnwinding;
+   public void setStructVariableMemberUnwinding(StructVariableMemberUnwinding structVariableMemberUnwinding) {
+      this.structVariableMemberUnwinding = structVariableMemberUnwinding;
    }
 
    public List<Comment> getFileComments() {

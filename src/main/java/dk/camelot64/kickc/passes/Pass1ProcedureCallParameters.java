@@ -77,11 +77,11 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
          procReturnVarRef = (LValue) procReturnVar.getRef();
          // Special handing of struct value returns
          if(procReturnVar.getType() instanceof SymbolTypeStruct) {
-            StructUnwinding.VariableUnwinding returnVarUnwinding = program.getStructUnwinding().getVariableUnwinding((VariableRef) procReturnVarRef);
+            StructVariableMemberUnwinding.VariableUnwinding returnVarUnwinding = program.getStructVariableMemberUnwinding().getVariableUnwinding((VariableRef) procReturnVarRef);
             if(returnVarUnwinding!=null) {
                ArrayList<RValue> unwoundReturnVars = new ArrayList<>();
                for(String memberName : returnVarUnwinding.getMemberNames()) {
-                  RValueUnwinding memberUnwinding = returnVarUnwinding.getMemberUnwinding(memberName);
+                  RValueUnwinding memberUnwinding = returnVarUnwinding.getMemberUnwinding(memberName, getScope());
                   unwoundReturnVars.add(memberUnwinding.getUnwinding(getScope()));
                }
                procReturnVarRef = new ValueList(unwoundReturnVars);

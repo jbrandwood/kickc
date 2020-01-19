@@ -295,11 +295,11 @@ mulf_init: {
     sta.z sqr+1
     lda.z add
     clc
-    adc #2
+    adc #<2
     sta.z add
-    bcc !+
-    inc.z add+1
-  !:
+    lda.z add+1
+    adc #>2
+    sta.z add+1
     iny
     cpy #$81
     bne __b1

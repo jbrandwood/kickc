@@ -2314,14 +2314,14 @@ mulf_init: {
     lda.z sqr+1
     adc.z add+1
     sta.z sqr+1
-    // [103] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (signed byte) 2 -- vwsz1=vwsz1_plus_2 
+    // [103] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (signed byte) 2 -- vwsz1=vwsz1_plus_vbsc1 
     lda.z add
     clc
-    adc #2
+    adc #<2
     sta.z add
-    bcc !+
-    inc.z add+1
-  !:
+    lda.z add+1
+    adc #>2
+    sta.z add+1
     // [104] (byte) mulf_init::i#1 ← ++ (byte) mulf_init::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [105] if((byte) mulf_init::i#1!=(byte) $81) goto mulf_init::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -2464,22 +2464,22 @@ Uplift Scope [main]
 Uplift Scope [do_perspective] 
 Uplift Scope [perspective] 
 
-Uplifting [mulf_init] best 4030 combination reg byte y [ mulf_init::i#2 mulf_init::i#1 ] reg byte x [ mulf_init::$5 ] reg byte x [ mulf_init::$6 ] reg byte x [ mulf_init::$2 ] zp[2]:16 [ mulf_init::add#2 mulf_init::add#1 ] zp[1]:20 [ mulf_init::val#0 ] zp[2]:13 [ mulf_init::sqr#2 mulf_init::sqr#1 ] 
+Uplifting [mulf_init] best 4035 combination reg byte y [ mulf_init::i#2 mulf_init::i#1 ] reg byte x [ mulf_init::$5 ] reg byte x [ mulf_init::$6 ] reg byte x [ mulf_init::$2 ] zp[2]:16 [ mulf_init::add#2 mulf_init::add#1 ] zp[1]:20 [ mulf_init::val#0 ] zp[2]:13 [ mulf_init::sqr#2 mulf_init::sqr#1 ] 
 Limited combination testing to 100 combinations of 432 possible.
-Uplifting [] best 4030 combination zp[2]:2 [ print_line_cursor#11 print_line_cursor#1 ] zp[2]:8 [ print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ] 
-Uplifting [memset] best 4030 combination zp[2]:11 [ memset::dst#2 memset::dst#1 ] 
-Uplifting [print_str] best 4030 combination zp[2]:4 [ print_str::str#7 print_str::str#9 print_str::str#0 ] 
-Uplifting [print_byte] best 4009 combination reg byte x [ print_byte::b#3 print_byte::b#5 print_byte::b#6 print_byte::b#0 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
-Uplifting [print_char] best 3994 combination reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
-Uplifting [print_sbyte] best 3979 combination reg byte x [ print_sbyte::b#6 print_sbyte::b#0 print_sbyte::b#4 ] 
-Uplifting [RADIX] best 3979 combination 
-Uplifting [print_ln] best 3979 combination 
-Uplifting [print_cls] best 3979 combination 
-Uplifting [main] best 3979 combination 
-Uplifting [do_perspective] best 3979 combination 
-Uplifting [perspective] best 3979 combination 
+Uplifting [] best 4035 combination zp[2]:2 [ print_line_cursor#11 print_line_cursor#1 ] zp[2]:8 [ print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ] 
+Uplifting [memset] best 4035 combination zp[2]:11 [ memset::dst#2 memset::dst#1 ] 
+Uplifting [print_str] best 4035 combination zp[2]:4 [ print_str::str#7 print_str::str#9 print_str::str#0 ] 
+Uplifting [print_byte] best 4014 combination reg byte x [ print_byte::b#3 print_byte::b#5 print_byte::b#6 print_byte::b#0 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
+Uplifting [print_char] best 3999 combination reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ] 
+Uplifting [print_sbyte] best 3984 combination reg byte x [ print_sbyte::b#6 print_sbyte::b#0 print_sbyte::b#4 ] 
+Uplifting [RADIX] best 3984 combination 
+Uplifting [print_ln] best 3984 combination 
+Uplifting [print_cls] best 3984 combination 
+Uplifting [main] best 3984 combination 
+Uplifting [do_perspective] best 3984 combination 
+Uplifting [perspective] best 3984 combination 
 Attempting to uplift remaining variables inzp[1]:20 [ mulf_init::val#0 ]
-Uplifting [mulf_init] best 3979 combination zp[1]:20 [ mulf_init::val#0 ] 
+Uplifting [mulf_init] best 3984 combination zp[1]:20 [ mulf_init::val#0 ] 
 Coalescing zero page register [ zp[2]:4 [ print_str::str#7 print_str::str#9 print_str::str#0 ] ] with [ zp[2]:2 [ print_line_cursor#11 print_line_cursor#1 ] ]
 Coalescing zero page register [ zp[2]:11 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:8 [ print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ] ]
 Coalescing zero page register [ zp[2]:13 [ mulf_init::sqr#2 mulf_init::sqr#1 ] ] with [ zp[2]:4 [ print_str::str#7 print_str::str#9 print_str::str#0 print_line_cursor#11 print_line_cursor#1 ] ]
@@ -3118,14 +3118,14 @@ mulf_init: {
     lda.z sqr+1
     adc.z add+1
     sta.z sqr+1
-    // [103] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (signed byte) 2 -- vwsz1=vwsz1_plus_2 
+    // [103] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (signed byte) 2 -- vwsz1=vwsz1_plus_vbsc1 
     lda.z add
     clc
-    adc #2
+    adc #<2
     sta.z add
-    bcc !+
-    inc.z add+1
-  !:
+    lda.z add+1
+    adc #>2
+    sta.z add+1
     // [104] (byte) mulf_init::i#1 ← ++ (byte) mulf_init::i#2 -- vbuyy=_inc_vbuyy 
     iny
     // [105] if((byte) mulf_init::i#1!=(byte) $81) goto mulf_init::@1 -- vbuyy_neq_vbuc1_then_la1 
@@ -3473,7 +3473,7 @@ reg byte x [ mulf_init::$6 ]
 
 
 FINAL ASSEMBLER
-Score: 3375
+Score: 3380
 
   // File Comments
 // 3D Rotation using a Rotation Matrix
@@ -4048,14 +4048,14 @@ mulf_init: {
     adc.z add+1
     sta.z sqr+1
     // add +=2
-    // [103] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (signed byte) 2 -- vwsz1=vwsz1_plus_2 
+    // [103] (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (signed byte) 2 -- vwsz1=vwsz1_plus_vbsc1 
     lda.z add
     clc
-    adc #2
+    adc #<2
     sta.z add
-    bcc !+
-    inc.z add+1
-  !:
+    lda.z add+1
+    adc #>2
+    sta.z add+1
     // for( byte i:0..128)
     // [104] (byte) mulf_init::i#1 ← ++ (byte) mulf_init::i#2 -- vbuyy=_inc_vbuyy 
     iny

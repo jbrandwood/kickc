@@ -86,9 +86,9 @@ print_word_at: {
     jsr print_byte_at
     lda.z w
     sta.z print_byte_at.b
-    lda.z print_byte_at.at
+    lda #2
     clc
-    adc #2
+    adc.z print_byte_at.at
     sta.z print_byte_at.at
     bcc !+
     inc.z print_byte_at.at+1

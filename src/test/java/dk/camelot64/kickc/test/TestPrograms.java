@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testSqrDelta() throws IOException, URISyntaxException {
+      compileAndCompare("sqr-delta");
+   }
+
+   @Test
    public void testRegister1() throws IOException, URISyntaxException {
       assertError("register-1", "Unknown register");
    }

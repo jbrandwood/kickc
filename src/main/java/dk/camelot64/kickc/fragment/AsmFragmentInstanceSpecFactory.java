@@ -134,6 +134,10 @@ public class AsmFragmentInstanceSpecFactory {
    }
 
    private String assignmentRightSideSignature(RValue rValue1, Operator operator, RValue rValue2) {
+
+      final SymbolType rValue1Type = rValue1==null?null:SymbolTypeInference.inferType(program.getScope(), rValue1);
+      final SymbolType rValue2Type = rValue2==null?null:SymbolTypeInference.inferType(program.getScope(), rValue2);
+
       StringBuilder signature = new StringBuilder();
       if(rValue1 != null) {
          signature.append(bind(rValue1));
@@ -151,7 +155,9 @@ public class AsmFragmentInstanceSpecFactory {
             rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getValue() == 2 &&
                   operator != null &&
-                  (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {
+                  (operator.getOperator().equals("-") || operator.getOperator().equals("+")) &&
+                  (SymbolType.BYTE.equals(rValue1Type) || SymbolType.SBYTE.equals(rValue1Type))
+      ) {
          signature.append("2");
       } else if(
             rValue2 instanceof ConstantInteger &&

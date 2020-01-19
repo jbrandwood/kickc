@@ -2,6 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_POINT_Y = 1
 main: {
     .label SCREEN = $400
@@ -9,12 +10,10 @@ main: {
     .label __4 = $a
     .label i = 2
     .label i1 = 4
-    .label __11 = 8
-    .label __12 = 6
-    .label __13 = $c
-    .label __14 = $e
-    .label __15 = $10
-    .label __16 = $a
+    .label __7 = 8
+    .label __8 = 6
+    .label __9 = $c
+    .label __10 = $a
     lda #<0
     sta.z i
     sta.z i+1
@@ -29,22 +28,22 @@ main: {
     lda.z __3
     clc
     adc #<points
-    sta.z __11
+    sta.z __7
     lda.z __3+1
     adc #>points
-    sta.z __11+1
+    sta.z __7+1
     lda #2
     ldy #0
-    sta (__11),y
+    sta (__7),y
     clc
-    lda.z __12
+    lda.z __8
     adc #<points+OFFSET_STRUCT_POINT_Y
-    sta.z __12
-    lda.z __12+1
+    sta.z __8
+    lda.z __8+1
     adc #>points+OFFSET_STRUCT_POINT_Y
-    sta.z __12+1
+    sta.z __8+1
     txa
-    sta (__12),y
+    sta (__8),y
     inc.z i
     bne !+
     inc.z i+1
@@ -68,36 +67,24 @@ main: {
     lda.z __4
     clc
     adc #<points
-    sta.z __13
+    sta.z __9
     lda.z __4+1
     adc #>points
-    sta.z __13+1
-    lda.z __4
+    sta.z __9+1
     clc
+    lda.z __10
     adc #<SCREEN
-    sta.z __14
-    lda.z __4+1
+    sta.z __10
+    lda.z __10+1
     adc #>SCREEN
-    sta.z __14+1
+    sta.z __10+1
     ldy #0
-    lda (__13),y
-    sta (__14),y
-    lda.z __4
-    clc
-    adc #<points+OFFSET_STRUCT_POINT_Y
-    sta.z __15
-    lda.z __4+1
-    adc #>points+OFFSET_STRUCT_POINT_Y
-    sta.z __15+1
-    clc
-    lda.z __16
-    adc #<SCREEN+OFFSET_STRUCT_POINT_Y
-    sta.z __16
-    lda.z __16+1
-    adc #>SCREEN+OFFSET_STRUCT_POINT_Y
-    sta.z __16+1
-    lda (__15),y
-    sta (__16),y
+  !:
+    lda (__9),y
+    sta (__10),y
+    iny
+    cpy #SIZEOF_STRUCT_POINT
+    bne !-
     inc.z i1
     bne !+
     inc.z i1+1

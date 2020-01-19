@@ -4,13 +4,15 @@ import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.StructDefinition;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.unwinding.*;
-import dk.camelot64.kickc.passes.unwinding.StructUnwinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -268,8 +270,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
       if(lValueUnwinding.isBulkCopyable() && rValueUnwinding.isBulkCopyable()) {
          // Use bulk unwinding for a struct member that is an array
          stmtIt.previous();
-         if(lValueUnwinding.getArraySpec()!=null)
-            if(rValueUnwinding.getArraySpec()==null || !lValueUnwinding.getArraySpec().equals(rValueUnwinding.getArraySpec()))
+         if(lValueUnwinding.getArraySpec() != null)
+            if(rValueUnwinding.getArraySpec() == null || !lValueUnwinding.getArraySpec().equals(rValueUnwinding.getArraySpec()))
                throw new RuntimeException("ArraySpec mismatch!");
          LValue lValueMemberVarRef = lValueUnwinding.getBulkLValue(getScope());
          RValue rValueBulkUnwinding = rValueUnwinding.getBulkRValue(getScope());
@@ -312,6 +314,12 @@ public class Pass1UnwindStructValues extends Pass1Base {
       if(value instanceof ConstantStructValue)
          // A constant struct value
          return true;
+      if(value instanceof PointerDereference) {
+         final SymbolType symbolType = SymbolTypeInference.inferType(getProgram().getScope(), value);
+         if(symbolType instanceof SymbolTypeStruct)
+            // A pointer to a struct
+            return true;
+      }
       // TODO: Add support for arrays
       // Not bulk assignable
       return false;
@@ -338,6 +346,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
             }
             if(value instanceof ConstantStructValue) {
                return new RValueUnwindingConstant(valueType, null, (ConstantStructValue) value);
+            }
+            if(value instanceof PointerDereference) {
+               return new RValueUnwindingStructPointerDeref((PointerDereference) value, (SymbolTypeStruct) valueType);
             }
          }
       }

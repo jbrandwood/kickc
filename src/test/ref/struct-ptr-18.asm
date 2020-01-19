@@ -7,14 +7,18 @@
   .const OFFSET_STRUCT_POINT_Y = 1
   .label idx = 2
 main: {
-    lda #1
-    sta points
-    lda #2
-    sta points+OFFSET_STRUCT_POINT_Y
-    lda #3
-    sta points+1*SIZEOF_STRUCT_POINT
-    lda #4
-    sta points+OFFSET_STRUCT_POINT_Y+1*SIZEOF_STRUCT_POINT
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda __0-1,y
+    sta points-1,y
+    dey
+    bne !-
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda __1-1,y
+    sta points+1*SIZEOF_STRUCT_POINT-1,y
+    dey
+    bne !-
     lda #0
     sta.z idx
     tax
@@ -47,3 +51,5 @@ print: {
     rts
 }
   points: .fill 2*2, 0
+  __0: .byte 1, 2
+  __1: .byte 3, 4

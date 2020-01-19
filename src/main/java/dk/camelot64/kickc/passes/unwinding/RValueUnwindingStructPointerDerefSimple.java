@@ -11,7 +11,7 @@ import dk.camelot64.kickc.model.values.*;
 
 import java.util.ListIterator;
 
-class RValueUnwindingStructPointerDerefSimple implements RValueUnwinding {
+public class RValueUnwindingStructPointerDerefSimple implements RValueUnwinding {
    private final PointerDereferenceSimple structPointerDeref;
    private final ArraySpec memberArraySpec;
    private final SymbolType memberType;
@@ -47,9 +47,9 @@ class RValueUnwindingStructPointerDerefSimple implements RValueUnwinding {
       Variable memberAddress = scope.addVariableIntermediate();
       memberAddress.setType(new SymbolTypePointer(memberType));
       CastValue structTypedPointer = new CastValue(new SymbolTypePointer(memberType), structPointerDeref.getPointer());
-      // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
+      // Add statement $1 = (memberType*)ptr_struct + OFFSET_MEMBER
       stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
-      // Unwind to *(ptr_struct+OFFSET_STRUCT_NAME_MEMBER)
+      // Unwind to *((memberType*)ptr_struct+OFFSET_MEMBER)
       return new PointerDereferenceSimple(memberAddress.getRef());
    }
 

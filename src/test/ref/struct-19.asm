@@ -29,14 +29,18 @@ main: {
     sta p2-1,y
     dey
     bne !-
-    lda.z p1
-    sta.z v
-    lda p1+OFFSET_STRUCT_POINT_Y
-    sta v+OFFSET_STRUCT_POINT_Y
-    lda.z p2
-    sta v+OFFSET_STRUCT_VECTOR_Q
-    lda p2+OFFSET_STRUCT_POINT_Y
-    sta v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda p1-1,y
+    sta v-1,y
+    dey
+    bne !-
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda p2-1,y
+    sta v+OFFSET_STRUCT_VECTOR_Q-1,y
+    dey
+    bne !-
     lda.z v
     sta SCREEN
     lda v+OFFSET_STRUCT_POINT_Y

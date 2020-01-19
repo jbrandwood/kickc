@@ -46,9 +46,9 @@ class RValueUnwindingStructPointerDereferenceIndexedMember implements RValueUnwi
       Variable memberAddress = scope.addVariableIntermediate();
       memberAddress.setType(new SymbolTypePointer(memberType));
       CastValue structTypedPointer = new CastValue(new SymbolTypePointer(memberType), structPointerDeref.getPointer());
-      // Add statement $1 = ptr_struct + OFFSET_STRUCT_NAME_MEMBER
+      // Add statement $1 = ptr_struct + OFFSET_MEMBER
       stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
-      // Unwind to *(ptr_struct+OFFSET_STRUCT_NAME_MEMBER[idx]
+      // Unwind to ((elmType*)ptr_struct+OFFSET_MEMBER)[idx]
       return new PointerDereferenceIndexed(memberAddress.getRef(), structPointerDeref.getIndex());
    }
 

@@ -65,6 +65,7 @@
   .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
+  .const SIZEOF_STRUCT_PROCESSINGSPRITE = $e
   .const OFFSET_STRUCT_PROCESSINGSPRITE_Y = 2
   .const OFFSET_STRUCT_PROCESSINGSPRITE_VX = 4
   .const OFFSET_STRUCT_PROCESSINGSPRITE_VY = 6
@@ -95,7 +96,8 @@ __b1:
 main: {
     .label dst = 3
     .label src = $1c
-    .label center_y = $1e
+    .label i = 2
+    .label center_y = $b
     lda.z SCREEN_DIST
     sta.z init_angle_screen.screen
     lda.z SCREEN_DIST+1
@@ -117,39 +119,30 @@ main: {
     lda.z src
     cmp #<SCREEN+$3e8
     bne __b2
-    ldx #0
+    lda #0
+    sta.z i
   // Init processing array
   __b3:
-    txa
+    lda.z i
     asl
-    stx.z $ff
     clc
-    adc.z $ff
+    adc.z i
     asl
-    stx.z $ff
     clc
-    adc.z $ff
+    adc.z i
     asl
-    tay
-    lda #<0
-    sta PROCESSING,y
-    sta PROCESSING+1,y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_COL,y
-    lda #STATUS_FREE
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,y
-    lda #<0
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,y
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,y
+    tax
+    ldy #0
+  !:
+    lda __2,y
+    sta PROCESSING,x
     inx
-    cpx #NUM_PROCESSING-1+1
+    iny
+    cpy #SIZEOF_STRUCT_PROCESSINGSPRITE
+    bne !-
+    inc.z i
+    lda #NUM_PROCESSING-1+1
+    cmp.z i
     bne __b3
     jsr initSprites
     jsr setupRasterIrq
@@ -186,7 +179,7 @@ main: {
     jmp __b1
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zp($b) center_x, byte zp($1e) center_y)
+// startProcessing(byte zp($1e) center_x, byte zp($b) center_y)
 startProcessing: {
     .label __0 = $c
     .label __1 = $c
@@ -201,8 +194,8 @@ startProcessing: {
     .label __16 = $15
     .label __17 = $15
     .label __21 = $18
-    .label center_x = $b
-    .label center_y = $1e
+    .label center_x = $1e
+    .label center_y = $b
     .label i = 2
     .label offset = $c
     .label colPtr = $10
@@ -476,11 +469,11 @@ getCharToProcess: {
     .label screen_line = $1c
     .label dist_line = 3
     .label y = 2
-    .label return_x = $12
-    .label return_y = $17
-    .label closest_dist = $b
-    .label closest_x = $12
-    .label closest_y = $17
+    .label return_x = $17
+    .label return_y = $b
+    .label closest_dist = $12
+    .label closest_x = $17
+    .label closest_y = $b
     .label __12 = $1a
     .label __13 = $18
     lda.z SCREEN_COPY
@@ -669,7 +662,7 @@ init_angle_screen: {
     .label ang_w = $1e
     .label x = $12
     .label xb = $17
-    .label y = $b
+    .label y = 2
     lda.z screen
     clc
     adc #<$28*$c
@@ -1306,3 +1299,6 @@ VYSIN:
 
   // Sprites currently being processed in the interrupt
   PROCESSING: .fill $e*NUM_PROCESSING, 0
+  __2: .word 0, 0, 0, 0
+  .byte 0, 0, 0, STATUS_FREE
+  .word 0

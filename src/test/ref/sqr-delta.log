@@ -283,11 +283,6 @@ Allocated zp[4]:10 [ ifunc::delta#2 ifunc::delta#1 ]
 Allocated zp[4]:14 [ ifunc::return#2 ]
 Allocated zp[4]:18 [ main::$0 ]
 Allocated zp[4]:22 [ ifunc::return#0 ]
-Warning! Unknown fragment for statement [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3
-Missing ASM fragment Fragment not found vduz1=_dec_vduz2. Attempted variations vduz1=_dec_vduz2 
-File /Users/jespergravgaard/c64/kickc/src/test/kc/sqr-delta.kc
-Line 10
-return --x;
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -417,8 +412,20 @@ ifunc: {
     jmp __b3
     // ifunc::@3
   __b3:
-    // [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3
-    .assert "Missing ASM fragment Fragment not found vduz1=_dec_vduz2. Attempted variations vduz1=_dec_vduz2 ", 0, 1
+    // [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3 -- vduz1=_dec_vduz2 
+    lda.z x
+    sec
+    sbc #1
+    sta.z return
+    lda.z x+1
+    sbc #0
+    sta.z return+1
+    lda.z x+2
+    sbc #0
+    sta.z return+2
+    lda.z x+3
+    sbc #0
+    sta.z return+3
     jmp __breturn
     // ifunc::@return
   __breturn:
@@ -475,10 +482,7 @@ Statement [6] (dword) ifunc::return#2 ← (dword) ifunc::return#0 [ ifunc::retur
 Statement [7] (dword~) main::$0 ← (dword) ifunc::return#2 [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
 Statement [8] *((const dword*) SCREEN) ← (dword~) main::$0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [12] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(byte) 1) goto ifunc::@2 [ ifunc::xsqr#2 ifunc::x#3 ifunc::delta#2 ] ( main:2::ifunc:5 [ ifunc::xsqr#2 ifunc::x#3 ifunc::delta#2 ] ) always clobbers reg byte a 
-Potential register analysis [13] ifunc::return#0 ← -- ifunc::x#3 missing fragment Fragment not found vduz1=_dec_vduz2. Attempted variations vduz1=_dec_vduz2  allocation: zp[4]:22 [ ifunc::return#0 ] zp[4]:6 [ ifunc::x#3 ifunc::x#1 ] 
-MISSING FRAGMENTS
-  Fragment not found vduz1=_dec_vduz2. Attempted variations vduz1=_dec_vduz2 
-Statement [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3 [ ifunc::return#0 ] ( main:2::ifunc:5 [ ifunc::return#0 ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3 [ ifunc::return#0 ] ( main:2::ifunc:5 [ ifunc::return#0 ] ) always clobbers reg byte a 
 Statement [16] (dword) ifunc::xsqr#1 ← (dword) ifunc::xsqr#2 + (dword) ifunc::delta#2 [ ifunc::delta#2 ifunc::xsqr#1 ifunc::x#1 ] ( main:2::ifunc:5 [ ifunc::delta#2 ifunc::xsqr#1 ifunc::x#1 ] ) always clobbers reg byte a 
 Statement [17] (dword) ifunc::delta#1 ← (dword) ifunc::delta#2 + (byte) 2 [ ifunc::xsqr#1 ifunc::x#1 ifunc::delta#1 ] ( main:2::ifunc:5 [ ifunc::xsqr#1 ifunc::x#1 ifunc::delta#1 ] ) always clobbers reg byte a 
 Potential registers zp[4]:2 [ ifunc::xsqr#2 ifunc::xsqr#1 ] : zp[4]:2 , 
@@ -493,24 +497,9 @@ Uplift Scope [ifunc] 30.25: zp[4]:10 [ ifunc::delta#2 ifunc::delta#1 ] 22: zp[4]
 Uplift Scope [main] 4: zp[4]:18 [ main::$0 ] 
 Uplift Scope [] 
 
-Warning! Unknown fragment for statement [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3
-Missing ASM fragment Fragment not found vduz1=_dec_vduz2. Attempted variations vduz1=_dec_vduz2 
-File /Users/jespergravgaard/c64/kickc/src/test/kc/sqr-delta.kc
-Line 10
-return --x;
-Uplifting [ifunc] best 2160 combination zp[4]:10 [ ifunc::delta#2 ifunc::delta#1 ] zp[4]:2 [ ifunc::xsqr#2 ifunc::xsqr#1 ] zp[4]:6 [ ifunc::x#3 ifunc::x#1 ] zp[4]:14 [ ifunc::return#2 ] zp[4]:22 [ ifunc::return#0 ] 
-Warning! Unknown fragment for statement [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3
-Missing ASM fragment Fragment not found vduz1=_dec_vduz2. Attempted variations vduz1=_dec_vduz2 
-File /Users/jespergravgaard/c64/kickc/src/test/kc/sqr-delta.kc
-Line 10
-return --x;
-Uplifting [main] best 2160 combination zp[4]:18 [ main::$0 ] 
-Warning! Unknown fragment for statement [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3
-Missing ASM fragment Fragment not found vduz1=_dec_vduz2. Attempted variations vduz1=_dec_vduz2 
-File /Users/jespergravgaard/c64/kickc/src/test/kc/sqr-delta.kc
-Line 10
-return --x;
-Uplifting [] best 2160 combination 
+Uplifting [ifunc] best 2194 combination zp[4]:10 [ ifunc::delta#2 ifunc::delta#1 ] zp[4]:2 [ ifunc::xsqr#2 ifunc::xsqr#1 ] zp[4]:6 [ ifunc::x#3 ifunc::x#1 ] zp[4]:14 [ ifunc::return#2 ] zp[4]:22 [ ifunc::return#0 ] 
+Uplifting [main] best 2194 combination zp[4]:18 [ main::$0 ] 
+Uplifting [] best 2194 combination 
 Coalescing zero page register [ zp[4]:6 [ ifunc::x#3 ifunc::x#1 ] ] with [ zp[4]:22 [ ifunc::return#0 ] ] - score: 1
 Coalescing zero page register [ zp[4]:14 [ ifunc::return#2 ] ] with [ zp[4]:18 [ main::$0 ] ] - score: 1
 Coalescing zero page register [ zp[4]:6 [ ifunc::x#3 ifunc::x#1 ifunc::return#0 ] ] with [ zp[4]:14 [ ifunc::return#2 main::$0 ] ] - score: 1

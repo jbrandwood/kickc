@@ -37,10 +37,10 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-   @Test
-   public void testSqrDelta() throws IOException, URISyntaxException {
-      compileAndCompare("sqr-delta");
-   }
+   //@Test
+   //public void testSqrDelta() throws IOException, URISyntaxException {
+   //   compileAndCompare("sqr-delta");
+   //}
 
    @Test
    public void testRegister1() throws IOException, URISyntaxException {

@@ -2380,7 +2380,7 @@ Target platform is c64basic / MOS6502X
   .const GREEN = 5
   // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
-  // The address of the sprite pointers on the current screen (screen+$3f8).
+  // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
   .label plex_show_idx = $e
   .label plex_sprite_idx = $d
@@ -3084,7 +3084,7 @@ SPRITE:
 YSIN:
 .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
 
-  // The x-positions of the multiplexer sprites ($000-$1ff)
+  // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.
   PLEX_YPOS: .fill PLEX_COUNT, 0
@@ -3421,7 +3421,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const GREEN = 5
   // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
-  // The address of the sprite pointers on the current screen (screen+$3f8).
+  // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
   .label plex_show_idx = 7
   .label plex_sprite_idx = 6
@@ -4059,7 +4059,7 @@ SPRITE:
 YSIN:
 .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
 
-  // The x-positions of the multiplexer sprites ($000-$1ff)
+  // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.
   PLEX_YPOS: .fill PLEX_COUNT, 0
@@ -4461,7 +4461,7 @@ Score: 43736
   .const GREEN = 5
   // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
-  // The address of the sprite pointers on the current screen (screen+$3f8).
+  // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
   .label plex_show_idx = 7
   .label plex_sprite_idx = 6
@@ -4664,7 +4664,7 @@ plexSort: {
     // s--;
     // [39] (byte) plexSort::s#1 ← -- (byte) plexSort::s#3 -- vbuxx=_dec_vbuxx 
     dex
-    // while((s!=$ff) && (nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[s]]))
+    // while((s!=0xff) && (nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[s]]))
     // [40] if((byte) plexSort::s#1==(byte) $ff) goto plexSort::@4 -- vbuxx_eq_vbuc1_then_la1 
     cpx #$ff
     beq __b4
@@ -4758,7 +4758,7 @@ init: {
     // [58] phi (byte) init::sx#2 = (byte) init::sx#1 [phi:init::@1->init::@1#1] -- register_copy 
     // init::@1
   __b1:
-    // PLEX_PTR[sx] = (char)(SPRITE/$40)
+    // PLEX_PTR[sx] = (char)(SPRITE/0x40)
     // [59] *((const byte[PLEX_COUNT]) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte[$40]) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$ff&SPRITE/$40
     sta PLEX_PTR,x
@@ -4788,7 +4788,7 @@ init: {
     cpx #PLEX_COUNT-1+1
     bne __b1
     // init::@2
-    // *SPRITES_ENABLE = $ff
+    // *SPRITES_ENABLE = 0xff
     // [65] *((const byte*) SPRITES_ENABLE) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Enable & initialize sprites
     lda #$ff
@@ -5009,11 +5009,11 @@ plexShowSprite: {
     cmp #0
     bne __b1
     // plexShowSprite::@3
-    // $ff^plex_sprite_msb
+    // 0xff^plex_sprite_msb
     // [112] (byte~) plexShowSprite::$9 ← (byte) $ff ^ (byte) plex_sprite_msb#28 -- vbuaa=vbuc1_bxor_vbuz1 
     lda #$ff
     eor.z plex_sprite_msb
-    // *SPRITES_XMSB &= ($ff^plex_sprite_msb)
+    // *SPRITES_XMSB &= (0xff^plex_sprite_msb)
     // [113] *((const byte*) SPRITES_XMSB) ← *((const byte*) SPRITES_XMSB) & (byte~) plexShowSprite::$9 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
     and SPRITES_XMSB
     sta SPRITES_XMSB
@@ -5073,7 +5073,7 @@ SPRITE:
 YSIN:
 .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
 
-  // The x-positions of the multiplexer sprites ($000-$1ff)
+  // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.
   PLEX_YPOS: .fill PLEX_COUNT, 0

@@ -30,7 +30,7 @@
   .const GREEN = 5
   // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
-  // The address of the sprite pointers on the current screen (screen+$3f8).
+  // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
   .label plex_show_idx = 7
   .label plex_sprite_idx = 6
@@ -330,7 +330,7 @@ SPRITE:
 YSIN:
 .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
 
-  // The x-positions of the multiplexer sprites ($000-$1ff)
+  // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.
   PLEX_YPOS: .fill PLEX_COUNT, 0

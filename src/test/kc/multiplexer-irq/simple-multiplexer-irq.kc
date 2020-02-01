@@ -2,9 +2,9 @@
 import "c64"
 import "multiplexer-irq"
 // Location of screen & sprites
-byte* SCREEN = $400;
+char* SCREEN = $400;
 
-byte* SPRITE = $2000;
+char* SPRITE = $2000;
 kickasm(pc SPRITE, resource "balloon.png") {{
     .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
@@ -12,7 +12,7 @@ kickasm(pc SPRITE, resource "balloon.png") {{
             .byte pic.getSinglecolorByte(x,y)
 }}
 
-byte[0x100] align(0x100) YSIN = kickasm {{
+char[0x100] align(0x100) YSIN = kickasm {{
     .var min = 50
     .var max = 250-21
     .var ampl = max-min;
@@ -32,15 +32,15 @@ void init() {
     // Initialize the multiplexer
     plexInit(SCREEN);
     // Set the x-positions & pointers
-    word xp = 32;
-    for(byte sx: 0..PLEX_COUNT-1) {
-        PLEX_PTR[sx] = (byte)(SPRITE/$40);
+    unsigned int xp = 32;
+    for(char sx: 0..PLEX_COUNT-1) {
+        PLEX_PTR[sx] = (char)(SPRITE/$40);
         PLEX_XPOS[sx] = xp;
         xp += 9;
     }
     // Enable & initialize sprites
     *SPRITES_ENABLE = $ff;
-    for(byte ss: 0..7) {
+    for(char ss: 0..7) {
         SPRITES_COLS[ss] = GREEN;
     }
     // enable the interrupt
@@ -55,7 +55,7 @@ void init() {
 volatile bool framedone = true;
 
 interrupt(kernel_min) void plex_irq() {
-    byte rasterY;
+    char rasterY;
     *BORDERCOL = WHITE;
     do {
         plexShowSprite();
@@ -73,13 +73,13 @@ interrupt(kernel_min) void plex_irq() {
 // The raster loop
 void loop() {
 // The current index into the y-sinus
-    byte sin_idx = 0;
+    char sin_idx = 0;
     while(true) {
         while(!framedone) { }
         *BORDERCOL = RED;
         // Assign sinus positions
-        byte y_idx = sin_idx;
-        for(byte sy: 0..PLEX_COUNT-1) {
+        char y_idx = sin_idx;
+        for(char sy: 0..PLEX_COUNT-1) {
             PLEX_YPOS[sy] = YSIN[y_idx];
             y_idx += 8;
         }

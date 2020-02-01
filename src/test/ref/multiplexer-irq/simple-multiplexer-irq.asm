@@ -32,7 +32,6 @@
   .const PLEX_COUNT = $20
   // The address of the sprite pointers on the current screen (screen+$3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
-  .label SPRITE = $2000
   .label plex_show_idx = 7
   .label plex_sprite_idx = 6
   .label plex_sprite_msb = 9
@@ -170,7 +169,7 @@ init: {
     sta.z xp+1
     ldx #0
   __b1:
-    lda #SPRITE/$40
+    lda #$ff&SPRITE/$40
     sta PLEX_PTR,x
     txa
     asl
@@ -320,13 +319,16 @@ plexShowSprite: {
 }
   // Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
   PLEX_FREE_YPOS: .fill 8, 0
+  .align $40
+SPRITE:
+.var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+    .for (var y=0; y<21; y++)
+        .for (var x=0;x<3; x++)
+            .byte pic.getSinglecolorByte(x,y)
+
   .align $100
 YSIN:
-.var min = 50
-    .var max = 250-21
-    .var ampl = max-min;
-    .for(var i=0;i<256;i++)
-        .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
+.fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
 
   // The x-positions of the multiplexer sprites ($000-$1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
@@ -336,9 +338,3 @@ YSIN:
   PLEX_PTR: .fill PLEX_COUNT, 0
   // Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
   PLEX_SORTED_IDX: .fill PLEX_COUNT, 0
-.pc = SPRITE "SPRITE"
-  .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
-    .for (var y=0; y<21; y++)
-        .for (var x=0;x<3; x++)
-            .byte pic.getSinglecolorByte(x,y)
-

@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMillforkLinkedlist() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/linkedlist-kc");
+   }
+
+   @Test
    public void testGridBobs() throws IOException, URISyntaxException {
       compileAndCompare("complex/prebob/grid-bobs");
    }

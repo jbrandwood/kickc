@@ -46,7 +46,7 @@ public interface RValueUnwinding {
    LValue getBulkLValue(ProgramScope scope);
 
    /**
-    * Get Rvalue to use when for copying/setting a bulk value at once. Typically returns a memset/memcpy commands.
+    * Get Rvalue to use when for copying/setting a bulk value at once. Typically returns a memset/memcpy command.
     * @param scope The program scope
     * @return The value to use as RValue
     */

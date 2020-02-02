@@ -404,6 +404,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   return new StructUnwindingVariable(variable, structDefinition);
                }
             } else if(value instanceof StructMemberRef && ((StructMemberRef) value).getStruct() instanceof VariableRef) {
+               getLog().append("Postponing unwinding for "+currentStmt.toString(getProgram(), false));
                return POSTPONE_UNWINDING;
             } else if(value instanceof PointerDereferenceSimple) {
                return new StructUnwindingPointerDerefSimple((PointerDereferenceSimple) value, structDefinition, stmtIt, currentBlock, currentStmt);

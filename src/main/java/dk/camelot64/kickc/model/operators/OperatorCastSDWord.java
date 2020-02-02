@@ -3,6 +3,7 @@ package dk.camelot64.kickc.model.operators;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.values.ConstantChar;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
@@ -17,6 +18,8 @@ public class OperatorCastSDWord extends OperatorCast {
    public ConstantLiteral calculateLiteral(ConstantLiteral value, ProgramScope scope) {
       if(value instanceof ConstantInteger) {
          return new ConstantInteger(0xffffffffL & ((ConstantInteger) value).getValue(), SymbolType.SDWORD);
+      } else if(value instanceof ConstantChar) {
+         return new ConstantInteger(((ConstantChar) value).getInteger(), SymbolType.SDWORD);
       }
       throw new CompileError("Calculation not implemented " + getOperator() + " " + value );
    }

@@ -7,11 +7,12 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.ListIterator;
 
-class RValueUnwindingStructPointerDereferenceIndexedMember implements RValueUnwinding {
+public class RValueUnwindingStructPointerDereferenceIndexedMember implements RValueUnwinding {
    private final PointerDereferenceIndexed structPointerDeref;
    private final SymbolType memberType;
    private final ArraySpec memberArraySpec;
@@ -54,7 +55,7 @@ class RValueUnwindingStructPointerDereferenceIndexedMember implements RValueUnwi
 
    @Override
    public boolean isBulkCopyable() {
-      return getArraySpec() != null;
+      return getArraySpec() != null || memberType instanceof SymbolTypeStruct;
    }
 
    @Override
@@ -64,6 +65,6 @@ class RValueUnwindingStructPointerDereferenceIndexedMember implements RValueUnwi
 
    @Override
    public RValue getBulkRValue(ProgramScope scope) {
-      throw new RuntimeException("TODO: Implement!");
+      return getUnwinding(scope);
    }
 }

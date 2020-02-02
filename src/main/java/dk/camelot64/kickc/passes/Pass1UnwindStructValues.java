@@ -4,10 +4,7 @@ import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.StructDefinition;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
@@ -314,6 +311,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
       if(value instanceof ConstantStructValue)
          // A constant struct value
          return true;
+      if(value instanceof StructMemberRef && ((StructMemberRef) value).getStruct() instanceof PointerDereference)
+         // A member of a struct in memory
+         return true;
       if(value instanceof PointerDereference) {
          final SymbolType symbolType = SymbolTypeInference.inferType(getProgram().getScope(), value);
          if(symbolType instanceof SymbolTypeStruct)
@@ -341,15 +341,28 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   return new RValueUnwindingStructVariable(variable);
                }
             }
-            if(value instanceof StructZero) {
+            if(value instanceof StructZero)
                return new RValueUnwindingZero(valueType, null);
-            }
-            if(value instanceof ConstantStructValue) {
+            if(value instanceof ConstantStructValue)
                return new RValueUnwindingConstant(valueType, null, (ConstantStructValue) value);
-            }
-            if(value instanceof PointerDereference) {
+            if(value instanceof PointerDereference)
                return new RValueUnwindingStructPointerDeref((PointerDereference) value, (SymbolTypeStruct) valueType);
+            if(value instanceof StructMemberRef && ((StructMemberRef) value).getStruct() instanceof PointerDereferenceIndexed) {
+               final StructMemberRef structMemberRef = (StructMemberRef) value;
+               final PointerDereferenceIndexed structPointerDerefIdx = (PointerDereferenceIndexed) structMemberRef.getStruct();
+               final SymbolType structPointerType = SymbolTypeInference.inferType(getScope(), structPointerDerefIdx);
+               if(!(structPointerType instanceof SymbolTypeStruct))
+                  throw new CompileError("Value is not a struct"+structPointerDerefIdx.toString(getProgram()), currentStmt);
+
+               final StructDefinition structDefinition = ((SymbolTypeStruct) structPointerType).getStructDefinition(getScope());
+               final String memberName = structMemberRef.getMemberName();
+               final Variable member = structDefinition.getMember(memberName);
+               final SymbolType memberType = member.getType();
+               final ArraySpec memberArraySpec = member.getArraySpec();
+               final ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(getScope(), structDefinition, memberName);
+               return new RValueUnwindingStructPointerDereferenceIndexedMember(structPointerDerefIdx, memberType, memberArraySpec, memberOffsetConstant, currentBlock, stmtIt, currentStmt);
             }
+
          }
       }
       return null;
@@ -396,6 +409,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
                return new StructUnwindingPointerDerefSimple((PointerDereferenceSimple) value, structDefinition, stmtIt, currentBlock, currentStmt);
             } else if(value instanceof PointerDereferenceIndexed) {
                return new StructUnwindingPointerDerefIndexed((PointerDereferenceIndexed) value, structDefinition, stmtIt, currentBlock, currentStmt);
+            } else if(value instanceof StructMemberRef && ((StructMemberRef) value).getStruct() instanceof PointerDereferenceIndexed) {
+               final StructMemberRef structMemberRef = (StructMemberRef) value;
+               return new StructUnwindingMemberOfPointerDerefIndexed((PointerDereferenceIndexed) structMemberRef.getStruct(),structMemberRef.getMemberName(), structDefinition, stmtIt, currentBlock, currentStmt);
             } else if(value instanceof ConstantStructValue) {
                return new StructUnwindingConstant((ConstantStructValue) value, structDefinition);
             } else if(value instanceof StructZero) {

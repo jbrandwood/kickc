@@ -11,7 +11,7 @@ import dk.camelot64.kickc.model.values.*;
 
 import java.util.ListIterator;
 
-public class RValueUnwindingStructPointerDerefSimple implements RValueUnwinding {
+public class RValueUnwindingStructPointerDerefSimpleMember implements RValueUnwinding {
    private final PointerDereferenceSimple structPointerDeref;
    private final ArraySpec memberArraySpec;
    private final SymbolType memberType;
@@ -21,7 +21,7 @@ public class RValueUnwindingStructPointerDerefSimple implements RValueUnwinding 
    private final ListIterator<Statement> stmtIt;
    private final Statement currentStmt;
 
-   public RValueUnwindingStructPointerDerefSimple(PointerDereferenceSimple structPointerDeref, ArraySpec memberArraySpec, SymbolType memberType, ConstantRef memberOffsetConstant, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt, Statement currentStmt) {
+   public RValueUnwindingStructPointerDerefSimpleMember(PointerDereferenceSimple structPointerDeref, ArraySpec memberArraySpec, SymbolType memberType, ConstantRef memberOffsetConstant, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt, Statement currentStmt) {
       this.structPointerDeref = structPointerDeref;
       this.memberArraySpec = memberArraySpec;
       this.memberType = memberType;

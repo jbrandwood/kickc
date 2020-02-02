@@ -45,7 +45,7 @@ public class StructUnwindingPointerDerefSimple implements StructUnwinding {
       Variable member = structDefinition.getMember(memberName);
       SymbolType memberType = member.getType();
       ArraySpec memberArraySpec = member.getArraySpec();
-      return new RValueUnwindingStructPointerDerefSimple(pointerDeref, memberArraySpec, memberType, memberOffsetConstant, currentBlock, stmtIt, currentStmt);
+      return new RValueUnwindingStructPointerDerefSimpleMember(pointerDeref, memberArraySpec, memberType, memberOffsetConstant, currentBlock, stmtIt, currentStmt);
    }
 
 }

@@ -38,6 +38,27 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMillforkPlasma() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/plasma-kc");
+   }
+
+   @Test
+   public void testMillforkRomsum() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/romsum-kc");
+   }
+
+   @Test
+   public void testMillforkSieve() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/sieve-kc");
+   }
+
+   @Test
+   public void testMillforkLinkedlist() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/linkedlist-kc");
+   }
+
+
+   @Test
    public void testSqrDelta() throws IOException, URISyntaxException {
       compileAndCompare("sqr-delta");
    }
@@ -2707,6 +2728,11 @@ public class TestPrograms {
    @Test
    public void testConstWordPointer() throws IOException, URISyntaxException {
       compileAndCompare("const-word-pointer");
+   }
+
+   @Test
+   public void testConstParam1() throws IOException, URISyntaxException {
+      assertError("const-param-1", "Error! Const parameters not supported", false);
    }
 
    @Test

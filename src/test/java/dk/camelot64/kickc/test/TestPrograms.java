@@ -38,6 +38,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMillforkPlasma() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/plasma-kc");
+   }
+
+   @Test
+   public void testMillforkRomsum() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/romsum-kc");
+   }
+
+   @Test
+   public void testMillforkSieve() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/sieve-kc");
+   }
+
+   @Test
    public void testMillforkLinkedlist() throws IOException, URISyntaxException {
       compileAndCompare("millfork-benchmarks/linkedlist-kc");
    }

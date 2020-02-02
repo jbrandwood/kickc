@@ -76,7 +76,7 @@ print_ln: {
     rts
 }
 // Print a word as DECIMAL
-// print_word_decimal(word zeropage(5) w)
+// print_word_decimal(word zp(5) w)
 print_word_decimal: {
     .label w = 5
     jsr utoa
@@ -84,7 +84,7 @@ print_word_decimal: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(5) str)
+// print_str(byte* zp(5) str)
 print_str: {
     .label str = 5
     lda #<decimal_digits
@@ -116,7 +116,7 @@ print_str: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zeropage(5) value, byte* zeropage(7) buffer)
+// utoa(word zp(5) value, byte* zp(7) buffer)
 utoa: {
     .const max_digits = 5
     .label digit_value = $11
@@ -184,7 +184,7 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zeropage(7) buffer, word zeropage(5) value, word zeropage($11) sub)
+// utoa_append(byte* zp(7) buffer, word zp(5) value, word zp($11) sub)
 utoa_append: {
     .label buffer = 7
     .label value = 5
@@ -277,7 +277,7 @@ end: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage($11) w)
+// print_word(word zp($11) w)
 print_word: {
     .label w = $11
     lda.z w+1

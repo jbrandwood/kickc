@@ -7,6 +7,7 @@ Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - 
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
 Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
@@ -26,7 +27,7 @@ Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
-Culled Empty Block (label) @13
+Culled Empty Block (label) @12
 Culled Empty Block (label) @14
 Culled Empty Block (label) @15
 Culled Empty Block (label) @16
@@ -55,9 +56,10 @@ Culled Empty Block (label) @38
 Culled Empty Block (label) @39
 Culled Empty Block (label) @40
 Culled Empty Block (label) @41
-Culled Empty Block (label) @43
+Culled Empty Block (label) @42
+Culled Empty Block (label) @44
 Culled Empty Block (label) rand::@1
-Culled Empty Block (label) @45
+Culled Empty Block (label) @46
 Culled Empty Block (label) doplasma::@4
 Culled Empty Block (label) doplasma::@5
 Culled Empty Block (label) doplasma::@6
@@ -71,7 +73,7 @@ Culled Empty Block (label) doplasma::@19
 Culled Empty Block (label) doplasma::@20
 Culled Empty Block (label) doplasma::@21
 Culled Empty Block (label) doplasma::@22
-Culled Empty Block (label) @46
+Culled Empty Block (label) @47
 Culled Empty Block (label) makechar::@19
 Culled Empty Block (label) makechar::@3
 Culled Empty Block (label) makechar::@20
@@ -82,7 +84,7 @@ Culled Empty Block (label) makechar::@12
 Culled Empty Block (label) makechar::@14
 Culled Empty Block (label) makechar::@15
 Culled Empty Block (label) makechar::@18
-Culled Empty Block (label) @47
+Culled Empty Block (label) @48
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
@@ -90,12 +92,12 @@ Culled Empty Block (label) main::@7
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@12
-@12: scope:[]  from @begin
-  (byte*) print_screen#0 ← ((byte*)) (number) $400
+  to:@13
+@13: scope:[]  from @begin
+  (byte*) print_screen#0 ← (byte*)(number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@42
+  to:@43
 
 (void()) print_ln()
 print_ln: scope:[print_ln]  from end::@2
@@ -186,21 +188,21 @@ print_char::@return: scope:[print_char]  from print_char
   (byte*) print_char_cursor#10 ← (byte*) print_char_cursor#26
   return 
   to:@return
-@42: scope:[]  from @12
-  (byte*) print_line_cursor#24 ← phi( @12/(byte*) print_line_cursor#0 )
-  (byte*) print_char_cursor#42 ← phi( @12/(byte*) print_char_cursor#0 )
+@43: scope:[]  from @13
+  (byte*) print_line_cursor#24 ← phi( @13/(byte*) print_line_cursor#0 )
+  (byte*) print_char_cursor#42 ← phi( @13/(byte*) print_char_cursor#0 )
   (word) last_time#0 ← (word) 0
   (word) Ticks#0 ← (word) 0
-  to:@44
+  to:@45
 
 (void()) start()
-start: scope:[start]  from end main
+start: scope:[start]  from end main::@8
   asm { jsr$FFDE staLAST_TIME stxLAST_TIME+1  }
   (word) rand_seed#0 ← (number) $194a
   to:start::@return
 start::@return: scope:[start]  from start
-  (word) rand_seed#9 ← phi( start/(word) rand_seed#0 )
-  (word) rand_seed#1 ← (word) rand_seed#9
+  (word) rand_seed#10 ← phi( start/(word) rand_seed#0 )
+  (word) rand_seed#1 ← (word) rand_seed#10
   return 
   to:@return
 
@@ -208,7 +210,7 @@ start::@return: scope:[start]  from start
 end: scope:[end]  from main::@3
   (byte*) print_line_cursor#23 ← phi( main::@3/(byte*) print_line_cursor#18 )
   (byte*) print_char_cursor#39 ← phi( main::@3/(byte*) print_char_cursor#37 )
-  (word) rand_seed#17 ← phi( main::@3/(word) rand_seed#21 )
+  (word) rand_seed#18 ← phi( main::@3/(word) rand_seed#22 )
   (word) last_time#6 ← phi( main::@3/(word) last_time#12 )
   (word) Ticks#1 ← (word) last_time#6
   call start 
@@ -218,8 +220,8 @@ end::@1: scope:[end]  from end
   (byte*) print_char_cursor#36 ← phi( end/(byte*) print_char_cursor#39 )
   (word) Ticks#7 ← phi( end/(word) Ticks#1 )
   (word) last_time#7 ← phi( end/(word) last_time#6 )
-  (word) rand_seed#10 ← phi( end/(word) rand_seed#1 )
-  (word) rand_seed#2 ← (word) rand_seed#10
+  (word) rand_seed#11 ← phi( end/(word) rand_seed#1 )
+  (word) rand_seed#2 ← (word) rand_seed#11
   (word) last_time#1 ← (word) last_time#7 - (word) Ticks#7
   (word) Ticks#2 ← (word) last_time#1
   (word) print_word::w#0 ← (word) Ticks#2
@@ -227,7 +229,7 @@ end::@1: scope:[end]  from end
   to:end::@2
 end::@2: scope:[end]  from end::@1
   (word) last_time#15 ← phi( end::@1/(word) last_time#1 )
-  (word) rand_seed#23 ← phi( end::@1/(word) rand_seed#2 )
+  (word) rand_seed#24 ← phi( end::@1/(word) rand_seed#2 )
   (word) Ticks#15 ← phi( end::@1/(word) Ticks#2 )
   (byte*) print_line_cursor#17 ← phi( end::@1/(byte*) print_line_cursor#20 )
   (byte*) print_char_cursor#27 ← phi( end::@1/(byte*) print_char_cursor#5 )
@@ -236,7 +238,7 @@ end::@2: scope:[end]  from end::@1
   to:end::@3
 end::@3: scope:[end]  from end::@2
   (word) last_time#13 ← phi( end::@2/(word) last_time#15 )
-  (word) rand_seed#18 ← phi( end::@2/(word) rand_seed#23 )
+  (word) rand_seed#19 ← phi( end::@2/(word) rand_seed#24 )
   (word) Ticks#12 ← phi( end::@2/(word) Ticks#15 )
   (byte*) print_char_cursor#28 ← phi( end::@2/(byte*) print_char_cursor#2 )
   (byte*) print_line_cursor#11 ← phi( end::@2/(byte*) print_line_cursor#2 )
@@ -247,28 +249,28 @@ end::@return: scope:[end]  from end::@3
   (byte*) print_line_cursor#12 ← phi( end::@3/(byte*) print_line_cursor#3 )
   (byte*) print_char_cursor#29 ← phi( end::@3/(byte*) print_char_cursor#12 )
   (word) last_time#8 ← phi( end::@3/(word) last_time#13 )
-  (word) rand_seed#11 ← phi( end::@3/(word) rand_seed#18 )
+  (word) rand_seed#12 ← phi( end::@3/(word) rand_seed#19 )
   (word) Ticks#8 ← phi( end::@3/(word) Ticks#12 )
   (word) Ticks#3 ← (word) Ticks#8
-  (word) rand_seed#3 ← (word) rand_seed#11
+  (word) rand_seed#3 ← (word) rand_seed#12
   (word) last_time#2 ← (word) last_time#8
   (byte*) print_char_cursor#13 ← (byte*) print_char_cursor#29
   (byte*) print_line_cursor#4 ← (byte*) print_line_cursor#12
   return 
   to:@return
-@44: scope:[]  from @42
-  (byte*) print_line_cursor#22 ← phi( @42/(byte*) print_line_cursor#24 )
-  (byte*) print_char_cursor#41 ← phi( @42/(byte*) print_char_cursor#42 )
-  (word) last_time#17 ← phi( @42/(word) last_time#0 )
-  (word) Ticks#17 ← phi( @42/(word) Ticks#0 )
+@45: scope:[]  from @43
+  (byte*) print_line_cursor#22 ← phi( @43/(byte*) print_line_cursor#24 )
+  (byte*) print_char_cursor#41 ← phi( @43/(byte*) print_char_cursor#42 )
+  (word) last_time#17 ← phi( @43/(word) last_time#0 )
+  (word) Ticks#17 ← phi( @43/(word) Ticks#0 )
   (word) rand_seed#4 ← (word) 0
-  to:@48
+  to:@49
 
 (byte()) rand()
 rand: scope:[rand]  from makechar::@8
-  (word) rand_seed#12 ← phi( makechar::@8/(word) rand_seed#19 )
+  (word) rand_seed#13 ← phi( makechar::@8/(word) rand_seed#20 )
   asm { ldx#8 ldaRAND_SEED+0 __rand_loop: asl rolRAND_SEED+1 bcc__no_eor eor#$2D __no_eor: dex bne__rand_loop staRAND_SEED+0  }
-  (byte~) rand::$0 ← ((byte)) (word) rand_seed#12
+  (byte~) rand::$0 ← ((byte)) (word) rand_seed#13
   (byte) rand::return#0 ← (byte~) rand::$0
   to:rand::@return
 rand::@return: scope:[rand]  from rand
@@ -403,8 +405,8 @@ doplasma::@return: scope:[doplasma]  from doplasma::@13
   to:@return
 
 (void()) makechar()
-makechar: scope:[makechar]  from main::@8
-  (word) rand_seed#38 ← phi( main::@8/(word) rand_seed#5 )
+makechar: scope:[makechar]  from main
+  (word) rand_seed#38 ← phi( main/(word) rand_seed#5 )
   (byte) makechar::i#0 ← (byte) 0
   (byte) makechar::ii#0 ← (byte) 0
   (byte) makechar::b#0 ← (byte) 0
@@ -435,7 +437,7 @@ makechar::@4: scope:[makechar]  from makechar::@2 makechar::@9
   to:makechar::@6
 makechar::@5: scope:[makechar]  from makechar::@4
   (byte) makechar::s#6 ← phi( makechar::@4/(byte) makechar::s#7 )
-  (word) rand_seed#27 ← phi( makechar::@4/(word) rand_seed#30 )
+  (word) rand_seed#28 ← phi( makechar::@4/(word) rand_seed#30 )
   (byte) makechar::i#7 ← phi( makechar::@4/(byte) makechar::i#3 )
   (word) makechar::c#10 ← phi( makechar::@4/(word) makechar::c#7 )
   (byte) makechar::b#1 ← (number) 0
@@ -448,7 +450,7 @@ makechar::@6: scope:[makechar]  from makechar::@4
   to:makechar::@1
 makechar::@7: scope:[makechar]  from makechar::@10 makechar::@5
   (byte) makechar::s#4 ← phi( makechar::@10/(byte) makechar::s#5 makechar::@5/(byte) makechar::s#6 )
-  (word) rand_seed#24 ← phi( makechar::@10/(word) rand_seed#26 makechar::@5/(word) rand_seed#27 )
+  (word) rand_seed#25 ← phi( makechar::@10/(word) rand_seed#27 makechar::@5/(word) rand_seed#28 )
   (byte) makechar::b#5 ← phi( makechar::@10/(byte) makechar::b#7 makechar::@5/(byte) makechar::b#1 )
   (byte) makechar::i#5 ← phi( makechar::@10/(byte) makechar::i#6 makechar::@5/(byte) makechar::i#7 )
   (word) makechar::c#8 ← phi( makechar::@10/(word) makechar::c#9 makechar::@5/(word) makechar::c#10 )
@@ -462,12 +464,12 @@ makechar::@8: scope:[makechar]  from makechar::@7
   (byte) makechar::b#8 ← phi( makechar::@7/(byte) makechar::b#5 )
   (byte) makechar::ii#7 ← phi( makechar::@7/(byte) makechar::ii#3 )
   (byte) makechar::s#3 ← phi( makechar::@7/(byte) makechar::s#4 )
-  (word) rand_seed#19 ← phi( makechar::@7/(word) rand_seed#24 )
+  (word) rand_seed#20 ← phi( makechar::@7/(word) rand_seed#25 )
   call rand 
   (byte) rand::return#2 ← (byte) rand::return#1
   to:makechar::@21
 makechar::@21: scope:[makechar]  from makechar::@8
-  (word) rand_seed#32 ← phi( makechar::@8/(word) rand_seed#19 )
+  (word) rand_seed#32 ← phi( makechar::@8/(word) rand_seed#20 )
   (byte) makechar::i#9 ← phi( makechar::@8/(byte) makechar::i#10 )
   (word) makechar::c#12 ← phi( makechar::@8/(word) makechar::c#13 )
   (byte) makechar::b#6 ← phi( makechar::@8/(byte) makechar::b#8 )
@@ -482,18 +484,18 @@ makechar::@21: scope:[makechar]  from makechar::@8
   to:makechar::@13
 makechar::@9: scope:[makechar]  from makechar::@7
   (byte) makechar::s#9 ← phi( makechar::@7/(byte) makechar::s#4 )
-  (word) rand_seed#35 ← phi( makechar::@7/(word) rand_seed#24 )
+  (word) rand_seed#35 ← phi( makechar::@7/(word) rand_seed#25 )
   (byte) makechar::b#3 ← phi( makechar::@7/(byte) makechar::b#5 )
   (byte) makechar::i#4 ← phi( makechar::@7/(byte) makechar::i#5 )
   (word) makechar::c#6 ← phi( makechar::@7/(word) makechar::c#8 )
   (word~) makechar::$8 ← (word) makechar::c#6 << (number) 3
   (word~) makechar::$9 ← (word~) makechar::$8 + (byte) makechar::i#4
-  *((byte*)(const word) CHARSET + (word~) makechar::$9) ← (byte) makechar::b#3
+  *((byte*)(const byte*) CHARSET + (word~) makechar::$9) ← (byte) makechar::b#3
   (byte) makechar::i#2 ← ++ (byte) makechar::i#4
   to:makechar::@4
 makechar::@10: scope:[makechar]  from makechar::@13 makechar::@21
   (byte) makechar::s#5 ← phi( makechar::@13/(byte) makechar::s#8 makechar::@21/(byte) makechar::s#2 )
-  (word) rand_seed#26 ← phi( makechar::@13/(word) rand_seed#31 makechar::@21/(word) rand_seed#32 )
+  (word) rand_seed#27 ← phi( makechar::@13/(word) rand_seed#31 makechar::@21/(word) rand_seed#32 )
   (byte) makechar::b#7 ← phi( makechar::@13/(byte) makechar::b#2 makechar::@21/(byte) makechar::b#6 )
   (byte) makechar::i#6 ← phi( makechar::@13/(byte) makechar::i#8 makechar::@21/(byte) makechar::i#9 )
   (word) makechar::c#9 ← phi( makechar::@13/(word) makechar::c#11 makechar::@21/(word) makechar::c#12 )
@@ -514,16 +516,16 @@ makechar::@return: scope:[makechar]  from makechar::@1
   to:@return
 
 (signed word()) main()
-main: scope:[main]  from @48
-  (byte*) print_line_cursor#29 ← phi( @48/(byte*) print_line_cursor#19 )
-  (byte*) print_char_cursor#47 ← phi( @48/(byte*) print_char_cursor#38 )
-  (word) Ticks#22 ← phi( @48/(word) Ticks#14 )
-  (word) last_time#22 ← phi( @48/(word) last_time#14 )
-  (word) rand_seed#20 ← phi( @48/(word) rand_seed#22 )
+main: scope:[main]  from @49
+  (byte*) print_line_cursor#29 ← phi( @49/(byte*) print_line_cursor#19 )
+  (byte*) print_char_cursor#47 ← phi( @49/(byte*) print_char_cursor#38 )
+  (word) Ticks#22 ← phi( @49/(word) Ticks#14 )
+  (word) last_time#22 ← phi( @49/(word) last_time#14 )
   (byte) main::v#0 ← (byte) 0
   (byte) main::block#0 ← (byte) 0
-  (word) main::count#0 ← (number) $1f4
-  call start 
+  (word) main::count#0 ← (word) $1f4
+  (word) rand_seed#5 ← (number) $194a
+  call makechar 
   to:main::@8
 main::@8: scope:[main]  from main
   (byte*) print_line_cursor#27 ← phi( main/(byte*) print_line_cursor#29 )
@@ -531,29 +533,29 @@ main::@8: scope:[main]  from main
   (word) Ticks#20 ← phi( main/(word) Ticks#22 )
   (word) last_time#20 ← phi( main/(word) last_time#22 )
   (word) main::count#6 ← phi( main/(word) main::count#0 )
-  (word) rand_seed#13 ← phi( main/(word) rand_seed#1 )
-  (word) rand_seed#5 ← (word) rand_seed#13
-  call makechar 
+  (word) rand_seed#21 ← phi( main/(word) rand_seed#5 )
+  call start 
   to:main::@9
 main::@9: scope:[main]  from main::@8
   (byte*) print_line_cursor#26 ← phi( main::@8/(byte*) print_line_cursor#27 )
   (byte*) print_char_cursor#44 ← phi( main::@8/(byte*) print_char_cursor#45 )
-  (word) rand_seed#29 ← phi( main::@8/(word) rand_seed#5 )
   (word) Ticks#19 ← phi( main::@8/(word) Ticks#20 )
   (word) last_time#19 ← phi( main::@8/(word) last_time#20 )
   (word) main::count#4 ← phi( main::@8/(word) main::count#6 )
+  (word) rand_seed#14 ← phi( main::@8/(word) rand_seed#1 )
+  (word) rand_seed#6 ← (word) rand_seed#14
   (byte) main::block#1 ← *((const byte*) CIA2_PORT_A)
   (byte) main::tmp#0 ← (byte) 0
   (number~) main::$2 ← (byte) main::block#1 & (number) $fc
   (byte) main::tmp#1 ← (number~) main::$2
-  (byte) main::tmp#2 ← (byte) main::tmp#1 | (byte)(const word) SCREEN1>>(number) $e^(number) 3
+  (byte) main::tmp#2 ← (byte) main::tmp#1 | (byte)(word)(const byte*) SCREEN1>>(number) $e^(number) 3
   *((const byte*) CIA2_PORT_A) ← (byte) main::tmp#2
   (byte) main::v#1 ← *((const byte*) VIC_MEMORY)
   to:main::@1
 main::@1: scope:[main]  from main::@11 main::@9
   (byte*) print_line_cursor#21 ← phi( main::@11/(byte*) print_line_cursor#25 main::@9/(byte*) print_line_cursor#26 )
   (byte*) print_char_cursor#40 ← phi( main::@11/(byte*) print_char_cursor#43 main::@9/(byte*) print_char_cursor#44 )
-  (word) rand_seed#25 ← phi( main::@11/(word) rand_seed#28 main::@9/(word) rand_seed#29 )
+  (word) rand_seed#26 ← phi( main::@11/(word) rand_seed#29 main::@9/(word) rand_seed#6 )
   (word) Ticks#16 ← phi( main::@11/(word) Ticks#18 main::@9/(word) Ticks#19 )
   (word) last_time#16 ← phi( main::@11/(word) last_time#18 main::@9/(word) last_time#19 )
   (byte) main::block#3 ← phi( main::@11/(byte) main::block#4 main::@9/(byte) main::block#1 )
@@ -565,13 +567,13 @@ main::@1: scope:[main]  from main::@11 main::@9
 main::@2: scope:[main]  from main::@1
   (byte*) print_line_cursor#30 ← phi( main::@1/(byte*) print_line_cursor#21 )
   (byte*) print_char_cursor#48 ← phi( main::@1/(byte*) print_char_cursor#40 )
-  (word) rand_seed#36 ← phi( main::@1/(word) rand_seed#25 )
+  (word) rand_seed#36 ← phi( main::@1/(word) rand_seed#26 )
   (word) Ticks#23 ← phi( main::@1/(word) Ticks#16 )
   (word) last_time#23 ← phi( main::@1/(word) last_time#16 )
   (byte) main::block#6 ← phi( main::@1/(byte) main::block#3 )
   (byte) main::v#6 ← phi( main::@1/(byte) main::v#3 )
   (word) main::count#7 ← phi( main::@1/(word) main::count#2 )
-  (byte*) doplasma::scrn#1 ← (byte*)(const word) SCREEN1
+  (byte*) doplasma::scrn#1 ← (byte*)(const byte*) SCREEN1
   call doplasma 
   to:main::@10
 main::@10: scope:[main]  from main::@2
@@ -584,13 +586,13 @@ main::@10: scope:[main]  from main::@2
   (byte) main::v#5 ← phi( main::@2/(byte) main::v#6 )
   (word) main::count#5 ← phi( main::@2/(word) main::count#7 )
   *((const byte*) VIC_MEMORY) ← (const byte) PAGE1
-  (byte*) doplasma::scrn#2 ← (byte*)(const word) SCREEN2
+  (byte*) doplasma::scrn#2 ← (byte*)(const byte*) SCREEN2
   call doplasma 
   to:main::@11
 main::@11: scope:[main]  from main::@10
   (byte*) print_line_cursor#25 ← phi( main::@10/(byte*) print_line_cursor#28 )
   (byte*) print_char_cursor#43 ← phi( main::@10/(byte*) print_char_cursor#46 )
-  (word) rand_seed#28 ← phi( main::@10/(word) rand_seed#33 )
+  (word) rand_seed#29 ← phi( main::@10/(word) rand_seed#33 )
   (word) Ticks#18 ← phi( main::@10/(word) Ticks#21 )
   (word) last_time#18 ← phi( main::@10/(word) last_time#21 )
   (byte) main::block#4 ← phi( main::@10/(byte) main::block#5 )
@@ -602,7 +604,7 @@ main::@11: scope:[main]  from main::@10
 main::@3: scope:[main]  from main::@1
   (byte*) print_line_cursor#18 ← phi( main::@1/(byte*) print_line_cursor#21 )
   (byte*) print_char_cursor#37 ← phi( main::@1/(byte*) print_char_cursor#40 )
-  (word) rand_seed#21 ← phi( main::@1/(word) rand_seed#25 )
+  (word) rand_seed#22 ← phi( main::@1/(word) rand_seed#26 )
   (word) Ticks#13 ← phi( main::@1/(word) Ticks#16 )
   (word) last_time#12 ← phi( main::@1/(word) last_time#16 )
   (byte) main::block#2 ← phi( main::@1/(byte) main::block#3 )
@@ -615,10 +617,10 @@ main::@12: scope:[main]  from main::@3
   (byte*) print_line_cursor#13 ← phi( main::@3/(byte*) print_line_cursor#4 )
   (byte*) print_char_cursor#30 ← phi( main::@3/(byte*) print_char_cursor#13 )
   (word) last_time#9 ← phi( main::@3/(word) last_time#2 )
-  (word) rand_seed#14 ← phi( main::@3/(word) rand_seed#3 )
+  (word) rand_seed#15 ← phi( main::@3/(word) rand_seed#3 )
   (word) Ticks#9 ← phi( main::@3/(word) Ticks#3 )
   (word) Ticks#4 ← (word) Ticks#9
-  (word) rand_seed#6 ← (word) rand_seed#14
+  (word) rand_seed#7 ← (word) rand_seed#15
   (word) last_time#3 ← (word) last_time#9
   (byte*) print_char_cursor#14 ← (byte*) print_char_cursor#30
   (byte*) print_line_cursor#5 ← (byte*) print_line_cursor#13
@@ -629,57 +631,57 @@ main::@return: scope:[main]  from main::@12
   (byte*) print_char_cursor#31 ← phi( main::@12/(byte*) print_char_cursor#14 )
   (word) last_time#10 ← phi( main::@12/(word) last_time#3 )
   (word) Ticks#10 ← phi( main::@12/(word) Ticks#4 )
-  (word) rand_seed#15 ← phi( main::@12/(word) rand_seed#6 )
+  (word) rand_seed#16 ← phi( main::@12/(word) rand_seed#7 )
   (signed word) main::return#3 ← phi( main::@12/(signed word) main::return#0 )
   (signed word) main::return#1 ← (signed word) main::return#3
-  (word) rand_seed#7 ← (word) rand_seed#15
+  (word) rand_seed#8 ← (word) rand_seed#16
   (word) Ticks#5 ← (word) Ticks#10
   (word) last_time#4 ← (word) last_time#10
   (byte*) print_char_cursor#15 ← (byte*) print_char_cursor#31
   (byte*) print_line_cursor#6 ← (byte*) print_line_cursor#14
   return 
   to:@return
-@48: scope:[]  from @44
-  (byte*) print_line_cursor#19 ← phi( @44/(byte*) print_line_cursor#22 )
-  (byte*) print_char_cursor#38 ← phi( @44/(byte*) print_char_cursor#41 )
-  (word) last_time#14 ← phi( @44/(word) last_time#17 )
-  (word) Ticks#14 ← phi( @44/(word) Ticks#17 )
-  (word) rand_seed#22 ← phi( @44/(word) rand_seed#4 )
+@49: scope:[]  from @45
+  (byte*) print_line_cursor#19 ← phi( @45/(byte*) print_line_cursor#22 )
+  (byte*) print_char_cursor#38 ← phi( @45/(byte*) print_char_cursor#41 )
+  (word) last_time#14 ← phi( @45/(word) last_time#17 )
+  (word) Ticks#14 ← phi( @45/(word) Ticks#17 )
+  (word) rand_seed#23 ← phi( @45/(word) rand_seed#4 )
   call main 
   (signed word) main::return#2 ← (signed word) main::return#1
-  to:@49
-@49: scope:[]  from @48
-  (byte*) print_line_cursor#15 ← phi( @48/(byte*) print_line_cursor#6 )
-  (byte*) print_char_cursor#32 ← phi( @48/(byte*) print_char_cursor#15 )
-  (word) last_time#11 ← phi( @48/(word) last_time#4 )
-  (word) Ticks#11 ← phi( @48/(word) Ticks#5 )
-  (word) rand_seed#16 ← phi( @48/(word) rand_seed#7 )
-  (word) rand_seed#8 ← (word) rand_seed#16
+  to:@50
+@50: scope:[]  from @49
+  (byte*) print_line_cursor#15 ← phi( @49/(byte*) print_line_cursor#6 )
+  (byte*) print_char_cursor#32 ← phi( @49/(byte*) print_char_cursor#15 )
+  (word) last_time#11 ← phi( @49/(word) last_time#4 )
+  (word) Ticks#11 ← phi( @49/(word) Ticks#5 )
+  (word) rand_seed#17 ← phi( @49/(word) rand_seed#8 )
+  (word) rand_seed#9 ← (word) rand_seed#17
   (word) Ticks#6 ← (word) Ticks#11
   (word) last_time#5 ← (word) last_time#11
   (byte*) print_char_cursor#16 ← (byte*) print_char_cursor#32
   (byte*) print_line_cursor#7 ← (byte*) print_line_cursor#15
   to:@end
-@end: scope:[]  from @49
+@end: scope:[]  from @50
 
 SYMBOL TABLE SSA
-(label) @12
-(label) @42
-(label) @44
-(label) @48
+(label) @13
+(label) @43
+(label) @45
 (label) @49
+(label) @50
 (label) @begin
 (label) @end
-(const word) CHARSET = (number) $e800
+(const byte*) CHARSET = (byte*)(number) $e800
 (const byte*) CIA2_PORT_A = (byte*)(number) $dd00
-(const byte) PAGE1 = (number) $8a
-(const byte) PAGE2 = (number) $9a
+(const byte) PAGE1 = (byte)(word)(const byte*) SCREEN1>>(number) 6&(number) $f0|(word)(const byte*) CHARSET>>(number) $a&(number) $e
+(const byte) PAGE2 = (byte)(word)(const byte*) SCREEN2>>(number) 6&(number) $f0|(word)(const byte*) CHARSET>>(number) $a&(number) $e
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const word) SCREEN1 = (number) $e000
-(const word) SCREEN2 = (number) $e400
+(const byte*) SCREEN1 = (byte*)(number) $e000
+(const byte*) SCREEN2 = (byte*)(number) $e400
 (word) Ticks
 (word) Ticks#0
 (word) Ticks#1
@@ -706,7 +708,7 @@ SYMBOL TABLE SSA
 (word) Ticks#8
 (word) Ticks#9
 (const byte*) VIC_MEMORY = (byte*)(number) $d018
-(const byte*) bittab = { (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
+(const byte*) bittab[]  = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (void()) doplasma((byte*) doplasma::scrn)
 (bool~) doplasma::$0
 (byte~) doplasma::$1
@@ -1047,7 +1049,7 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#7
 (byte*) print_char_cursor#8
 (byte*) print_char_cursor#9
-(const byte*) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab[]  = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -1149,13 +1151,21 @@ SYMBOL TABLE SSA
 (word) rand_seed#7
 (word) rand_seed#8
 (word) rand_seed#9
-(const byte*) sinustable = { (byte)(number) $80, (byte)(number) $7d, (byte)(number) $7a, (byte)(number) $77, (byte)(number) $74, (byte)(number) $70, (byte)(number) $6d, (byte)(number) $6a, (byte)(number) $67, (byte)(number) $64, (byte)(number) $61, (byte)(number) $5e, (byte)(number) $5b, (byte)(number) $58, (byte)(number) $55, (byte)(number) $52, (byte)(number) $4f, (byte)(number) $4d, (byte)(number) $4a, (byte)(number) $47, (byte)(number) $44, (byte)(number) $41, (byte)(number) $3f, (byte)(number) $3c, (byte)(number) $39, (byte)(number) $37, (byte)(number) $34, (byte)(number) $32, (byte)(number) $2f, (byte)(number) $2d, (byte)(number) $2b, (byte)(number) $28, (byte)(number) $26, (byte)(number) $24, (byte)(number) $22, (byte)(number) $20, (byte)(number) $1e, (byte)(number) $1c, (byte)(number) $1a, (byte)(number) $18, (byte)(number) $16, (byte)(number) $15, (byte)(number) $13, (byte)(number) $11, (byte)(number) $10, (byte)(number) $f, (byte)(number) $d, (byte)(number) $c, (byte)(number) $b, (byte)(number) $a, (byte)(number) 8, (byte)(number) 7, (byte)(number) 6, (byte)(number) 6, (byte)(number) 5, (byte)(number) 4, (byte)(number) 3, (byte)(number) 3, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1, (byte)(number) 2, (byte)(number) 2, (byte)(number) 2, (byte)(number) 3, (byte)(number) 3, (byte)(number) 4, (byte)(number) 5, (byte)(number) 6, (byte)(number) 6, (byte)(number) 7, (byte)(number) 8, (byte)(number) $a, (byte)(number) $b, (byte)(number) $c, (byte)(number) $d, (byte)(number) $f, (byte)(number) $10, (byte)(number) $11, (byte)(number) $13, (byte)(number) $15, (byte)(number) $16, (byte)(number) $18, (byte)(number) $1a, (byte)(number) $1c, (byte)(number) $1e, (byte)(number) $20, (byte)(number) $22, (byte)(number) $24, (byte)(number) $26, (byte)(number) $28, (byte)(number) $2b, (byte)(number) $2d, (byte)(number) $2f, (byte)(number) $32, (byte)(number) $34, (byte)(number) $37, (byte)(number) $39, (byte)(number) $3c, (byte)(number) $3f, (byte)(number) $41, (byte)(number) $44, (byte)(number) $47, (byte)(number) $4a, (byte)(number) $4d, (byte)(number) $4f, (byte)(number) $52, (byte)(number) $55, (byte)(number) $58, (byte)(number) $5b, (byte)(number) $5e, (byte)(number) $61, (byte)(number) $64, (byte)(number) $67, (byte)(number) $6a, (byte)(number) $6d, (byte)(number) $70, (byte)(number) $74, (byte)(number) $77, (byte)(number) $7a, (byte)(number) $7d, (byte)(number) $80, (byte)(number) $83, (byte)(number) $86, (byte)(number) $89, (byte)(number) $8c, (byte)(number) $90, (byte)(number) $93, (byte)(number) $96, (byte)(number) $99, (byte)(number) $9c, (byte)(number) $9f, (byte)(number) $a2, (byte)(number) $a5, (byte)(number) $a8, (byte)(number) $ab, (byte)(number) $ae, (byte)(number) $b1, (byte)(number) $b3, (byte)(number) $b6, (byte)(number) $b9, (byte)(number) $bc, (byte)(number) $bf, (byte)(number) $c1, (byte)(number) $c4, (byte)(number) $c7, (byte)(number) $c9, (byte)(number) $cc, (byte)(number) $ce, (byte)(number) $d1, (byte)(number) $d3, (byte)(number) $d5, (byte)(number) $d8, (byte)(number) $da, (byte)(number) $dc, (byte)(number) $de, (byte)(number) $e0, (byte)(number) $e2, (byte)(number) $e4, (byte)(number) $e6, (byte)(number) $e8, (byte)(number) $ea, (byte)(number) $eb, (byte)(number) $ed, (byte)(number) $ef, (byte)(number) $f0, (byte)(number) $f1, (byte)(number) $f3, (byte)(number) $f4, (byte)(number) $f5, (byte)(number) $f6, (byte)(number) $f8, (byte)(number) $f9, (byte)(number) $fa, (byte)(number) $fa, (byte)(number) $fb, (byte)(number) $fc, (byte)(number) $fd, (byte)(number) $fd, (byte)(number) $fe, (byte)(number) $fe, (byte)(number) $fe, (byte)(number) $ff, (byte)(number) $ff, (byte)(number) $ff, (byte)(number) $ff, (byte)(number) $ff, (byte)(number) $ff, (byte)(number) $ff, (byte)(number) $fe, (byte)(number) $fe, (byte)(number) $fe, (byte)(number) $fd, (byte)(number) $fd, (byte)(number) $fc, (byte)(number) $fb, (byte)(number) $fa, (byte)(number) $fa, (byte)(number) $f9, (byte)(number) $f8, (byte)(number) $f6, (byte)(number) $f5, (byte)(number) $f4, (byte)(number) $f3, (byte)(number) $f1, (byte)(number) $f0, (byte)(number) $ef, (byte)(number) $ed, (byte)(number) $eb, (byte)(number) $ea, (byte)(number) $e8, (byte)(number) $e6, (byte)(number) $e4, (byte)(number) $e2, (byte)(number) $e0, (byte)(number) $de, (byte)(number) $dc, (byte)(number) $da, (byte)(number) $d8, (byte)(number) $d5, (byte)(number) $d3, (byte)(number) $d1, (byte)(number) $ce, (byte)(number) $cc, (byte)(number) $c9, (byte)(number) $c7, (byte)(number) $c4, (byte)(number) $c1, (byte)(number) $bf, (byte)(number) $bc, (byte)(number) $b9, (byte)(number) $b6, (byte)(number) $b3, (byte)(number) $b1, (byte)(number) $ae, (byte)(number) $ab, (byte)(number) $a8, (byte)(number) $a5, (byte)(number) $a2, (byte)(number) $9f, (byte)(number) $9c, (byte)(number) $99, (byte)(number) $96, (byte)(number) $93, (byte)(number) $90, (byte)(number) $8c, (byte)(number) $89, (byte)(number) $86, (byte)(number) $83 }
+(const byte*) sinustable[(number) $100]  = { (byte) $80, (byte) $7d, (byte) $7a, (byte) $77, (byte) $74, (byte) $70, (byte) $6d, (byte) $6a, (byte) $67, (byte) $64, (byte) $61, (byte) $5e, (byte) $5b, (byte) $58, (byte) $55, (byte) $52, (byte) $4f, (byte) $4d, (byte) $4a, (byte) $47, (byte) $44, (byte) $41, (byte) $3f, (byte) $3c, (byte) $39, (byte) $37, (byte) $34, (byte) $32, (byte) $2f, (byte) $2d, (byte) $2b, (byte) $28, (byte) $26, (byte) $24, (byte) $22, (byte) $20, (byte) $1e, (byte) $1c, (byte) $1a, (byte) $18, (byte) $16, (byte) $15, (byte) $13, (byte) $11, (byte) $10, (byte) $f, (byte) $d, (byte) $c, (byte) $b, (byte) $a, (byte) 8, (byte) 7, (byte) 6, (byte) 6, (byte) 5, (byte) 4, (byte) 3, (byte) 3, (byte) 2, (byte) 2, (byte) 2, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 2, (byte) 2, (byte) 3, (byte) 3, (byte) 4, (byte) 5, (byte) 6, (byte) 6, (byte) 7, (byte) 8, (byte) $a, (byte) $b, (byte) $c, (byte) $d, (byte) $f, (byte) $10, (byte) $11, (byte) $13, (byte) $15, (byte) $16, (byte) $18, (byte) $1a, (byte) $1c, (byte) $1e, (byte) $20, (byte) $22, (byte) $24, (byte) $26, (byte) $28, (byte) $2b, (byte) $2d, (byte) $2f, (byte) $32, (byte) $34, (byte) $37, (byte) $39, (byte) $3c, (byte) $3f, (byte) $41, (byte) $44, (byte) $47, (byte) $4a, (byte) $4d, (byte) $4f, (byte) $52, (byte) $55, (byte) $58, (byte) $5b, (byte) $5e, (byte) $61, (byte) $64, (byte) $67, (byte) $6a, (byte) $6d, (byte) $70, (byte) $74, (byte) $77, (byte) $7a, (byte) $7d, (byte) $80, (byte) $83, (byte) $86, (byte) $89, (byte) $8c, (byte) $90, (byte) $93, (byte) $96, (byte) $99, (byte) $9c, (byte) $9f, (byte) $a2, (byte) $a5, (byte) $a8, (byte) $ab, (byte) $ae, (byte) $b1, (byte) $b3, (byte) $b6, (byte) $b9, (byte) $bc, (byte) $bf, (byte) $c1, (byte) $c4, (byte) $c7, (byte) $c9, (byte) $cc, (byte) $ce, (byte) $d1, (byte) $d3, (byte) $d5, (byte) $d8, (byte) $da, (byte) $dc, (byte) $de, (byte) $e0, (byte) $e2, (byte) $e4, (byte) $e6, (byte) $e8, (byte) $ea, (byte) $eb, (byte) $ed, (byte) $ef, (byte) $f0, (byte) $f1, (byte) $f3, (byte) $f4, (byte) $f5, (byte) $f6, (byte) $f8, (byte) $f9, (byte) $fa, (byte) $fa, (byte) $fb, (byte) $fc, (byte) $fd, (byte) $fd, (byte) $fe, (byte) $fe, (byte) $fe, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $fe, (byte) $fe, (byte) $fe, (byte) $fd, (byte) $fd, (byte) $fc, (byte) $fb, (byte) $fa, (byte) $fa, (byte) $f9, (byte) $f8, (byte) $f6, (byte) $f5, (byte) $f4, (byte) $f3, (byte) $f1, (byte) $f0, (byte) $ef, (byte) $ed, (byte) $eb, (byte) $ea, (byte) $e8, (byte) $e6, (byte) $e4, (byte) $e2, (byte) $e0, (byte) $de, (byte) $dc, (byte) $da, (byte) $d8, (byte) $d5, (byte) $d3, (byte) $d1, (byte) $ce, (byte) $cc, (byte) $c9, (byte) $c7, (byte) $c4, (byte) $c1, (byte) $bf, (byte) $bc, (byte) $b9, (byte) $b6, (byte) $b3, (byte) $b1, (byte) $ae, (byte) $ab, (byte) $a8, (byte) $a5, (byte) $a2, (byte) $9f, (byte) $9c, (byte) $99, (byte) $96, (byte) $93, (byte) $90, (byte) $8c, (byte) $89, (byte) $86, (byte) $83 }
 (void()) start()
 (label) start::@return
 (const word*) start::LAST_TIME = &(word) last_time
-(const byte*) xbuf = { fill( $28, 0) }
-(const byte*) ybuf = { fill( $19, 0) }
+(const byte*) xbuf[(number) $28]  = { fill( $28, 0) }
+(const byte*) ybuf[(number) $19]  = { fill( $19, 0) }
 
+Adding number conversion cast (unumber) $f0 in 
+Adding number conversion cast (unumber) 6 in 
+Adding number conversion cast (unumber) $e in 
+Adding number conversion cast (unumber) $a in 
+Adding number conversion cast (unumber) $f0 in 
+Adding number conversion cast (unumber) 6 in 
+Adding number conversion cast (unumber) $e in 
+Adding number conversion cast (unumber) $a in 
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#8 + (number) $28
 Adding number conversion cast (unumber) 4 in (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
 Adding number conversion cast (unumber) $f in (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
@@ -1188,17 +1198,16 @@ Adding number conversion cast (unumber) 8 in (bool~) makechar::$3 ← (byte) mak
 Adding number conversion cast (unumber) $ff in (number~) makechar::$5 ← (byte~) makechar::$4 & (number) $ff
 Adding number conversion cast (unumber) makechar::$5 in (number~) makechar::$5 ← (byte~) makechar::$4 & (unumber)(number) $ff
 Adding number conversion cast (unumber) 3 in (word~) makechar::$8 ← (word) makechar::c#6 << (number) 3
-Adding number conversion cast (unumber) $1f4 in (word) main::count#0 ← (number) $1f4
+Adding number conversion cast (unumber) $194a in (word) rand_seed#5 ← (number) $194a
 Adding number conversion cast (unumber) $fc in (number~) main::$2 ← (byte) main::block#1 & (number) $fc
 Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (byte) main::block#1 & (unumber)(number) $fc
-Adding number conversion cast (unumber) 3 in (byte) main::tmp#2 ← (byte) main::tmp#1 | (byte)(const word) SCREEN1>>(number) $e^(number) 3
-Adding number conversion cast (unumber) $e in (byte) main::tmp#2 ← (byte) main::tmp#1 | (byte)(const word) SCREEN1>>(number) $e^(unumber)(number) 3
+Adding number conversion cast (unumber) 3 in (byte) main::tmp#2 ← (byte) main::tmp#1 | (byte)(word)(const byte*) SCREEN1>>(number) $e^(number) 3
+Adding number conversion cast (unumber) $e in (byte) main::tmp#2 ← (byte) main::tmp#1 | (byte)(word)(const byte*) SCREEN1>>(number) $e^(unumber)(number) 3
 Adding number conversion cast (unumber) 0 in (bool~) main::$6 ← (number) 0 != (word) main::count#2
 Adding number conversion cast (snumber) 0 in (signed word) main::return#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
 Inlining cast (word) rand_seed#0 ← (unumber)(number) $194a
-Inlining cast (byte~) rand::$0 ← (byte)(word) rand_seed#12
+Inlining cast (byte~) rand::$0 ← (byte)(word) rand_seed#13
 Inlining cast (byte) doplasma::ii#1 ← (unumber)(number) 0
 Inlining cast (byte) doplasma::i#1 ← (unumber)(number) 0
 Inlining cast (byte) doplasma::jj#1 ← (unumber)(number) 0
@@ -1208,275 +1217,22 @@ Inlining cast (byte~) makechar::$1 ← (byte)(word) makechar::c#4
 Inlining cast (byte) makechar::i#1 ← (unumber)(number) 0
 Inlining cast (byte) makechar::b#1 ← (unumber)(number) 0
 Inlining cast (byte) makechar::ii#1 ← (unumber)(number) 0
-Inlining cast (word) main::count#0 ← (unumber)(number) $1f4
+Inlining cast (word) rand_seed#5 ← (unumber)(number) $194a
 Inlining cast (signed word) main::return#0 ← (snumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 56576
-Simplifying constant integer cast $80
-Simplifying constant integer cast $7d
-Simplifying constant integer cast $7a
-Simplifying constant integer cast $77
-Simplifying constant integer cast $74
-Simplifying constant integer cast $70
-Simplifying constant integer cast $6d
-Simplifying constant integer cast $6a
-Simplifying constant integer cast $67
-Simplifying constant integer cast $64
-Simplifying constant integer cast $61
-Simplifying constant integer cast $5e
-Simplifying constant integer cast $5b
-Simplifying constant integer cast $58
-Simplifying constant integer cast $55
-Simplifying constant integer cast $52
-Simplifying constant integer cast $4f
-Simplifying constant integer cast $4d
-Simplifying constant integer cast $4a
-Simplifying constant integer cast $47
-Simplifying constant integer cast $44
-Simplifying constant integer cast $41
-Simplifying constant integer cast $3f
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $39
-Simplifying constant integer cast $37
-Simplifying constant integer cast $34
-Simplifying constant integer cast $32
-Simplifying constant integer cast $2f
-Simplifying constant integer cast $2d
-Simplifying constant integer cast $2b
-Simplifying constant integer cast $28
-Simplifying constant integer cast $26
-Simplifying constant integer cast $24
-Simplifying constant integer cast $22
-Simplifying constant integer cast $20
-Simplifying constant integer cast $1e
-Simplifying constant integer cast $1c
-Simplifying constant integer cast $1a
-Simplifying constant integer cast $18
-Simplifying constant integer cast $16
-Simplifying constant integer cast $15
-Simplifying constant integer cast $13
-Simplifying constant integer cast $11
-Simplifying constant integer cast $10
-Simplifying constant integer cast $f
-Simplifying constant integer cast $d
-Simplifying constant integer cast $c
-Simplifying constant integer cast $b
-Simplifying constant integer cast $a
-Simplifying constant integer cast 8
-Simplifying constant integer cast 7
+Simplifying constant pointer cast (byte*) 57344
+Simplifying constant pointer cast (byte*) 58368
+Simplifying constant pointer cast (byte*) 59392
 Simplifying constant integer cast 6
-Simplifying constant integer cast 6
-Simplifying constant integer cast 5
-Simplifying constant integer cast 4
-Simplifying constant integer cast 3
-Simplifying constant integer cast 3
-Simplifying constant integer cast 2
-Simplifying constant integer cast 2
-Simplifying constant integer cast 2
-Simplifying constant integer cast 1
-Simplifying constant integer cast 1
-Simplifying constant integer cast 1
-Simplifying constant integer cast 1
-Simplifying constant integer cast 1
-Simplifying constant integer cast 1
-Simplifying constant integer cast 1
-Simplifying constant integer cast 2
-Simplifying constant integer cast 2
-Simplifying constant integer cast 2
-Simplifying constant integer cast 3
-Simplifying constant integer cast 3
-Simplifying constant integer cast 4
-Simplifying constant integer cast 5
-Simplifying constant integer cast 6
-Simplifying constant integer cast 6
-Simplifying constant integer cast 7
-Simplifying constant integer cast 8
-Simplifying constant integer cast $a
-Simplifying constant integer cast $b
-Simplifying constant integer cast $c
-Simplifying constant integer cast $d
-Simplifying constant integer cast $f
-Simplifying constant integer cast $10
-Simplifying constant integer cast $11
-Simplifying constant integer cast $13
-Simplifying constant integer cast $15
-Simplifying constant integer cast $16
-Simplifying constant integer cast $18
-Simplifying constant integer cast $1a
-Simplifying constant integer cast $1c
-Simplifying constant integer cast $1e
-Simplifying constant integer cast $20
-Simplifying constant integer cast $22
-Simplifying constant integer cast $24
-Simplifying constant integer cast $26
-Simplifying constant integer cast $28
-Simplifying constant integer cast $2b
-Simplifying constant integer cast $2d
-Simplifying constant integer cast $2f
-Simplifying constant integer cast $32
-Simplifying constant integer cast $34
-Simplifying constant integer cast $37
-Simplifying constant integer cast $39
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $3f
-Simplifying constant integer cast $41
-Simplifying constant integer cast $44
-Simplifying constant integer cast $47
-Simplifying constant integer cast $4a
-Simplifying constant integer cast $4d
-Simplifying constant integer cast $4f
-Simplifying constant integer cast $52
-Simplifying constant integer cast $55
-Simplifying constant integer cast $58
-Simplifying constant integer cast $5b
-Simplifying constant integer cast $5e
-Simplifying constant integer cast $61
-Simplifying constant integer cast $64
-Simplifying constant integer cast $67
-Simplifying constant integer cast $6a
-Simplifying constant integer cast $6d
-Simplifying constant integer cast $70
-Simplifying constant integer cast $74
-Simplifying constant integer cast $77
-Simplifying constant integer cast $7a
-Simplifying constant integer cast $7d
-Simplifying constant integer cast $80
-Simplifying constant integer cast $83
-Simplifying constant integer cast $86
-Simplifying constant integer cast $89
-Simplifying constant integer cast $8c
-Simplifying constant integer cast $90
-Simplifying constant integer cast $93
-Simplifying constant integer cast $96
-Simplifying constant integer cast $99
-Simplifying constant integer cast $9c
-Simplifying constant integer cast $9f
-Simplifying constant integer cast $a2
-Simplifying constant integer cast $a5
-Simplifying constant integer cast $a8
-Simplifying constant integer cast $ab
-Simplifying constant integer cast $ae
-Simplifying constant integer cast $b1
-Simplifying constant integer cast $b3
-Simplifying constant integer cast $b6
-Simplifying constant integer cast $b9
-Simplifying constant integer cast $bc
-Simplifying constant integer cast $bf
-Simplifying constant integer cast $c1
-Simplifying constant integer cast $c4
-Simplifying constant integer cast $c7
-Simplifying constant integer cast $c9
-Simplifying constant integer cast $cc
-Simplifying constant integer cast $ce
-Simplifying constant integer cast $d1
-Simplifying constant integer cast $d3
-Simplifying constant integer cast $d5
-Simplifying constant integer cast $d8
-Simplifying constant integer cast $da
-Simplifying constant integer cast $dc
-Simplifying constant integer cast $de
-Simplifying constant integer cast $e0
-Simplifying constant integer cast $e2
-Simplifying constant integer cast $e4
-Simplifying constant integer cast $e6
-Simplifying constant integer cast $e8
-Simplifying constant integer cast $ea
-Simplifying constant integer cast $eb
-Simplifying constant integer cast $ed
-Simplifying constant integer cast $ef
 Simplifying constant integer cast $f0
-Simplifying constant integer cast $f1
-Simplifying constant integer cast $f3
-Simplifying constant integer cast $f4
-Simplifying constant integer cast $f5
-Simplifying constant integer cast $f6
-Simplifying constant integer cast $f8
-Simplifying constant integer cast $f9
-Simplifying constant integer cast $fa
-Simplifying constant integer cast $fa
-Simplifying constant integer cast $fb
-Simplifying constant integer cast $fc
-Simplifying constant integer cast $fd
-Simplifying constant integer cast $fd
-Simplifying constant integer cast $fe
-Simplifying constant integer cast $fe
-Simplifying constant integer cast $fe
-Simplifying constant integer cast $ff
-Simplifying constant integer cast $ff
-Simplifying constant integer cast $ff
-Simplifying constant integer cast $ff
-Simplifying constant integer cast $ff
-Simplifying constant integer cast $ff
-Simplifying constant integer cast $ff
-Simplifying constant integer cast $fe
-Simplifying constant integer cast $fe
-Simplifying constant integer cast $fe
-Simplifying constant integer cast $fd
-Simplifying constant integer cast $fd
-Simplifying constant integer cast $fc
-Simplifying constant integer cast $fb
-Simplifying constant integer cast $fa
-Simplifying constant integer cast $fa
-Simplifying constant integer cast $f9
-Simplifying constant integer cast $f8
-Simplifying constant integer cast $f6
-Simplifying constant integer cast $f5
-Simplifying constant integer cast $f4
-Simplifying constant integer cast $f3
-Simplifying constant integer cast $f1
+Simplifying constant integer cast $a
+Simplifying constant integer cast $e
+Simplifying constant integer cast 6
 Simplifying constant integer cast $f0
-Simplifying constant integer cast $ef
-Simplifying constant integer cast $ed
-Simplifying constant integer cast $eb
-Simplifying constant integer cast $ea
-Simplifying constant integer cast $e8
-Simplifying constant integer cast $e6
-Simplifying constant integer cast $e4
-Simplifying constant integer cast $e2
-Simplifying constant integer cast $e0
-Simplifying constant integer cast $de
-Simplifying constant integer cast $dc
-Simplifying constant integer cast $da
-Simplifying constant integer cast $d8
-Simplifying constant integer cast $d5
-Simplifying constant integer cast $d3
-Simplifying constant integer cast $d1
-Simplifying constant integer cast $ce
-Simplifying constant integer cast $cc
-Simplifying constant integer cast $c9
-Simplifying constant integer cast $c7
-Simplifying constant integer cast $c4
-Simplifying constant integer cast $c1
-Simplifying constant integer cast $bf
-Simplifying constant integer cast $bc
-Simplifying constant integer cast $b9
-Simplifying constant integer cast $b6
-Simplifying constant integer cast $b3
-Simplifying constant integer cast $b1
-Simplifying constant integer cast $ae
-Simplifying constant integer cast $ab
-Simplifying constant integer cast $a8
-Simplifying constant integer cast $a5
-Simplifying constant integer cast $a2
-Simplifying constant integer cast $9f
-Simplifying constant integer cast $9c
-Simplifying constant integer cast $99
-Simplifying constant integer cast $96
-Simplifying constant integer cast $93
-Simplifying constant integer cast $90
-Simplifying constant integer cast $8c
-Simplifying constant integer cast $89
-Simplifying constant integer cast $86
-Simplifying constant integer cast $83
-Simplifying constant integer cast 1
-Simplifying constant integer cast 2
-Simplifying constant integer cast 4
-Simplifying constant integer cast 8
-Simplifying constant integer cast $10
-Simplifying constant integer cast $20
-Simplifying constant integer cast $40
-Simplifying constant integer cast $80
+Simplifying constant integer cast $a
+Simplifying constant integer cast $e
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $28
 Simplifying constant integer cast 4
@@ -1508,13 +1264,24 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 3
-Simplifying constant integer cast $1f4
+Simplifying constant integer cast (const byte*) CHARSET
+Simplifying constant integer cast $194a
 Simplifying constant integer cast $fc
 Simplifying constant integer cast $e
 Simplifying constant integer cast 3
 Simplifying constant integer cast 0
+Simplifying constant integer cast (const byte*) SCREEN1
+Simplifying constant integer cast (const byte*) SCREEN2
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) $f0
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $e
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) $f0
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $e
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $f
@@ -1545,7 +1312,7 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) 3
-Finalized unsigned number type (word) $1f4
+Finalized unsigned number type (word) $194a
 Finalized unsigned number type (byte) $fc
 Finalized unsigned number type (byte) $e
 Finalized unsigned number type (byte) 3
@@ -1570,10 +1337,10 @@ Alias (byte) print_byte::b#2 = (byte) print_byte::b#3
 Alias (byte*) print_char_cursor#22 = (byte*) print_char_cursor#6 
 Alias (byte*) print_char_cursor#23 = (byte*) print_char_cursor#7 (byte*) print_char_cursor#24 (byte*) print_char_cursor#8 
 Alias (byte*) print_char_cursor#10 = (byte*) print_char_cursor#26 (byte*) print_char_cursor#9 
-Alias (word) rand_seed#0 = (word) rand_seed#9 (word) rand_seed#1 
+Alias (word) rand_seed#0 = (word) rand_seed#10 (word) rand_seed#1 
 Alias (byte*) print_char_cursor#36 = (byte*) print_char_cursor#39 
 Alias (byte*) print_line_cursor#17 = (byte*) print_line_cursor#20 (byte*) print_line_cursor#23 
-Alias (word) rand_seed#10 = (word) rand_seed#2 (word) rand_seed#23 (word) rand_seed#18 (word) rand_seed#11 (word) rand_seed#3 
+Alias (word) rand_seed#11 = (word) rand_seed#2 (word) rand_seed#24 (word) rand_seed#19 (word) rand_seed#12 (word) rand_seed#3 
 Alias (byte*) print_char_cursor#11 = (byte*) print_char_cursor#27 
 Alias (byte*) print_line_cursor#11 = (byte*) print_line_cursor#3 (byte*) print_line_cursor#12 (byte*) print_line_cursor#4 
 Alias (byte*) print_char_cursor#12 = (byte*) print_char_cursor#28 (byte*) print_char_cursor#29 (byte*) print_char_cursor#13 
@@ -1605,38 +1372,39 @@ Alias (word) makechar::c#3 = (word) makechar::c#4
 Alias (word) rand_seed#34 = (word) rand_seed#37 
 Alias (word) makechar::c#10 = (word) makechar::c#7 (word) makechar::c#5 
 Alias (byte) makechar::i#3 = (byte) makechar::i#7 
-Alias (word) rand_seed#27 = (word) rand_seed#30 (word) rand_seed#39 
+Alias (word) rand_seed#28 = (word) rand_seed#30 (word) rand_seed#39 
 Alias (byte) makechar::s#6 = (byte) makechar::s#7 
-Alias (word) rand_seed#19 = (word) rand_seed#24 (word) rand_seed#32 (word) rand_seed#35 (word) rand_seed#31 
+Alias (word) rand_seed#20 = (word) rand_seed#25 (word) rand_seed#32 (word) rand_seed#35 (word) rand_seed#31 
 Alias (byte) makechar::s#2 = (byte) makechar::s#3 (byte) makechar::s#4 (byte) makechar::s#9 (byte) makechar::s#8 
 Alias (byte) makechar::ii#3 = (byte) makechar::ii#7 (byte) makechar::ii#6 (byte) makechar::ii#5 
 Alias (byte) makechar::b#3 = (byte) makechar::b#8 (byte) makechar::b#5 (byte) makechar::b#6 (byte) makechar::b#4 
 Alias (word) makechar::c#11 = (word) makechar::c#13 (word) makechar::c#8 (word) makechar::c#12 (word) makechar::c#6 
 Alias (byte) makechar::i#10 = (byte) makechar::i#5 (byte) makechar::i#9 (byte) makechar::i#4 (byte) makechar::i#8 
 Alias (byte) rand::return#2 = (byte) rand::return#4 
+Alias (word) rand_seed#21 = (word) rand_seed#5 
 Alias (word) main::count#0 = (word) main::count#6 (word) main::count#4 
 Alias (word) last_time#19 = (word) last_time#20 (word) last_time#22 
 Alias (word) Ticks#19 = (word) Ticks#20 (word) Ticks#22 
 Alias (byte*) print_char_cursor#44 = (byte*) print_char_cursor#45 (byte*) print_char_cursor#47 
 Alias (byte*) print_line_cursor#26 = (byte*) print_line_cursor#27 (byte*) print_line_cursor#29 
-Alias (word) rand_seed#13 = (word) rand_seed#5 (word) rand_seed#29 
+Alias (word) rand_seed#14 = (word) rand_seed#6 
 Alias (byte) main::tmp#1 = (byte~) main::$2 
 Alias (word) main::count#2 = (word) main::count#7 (word) main::count#5 (word) main::count#3 
 Alias (byte) main::v#2 = (byte) main::v#6 (byte) main::v#3 (byte) main::v#5 (byte) main::v#4 
 Alias (byte) main::block#2 = (byte) main::block#6 (byte) main::block#3 (byte) main::block#5 (byte) main::block#4 
 Alias (word) last_time#12 = (word) last_time#23 (word) last_time#16 (word) last_time#21 (word) last_time#18 
 Alias (word) Ticks#13 = (word) Ticks#23 (word) Ticks#16 (word) Ticks#21 (word) Ticks#18 
-Alias (word) rand_seed#21 = (word) rand_seed#36 (word) rand_seed#25 (word) rand_seed#33 (word) rand_seed#28 
+Alias (word) rand_seed#22 = (word) rand_seed#36 (word) rand_seed#26 (word) rand_seed#33 (word) rand_seed#29 
 Alias (byte*) print_char_cursor#37 = (byte*) print_char_cursor#48 (byte*) print_char_cursor#40 (byte*) print_char_cursor#46 (byte*) print_char_cursor#43 
 Alias (byte*) print_line_cursor#18 = (byte*) print_line_cursor#30 (byte*) print_line_cursor#21 (byte*) print_line_cursor#28 (byte*) print_line_cursor#25 
 Alias (word) Ticks#10 = (word) Ticks#4 (word) Ticks#9 (word) Ticks#5 
-Alias (word) rand_seed#14 = (word) rand_seed#6 (word) rand_seed#15 (word) rand_seed#7 
+Alias (word) rand_seed#15 = (word) rand_seed#7 (word) rand_seed#16 (word) rand_seed#8 
 Alias (word) last_time#10 = (word) last_time#3 (word) last_time#9 (word) last_time#4 
 Alias (byte*) print_char_cursor#14 = (byte*) print_char_cursor#30 (byte*) print_char_cursor#31 (byte*) print_char_cursor#15 
 Alias (byte*) print_line_cursor#13 = (byte*) print_line_cursor#5 (byte*) print_line_cursor#14 (byte*) print_line_cursor#6 
 Alias (signed word) main::return#0 = (signed word) main::return#3 (signed word) main::return#1 
-Alias (word) rand_seed#22 = (word) rand_seed#4 
-Alias (word) rand_seed#16 = (word) rand_seed#8 
+Alias (word) rand_seed#23 = (word) rand_seed#4 
+Alias (word) rand_seed#17 = (word) rand_seed#9 
 Alias (word) Ticks#11 = (word) Ticks#6 
 Alias (word) last_time#11 = (word) last_time#5 
 Alias (byte*) print_char_cursor#16 = (byte*) print_char_cursor#32 
@@ -1647,7 +1415,7 @@ Alias candidate removed (volatile)(word) Ticks#12 = (word) Ticks#2 (word) last_t
 Alias (byte) makechar::ii#3 = (byte) makechar::ii#4 
 Alias (word) makechar::c#11 = (word) makechar::c#9 
 Alias (byte) makechar::i#10 = (byte) makechar::i#6 
-Alias (word) rand_seed#19 = (word) rand_seed#26 
+Alias (word) rand_seed#20 = (word) rand_seed#27 
 Alias (byte) makechar::s#2 = (byte) makechar::s#5 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)(word) last_time#6 = (word) Ticks#1 (word) last_time#7 (word) Ticks#7 
@@ -1662,10 +1430,10 @@ Identical Phi Values (byte*) print_char_cursor#20 (byte*) print_char_cursor#23
 Identical Phi Values (byte*) print_char_cursor#22 (byte*) print_char_cursor#10
 Identical Phi Values (byte*) print_char_cursor#23 (byte*) print_char_cursor#10
 Identical Phi Values (word) last_time#6 (word) last_time#12
-Identical Phi Values (word) rand_seed#17 (word) rand_seed#21
+Identical Phi Values (word) rand_seed#18 (word) rand_seed#22
 Identical Phi Values (byte*) print_char_cursor#36 (byte*) print_char_cursor#37
 Identical Phi Values (byte*) print_line_cursor#17 (byte*) print_line_cursor#18
-Identical Phi Values (word) rand_seed#10 (word) rand_seed#0
+Identical Phi Values (word) rand_seed#11 (word) rand_seed#0
 Identical Phi Values (word) last_time#7 (word) last_time#6
 Identical Phi Values (word) Ticks#7 (word) Ticks#1
 Identical Phi Values (byte*) print_char_cursor#11 (byte*) print_char_cursor#20
@@ -1677,7 +1445,7 @@ Identical Phi Values (word) Ticks#12 (word) Ticks#15
 Identical Phi Values (word) last_time#13 (word) last_time#15
 Identical Phi Values (word) Ticks#8 (word) Ticks#12
 Identical Phi Values (word) last_time#8 (word) last_time#13
-Identical Phi Values (word) rand_seed#12 (word) rand_seed#19
+Identical Phi Values (word) rand_seed#13 (word) rand_seed#20
 Identical Phi Values (byte) doplasma::c1A#2 (byte) doplasma::c1a#1
 Identical Phi Values (byte) doplasma::c1B#2 (byte) doplasma::c1b#1
 Identical Phi Values (byte) doplasma::c2A#2 (byte) doplasma::c2A#0
@@ -1688,40 +1456,39 @@ Identical Phi Values (byte) doplasma::c2B#3 (byte) doplasma::c2B#2
 Identical Phi Values (byte*) doplasma::scrn#11 (byte*) doplasma::scrn#10
 Identical Phi Values (byte) doplasma::jj#4 (byte) doplasma::jj#3
 Identical Phi Values (byte*) doplasma::scrn#3 (byte*) doplasma::scrn#6
-Identical Phi Values (word) rand_seed#38 (word) rand_seed#13
+Identical Phi Values (word) rand_seed#38 (word) rand_seed#21
 Identical Phi Values (word) makechar::c#11 (word) makechar::c#10
 Identical Phi Values (byte) makechar::i#10 (byte) makechar::i#3
-Identical Phi Values (word) rand_seed#19 (word) rand_seed#27
+Identical Phi Values (word) rand_seed#20 (word) rand_seed#28
 Identical Phi Values (byte) makechar::s#2 (byte) makechar::s#6
-Identical Phi Values (word) rand_seed#20 (word) rand_seed#22
 Identical Phi Values (word) last_time#19 (word) last_time#0
 Identical Phi Values (word) Ticks#19 (word) Ticks#0
 Identical Phi Values (byte*) print_char_cursor#44 (byte*) print_char_cursor#0
 Identical Phi Values (byte*) print_line_cursor#26 (byte*) print_char_cursor#0
-Identical Phi Values (word) rand_seed#13 (word) rand_seed#0
+Identical Phi Values (word) rand_seed#14 (word) rand_seed#0
 Identical Phi Values (byte) main::v#2 (byte) main::v#1
 Identical Phi Values (byte) main::block#2 (byte) main::block#1
 Identical Phi Values (word) last_time#12 (word) last_time#19
 Identical Phi Values (word) Ticks#13 (word) Ticks#19
-Identical Phi Values (word) rand_seed#21 (word) rand_seed#13
+Identical Phi Values (word) rand_seed#22 (word) rand_seed#14
 Identical Phi Values (byte*) print_char_cursor#37 (byte*) print_char_cursor#44
 Identical Phi Values (byte*) print_line_cursor#18 (byte*) print_line_cursor#26
 Identical Phi Values (word) Ticks#10 (word) Ticks#3
-Identical Phi Values (word) rand_seed#14 (word) rand_seed#10
+Identical Phi Values (word) rand_seed#15 (word) rand_seed#11
 Identical Phi Values (word) last_time#10 (word) last_time#2
 Identical Phi Values (byte*) print_char_cursor#14 (byte*) print_char_cursor#12
 Identical Phi Values (byte*) print_line_cursor#13 (byte*) print_line_cursor#11
-Identical Phi Values (word) rand_seed#16 (word) rand_seed#14
+Identical Phi Values (word) rand_seed#17 (word) rand_seed#15
 Identical Phi Values (word) Ticks#11 (word) Ticks#10
 Identical Phi Values (word) last_time#11 (word) last_time#10
 Identical Phi Values (byte*) print_char_cursor#16 (byte*) print_char_cursor#14
 Identical Phi Values (byte*) print_line_cursor#15 (byte*) print_line_cursor#13
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (word) makechar::c#10 (word) makechar::c#3
-Identical Phi Values (word) rand_seed#27 (word) rand_seed#34
+Identical Phi Values (word) rand_seed#28 (word) rand_seed#34
 Identical Phi Values (byte) makechar::s#6 (byte) makechar::s#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identical Phi Values (word) rand_seed#34 (word) rand_seed#0
+Identical Phi Values (word) rand_seed#34 (word) rand_seed#21
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) print_ln::$1 [8] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1
 Simple Condition (bool~) doplasma::$0 [106] if((byte) doplasma::ii#3<(byte) $19) goto doplasma::@2
@@ -1732,7 +1499,7 @@ Simple Condition (bool~) makechar::$0 [157] if((word) makechar::c#3<(word) $100)
 Simple Condition (bool~) makechar::$2 [164] if((byte) makechar::i#3<(byte) 8) goto makechar::@5
 Simple Condition (bool~) makechar::$3 [172] if((byte) makechar::ii#3<(byte) 8) goto makechar::@8
 Simple Condition (bool~) makechar::$7 [181] if((byte~) makechar::$5<=(byte) makechar::s#1) goto makechar::@10
-Simple Condition (bool~) main::$6 [210] if((byte) 0!=(word) main::count#2) goto main::@2
+Simple Condition (bool~) main::$6 [211] if((byte) 0!=(word) main::count#2) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_char_cursor#0 = (byte*) 1024
 Constant (const word) Ticks#0 = 0
@@ -1765,21 +1532,21 @@ Constant (const byte) main::v#0 = 0
 Constant (const byte) main::block#0 = 0
 Constant (const word) main::count#0 = $1f4
 Constant (const byte) main::tmp#0 = 0
-Constant (const byte*) doplasma::scrn#1 = (byte*)SCREEN1
-Constant (const byte*) doplasma::scrn#2 = (byte*)SCREEN2
+Constant (const byte*) doplasma::scrn#1 = SCREEN1
+Constant (const byte*) doplasma::scrn#2 = SCREEN2
 Constant (const signed word) main::return#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const signed word) main::return#2 = main::return#0
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [185] *((byte*)(const word) CHARSET + (word~) makechar::$9) ← (byte) makechar::b#3
+De-inlining pointer[w] to *(pointer+w)   [185] *((const byte*) CHARSET + (word~) makechar::$9) ← (byte) makechar::b#3
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Simplifying constant evaluating to zero (byte)(const word) SCREEN1>>(byte) $e^(byte) 3 in [205] (byte) main::tmp#2 ← (byte) main::tmp#1 | (byte)(const word) SCREEN1>>(byte) $e^(byte) 3
+Simplifying constant evaluating to zero (byte)(word)(const byte*) SCREEN1>>(byte) $e^(byte) 3 in [206] (byte) main::tmp#2 ← (byte) main::tmp#1 | (byte)(word)(const byte*) SCREEN1>>(byte) $e^(byte) 3
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero 3 in [114] (byte) doplasma::c1A#1 ← (const byte) doplasma::c1a#1 + (byte) 3
 Simplifying expression containing zero 5 in [115] (byte) doplasma::c1B#1 ← (const byte) doplasma::c1b#1 - (byte) 5
 Simplifying expression containing zero 2 in [129] (byte) doplasma::c2A#1 ← (const byte) doplasma::c2A#0 + (byte) 2
 Simplifying expression containing zero 3 in [130] (byte) doplasma::c2B#1 ← (const byte) doplasma::c2B#0 - (byte) 3
-Simplifying expression containing zero main::tmp#1 in [205] (byte) main::tmp#2 ← (byte) main::tmp#1 | (byte) 0
+Simplifying expression containing zero main::tmp#1 in [206] (byte) main::tmp#2 ← (byte) main::tmp#1 | (byte) 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (word) Ticks#3 and assignment [32] (word) Ticks#3 ← (word) Ticks#2
 Eliminating unused variable (byte) doplasma::c1A#1 and assignment [47] (byte) doplasma::c1A#1 ← (byte) 3
@@ -1807,6 +1574,9 @@ Eliminating unused constant (const word) Ticks#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const signed word) main::return#0
 Successful SSA optimization PassNEliminateUnusedVars
+Simplifying constant integer cast (word)(const byte*) SCREEN1>>(byte) 6&(byte) $f0|(word)(const byte*) CHARSET>>(byte) $a&(byte) $e
+Simplifying constant integer cast (word)(const byte*) SCREEN2>>(byte) 6&(byte) $f0|(word)(const byte*) CHARSET>>(byte) $a&(byte) $e
+Successful SSA optimization PassNCastSimplification
 Alias candidate removed (volatile)(word) last_time#1 = (word) Ticks#2 (word) last_time#2 
 Alias (byte) main::tmp#1 = (byte) main::tmp#2 
 Successful SSA optimization Pass2AliasElimination
@@ -1835,9 +1605,9 @@ Constant inlined doplasma::ii#1 = (byte) 0
 Constant inlined doplasma::jj#1 = (byte) 0
 Constant inlined print_char_cursor#0 = (byte*) 1024
 Constant inlined main::count#0 = (word) $1f4
-Constant inlined doplasma::scrn#2 = (byte*)(const word) SCREEN2
+Constant inlined doplasma::scrn#2 = (const byte*) SCREEN2
+Constant inlined doplasma::scrn#1 = (const byte*) SCREEN1
 Constant inlined doplasma::c1a#1 = (byte) 0
-Constant inlined doplasma::scrn#1 = (byte*)(const word) SCREEN1
 Constant inlined doplasma::c1b#1 = (byte) 0
 Constant inlined makechar::i#1 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
@@ -1846,11 +1616,10 @@ Alias candidate removed (volatile)(word) last_time#1 = (word) Ticks#2 (word) las
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting makechar::@22(between makechar::@21 and makechar::@10)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @12
-Adding NOP phi() at start of @48
+Adding NOP phi() at start of @13
 Adding NOP phi() at start of @49
+Adding NOP phi() at start of @50
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@8
 Adding NOP phi() at start of main::@12
 Adding NOP phi() at start of main::@2
@@ -1867,7 +1636,7 @@ Adding NOP phi() at start of makechar::@5
 Adding NOP phi() at start of makechar::@8
 CALL GRAPH
 Calls in [] to main:5 
-Calls in [main] to start:9 makechar:11 end:20 doplasma:24 doplasma:26 
+Calls in [main] to makechar:9 start:11 end:20 doplasma:24 doplasma:26 
 Calls in [end] to start:68 print_word:72 print_ln:74 
 Calls in [print_word] to print_byte:87 print_byte:91 
 Calls in [print_byte] to print_char:99 print_char:104 
@@ -1900,8 +1669,8 @@ Coalesced [143] makechar::ii#8 ← makechar::ii#2
 Coalesced [144] makechar::b#9 ← makechar::b#7
 Coalesced (already) [145] makechar::b#11 ← makechar::b#3
 Coalesced down to 18 phi equivalence classes
-Culled Empty Block (label) @12
-Culled Empty Block (label) @49
+Culled Empty Block (label) @13
+Culled Empty Block (label) @50
 Culled Empty Block (label) main::@12
 Culled Empty Block (label) doplasma::@3
 Culled Empty Block (label) doplasma::@9
@@ -1913,9 +1682,9 @@ Culled Empty Block (label) print_word::@2
 Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) makechar::@5
 Culled Empty Block (label) makechar::@22
-Renumbering block @42 to @1
-Renumbering block @44 to @2
-Renumbering block @48 to @3
+Renumbering block @43 to @1
+Renumbering block @45 to @2
+Renumbering block @49 to @3
 Renumbering block doplasma::@7 to doplasma::@3
 Renumbering block doplasma::@8 to doplasma::@4
 Renumbering block doplasma::@13 to doplasma::@5
@@ -1937,7 +1706,6 @@ Renumbering block main::@11 to main::@7
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@4
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of end::@2
@@ -1953,7 +1721,7 @@ FINAL CONTROL FLOW GRAPH
   [1] (word) last_time#0 ← (word) 0
   to:@2
 @2: scope:[]  from @1
-  [2] (word) rand_seed#22 ← (word) 0
+  [2] (word) rand_seed#23 ← (word) 0
   to:@3
 @3: scope:[]  from @2
   [3] phi()
@@ -1964,12 +1732,12 @@ FINAL CONTROL FLOW GRAPH
 
 (signed word()) main()
 main: scope:[main]  from @3
-  [6] phi()
-  [7] call start 
+  [6] (word) rand_seed#21 ← (word) $194a
+  [7] call makechar 
   to:main::@4
 main::@4: scope:[main]  from main
   [8] phi()
-  [9] call makechar 
+  [9] call start 
   to:main::@5
 main::@5: scope:[main]  from main::@4
   [10] (byte) main::block#1 ← *((const byte*) CIA2_PORT_A)
@@ -2004,7 +1772,7 @@ main::@7: scope:[main]  from main::@6
 
 (void()) doplasma((byte*) doplasma::scrn)
 doplasma: scope:[doplasma]  from main::@2 main::@6
-  [26] (byte*) doplasma::scrn#13 ← phi( main::@6/(byte*)(const word) SCREEN2 main::@2/(byte*)(const word) SCREEN1 )
+  [26] (byte*) doplasma::scrn#13 ← phi( main::@6/(const byte*) SCREEN2 main::@2/(const byte*) SCREEN1 )
   to:doplasma::@1
 doplasma::@1: scope:[doplasma]  from doplasma doplasma::@2
   [27] (byte) doplasma::c1b#3 ← phi( doplasma/(byte) 0 doplasma::@2/(byte) doplasma::c1b#2 )
@@ -2129,7 +1897,7 @@ print_char::@return: scope:[print_char]  from print_char
   to:@return
 
 (void()) start()
-start: scope:[start]  from end main
+start: scope:[start]  from end main::@4
   asm { jsr$FFDE staLAST_TIME stxLAST_TIME+1  }
   [84] (word) rand_seed#0 ← (word) $194a
   to:start::@return
@@ -2138,7 +1906,7 @@ start::@return: scope:[start]  from start
   to:@return
 
 (void()) makechar()
-makechar: scope:[makechar]  from main::@4
+makechar: scope:[makechar]  from main
   [86] phi()
   to:makechar::@1
 makechar::@1: scope:[makechar]  from makechar makechar::@4
@@ -2167,7 +1935,7 @@ makechar::@5: scope:[makechar]  from makechar::@3 makechar::@8
 makechar::@7: scope:[makechar]  from makechar::@5
   [97] (word~) makechar::$8 ← (word) makechar::c#3 << (byte) 3
   [98] (word~) makechar::$9 ← (word~) makechar::$8 + (byte) makechar::i#3
-  [99] (byte*~) makechar::$10 ← (byte*)(const word) CHARSET + (word~) makechar::$9
+  [99] (byte*~) makechar::$10 ← (const byte*) CHARSET + (word~) makechar::$9
   [100] *((byte*~) makechar::$10) ← (byte) makechar::b#3
   [101] (byte) makechar::i#2 ← ++ (byte) makechar::i#3
   to:makechar::@3
@@ -2192,7 +1960,7 @@ makechar::@8: scope:[makechar]  from makechar::@10 makechar::@9
 (byte()) rand()
 rand: scope:[rand]  from makechar::@6
   asm { ldx#8 ldaRAND_SEED+0 __rand_loop: asl rolRAND_SEED+1 bcc__no_eor eor#$2D __no_eor: dex bne__rand_loop staRAND_SEED+0  }
-  [112] (byte) rand::return#0 ← (byte)(word) rand_seed#0
+  [112] (byte) rand::return#0 ← (byte)(word) rand_seed#21
   to:rand::@return
 rand::@return: scope:[rand]  from rand
   [113] return 
@@ -2306,8 +2074,9 @@ VARIABLE REGISTER WEIGHTS
 (byte) rand::return#0 334.33333333333337
 (byte) rand::return#2 2002.0
 (word) rand_seed
-(word) rand_seed#0 0.06451612903225806
-(word) rand_seed#22 20.0
+(word) rand_seed#0 20.0
+(word) rand_seed#21 0.07142857142857142
+(word) rand_seed#23 20.0
 (void()) start()
 
 Initial phi equivalence classes
@@ -2331,7 +2100,8 @@ Initial phi equivalence classes
 [ makechar::b#3 makechar::b#7 makechar::b#2 ]
 Coalescing volatile variable equivalence classes [ last_time#0 ] and [ last_time#1 ]
 Coalescing volatile variable equivalence classes [ last_time#0 last_time#1 ] and [ last_time#2 ]
-Coalescing volatile variable equivalence classes [ rand_seed#0 ] and [ rand_seed#22 ]
+Coalescing volatile variable equivalence classes [ rand_seed#0 ] and [ rand_seed#21 ]
+Coalescing volatile variable equivalence classes [ rand_seed#0 rand_seed#21 ] and [ rand_seed#23 ]
 Added variable main::block#1 to live range equivalence class [ main::block#1 ]
 Added variable main::tmp#1 to live range equivalence class [ main::tmp#1 ]
 Added variable main::v#1 to live range equivalence class [ main::v#1 ]
@@ -2372,7 +2142,7 @@ Complete equivalence classes
 [ makechar::ii#3 makechar::ii#2 ]
 [ makechar::b#3 makechar::b#7 makechar::b#2 ]
 [ last_time#0 last_time#1 last_time#2 ]
-[ rand_seed#0 rand_seed#22 ]
+[ rand_seed#0 rand_seed#21 rand_seed#23 ]
 [ main::block#1 ]
 [ main::tmp#1 ]
 [ main::v#1 ]
@@ -2412,7 +2182,7 @@ Allocated zp[1]:22 [ makechar::i#3 makechar::i#2 ]
 Allocated zp[1]:23 [ makechar::ii#3 makechar::ii#2 ]
 Allocated zp[1]:24 [ makechar::b#3 makechar::b#7 makechar::b#2 ]
 Allocated zp[2]:25 [ last_time#0 last_time#1 last_time#2 ]
-Allocated zp[2]:27 [ rand_seed#0 rand_seed#22 ]
+Allocated zp[2]:27 [ rand_seed#0 rand_seed#21 rand_seed#23 ]
 Allocated zp[1]:29 [ main::block#1 ]
 Allocated zp[1]:30 [ main::tmp#1 ]
 Allocated zp[1]:31 [ main::v#1 ]
@@ -2445,12 +2215,11 @@ Target platform is c64basic / MOS6502X
   .label VIC_MEMORY = $d018
   // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  .const SCREEN1 = $e000
-  .const SCREEN2 = $e400
-  .const CHARSET = $e800
-  .const PAGE1 = $8a
-  // ((SCREEN1 >> 6) & 0xF0) | ((CHARSET >> 10) & 0x0E);
-  .const PAGE2 = $9a
+  .label SCREEN1 = $e000
+  .label SCREEN2 = $e400
+  .label CHARSET = $e800
+  .const PAGE1 = SCREEN1>>6&$f0|CHARSET>>$a&$e
+  .const PAGE2 = SCREEN2>>6&$f0|CHARSET>>$a&$e
   .label print_line_cursor = $e
   .label print_char_cursor = $12
   .label last_time = $19
@@ -2470,7 +2239,7 @@ __b1:
   jmp __b2
   // @2
 __b2:
-  // [2] (word) rand_seed#22 ← (word) 0 -- vwuz1=vwuc1 
+  // [2] (word) rand_seed#23 ← (word) 0 -- vwuz1=vwuc1 
   lda #<0
   sta.z rand_seed
   lda #>0
@@ -2481,8 +2250,6 @@ __b3_from___b2:
   // @3
 __b3:
   // [4] call main 
-  // [6] phi from @3 to main [phi:@3->main]
-main_from___b3:
   jsr main
   // [5] phi from @3 to @end [phi:@3->@end]
 __bend_from___b3:
@@ -2495,17 +2262,22 @@ main: {
     .label tmp = $1e
     .label v = $1f
     .label count = 2
-    // [7] call start 
-    jsr start
+    // [6] (word) rand_seed#21 ← (word) $194a -- vwuz1=vwuc1 
+    lda #<$194a
+    sta.z rand_seed
+    lda #>$194a
+    sta.z rand_seed+1
+    // [7] call makechar 
+    // [86] phi from main to makechar [phi:main->makechar]
+  makechar_from_main:
+    jsr makechar
     // [8] phi from main to main::@4 [phi:main->main::@4]
   __b4_from_main:
     jmp __b4
     // main::@4
   __b4:
-    // [9] call makechar 
-    // [86] phi from main::@4 to makechar [phi:main::@4->makechar]
-  makechar_from___b4:
-    jsr makechar
+    // [9] call start 
+    jsr start
     jmp __b5
     // main::@5
   __b5:
@@ -2564,7 +2336,7 @@ main: {
     // [21] call doplasma 
     // [26] phi from main::@2 to doplasma [phi:main::@2->doplasma]
   doplasma_from___b2:
-    // [26] phi (byte*) doplasma::scrn#13 = (byte*)(const word) SCREEN1 [phi:main::@2->doplasma#0] -- pbuz1=pbuc1 
+    // [26] phi (byte*) doplasma::scrn#13 = (const byte*) SCREEN1 [phi:main::@2->doplasma#0] -- pbuz1=pbuc1 
     lda #<SCREEN1
     sta.z doplasma.scrn
     lda #>SCREEN1
@@ -2579,7 +2351,7 @@ main: {
     // [23] call doplasma 
     // [26] phi from main::@6 to doplasma [phi:main::@6->doplasma]
   doplasma_from___b6:
-    // [26] phi (byte*) doplasma::scrn#13 = (byte*)(const word) SCREEN2 [phi:main::@6->doplasma#0] -- pbuz1=pbuc1 
+    // [26] phi (byte*) doplasma::scrn#13 = (const byte*) SCREEN2 [phi:main::@6->doplasma#0] -- pbuz1=pbuc1 
     lda #<SCREEN2
     sta.z doplasma.scrn
     lda #>SCREEN2
@@ -2603,7 +2375,7 @@ main: {
     jmp __b1
 }
   // doplasma
-// doplasma(byte* zeropage($b) scrn)
+// doplasma(byte* zp($b) scrn)
 doplasma: {
     .const c2A = 0
     .const c2B = 0
@@ -2871,7 +2643,7 @@ print_ln: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage($27) w)
+// print_word(word zp($27) w)
 print_word: {
     .label w = $27
     // [66] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuz1=_hi_vwuz2 
@@ -2907,7 +2679,7 @@ print_word: {
 }
   // print_byte
 // Print a byte as HEX
-// print_byte(byte zeropage($10) b)
+// print_byte(byte zp($10) b)
 print_byte: {
     .label __0 = $29
     .label __2 = $2a
@@ -2954,7 +2726,7 @@ print_byte: {
 }
   // print_char
 // Print a single char
-// print_char(byte zeropage($11) ch)
+// print_char(byte zp($11) ch)
 print_char: {
     .label ch = $11
     // [80] *((byte*) print_char_cursor#25) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuz2 
@@ -3097,7 +2869,7 @@ makechar: {
     lda #0
     adc.z __8+1
     sta.z __9+1
-    // [99] (byte*~) makechar::$10 ← (byte*)(const word) CHARSET + (word~) makechar::$9 -- pbuz1=pbuc1_plus_vwuz2 
+    // [99] (byte*~) makechar::$10 ← (const byte*) CHARSET + (word~) makechar::$9 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z __9
     clc
     adc #<CHARSET
@@ -3179,7 +2951,7 @@ rand: {
     dex
     bne __rand_loop
     sta RAND_SEED+0
-    // [112] (byte) rand::return#0 ← (byte)(word) rand_seed#0 -- vbuz1=_byte_vwuz2 
+    // [112] (byte) rand::return#0 ← (byte)(word) rand_seed#21 -- vbuz1=_byte_vwuz2 
     lda.z rand_seed
     sta.z return
     jmp __breturn
@@ -3190,7 +2962,6 @@ rand: {
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
-  // ((SCREEN2 >> 6) & 0xF0) | ((CHARSET >> 10) & 0x0E);
   .align $100
   sinustable: .byte $80, $7d, $7a, $77, $74, $70, $6d, $6a, $67, $64, $61, $5e, $5b, $58, $55, $52, $4f, $4d, $4a, $47, $44, $41, $3f, $3c, $39, $37, $34, $32, $2f, $2d, $2b, $28, $26, $24, $22, $20, $1e, $1c, $1a, $18, $16, $15, $13, $11, $10, $f, $d, $c, $b, $a, 8, 7, 6, 6, 5, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 5, 6, 6, 7, 8, $a, $b, $c, $d, $f, $10, $11, $13, $15, $16, $18, $1a, $1c, $1e, $20, $22, $24, $26, $28, $2b, $2d, $2f, $32, $34, $37, $39, $3c, $3f, $41, $44, $47, $4a, $4d, $4f, $52, $55, $58, $5b, $5e, $61, $64, $67, $6a, $6d, $70, $74, $77, $7a, $7d, $80, $83, $86, $89, $8c, $90, $93, $96, $99, $9c, $9f, $a2, $a5, $a8, $ab, $ae, $b1, $b3, $b6, $b9, $bc, $bf, $c1, $c4, $c7, $c9, $cc, $ce, $d1, $d3, $d5, $d8, $da, $dc, $de, $e0, $e2, $e4, $e6, $e8, $ea, $eb, $ed, $ef, $f0, $f1, $f3, $f4, $f5, $f6, $f8, $f9, $fa, $fa, $fb, $fc, $fd, $fd, $fe, $fe, $fe, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $fe, $fe, $fe, $fd, $fd, $fc, $fb, $fa, $fa, $f9, $f8, $f6, $f5, $f4, $f3, $f1, $f0, $ef, $ed, $eb, $ea, $e8, $e6, $e4, $e2, $e0, $de, $dc, $da, $d8, $d5, $d3, $d1, $ce, $cc, $c9, $c7, $c4, $c1, $bf, $bc, $b9, $b6, $b3, $b1, $ae, $ab, $a8, $a5, $a2, $9f, $9c, $99, $96, $93, $90, $8c, $89, $86, $83
   xbuf: .fill $28, 0
@@ -3199,7 +2970,8 @@ rand: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] (word) last_time#0 ← (word) 0 [ last_time#0 ] (  [ last_time#0 ] ) always clobbers reg byte a 
-Statement [2] (word) rand_seed#22 ← (word) 0 [ last_time#0 ] (  [ last_time#0 ] ) always clobbers reg byte a 
+Statement [2] (word) rand_seed#23 ← (word) 0 [ last_time#0 ] (  [ last_time#0 ] ) always clobbers reg byte a 
+Statement [6] (word) rand_seed#21 ← (word) $194a [ last_time#0 rand_seed#21 ] ( main:4 [ last_time#0 rand_seed#21 ] ) always clobbers reg byte a 
 Statement [15] if((byte) 0!=(word) main::count#2) goto main::@2 [ last_time#0 main::block#1 main::v#1 main::count#2 ] ( main:4 [ last_time#0 main::block#1 main::v#1 main::count#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:29 [ main::block#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:31 [ main::v#1 ]
@@ -3236,28 +3008,29 @@ Statement [75] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ p
 Statement [80] *((byte*) print_char_cursor#25) ← (byte) print_char::ch#2 [ print_char_cursor#25 ] ( main:4::end:18::print_word:56::print_byte:67::print_char:74 [ last_time#1 print_word::w#0 print_byte::b#2 print_char_cursor#25 ] main:4::end:18::print_word:56::print_byte:69::print_char:74 [ last_time#1 print_byte::b#2 print_char_cursor#25 ] main:4::end:18::print_word:56::print_byte:67::print_char:77 [ last_time#1 print_word::w#0 print_char_cursor#25 ] main:4::end:18::print_word:56::print_byte:69::print_char:77 [ last_time#1 print_char_cursor#25 ] ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:16 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement asm { jsr$FFDE staLAST_TIME stxLAST_TIME+1  } always clobbers reg byte a reg byte x reg byte y 
-Statement [84] (word) rand_seed#0 ← (word) $194a [ rand_seed#0 ] ( main:4::start:7 [ last_time#0 rand_seed#0 ] main:4::end:18::start:52 [ last_time#0 Ticks#1 rand_seed#0 ] ) always clobbers reg byte a 
-Statement [88] if((word) makechar::c#3<(word) $100) goto makechar::@2 [ rand_seed#0 makechar::c#3 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 ] ) always clobbers reg byte a 
-Statement [90] (byte~) makechar::$1 ← (byte)(word) makechar::c#3 [ rand_seed#0 makechar::c#3 makechar::$1 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::$1 ] ) always clobbers reg byte a 
-Statement [97] (word~) makechar::$8 ← (word) makechar::c#3 << (byte) 3 [ rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$8 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$8 ] ) always clobbers reg byte a 
+Statement [84] (word) rand_seed#0 ← (word) $194a [ ] ( main:4::start:9 [ last_time#0 ] main:4::end:18::start:52 [ last_time#0 Ticks#1 ] ) always clobbers reg byte a 
+Statement [88] if((word) makechar::c#3<(word) $100) goto makechar::@2 [ rand_seed#21 makechar::c#3 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 ] ) always clobbers reg byte a 
+Statement [90] (byte~) makechar::$1 ← (byte)(word) makechar::c#3 [ rand_seed#21 makechar::c#3 makechar::$1 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::$1 ] ) always clobbers reg byte a 
+Statement [97] (word~) makechar::$8 ← (word) makechar::c#3 << (byte) 3 [ rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$8 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$8 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:44 [ makechar::s#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:22 [ makechar::i#3 makechar::i#2 ]
 Removing always clobbered register reg byte a as potential for zp[1]:24 [ makechar::b#3 makechar::b#7 makechar::b#2 ]
-Statement [98] (word~) makechar::$9 ← (word~) makechar::$8 + (byte) makechar::i#3 [ rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$9 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$9 ] ) always clobbers reg byte a 
-Statement [99] (byte*~) makechar::$10 ← (byte*)(const word) CHARSET + (word~) makechar::$9 [ rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$10 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$10 ] ) always clobbers reg byte a 
-Statement [100] *((byte*~) makechar::$10) ← (byte) makechar::b#3 [ rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 ] ) always clobbers reg byte a reg byte y 
+Statement [98] (word~) makechar::$9 ← (word~) makechar::$8 + (byte) makechar::i#3 [ rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$9 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$9 ] ) always clobbers reg byte a 
+Statement [99] (byte*~) makechar::$10 ← (const byte*) CHARSET + (word~) makechar::$9 [ rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$10 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$10 ] ) always clobbers reg byte a 
+Statement [100] *((byte*~) makechar::$10) ← (byte) makechar::b#3 [ rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:44 [ makechar::s#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:22 [ makechar::i#3 makechar::i#2 ]
-Statement [108] (byte) makechar::b#2 ← (byte) makechar::b#3 | *((const byte*) bittab + (byte) makechar::ii#3) [ rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#2 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#2 ] ) always clobbers reg byte a 
+Statement [108] (byte) makechar::b#2 ← (byte) makechar::b#3 | *((const byte*) bittab + (byte) makechar::ii#3) [ rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#2 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:23 [ makechar::ii#3 makechar::ii#2 ]
 Statement asm { ldx#8 ldaRAND_SEED+0 __rand_loop: asl rolRAND_SEED+1 bcc__no_eor eor#$2D __no_eor: dex bne__rand_loop staRAND_SEED+0  } always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte x as potential for zp[1]:44 [ makechar::s#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:22 [ makechar::i#3 makechar::i#2 ]
 Removing always clobbered register reg byte x as potential for zp[1]:23 [ makechar::ii#3 makechar::ii#2 ]
 Removing always clobbered register reg byte x as potential for zp[1]:24 [ makechar::b#3 makechar::b#7 makechar::b#2 ]
-Statement [112] (byte) rand::return#0 ← (byte)(word) rand_seed#0 [ rand_seed#0 rand::return#0 ] ( main:4::makechar:9::rand:103 [ last_time#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#3 rand_seed#0 rand::return#0 ] ) always clobbers reg byte a 
+Statement [112] (byte) rand::return#0 ← (byte)(word) rand_seed#21 [ rand_seed#21 rand::return#0 ] ( main:4::makechar:7::rand:103 [ last_time#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#3 rand_seed#21 rand::return#0 ] ) always clobbers reg byte a 
 Statement [1] (word) last_time#0 ← (word) 0 [ last_time#0 ] (  [ last_time#0 ] ) always clobbers reg byte a 
-Statement [2] (word) rand_seed#22 ← (word) 0 [ last_time#0 ] (  [ last_time#0 ] ) always clobbers reg byte a 
+Statement [2] (word) rand_seed#23 ← (word) 0 [ last_time#0 ] (  [ last_time#0 ] ) always clobbers reg byte a 
+Statement [6] (word) rand_seed#21 ← (word) $194a [ last_time#0 rand_seed#21 ] ( main:4 [ last_time#0 rand_seed#21 ] ) always clobbers reg byte a 
 Statement [11] (byte) main::tmp#1 ← (byte) main::block#1 & (byte) $fc [ last_time#0 main::block#1 main::tmp#1 ] ( main:4 [ last_time#0 main::block#1 main::tmp#1 ] ) always clobbers reg byte a 
 Statement [15] if((byte) 0!=(word) main::count#2) goto main::@2 [ last_time#0 main::block#1 main::v#1 main::count#2 ] ( main:4 [ last_time#0 main::block#1 main::v#1 main::count#2 ] ) always clobbers reg byte a 
 Statement [22] *((const byte*) VIC_MEMORY) ← (const byte) PAGE1 [ last_time#0 main::block#1 main::v#1 main::count#2 ] ( main:4 [ last_time#0 main::block#1 main::v#1 main::count#2 ] ) always clobbers reg byte a 
@@ -3283,18 +3056,18 @@ Statement [72] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ p
 Statement [75] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#10 print_byte::$2 ] ( main:4::end:18::print_word:56::print_byte:67 [ last_time#1 print_word::w#0 print_char_cursor#10 print_byte::$2 ] main:4::end:18::print_word:56::print_byte:69 [ last_time#1 print_char_cursor#10 print_byte::$2 ] ) always clobbers reg byte a 
 Statement [80] *((byte*) print_char_cursor#25) ← (byte) print_char::ch#2 [ print_char_cursor#25 ] ( main:4::end:18::print_word:56::print_byte:67::print_char:74 [ last_time#1 print_word::w#0 print_byte::b#2 print_char_cursor#25 ] main:4::end:18::print_word:56::print_byte:69::print_char:74 [ last_time#1 print_byte::b#2 print_char_cursor#25 ] main:4::end:18::print_word:56::print_byte:67::print_char:77 [ last_time#1 print_word::w#0 print_char_cursor#25 ] main:4::end:18::print_word:56::print_byte:69::print_char:77 [ last_time#1 print_char_cursor#25 ] ) always clobbers reg byte y 
 Statement asm { jsr$FFDE staLAST_TIME stxLAST_TIME+1  } always clobbers reg byte a reg byte x reg byte y 
-Statement [84] (word) rand_seed#0 ← (word) $194a [ rand_seed#0 ] ( main:4::start:7 [ last_time#0 rand_seed#0 ] main:4::end:18::start:52 [ last_time#0 Ticks#1 rand_seed#0 ] ) always clobbers reg byte a 
-Statement [88] if((word) makechar::c#3<(word) $100) goto makechar::@2 [ rand_seed#0 makechar::c#3 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 ] ) always clobbers reg byte a 
-Statement [90] (byte~) makechar::$1 ← (byte)(word) makechar::c#3 [ rand_seed#0 makechar::c#3 makechar::$1 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::$1 ] ) always clobbers reg byte a 
-Statement [91] (byte) makechar::s#1 ← *((const byte*) sinustable + (byte~) makechar::$1) [ rand_seed#0 makechar::c#3 makechar::s#1 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 ] ) always clobbers reg byte a 
-Statement [93] if((byte) makechar::i#3<(byte) 8) goto makechar::@5 [ rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 ] ) always clobbers reg byte a 
-Statement [97] (word~) makechar::$8 ← (word) makechar::c#3 << (byte) 3 [ rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$8 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$8 ] ) always clobbers reg byte a 
-Statement [98] (word~) makechar::$9 ← (word~) makechar::$8 + (byte) makechar::i#3 [ rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$9 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$9 ] ) always clobbers reg byte a 
-Statement [99] (byte*~) makechar::$10 ← (byte*)(const word) CHARSET + (word~) makechar::$9 [ rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$10 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$10 ] ) always clobbers reg byte a 
-Statement [100] *((byte*~) makechar::$10) ← (byte) makechar::b#3 [ rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 ] ) always clobbers reg byte a reg byte y 
-Statement [108] (byte) makechar::b#2 ← (byte) makechar::b#3 | *((const byte*) bittab + (byte) makechar::ii#3) [ rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#2 ] ( main:4::makechar:9 [ last_time#0 rand_seed#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#2 ] ) always clobbers reg byte a 
+Statement [84] (word) rand_seed#0 ← (word) $194a [ ] ( main:4::start:9 [ last_time#0 ] main:4::end:18::start:52 [ last_time#0 Ticks#1 ] ) always clobbers reg byte a 
+Statement [88] if((word) makechar::c#3<(word) $100) goto makechar::@2 [ rand_seed#21 makechar::c#3 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 ] ) always clobbers reg byte a 
+Statement [90] (byte~) makechar::$1 ← (byte)(word) makechar::c#3 [ rand_seed#21 makechar::c#3 makechar::$1 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::$1 ] ) always clobbers reg byte a 
+Statement [91] (byte) makechar::s#1 ← *((const byte*) sinustable + (byte~) makechar::$1) [ rand_seed#21 makechar::c#3 makechar::s#1 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 ] ) always clobbers reg byte a 
+Statement [93] if((byte) makechar::i#3<(byte) 8) goto makechar::@5 [ rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 ] ) always clobbers reg byte a 
+Statement [97] (word~) makechar::$8 ← (word) makechar::c#3 << (byte) 3 [ rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$8 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$8 ] ) always clobbers reg byte a 
+Statement [98] (word~) makechar::$9 ← (word~) makechar::$8 + (byte) makechar::i#3 [ rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$9 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$9 ] ) always clobbers reg byte a 
+Statement [99] (byte*~) makechar::$10 ← (const byte*) CHARSET + (word~) makechar::$9 [ rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$10 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::b#3 makechar::$10 ] ) always clobbers reg byte a 
+Statement [100] *((byte*~) makechar::$10) ← (byte) makechar::b#3 [ rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 ] ) always clobbers reg byte a reg byte y 
+Statement [108] (byte) makechar::b#2 ← (byte) makechar::b#3 | *((const byte*) bittab + (byte) makechar::ii#3) [ rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#2 ] ( main:4::makechar:7 [ last_time#0 rand_seed#21 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#2 ] ) always clobbers reg byte a 
 Statement asm { ldx#8 ldaRAND_SEED+0 __rand_loop: asl rolRAND_SEED+1 bcc__no_eor eor#$2D __no_eor: dex bne__rand_loop staRAND_SEED+0  } always clobbers reg byte a reg byte x 
-Statement [112] (byte) rand::return#0 ← (byte)(word) rand_seed#0 [ rand_seed#0 rand::return#0 ] ( main:4::makechar:9::rand:103 [ last_time#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#3 rand_seed#0 rand::return#0 ] ) always clobbers reg byte a 
+Statement [112] (byte) rand::return#0 ← (byte)(word) rand_seed#21 [ rand_seed#21 rand::return#0 ] ( main:4::makechar:7::rand:103 [ last_time#0 makechar::c#3 makechar::s#1 makechar::i#3 makechar::ii#3 makechar::b#3 rand_seed#21 rand::return#0 ] ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::count#2 main::count#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ doplasma::ii#3 doplasma::ii#2 ] : zp[1]:4 , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ doplasma::c1a#3 doplasma::c1a#2 ] : zp[1]:5 , reg byte x , reg byte y , 
@@ -3314,7 +3087,7 @@ Potential registers zp[1]:22 [ makechar::i#3 makechar::i#2 ] : zp[1]:22 ,
 Potential registers zp[1]:23 [ makechar::ii#3 makechar::ii#2 ] : zp[1]:23 , reg byte y , 
 Potential registers zp[1]:24 [ makechar::b#3 makechar::b#7 makechar::b#2 ] : zp[1]:24 , reg byte y , 
 Potential registers zp[2]:25 [ last_time#0 last_time#1 last_time#2 ] : zp[2]:25 , 
-Potential registers zp[2]:27 [ rand_seed#0 rand_seed#22 ] : zp[2]:27 , 
+Potential registers zp[2]:27 [ rand_seed#0 rand_seed#21 rand_seed#23 ] : zp[2]:27 , 
 Potential registers zp[1]:29 [ main::block#1 ] : zp[1]:29 , reg byte x , reg byte y , 
 Potential registers zp[1]:30 [ main::tmp#1 ] : zp[1]:30 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:31 [ main::v#1 ] : zp[1]:31 , reg byte x , reg byte y , 
@@ -3340,7 +3113,7 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [makechar] 3,785.68: zp[1]:24 [ makechar::b#3 makechar::b#7 makechar::b#2 ] 2,402.4: zp[1]:23 [ makechar::ii#3 makechar::ii#2 ] 2,002: zp[1]:52 [ makechar::$4 ] 2,002: zp[1]:53 [ makechar::$5 ] 225.76: zp[1]:22 [ makechar::i#3 makechar::i#2 ] 202: zp[2]:45 [ makechar::$8 ] 202: zp[2]:47 [ makechar::$9 ] 202: zp[2]:49 [ makechar::$10 ] 53.26: zp[1]:44 [ makechar::s#1 ] 28.09: zp[2]:20 [ makechar::c#3 makechar::c#2 ] 22: zp[1]:43 [ makechar::$1 ] 
 Uplift Scope [doplasma] 3,253.25: zp[1]:13 [ doplasma::j#3 doplasma::j#2 ] 2,002: zp[1]:32 [ doplasma::$6 ] 365: zp[1]:10 [ doplasma::jj#3 doplasma::jj#2 ] 294.02: zp[2]:11 [ doplasma::scrn#6 doplasma::scrn#0 doplasma::scrn#13 ] 269.33: zp[1]:4 [ doplasma::ii#3 doplasma::ii#2 ] 269.33: zp[1]:7 [ doplasma::i#3 doplasma::i#2 ] 202: zp[1]:33 [ doplasma::$3 ] 202: zp[1]:34 [ doplasma::$1 ] 161.6: zp[1]:6 [ doplasma::c1b#3 doplasma::c1b#2 ] 161.6: zp[1]:9 [ doplasma::c2b#3 doplasma::c2b#2 ] 143.08: zp[1]:5 [ doplasma::c1a#3 doplasma::c1a#2 ] 143.08: zp[1]:8 [ doplasma::c2a#3 doplasma::c2a#2 ] 
 Uplift Scope [rand] 2,002: zp[1]:51 [ rand::return#2 ] 334.33: zp[1]:54 [ rand::return#0 ] 
-Uplift Scope [] 38.5: zp[2]:14 [ print_line_cursor#8 print_line_cursor#1 ] 21.26: zp[2]:25 [ last_time#0 last_time#1 last_time#2 ] 20.06: zp[2]:27 [ rand_seed#0 rand_seed#22 ] 6.33: zp[2]:18 [ print_char_cursor#25 print_char_cursor#35 print_char_cursor#10 ] 4: zp[2]:37 [ Ticks#2 ] 2: zp[2]:35 [ Ticks#1 ] 
+Uplift Scope [] 40.07: zp[2]:27 [ rand_seed#0 rand_seed#21 rand_seed#23 ] 38.5: zp[2]:14 [ print_line_cursor#8 print_line_cursor#1 ] 21.26: zp[2]:25 [ last_time#0 last_time#1 last_time#2 ] 6.33: zp[2]:18 [ print_char_cursor#25 print_char_cursor#35 print_char_cursor#10 ] 4: zp[2]:37 [ Ticks#2 ] 2: zp[2]:35 [ Ticks#1 ] 
 Uplift Scope [main] 26.71: zp[2]:2 [ main::count#2 main::count#1 ] 4: zp[1]:30 [ main::tmp#1 ] 0.46: zp[1]:29 [ main::block#1 ] 0.44: zp[1]:31 [ main::v#1 ] 
 Uplift Scope [print_byte] 10: zp[1]:16 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp[1]:41 [ print_byte::$0 ] 4: zp[1]:42 [ print_byte::$2 ] 
 Uplift Scope [print_char] 14: zp[1]:17 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
@@ -3350,48 +3123,48 @@ Uplift Scope [print_ln]
 Uplift Scope [start] 
 Uplift Scope [end] 
 
-Uplifting [makechar] best 165875 combination zp[1]:24 [ makechar::b#3 makechar::b#7 makechar::b#2 ] reg byte y [ makechar::ii#3 makechar::ii#2 ] reg byte a [ makechar::$4 ] zp[1]:53 [ makechar::$5 ] zp[1]:22 [ makechar::i#3 makechar::i#2 ] zp[2]:45 [ makechar::$8 ] zp[2]:47 [ makechar::$9 ] zp[2]:49 [ makechar::$10 ] zp[1]:44 [ makechar::s#1 ] zp[2]:20 [ makechar::c#3 makechar::c#2 ] reg byte a [ makechar::$1 ] 
+Uplifting [makechar] best 165885 combination zp[1]:24 [ makechar::b#3 makechar::b#7 makechar::b#2 ] reg byte y [ makechar::ii#3 makechar::ii#2 ] reg byte a [ makechar::$4 ] zp[1]:53 [ makechar::$5 ] zp[1]:22 [ makechar::i#3 makechar::i#2 ] zp[2]:45 [ makechar::$8 ] zp[2]:47 [ makechar::$9 ] zp[2]:49 [ makechar::$10 ] zp[1]:44 [ makechar::s#1 ] zp[2]:20 [ makechar::c#3 makechar::c#2 ] reg byte a [ makechar::$1 ] 
 Limited combination testing to 100 combinations of 256 possible.
-Uplifting [doplasma] best 140975 combination reg byte y [ doplasma::j#3 doplasma::j#2 ] reg byte a [ doplasma::$6 ] reg byte x [ doplasma::jj#3 doplasma::jj#2 ] zp[2]:11 [ doplasma::scrn#6 doplasma::scrn#0 doplasma::scrn#13 ] zp[1]:4 [ doplasma::ii#3 doplasma::ii#2 ] zp[1]:7 [ doplasma::i#3 doplasma::i#2 ] zp[1]:33 [ doplasma::$3 ] zp[1]:34 [ doplasma::$1 ] zp[1]:6 [ doplasma::c1b#3 doplasma::c1b#2 ] zp[1]:9 [ doplasma::c2b#3 doplasma::c2b#2 ] zp[1]:5 [ doplasma::c1a#3 doplasma::c1a#2 ] zp[1]:8 [ doplasma::c2a#3 doplasma::c2a#2 ] 
+Uplifting [doplasma] best 140985 combination reg byte y [ doplasma::j#3 doplasma::j#2 ] reg byte a [ doplasma::$6 ] reg byte x [ doplasma::jj#3 doplasma::jj#2 ] zp[2]:11 [ doplasma::scrn#6 doplasma::scrn#0 doplasma::scrn#13 ] zp[1]:4 [ doplasma::ii#3 doplasma::ii#2 ] zp[1]:7 [ doplasma::i#3 doplasma::i#2 ] zp[1]:33 [ doplasma::$3 ] zp[1]:34 [ doplasma::$1 ] zp[1]:6 [ doplasma::c1b#3 doplasma::c1b#2 ] zp[1]:9 [ doplasma::c2b#3 doplasma::c2b#2 ] zp[1]:5 [ doplasma::c1a#3 doplasma::c1a#2 ] zp[1]:8 [ doplasma::c2a#3 doplasma::c2a#2 ] 
 Limited combination testing to 100 combinations of 419904 possible.
-Uplifting [rand] best 131972 combination reg byte a [ rand::return#2 ] reg byte a [ rand::return#0 ] 
-Uplifting [] best 131972 combination zp[2]:14 [ print_line_cursor#8 print_line_cursor#1 ] zp[2]:25 [ last_time#0 last_time#1 last_time#2 ] zp[2]:27 [ rand_seed#0 rand_seed#22 ] zp[2]:18 [ print_char_cursor#25 print_char_cursor#35 print_char_cursor#10 ] zp[2]:37 [ Ticks#2 ] zp[2]:35 [ Ticks#1 ] 
-Uplifting [main] best 131966 combination zp[2]:2 [ main::count#2 main::count#1 ] reg byte a [ main::tmp#1 ] zp[1]:29 [ main::block#1 ] zp[1]:31 [ main::v#1 ] 
-Uplifting [print_byte] best 131952 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
-Uplifting [print_char] best 131943 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
-Uplifting [print_word] best 131943 combination zp[2]:39 [ print_word::w#0 ] 
-Uplifting [RADIX] best 131943 combination 
-Uplifting [print_ln] best 131943 combination 
-Uplifting [start] best 131943 combination 
-Uplifting [end] best 131943 combination 
+Uplifting [rand] best 131982 combination reg byte a [ rand::return#2 ] reg byte a [ rand::return#0 ] 
+Uplifting [] best 131982 combination zp[2]:27 [ rand_seed#0 rand_seed#21 rand_seed#23 ] zp[2]:14 [ print_line_cursor#8 print_line_cursor#1 ] zp[2]:25 [ last_time#0 last_time#1 last_time#2 ] zp[2]:18 [ print_char_cursor#25 print_char_cursor#35 print_char_cursor#10 ] zp[2]:37 [ Ticks#2 ] zp[2]:35 [ Ticks#1 ] 
+Uplifting [main] best 131976 combination zp[2]:2 [ main::count#2 main::count#1 ] reg byte a [ main::tmp#1 ] zp[1]:29 [ main::block#1 ] zp[1]:31 [ main::v#1 ] 
+Uplifting [print_byte] best 131962 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
+Uplifting [print_char] best 131953 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
+Uplifting [print_word] best 131953 combination zp[2]:39 [ print_word::w#0 ] 
+Uplifting [RADIX] best 131953 combination 
+Uplifting [print_ln] best 131953 combination 
+Uplifting [start] best 131953 combination 
+Uplifting [end] best 131953 combination 
 Attempting to uplift remaining variables inzp[1]:24 [ makechar::b#3 makechar::b#7 makechar::b#2 ]
-Uplifting [makechar] best 131943 combination zp[1]:24 [ makechar::b#3 makechar::b#7 makechar::b#2 ] 
+Uplifting [makechar] best 131953 combination zp[1]:24 [ makechar::b#3 makechar::b#7 makechar::b#2 ] 
 Attempting to uplift remaining variables inzp[1]:53 [ makechar::$5 ]
-Uplifting [makechar] best 131943 combination zp[1]:53 [ makechar::$5 ] 
+Uplifting [makechar] best 131953 combination zp[1]:53 [ makechar::$5 ] 
 Attempting to uplift remaining variables inzp[1]:4 [ doplasma::ii#3 doplasma::ii#2 ]
-Uplifting [doplasma] best 131943 combination zp[1]:4 [ doplasma::ii#3 doplasma::ii#2 ] 
+Uplifting [doplasma] best 131953 combination zp[1]:4 [ doplasma::ii#3 doplasma::ii#2 ] 
 Attempting to uplift remaining variables inzp[1]:7 [ doplasma::i#3 doplasma::i#2 ]
-Uplifting [doplasma] best 131943 combination zp[1]:7 [ doplasma::i#3 doplasma::i#2 ] 
+Uplifting [doplasma] best 131953 combination zp[1]:7 [ doplasma::i#3 doplasma::i#2 ] 
 Attempting to uplift remaining variables inzp[1]:22 [ makechar::i#3 makechar::i#2 ]
-Uplifting [makechar] best 131943 combination zp[1]:22 [ makechar::i#3 makechar::i#2 ] 
+Uplifting [makechar] best 131953 combination zp[1]:22 [ makechar::i#3 makechar::i#2 ] 
 Attempting to uplift remaining variables inzp[1]:33 [ doplasma::$3 ]
-Uplifting [doplasma] best 131343 combination reg byte a [ doplasma::$3 ] 
+Uplifting [doplasma] best 131353 combination reg byte a [ doplasma::$3 ] 
 Attempting to uplift remaining variables inzp[1]:34 [ doplasma::$1 ]
-Uplifting [doplasma] best 130743 combination reg byte a [ doplasma::$1 ] 
+Uplifting [doplasma] best 130753 combination reg byte a [ doplasma::$1 ] 
 Attempting to uplift remaining variables inzp[1]:6 [ doplasma::c1b#3 doplasma::c1b#2 ]
-Uplifting [doplasma] best 130743 combination zp[1]:6 [ doplasma::c1b#3 doplasma::c1b#2 ] 
+Uplifting [doplasma] best 130753 combination zp[1]:6 [ doplasma::c1b#3 doplasma::c1b#2 ] 
 Attempting to uplift remaining variables inzp[1]:9 [ doplasma::c2b#3 doplasma::c2b#2 ]
-Uplifting [doplasma] best 130743 combination zp[1]:9 [ doplasma::c2b#3 doplasma::c2b#2 ] 
+Uplifting [doplasma] best 130753 combination zp[1]:9 [ doplasma::c2b#3 doplasma::c2b#2 ] 
 Attempting to uplift remaining variables inzp[1]:5 [ doplasma::c1a#3 doplasma::c1a#2 ]
-Uplifting [doplasma] best 130743 combination zp[1]:5 [ doplasma::c1a#3 doplasma::c1a#2 ] 
+Uplifting [doplasma] best 130753 combination zp[1]:5 [ doplasma::c1a#3 doplasma::c1a#2 ] 
 Attempting to uplift remaining variables inzp[1]:8 [ doplasma::c2a#3 doplasma::c2a#2 ]
-Uplifting [doplasma] best 130743 combination zp[1]:8 [ doplasma::c2a#3 doplasma::c2a#2 ] 
+Uplifting [doplasma] best 130753 combination zp[1]:8 [ doplasma::c2a#3 doplasma::c2a#2 ] 
 Attempting to uplift remaining variables inzp[1]:44 [ makechar::s#1 ]
-Uplifting [makechar] best 130743 combination zp[1]:44 [ makechar::s#1 ] 
+Uplifting [makechar] best 130753 combination zp[1]:44 [ makechar::s#1 ] 
 Attempting to uplift remaining variables inzp[1]:29 [ main::block#1 ]
-Uplifting [main] best 130743 combination zp[1]:29 [ main::block#1 ] 
+Uplifting [main] best 130753 combination zp[1]:29 [ main::block#1 ] 
 Attempting to uplift remaining variables inzp[1]:31 [ main::v#1 ]
-Uplifting [main] best 130743 combination zp[1]:31 [ main::v#1 ] 
+Uplifting [main] best 130753 combination zp[1]:31 [ main::v#1 ] 
 Coalescing zero page register [ zp[2]:37 [ Ticks#2 ] ] with [ zp[2]:39 [ print_word::w#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:45 [ makechar::$8 ] ] with [ zp[2]:47 [ makechar::$9 ] ] - score: 1
 Coalescing zero page register [ zp[2]:45 [ makechar::$8 makechar::$9 ] ] with [ zp[2]:49 [ makechar::$10 ] ] - score: 1
@@ -3410,7 +3183,7 @@ Allocated (was zp[2]:18) zp[2]:6 [ print_char_cursor#25 print_char_cursor#35 pri
 Allocated (was zp[1]:22) zp[1]:8 [ makechar::i#3 makechar::i#2 doplasma::ii#3 doplasma::ii#2 ]
 Allocated (was zp[1]:24) zp[1]:9 [ makechar::b#3 makechar::b#7 makechar::b#2 doplasma::c1a#3 doplasma::c1a#2 ]
 Allocated (was zp[2]:25) zp[2]:10 [ last_time#0 last_time#1 last_time#2 ]
-Allocated (was zp[2]:27) zp[2]:12 [ rand_seed#0 rand_seed#22 ]
+Allocated (was zp[2]:27) zp[2]:12 [ rand_seed#0 rand_seed#21 rand_seed#23 ]
 Allocated (was zp[1]:29) zp[1]:14 [ main::block#1 ]
 Allocated (was zp[1]:31) zp[1]:15 [ main::v#1 ]
 Allocated (was zp[2]:35) zp[2]:16 [ Ticks#1 makechar::c#3 makechar::c#2 ]
@@ -3428,12 +3201,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label VIC_MEMORY = $d018
   // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  .const SCREEN1 = $e000
-  .const SCREEN2 = $e400
-  .const CHARSET = $e800
-  .const PAGE1 = $8a
-  // ((SCREEN1 >> 6) & 0xF0) | ((CHARSET >> 10) & 0x0E);
-  .const PAGE2 = $9a
+  .label SCREEN1 = $e000
+  .label SCREEN2 = $e400
+  .label CHARSET = $e800
+  .const PAGE1 = SCREEN1>>6&$f0|CHARSET>>$a&$e
+  .const PAGE2 = SCREEN2>>6&$f0|CHARSET>>$a&$e
   .label print_line_cursor = 4
   .label print_char_cursor = 6
   .label last_time = $a
@@ -3453,7 +3225,7 @@ __b1:
   jmp __b2
   // @2
 __b2:
-  // [2] (word) rand_seed#22 ← (word) 0 -- vwuz1=vwuc1 
+  // [2] (word) rand_seed#23 ← (word) 0 -- vwuz1=vwuc1 
   lda #<0
   sta.z rand_seed
   lda #>0
@@ -3464,8 +3236,6 @@ __b3_from___b2:
   // @3
 __b3:
   // [4] call main 
-  // [6] phi from @3 to main [phi:@3->main]
-main_from___b3:
   jsr main
   // [5] phi from @3 to @end [phi:@3->@end]
 __bend_from___b3:
@@ -3477,17 +3247,22 @@ main: {
     .label block = $e
     .label v = $f
     .label count = 4
-    // [7] call start 
-    jsr start
+    // [6] (word) rand_seed#21 ← (word) $194a -- vwuz1=vwuc1 
+    lda #<$194a
+    sta.z rand_seed
+    lda #>$194a
+    sta.z rand_seed+1
+    // [7] call makechar 
+    // [86] phi from main to makechar [phi:main->makechar]
+  makechar_from_main:
+    jsr makechar
     // [8] phi from main to main::@4 [phi:main->main::@4]
   __b4_from_main:
     jmp __b4
     // main::@4
   __b4:
-    // [9] call makechar 
-    // [86] phi from main::@4 to makechar [phi:main::@4->makechar]
-  makechar_from___b4:
-    jsr makechar
+    // [9] call start 
+    jsr start
     jmp __b5
     // main::@5
   __b5:
@@ -3544,7 +3319,7 @@ main: {
     // [21] call doplasma 
     // [26] phi from main::@2 to doplasma [phi:main::@2->doplasma]
   doplasma_from___b2:
-    // [26] phi (byte*) doplasma::scrn#13 = (byte*)(const word) SCREEN1 [phi:main::@2->doplasma#0] -- pbuz1=pbuc1 
+    // [26] phi (byte*) doplasma::scrn#13 = (const byte*) SCREEN1 [phi:main::@2->doplasma#0] -- pbuz1=pbuc1 
     lda #<SCREEN1
     sta.z doplasma.scrn
     lda #>SCREEN1
@@ -3559,7 +3334,7 @@ main: {
     // [23] call doplasma 
     // [26] phi from main::@6 to doplasma [phi:main::@6->doplasma]
   doplasma_from___b6:
-    // [26] phi (byte*) doplasma::scrn#13 = (byte*)(const word) SCREEN2 [phi:main::@6->doplasma#0] -- pbuz1=pbuc1 
+    // [26] phi (byte*) doplasma::scrn#13 = (const byte*) SCREEN2 [phi:main::@6->doplasma#0] -- pbuz1=pbuc1 
     lda #<SCREEN2
     sta.z doplasma.scrn
     lda #>SCREEN2
@@ -3583,7 +3358,7 @@ main: {
     jmp __b1
 }
   // doplasma
-// doplasma(byte* zeropage(6) scrn)
+// doplasma(byte* zp(6) scrn)
 doplasma: {
     .const c2A = 0
     .const c2B = 0
@@ -3829,7 +3604,7 @@ print_ln: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage($13) w)
+// print_word(word zp($13) w)
 print_word: {
     .label w = $13
     // [66] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuxx=_hi_vwuz1 
@@ -4039,7 +3814,7 @@ makechar: {
     bcc !+
     inc.z __9+1
   !:
-    // [99] (byte*~) makechar::$10 ← (byte*)(const word) CHARSET + (word~) makechar::$9 -- pbuz1=pbuc1_plus_vwuz1 
+    // [99] (byte*~) makechar::$10 ← (const byte*) CHARSET + (word~) makechar::$9 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z __10
     adc #<CHARSET
@@ -4113,7 +3888,7 @@ rand: {
     dex
     bne __rand_loop
     sta RAND_SEED+0
-    // [112] (byte) rand::return#0 ← (byte)(word) rand_seed#0 -- vbuaa=_byte_vwuz1 
+    // [112] (byte) rand::return#0 ← (byte)(word) rand_seed#21 -- vbuaa=_byte_vwuz1 
     lda.z rand_seed
     jmp __breturn
     // rand::@return
@@ -4123,7 +3898,6 @@ rand: {
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
-  // ((SCREEN2 >> 6) & 0xF0) | ((CHARSET >> 10) & 0x0E);
   .align $100
   sinustable: .byte $80, $7d, $7a, $77, $74, $70, $6d, $6a, $67, $64, $61, $5e, $5b, $58, $55, $52, $4f, $4d, $4a, $47, $44, $41, $3f, $3c, $39, $37, $34, $32, $2f, $2d, $2b, $28, $26, $24, $22, $20, $1e, $1c, $1a, $18, $16, $15, $13, $11, $10, $f, $d, $c, $b, $a, 8, 7, 6, 6, 5, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 5, 6, 6, 7, 8, $a, $b, $c, $d, $f, $10, $11, $13, $15, $16, $18, $1a, $1c, $1e, $20, $22, $24, $26, $28, $2b, $2d, $2f, $32, $34, $37, $39, $3c, $3f, $41, $44, $47, $4a, $4d, $4f, $52, $55, $58, $5b, $5e, $61, $64, $67, $6a, $6d, $70, $74, $77, $7a, $7d, $80, $83, $86, $89, $8c, $90, $93, $96, $99, $9c, $9f, $a2, $a5, $a8, $ab, $ae, $b1, $b3, $b6, $b9, $bc, $bf, $c1, $c4, $c7, $c9, $cc, $ce, $d1, $d3, $d5, $d8, $da, $dc, $de, $e0, $e2, $e4, $e6, $e8, $ea, $eb, $ed, $ef, $f0, $f1, $f3, $f4, $f5, $f6, $f8, $f9, $fa, $fa, $fb, $fc, $fd, $fd, $fe, $fe, $fe, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $fe, $fe, $fe, $fd, $fd, $fc, $fb, $fa, $fa, $f9, $f8, $f6, $f5, $f4, $f3, $f1, $f0, $ef, $ed, $eb, $ea, $e8, $e6, $e4, $e2, $e0, $de, $dc, $da, $d8, $d5, $d3, $d1, $ce, $cc, $c9, $c7, $c4, $c1, $bf, $bc, $b9, $b6, $b3, $b1, $ae, $ab, $a8, $a5, $a2, $9f, $9c, $99, $96, $93, $90, $8c, $89, $86, $83
   xbuf: .fill $28, 0
@@ -4188,10 +3962,8 @@ Replacing label __b6_from___b5 with __b6
 Replacing label __b8_from___b10 with __b8
 Removing instruction __bbegin:
 Removing instruction __b3_from___b2:
-Removing instruction main_from___b3:
 Removing instruction __bend_from___b3:
 Removing instruction __b4_from_main:
-Removing instruction makechar_from___b4:
 Removing instruction __b2_from___b1:
 Removing instruction doplasma_from___b2:
 Removing instruction __b2_from___b1:
@@ -4204,6 +3976,7 @@ Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b2:
 Removing instruction __b3:
 Removing instruction __bend:
+Removing instruction makechar_from_main:
 Removing instruction __b4:
 Removing instruction __b5:
 Removing instruction __b1_from___b5:
@@ -4265,21 +4038,21 @@ FINAL SYMBOL TABLE
 (label) @3
 (label) @begin
 (label) @end
-(const word) CHARSET = (number) $e800
+(const byte*) CHARSET = (byte*) 59392
 (const byte*) CIA2_PORT_A = (byte*) 56576
-(const byte) PAGE1 = (number) $8a
-(const byte) PAGE2 = (number) $9a
+(const byte) PAGE1 = (word)(const byte*) SCREEN1>>(byte) 6&(byte) $f0|(word)(const byte*) CHARSET>>(byte) $a&(byte) $e
+(const byte) PAGE2 = (word)(const byte*) SCREEN2>>(byte) 6&(byte) $f0|(word)(const byte*) CHARSET>>(byte) $a&(byte) $e
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const word) SCREEN1 = (number) $e000
-(const word) SCREEN2 = (number) $e400
+(const byte*) SCREEN1 = (byte*) 57344
+(const byte*) SCREEN2 = (byte*) 58368
 (word) Ticks
 (word) Ticks#1 Ticks zp[2]:16 2.0
 (word) Ticks#2 Ticks_1 zp[2]:19 4.0
 (const byte*) VIC_MEMORY = (byte*) 53272
-(const byte*) bittab = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
+(const byte*) bittab[]  = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (void()) doplasma((byte*) doplasma::scrn)
 (byte~) doplasma::$1 reg byte a 202.0
 (byte~) doplasma::$3 reg byte a 202.0
@@ -4406,7 +4179,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#10 print_char_cursor zp[2]:6 1.0
 (byte*) print_char_cursor#25 print_char_cursor zp[2]:6 4.0
 (byte*) print_char_cursor#35 print_char_cursor zp[2]:6 1.3333333333333333
-(const byte*) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab[]  = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp[2]:4 16.5
 (byte*) print_line_cursor#8 print_line_cursor zp[2]:4 22.0
@@ -4426,14 +4199,15 @@ FINAL SYMBOL TABLE
 (byte) rand::return#0 reg byte a 334.33333333333337
 (byte) rand::return#2 reg byte a 2002.0
 (word) rand_seed
-(word) rand_seed#0 rand_seed zp[2]:12 0.06451612903225806
-(word) rand_seed#22 rand_seed zp[2]:12 20.0
-(const byte*) sinustable = { (byte) $80, (byte) $7d, (byte) $7a, (byte) $77, (byte) $74, (byte) $70, (byte) $6d, (byte) $6a, (byte) $67, (byte) $64, (byte) $61, (byte) $5e, (byte) $5b, (byte) $58, (byte) $55, (byte) $52, (byte) $4f, (byte) $4d, (byte) $4a, (byte) $47, (byte) $44, (byte) $41, (byte) $3f, (byte) $3c, (byte) $39, (byte) $37, (byte) $34, (byte) $32, (byte) $2f, (byte) $2d, (byte) $2b, (byte) $28, (byte) $26, (byte) $24, (byte) $22, (byte) $20, (byte) $1e, (byte) $1c, (byte) $1a, (byte) $18, (byte) $16, (byte) $15, (byte) $13, (byte) $11, (byte) $10, (byte) $f, (byte) $d, (byte) $c, (byte) $b, (byte) $a, (byte) 8, (byte) 7, (byte) 6, (byte) 6, (byte) 5, (byte) 4, (byte) 3, (byte) 3, (byte) 2, (byte) 2, (byte) 2, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 2, (byte) 2, (byte) 3, (byte) 3, (byte) 4, (byte) 5, (byte) 6, (byte) 6, (byte) 7, (byte) 8, (byte) $a, (byte) $b, (byte) $c, (byte) $d, (byte) $f, (byte) $10, (byte) $11, (byte) $13, (byte) $15, (byte) $16, (byte) $18, (byte) $1a, (byte) $1c, (byte) $1e, (byte) $20, (byte) $22, (byte) $24, (byte) $26, (byte) $28, (byte) $2b, (byte) $2d, (byte) $2f, (byte) $32, (byte) $34, (byte) $37, (byte) $39, (byte) $3c, (byte) $3f, (byte) $41, (byte) $44, (byte) $47, (byte) $4a, (byte) $4d, (byte) $4f, (byte) $52, (byte) $55, (byte) $58, (byte) $5b, (byte) $5e, (byte) $61, (byte) $64, (byte) $67, (byte) $6a, (byte) $6d, (byte) $70, (byte) $74, (byte) $77, (byte) $7a, (byte) $7d, (byte) $80, (byte) $83, (byte) $86, (byte) $89, (byte) $8c, (byte) $90, (byte) $93, (byte) $96, (byte) $99, (byte) $9c, (byte) $9f, (byte) $a2, (byte) $a5, (byte) $a8, (byte) $ab, (byte) $ae, (byte) $b1, (byte) $b3, (byte) $b6, (byte) $b9, (byte) $bc, (byte) $bf, (byte) $c1, (byte) $c4, (byte) $c7, (byte) $c9, (byte) $cc, (byte) $ce, (byte) $d1, (byte) $d3, (byte) $d5, (byte) $d8, (byte) $da, (byte) $dc, (byte) $de, (byte) $e0, (byte) $e2, (byte) $e4, (byte) $e6, (byte) $e8, (byte) $ea, (byte) $eb, (byte) $ed, (byte) $ef, (byte) $f0, (byte) $f1, (byte) $f3, (byte) $f4, (byte) $f5, (byte) $f6, (byte) $f8, (byte) $f9, (byte) $fa, (byte) $fa, (byte) $fb, (byte) $fc, (byte) $fd, (byte) $fd, (byte) $fe, (byte) $fe, (byte) $fe, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $fe, (byte) $fe, (byte) $fe, (byte) $fd, (byte) $fd, (byte) $fc, (byte) $fb, (byte) $fa, (byte) $fa, (byte) $f9, (byte) $f8, (byte) $f6, (byte) $f5, (byte) $f4, (byte) $f3, (byte) $f1, (byte) $f0, (byte) $ef, (byte) $ed, (byte) $eb, (byte) $ea, (byte) $e8, (byte) $e6, (byte) $e4, (byte) $e2, (byte) $e0, (byte) $de, (byte) $dc, (byte) $da, (byte) $d8, (byte) $d5, (byte) $d3, (byte) $d1, (byte) $ce, (byte) $cc, (byte) $c9, (byte) $c7, (byte) $c4, (byte) $c1, (byte) $bf, (byte) $bc, (byte) $b9, (byte) $b6, (byte) $b3, (byte) $b1, (byte) $ae, (byte) $ab, (byte) $a8, (byte) $a5, (byte) $a2, (byte) $9f, (byte) $9c, (byte) $99, (byte) $96, (byte) $93, (byte) $90, (byte) $8c, (byte) $89, (byte) $86, (byte) $83 }
+(word) rand_seed#0 rand_seed zp[2]:12 20.0
+(word) rand_seed#21 rand_seed zp[2]:12 0.07142857142857142
+(word) rand_seed#23 rand_seed zp[2]:12 20.0
+(const byte*) sinustable[(number) $100]  = { (byte) $80, (byte) $7d, (byte) $7a, (byte) $77, (byte) $74, (byte) $70, (byte) $6d, (byte) $6a, (byte) $67, (byte) $64, (byte) $61, (byte) $5e, (byte) $5b, (byte) $58, (byte) $55, (byte) $52, (byte) $4f, (byte) $4d, (byte) $4a, (byte) $47, (byte) $44, (byte) $41, (byte) $3f, (byte) $3c, (byte) $39, (byte) $37, (byte) $34, (byte) $32, (byte) $2f, (byte) $2d, (byte) $2b, (byte) $28, (byte) $26, (byte) $24, (byte) $22, (byte) $20, (byte) $1e, (byte) $1c, (byte) $1a, (byte) $18, (byte) $16, (byte) $15, (byte) $13, (byte) $11, (byte) $10, (byte) $f, (byte) $d, (byte) $c, (byte) $b, (byte) $a, (byte) 8, (byte) 7, (byte) 6, (byte) 6, (byte) 5, (byte) 4, (byte) 3, (byte) 3, (byte) 2, (byte) 2, (byte) 2, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 2, (byte) 2, (byte) 3, (byte) 3, (byte) 4, (byte) 5, (byte) 6, (byte) 6, (byte) 7, (byte) 8, (byte) $a, (byte) $b, (byte) $c, (byte) $d, (byte) $f, (byte) $10, (byte) $11, (byte) $13, (byte) $15, (byte) $16, (byte) $18, (byte) $1a, (byte) $1c, (byte) $1e, (byte) $20, (byte) $22, (byte) $24, (byte) $26, (byte) $28, (byte) $2b, (byte) $2d, (byte) $2f, (byte) $32, (byte) $34, (byte) $37, (byte) $39, (byte) $3c, (byte) $3f, (byte) $41, (byte) $44, (byte) $47, (byte) $4a, (byte) $4d, (byte) $4f, (byte) $52, (byte) $55, (byte) $58, (byte) $5b, (byte) $5e, (byte) $61, (byte) $64, (byte) $67, (byte) $6a, (byte) $6d, (byte) $70, (byte) $74, (byte) $77, (byte) $7a, (byte) $7d, (byte) $80, (byte) $83, (byte) $86, (byte) $89, (byte) $8c, (byte) $90, (byte) $93, (byte) $96, (byte) $99, (byte) $9c, (byte) $9f, (byte) $a2, (byte) $a5, (byte) $a8, (byte) $ab, (byte) $ae, (byte) $b1, (byte) $b3, (byte) $b6, (byte) $b9, (byte) $bc, (byte) $bf, (byte) $c1, (byte) $c4, (byte) $c7, (byte) $c9, (byte) $cc, (byte) $ce, (byte) $d1, (byte) $d3, (byte) $d5, (byte) $d8, (byte) $da, (byte) $dc, (byte) $de, (byte) $e0, (byte) $e2, (byte) $e4, (byte) $e6, (byte) $e8, (byte) $ea, (byte) $eb, (byte) $ed, (byte) $ef, (byte) $f0, (byte) $f1, (byte) $f3, (byte) $f4, (byte) $f5, (byte) $f6, (byte) $f8, (byte) $f9, (byte) $fa, (byte) $fa, (byte) $fb, (byte) $fc, (byte) $fd, (byte) $fd, (byte) $fe, (byte) $fe, (byte) $fe, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $ff, (byte) $fe, (byte) $fe, (byte) $fe, (byte) $fd, (byte) $fd, (byte) $fc, (byte) $fb, (byte) $fa, (byte) $fa, (byte) $f9, (byte) $f8, (byte) $f6, (byte) $f5, (byte) $f4, (byte) $f3, (byte) $f1, (byte) $f0, (byte) $ef, (byte) $ed, (byte) $eb, (byte) $ea, (byte) $e8, (byte) $e6, (byte) $e4, (byte) $e2, (byte) $e0, (byte) $de, (byte) $dc, (byte) $da, (byte) $d8, (byte) $d5, (byte) $d3, (byte) $d1, (byte) $ce, (byte) $cc, (byte) $c9, (byte) $c7, (byte) $c4, (byte) $c1, (byte) $bf, (byte) $bc, (byte) $b9, (byte) $b6, (byte) $b3, (byte) $b1, (byte) $ae, (byte) $ab, (byte) $a8, (byte) $a5, (byte) $a2, (byte) $9f, (byte) $9c, (byte) $99, (byte) $96, (byte) $93, (byte) $90, (byte) $8c, (byte) $89, (byte) $86, (byte) $83 }
 (void()) start()
 (label) start::@return
 (const word*) start::LAST_TIME = &(word) last_time
-(const byte*) xbuf = { fill( $28, 0) }
-(const byte*) ybuf = { fill( $19, 0) }
+(const byte*) xbuf[(number) $28]  = { fill( $28, 0) }
+(const byte*) ybuf[(number) $19]  = { fill( $19, 0) }
 
 zp[1]:2 [ doplasma::c2a#3 doplasma::c2a#2 ]
 zp[1]:3 [ doplasma::c2b#3 doplasma::c2b#2 ]
@@ -4447,7 +4221,7 @@ zp[1]:8 [ makechar::i#3 makechar::i#2 doplasma::ii#3 doplasma::ii#2 ]
 reg byte y [ makechar::ii#3 makechar::ii#2 ]
 zp[1]:9 [ makechar::b#3 makechar::b#7 makechar::b#2 doplasma::c1a#3 doplasma::c1a#2 ]
 zp[2]:10 [ last_time#0 last_time#1 last_time#2 ]
-zp[2]:12 [ rand_seed#0 rand_seed#22 ]
+zp[2]:12 [ rand_seed#0 rand_seed#21 rand_seed#23 ]
 zp[1]:14 [ main::block#1 ]
 reg byte a [ main::tmp#1 ]
 zp[1]:15 [ main::v#1 ]
@@ -4467,7 +4241,7 @@ reg byte a [ rand::return#0 ]
 
 
 FINAL ASSEMBLER
-Score: 104137
+Score: 104147
 
   // File Comments
   // Upstart
@@ -4478,12 +4252,11 @@ Score: 104137
   .label VIC_MEMORY = $d018
   // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
   .label CIA2_PORT_A = $dd00
-  .const SCREEN1 = $e000
-  .const SCREEN2 = $e400
-  .const CHARSET = $e800
-  .const PAGE1 = $8a
-  // ((SCREEN1 >> 6) & 0xF0) | ((CHARSET >> 10) & 0x0E);
-  .const PAGE2 = $9a
+  .label SCREEN1 = $e000
+  .label SCREEN2 = $e400
+  .label CHARSET = $e800
+  .const PAGE1 = SCREEN1>>6&$f0|CHARSET>>$a&$e
+  .const PAGE2 = SCREEN2>>6&$f0|CHARSET>>$a&$e
   .label print_line_cursor = 4
   .label print_char_cursor = 6
   .label last_time = $a
@@ -4500,13 +4273,12 @@ __b1:
   sta.z last_time+1
   // @2
   // rand_seed
-  // [2] (word) rand_seed#22 ← (word) 0 -- vwuz1=vwuc1 
+  // [2] (word) rand_seed#23 ← (word) 0 -- vwuz1=vwuc1 
   sta.z rand_seed
   sta.z rand_seed+1
   // [3] phi from @2 to @3 [phi:@2->@3]
   // @3
   // [4] call main 
-  // [6] phi from @3 to main [phi:@3->main]
   jsr main
   rts
   // [5] phi from @3 to @end [phi:@3->@end]
@@ -4516,15 +4288,21 @@ main: {
     .label block = $e
     .label v = $f
     .label count = 4
-    // start()
-    // [7] call start 
-    jsr start
+    // rand_seed = 6474
+    // [6] (word) rand_seed#21 ← (word) $194a -- vwuz1=vwuc1 
+    lda #<$194a
+    sta.z rand_seed
+    lda #>$194a
+    sta.z rand_seed+1
+    // makechar()
+    // [7] call makechar 
+    // [86] phi from main to makechar [phi:main->makechar]
+    jsr makechar
     // [8] phi from main to main::@4 [phi:main->main::@4]
     // main::@4
-    // makechar()
-    // [9] call makechar 
-    // [86] phi from main::@4 to makechar [phi:main::@4->makechar]
-    jsr makechar
+    // start()
+    // [9] call start 
+    jsr start
     // main::@5
     // block = *CIA2_PORT_A
     // [10] (byte) main::block#1 ← *((const byte*) CIA2_PORT_A) -- vbuz1=_deref_pbuc1 
@@ -4580,7 +4358,7 @@ main: {
     // doplasma ((char*)SCREEN1)
     // [21] call doplasma 
     // [26] phi from main::@2 to doplasma [phi:main::@2->doplasma]
-    // [26] phi (byte*) doplasma::scrn#13 = (byte*)(const word) SCREEN1 [phi:main::@2->doplasma#0] -- pbuz1=pbuc1 
+    // [26] phi (byte*) doplasma::scrn#13 = (const byte*) SCREEN1 [phi:main::@2->doplasma#0] -- pbuz1=pbuc1 
     lda #<SCREEN1
     sta.z doplasma.scrn
     lda #>SCREEN1
@@ -4594,7 +4372,7 @@ main: {
     // doplasma ((char*)SCREEN2)
     // [23] call doplasma 
     // [26] phi from main::@6 to doplasma [phi:main::@6->doplasma]
-    // [26] phi (byte*) doplasma::scrn#13 = (byte*)(const word) SCREEN2 [phi:main::@6->doplasma#0] -- pbuz1=pbuc1 
+    // [26] phi (byte*) doplasma::scrn#13 = (const byte*) SCREEN2 [phi:main::@6->doplasma#0] -- pbuz1=pbuc1 
     lda #<SCREEN2
     sta.z doplasma.scrn
     lda #>SCREEN2
@@ -4617,7 +4395,7 @@ main: {
     jmp __b1
 }
   // doplasma
-// doplasma(byte* zeropage(6) scrn)
+// doplasma(byte* zp(6) scrn)
 doplasma: {
     .const c2A = 0
     .const c2B = 0
@@ -4862,7 +4640,7 @@ print_ln: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage($13) w)
+// print_word(word zp($13) w)
 print_word: {
     .label w = $13
     // print_byte(>w)
@@ -5067,7 +4845,7 @@ makechar: {
     inc.z __9+1
   !:
     // ((char*)CHARSET) [(c<<3) + i] = b
-    // [99] (byte*~) makechar::$10 ← (byte*)(const word) CHARSET + (word~) makechar::$9 -- pbuz1=pbuc1_plus_vwuz1 
+    // [99] (byte*~) makechar::$10 ← (const byte*) CHARSET + (word~) makechar::$9 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z __10
     adc #<CHARSET
@@ -5138,7 +4916,7 @@ rand: {
     bne __rand_loop
     sta RAND_SEED+0
     // (char)rand_seed
-    // [112] (byte) rand::return#0 ← (byte)(word) rand_seed#0 -- vbuaa=_byte_vwuz1 
+    // [112] (byte) rand::return#0 ← (byte)(word) rand_seed#21 -- vbuaa=_byte_vwuz1 
     lda.z rand_seed
     // rand::@return
     // }
@@ -5147,7 +4925,6 @@ rand: {
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
-  // ((SCREEN2 >> 6) & 0xF0) | ((CHARSET >> 10) & 0x0E);
   .align $100
   sinustable: .byte $80, $7d, $7a, $77, $74, $70, $6d, $6a, $67, $64, $61, $5e, $5b, $58, $55, $52, $4f, $4d, $4a, $47, $44, $41, $3f, $3c, $39, $37, $34, $32, $2f, $2d, $2b, $28, $26, $24, $22, $20, $1e, $1c, $1a, $18, $16, $15, $13, $11, $10, $f, $d, $c, $b, $a, 8, 7, 6, 6, 5, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 5, 6, 6, 7, 8, $a, $b, $c, $d, $f, $10, $11, $13, $15, $16, $18, $1a, $1c, $1e, $20, $22, $24, $26, $28, $2b, $2d, $2f, $32, $34, $37, $39, $3c, $3f, $41, $44, $47, $4a, $4d, $4f, $52, $55, $58, $5b, $5e, $61, $64, $67, $6a, $6d, $70, $74, $77, $7a, $7d, $80, $83, $86, $89, $8c, $90, $93, $96, $99, $9c, $9f, $a2, $a5, $a8, $ab, $ae, $b1, $b3, $b6, $b9, $bc, $bf, $c1, $c4, $c7, $c9, $cc, $ce, $d1, $d3, $d5, $d8, $da, $dc, $de, $e0, $e2, $e4, $e6, $e8, $ea, $eb, $ed, $ef, $f0, $f1, $f3, $f4, $f5, $f6, $f8, $f9, $fa, $fa, $fb, $fc, $fd, $fd, $fe, $fe, $fe, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $fe, $fe, $fe, $fd, $fd, $fc, $fb, $fa, $fa, $f9, $f8, $f6, $f5, $f4, $f3, $f1, $f0, $ef, $ed, $eb, $ea, $e8, $e6, $e4, $e2, $e0, $de, $dc, $da, $d8, $d5, $d3, $d1, $ce, $cc, $c9, $c7, $c4, $c1, $bf, $bc, $b9, $b6, $b3, $b1, $ae, $ab, $a8, $a5, $a2, $9f, $9c, $99, $96, $93, $90, $8c, $89, $86, $83
   xbuf: .fill $28, 0

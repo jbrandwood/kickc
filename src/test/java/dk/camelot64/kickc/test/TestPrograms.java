@@ -2731,11 +2731,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testConstParam1() throws IOException, URISyntaxException {
-      assertError("const-param-1", "Error! Const parameters not supported", false);
-   }
-
-   @Test
    public void testConstParam() throws IOException, URISyntaxException {
       compileAndCompare("const-param");
    }

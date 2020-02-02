@@ -103,7 +103,7 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage($e) w)
+// print_word(word zp($e) w)
 print_word: {
     .label w = $e
     lda.z w+1
@@ -188,7 +188,7 @@ sum: {
     sta.z current
     jmp __b1
 }
-// prepend(word zeropage(4) x)
+// prepend(word zp(4) x)
 prepend: {
     .label new = $10
     .label x = 4

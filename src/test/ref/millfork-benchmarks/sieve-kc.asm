@@ -78,7 +78,7 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage($c) w)
+// print_word(word zp($c) w)
 print_word: {
     .label w = $c
     lda.z w+1

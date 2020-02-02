@@ -7,6 +7,7 @@ Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - 
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
 Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
@@ -23,6 +24,7 @@ Culled Empty Block (label) @5
 Culled Empty Block (label) @6
 Culled Empty Block (label) @7
 Culled Empty Block (label) @8
+Culled Empty Block (label) @9
 Culled Empty Block (label) utoa::@13
 Culled Empty Block (label) utoa::@5
 Culled Empty Block (label) utoa::@14
@@ -34,20 +36,19 @@ Culled Empty Block (label) utoa::@17
 Culled Empty Block (label) utoa::@22
 Culled Empty Block (label) utoa::@23
 Culled Empty Block (label) utoa::@25
-Culled Empty Block (label) @9
+Culled Empty Block (label) @10
 Culled Empty Block (label) utoa_append::@4
 Culled Empty Block (label) utoa_append::@5
 Culled Empty Block (label) utoa_append::@6
 Culled Empty Block (label) utoa_append::@7
-Culled Empty Block (label) @10
 Culled Empty Block (label) @11
-Culled Empty Block (label) @13
+Culled Empty Block (label) @12
 Culled Empty Block (label) @14
+Culled Empty Block (label) @15
 Culled Empty Block (label) print_str::@4
 Culled Empty Block (label) print_str::@3
 Culled Empty Block (label) print_str::@5
 Culled Empty Block (label) print_str::@6
-Culled Empty Block (label) @15
 Culled Empty Block (label) @16
 Culled Empty Block (label) @17
 Culled Empty Block (label) @18
@@ -74,13 +75,14 @@ Culled Empty Block (label) @38
 Culled Empty Block (label) @39
 Culled Empty Block (label) @40
 Culled Empty Block (label) @41
-Culled Empty Block (label) @43
-Culled Empty Block (label) @45
+Culled Empty Block (label) @42
+Culled Empty Block (label) @44
+Culled Empty Block (label) @46
 Culled Empty Block (label) sum::@7
 Culled Empty Block (label) sum::@8
 Culled Empty Block (label) sum::@6
 Culled Empty Block (label) sum::@9
-Culled Empty Block (label) @46
+Culled Empty Block (label) @47
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
@@ -88,7 +90,7 @@ Culled Empty Block (label) main::@7
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@12
+  to:@13
 
 (void()) utoa((word) utoa::value , (byte*) utoa::buffer , (byte) utoa::radix)
 utoa: scope:[utoa]  from print_word_decimal
@@ -163,8 +165,8 @@ utoa::@8: scope:[utoa]  from utoa::@1 utoa::@2 utoa::@3 utoa::@4
   (word) utoa::value#7 ← phi( utoa::@1/(word) utoa::value#8 utoa::@2/(word) utoa::value#9 utoa::@3/(word) utoa::value#10 utoa::@4/(word) utoa::value#11 )
   (word*) utoa::digit_values#8 ← phi( utoa::@1/(word*) utoa::digit_values#1 utoa::@2/(word*) utoa::digit_values#2 utoa::@3/(word*) utoa::digit_values#3 utoa::@4/(word*) utoa::digit_values#4 )
   (byte) utoa::max_digits#7 ← phi( utoa::@1/(byte) utoa::max_digits#1 utoa::@2/(byte) utoa::max_digits#2 utoa::@3/(byte) utoa::max_digits#3 utoa::@4/(byte) utoa::max_digits#4 )
-  (byte) utoa::started#0 ← (number) 0
-  (byte) utoa::digit#0 ← (number) 0
+  (byte) utoa::started#0 ← (byte) 0
+  (byte) utoa::digit#0 ← (byte) 0
   to:utoa::@18
 utoa::@18: scope:[utoa]  from utoa::@21 utoa::@8
   (byte*) utoa::buffer#11 ← phi( utoa::@21/(byte*) utoa::buffer#14 utoa::@8/(byte*) utoa::buffer#15 )
@@ -238,7 +240,7 @@ utoa_append: scope:[utoa_append]  from utoa::@24
   (byte*) utoa_append::buffer#3 ← phi( utoa::@24/(byte*) utoa_append::buffer#0 )
   (word) utoa_append::sub#3 ← phi( utoa::@24/(word) utoa_append::sub#0 )
   (word) utoa_append::value#5 ← phi( utoa::@24/(word) utoa_append::value#0 )
-  (byte) utoa_append::digit#0 ← (number) 0
+  (byte) utoa_append::digit#0 ← (byte) 0
   to:utoa_append::@1
 utoa_append::@1: scope:[utoa_append]  from utoa_append utoa_append::@2
   (byte*) utoa_append::buffer#2 ← phi( utoa_append/(byte*) utoa_append::buffer#3 utoa_append::@2/(byte*) utoa_append::buffer#4 )
@@ -268,11 +270,11 @@ utoa_append::@return: scope:[utoa_append]  from utoa_append::@3
   (word) utoa_append::return#2 ← (word) utoa_append::return#4
   return 
   to:@return
-@12: scope:[]  from @begin
-  (byte*) print_screen#0 ← ((byte*)) (number) $400
+@13: scope:[]  from @begin
+  (byte*) print_screen#0 ← (byte*)(number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@42
+  to:@43
 
 (void()) print_str((byte*) print_str::str)
 print_str: scope:[print_str]  from print_word_decimal::@1
@@ -411,12 +413,12 @@ print_char::@return: scope:[print_char]  from print_char
   (byte*) print_char_cursor#14 ← (byte*) print_char_cursor#36
   return 
   to:@return
-@42: scope:[]  from @12
-  (byte*) print_line_cursor#28 ← phi( @12/(byte*) print_line_cursor#0 )
-  (byte*) print_char_cursor#60 ← phi( @12/(byte*) print_char_cursor#0 )
+@43: scope:[]  from @13
+  (byte*) print_line_cursor#28 ← phi( @13/(byte*) print_line_cursor#0 )
+  (byte*) print_char_cursor#60 ← phi( @13/(byte*) print_char_cursor#0 )
   (word) last_time#0 ← (word) 0
   (word) Ticks#0 ← (word) 0
-  to:@44
+  to:@45
 
 (void()) start()
 start: scope:[start]  from end main
@@ -481,13 +483,13 @@ end::@return: scope:[end]  from end::@3
   (byte*) print_line_cursor#4 ← (byte*) print_line_cursor#13
   return 
   to:@return
-@44: scope:[]  from @42
-  (word) last_time#17 ← phi( @42/(word) last_time#0 )
-  (word) Ticks#17 ← phi( @42/(word) Ticks#0 )
-  (byte*) print_line_cursor#26 ← phi( @42/(byte*) print_line_cursor#28 )
-  (byte*) print_char_cursor#59 ← phi( @42/(byte*) print_char_cursor#60 )
+@45: scope:[]  from @43
+  (word) last_time#17 ← phi( @43/(word) last_time#0 )
+  (word) Ticks#17 ← phi( @43/(word) Ticks#0 )
+  (byte*) print_line_cursor#26 ← phi( @43/(byte*) print_line_cursor#28 )
+  (byte*) print_char_cursor#59 ← phi( @43/(byte*) print_char_cursor#60 )
   (word) rand_seed#4 ← (word) 0
-  to:@47
+  to:@48
 
 (word()) sum()
 sum: scope:[sum]  from main::@2
@@ -542,12 +544,12 @@ sum::@return: scope:[sum]  from sum::@3
   to:@return
 
 (signed word()) main()
-main: scope:[main]  from @47
-  (byte*) print_line_cursor#31 ← phi( @47/(byte*) print_line_cursor#22 )
-  (byte*) print_char_cursor#62 ← phi( @47/(byte*) print_char_cursor#53 )
-  (word) Ticks#20 ← phi( @47/(word) Ticks#14 )
-  (word) last_time#20 ← phi( @47/(word) last_time#14 )
-  (word) rand_seed#18 ← phi( @47/(word) rand_seed#20 )
+main: scope:[main]  from @48
+  (byte*) print_line_cursor#31 ← phi( @48/(byte*) print_line_cursor#22 )
+  (byte*) print_char_cursor#62 ← phi( @48/(byte*) print_char_cursor#53 )
+  (word) Ticks#20 ← phi( @48/(word) Ticks#14 )
+  (word) last_time#20 ← phi( @48/(word) last_time#14 )
+  (word) rand_seed#18 ← phi( @48/(word) rand_seed#20 )
   (word) main::i#0 ← (word) 0
   call start 
   to:main::@8
@@ -649,50 +651,50 @@ main::@return: scope:[main]  from main::@12
   (word) last_time#4 ← (word) last_time#10
   return 
   to:@return
-@47: scope:[]  from @44
-  (word) last_time#14 ← phi( @44/(word) last_time#17 )
-  (word) Ticks#14 ← phi( @44/(word) Ticks#17 )
-  (byte*) print_line_cursor#22 ← phi( @44/(byte*) print_line_cursor#26 )
-  (byte*) print_char_cursor#53 ← phi( @44/(byte*) print_char_cursor#59 )
-  (word) rand_seed#20 ← phi( @44/(word) rand_seed#4 )
+@48: scope:[]  from @45
+  (word) last_time#14 ← phi( @45/(word) last_time#17 )
+  (word) Ticks#14 ← phi( @45/(word) Ticks#17 )
+  (byte*) print_line_cursor#22 ← phi( @45/(byte*) print_line_cursor#26 )
+  (byte*) print_char_cursor#53 ← phi( @45/(byte*) print_char_cursor#59 )
+  (word) rand_seed#20 ← phi( @45/(word) rand_seed#4 )
   call main 
   (signed word) main::return#2 ← (signed word) main::return#1
-  to:@48
-@48: scope:[]  from @47
-  (word) last_time#11 ← phi( @47/(word) last_time#4 )
-  (word) Ticks#11 ← phi( @47/(word) Ticks#5 )
-  (byte*) print_line_cursor#17 ← phi( @47/(byte*) print_line_cursor#7 )
-  (byte*) print_char_cursor#44 ← phi( @47/(byte*) print_char_cursor#21 )
-  (word) rand_seed#15 ← phi( @47/(word) rand_seed#7 )
+  to:@49
+@49: scope:[]  from @48
+  (word) last_time#11 ← phi( @48/(word) last_time#4 )
+  (word) Ticks#11 ← phi( @48/(word) Ticks#5 )
+  (byte*) print_line_cursor#17 ← phi( @48/(byte*) print_line_cursor#7 )
+  (byte*) print_char_cursor#44 ← phi( @48/(byte*) print_char_cursor#21 )
+  (word) rand_seed#15 ← phi( @48/(word) rand_seed#7 )
   (word) rand_seed#8 ← (word) rand_seed#15
   (byte*) print_char_cursor#22 ← (byte*) print_char_cursor#44
   (byte*) print_line_cursor#8 ← (byte*) print_line_cursor#17
   (word) Ticks#6 ← (word) Ticks#11
   (word) last_time#5 ← (word) last_time#11
   to:@end
-@end: scope:[]  from @48
+@end: scope:[]  from @49
 
 SYMBOL TABLE SSA
-(label) @12
-(label) @42
-(label) @44
-(label) @47
+(label) @13
+(label) @43
+(label) @45
 (label) @48
+(label) @49
 (label) @begin
 (label) @end
 (const byte) BINARY = (number) 2
 (const byte) DECIMAL = (number) $a
-(const byte*) DIGITS = (string) "0123456789abcdef"z
+(const byte*) DIGITS[]  = (string) "0123456789abcdef"z
 (const byte) HEXADECIMAL = (number) $10
 (const byte) OCTAL = (number) 8
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const word*) RADIX_BINARY_VALUES = { (word)(number) $8000, (word)(number) $4000, (word)(number) $2000, (word)(number) $1000, (word)(number) $800, (word)(number) $400, (word)(number) $200, (word)(number) $100, (word)(number) $80, (word)(number) $40, (word)(number) $20, (word)(number) $10, (word)(number) 8, (word)(number) 4, (word)(number) 2 }
-(const word*) RADIX_DECIMAL_VALUES = { (word)(number) $2710, (word)(number) $3e8, (word)(number) $64, (word)(number) $a }
-(const word*) RADIX_HEXADECIMAL_VALUES = { (word)(number) $1000, (word)(number) $100, (word)(number) $10 }
-(const word*) RADIX_OCTAL_VALUES = { (word)(number) $8000, (word)(number) $1000, (word)(number) $200, (word)(number) $40, (word)(number) 8 }
+(const word*) RADIX_BINARY_VALUES[]  = { (word) $8000, (word) $4000, (word) $2000, (word) $1000, (word) $800, (word) $400, (word) $200, (word) $100, (word) $80, (word) $40, (word) $20, (word) $10, (word) 8, (word) 4, (word) 2 }
+(const word*) RADIX_DECIMAL_VALUES[]  = { (word) $2710, (word) $3e8, (word) $64, (word) $a }
+(const word*) RADIX_HEXADECIMAL_VALUES[]  = { (word) $1000, (word) $100, (word) $10 }
+(const word*) RADIX_OCTAL_VALUES[]  = { (word) $8000, (word) $1000, (word) $200, (word) $40, (word) 8 }
 (const byte) SIZEOF_WORD = (byte) 2
 (word) Ticks
 (word) Ticks#0
@@ -719,7 +721,7 @@ SYMBOL TABLE SSA
 (word) Ticks#7
 (word) Ticks#8
 (word) Ticks#9
-(const byte*) decimal_digits = { fill( 6, 0) }
+(const byte*) decimal_digits[(number) 6]  = { fill( 6, 0) }
 (void()) end()
 (label) end::@1
 (label) end::@2
@@ -857,7 +859,7 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#7
 (byte*) print_char_cursor#8
 (byte*) print_char_cursor#9
-(const byte*) print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab[]  = (string) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -1165,13 +1167,10 @@ Adding number conversion cast (unumber) 4 in (byte) utoa::max_digits#2 ← (numb
 Adding number conversion cast (unumber) 6 in (byte) utoa::max_digits#3 ← (number) 6
 Adding number conversion cast (unumber) $10 in (byte) utoa::max_digits#4 ← (number) $10
 Adding number conversion cast (unumber) 0 in *((byte*) utoa::buffer#2) ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) utoa::started#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) utoa::digit#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (number~) utoa::$5 ← (byte) utoa::max_digits#5 - (number) 1
 Adding number conversion cast (unumber) utoa::$5 in (number~) utoa::$5 ← (byte) utoa::max_digits#5 - (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in *((byte*) utoa::buffer#3) ← (number) 0
 Adding number conversion cast (unumber) 1 in (byte) utoa::started#1 ← (number) 1
-Adding number conversion cast (unumber) 0 in (byte) utoa_append::digit#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) print_str::$0 ← (number) 0 != *((byte*) print_str::str#2)
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#9 + (number) $28
 Adding number conversion cast (unumber) 4 in (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
@@ -1193,13 +1192,9 @@ Inlining cast (byte) utoa::max_digits#2 ← (unumber)(number) 4
 Inlining cast (byte) utoa::max_digits#3 ← (unumber)(number) 6
 Inlining cast (byte) utoa::max_digits#4 ← (unumber)(number) $10
 Inlining cast *((byte*) utoa::buffer#2) ← (unumber)(number) 0
-Inlining cast (byte) utoa::started#0 ← (unumber)(number) 0
-Inlining cast (byte) utoa::digit#0 ← (unumber)(number) 0
 Inlining cast (byte~) utoa::$4 ← (byte)(word) utoa::value#3
 Inlining cast *((byte*) utoa::buffer#3) ← (unumber)(number) 0
 Inlining cast (byte) utoa::started#1 ← (unumber)(number) 1
-Inlining cast (byte) utoa_append::digit#0 ← (unumber)(number) 0
-Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
 Inlining cast (word) rand_seed#0 ← (unumber)(number) $194a
 Inlining cast (word) sum::s#1 ← (unumber)(number) 0
 Inlining cast (byte) sum::page#1 ← (unumber)(number) 0
@@ -1207,45 +1202,15 @@ Inlining cast (byte) sum::i#1 ← (unumber)(number) 0
 Inlining cast (word) main::i#1 ← (unumber)(number) 0
 Inlining cast (signed word) main::return#0 ← (snumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $8000
-Simplifying constant integer cast $4000
-Simplifying constant integer cast $2000
-Simplifying constant integer cast $1000
-Simplifying constant integer cast $800
-Simplifying constant integer cast $400
-Simplifying constant integer cast $200
-Simplifying constant integer cast $100
-Simplifying constant integer cast $80
-Simplifying constant integer cast $40
-Simplifying constant integer cast $20
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
-Simplifying constant integer cast 4
-Simplifying constant integer cast 2
-Simplifying constant integer cast $8000
-Simplifying constant integer cast $1000
-Simplifying constant integer cast $200
-Simplifying constant integer cast $40
-Simplifying constant integer cast 8
-Simplifying constant integer cast $2710
-Simplifying constant integer cast $3e8
-Simplifying constant integer cast $64
-Simplifying constant integer cast $a
-Simplifying constant integer cast $1000
-Simplifying constant integer cast $100
-Simplifying constant integer cast $10
 Simplifying constant pointer cast (byte*) 57344
 Simplifying constant integer cast 5
 Simplifying constant integer cast 4
 Simplifying constant integer cast 6
 Simplifying constant integer cast $10
 Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
@@ -1267,12 +1232,9 @@ Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 6
 Finalized unsigned number type (byte) $10
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 4
@@ -1601,9 +1563,9 @@ Added new block during phi lifting utoa::@28(between utoa::@27 and utoa::@21)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting sum::@10(between sum::@4 and sum::@4)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @12
-Adding NOP phi() at start of @47
+Adding NOP phi() at start of @13
 Adding NOP phi() at start of @48
+Adding NOP phi() at start of @49
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@8
@@ -1668,8 +1630,8 @@ Coalesced [135] print_char_cursor#69 ← print_char_cursor#49
 Coalesced [139] print_char::ch#4 ← print_char::ch#1
 Coalesced (already) [140] print_char_cursor#70 ← print_char_cursor#13
 Coalesced down to 16 phi equivalence classes
-Culled Empty Block (label) @12
-Culled Empty Block (label) @48
+Culled Empty Block (label) @13
+Culled Empty Block (label) @49
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@12
 Culled Empty Block (label) print_ln::@2
@@ -1684,9 +1646,9 @@ Culled Empty Block (label) sum::@10
 Culled Empty Block (label) end::@3
 Culled Empty Block (label) print_word::@2
 Culled Empty Block (label) print_byte::@2
-Renumbering block @42 to @1
-Renumbering block @44 to @2
-Renumbering block @47 to @3
+Renumbering block @43 to @1
+Renumbering block @45 to @2
+Renumbering block @48 to @3
 Renumbering block utoa::@18 to utoa::@1
 Renumbering block utoa::@19 to utoa::@2
 Renumbering block utoa::@20 to utoa::@3
@@ -2370,7 +2332,7 @@ print_ln: {
 }
   // print_word_decimal
 // Print a word as DECIMAL
-// print_word_decimal(word zeropage($21) w)
+// print_word_decimal(word zp($21) w)
 print_word_decimal: {
     .label w = $21
     // [27] (word) utoa::value#1 ← (word) print_word_decimal::w#0 -- vwuz1=vwuz2 
@@ -2399,7 +2361,7 @@ print_word_decimal: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(6) str)
+// print_str(byte* zp(6) str)
 print_str: {
     .label str = 6
     // [33] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
@@ -2452,7 +2414,7 @@ print_str: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zeropage(9) value, byte* zeropage($24) buffer)
+// utoa(word zp(9) value, byte* zp($24) buffer)
 utoa: {
     .const max_digits = 5
     .label __4 = $23
@@ -2614,7 +2576,7 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zeropage($29) buffer, word zeropage($e) value, word zeropage($2b) sub)
+// utoa_append(byte* zp($29) buffer, word zp($e) value, word zp($2b) sub)
 utoa_append: {
     .label buffer = $29
     .label value = $e
@@ -2809,7 +2771,7 @@ end: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage($34) w)
+// print_word(word zp($34) w)
 print_word: {
     .label w = $34
     // [88] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuz1=_hi_vwuz2 
@@ -2841,7 +2803,7 @@ print_word: {
 }
   // print_byte
 // Print a byte as HEX
-// print_byte(byte zeropage($17) b)
+// print_byte(byte zp($17) b)
 print_byte: {
     .label __0 = $36
     .label __2 = $37
@@ -2888,7 +2850,7 @@ print_byte: {
 }
   // print_char
 // Print a single char
-// print_char(byte zeropage($18) ch)
+// print_char(byte zp($18) ch)
 print_char: {
     .label ch = $18
     // [102] *((byte*) print_char_cursor#35) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuz2 
@@ -3283,7 +3245,7 @@ print_ln: {
 }
   // print_word_decimal
 // Print a word as DECIMAL
-// print_word_decimal(word zeropage(5) w)
+// print_word_decimal(word zp(5) w)
 print_word_decimal: {
     .label w = 5
     // [27] (word) utoa::value#1 ← (word) print_word_decimal::w#0
@@ -3308,7 +3270,7 @@ print_word_decimal: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(5) str)
+// print_str(byte* zp(5) str)
 print_str: {
     .label str = 5
     // [33] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
@@ -3361,7 +3323,7 @@ print_str: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zeropage(5) value, byte* zeropage(7) buffer)
+// utoa(word zp(5) value, byte* zp(7) buffer)
 utoa: {
     .const max_digits = 5
     .label digit_value = $11
@@ -3491,7 +3453,7 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zeropage(7) buffer, word zeropage(5) value, word zeropage($11) sub)
+// utoa_append(byte* zp(7) buffer, word zp(5) value, word zp($11) sub)
 utoa_append: {
     .label buffer = 7
     .label value = 5
@@ -3669,7 +3631,7 @@ end: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage($11) w)
+// print_word(word zp($11) w)
 print_word: {
     .label w = $11
     // [88] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuxx=_hi_vwuz1 
@@ -3919,16 +3881,16 @@ FINAL SYMBOL TABLE
 (label) @3
 (label) @begin
 (label) @end
-(const byte*) DIGITS = (string) "0123456789abcdef"z
+(const byte*) DIGITS[]  = (string) "0123456789abcdef"z
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const word*) RADIX_DECIMAL_VALUES = { (word) $2710, (word) $3e8, (word) $64, (word) $a }
+(const word*) RADIX_DECIMAL_VALUES[]  = { (word) $2710, (word) $3e8, (word) $64, (word) $a }
 (word) Ticks
 (word) Ticks#1 Ticks zp[2]:15 2.0
 (word) Ticks#2 Ticks_1 zp[2]:17 4.0
-(const byte*) decimal_digits = { fill( 6, 0) }
+(const byte*) decimal_digits[(number) 6]  = { fill( 6, 0) }
 (void()) end()
 (label) end::@1
 (label) end::@2
@@ -4252,7 +4214,7 @@ print_ln: {
 }
   // print_word_decimal
 // Print a word as DECIMAL
-// print_word_decimal(word zeropage(5) w)
+// print_word_decimal(word zp(5) w)
 print_word_decimal: {
     .label w = 5
     // utoa(w, decimal_digits, DECIMAL)
@@ -4273,7 +4235,7 @@ print_word_decimal: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(5) str)
+// print_str(byte* zp(5) str)
 print_str: {
     .label str = 5
     // [33] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
@@ -4324,7 +4286,7 @@ print_str: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zeropage(5) value, byte* zeropage(7) buffer)
+// utoa(word zp(5) value, byte* zp(7) buffer)
 utoa: {
     .const max_digits = 5
     .label digit_value = $11
@@ -4451,7 +4413,7 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zeropage(7) buffer, word zeropage(5) value, word zeropage($11) sub)
+// utoa_append(byte* zp(7) buffer, word zp(5) value, word zp($11) sub)
 utoa_append: {
     .label buffer = 7
     .label value = 5
@@ -4623,7 +4585,7 @@ end: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage($11) w)
+// print_word(word zp($11) w)
 print_word: {
     .label w = $11
     // print_byte(>w)

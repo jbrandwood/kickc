@@ -22,7 +22,7 @@ Adding struct value member variable copy *((struct Point*)&(struct Vector) main:
 Adding struct value member variable copy *((struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_Q) ← (struct Point) main::v1_q
 Adding struct value member variable copy *((struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_P) ← (struct Vector) main::v2.p
 Adding struct value member variable copy *((struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_Q) ← { x: (byte) 6, y: (byte) 7 }
-Adding struct value member variable copy *(&(struct Vector) main::v4) ← memcpy(*(&(struct Vector) main::v3), struct Vector, (const byte) SIZEOF_STRUCT_VECTOR)
+Adding value bulk copy *(&(struct Vector) main::v4) ← memcpy(*(&(struct Vector) main::v3), struct Vector, (const byte) SIZEOF_STRUCT_VECTOR)
 Adding struct value member variable copy (struct Point) main::v5_p ← (struct Point){ (struct Vector) main::v4.p.x, (struct Vector) main::v4.p.y }
 Adding struct value member variable copy (struct Point) main::v5_q ← { x: (byte) 8, y: (byte) 9 }
 Replacing struct member reference (struct Vector) main::v2.p with member unwinding reference *((struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_P)
@@ -111,6 +111,7 @@ main: scope:[main]  from @1
   *((struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_Q) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   (struct Vector) main::v3 ← struct-unwound {*((struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_P), *((struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_Q)}
   *(&(struct Vector) main::v4) ← memcpy(*(&(struct Vector) main::v3), struct Vector, (const byte) SIZEOF_STRUCT_VECTOR)
+  (struct Vector) main::v4 ← struct-unwound {*(&(struct Vector) main::v4)}
   (byte*~) main::$4 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
   (byte) main::v5_p_x#0 ← *((byte*~) main::$4)
   (byte*~) main::$5 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
@@ -255,24 +256,25 @@ Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
 Removing C-classic struct-unwound assignment [9] (struct Vector) main::v2 ← struct-unwound {*((struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_P), *((struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_Q)}
 Removing C-classic struct-unwound assignment [12] (struct Vector) main::v3 ← struct-unwound {*((struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_P), *((struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_Q)}
+Removing C-classic struct-unwound assignment [14] (struct Vector) main::v4 ← struct-unwound {*(&(struct Vector) main::v4)}
 Constant right-side identified [1] (byte*~) main::$0 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
 Constant right-side identified [3] (byte*~) main::$1 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
 Constant right-side identified [5] (byte*~) main::$2 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_X
 Constant right-side identified [7] (byte*~) main::$3 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [14] (byte*~) main::$4 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [16] (byte*~) main::$5 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [26] (byte*~) main::$6 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [29] (byte*~) main::$7 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [32] (byte*~) main::$8 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [35] (byte*~) main::$9 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [38] (byte*~) main::$10 ← (byte*)(struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [41] (byte*~) main::$11 ← (byte*)(struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [44] (byte*~) main::$12 ← (byte*)(struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [47] (byte*~) main::$13 ← (byte*)(struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [50] (byte*~) main::$14 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [53] (byte*~) main::$15 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [56] (byte*~) main::$16 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [59] (byte*~) main::$17 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [15] (byte*~) main::$4 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [17] (byte*~) main::$5 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [27] (byte*~) main::$6 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [30] (byte*~) main::$7 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [33] (byte*~) main::$8 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [36] (byte*~) main::$9 ← (byte*)(struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [39] (byte*~) main::$10 ← (byte*)(struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [42] (byte*~) main::$11 ← (byte*)(struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [45] (byte*~) main::$12 ← (byte*)(struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [48] (byte*~) main::$13 ← (byte*)(struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [51] (byte*~) main::$14 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [54] (byte*~) main::$15 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [57] (byte*~) main::$16 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [60] (byte*~) main::$17 ← (byte*)(struct Point*)&(struct Vector) main::v4+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::idx#0 = 0
 Constant (const byte*) main::$0 = (byte*)(struct Point*)&main::v2+OFFSET_STRUCT_VECTOR_P+OFFSET_STRUCT_POINT_X
@@ -315,7 +317,7 @@ Simplifying expression containing zero (struct Point*)&main::v4 in
 Simplifying expression containing zero (byte*)(struct Point*)&main::v4+OFFSET_STRUCT_VECTOR_Q in 
 Simplifying expression containing zero (struct Point*)&main::v2 in [10] *((struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_P) ← memcpy(*((struct Point*)&(struct Vector) main::v2+(const byte) OFFSET_STRUCT_VECTOR_P), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Simplifying expression containing zero (struct Point*)&main::v3 in [10] *((struct Point*)&(struct Vector) main::v3+(const byte) OFFSET_STRUCT_VECTOR_P) ← memcpy(*((struct Point*)&(struct Vector) main::v2), struct Point, (const byte) SIZEOF_STRUCT_POINT)
-Simplifying expression containing zero SCREEN in [18] *((const byte*) SCREEN + (const byte) main::idx#0) ← (const byte) main::v1_p_x
+Simplifying expression containing zero SCREEN in [19] *((const byte*) SCREEN + (const byte) main::idx#0) ← (const byte) main::v1_p_x
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) main::idx#20 and assignment [48] (byte) main::idx#20 ← ++ (byte) main::idx#19
 Eliminating unused constant (const byte) OFFSET_STRUCT_VECTOR_P

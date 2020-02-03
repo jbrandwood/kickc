@@ -1,4 +1,4 @@
-Adding struct value member variable copy *(&(struct Point) point2) ← memcpy(*(&(struct Point) point1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+Adding value bulk copy *(&(struct Point) point2) ← memcpy(*(&(struct Point) point1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Replacing struct member reference (struct Point) point1.x with member unwinding reference *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X)
 Replacing struct member reference (struct Point) point1.y with member unwinding reference *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_Y)
 Replacing struct member reference (struct Point) point2.x with member unwinding reference *((byte*)&(struct Point) point2+(const byte) OFFSET_STRUCT_POINT_X)
@@ -16,6 +16,7 @@ main: scope:[main]  from @1
   *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X) ← (number) 2
   *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_Y) ← (number) 3
   *(&(struct Point) point2) ← memcpy(*(&(struct Point) point1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  (struct Point) point2 ← struct-unwound {*(&(struct Point) point2)}
   *((byte*)&(struct Point) point2+(const byte) OFFSET_STRUCT_POINT_X) ← (number) 4
   *((const byte*) main::SCREEN + (number) 0) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X)
   *((const byte*) main::SCREEN + (number) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_Y)
@@ -77,11 +78,12 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Removing C-classic struct-unwound assignment [3] (struct Point) point2 ← struct-unwound {*(&(struct Point) point2)}
 Simplifying expression containing zero (byte*)&point1 in [0] *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X) ← (byte) 2
-Simplifying expression containing zero (byte*)&point2 in [3] *((byte*)&(struct Point) point2+(const byte) OFFSET_STRUCT_POINT_X) ← (byte) 4
-Simplifying expression containing zero (byte*)&point1 in [4] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*)&(struct Point) point1)
-Simplifying expression containing zero (byte*)&point2 in [6] *((const byte*) main::SCREEN + (byte) 2) ← *((byte*)&(struct Point) point2+(const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero (byte*)&point2 in [4] *((byte*)&(struct Point) point2+(const byte) OFFSET_STRUCT_POINT_X) ← (byte) 4
+Simplifying expression containing zero (byte*)&point1 in [5] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero main::SCREEN in [5] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*)&(struct Point) point1)
+Simplifying expression containing zero (byte*)&point2 in [7] *((const byte*) main::SCREEN + (byte) 2) ← *((byte*)&(struct Point) point2+(const byte) OFFSET_STRUCT_POINT_X)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars

@@ -199,6 +199,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
       LValue lValue = assignment.getlValue();
       SymbolType lValueType = SymbolTypeInference.inferType(getScope(), lValue);
       if(lValueType instanceof SymbolTypeStruct && assignment.getOperator() == null) {
+
          // Assignment to a struct
          SymbolTypeStruct lValueStructType = (SymbolTypeStruct) lValueType;
          RValue rValue = assignment.getrValue2();
@@ -208,6 +209,19 @@ public class Pass1UnwindStructValues extends Pass1Base {
          // Check if this is already a bulk assignment
          if(assignment.getrValue2() instanceof MemcpyValue || assignment.getrValue2() instanceof MemsetValue)
             return false;
+
+         ValueSource lValueSource = getValueSource(lValue, assignment, stmtIt, currentBlock);
+         ValueSource rValueSource = getValueSource(rValue, assignment, stmtIt, currentBlock);
+         List<RValue> lValueUnwoundList = new ArrayList<>();
+         if(copyValues(lValueSource, rValueSource, lValueUnwoundList, initialAssignment, assignment, currentBlock, stmtIt)) {
+            if(lValue instanceof VariableRef) {
+               StructUnwoundPlaceholder unwoundPlaceholder = new StructUnwoundPlaceholder(lValueStructType, lValueUnwoundList);
+               assignment.setrValue2(unwoundPlaceholder);
+            } else {
+               stmtIt.remove();
+            }
+            return true;
+         }
 
          // Check for bulk assignable values
          if(isBulkAssignable(lValue) && isBulkAssignable(rValue)) {
@@ -251,6 +265,67 @@ public class Pass1UnwindStructValues extends Pass1Base {
          throw new CompileError("Incompatible struct assignment " + assignment.toString(getProgram(), false), assignment);
       }
       return false;
+   }
+
+   private boolean copyValues(ValueSource lValueSource, ValueSource rValueSource, List<RValue> lValueUnwoundList, boolean initialAssignment, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
+      if(lValueSource==null || rValueSource==null)
+         return false;
+      if(lValueSource.isSimple() && rValueSource.isSimple()) {
+         stmtIt.previous();
+         LValue lValueRef = (LValue) lValueSource.getSimpleValue(getScope());
+         RValue rValueRef = rValueSource.getSimpleValue(getScope());
+         if(lValueUnwoundList != null)
+            lValueUnwoundList.add(lValueRef);
+         Statement copyStmt = new StatementAssignment(lValueRef, rValueRef, initialAssignment, currentStmt.getSource(), Comment.NO_COMMENTS);
+         stmtIt.add(copyStmt);
+         stmtIt.next();
+         getLog().append("Adding value simple copy " + copyStmt.toString(getProgram(), false));
+         return true;
+      } else if(lValueSource.isBulkCopyable() && rValueSource.isBulkCopyable()) {
+         // Use bulk unwinding for a struct member that is an array
+         stmtIt.previous();
+         if(lValueSource.getArraySpec() != null)
+            if(rValueSource.getArraySpec() == null || !lValueSource.getArraySpec().equals(rValueSource.getArraySpec()))
+               throw new RuntimeException("ArraySpec mismatch!");
+         LValue lValueMemberVarRef = lValueSource.getBulkLValue(getScope());
+         RValue rValueBulkUnwinding = rValueSource.getBulkRValue(getScope());
+         if(lValueUnwoundList != null)
+            lValueUnwoundList.add(lValueMemberVarRef);
+         Statement copyStmt = new StatementAssignment(lValueMemberVarRef, rValueBulkUnwinding, initialAssignment, currentStmt.getSource(), Comment.NO_COMMENTS);
+         stmtIt.add(copyStmt);
+         stmtIt.next();
+         getLog().append("Adding value bulk copy " + copyStmt.toString(getProgram(), false));
+         return true;
+      } else if(lValueSource.isUnwindable() && rValueSource.isUnwindable()) {
+         getLog().append("Unwinding value copy " + currentStmt.toString(getProgram(), false));
+         for(String memberName : lValueSource.getMemberNames(getScope())) {
+            ValueSource lValueSubSource = lValueSource.getMemberUnwinding(memberName, getScope(), currentStmt, currentBlock, stmtIt);
+            ValueSource rValueSubSource = rValueSource.getMemberUnwinding(memberName, getScope(), currentStmt, currentBlock, stmtIt);
+            boolean success = copyValues(lValueSubSource, rValueSubSource, lValueUnwoundList, initialAssignment, currentStmt, currentBlock, stmtIt);
+            if(!success)
+               throw new InternalError("Error during value unwinding copy! ", currentStmt);
+         }
+         return true;
+      }
+      return false;
+   }
+
+   /**
+    * Get a value source for copying a value
+    * @param value The value being copied
+    * @param currentStmt The current statement
+    * @param stmtIt The statement iterator
+    * @param currentBlock The current block
+    * @return The vaule source for copying. null if no value source can be created.
+    */
+   private ValueSource getValueSource(Value value, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+      if(value instanceof VariableRef) {
+         Variable variable = getScope().getVariable((VariableRef) value);
+         if(variable.isStructClassic()) {
+            return new ValueSourceStructVariable(variable);
+         }
+      }
+      return null;
    }
 
    /**

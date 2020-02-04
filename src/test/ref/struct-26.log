@@ -2,7 +2,7 @@ Fixing struct type size struct Point to 3
 Fixing struct type size struct Point to 3
 Fixing struct type SIZE_OF struct Point to 3
 Fixing struct type SIZE_OF struct Point to 3
-Adding struct value member variable copy *(&(struct Point) main::point1) ← memset(struct Point, (const byte) SIZEOF_STRUCT_POINT)
+Adding value bulk copy *(&(struct Point) main::point1) ← memset(struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Adding value bulk copy *(&(struct Point) main::point2) ← memcpy(*(&(struct Point) main::point1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Replacing struct member reference (struct Point) main::point1.x with member unwinding reference *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_X)
 Replacing struct member reference (struct Point) main::point1.initials with member unwinding reference (byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS
@@ -18,6 +18,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   *(&(struct Point) main::point1) ← memset(struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  (struct Point) main::point1 ← struct-unwound {*(&(struct Point) main::point1)}
   *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_X) ← (number) 2
   *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (number) 0) ← (byte) 'j'
   *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (number) 1) ← (byte) 'g'
@@ -83,12 +84,13 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Removing C-classic struct-unwound assignment [5] (struct Point) main::point2 ← struct-unwound {*(&(struct Point) main::point2)}
-Simplifying expression containing zero (byte*)&main::point1 in [1] *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_X) ← (byte) 2
-Simplifying expression containing zero (byte*)&main::point1+OFFSET_STRUCT_POINT_INITIALS in [2] *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (byte) 0) ← (byte) 'j'
-Simplifying expression containing zero (byte*)&main::point2 in [6] *((const byte*) SCREEN + (byte) 0) ← *((byte*)&(struct Point) main::point2+(const byte) OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero SCREEN in [6] *((const byte*) SCREEN + (byte) 0) ← *((byte*)&(struct Point) main::point2)
-Simplifying expression containing zero (byte*)&main::point2+OFFSET_STRUCT_POINT_INITIALS in [7] *((const byte*) SCREEN + (byte) 1) ← *((byte*)&(struct Point) main::point2+(const byte) OFFSET_STRUCT_POINT_INITIALS + (byte) 0)
+Removing C-classic struct-unwound assignment [1] (struct Point) main::point1 ← struct-unwound {*(&(struct Point) main::point1)}
+Removing C-classic struct-unwound assignment [6] (struct Point) main::point2 ← struct-unwound {*(&(struct Point) main::point2)}
+Simplifying expression containing zero (byte*)&main::point1 in [2] *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_X) ← (byte) 2
+Simplifying expression containing zero (byte*)&main::point1+OFFSET_STRUCT_POINT_INITIALS in [3] *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (byte) 0) ← (byte) 'j'
+Simplifying expression containing zero (byte*)&main::point2 in [7] *((const byte*) SCREEN + (byte) 0) ← *((byte*)&(struct Point) main::point2+(const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero SCREEN in [7] *((const byte*) SCREEN + (byte) 0) ← *((byte*)&(struct Point) main::point2)
+Simplifying expression containing zero (byte*)&main::point2+OFFSET_STRUCT_POINT_INITIALS in [8] *((const byte*) SCREEN + (byte) 1) ← *((byte*)&(struct Point) main::point2+(const byte) OFFSET_STRUCT_POINT_INITIALS + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars

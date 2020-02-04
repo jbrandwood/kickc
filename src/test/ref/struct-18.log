@@ -1,4 +1,4 @@
-Adding struct value member variable copy *(&(struct Vector) main::v) ← memcpy(*(&(const struct Vector) $0), struct Vector, (const byte) SIZEOF_STRUCT_VECTOR)
+Adding value bulk copy *(&(struct Vector) main::v) ← memcpy(*(&(const struct Vector) $0), struct Vector, (const byte) SIZEOF_STRUCT_VECTOR)
 Replacing struct member reference (struct Vector) main::v.p with member unwinding reference *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P)
 Replacing struct member reference (struct Vector) main::v.p with member unwinding reference *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P)
 Replacing struct member reference (struct Vector) main::v.q with member unwinding reference *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q)
@@ -15,6 +15,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   *(&(struct Vector) main::v) ← memcpy(*(&(const struct Vector) $0), struct Vector, (const byte) SIZEOF_STRUCT_VECTOR)
+  (struct Vector) main::v ← struct-unwound {*(&(struct Vector) main::v)}
   (byte*~) main::$0 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
   *((const byte*) SCREEN + (number) 0) ← *((byte*~) main::$0)
   (byte*~) main::$1 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
@@ -74,10 +75,11 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [1] (byte*~) main::$0 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [3] (byte*~) main::$1 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [5] (byte*~) main::$2 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [7] (byte*~) main::$3 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_Y
+Removing C-classic struct-unwound assignment [1] (struct Vector) main::v ← struct-unwound {*(&(struct Vector) main::v)}
+Constant right-side identified [2] (byte*~) main::$0 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [4] (byte*~) main::$1 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [6] (byte*~) main::$2 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [8] (byte*~) main::$3 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$0 = (byte*)(struct Point*)&main::v+OFFSET_STRUCT_VECTOR_P+OFFSET_STRUCT_POINT_X
 Constant (const byte*) main::$1 = (byte*)(struct Point*)&main::v+OFFSET_STRUCT_VECTOR_P+OFFSET_STRUCT_POINT_Y
@@ -88,7 +90,7 @@ Simplifying expression containing zero (byte*)(struct Point*)&main::v+OFFSET_STR
 Simplifying expression containing zero (struct Point*)&main::v in 
 Simplifying expression containing zero (struct Point*)&main::v in 
 Simplifying expression containing zero (byte*)(struct Point*)&main::v+OFFSET_STRUCT_VECTOR_Q in 
-Simplifying expression containing zero SCREEN in [2] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) main::$0)
+Simplifying expression containing zero SCREEN in [3] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) main::$0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_VECTOR_P
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X

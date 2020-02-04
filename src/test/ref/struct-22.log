@@ -2,8 +2,8 @@ Created struct value member variable (byte) print::p_x
 Created struct value member variable (byte) print::p_y
 Converted struct value to member variables (struct Point) print::p
 Converted procedure struct value parameter to member unwinding (void()) print((byte) print::p_x , (byte) print::p_y)
-Adding struct value member variable copy *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
-Adding struct value member variable copy *(&(struct Point) main::point2) ← memcpy(*(&(const struct Point) $1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+Adding value bulk copy *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+Adding value bulk copy *(&(struct Point) main::point2) ← memcpy(*(&(const struct Point) $1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Converted procedure struct value parameter to member unwinding in call (void~) main::$0 ← call print *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_X) *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_Y) 
 Converted procedure struct value parameter to member unwinding in call (void~) main::$1 ← call print *((byte*)&(struct Point) main::point2+(const byte) OFFSET_STRUCT_POINT_X) *((byte*)&(struct Point) main::point2+(const byte) OFFSET_STRUCT_POINT_Y) 
 Replacing struct member reference (struct Point) print::p.x with member unwinding reference (byte) print::p_x
@@ -17,7 +17,9 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  (struct Point) main::point1 ← struct-unwound {*(&(struct Point) main::point1)}
   *(&(struct Point) main::point2) ← memcpy(*(&(const struct Point) $1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  (struct Point) main::point2 ← struct-unwound {*(&(struct Point) main::point2)}
   (byte) print::p_x#0 ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_X)
   (byte) print::p_y#0 ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_Y)
   call print 
@@ -91,9 +93,11 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero (byte*)&main::point1 in [2] (byte) print::p_x#0 ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero (byte*)&main::point2 in [5] (byte) print::p_x#1 ← *((byte*)&(struct Point) main::point2+(const byte) OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero SCREEN in [10] *((const byte*) SCREEN + (byte) 0) ← (byte) print::p_x#2
+Removing C-classic struct-unwound assignment [1] (struct Point) main::point1 ← struct-unwound {*(&(struct Point) main::point1)}
+Removing C-classic struct-unwound assignment [3] (struct Point) main::point2 ← struct-unwound {*(&(struct Point) main::point2)}
+Simplifying expression containing zero (byte*)&main::point1 in [4] (byte) print::p_x#0 ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero (byte*)&main::point2 in [7] (byte) print::p_x#1 ← *((byte*)&(struct Point) main::point2+(const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero SCREEN in [12] *((const byte*) SCREEN + (byte) 0) ← (byte) print::p_x#2
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars

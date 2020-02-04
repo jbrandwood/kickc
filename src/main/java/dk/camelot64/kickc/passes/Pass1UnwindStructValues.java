@@ -316,7 +316,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @param currentStmt The current statement
     * @param stmtIt The statement iterator
     * @param currentBlock The current block
-    * @return The vaule source for copying. null if no value source can be created.
+    * @return The value source for copying. null if no value source can be created.
     */
    private ValueSource getValueSource(Value value, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       if(value instanceof VariableRef) {
@@ -325,6 +325,10 @@ public class Pass1UnwindStructValues extends Pass1Base {
             return new ValueSourceStructVariable(variable);
          }
       }
+      if(value instanceof StructZero)
+         return new ValueSourceZero(((StructZero) value).getTypeStruct(), null);
+      if(value instanceof ConstantStructValue)
+         return new ValueSourceConstant(((ConstantStructValue) value).getType(getScope()), null, (ConstantStructValue) value);
       return null;
    }
 

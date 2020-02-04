@@ -1,5 +1,5 @@
 Setting inferred volatile on symbol affected by address-of (struct Point*) main::q ← &(struct Point) main::p
-Adding struct value member variable copy *(&(struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+Adding value bulk copy *(&(struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Rewriting struct pointer member access *((struct Point*) main::q).x
 Rewriting struct pointer member access *((struct Point*) main::q).y
 Identified constant variable (struct Point*) main::q
@@ -11,6 +11,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   *(&(struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  (struct Point) main::p ← struct-unwound {*(&(struct Point) main::p)}
   (byte*~) main::$0 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
   *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$0)
   (byte*~) main::$1 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
@@ -55,14 +56,15 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [1] (byte*~) main::$0 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [3] (byte*~) main::$1 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
+Removing C-classic struct-unwound assignment [1] (struct Point) main::p ← struct-unwound {*(&(struct Point) main::p)}
+Constant right-side identified [2] (byte*~) main::$0 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
+Constant right-side identified [4] (byte*~) main::$1 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$0 = (byte*)main::q+OFFSET_STRUCT_POINT_X
 Constant (const byte*) main::$1 = (byte*)main::q+OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero (byte*)main::q in 
-Simplifying expression containing zero main::SCREEN in [2] *((const byte*) main::SCREEN + (byte) 0) ← *((const byte*) main::$0)
+Simplifying expression containing zero main::SCREEN in [3] *((const byte*) main::SCREEN + (byte) 0) ← *((const byte*) main::$0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars

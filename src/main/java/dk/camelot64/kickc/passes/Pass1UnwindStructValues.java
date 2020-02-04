@@ -225,11 +225,12 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
          // Check for bulk assignable values
          if(isBulkAssignable(lValue) && isBulkAssignable(rValue)) {
-            RValueUnwinding lValueUnwinding = getValueUnwinding(lValue, assignment, stmtIt, currentBlock);
-            RValueUnwinding rValueUnwinding = getValueUnwinding(rValue, assignment, stmtIt, currentBlock);
-            unwindAssignment(lValueUnwinding, rValueUnwinding, null, stmtIt, initialAssignment, source);
-            stmtIt.remove();
-            return true;
+            throw new InternalError("E!");
+            //RValueUnwinding lValueUnwinding = getValueUnwinding(lValue, assignment, stmtIt, currentBlock);
+            //RValueUnwinding rValueUnwinding = getValueUnwinding(rValue, assignment, stmtIt, currentBlock);
+            //unwindAssignment(lValueUnwinding, rValueUnwinding, null, stmtIt, initialAssignment, source);
+            //stmtIt.remove();
+            //return true;
          }
 
          // Check for struct unwinding
@@ -268,7 +269,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
    }
 
    private boolean copyValues(ValueSource lValueSource, ValueSource rValueSource, List<RValue> lValueUnwoundList, boolean initialAssignment, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
-      if(lValueSource==null || rValueSource==null)
+      if(lValueSource == null || rValueSource == null)
          return false;
       if(lValueSource.isSimple() && rValueSource.isSimple()) {
          stmtIt.previous();
@@ -299,8 +300,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
       } else if(lValueSource.isUnwindable() && rValueSource.isUnwindable()) {
          getLog().append("Unwinding value copy " + currentStmt.toString(getProgram(), false));
          for(String memberName : lValueSource.getMemberNames(getScope())) {
-            ValueSource lValueSubSource = lValueSource.getMemberUnwinding(memberName, getScope(), currentStmt, currentBlock, stmtIt);
-            ValueSource rValueSubSource = rValueSource.getMemberUnwinding(memberName, getScope(), currentStmt, currentBlock, stmtIt);
+            ValueSource lValueSubSource = lValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), currentStmt, currentBlock, stmtIt);
+            ValueSource rValueSubSource = rValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), currentStmt, currentBlock, stmtIt);
             boolean success = copyValues(lValueSubSource, rValueSubSource, lValueUnwoundList, initialAssignment, currentStmt, currentBlock, stmtIt);
             if(!success)
                throw new InternalError("Error during value unwinding copy! ", currentStmt);
@@ -312,6 +313,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
    /**
     * Get a value source for copying a value
+    *
     * @param value The value being copied
     * @param currentStmt The current statement
     * @param stmtIt The statement iterator
@@ -321,14 +323,24 @@ public class Pass1UnwindStructValues extends Pass1Base {
    private ValueSource getValueSource(Value value, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       if(value instanceof VariableRef) {
          Variable variable = getScope().getVariable((VariableRef) value);
-         if(variable.isStructClassic()) {
-            return new ValueSourceStructVariable(variable);
+         if(variable.getType() instanceof SymbolTypeStruct) {
+            return new ValueSourceVariable(variable);
          }
       }
       if(value instanceof StructZero)
          return new ValueSourceZero(((StructZero) value).getTypeStruct(), null);
       if(value instanceof ConstantStructValue)
          return new ValueSourceConstant(((ConstantStructValue) value).getType(getScope()), null, (ConstantStructValue) value);
+      if(value instanceof PointerDereferenceSimple)
+         return new ValueSourcePointerDereferenceSimple((PointerDereferenceSimple) value, SymbolTypeInference.inferType(getScope(), (RValue) value), null);
+      if(value instanceof PointerDereferenceIndexed)
+         return new ValueSourcePointerDereferenceIndexed((PointerDereferenceIndexed) value, SymbolTypeInference.inferType(getScope(), (RValue) value), null);
+      if(value instanceof StructMemberRef) {
+         final RValue structValue = ((StructMemberRef) value).getStruct();
+         final ValueSource structValueSource = getValueSource(structValue, currentStmt, stmtIt, currentBlock);
+         final ValueSource structMemberSource = structValueSource.getMemberUnwinding(((StructMemberRef) value).getMemberName(), getProgram(), getScope(), currentStmt, currentBlock, stmtIt);
+         return structMemberSource;
+      }
       return null;
    }
 
@@ -431,7 +443,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                final PointerDereferenceIndexed structPointerDerefIdx = (PointerDereferenceIndexed) structMemberRef.getStruct();
                final SymbolType structPointerType = SymbolTypeInference.inferType(getScope(), structPointerDerefIdx);
                if(!(structPointerType instanceof SymbolTypeStruct))
-                  throw new CompileError("Value is not a struct"+structPointerDerefIdx.toString(getProgram()), currentStmt);
+                  throw new CompileError("Value is not a struct" + structPointerDerefIdx.toString(getProgram()), currentStmt);
 
                final StructDefinition structDefinition = ((SymbolTypeStruct) structPointerType).getStructDefinition(getScope());
                final String memberName = structMemberRef.getMemberName();
@@ -483,7 +495,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   return new StructUnwindingVariable(variable, structDefinition);
                }
             } else if(value instanceof StructMemberRef && ((StructMemberRef) value).getStruct() instanceof VariableRef) {
-               getLog().append("Postponing unwinding for "+currentStmt.toString(getProgram(), false));
+               getLog().append("Postponing unwinding for " + currentStmt.toString(getProgram(), false));
                return POSTPONE_UNWINDING;
             } else if(value instanceof PointerDereferenceSimple) {
                return new StructUnwindingPointerDerefSimple((PointerDereferenceSimple) value, structDefinition, stmtIt, currentBlock, currentStmt);
@@ -491,7 +503,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
                return new StructUnwindingPointerDerefIndexed((PointerDereferenceIndexed) value, structDefinition, stmtIt, currentBlock, currentStmt);
             } else if(value instanceof StructMemberRef && ((StructMemberRef) value).getStruct() instanceof PointerDereferenceIndexed) {
                final StructMemberRef structMemberRef = (StructMemberRef) value;
-               return new StructUnwindingMemberOfPointerDerefIndexed((PointerDereferenceIndexed) structMemberRef.getStruct(),structMemberRef.getMemberName(), structDefinition, stmtIt, currentBlock, currentStmt);
+               return new StructUnwindingMemberOfPointerDerefIndexed((PointerDereferenceIndexed) structMemberRef.getStruct(), structMemberRef.getMemberName(), structDefinition, stmtIt, currentBlock, currentStmt);
             } else if(value instanceof ConstantStructValue) {
                return new StructUnwindingConstant((ConstantStructValue) value, structDefinition);
             } else if(value instanceof StructZero) {

@@ -1,7 +1,9 @@
 package dk.camelot64.kickc.passes.unwinding;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.operators.OperatorSizeOf;
+import dk.camelot64.kickc.model.InternalError;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.StructVariableMemberUnwinding;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.ArraySpec;
@@ -14,18 +16,15 @@ import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.PassNStructPointerRewriting;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.ListIterator;
 
 /** Value Source for a variable */
-public class ValueSourceStructVariable extends ValueSourceBase {
+public class ValueSourceVariable extends ValueSourceBase {
 
    /** The variable. */
    private final Variable variable;
 
-   public ValueSourceStructVariable(Variable variable) {
+   public ValueSourceVariable(Variable variable) {
       this.variable = variable;
    }
 
@@ -46,7 +45,9 @@ public class ValueSourceStructVariable extends ValueSourceBase {
 
    @Override
    public RValue getSimpleValue(ProgramScope programScope) {
-      return new ConstantSymbolPointer(variable.getRef());
+      // Historically this returned a pointer - why?
+      //return new ConstantSymbolPointer(variable.getRef());
+      return variable.getRef();
    }
 
    @Override
@@ -63,8 +64,8 @@ public class ValueSourceStructVariable extends ValueSourceBase {
    }
 
    @Override
-   public ValueSource getMemberUnwinding(String memberName, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
-      if(getSymbolType() instanceof SymbolTypeStruct) {
+   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
+      if(variable.isStructClassic()) {
          StructDefinition structDefinition = ((SymbolTypeStruct) getSymbolType()).getStructDefinition(programScope);
          final SymbolType memberType = structDefinition.getMember(memberName).getType();
          final ArraySpec memberArraySpec = structDefinition.getMember(memberName).getArraySpec();
@@ -78,8 +79,14 @@ public class ValueSourceStructVariable extends ValueSourceBase {
          // Unwind to *((type*)&struct + OFFSET_MEMBER)
          PointerDereferenceSimple memberDeref = new PointerDereferenceSimple(memberPointer);
          return new ValueSourcePointerDereferenceSimple(memberDeref, memberType, memberArraySpec);
+      } else if(variable.isStructUnwind()) {
+         StructVariableMemberUnwinding structVariableMemberUnwinding = program.getStructVariableMemberUnwinding();
+         final StructVariableMemberUnwinding.VariableUnwinding variableUnwinding = structVariableMemberUnwinding.getVariableUnwinding(variable.getRef());
+         final SymbolVariableRef memberUnwound = variableUnwinding.getMemberUnwound(memberName);
+         final Variable memberVariable = programScope.getVar(memberUnwound);
+         return new ValueSourceVariable(memberVariable);
       } else {
-         return null;
+         throw new InternalError("Not implemented!");
       }
    }
 

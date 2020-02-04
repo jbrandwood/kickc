@@ -52,7 +52,7 @@ public class StructVariableMemberUnwinding {
       StructDefinition structDefinition;
 
       /** Maps member names to the unwound variables. */
-      Map<String, RValue> memberUnwinding;
+      Map<String, SymbolVariableRef> memberUnwinding;
 
       public VariableUnwinding(StructDefinition structDefinition) {
          this.structDefinition = structDefinition;
@@ -60,12 +60,16 @@ public class StructVariableMemberUnwinding {
       }
 
       /** Set how a member variable was unwound to a specific (new) variable. */
-      public void setMemberUnwinding(String memberName, RValue memberVariableUnwound) {
+      public void setMemberUnwinding(String memberName, SymbolVariableRef memberVariableUnwound) {
          this.memberUnwinding.put(memberName, memberVariableUnwound);
       }
 
       public List<String> getMemberNames() {
          return new ArrayList<>(memberUnwinding.keySet());
+      }
+
+      public SymbolVariableRef getMemberUnwound(String memberName) {
+         return memberUnwinding.get(memberName);
       }
 
       @Override

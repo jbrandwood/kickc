@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes.unwinding;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -80,12 +81,13 @@ public interface ValueSource {
     * Get a sub value source for one member to use for copying that member.
     *
     * @param memberName The member name
+    * @param program
     * @param programScope The program scope
     * @param currentStmt
     * @param currentBlock
     * @param stmtIt
     * @return The unwinding of the member
     */
-   ValueSource getMemberUnwinding(String memberName, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt);
+   ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt);
 
 }

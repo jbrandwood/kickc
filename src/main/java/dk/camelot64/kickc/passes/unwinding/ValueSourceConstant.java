@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes.unwinding;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.operators.OperatorSizeOf;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -44,7 +44,7 @@ public class ValueSourceConstant extends ValueSourceBase {
    }
 
    @Override
-   public ValueSource getMemberUnwinding(String memberName, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
+   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
       StructDefinition structDefinition = ((SymbolTypeStruct) getSymbolType()).getStructDefinition(programScope);
       ConstantStructValue constantStructValue = (ConstantStructValue) value;
       final Variable member = structDefinition.getMember(memberName);

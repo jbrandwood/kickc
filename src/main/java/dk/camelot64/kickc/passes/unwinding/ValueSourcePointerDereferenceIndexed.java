@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes.unwinding;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -14,18 +15,17 @@ import dk.camelot64.kickc.passes.PassNStructPointerRewriting;
 
 import java.util.ListIterator;
 
-/** Value Source for a pointer dereference. */
-public class ValueSourcePointerDereferenceSimple extends ValueSourceBase {
+/** Unwinding for a indexed pointer deref. */
+public class ValueSourcePointerDereferenceIndexed extends ValueSourceBase {
 
-   /** The pointer dereference. */
-   private final PointerDereferenceSimple pointerDereference;
+   private final PointerDereferenceIndexed pointerDereferenceIndexed;
    /** The type of the value. */
    private SymbolType valueType;
    /** The array spec of the value. */
    private final ArraySpec valueArraySpec;
 
-   public ValueSourcePointerDereferenceSimple(PointerDereferenceSimple pointerDereference, SymbolType valueType, ArraySpec valueArraySpec) {
-      this.pointerDereference = pointerDereference;
+   public ValueSourcePointerDereferenceIndexed(PointerDereferenceIndexed pointerDereferenceIndexed, SymbolType valueType, ArraySpec valueArraySpec) {
+      this.pointerDereferenceIndexed = pointerDereferenceIndexed;
       this.valueType = valueType;
       this.valueArraySpec = valueArraySpec;
    }
@@ -47,17 +47,24 @@ public class ValueSourcePointerDereferenceSimple extends ValueSourceBase {
 
    @Override
    public RValue getSimpleValue(ProgramScope programScope) {
-      return pointerDereference;
+      if(getArraySpec() != null) {
+         // For arrays return the pointer to the array - not the deref
+         //return pointerDereferenceIndexed.getPointer();
+         // Maybe return pointer + index ?
+         throw new InternalError("Not implemented! ");
+      } else {
+         return pointerDereferenceIndexed;
+      }
    }
 
    @Override
    public LValue getBulkLValue(ProgramScope scope) {
-      return pointerDereference;
+      return pointerDereferenceIndexed;
    }
 
    @Override
    public RValue getBulkRValue(ProgramScope scope) {
-      return new MemcpyValue(pointerDereference, getByteSize(scope), getSymbolType());
+      return new MemcpyValue(pointerDereferenceIndexed, getByteSize(scope), getSymbolType());
    }
 
    @Override
@@ -67,15 +74,15 @@ public class ValueSourcePointerDereferenceSimple extends ValueSourceBase {
       final ArraySpec memberArraySpec = structDefinition.getMember(memberName).getArraySpec();
       ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(programScope, structDefinition, memberName);
       // Simple member value - unwind to value of member *((type*)&struct + OFFSET_MEMBER)
-      final RValue structPointer = pointerDereference.getPointer();
+      final RValue structPointer = pointerDereferenceIndexed.getPointer();
       if(structPointer instanceof ConstantValue) {
          // Pointer to member type
          ConstantCastValue structTypedPointer = new ConstantCastValue(new SymbolTypePointer(memberType), (ConstantValue) structPointer);
          // Calculate member address  (type*)&struct + OFFSET_MEMBER
          ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
          // Unwind to *((type*)&struct + OFFSET_MEMBER)
-         PointerDereferenceSimple memberDeref = new PointerDereferenceSimple(memberPointer);
-         return new ValueSourcePointerDereferenceSimple(memberDeref, memberType, memberArraySpec);
+         PointerDereferenceIndexed memberDeref = new PointerDereferenceIndexed(memberPointer, pointerDereferenceIndexed.getIndex());
+         return new ValueSourcePointerDereferenceIndexed(memberDeref, memberType, memberArraySpec);
       } else {
          Scope scope = programScope.getScope(currentBlock.getScope());
          Variable memberAddress = scope.addVariableIntermediate();
@@ -86,9 +93,9 @@ public class ValueSourcePointerDereferenceSimple extends ValueSourceBase {
          stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
          stmtIt.next();
          // Unwind to *((memberType*)ptr_struct+OFFSET_MEMBER)
-         PointerDereferenceSimple memberDeref = new PointerDereferenceSimple(memberAddress.getRef());
-         return new ValueSourcePointerDereferenceSimple(memberDeref, memberType, memberArraySpec);
+         PointerDereferenceIndexed memberDeref = new PointerDereferenceIndexed(memberAddress.getRef(), pointerDereferenceIndexed.getIndex());
+         return new ValueSourcePointerDereferenceIndexed(memberDeref, memberType, memberArraySpec);
       }
    }
-}
 
+}

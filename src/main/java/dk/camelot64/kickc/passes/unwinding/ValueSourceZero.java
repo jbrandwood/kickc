@@ -3,22 +3,17 @@ package dk.camelot64.kickc.passes.unwinding;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Initializers;
 import dk.camelot64.kickc.model.InternalError;
-import dk.camelot64.kickc.model.operators.OperatorSizeOf;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
-import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
-import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.MemsetValue;
 import dk.camelot64.kickc.model.values.RValue;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.ListIterator;
 
 /** Value Source for a zero value. */
@@ -53,7 +48,7 @@ public class ValueSourceZero extends ValueSourceBase {
    }
 
    @Override
-   public ValueSource getMemberUnwinding(String memberName, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
+   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
       StructDefinition structDefinition = ((SymbolTypeStruct) getSymbolType()).getStructDefinition(programScope);
       final SymbolType memberType = structDefinition.getMember(memberName).getType();
       final ArraySpec memberArraySpec = structDefinition.getMember(memberName).getArraySpec();

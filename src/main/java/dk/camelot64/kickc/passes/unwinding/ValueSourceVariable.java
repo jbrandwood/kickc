@@ -52,8 +52,12 @@ public class ValueSourceVariable extends ValueSourceBase {
 
    @Override
    public LValue getBulkLValue(ProgramScope scope) {
-      ConstantSymbolPointer pointer = new ConstantSymbolPointer(variable.getRef());
-      return new PointerDereferenceSimple(pointer);
+      if(getArraySpec()!=null) {
+         return new PointerDereferenceSimple(variable.getRef());
+      } else {
+         ConstantSymbolPointer pointer = new ConstantSymbolPointer(variable.getRef());
+         return new PointerDereferenceSimple(pointer);
+      }
    }
 
    @Override

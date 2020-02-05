@@ -528,7 +528,7 @@ public class TestPrograms {
 
    @Test
    public void testCastError() throws IOException, URISyntaxException {
-      assertError("cast-error", "Error! Dereferencing a non-pointer type number");
+      assertError("cast-error", "Type mismatch");
    }
 
    @Test
@@ -1140,12 +1140,12 @@ public class TestPrograms {
 
    @Test
    public void testStructError2() throws IOException, URISyntaxException {
-      assertError("struct-err-2", "Incompatible struct assignment");
+      assertError("struct-err-2", "Type mismatch");
    }
 
    @Test
    public void testStructError1() throws IOException, URISyntaxException {
-      assertError("struct-err-1", "Incompatible struct assignment");
+      assertError("struct-err-1", "Type mismatch");
    }
 
    @Test

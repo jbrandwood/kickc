@@ -3,9 +3,9 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
+  .const OFFSET_STRUCT_POINT_Y = 1
   .const OFFSET_STRUCT_VECTOR_Q = 2
   .const SIZEOF_STRUCT_VECTOR = 4
-  .const OFFSET_STRUCT_POINT_Y = 1
   .const SIZEOF_STRUCT_POINT = 2
 main: {
     .const v1_p_x = 2

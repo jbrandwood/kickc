@@ -12,17 +12,21 @@ Created struct value member variable (byte) get::p_x
 Created struct value member variable (byte) get::p_y
 Converted struct value to member variables (struct Point) get::p
 Converted procedure call LValue to member unwinding { (byte~) main::$0_x, (byte~) main::$0_y } ← call get (number) 0 
-Adding struct value member variable copy *((byte*~) main::$4) ← (byte~) main::$0_x
-Adding struct value member variable copy *((byte*~) main::$5) ← (byte~) main::$0_y
+Unwinding value copy *((const struct Point*) SCREEN) ← (struct Point~) main::$0
+Adding value simple copy *((byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_X) ← (byte~) main::$0_x
+Adding value simple copy *((byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$0_y
 Converted procedure call LValue to member unwinding { (byte~) main::$1_x, (byte~) main::$1_y } ← call get (byte) main::i 
-Adding struct value member variable copy *((byte*~) main::$6 + (byte~) main::$3) ← (byte~) main::$1_x
-Adding struct value member variable copy *((byte*~) main::$7 + (byte~) main::$3) ← (byte~) main::$1_y
+Unwinding value copy *((const struct Point*) SCREEN + (byte~) main::$3) ← (struct Point~) main::$1
+Adding value simple copy *((byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$3) ← (byte~) main::$1_x
+Adding value simple copy *((byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$3) ← (byte~) main::$1_y
 Adding struct value member variable copy (byte) get::p_x ← (byte) get::i
 Adding struct value member variable copy (byte) get::p_y ← (byte) 7
-Adding struct value member variable copy (byte) get::return_x ← (byte) get::p_x
-Adding struct value member variable copy (byte) get::return_y ← (byte) get::p_y
-Adding struct value member variable copy (byte) get::return_x ← (byte) get::return_x
-Adding struct value member variable copy (byte) get::return_y ← (byte) get::return_y
+Unwinding value copy (struct Point) get::return ← (struct Point) get::p
+Adding value simple copy (byte) get::return_x ← (byte) get::p_x
+Adding value simple copy (byte) get::return_y ← (byte) get::p_y
+Unwinding value copy (struct Point) get::return ← (struct Point) get::return
+Adding value simple copy (byte) get::return_x ← (byte) get::return_x
+Adding value simple copy (byte) get::return_y ← (byte) get::return_y
 Converted procedure struct return value to member unwinding return { (byte) get::return_x, (byte) get::return_y }
 Identified constant variable (byte) idx
 Identified constant variable (byte) get::p_y
@@ -50,10 +54,8 @@ main::@3: scope:[main]  from main
   (byte) get::return_x#4 ← phi( main/(byte) get::return_x#0 )
   (byte~) main::$0_x ← (byte) get::return_x#4
   (byte~) main::$0_y ← (byte) get::return_y#4
-  (byte*~) main::$4 ← (byte*)(const struct Point*) SCREEN + (const byte) OFFSET_STRUCT_POINT_X
-  *((byte*~) main::$4) ← (byte~) main::$0_x
-  (byte*~) main::$5 ← (byte*)(const struct Point*) SCREEN + (const byte) OFFSET_STRUCT_POINT_Y
-  *((byte*~) main::$5) ← (byte~) main::$0_y
+  *((byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_X) ← (byte~) main::$0_x
+  *((byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$0_y
   (byte) main::i#0 ← (byte) 1
   to:main::@1
 main::@1: scope:[main]  from main::@3 main::@4
@@ -70,10 +72,8 @@ main::@4: scope:[main]  from main::@1
   (byte~) main::$1_x ← (byte) get::return_x#5
   (byte~) main::$1_y ← (byte) get::return_y#5
   (byte~) main::$3 ← (byte) main::i#3 * (const byte) SIZEOF_STRUCT_POINT
-  (byte*~) main::$6 ← (byte*)(const struct Point*) SCREEN + (const byte) OFFSET_STRUCT_POINT_X
-  *((byte*~) main::$6 + (byte~) main::$3) ← (byte~) main::$1_x
-  (byte*~) main::$7 ← (byte*)(const struct Point*) SCREEN + (const byte) OFFSET_STRUCT_POINT_Y
-  *((byte*~) main::$7 + (byte~) main::$3) ← (byte~) main::$1_y
+  *((byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$3) ← (byte~) main::$1_x
+  *((byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$3) ← (byte~) main::$1_y
   (byte) main::i#1 ← (byte) main::i#3 + rangenext(1,2)
   (bool~) main::$2 ← (byte) main::i#1 != rangelast(1,2)
   if((bool~) main::$2) goto main::@1
@@ -153,10 +153,6 @@ SYMBOL TABLE SSA
 (byte~) main::$1_y
 (bool~) main::$2
 (byte~) main::$3
-(byte*~) main::$4
-(byte*~) main::$5
-(byte*~) main::$6
-(byte*~) main::$7
 (label) main::@1
 (label) main::@3
 (label) main::@4
@@ -184,19 +180,10 @@ Alias (byte) main::i#2 = (byte) main::i#3
 Alias (byte) get::return_x#2 = (byte) get::p_x#0 (byte) get::i#2 (byte) get::return_x#6 (byte) get::return_x#3 
 Alias (byte) get::return_y#2 = (byte) get::return_y#6 (byte) get::return_y#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$2 [27] if((byte) main::i#1!=rangelast(1,2)) goto main::@1
+Simple Condition (bool~) main::$2 [23] if((byte) main::i#1!=rangelast(1,2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [7] (byte*~) main::$4 ← (byte*)(const struct Point*) SCREEN + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [9] (byte*~) main::$5 ← (byte*)(const struct Point*) SCREEN + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [21] (byte*~) main::$6 ← (byte*)(const struct Point*) SCREEN + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [23] (byte*~) main::$7 ← (byte*)(const struct Point*) SCREEN + (const byte) OFFSET_STRUCT_POINT_Y
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) get::i#0 = 0
-Constant (const byte*) main::$4 = (byte*)SCREEN+OFFSET_STRUCT_POINT_X
-Constant (const byte*) main::$5 = (byte*)SCREEN+OFFSET_STRUCT_POINT_Y
 Constant (const byte) main::i#0 = 1
-Constant (const byte*) main::$6 = (byte*)SCREEN+OFFSET_STRUCT_POINT_X
-Constant (const byte*) main::$7 = (byte*)SCREEN+OFFSET_STRUCT_POINT_Y
 Constant (const byte) get::return_y#2 = get::p_y
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) get::return_y#0 = get::return_y#2
@@ -205,10 +192,10 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) main::$0_y = get::return_y#0
 Constant (const byte) main::$1_y = get::return_y#1
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [25] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [27] if(main::i#1!=rangelast(1,2)) goto main::@1 to (number) 3
-Simplifying expression containing zero (byte*)SCREEN in 
-Simplifying expression containing zero (byte*)SCREEN in 
+Resolved ranged next value [21] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [23] if(main::i#1!=rangelast(1,2)) goto main::@1 to (number) 3
+Simplifying expression containing zero (byte*)SCREEN in [7] *((byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_X) ← (byte~) main::$0_x
+Simplifying expression containing zero (byte*)SCREEN in [19] *((byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$3) ← (byte~) main::$1_x
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (struct Point) get::return#0 and assignment [17] (struct Point) get::return#0 ← struct-unwound {(byte) get::return_x#2, (const byte) get::return_y#2}
 Eliminating unused variable (struct Point) get::return#1 and assignment [18] (struct Point) get::return#1 ← struct-unwound {(byte) get::return_x#2, (const byte) get::return_y#2}
@@ -226,14 +213,10 @@ Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) get::i#0
 Constant inlined main::$1_y = (const byte) get::p_y
 Constant inlined main::$0_y = (const byte) get::p_y
-Constant inlined main::$5 = (byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_Y
 Constant inlined main::i#0 = (byte) 1
-Constant inlined main::$6 = (byte*)(const struct Point*) SCREEN
-Constant inlined main::$4 = (byte*)(const struct Point*) SCREEN
 Constant inlined get::return_y#0 = (const byte) get::p_y
 Constant inlined get::i#0 = (byte) 0
 Constant inlined get::return_y#1 = (const byte) get::p_y
-Constant inlined main::$7 = (byte*)(const struct Point*) SCREEN+(const byte) OFFSET_STRUCT_POINT_Y
 Constant inlined get::return_y#2 = (const byte) get::p_y
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant (const byte) SIZEOF_STRUCT_POINT

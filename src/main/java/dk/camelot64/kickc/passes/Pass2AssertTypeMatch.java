@@ -29,19 +29,6 @@ public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
             if(statement instanceof StatementAssignment) {
                checkAssignment((StatementAssignment) statement);
             }
-            if(statement instanceof StatementConditionalJump) {
-               StatementConditionalJump conditionalJump = (StatementConditionalJump) statement;
-               if(conditionalJump.getOperator()==null) {
-                  RValue rValue = conditionalJump.getrValue2();
-                  SymbolType rValueType = SymbolTypeInference.inferType(getScope(), rValue);
-                  if(!SymbolType.BOOLEAN.equals(rValueType)) {
-                     getLog().append("ERROR! Type mismatch non-boolean condition from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false));
-                     throw new CompileError("ERROR! Type mismatch non-boolean condition from (" + rValueType.getTypeName() + "). In " + statement.toString(getProgram(), false), statement.getSource());
-                  }
-               } else {
-                 // Conditions with operators always result in booleans?
-               }
-            }
             // TODO: Implement checking for calls / ...
          }
       }

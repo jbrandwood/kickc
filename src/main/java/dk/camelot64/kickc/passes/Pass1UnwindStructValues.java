@@ -4,7 +4,10 @@ import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.StructDefinition;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
@@ -198,6 +201,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
    private boolean unwindAssignment(StatementAssignment assignment, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       LValue lValue = assignment.getlValue();
       SymbolType lValueType = SymbolTypeInference.inferType(getScope(), lValue);
+
       if(lValueType instanceof SymbolTypeStruct && assignment.getOperator() == null) {
 
          // Assignment to a struct
@@ -207,11 +211,13 @@ public class Pass1UnwindStructValues extends Pass1Base {
          StatementSource source = assignment.getSource();
 
          // Check if this is already a bulk assignment
-         if(assignment.getrValue2() instanceof MemcpyValue || assignment.getrValue2() instanceof MemsetValue)
+         if(rValue instanceof MemcpyValue || rValue instanceof MemsetValue)
+            return false;
+         if(rValue instanceof StructUnwoundPlaceholder)
             return false;
 
-         ValueSource lValueSource = getValueSource(lValue, assignment, stmtIt, currentBlock);
-         ValueSource rValueSource = getValueSource(rValue, assignment, stmtIt, currentBlock);
+         ValueSource lValueSource = getValueSource(getProgram(), getScope(), lValue, assignment, stmtIt, currentBlock);
+         ValueSource rValueSource = getValueSource(getProgram(), getScope(), rValue, assignment, stmtIt, currentBlock);
          List<RValue> lValueUnwoundList = new ArrayList<>();
          if(copyValues(lValueSource, rValueSource, lValueUnwoundList, initialAssignment, assignment, currentBlock, stmtIt)) {
             if(lValue instanceof VariableRef) {
@@ -223,17 +229,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
             return true;
          }
 
-         // Check for bulk assignable values
-         if(isBulkAssignable(lValue) && isBulkAssignable(rValue)) {
-            throw new InternalError("E!");
-            //RValueUnwinding lValueUnwinding = getValueUnwinding(lValue, assignment, stmtIt, currentBlock);
-            //RValueUnwinding rValueUnwinding = getValueUnwinding(rValue, assignment, stmtIt, currentBlock);
-            //unwindAssignment(lValueUnwinding, rValueUnwinding, null, stmtIt, initialAssignment, source);
-            //stmtIt.remove();
-            //return true;
-         }
 
          // Check for struct unwinding
+         if(1==1) throw new InternalError("E!");
          StructUnwinding lValueUnwinding = getStructMemberUnwinding(lValue, assignment, stmtIt, currentBlock);
          if(lValueUnwinding == null)
             return false;
@@ -251,9 +249,12 @@ public class Pass1UnwindStructValues extends Pass1Base {
                return true;
             List<RValue> lValueUnwoundPlaceholder = new ArrayList<>();
             for(String memberName : lValueUnwinding.getMemberNames()) {
+               /*
                RValueUnwinding lValueMemberUnwinding = lValueUnwinding.getMemberUnwinding(memberName, getScope());
                RValueUnwinding rValueMemberUnwinding = rValueUnwinding.getMemberUnwinding(memberName, getScope());
                unwindAssignment(lValueMemberUnwinding, rValueMemberUnwinding, lValueUnwoundPlaceholder, stmtIt, initialAssignment, source);
+
+                */
             }
             StructUnwoundPlaceholder unwoundPlaceholder = new StructUnwoundPlaceholder(lValueStructType, lValueUnwoundPlaceholder);
             if(lValue instanceof VariableRef) {
@@ -320,145 +321,41 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @param currentBlock The current block
     * @return The value source for copying. null if no value source can be created.
     */
-   private ValueSource getValueSource(Value value, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-      if(value instanceof VariableRef) {
-         Variable variable = getScope().getVariable((VariableRef) value);
-         if(variable.getType() instanceof SymbolTypeStruct) {
-            return new ValueSourceVariable(variable);
+   public static ValueSource getValueSource(Program program, ProgramScope programScope, Value value, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+      final SymbolType valueType = SymbolTypeInference.inferType(programScope, (RValue) value);
+      if(valueType instanceof SymbolTypeStruct && value instanceof CastValue && ((CastValue) value).getValue() instanceof ValueList) {
+         ValueList valueList = (ValueList) ((CastValue) value).getValue();
+         final StructDefinition structDefinition = ((SymbolTypeStruct) valueType).getStructDefinition(programScope);
+         int numMembers = structDefinition.getAllVars(false).size();
+         if(numMembers != valueList.getList().size()) {
+            throw new CompileError("Struct initialization list has wrong size. Need  " + numMembers + " got " + valueList.getList().size(), currentStmt);
          }
+         return new ValueSourceStructValueList(valueList, structDefinition);
+      }
+      while(value instanceof CastValue)
+         value = ((CastValue) value).getValue();
+      if(value instanceof VariableRef) {
+         Variable variable = programScope.getVariable((VariableRef) value);
+         return new ValueSourceVariable(variable);
       }
       if(value instanceof StructZero)
          return new ValueSourceZero(((StructZero) value).getTypeStruct(), null);
-      if(value instanceof ConstantStructValue)
-         return new ValueSourceConstant(((ConstantStructValue) value).getType(getScope()), null, (ConstantStructValue) value);
+      if(value instanceof ConstantValue)
+         return new ValueSourceConstant(((ConstantValue) value).getType(programScope), null, (ConstantValue) value);
       if(value instanceof PointerDereferenceSimple)
-         return new ValueSourcePointerDereferenceSimple((PointerDereferenceSimple) value, SymbolTypeInference.inferType(getScope(), (RValue) value), null);
+         return new ValueSourcePointerDereferenceSimple((PointerDereferenceSimple) value, valueType, null);
       if(value instanceof PointerDereferenceIndexed)
-         return new ValueSourcePointerDereferenceIndexed((PointerDereferenceIndexed) value, SymbolTypeInference.inferType(getScope(), (RValue) value), null);
+         return new ValueSourcePointerDereferenceIndexed((PointerDereferenceIndexed) value, valueType, null);
       if(value instanceof StructMemberRef) {
          final RValue structValue = ((StructMemberRef) value).getStruct();
-         final ValueSource structValueSource = getValueSource(structValue, currentStmt, stmtIt, currentBlock);
-         final ValueSource structMemberSource = structValueSource.getMemberUnwinding(((StructMemberRef) value).getMemberName(), getProgram(), getScope(), currentStmt, currentBlock, stmtIt);
+         final ValueSource structValueSource = getValueSource(program, programScope, structValue, currentStmt, stmtIt, currentBlock);
+         final ValueSource structMemberSource = structValueSource.getMemberUnwinding(((StructMemberRef) value).getMemberName(), program, programScope, currentStmt, currentBlock, stmtIt);
          return structMemberSource;
       }
+
+
       return null;
    }
-
-   /**
-    * Unwind assignment from an RValue to an LValue
-    *
-    * @param lValueUnwinding The unwinding of the LValue
-    * @param rValueUnwinding The unwinding of the RValue
-    * @param lValueUnwoundList will receive the actual unwinding used for the lValue (if non-null)
-    * @param stmtIt Statement iterator used for adding unwound assignment statements (before the current statement)
-    * @param initialAssignment Is this the initial assignment
-    * @param source The statement source
-    */
-   private void unwindAssignment(RValueUnwinding lValueUnwinding, RValueUnwinding rValueUnwinding, List<RValue> lValueUnwoundList, ListIterator<Statement> stmtIt, boolean initialAssignment, StatementSource source) {
-      if(lValueUnwinding.isBulkCopyable() && rValueUnwinding.isBulkCopyable()) {
-         // Use bulk unwinding for a struct member that is an array
-         stmtIt.previous();
-         if(lValueUnwinding.getArraySpec() != null)
-            if(rValueUnwinding.getArraySpec() == null || !lValueUnwinding.getArraySpec().equals(rValueUnwinding.getArraySpec()))
-               throw new RuntimeException("ArraySpec mismatch!");
-         LValue lValueMemberVarRef = lValueUnwinding.getBulkLValue(getScope());
-         RValue rValueBulkUnwinding = rValueUnwinding.getBulkRValue(getScope());
-         if(lValueUnwoundList != null)
-            lValueUnwoundList.add(lValueMemberVarRef);
-         Statement copyStmt = new StatementAssignment(lValueMemberVarRef, rValueBulkUnwinding, initialAssignment, source, Comment.NO_COMMENTS);
-         stmtIt.add(copyStmt);
-         stmtIt.next();
-         getLog().append("Adding struct value member variable copy " + copyStmt.toString(getProgram(), false));
-      } else {
-         // Unwinding a non-array struct member
-         stmtIt.previous();
-         LValue lValueMemberVarRef = (LValue) lValueUnwinding.getUnwinding(getScope());
-         RValue rValueMemberVarRef = rValueUnwinding.getUnwinding(getScope());
-         if(lValueUnwoundList != null)
-            lValueUnwoundList.add(lValueMemberVarRef);
-         Statement copyStmt = new StatementAssignment(lValueMemberVarRef, rValueMemberVarRef, initialAssignment, source, Comment.NO_COMMENTS);
-         stmtIt.add(copyStmt);
-         stmtIt.next();
-         getLog().append("Adding struct value member variable copy " + copyStmt.toString(getProgram(), false));
-      }
-   }
-
-   /**
-    * Determine whether a value can be used in a bulk assignment
-    *
-    * @param value The value
-    * @return true if the value is bulk assignable
-    */
-   private boolean isBulkAssignable(RValue value) {
-      if(value instanceof SymbolVariableRef) {
-         Variable var = getScope().getVar((SymbolVariableRef) value);
-         if(var.isStructClassic())
-            // A load/store struct value
-            return true;
-      }
-      if(value instanceof StructZero)
-         // A zero-filled struct value
-         return true;
-      if(value instanceof ConstantStructValue)
-         // A constant struct value
-         return true;
-      if(value instanceof StructMemberRef && ((StructMemberRef) value).getStruct() instanceof PointerDereference)
-         // A member of a struct in memory
-         return true;
-      if(value instanceof PointerDereference) {
-         final SymbolType symbolType = SymbolTypeInference.inferType(getProgram().getScope(), value);
-         if(symbolType instanceof SymbolTypeStruct)
-            // A pointer to a struct
-            return true;
-      }
-      // TODO: Add support for arrays
-      // Not bulk assignable
-      return false;
-   }
-
-   /**
-    * Get unwinding for a value
-    *
-    * @param value The value
-    * @return Unwinding for the value
-    */
-   private RValueUnwinding getValueUnwinding(RValue value, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-      if(value != null) {
-         SymbolType valueType = SymbolTypeInference.inferType(getScope(), value);
-         if(valueType instanceof SymbolTypeStruct) {
-            if(value instanceof VariableRef) {
-               Variable variable = getScope().getVariable((VariableRef) value);
-               if(variable.isStructClassic()) {
-                  return new RValueUnwindingStructVariable(variable);
-               }
-            }
-            if(value instanceof StructZero)
-               return new RValueUnwindingZero(valueType, null);
-            if(value instanceof ConstantStructValue)
-               return new RValueUnwindingConstant(valueType, null, (ConstantStructValue) value);
-            if(value instanceof PointerDereference)
-               return new RValueUnwindingStructPointerDeref((PointerDereference) value, (SymbolTypeStruct) valueType);
-            if(value instanceof StructMemberRef && ((StructMemberRef) value).getStruct() instanceof PointerDereferenceIndexed) {
-               final StructMemberRef structMemberRef = (StructMemberRef) value;
-               final PointerDereferenceIndexed structPointerDerefIdx = (PointerDereferenceIndexed) structMemberRef.getStruct();
-               final SymbolType structPointerType = SymbolTypeInference.inferType(getScope(), structPointerDerefIdx);
-               if(!(structPointerType instanceof SymbolTypeStruct))
-                  throw new CompileError("Value is not a struct" + structPointerDerefIdx.toString(getProgram()), currentStmt);
-
-               final StructDefinition structDefinition = ((SymbolTypeStruct) structPointerType).getStructDefinition(getScope());
-               final String memberName = structMemberRef.getMemberName();
-               final Variable member = structDefinition.getMember(memberName);
-               final SymbolType memberType = member.getType();
-               final ArraySpec memberArraySpec = member.getArraySpec();
-               final ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(getScope(), structDefinition, memberName);
-               return new RValueUnwindingStructPointerDereferenceIndexedMember(structPointerDerefIdx, memberType, memberArraySpec, memberOffsetConstant, currentBlock, stmtIt, currentStmt);
-            }
-
-         }
-      }
-      return null;
-   }
-
 
    /**
     * Examine a value - and if it represents a struct get the unwinding information for the struct members

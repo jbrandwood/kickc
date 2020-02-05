@@ -2,8 +2,9 @@ Fixing pointer array-indexing *((const struct Point*) points + (byte) main::i)
 Fixing pointer array-indexing *((const struct Point*) points + (byte) main::i1)
 Fixing pointer array-indexing *((const struct Point*) main::SCREEN + (byte) main::i1)
 Constantified RValue *((const struct Point*) points + (byte~) main::$2) ← (struct Point){ (byte) 2, (byte) main::i }
-Adding struct value member variable copy *((byte*~) main::$4 + (byte~) main::$2) ← (byte) 2
-Adding struct value member variable copy *((byte*~) main::$5 + (byte~) main::$2) ← (byte) main::i
+Unwinding value copy *((const struct Point*) points + (byte~) main::$2) ← (struct Point){ (byte) 2, (byte) main::i }
+Adding value simple copy *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$2) ← (byte) 2
+Adding value simple copy *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$2) ← (byte) main::i
 Adding value bulk copy *((const struct Point*) main::SCREEN + (byte~) main::$3) ← memcpy(*((const struct Point*) points + (byte~) main::$3), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Culled Empty Block (label) main::@4
 
@@ -18,10 +19,8 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
-  (byte*~) main::$4 ← (byte*)(const struct Point*) points + (const byte) OFFSET_STRUCT_POINT_X
-  *((byte*~) main::$4 + (byte~) main::$2) ← (byte) 2
-  (byte*~) main::$5 ← (byte*)(const struct Point*) points + (const byte) OFFSET_STRUCT_POINT_Y
-  *((byte*~) main::$5 + (byte~) main::$2) ← (byte) main::i#2
+  *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$2) ← (byte) 2
+  *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$2) ← (byte) main::i#2
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,1)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,1)
   if((bool~) main::$0) goto main::@1
@@ -62,8 +61,6 @@ SYMBOL TABLE SSA
 (bool~) main::$1
 (byte~) main::$2
 (byte~) main::$3
-(byte*~) main::$4
-(byte*~) main::$5
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -81,22 +78,17 @@ SYMBOL TABLE SSA
 
 Simplifying constant pointer cast (struct Point*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$0 [9] if((byte) main::i#1!=rangelast(0,1)) goto main::@1
-Simple Condition (bool~) main::$1 [16] if((byte) main::i1#1!=rangelast(0,1)) goto main::@3
+Simple Condition (bool~) main::$0 [7] if((byte) main::i#1!=rangelast(0,1)) goto main::@1
+Simple Condition (bool~) main::$1 [14] if((byte) main::i1#1!=rangelast(0,1)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [3] (byte*~) main::$4 ← (byte*)(const struct Point*) points + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [5] (byte*~) main::$5 ← (byte*)(const struct Point*) points + (const byte) OFFSET_STRUCT_POINT_Y
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::i#0 = 0
-Constant (const byte*) main::$4 = (byte*)points+OFFSET_STRUCT_POINT_X
-Constant (const byte*) main::$5 = (byte*)points+OFFSET_STRUCT_POINT_Y
 Constant (const byte) main::i1#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [7] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [9] if(main::i#1!=rangelast(0,1)) goto main::@1 to (number) 2
-Resolved ranged next value [14] main::i1#1 ← ++ main::i1#2 to ++
-Resolved ranged comparison value [16] if(main::i1#1!=rangelast(0,1)) goto main::@3 to (number) 2
-Simplifying expression containing zero (byte*)points in 
+Resolved ranged next value [5] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [7] if(main::i#1!=rangelast(0,1)) goto main::@1 to (number) 2
+Resolved ranged next value [12] main::i1#1 ← ++ main::i1#2 to ++
+Resolved ranged comparison value [14] if(main::i1#1!=rangelast(0,1)) goto main::@3 to (number) 2
+Simplifying expression containing zero (byte*)points in [3] *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$2) ← (byte) 2
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
@@ -114,10 +106,8 @@ Rewriting multiplication to use shift [7] (byte~) main::$3 ← (byte) main::i1#2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i1#0
-Constant inlined main::$5 = (byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y
 Constant inlined main::i#0 = (byte) 0
 Constant inlined main::i1#0 = (byte) 0
-Constant inlined main::$4 = (byte*)(const struct Point*) points
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@5(between main::@1 and main::@1)
 Added new block during phi lifting main::@6(between main::@3 and main::@3)

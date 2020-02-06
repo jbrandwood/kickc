@@ -5,10 +5,8 @@ import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.values.ConstantRef;
-import dk.camelot64.kickc.model.values.ConstantString;
-import dk.camelot64.kickc.model.values.ConstantValue;
-import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -93,7 +91,9 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
             // Create a new root - and roll around again
             ProgramScope rootScope = getScope();
             String localName = getRootName(constantVars);
-            Variable newRootConstant = Variable.createConstant(localName, SymbolType.STRING, rootScope, new ArraySpec(), constString, segmentData);
+            final long stringLength = constString.getStringLength();
+            final ConstantInteger arraySize = new ConstantInteger(stringLength, stringLength<256?SymbolType.BYTE : SymbolType.WORD);
+            Variable newRootConstant = Variable.createConstant(localName, new SymbolTypePointer(SymbolType.BYTE), rootScope, new ArraySpec(arraySize), constString, segmentData);
             rootScope.add(newRootConstant);
             rootConstant = newRootConstant;
          }

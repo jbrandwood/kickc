@@ -6,10 +6,10 @@
   .const SIZEOF_SIGNED_WORD = 2
 main: {
     .label SCREEN = $400
-    .label __0 = 2
-    .label __1 = 2
     .label y1 = 4
     .label y2 = 6
+    .label __0 = 2
+    .label __1 = 2
     lda #<$1234
     sta.z y1
     lda #>$1234

@@ -2,14 +2,14 @@
 :BasicUpstart(__b1)
 .pc = $80d "Program"
   .const OFFSET_STRUCT_NODE_VALUE = 2
-  .label print_line_cursor = 4
-  .label print_char_cursor = 6
   .label last_time = $a
   .label rand_seed = $c
+  .label print_line_cursor = 4
+  .label print_char_cursor = 6
   .label Ticks = $10
-  .label Ticks_1 = $e
   .label free_ = 8
   .label root = 2
+  .label Ticks_1 = $e
 __b1:
   lda #<0
   sta.z last_time

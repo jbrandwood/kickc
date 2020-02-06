@@ -12,9 +12,9 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte) idx#15 ← phi( @2/(byte) idx#16 )
-  (dword) main::d#0 ← (dword) $12345678
-  (word) main::w#0 ← (word) $1234
-  (byte) main::b#0 ← (byte) $12
+  (dword) main::d ← (dword) $12345678
+  (word) main::w ← (word) $1234
+  (byte) main::b ← (byte) $12
   (void*) print::ptr#0 ← (const void*) main::vb
   call print 
   to:main::@1
@@ -96,15 +96,12 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(byte) main::b
-(byte) main::b#0
-(dword) main::d
-(dword) main::d#0
+(byte) main::b loadstore
+(dword) main::d loadstore
 (const void*) main::vb = (void*)&(byte) main::b
 (const void*) main::vd = (void*)&(dword) main::d
 (const void*) main::vw = (void*)&(word) main::w
-(word) main::w
-(word) main::w#0
+(word) main::w loadstore
 (void()) print((void*) print::ptr)
 (byte*~) print::$0
 (label) print::@return
@@ -184,9 +181,9 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (dword) main::d#0 ← (dword) $12345678
-  [5] (word) main::w#0 ← (word) $1234
-  [6] (byte) main::b#0 ← (byte) $12
+  [4] (dword) main::d ← (dword) $12345678
+  [5] (word) main::w ← (word) $1234
+  [6] (byte) main::b ← (byte) $12
   [7] call print 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -218,12 +215,9 @@ VARIABLE REGISTER WEIGHTS
 (byte) idx#12 4.0
 (byte) idx#13 1.0
 (void()) main()
-(byte) main::b
-(byte) main::b#0 20.0
-(dword) main::d
-(dword) main::d#0 20.0
-(word) main::w
-(word) main::w#0 20.0
+(byte) main::b loadstore 20.0
+(dword) main::d loadstore 20.0
+(word) main::w loadstore 20.0
 (void()) print((void*) print::ptr)
 (void*) print::ptr
 (void*) print::ptr#3
@@ -231,17 +225,20 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ print::ptr#3 ]
 [ idx#12 idx#13 ]
+Added variable main::d to live range equivalence class [ main::d ]
+Added variable main::w to live range equivalence class [ main::w ]
+Added variable main::b to live range equivalence class [ main::b ]
 Complete equivalence classes
 [ print::ptr#3 ]
 [ idx#12 idx#13 ]
-[ main::d#0 ]
-[ main::w#0 ]
-[ main::b#0 ]
+[ main::d ]
+[ main::w ]
+[ main::b ]
 Allocated zp[2]:2 [ print::ptr#3 ]
 Allocated zp[1]:4 [ idx#12 idx#13 ]
-Allocated zp[4]:5 [ main::d#0 ]
-Allocated zp[2]:9 [ main::w#0 ]
-Allocated zp[1]:11 [ main::b#0 ]
+Allocated zp[4]:5 [ main::d ]
+Allocated zp[2]:9 [ main::w ]
+Allocated zp[1]:11 [ main::b ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -276,7 +273,7 @@ main: {
     .label d = 5
     .label w = 9
     .label b = $b
-    // [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
+    // [4] (dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta.z d
     lda #>$12345678
@@ -285,12 +282,12 @@ main: {
     sta.z d+2
     lda #>$12345678>>$10
     sta.z d+3
-    // [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
+    // [5] (word) main::w ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
     sta.z w
     lda #>$1234
     sta.z w+1
-    // [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
+    // [6] (byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
     sta.z b
     // [7] call print 
@@ -361,35 +358,35 @@ print: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (dword) main::d#0 ← (dword) $12345678 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] (word) main::w#0 ← (word) $1234 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] (byte) main::b#0 ← (byte) $12 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] (dword) main::d ← (dword) $12345678 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] (word) main::w ← (word) $1234 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] (byte) main::b ← (byte) $12 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [14] *((const byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) [ idx#12 ] ( main:2::print:7 [ idx#12 ] main:2::print:9 [ idx#12 ] main:2::print:11 [ idx#12 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ idx#12 idx#13 ]
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ idx#12 idx#13 ]
-Statement [4] (dword) main::d#0 ← (dword) $12345678 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] (word) main::w#0 ← (word) $1234 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] (byte) main::b#0 ← (byte) $12 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] (dword) main::d ← (dword) $12345678 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] (word) main::w ← (word) $1234 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [6] (byte) main::b ← (byte) $12 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [14] *((const byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) [ idx#12 ] ( main:2::print:7 [ idx#12 ] main:2::print:9 [ idx#12 ] main:2::print:11 [ idx#12 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ print::ptr#3 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ idx#12 idx#13 ] : zp[1]:4 , reg byte x , 
-Potential registers zp[4]:5 [ main::d#0 ] : zp[4]:5 , 
-Potential registers zp[2]:9 [ main::w#0 ] : zp[2]:9 , 
-Potential registers zp[1]:11 [ main::b#0 ] : zp[1]:11 , 
+Potential registers zp[4]:5 [ main::d ] : zp[4]:5 , 
+Potential registers zp[2]:9 [ main::w ] : zp[2]:9 , 
+Potential registers zp[1]:11 [ main::b ] : zp[1]:11 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 20: zp[4]:5 [ main::d#0 ] 20: zp[2]:9 [ main::w#0 ] 20: zp[1]:11 [ main::b#0 ] 
+Uplift Scope [main] 20: zp[4]:5 [ main::d ] 20: zp[2]:9 [ main::w ] 20: zp[1]:11 [ main::b ] 
 Uplift Scope [] 5: zp[1]:4 [ idx#12 idx#13 ] 
 Uplift Scope [print] 0: zp[2]:2 [ print::ptr#3 ] 
 
-Uplifting [main] best 144 combination zp[4]:5 [ main::d#0 ] zp[2]:9 [ main::w#0 ] zp[1]:11 [ main::b#0 ] 
+Uplifting [main] best 144 combination zp[4]:5 [ main::d ] zp[2]:9 [ main::w ] zp[1]:11 [ main::b ] 
 Uplifting [] best 135 combination reg byte x [ idx#12 idx#13 ] 
 Uplifting [print] best 135 combination zp[2]:2 [ print::ptr#3 ] 
-Attempting to uplift remaining variables inzp[1]:11 [ main::b#0 ]
-Uplifting [main] best 135 combination zp[1]:11 [ main::b#0 ] 
-Allocated (was zp[4]:5) zp[4]:4 [ main::d#0 ]
-Allocated (was zp[2]:9) zp[2]:8 [ main::w#0 ]
-Allocated (was zp[1]:11) zp[1]:10 [ main::b#0 ]
+Attempting to uplift remaining variables inzp[1]:11 [ main::b ]
+Uplifting [main] best 135 combination zp[1]:11 [ main::b ] 
+Allocated (was zp[4]:5) zp[4]:4 [ main::d ]
+Allocated (was zp[2]:9) zp[2]:8 [ main::w ]
+Allocated (was zp[1]:11) zp[1]:10 [ main::b ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -422,7 +419,7 @@ main: {
     .label d = 4
     .label w = 8
     .label b = $a
-    // [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
+    // [4] (dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta.z d
     lda #>$12345678
@@ -431,12 +428,12 @@ main: {
     sta.z d+2
     lda #>$12345678>>$10
     sta.z d+3
-    // [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
+    // [5] (word) main::w ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
     sta.z w
     lda #>$1234
     sta.z w+1
-    // [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
+    // [6] (byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
     sta.z b
     // [7] call print 
@@ -546,15 +543,12 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte) main::b
-(byte) main::b#0 b zp[1]:10 20.0
-(dword) main::d
-(dword) main::d#0 d zp[4]:4 20.0
+(byte) main::b loadstore zp[1]:10 20.0
+(dword) main::d loadstore zp[4]:4 20.0
 (const void*) main::vb = (void*)&(byte) main::b
 (const void*) main::vd = (void*)&(dword) main::d
 (const void*) main::vw = (void*)&(word) main::w
-(word) main::w
-(word) main::w#0 w zp[2]:8 20.0
+(word) main::w loadstore zp[2]:8 20.0
 (void()) print((void*) print::ptr)
 (label) print::@return
 (void*) print::ptr
@@ -562,9 +556,9 @@ FINAL SYMBOL TABLE
 
 zp[2]:2 [ print::ptr#3 ]
 reg byte x [ idx#12 idx#13 ]
-zp[4]:4 [ main::d#0 ]
-zp[2]:8 [ main::w#0 ]
-zp[1]:10 [ main::b#0 ]
+zp[4]:4 [ main::d ]
+zp[2]:8 [ main::w ]
+zp[1]:10 [ main::b ]
 
 
 FINAL ASSEMBLER
@@ -593,7 +587,7 @@ main: {
     .label w = 8
     .label b = $a
     // d = 0x12345678
-    // [4] (dword) main::d#0 ← (dword) $12345678 -- vduz1=vduc1 
+    // [4] (dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta.z d
     lda #>$12345678
@@ -603,13 +597,13 @@ main: {
     lda #>$12345678>>$10
     sta.z d+3
     // w = 0x1234
-    // [5] (word) main::w#0 ← (word) $1234 -- vwuz1=vwuc1 
+    // [5] (word) main::w ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
     sta.z w
     lda #>$1234
     sta.z w+1
     // b = 0x12
-    // [6] (byte) main::b#0 ← (byte) $12 -- vbuz1=vbuc1 
+    // [6] (byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
     sta.z b
     // print(vb)

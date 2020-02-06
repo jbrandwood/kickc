@@ -2,10 +2,10 @@
 :BasicUpstart(__b1)
 .pc = $80d "Program"
   .label rom = $e000
-  .label print_char_cursor = 9
-  .label print_line_cursor = 2
   .label last_time = $b
   .label rand_seed = $d
+  .label print_char_cursor = 9
+  .label print_line_cursor = 2
   .label Ticks = $f
   .label Ticks_1 = $11
 __b1:

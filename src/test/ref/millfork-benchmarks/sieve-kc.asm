@@ -3,10 +3,10 @@
 .pc = $80d "Program"
   .const COUNT = $4000
   .const SQRT_COUNT = $80
-  .label print_line_cursor = 2
-  .label print_char_cursor = 4
   .label last_time = 6
   .label rand_seed = 8
+  .label print_line_cursor = 2
+  .label print_char_cursor = 4
   .label Ticks = $a
   .label Ticks_1 = $c
 __b1:

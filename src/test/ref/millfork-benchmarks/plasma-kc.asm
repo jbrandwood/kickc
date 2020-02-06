@@ -9,10 +9,10 @@
   .label CHARSET = $e800
   .const PAGE1 = SCREEN1>>6&$f0|CHARSET>>$a&$e
   .const PAGE2 = SCREEN2>>6&$f0|CHARSET>>$a&$e
-  .label print_line_cursor = 4
-  .label print_char_cursor = 6
   .label last_time = $a
   .label rand_seed = $c
+  .label print_line_cursor = 4
+  .label print_char_cursor = 6
   .label Ticks = $10
   .label Ticks_1 = $13
 __b1:

@@ -2,10 +2,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label textid = 4
+  .label textid = 2
 main: {
-    .label text = 2
-    .label screen = 5
+    .label text = 5
+    .label screen = 3
     lda #<0
     sta.z text
     sta.z text+1

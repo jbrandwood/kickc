@@ -109,7 +109,7 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
                isVol.set(true);
             if(programValue.get() instanceof VariableRef) {
                Variable variable = getScope().getVariable((VariableRef) programValue.get());
-               if(variable.isAnyVolatile())
+               if(variable.isVolatile())
                   isVol.set(true);
             }
          };

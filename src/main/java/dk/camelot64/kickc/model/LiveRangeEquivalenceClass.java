@@ -143,7 +143,7 @@ public class LiveRangeEquivalenceClass {
    public boolean hasVolatile(Program program) {
       for(VariableRef varRef : variables) {
          Variable variable = program.getScope().getVariable(varRef);
-         if(variable.isAnyVolatile()) {
+         if(variable.isVolatile()) {
             return true;
          }
       }

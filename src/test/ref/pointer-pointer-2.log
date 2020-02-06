@@ -15,21 +15,19 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @2
   (byte) textid#16 ← phi( @2/(byte) textid#15 )
   (byte*) main::screen#0 ← (byte*)(number) $400
-  (byte*) main::text#0 ← (byte*) 0
+  (byte*) main::text ← (byte*) 0
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
   (byte) main::i#6 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
   (byte*) main::screen#5 ← phi( main/(byte*) main::screen#0 main::@4/(byte*) main::screen#6 )
   (byte) textid#11 ← phi( main/(byte) textid#16 main::@4/(byte) textid#12 )
-  (byte*) main::text#2 ← phi( main/(byte*) main::text#0 main::@4/(byte*) main::text#5 )
-  (byte**) nexttext::textp#0 ← &(byte*) main::text#2
+  (byte**) nexttext::textp#0 ← &(byte*) main::text
   call nexttext 
   to:main::@9
 main::@9: scope:[main]  from main::@1
   (byte) main::i#5 ← phi( main::@1/(byte) main::i#6 )
   (byte*) main::screen#4 ← phi( main::@1/(byte*) main::screen#5 )
-  (byte*) main::text#6 ← phi( main::@1/(byte*) main::text#2 )
   (byte) textid#6 ← phi( main::@1/(byte) textid#4 )
   (byte) textid#0 ← (byte) textid#6
   to:main::@2
@@ -37,23 +35,20 @@ main::@2: scope:[main]  from main::@3 main::@9
   (byte) textid#17 ← phi( main::@3/(byte) textid#18 main::@9/(byte) textid#0 )
   (byte) main::i#3 ← phi( main::@3/(byte) main::i#4 main::@9/(byte) main::i#5 )
   (byte*) main::screen#3 ← phi( main::@3/(byte*) main::screen#1 main::@9/(byte*) main::screen#4 )
-  (byte*) main::text#3 ← phi( main::@3/(byte*) main::text#1 main::@9/(byte*) main::text#6 )
-  (bool~) main::$2 ← (number) 0 != *((byte*) main::text#3)
+  (bool~) main::$2 ← (number) 0 != *((byte*) main::text)
   if((bool~) main::$2) goto main::@3
   to:main::@4
 main::@3: scope:[main]  from main::@2
   (byte) textid#18 ← phi( main::@2/(byte) textid#17 )
   (byte) main::i#4 ← phi( main::@2/(byte) main::i#3 )
   (byte*) main::screen#2 ← phi( main::@2/(byte*) main::screen#3 )
-  (byte*) main::text#4 ← phi( main::@2/(byte*) main::text#3 )
-  *((byte*) main::screen#2) ← *((byte*) main::text#4)
+  *((byte*) main::screen#2) ← *((byte*) main::text)
   (byte*) main::screen#1 ← ++ (byte*) main::screen#2
-  (byte*) main::text#1 ← ++ (byte*) main::text#4
+  (byte*) main::text ← ++ (byte*) main::text
   to:main::@2
 main::@4: scope:[main]  from main::@2
   (byte*) main::screen#6 ← phi( main::@2/(byte*) main::screen#3 )
   (byte) textid#12 ← phi( main::@2/(byte) textid#17 )
-  (byte*) main::text#5 ← phi( main::@2/(byte*) main::text#3 )
   (byte) main::i#2 ← phi( main::@2/(byte) main::i#3 )
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$14)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,$14)
@@ -133,14 +128,7 @@ SYMBOL TABLE SSA
 (byte*) main::screen#4
 (byte*) main::screen#5
 (byte*) main::screen#6
-(byte*) main::text
-(byte*) main::text#0
-(byte*) main::text#1
-(byte*) main::text#2
-(byte*) main::text#3
-(byte*) main::text#4
-(byte*) main::text#5
-(byte*) main::text#6
+(byte*) main::text loadstore
 (void()) nexttext((byte**) nexttext::textp)
 (number~) nexttext::$0
 (bool~) nexttext::$1
@@ -175,7 +163,7 @@ SYMBOL TABLE SSA
 (byte) textid#8
 (byte) textid#9
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (number) 0 != *((byte*) main::text#3)
+Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (number) 0 != *((byte*) main::text)
 Adding number conversion cast (unumber) 1 in (number~) nexttext::$0 ← (byte) textid#8 & (number) 1
 Adding number conversion cast (unumber) nexttext::$0 in (number~) nexttext::$0 ← (byte) textid#8 & (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (bool~) nexttext::$1 ← (unumber~) nexttext::$0 == (number) 0
@@ -190,11 +178,9 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) nexttext::$0 ← (byte) textid#8 & (byte) 1
-Alias (byte*) main::text#2 = (byte*) main::text#6 
 Alias (byte*) main::screen#4 = (byte*) main::screen#5 
 Alias (byte) main::i#5 = (byte) main::i#6 
 Alias (byte) textid#0 = (byte) textid#6 
-Alias (byte*) main::text#3 = (byte*) main::text#4 (byte*) main::text#5 
 Alias (byte*) main::screen#2 = (byte*) main::screen#3 (byte*) main::screen#6 
 Alias (byte) main::i#2 = (byte) main::i#4 (byte) main::i#3 
 Alias (byte) textid#1 = (byte) textid#18 (byte) textid#17 (byte) textid#12 (byte) textid#7 
@@ -214,13 +200,13 @@ Identical Phi Values (byte) textid#8 (byte) textid#11
 Identical Phi Values (byte**) nexttext::textp#1 (byte**) nexttext::textp#0
 Identical Phi Values (byte) textid#10 (byte) textid#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [11] if((byte) 0!=*((byte*) main::text#3)) goto main::@3
+Simple Condition (bool~) main::$2 [11] if((byte) 0!=*((byte*) main::text)) goto main::@3
 Simple Condition (bool~) main::$1 [19] if((byte) main::i#1!=rangelast(0,$14)) goto main::@1
 Simple Condition (bool~) nexttext::$1 [28] if((byte~) nexttext::$0==(byte) 0) goto nexttext::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const byte) main::i#0 = 0
-Constant (const byte**) nexttext::textp#0 = &main::text#2
+Constant (const byte**) nexttext::textp#0 = &main::text
 Constant (const byte) textid#15 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [17] main::i#1 ← ++ main::i#5 to ++
@@ -246,19 +232,15 @@ Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:3 
-Calls in [main] to nexttext:9 
+Calls in [main] to nexttext:8 
 
-Created 6 initial phi equivalence classes
-Coalesced [7] main::text#7 ← main::text#0
-Coalesced [10] main::text#10 ← main::text#2
-Coalesced [11] main::screen#9 ← main::screen#4
-Coalesced (already) [17] main::text#8 ← main::text#3
-Coalesced [18] textid#19 ← textid#13
-Coalesced (already) [19] main::screen#7 ← main::screen#2
-Coalesced [20] main::i#7 ← main::i#1
-Coalesced [24] main::text#9 ← main::text#1
-Coalesced [25] main::screen#8 ← main::screen#1
-Coalesced down to 4 phi equivalence classes
+Created 4 initial phi equivalence classes
+Coalesced [9] main::screen#9 ← main::screen#4
+Coalesced [15] textid#19 ← textid#13
+Coalesced (already) [16] main::screen#7 ← main::screen#2
+Coalesced [17] main::i#7 ← main::i#1
+Coalesced [21] main::screen#8 ← main::screen#1
+Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) @1
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@9
@@ -282,19 +264,17 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (byte*) main::text#0 ← (byte*) 0
+  [4] (byte*) main::text ← (byte*) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
   [5] (byte) main::i#5 ← phi( main/(byte) 0 main::@4/(byte) main::i#1 )
   [5] (byte*) main::screen#4 ← phi( main/(byte*) 1024 main::@4/(byte*) main::screen#2 )
   [5] (byte) textid#11 ← phi( main/(byte) 0 main::@4/(byte) textid#13 )
-  [5] (byte*) main::text#2 ← phi( main/(byte*) main::text#0 main::@4/(byte*) main::text#3 )
   [6] call nexttext 
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   [7] (byte*) main::screen#2 ← phi( main::@3/(byte*) main::screen#1 main::@1/(byte*) main::screen#4 )
-  [7] (byte*) main::text#3 ← phi( main::@3/(byte*) main::text#1 main::@1/(byte*) main::text#2 )
-  [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3
+  [8] if((byte) 0!=*((byte*) main::text)) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@2
   [9] (byte) main::i#1 ← ++ (byte) main::i#5
@@ -304,9 +284,9 @@ main::@return: scope:[main]  from main::@4
   [11] return 
   to:@return
 main::@3: scope:[main]  from main::@2
-  [12] *((byte*) main::screen#2) ← *((byte*) main::text#3)
+  [12] *((byte*) main::screen#2) ← *((byte*) main::text)
   [13] (byte*) main::screen#1 ← ++ (byte*) main::screen#2
-  [14] (byte*) main::text#1 ← ++ (byte*) main::text#3
+  [14] (byte*) main::text ← ++ (byte*) main::text
   to:main::@2
 
 (void()) nexttext((byte**) nexttext::textp)
@@ -335,11 +315,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) main::screen#1 101.0
 (byte*) main::screen#2 65.0
 (byte*) main::screen#4 11.0
-(byte*) main::text
-(byte*) main::text#0 4.0
-(byte*) main::text#1 202.0
-(byte*) main::text#2 12.0
-(byte*) main::text#3 70.99999999999999
+(byte*) main::text loadstore 50.75
 (void()) nexttext((byte**) nexttext::textp)
 (byte~) nexttext::$0 2.0
 (byte**) nexttext::textp
@@ -348,21 +324,21 @@ VARIABLE REGISTER WEIGHTS
 (byte) textid#13 1.0
 
 Initial phi equivalence classes
-[ main::text#2 main::text#0 main::text#3 main::text#1 ]
 [ textid#11 textid#13 ]
 [ main::screen#4 main::screen#2 main::screen#1 ]
 [ main::i#5 main::i#1 ]
+Added variable main::text to live range equivalence class [ main::text ]
 Added variable nexttext::$0 to live range equivalence class [ nexttext::$0 ]
 Complete equivalence classes
-[ main::text#2 main::text#0 main::text#3 main::text#1 ]
 [ textid#11 textid#13 ]
 [ main::screen#4 main::screen#2 main::screen#1 ]
 [ main::i#5 main::i#1 ]
+[ main::text ]
 [ nexttext::$0 ]
-Allocated zp[2]:2 [ main::text#2 main::text#0 main::text#3 main::text#1 ]
-Allocated zp[1]:4 [ textid#11 textid#13 ]
-Allocated zp[2]:5 [ main::screen#4 main::screen#2 main::screen#1 ]
-Allocated zp[1]:7 [ main::i#5 main::i#1 ]
+Allocated zp[1]:2 [ textid#11 textid#13 ]
+Allocated zp[2]:3 [ main::screen#4 main::screen#2 main::screen#1 ]
+Allocated zp[1]:5 [ main::i#5 main::i#1 ]
+Allocated zp[2]:6 [ main::text ]
 Allocated zp[1]:8 [ nexttext::$0 ]
 
 INITIAL ASM
@@ -374,7 +350,7 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label textid = 4
+  .label textid = 2
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -391,10 +367,10 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label text = 2
-    .label screen = 5
-    .label i = 7
-    // [4] (byte*) main::text#0 ← (byte*) 0 -- pbuz1=pbuc1 
+    .label text = 6
+    .label screen = 3
+    .label i = 5
+    // [4] (byte*) main::text ← (byte*) 0 -- pbuz1=pbuc1 
     lda #<0
     sta.z text
     lda #>0
@@ -412,14 +388,12 @@ main: {
     // [5] phi (byte) textid#11 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z textid
-    // [5] phi (byte*) main::text#2 = (byte*) main::text#0 [phi:main->main::@1#3] -- register_copy 
     jmp __b1
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
     // [5] phi (byte) main::i#5 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::screen#4 = (byte*) main::screen#2 [phi:main::@4->main::@1#1] -- register_copy 
     // [5] phi (byte) textid#11 = (byte) textid#13 [phi:main::@4->main::@1#2] -- register_copy 
-    // [5] phi (byte*) main::text#2 = (byte*) main::text#3 [phi:main::@4->main::@1#3] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
@@ -429,11 +403,10 @@ main: {
   __b2_from___b1:
   __b2_from___b3:
     // [7] phi (byte*) main::screen#2 = (byte*) main::screen#4 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
-    // [7] phi (byte*) main::text#3 = (byte*) main::text#2 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
     jmp __b2
     // main::@2
   __b2:
-    // [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [8] if((byte) 0!=*((byte*) main::text)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (text),y
     cmp #0
@@ -454,7 +427,7 @@ main: {
     rts
     // main::@3
   __b3:
-    // [12] *((byte*) main::screen#2) ← *((byte*) main::text#3) -- _deref_pbuz1=_deref_pbuz2 
+    // [12] *((byte*) main::screen#2) ← *((byte*) main::text) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (text),y
     ldy #0
@@ -464,7 +437,7 @@ main: {
     bne !+
     inc.z screen+1
   !:
-    // [14] (byte*) main::text#1 ← ++ (byte*) main::text#3 -- pbuz1=_inc_pbuz1 
+    // [14] (byte*) main::text ← ++ (byte*) main::text -- pbuz1=_inc_pbuz1 
     inc.z text
     bne !+
     inc.z text+1
@@ -515,38 +488,39 @@ nexttext: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte*) main::text#0 ← (byte*) 0 [ main::text#0 ] ( main:2 [ main::text#0 ] ) always clobbers reg byte a 
-Statement [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp[1]:7 [ main::i#5 main::i#1 ]
-Removing always clobbered register reg byte y as potential for zp[1]:7 [ main::i#5 main::i#1 ]
-Removing always clobbered register reg byte a as potential for zp[1]:4 [ textid#11 textid#13 ]
-Removing always clobbered register reg byte y as potential for zp[1]:4 [ textid#11 textid#13 ]
-Statement [12] *((byte*) main::screen#2) ← *((byte*) main::text#3) [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
-Statement [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 [ textid#11 nexttext::$0 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#11 nexttext::$0 ] ) always clobbers reg byte a 
-Statement [18] *((const byte**) nexttext::textp#0) ← (const byte*) text2 [ textid#13 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
-Statement [20] *((const byte**) nexttext::textp#0) ← (const byte*) text1 [ textid#13 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
-Statement [4] (byte*) main::text#0 ← (byte*) 0 [ main::text#0 ] ( main:2 [ main::text#0 ] ) always clobbers reg byte a 
-Statement [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
-Statement [12] *((byte*) main::screen#2) ← *((byte*) main::text#3) [ main::i#5 main::text#3 textid#13 main::screen#2 ] ( main:2 [ main::i#5 main::text#3 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
-Statement [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 [ textid#11 nexttext::$0 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#11 nexttext::$0 ] ) always clobbers reg byte a 
-Statement [18] *((const byte**) nexttext::textp#0) ← (const byte*) text2 [ textid#13 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
-Statement [20] *((const byte**) nexttext::textp#0) ← (const byte*) text1 [ textid#13 ] ( main:2::nexttext:6 [ main::text#2 main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
-Potential registers zp[2]:2 [ main::text#2 main::text#0 main::text#3 main::text#1 ] : zp[2]:2 , 
-Potential registers zp[1]:4 [ textid#11 textid#13 ] : zp[1]:4 , reg byte x , 
-Potential registers zp[2]:5 [ main::screen#4 main::screen#2 main::screen#1 ] : zp[2]:5 , 
-Potential registers zp[1]:7 [ main::i#5 main::i#1 ] : zp[1]:7 , reg byte x , 
+Statement [4] (byte*) main::text ← (byte*) 0 [ main::text ] ( main:2 [ main::text ] ) always clobbers reg byte a 
+Statement [8] if((byte) 0!=*((byte*) main::text)) goto main::@3 [ main::text main::i#5 textid#13 main::screen#2 ] ( main:2 [ main::text main::i#5 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::i#5 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:5 [ main::i#5 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ textid#11 textid#13 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ textid#11 textid#13 ]
+Statement [12] *((byte*) main::screen#2) ← *((byte*) main::text) [ main::i#5 textid#13 main::screen#2 ] ( main:2 [ main::i#5 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
+Statement [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 [ textid#11 nexttext::$0 ] ( main:2::nexttext:6 [ main::text main::screen#4 main::i#5 textid#11 nexttext::$0 ] ) always clobbers reg byte a 
+Statement [18] *((const byte**) nexttext::textp#0) ← (const byte*) text2 [ textid#13 ] ( main:2::nexttext:6 [ main::text main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
+Statement [20] *((const byte**) nexttext::textp#0) ← (const byte*) text1 [ textid#13 ] ( main:2::nexttext:6 [ main::text main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
+Statement [4] (byte*) main::text ← (byte*) 0 [ main::text ] ( main:2 [ main::text ] ) always clobbers reg byte a 
+Statement [8] if((byte) 0!=*((byte*) main::text)) goto main::@3 [ main::text main::i#5 textid#13 main::screen#2 ] ( main:2 [ main::text main::i#5 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
+Statement [12] *((byte*) main::screen#2) ← *((byte*) main::text) [ main::i#5 textid#13 main::screen#2 ] ( main:2 [ main::i#5 textid#13 main::screen#2 ] ) always clobbers reg byte a reg byte y 
+Statement [15] (byte~) nexttext::$0 ← (byte) textid#11 & (byte) 1 [ textid#11 nexttext::$0 ] ( main:2::nexttext:6 [ main::text main::screen#4 main::i#5 textid#11 nexttext::$0 ] ) always clobbers reg byte a 
+Statement [18] *((const byte**) nexttext::textp#0) ← (const byte*) text2 [ textid#13 ] ( main:2::nexttext:6 [ main::text main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
+Statement [20] *((const byte**) nexttext::textp#0) ← (const byte*) text1 [ textid#13 ] ( main:2::nexttext:6 [ main::text main::screen#4 main::i#5 textid#13 ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ textid#11 textid#13 ] : zp[1]:2 , reg byte x , 
+Potential registers zp[2]:3 [ main::screen#4 main::screen#2 main::screen#1 ] : zp[2]:3 , 
+Potential registers zp[1]:5 [ main::i#5 main::i#1 ] : zp[1]:5 , reg byte x , 
+Potential registers zp[2]:6 [ main::text ] : zp[2]:6 , 
 Potential registers zp[1]:8 [ nexttext::$0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 289: zp[2]:2 [ main::text#2 main::text#0 main::text#3 main::text#1 ] 177: zp[2]:5 [ main::screen#4 main::screen#2 main::screen#1 ] 19.64: zp[1]:7 [ main::i#5 main::i#1 ] 
-Uplift Scope [] 8.5: zp[1]:4 [ textid#11 textid#13 ] 
+Uplift Scope [main] 177: zp[2]:3 [ main::screen#4 main::screen#2 main::screen#1 ] 50.75: zp[2]:6 [ main::text ] 19.64: zp[1]:5 [ main::i#5 main::i#1 ] 
+Uplift Scope [] 8.5: zp[1]:2 [ textid#11 textid#13 ] 
 Uplift Scope [nexttext] 2: zp[1]:8 [ nexttext::$0 ] 
 
-Uplifting [main] best 6618 combination zp[2]:2 [ main::text#2 main::text#0 main::text#3 main::text#1 ] zp[2]:5 [ main::screen#4 main::screen#2 main::screen#1 ] reg byte x [ main::i#5 main::i#1 ] 
-Uplifting [] best 6618 combination zp[1]:4 [ textid#11 textid#13 ] 
+Uplifting [main] best 6618 combination zp[2]:3 [ main::screen#4 main::screen#2 main::screen#1 ] zp[2]:6 [ main::text ] reg byte x [ main::i#5 main::i#1 ] 
+Uplifting [] best 6618 combination zp[1]:2 [ textid#11 textid#13 ] 
 Uplifting [nexttext] best 6612 combination reg byte a [ nexttext::$0 ] 
-Attempting to uplift remaining variables inzp[1]:4 [ textid#11 textid#13 ]
-Uplifting [] best 6612 combination zp[1]:4 [ textid#11 textid#13 ] 
+Attempting to uplift remaining variables inzp[1]:2 [ textid#11 textid#13 ]
+Uplifting [] best 6612 combination zp[1]:2 [ textid#11 textid#13 ] 
+Allocated (was zp[2]:6) zp[2]:5 [ main::text ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -556,7 +530,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label textid = 4
+  .label textid = 2
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -573,9 +547,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label text = 2
-    .label screen = 5
-    // [4] (byte*) main::text#0 ← (byte*) 0 -- pbuz1=pbuc1 
+    .label text = 5
+    .label screen = 3
+    // [4] (byte*) main::text ← (byte*) 0 -- pbuz1=pbuc1 
     lda #<0
     sta.z text
     lda #>0
@@ -592,14 +566,12 @@ main: {
     // [5] phi (byte) textid#11 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z textid
-    // [5] phi (byte*) main::text#2 = (byte*) main::text#0 [phi:main->main::@1#3] -- register_copy 
     jmp __b1
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
     // [5] phi (byte) main::i#5 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::screen#4 = (byte*) main::screen#2 [phi:main::@4->main::@1#1] -- register_copy 
     // [5] phi (byte) textid#11 = (byte) textid#13 [phi:main::@4->main::@1#2] -- register_copy 
-    // [5] phi (byte*) main::text#2 = (byte*) main::text#3 [phi:main::@4->main::@1#3] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
@@ -609,11 +581,10 @@ main: {
   __b2_from___b1:
   __b2_from___b3:
     // [7] phi (byte*) main::screen#2 = (byte*) main::screen#4 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
-    // [7] phi (byte*) main::text#3 = (byte*) main::text#2 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
     jmp __b2
     // main::@2
   __b2:
-    // [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [8] if((byte) 0!=*((byte*) main::text)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (text),y
     cmp #0
@@ -633,7 +604,7 @@ main: {
     rts
     // main::@3
   __b3:
-    // [12] *((byte*) main::screen#2) ← *((byte*) main::text#3) -- _deref_pbuz1=_deref_pbuz2 
+    // [12] *((byte*) main::screen#2) ← *((byte*) main::text) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (text),y
     ldy #0
@@ -643,7 +614,7 @@ main: {
     bne !+
     inc.z screen+1
   !:
-    // [14] (byte*) main::text#1 ← ++ (byte*) main::text#3 -- pbuz1=_inc_pbuz1 
+    // [14] (byte*) main::text ← ++ (byte*) main::text -- pbuz1=_inc_pbuz1 
     inc.z text
     bne !+
     inc.z text+1
@@ -746,31 +717,27 @@ FINAL SYMBOL TABLE
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#5 reg byte x 3.142857142857143
 (byte*) main::screen
-(byte*) main::screen#1 screen zp[2]:5 101.0
-(byte*) main::screen#2 screen zp[2]:5 65.0
-(byte*) main::screen#4 screen zp[2]:5 11.0
-(byte*) main::text
-(byte*) main::text#0 text zp[2]:2 4.0
-(byte*) main::text#1 text zp[2]:2 202.0
-(byte*) main::text#2 text zp[2]:2 12.0
-(byte*) main::text#3 text zp[2]:2 70.99999999999999
+(byte*) main::screen#1 screen zp[2]:3 101.0
+(byte*) main::screen#2 screen zp[2]:3 65.0
+(byte*) main::screen#4 screen zp[2]:3 11.0
+(byte*) main::text loadstore zp[2]:5 50.75
 (void()) nexttext((byte**) nexttext::textp)
 (byte~) nexttext::$0 reg byte a 2.0
 (label) nexttext::@1
 (label) nexttext::@2
 (label) nexttext::@return
 (byte**) nexttext::textp
-(const byte**) nexttext::textp#0 textp = &(byte*) main::text#2
+(const byte**) nexttext::textp#0 textp = &(byte*) main::text
 (const byte*) text1[]  = (string) "camelot "
 (const byte*) text2[]  = (string) "rex "
 (byte) textid
-(byte) textid#11 textid zp[1]:4 7.5
-(byte) textid#13 textid zp[1]:4 1.0
+(byte) textid#11 textid zp[1]:2 7.5
+(byte) textid#13 textid zp[1]:2 1.0
 
-zp[2]:2 [ main::text#2 main::text#0 main::text#3 main::text#1 ]
-zp[1]:4 [ textid#11 textid#13 ]
-zp[2]:5 [ main::screen#4 main::screen#2 main::screen#1 ]
+zp[1]:2 [ textid#11 textid#13 ]
+zp[2]:3 [ main::screen#4 main::screen#2 main::screen#1 ]
 reg byte x [ main::i#5 main::i#1 ]
+zp[2]:5 [ main::text ]
 reg byte a [ nexttext::$0 ]
 
 
@@ -784,7 +751,7 @@ Score: 5705
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label textid = 4
+  .label textid = 2
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -793,10 +760,10 @@ Score: 5705
   // @end
   // main
 main: {
-    .label text = 2
-    .label screen = 5
+    .label text = 5
+    .label screen = 3
     // text
-    // [4] (byte*) main::text#0 ← (byte*) 0 -- pbuz1=pbuc1 
+    // [4] (byte*) main::text ← (byte*) 0 -- pbuz1=pbuc1 
     lda #<0
     sta.z text
     sta.z text+1
@@ -811,12 +778,10 @@ main: {
     // [5] phi (byte) textid#11 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     txa
     sta.z textid
-    // [5] phi (byte*) main::text#2 = (byte*) main::text#0 [phi:main->main::@1#3] -- register_copy 
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [5] phi (byte) main::i#5 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     // [5] phi (byte*) main::screen#4 = (byte*) main::screen#2 [phi:main::@4->main::@1#1] -- register_copy 
     // [5] phi (byte) textid#11 = (byte) textid#13 [phi:main::@4->main::@1#2] -- register_copy 
-    // [5] phi (byte*) main::text#2 = (byte*) main::text#3 [phi:main::@4->main::@1#3] -- register_copy 
     // main::@1
   __b1:
     // nexttext(&text)
@@ -824,11 +789,10 @@ main: {
     jsr nexttext
     // [7] phi from main::@1 main::@3 to main::@2 [phi:main::@1/main::@3->main::@2]
     // [7] phi (byte*) main::screen#2 = (byte*) main::screen#4 [phi:main::@1/main::@3->main::@2#0] -- register_copy 
-    // [7] phi (byte*) main::text#3 = (byte*) main::text#2 [phi:main::@1/main::@3->main::@2#1] -- register_copy 
     // main::@2
   __b2:
     // while(*text)
-    // [8] if((byte) 0!=*((byte*) main::text#3)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [8] if((byte) 0!=*((byte*) main::text)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (text),y
     cmp #0
@@ -847,7 +811,7 @@ main: {
     // main::@3
   __b3:
     // *screen++ = *text++
-    // [12] *((byte*) main::screen#2) ← *((byte*) main::text#3) -- _deref_pbuz1=_deref_pbuz2 
+    // [12] *((byte*) main::screen#2) ← *((byte*) main::text) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (text),y
     sta (screen),y
@@ -857,7 +821,7 @@ main: {
     bne !+
     inc.z screen+1
   !:
-    // [14] (byte*) main::text#1 ← ++ (byte*) main::text#3 -- pbuz1=_inc_pbuz1 
+    // [14] (byte*) main::text ← ++ (byte*) main::text -- pbuz1=_inc_pbuz1 
     inc.z text
     bne !+
     inc.z text+1

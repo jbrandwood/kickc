@@ -8,15 +8,14 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) main::screen#0 ← (byte*)(number) $400
+  (byte*) main::screen ← (byte*)(number) $400
   (byte) sub::ch#0 ← (byte) 'a'
-  (byte**) sub::dst#0 ← &(byte*) main::screen#0
+  (byte**) sub::dst#0 ← &(byte*) main::screen
   call sub 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte*) main::screen#1 ← phi( main/(byte*) main::screen#0 )
   (byte) sub::ch#1 ← (byte) 'b'
-  (byte**) sub::dst#1 ← &(byte*) main::screen#1
+  (byte**) sub::dst#1 ← &(byte*) main::screen
   call sub 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -51,9 +50,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::screen
-(byte*) main::screen#0
-(byte*) main::screen#1
+(byte*) main::screen loadstore
 (void()) sub((byte) sub::ch , (byte**) sub::dst)
 (label) sub::@return
 (byte) sub::ch
@@ -67,12 +64,10 @@ SYMBOL TABLE SSA
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Alias (byte*) main::screen#0 = (byte*) main::screen#1 
-Successful SSA optimization Pass2AliasElimination
 Constant (const byte) sub::ch#0 = 'a'
-Constant (const byte**) sub::dst#0 = &main::screen#0
+Constant (const byte**) sub::dst#0 = &main::screen
 Constant (const byte) sub::ch#1 = 'b'
-Constant (const byte**) sub::dst#1 = &main::screen#0
+Constant (const byte**) sub::dst#1 = &main::screen
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) sub::ch#0
 Inlining constant with var siblings (const byte**) sub::dst#0
@@ -80,10 +75,10 @@ Inlining constant with var siblings (const byte) sub::ch#1
 Inlining constant with var siblings (const byte**) sub::dst#1
 Constant inlined sub::ch#1 = (byte) 'b'
 Constant inlined sub::ch#0 = (byte) 'a'
-Constant inlined sub::dst#1 = &(byte*) main::screen#0
-Constant inlined sub::dst#0 = &(byte*) main::screen#0
+Constant inlined sub::dst#1 = &(byte*) main::screen
+Constant inlined sub::dst#0 = &(byte*) main::screen
 Successful SSA optimization Pass2ConstantInlining
-Identical Phi Values (byte**) sub::dst#2 &(byte*) main::screen#0
+Identical Phi Values (byte**) sub::dst#2 &(byte*) main::screen
 Successful SSA optimization Pass2IdenticalPhiElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -118,7 +113,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (byte*) main::screen#0 ← (byte*) 1024
+  [4] (byte*) main::screen ← (byte*) 1024
   [5] call sub 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -132,8 +127,8 @@ main::@return: scope:[main]  from main::@1
 (void()) sub((byte) sub::ch , (byte**) sub::dst)
 sub: scope:[sub]  from main main::@1
   [9] (byte) sub::ch#2 ← phi( main/(byte) 'a' main::@1/(byte) 'b' )
-  [10] *(*(&(byte*) main::screen#0)) ← (byte) sub::ch#2
-  [11] *(&(byte*) main::screen#0) ← ++ *(&(byte*) main::screen#0)
+  [10] *(*(&(byte*) main::screen)) ← (byte) sub::ch#2
+  [11] *(&(byte*) main::screen) ← ++ *(&(byte*) main::screen)
   to:sub::@return
 sub::@return: scope:[sub]  from sub
   [12] return 
@@ -142,8 +137,7 @@ sub::@return: scope:[sub]  from sub
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::screen
-(byte*) main::screen#0 0.2857142857142857
+(byte*) main::screen loadstore 0.2857142857142857
 (void()) sub((byte) sub::ch , (byte**) sub::dst)
 (byte) sub::ch
 (byte) sub::ch#2 2.0
@@ -151,11 +145,12 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ sub::ch#2 ]
+Added variable main::screen to live range equivalence class [ main::screen ]
 Complete equivalence classes
 [ sub::ch#2 ]
-[ main::screen#0 ]
+[ main::screen ]
 Allocated zp[1]:2 [ sub::ch#2 ]
-Allocated zp[2]:3 [ main::screen#0 ]
+Allocated zp[2]:3 [ main::screen ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -184,7 +179,7 @@ __bend:
   // main
 main: {
     .label screen = 3
-    // [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [4] (byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -218,7 +213,7 @@ main: {
 // sub(byte zp(2) ch)
 sub: {
     .label ch = 2
-    // [10] *(*(&(byte*) main::screen#0)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuz1 
+    // [10] *(*(&(byte*) main::screen)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuz1 
     lda.z ch
     ldy.z main.screen
     sty.z $fe
@@ -226,7 +221,7 @@ sub: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [11] *(&(byte*) main::screen#0) ← ++ *(&(byte*) main::screen#0) -- _deref_pptc1=_inc__deref_pptc1 
+    // [11] *(&(byte*) main::screen) ← ++ *(&(byte*) main::screen) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z main.screen
     bne !+
     inc.z main.screen+1
@@ -240,20 +235,20 @@ sub: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte*) main::screen#0 ← (byte*) 1024 [ main::screen#0 ] ( main:2 [ main::screen#0 ] ) always clobbers reg byte a 
-Statement [10] *(*(&(byte*) main::screen#0)) ← (byte) sub::ch#2 [ main::screen#0 ] ( main:2::sub:5 [ main::screen#0 ] main:2::sub:7 [ main::screen#0 ] ) always clobbers reg byte y 
+Statement [4] (byte*) main::screen ← (byte*) 1024 [ main::screen ] ( main:2 [ main::screen ] ) always clobbers reg byte a 
+Statement [10] *(*(&(byte*) main::screen)) ← (byte) sub::ch#2 [ main::screen ] ( main:2::sub:5 [ main::screen ] main:2::sub:7 [ main::screen ] ) always clobbers reg byte y 
 Potential registers zp[1]:2 [ sub::ch#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[2]:3 [ main::screen#0 ] : zp[2]:3 , 
+Potential registers zp[2]:3 [ main::screen ] : zp[2]:3 , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [sub] 2: zp[1]:2 [ sub::ch#2 ] 
-Uplift Scope [main] 0.29: zp[2]:3 [ main::screen#0 ] 
+Uplift Scope [main] 0.29: zp[2]:3 [ main::screen ] 
 Uplift Scope [] 
 
 Uplifting [sub] best 91 combination reg byte a [ sub::ch#2 ] 
-Uplifting [main] best 91 combination zp[2]:3 [ main::screen#0 ] 
+Uplifting [main] best 91 combination zp[2]:3 [ main::screen ] 
 Uplifting [] best 91 combination 
-Allocated (was zp[2]:3) zp[2]:2 [ main::screen#0 ]
+Allocated (was zp[2]:3) zp[2]:2 [ main::screen ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -281,7 +276,7 @@ __bend:
   // main
 main: {
     .label screen = 2
-    // [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [4] (byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -312,14 +307,14 @@ main: {
   // sub
 // sub(byte register(A) ch)
 sub: {
-    // [10] *(*(&(byte*) main::screen#0)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuaa 
+    // [10] *(*(&(byte*) main::screen)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuaa 
     ldy.z main.screen
     sty.z $fe
     ldy.z main.screen+1
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [11] *(&(byte*) main::screen#0) ← ++ *(&(byte*) main::screen#0) -- _deref_pptc1=_inc__deref_pptc1 
+    // [11] *(&(byte*) main::screen) ← ++ *(&(byte*) main::screen) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z main.screen
     bne !+
     inc.z main.screen+1
@@ -365,8 +360,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte*) main::screen
-(byte*) main::screen#0 screen zp[2]:2 0.2857142857142857
+(byte*) main::screen loadstore zp[2]:2 0.2857142857142857
 (void()) sub((byte) sub::ch , (byte**) sub::dst)
 (label) sub::@return
 (byte) sub::ch
@@ -374,7 +368,7 @@ FINAL SYMBOL TABLE
 (byte**) sub::dst
 
 reg byte a [ sub::ch#2 ]
-zp[2]:2 [ main::screen#0 ]
+zp[2]:2 [ main::screen ]
 
 
 FINAL ASSEMBLER
@@ -398,7 +392,7 @@ Score: 70
 main: {
     .label screen = 2
     // screen = 0x400
-    // [4] (byte*) main::screen#0 ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [4] (byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -426,7 +420,7 @@ main: {
 // sub(byte register(A) ch)
 sub: {
     // *(*dst)++ = ch
-    // [10] *(*(&(byte*) main::screen#0)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuaa 
+    // [10] *(*(&(byte*) main::screen)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuaa 
     ldy.z main.screen
     sty.z $fe
     ldy.z main.screen+1
@@ -434,7 +428,7 @@ sub: {
     ldy #0
     sta ($fe),y
     // *(*dst)++ = ch;
-    // [11] *(&(byte*) main::screen#0) ← ++ *(&(byte*) main::screen#0) -- _deref_pptc1=_inc__deref_pptc1 
+    // [11] *(&(byte*) main::screen) ← ++ *(&(byte*) main::screen) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z main.screen
     bne !+
     inc.z main.screen+1

@@ -65,9 +65,6 @@ public class Variable implements Symbol {
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). (volatile keyword) [Only Variables] */
    private boolean isVolatile;
 
-   /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). [Only variables] TODO: Remove this */
-   private boolean inferredVolatile;
-
    /** Specifies that the variable must always be added to the output ASM even if it is never used anywhere. (export keyword) */
    private boolean export;
 
@@ -189,7 +186,6 @@ public class Variable implements Symbol {
       version.setRegister(phiMaster.getRegister());
       version.setVolatile(phiMaster.isVolatile());
       version.setExport(phiMaster.isExport());
-      version.setInferredVolatile(phiMaster.isInferredVolatile());
       version.setComments(phiMaster.getComments());
       return version;
    }
@@ -233,7 +229,6 @@ public class Variable implements Symbol {
       constVar.setRegister(variable.getRegister());
       constVar.setVolatile(variable.isVolatile());
       constVar.setExport(variable.isExport());
-      constVar.setInferredVolatile(variable.isInferredVolatile());
       constVar.setComments(variable.getComments());
       return constVar;
    }
@@ -253,7 +248,6 @@ public class Variable implements Symbol {
       copy.setVolatile(original.isVolatile());
       copy.setExport(original.isExport());
       copy.setRegister(original.getRegister());
-      copy.setInferredVolatile(original.isInferredVolatile());
       copy.setComments(original.getComments());
       return copy;
    }
@@ -281,7 +275,6 @@ public class Variable implements Symbol {
          memberVariable = new Variable(name, structVar.getKind(), memberDefinition.getType(), structVar.getScope(), memoryArea, structVar.getDataSegment(), memberDefinition.getArraySpec(), memberDefinition.getInitValue());
       }
       memberVariable.setVolatile(structVar.isVolatile());
-      memberVariable.setInferredVolatile(structVar.isInferredVolatile());
       memberVariable.setNoModify(structVar.isNoModify());
       memberVariable.setExport(structVar.isExport());
       return memberVariable;
@@ -529,18 +522,6 @@ public class Variable implements Symbol {
 
    public void setMemoryAlignment(Integer memoryAlignment) {
       this.memoryAlignment = memoryAlignment;
-   }
-
-   public void setInferredVolatile(boolean inferredVolatile) {
-      this.inferredVolatile = inferredVolatile;
-   }
-
-   public boolean isInferredVolatile() {
-      return inferredVolatile;
-   }
-
-   public boolean isAnyVolatile() {
-      return isVolatile || inferredVolatile;
    }
 
    /**

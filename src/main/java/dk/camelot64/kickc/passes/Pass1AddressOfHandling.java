@@ -55,7 +55,8 @@ public class Pass1AddressOfHandling extends Pass2SsaOptimization {
          variable.setKind(Variable.Kind.LOAD_STORE);
          getLog().append("Setting struct to load/store in variable affected by address-of " + stmtStr);
       } else {
-         variable.setInferredVolatile(true);
+         variable.setKind(Variable.Kind.LOAD_STORE);
+         variable.setVolatile(true);
          getLog().append("Setting inferred volatile on symbol affected by address-of " + stmtStr);
       }
    }

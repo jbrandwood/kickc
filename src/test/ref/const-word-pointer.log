@@ -8,7 +8,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word) main::w#0 ← (word) $d03
+  (word) main::w ← (word) $d03
   (byte~) main::$0 ← < *((const word*) main::wp)
   *((const byte*) main::screen + (number) 0) ← (byte~) main::$0
   (byte~) main::$1 ← > *((const word*) main::wp)
@@ -41,8 +41,7 @@ SYMBOL TABLE SSA
 (byte~) main::$3
 (label) main::@return
 (const byte*) main::screen = (byte*)(number) $400
-(word) main::w
-(word) main::w#0
+(word) main::w loadstore
 (const word*) main::wp = &(word) main::w
 
 Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte~) main::$0
@@ -99,7 +98,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (word) main::w#0 ← (word) $d03
+  [4] (word) main::w ← (word) $d03
   [5] (byte~) main::$0 ← < *((const word*) main::wp)
   [6] *((const byte*) main::screen) ← (byte~) main::$0
   [7] (byte~) main::$1 ← > *((const word*) main::wp)
@@ -121,21 +120,21 @@ VARIABLE REGISTER WEIGHTS
 (byte~) main::$1 4.0
 (byte~) main::$2 4.0
 (byte~) main::$3 4.0
-(word) main::w
-(word) main::w#0 20.0
+(word) main::w loadstore 20.0
 
 Initial phi equivalence classes
+Added variable main::w to live range equivalence class [ main::w ]
 Added variable main::$0 to live range equivalence class [ main::$0 ]
 Added variable main::$1 to live range equivalence class [ main::$1 ]
 Added variable main::$2 to live range equivalence class [ main::$2 ]
 Added variable main::$3 to live range equivalence class [ main::$3 ]
 Complete equivalence classes
-[ main::w#0 ]
+[ main::w ]
 [ main::$0 ]
 [ main::$1 ]
 [ main::$2 ]
 [ main::$3 ]
-Allocated zp[2]:2 [ main::w#0 ]
+Allocated zp[2]:2 [ main::w ]
 Allocated zp[1]:4 [ main::$0 ]
 Allocated zp[1]:5 [ main::$1 ]
 Allocated zp[1]:6 [ main::$2 ]
@@ -169,12 +168,12 @@ __bend:
 main: {
     .label screen = $400
     .label wp = w
+    .label w = 2
     .label __0 = 4
     .label __1 = 5
     .label __2 = 6
     .label __3 = 7
-    .label w = 2
-    // [4] (word) main::w#0 ← (word) $d03 -- vwuz1=vwuc1 
+    // [4] (word) main::w ← (word) $d03 -- vwuz1=vwuc1 
     lda #<$d03
     sta.z w
     lda #>$d03
@@ -217,19 +216,19 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (word) main::w#0 ← (word) $d03 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] (word) main::w ← (word) $d03 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [9] *((const word*) main::wp) ← (word) $210c [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp[2]:2 [ main::w#0 ] : zp[2]:2 , 
+Potential registers zp[2]:2 [ main::w ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ main::$1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:6 [ main::$2 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:7 [ main::$3 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 20: zp[2]:2 [ main::w#0 ] 4: zp[1]:4 [ main::$0 ] 4: zp[1]:5 [ main::$1 ] 4: zp[1]:6 [ main::$2 ] 4: zp[1]:7 [ main::$3 ] 
+Uplift Scope [main] 20: zp[2]:2 [ main::w ] 4: zp[1]:4 [ main::$0 ] 4: zp[1]:5 [ main::$1 ] 4: zp[1]:6 [ main::$2 ] 4: zp[1]:7 [ main::$3 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 69 combination zp[2]:2 [ main::w#0 ] reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] 
+Uplifting [main] best 69 combination zp[2]:2 [ main::w ] reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] 
 Limited combination testing to 100 combinations of 256 possible.
 Uplifting [] best 69 combination 
 
@@ -261,7 +260,7 @@ main: {
     .label screen = $400
     .label wp = w
     .label w = 2
-    // [4] (word) main::w#0 ← (word) $d03 -- vwuz1=vwuc1 
+    // [4] (word) main::w ← (word) $d03 -- vwuz1=vwuc1 
     lda #<$d03
     sta.z w
     lda #>$d03
@@ -325,11 +324,10 @@ FINAL SYMBOL TABLE
 (byte~) main::$3 reg byte a 4.0
 (label) main::@return
 (const byte*) main::screen = (byte*) 1024
-(word) main::w
-(word) main::w#0 w zp[2]:2 20.0
+(word) main::w loadstore zp[2]:2 20.0
 (const word*) main::wp = &(word) main::w
 
-zp[2]:2 [ main::w#0 ]
+zp[2]:2 [ main::w ]
 reg byte a [ main::$0 ]
 reg byte a [ main::$1 ]
 reg byte a [ main::$2 ]
@@ -359,7 +357,7 @@ main: {
     .label wp = w
     .label w = 2
     // w = $0d03
-    // [4] (word) main::w#0 ← (word) $d03 -- vwuz1=vwuc1 
+    // [4] (word) main::w ← (word) $d03 -- vwuz1=vwuc1 
     lda #<$d03
     sta.z w
     lda #>$d03

@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word) main::w#0 ← (word) $4d2
+  (word) main::w ← (word) $4d2
   (void*) main::vp#0 ← ((void*)) (const word*) main::wp
   (byte*) main::bp#0 ← ((byte*)) (void*) main::vp#0
   *((const byte*) main::SCREEN) ← *((byte*) main::bp#0)
@@ -34,8 +34,7 @@ SYMBOL TABLE SSA
 (byte*) main::bp#0
 (void*) main::vp
 (void*) main::vp#0
-(word) main::w
-(word) main::w#0
+(word) main::w loadstore
 (const word*) main::wp = &(word) main::w
 
 Inlining cast (void*) main::vp#0 ← (void*)(const word*) main::wp
@@ -76,7 +75,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (word) main::w#0 ← (word) $4d2
+  [4] (word) main::w ← (word) $4d2
   [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0)
   to:main::@return
 main::@return: scope:[main]  from main
@@ -88,13 +87,13 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte*) main::bp
 (void*) main::vp
-(word) main::w
-(word) main::w#0 20.0
+(word) main::w loadstore 20.0
 
 Initial phi equivalence classes
+Added variable main::w to live range equivalence class [ main::w ]
 Complete equivalence classes
-[ main::w#0 ]
-Allocated zp[2]:2 [ main::w#0 ]
+[ main::w ]
+Allocated zp[2]:2 [ main::w ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -126,7 +125,7 @@ main: {
     .label vp = wp
     .label bp = vp
     .label w = 2
-    // [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
+    // [4] (word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
     lda #<$4d2
     sta.z w
     lda #>$4d2
@@ -143,15 +142,15 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (word) main::w#0 ← (word) $4d2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] (word) main::w ← (word) $4d2 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp[2]:2 [ main::w#0 ] : zp[2]:2 , 
+Potential registers zp[2]:2 [ main::w ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 20: zp[2]:2 [ main::w#0 ] 
+Uplift Scope [main] 20: zp[2]:2 [ main::w ] 
 Uplift Scope [] 
 
-Uplifting [main] best 38 combination zp[2]:2 [ main::w#0 ] 
+Uplifting [main] best 38 combination zp[2]:2 [ main::w ] 
 Uplifting [] best 38 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -183,7 +182,7 @@ main: {
     .label vp = wp
     .label bp = vp
     .label w = 2
-    // [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
+    // [4] (word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
     lda #<$4d2
     sta.z w
     lda #>$4d2
@@ -229,11 +228,10 @@ FINAL SYMBOL TABLE
 (const byte*) main::bp#0 bp = (byte*)(const void*) main::vp#0
 (void*) main::vp
 (const void*) main::vp#0 vp = (void*)(const word*) main::wp
-(word) main::w
-(word) main::w#0 w zp[2]:2 20.0
+(word) main::w loadstore zp[2]:2 20.0
 (const word*) main::wp = &(word) main::w
 
-zp[2]:2 [ main::w#0 ]
+zp[2]:2 [ main::w ]
 
 
 FINAL ASSEMBLER
@@ -260,7 +258,7 @@ main: {
     .label bp = vp
     .label w = 2
     // w = 1234
-    // [4] (word) main::w#0 ← (word) $4d2 -- vwuz1=vwuc1 
+    // [4] (word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
     lda #<$4d2
     sta.z w
     lda #>$4d2

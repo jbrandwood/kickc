@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes.unwinding;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Initializers;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.*;
@@ -44,14 +45,22 @@ public class ValueSourceConstant extends ValueSourceBase {
    }
 
    @Override
-   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
+   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       StructDefinition structDefinition = ((SymbolTypeStruct) getSymbolType()).getStructDefinition(programScope);
-      ConstantStructValue constantStructValue = (ConstantStructValue) value;
-      final Variable member = structDefinition.getMember(memberName);
-      final SymbolType type = member.getType();
-      final ArraySpec arraySpec = member.getArraySpec();
-      final ConstantValue memberValue = constantStructValue.getValue(member.getRef());
-      return new ValueSourceConstant(type, arraySpec, memberValue);
+      if(value instanceof ConstantStructValue) {
+         ConstantStructValue constantStructValue = (ConstantStructValue) value;
+         final Variable member = structDefinition.getMember(memberName);
+         final SymbolType type = member.getType();
+         final ArraySpec arraySpec = member.getArraySpec();
+         final ConstantValue memberValue = constantStructValue.getValue(member.getRef());
+         return new ValueSourceConstant(type, arraySpec, memberValue);
+      } else if(value instanceof StructZero) {
+         final SymbolType memberType = structDefinition.getMember(memberName).getType();
+         final ArraySpec memberArraySpec = structDefinition.getMember(memberName).getArraySpec();
+         final ConstantValue memberZeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(memberType, memberArraySpec), currentStmt.getSource());
+         return new ValueSourceConstant(memberType, memberArraySpec, memberZeroValue);
+      }
+      throw new InternalError("Not supported "+value);
    }
 
    @Override

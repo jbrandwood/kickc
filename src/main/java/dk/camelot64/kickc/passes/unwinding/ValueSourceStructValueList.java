@@ -11,7 +11,6 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.ValueList;
-import dk.camelot64.kickc.passes.Pass1UnwindStructValues;
 
 import java.util.ListIterator;
 
@@ -57,10 +56,10 @@ public class ValueSourceStructValueList extends ValueSourceBase {
    }
 
    @Override
-   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
+   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       int memberIndex = getMemberNames(programScope).indexOf(memberName);
       final RValue memberValue = valueList.getList().get(memberIndex);
-      final ValueSource valueSource = Pass1UnwindStructValues.getValueSource(program, programScope, memberValue, currentStmt, stmtIt, currentBlock);
+      final ValueSource valueSource = ValueSourceFactory.getValueSource(memberValue, program, programScope, currentStmt, stmtIt, currentBlock);
       return valueSource;
    }
 

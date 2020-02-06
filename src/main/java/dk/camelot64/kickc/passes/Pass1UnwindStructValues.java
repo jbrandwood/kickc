@@ -5,8 +5,6 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
@@ -71,9 +69,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
             getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
                if(programValue.get() instanceof StructMemberRef) {
                   StructMemberRef structMemberRef = (StructMemberRef) programValue.get();
-                  final ValueSource structValueSource = getValueSource(getProgram(), getScope(), structMemberRef.getStruct(), currentStmt, stmtIt, currentBlock);
+                  final ValueSource structValueSource = ValueSourceFactory.getValueSource(structMemberRef.getStruct(), getProgram(), getScope(), currentStmt, stmtIt, currentBlock);
                   if(structValueSource != null) {
-                     final ValueSource memberUnwinding = structValueSource.getMemberUnwinding(structMemberRef.getMemberName(), getProgram(), getScope(), currentStmt, currentBlock, stmtIt);
+                     final ValueSource memberUnwinding = structValueSource.getMemberUnwinding(structMemberRef.getMemberName(), getProgram(), getScope(), currentStmt, stmtIt, currentBlock);
                      RValue memberSimpleValue = memberUnwinding.getSimpleValue(getScope());
                      getLog().append("Replacing struct member reference " + structMemberRef.toString(getProgram()) + " with member unwinding reference " + memberSimpleValue.toString(getProgram()));
                      programValue.set(memberSimpleValue);
@@ -93,11 +91,11 @@ public class Pass1UnwindStructValues extends Pass1Base {
       // Unwind struct value return value
       boolean lvalUnwound = false;
 
-      final ValueSource lValueSource = getValueSource(getProgram(), getScope(), call.getlValue(), call, stmtIt, currentBlock);
+      final ValueSource lValueSource = ValueSourceFactory.getValueSource(call.getlValue(), getProgram(), getScope(), call, stmtIt, currentBlock);
       if(lValueSource != null && lValueSource.isUnwindable()) {
          ArrayList<RValue> unwoundMembers = new ArrayList<>();
          for(String memberName : lValueSource.getMemberNames(getScope())) {
-            ValueSource memberUnwinding = lValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, currentBlock, stmtIt);
+            ValueSource memberUnwinding = lValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, stmtIt, currentBlock);
             unwoundMembers.add(memberUnwinding.getSimpleValue(getScope()));
          }
          ValueList unwoundLValue = new ValueList(unwoundMembers);
@@ -111,11 +109,11 @@ public class Pass1UnwindStructValues extends Pass1Base {
       boolean anyParameterUnwound = false;
       for(RValue parameter : call.getParameters()) {
          boolean unwound = false;
-         final ValueSource parameterSource = getValueSource(getProgram(), getScope(), parameter, call, stmtIt, currentBlock);
+         final ValueSource parameterSource = ValueSourceFactory.getValueSource(parameter, getProgram(), getScope(), call, stmtIt, currentBlock);
          if(parameterSource != null && parameterSource.isUnwindable()) {
             // Passing a struct variable - convert it to member variables
             for(String memberName : parameterSource.getMemberNames(getScope())) {
-               ValueSource memberUnwinding = parameterSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, currentBlock, stmtIt);
+               ValueSource memberUnwinding = parameterSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, stmtIt, currentBlock);
                unwoundParameters.add(memberUnwinding.getSimpleValue(getScope()));
             }
             unwound = true;
@@ -143,11 +141,11 @@ public class Pass1UnwindStructValues extends Pass1Base {
    private boolean unwindReturn(StatementReturn statementReturn, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       boolean modified = false;
       // Unwind struct value return value
-      final ValueSource returnVarUnwinding = getValueSource(getProgram(), getScope(), statementReturn.getValue(), statementReturn, stmtIt, currentBlock);
+      final ValueSource returnVarUnwinding = ValueSourceFactory.getValueSource(statementReturn.getValue(), getProgram(), getScope(), statementReturn, stmtIt, currentBlock);
       if(returnVarUnwinding != null && returnVarUnwinding.isUnwindable()) {
          ArrayList<RValue> unwoundMembers = new ArrayList<>();
          for(String memberName : returnVarUnwinding.getMemberNames(getScope())) {
-            final ValueSource memberUnwinding = returnVarUnwinding.getMemberUnwinding(memberName, getProgram(), getScope(), statementReturn, currentBlock, stmtIt);
+            final ValueSource memberUnwinding = returnVarUnwinding.getMemberUnwinding(memberName, getProgram(), getScope(), statementReturn, stmtIt, currentBlock);
             unwoundMembers.add(memberUnwinding.getSimpleValue(getScope()));
          }
          ValueList unwoundReturnValue = new ValueList(unwoundMembers);
@@ -213,8 +211,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
          if(rValue instanceof MemcpyValue || rValue instanceof MemsetValue || rValue instanceof StructUnwoundPlaceholder)
             return false;
 
-         ValueSource lValueSource = getValueSource(getProgram(), getScope(), lValue, assignment, stmtIt, currentBlock);
-         ValueSource rValueSource = getValueSource(getProgram(), getScope(), rValue, assignment, stmtIt, currentBlock);
+         ValueSource lValueSource = ValueSourceFactory.getValueSource(lValue, getProgram(), getScope(), assignment, stmtIt, currentBlock);
+         ValueSource rValueSource = ValueSourceFactory.getValueSource(rValue, getProgram(), getScope(), assignment, stmtIt, currentBlock);
          List<RValue> lValueUnwoundList = new ArrayList<>();
          if(copyValues(lValueSource, rValueSource, lValueUnwoundList, initialAssignment, assignment, currentBlock, stmtIt)) {
             if(lValue instanceof VariableRef) {
@@ -261,8 +259,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
       } else if(lValueSource.isUnwindable() && rValueSource.isUnwindable()) {
          getLog().append("Unwinding value copy " + currentStmt.toString(getProgram(), false));
          for(String memberName : lValueSource.getMemberNames(getScope())) {
-            ValueSource lValueSubSource = lValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), currentStmt, currentBlock, stmtIt);
-            ValueSource rValueSubSource = rValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), currentStmt, currentBlock, stmtIt);
+            ValueSource lValueSubSource = lValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), currentStmt, stmtIt, currentBlock);
+            ValueSource rValueSubSource = rValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), currentStmt, stmtIt, currentBlock);
             boolean success = copyValues(lValueSubSource, rValueSubSource, lValueUnwoundList, initialAssignment, currentStmt, currentBlock, stmtIt);
             if(!success)
                throw new InternalError("Error during value unwinding copy! ", currentStmt);
@@ -272,48 +270,4 @@ public class Pass1UnwindStructValues extends Pass1Base {
       return false;
    }
 
-   /**
-    * Get a value source for copying a value
-    *
-    * @param value The value being copied
-    * @param currentStmt The current statement
-    * @param stmtIt The statement iterator
-    * @param currentBlock The current block
-    * @return The value source for copying. null if no value source can be created.
-    */
-   public static ValueSource getValueSource(Program program, ProgramScope programScope, Value value, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-      if(value == null)
-         return null;
-      final SymbolType valueType = SymbolTypeInference.inferType(programScope, (RValue) value);
-      if(valueType instanceof SymbolTypeStruct && value instanceof CastValue && ((CastValue) value).getValue() instanceof ValueList) {
-         ValueList valueList = (ValueList) ((CastValue) value).getValue();
-         final StructDefinition structDefinition = ((SymbolTypeStruct) valueType).getStructDefinition(programScope);
-         int numMembers = structDefinition.getAllVars(false).size();
-         if(numMembers != valueList.getList().size()) {
-            throw new CompileError("Struct initialization list has wrong size. Need  " + numMembers + " got " + valueList.getList().size(), currentStmt);
-         }
-         return new ValueSourceStructValueList(valueList, structDefinition);
-      }
-      while(value instanceof CastValue)
-         value = ((CastValue) value).getValue();
-      if(value instanceof VariableRef) {
-         Variable variable = programScope.getVariable((VariableRef) value);
-         return new ValueSourceVariable(variable);
-      }
-      if(value instanceof StructZero)
-         return new ValueSourceZero(((StructZero) value).getTypeStruct(), null);
-      if(value instanceof ConstantValue)
-         return new ValueSourceConstant(((ConstantValue) value).getType(programScope), null, (ConstantValue) value);
-      if(value instanceof PointerDereferenceSimple)
-         return new ValueSourcePointerDereferenceSimple((PointerDereferenceSimple) value, valueType, null);
-      if(value instanceof PointerDereferenceIndexed)
-         return new ValueSourcePointerDereferenceIndexed((PointerDereferenceIndexed) value, valueType, null);
-      if(value instanceof StructMemberRef) {
-         final RValue structValue = ((StructMemberRef) value).getStruct();
-         final ValueSource structValueSource = getValueSource(program, programScope, structValue, currentStmt, stmtIt, currentBlock);
-         return structValueSource.getMemberUnwinding(((StructMemberRef) value).getMemberName(), program, programScope, currentStmt, currentBlock, stmtIt);
-      }
-      return null;
-   }
-   
 }

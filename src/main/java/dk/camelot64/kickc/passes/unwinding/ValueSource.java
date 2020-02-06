@@ -84,10 +84,10 @@ public interface ValueSource {
     * @param program
     * @param programScope The program scope
     * @param currentStmt
-    * @param currentBlock
     * @param stmtIt
+    * @param currentBlock
     * @return The unwinding of the member
     */
-   ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt);
+   ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock);
 
 }

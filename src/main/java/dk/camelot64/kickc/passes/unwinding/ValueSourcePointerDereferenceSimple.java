@@ -61,7 +61,7 @@ public class ValueSourcePointerDereferenceSimple extends ValueSourceBase {
    }
 
    @Override
-   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
+   public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       StructDefinition structDefinition = ((SymbolTypeStruct) getSymbolType()).getStructDefinition(programScope);
       final SymbolType memberType = structDefinition.getMember(memberName).getType();
       final ArraySpec memberArraySpec = structDefinition.getMember(memberName).getArraySpec();

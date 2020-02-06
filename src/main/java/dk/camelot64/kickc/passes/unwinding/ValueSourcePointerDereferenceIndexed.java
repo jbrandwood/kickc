@@ -76,14 +76,37 @@ public class ValueSourcePointerDereferenceIndexed extends ValueSourceBase {
       // Simple member value - unwind to value of member *((type*)&struct + OFFSET_MEMBER)
       final RValue structPointer = pointerDereferenceIndexed.getPointer();
       if(structPointer instanceof ConstantValue) {
-         // Pointer to member type
-         ConstantCastValue structTypedPointer = new ConstantCastValue(new SymbolTypePointer(memberType), (ConstantValue) structPointer);
-         // Calculate member address  (type*)&struct + OFFSET_MEMBER
-         ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
-         // Unwind to *((type*)&struct + OFFSET_MEMBER)
-         PointerDereferenceIndexed memberDeref = new PointerDereferenceIndexed(memberPointer, pointerDereferenceIndexed.getIndex());
-         return new ValueSourcePointerDereferenceIndexed(memberDeref, memberType, memberArraySpec);
+         if(memberArraySpec!=null) {
+            final SymbolType elementType = ((SymbolTypePointer) memberType).getElementType();
+            // Pointer to element type
+            ConstantCastValue elementTypedPointer = new ConstantCastValue(new SymbolTypePointer(elementType), (ConstantValue) structPointer);
+            // Calculate member address  (elmType*)&struct + OFFSET_MEMBER
+            ConstantBinary memberPointer = new ConstantBinary(elementTypedPointer, Operators.PLUS, memberOffsetConstant);
+            // Calculate member address  (elmType*)&struct + OFFSET_MEMBER
+            if(pointerDereferenceIndexed.getIndex() instanceof ConstantValue) {
+               ConstantBinary elmPointer = new ConstantBinary(memberPointer, Operators.PLUS, (ConstantValue) pointerDereferenceIndexed.getIndex());
+               return new ValueSourceConstant(new SymbolTypePointer(elementType), null, elmPointer);
+            }  else {
+               Scope scope = programScope.getScope(currentBlock.getScope());
+               Variable elementAddress = scope.addVariableIntermediate();
+               elementAddress.setType(new SymbolTypePointer(elementType));
+               stmtIt.previous();
+               stmtIt.add(new StatementAssignment((LValue) elementAddress.getRef(), memberPointer, Operators.PLUS, pointerDereferenceIndexed.getIndex(), true, currentStmt.getSource(), currentStmt.getComments()));
+               stmtIt.next();
+               return new ValueSourceVariable(elementAddress);
+            }
+         }  else {
+            // Pointer to member type
+            ConstantCastValue structTypedPointer = new ConstantCastValue(new SymbolTypePointer(memberType), (ConstantValue) structPointer);
+            // Calculate member address  (type*)&struct + OFFSET_MEMBER
+            ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
+            // Unwind to *((type*)&struct + OFFSET_MEMBER)
+            PointerDereferenceIndexed memberDeref = new PointerDereferenceIndexed(memberPointer, pointerDereferenceIndexed.getIndex());
+            return new ValueSourcePointerDereferenceIndexed(memberDeref, memberType, null);
+         }
       } else {
+         if(memberArraySpec!=null)
+            throw new InternalError("Not implemented!");
          Scope scope = programScope.getScope(currentBlock.getScope());
          Variable memberAddress = scope.addVariableIntermediate();
          memberAddress.setType(new SymbolTypePointer(memberType));
@@ -94,7 +117,7 @@ public class ValueSourcePointerDereferenceIndexed extends ValueSourceBase {
          stmtIt.next();
          // Unwind to *((memberType*)ptr_struct+OFFSET_MEMBER)
          PointerDereferenceIndexed memberDeref = new PointerDereferenceIndexed(memberAddress.getRef(), pointerDereferenceIndexed.getIndex());
-         return new ValueSourcePointerDereferenceIndexed(memberDeref, memberType, memberArraySpec);
+         return new ValueSourcePointerDereferenceIndexed(memberDeref, memberType, null);
       }
    }
 

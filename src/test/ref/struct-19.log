@@ -3,14 +3,10 @@ Adding value bulk copy *(&(struct Point) main::p1) ← memcpy(*(&(const struct P
 Adding value bulk copy *(&(struct Point) main::p2) ← memcpy(*(&(const struct Point) $1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Adding value bulk copy *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P) ← memcpy(*(&(struct Point) main::p1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Adding value bulk copy *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q) ← memcpy(*(&(struct Point) main::p2), struct Point, (const byte) SIZEOF_STRUCT_POINT)
-Replacing struct member reference (struct Vector) main::v.p with member unwinding reference *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P)
-Replacing struct member reference (struct Vector) main::v.p with member unwinding reference *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P)
-Replacing struct member reference (struct Vector) main::v.q with member unwinding reference *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q)
-Replacing struct member reference (struct Vector) main::v.q with member unwinding reference *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q)
-Rewriting struct pointer member access *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P).x
-Rewriting struct pointer member access *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P).y
-Rewriting struct pointer member access *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q).x
-Rewriting struct pointer member access *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q).y
+Replacing struct member reference (struct Vector) main::v.p.x with member unwinding reference *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P+(const byte) OFFSET_STRUCT_POINT_X)
+Replacing struct member reference (struct Vector) main::v.p.y with member unwinding reference *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P+(const byte) OFFSET_STRUCT_POINT_Y)
+Replacing struct member reference (struct Vector) main::v.q.x with member unwinding reference *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q+(const byte) OFFSET_STRUCT_POINT_X)
+Replacing struct member reference (struct Vector) main::v.q.y with member unwinding reference *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q+(const byte) OFFSET_STRUCT_POINT_Y)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -26,14 +22,10 @@ main: scope:[main]  from @1
   (struct Point) main::p2 ← struct-unwound {*(&(struct Point) main::p2)}
   *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P) ← memcpy(*(&(struct Point) main::p1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q) ← memcpy(*(&(struct Point) main::p2), struct Point, (const byte) SIZEOF_STRUCT_POINT)
-  (byte*~) main::$0 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
-  *((const byte*) SCREEN + (number) 0) ← *((byte*~) main::$0)
-  (byte*~) main::$1 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
-  *((const byte*) SCREEN + (number) 1) ← *((byte*~) main::$1)
-  (byte*~) main::$2 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_X
-  *((const byte*) SCREEN + (number) 2) ← *((byte*~) main::$2)
-  (byte*~) main::$3 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_Y
-  *((const byte*) SCREEN + (number) 3) ← *((byte*~) main::$3)
+  *((const byte*) SCREEN + (number) 0) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P+(const byte) OFFSET_STRUCT_POINT_X)
+  *((const byte*) SCREEN + (number) 1) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P+(const byte) OFFSET_STRUCT_POINT_Y)
+  *((const byte*) SCREEN + (number) 2) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q+(const byte) OFFSET_STRUCT_POINT_X)
+  *((const byte*) SCREEN + (number) 3) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q+(const byte) OFFSET_STRUCT_POINT_Y)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -64,19 +56,15 @@ SYMBOL TABLE SSA
 (struct Point) Vector::p
 (struct Point) Vector::q
 (void()) main()
-(byte*~) main::$0
-(byte*~) main::$1
-(byte*~) main::$2
-(byte*~) main::$3
 (label) main::@return
 (struct Point) main::p1 loadstore
 (struct Point) main::p2 loadstore
 (struct Vector) main::v loadstore
 
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← *((byte*~) main::$0)
-Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← *((byte*~) main::$1)
-Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (number) 2) ← *((byte*~) main::$2)
-Adding number conversion cast (unumber) 3 in *((const byte*) SCREEN + (number) 3) ← *((byte*~) main::$3)
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P+(const byte) OFFSET_STRUCT_POINT_X)
+Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P+(const byte) OFFSET_STRUCT_POINT_Y)
+Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (number) 2) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q+(const byte) OFFSET_STRUCT_POINT_X)
+Adding number conversion cast (unumber) 3 in *((const byte*) SCREEN + (number) 3) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q+(const byte) OFFSET_STRUCT_POINT_Y)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -92,31 +80,16 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing C-classic struct-unwound assignment [1] (struct Vector) main::v ← struct-unwound {*(&(struct Vector) main::v)}
 Removing C-classic struct-unwound assignment [3] (struct Point) main::p1 ← struct-unwound {*(&(struct Point) main::p1)}
 Removing C-classic struct-unwound assignment [5] (struct Point) main::p2 ← struct-unwound {*(&(struct Point) main::p2)}
-Constant right-side identified [8] (byte*~) main::$0 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [10] (byte*~) main::$1 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [12] (byte*~) main::$2 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [14] (byte*~) main::$3 ← (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q + (const byte) OFFSET_STRUCT_POINT_Y
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = (byte*)(struct Point*)&main::v+OFFSET_STRUCT_VECTOR_P+OFFSET_STRUCT_POINT_X
-Constant (const byte*) main::$1 = (byte*)(struct Point*)&main::v+OFFSET_STRUCT_VECTOR_P+OFFSET_STRUCT_POINT_Y
-Constant (const byte*) main::$2 = (byte*)(struct Point*)&main::v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_X
-Constant (const byte*) main::$3 = (byte*)(struct Point*)&main::v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)(struct Point*)&main::v+OFFSET_STRUCT_VECTOR_P in 
-Simplifying expression containing zero (struct Point*)&main::v in 
-Simplifying expression containing zero (struct Point*)&main::v in 
-Simplifying expression containing zero (byte*)(struct Point*)&main::v+OFFSET_STRUCT_VECTOR_Q in 
 Simplifying expression containing zero (struct Point*)&main::v in [6] *((struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P) ← memcpy(*(&(struct Point) main::p1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
-Simplifying expression containing zero SCREEN in [9] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) main::$0)
+Simplifying expression containing zero (byte*)(struct Point*)&main::v+OFFSET_STRUCT_VECTOR_P in [8] *((const byte*) SCREEN + (byte) 0) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P+(const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero (struct Point*)&main::v in [8] *((const byte*) SCREEN + (byte) 0) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P)
+Simplifying expression containing zero SCREEN in [8] *((const byte*) SCREEN + (byte) 0) ← *((byte*)(struct Point*)&(struct Vector) main::v)
+Simplifying expression containing zero (struct Point*)&main::v in [9] *((const byte*) SCREEN + (byte) 1) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_P+(const byte) OFFSET_STRUCT_POINT_Y)
+Simplifying expression containing zero (byte*)(struct Point*)&main::v+OFFSET_STRUCT_VECTOR_Q in [10] *((const byte*) SCREEN + (byte) 2) ← *((byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q+(const byte) OFFSET_STRUCT_POINT_X)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_VECTOR_P
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined main::$3 = (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q+(const byte) OFFSET_STRUCT_POINT_Y
-Constant inlined main::$1 = (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_POINT_Y
-Constant inlined main::$2 = (byte*)(struct Point*)&(struct Vector) main::v+(const byte) OFFSET_STRUCT_VECTOR_Q
-Constant inlined main::$0 = (byte*)(struct Point*)&(struct Vector) main::v
-Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+1)
 Consolidated array index constant in *(SCREEN+2)
 Consolidated array index constant in *(SCREEN+3)

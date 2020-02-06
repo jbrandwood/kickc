@@ -7,7 +7,7 @@
   .const OFFSET_STRUCT_POINT_Y = 1
 main: {
     .label SCREEN = $400
-    .label __14 = 6
+    .label __9 = 6
     .label x = 5
     .label ptr = 2
     .label i = 4
@@ -37,12 +37,12 @@ main: {
     tya
     clc
     adc.z ptr
-    sta.z __14
+    sta.z __9
     lda #0
     adc.z ptr+1
-    sta.z __14+1
+    sta.z __9+1
     ldy #OFFSET_STRUCT_POINT_Y
-    lda (__14),y
+    lda (__9),y
     tay
     lda.z x
     sta SCREEN,x

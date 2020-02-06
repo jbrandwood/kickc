@@ -70,6 +70,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
       ProgramValueIterator.execute(
             getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
                if(programValue.get() instanceof StructMemberRef) {
+/*
                   StructMemberRef structMemberRef = (StructMemberRef) programValue.get();
                   if(structMemberRef.getStruct() instanceof VariableRef) {
                      StructUnwinding memberVariables = getStructMemberUnwinding(structMemberRef.getStruct(), currentStmt, stmtIt, currentBlock);
@@ -78,8 +79,19 @@ public class Pass1UnwindStructValues extends Pass1Base {
                         RValue structMemberVariable = memberUnwinding.getUnwinding(getScope());
                         getLog().append("Replacing struct member reference " + structMemberRef.toString(getProgram()) + " with member unwinding reference " + structMemberVariable.toString(getProgram()));
                         programValue.set(structMemberVariable);
-                        modified.set(true);
                      }
+
+ */
+                     StructMemberRef structMemberRef = (StructMemberRef) programValue.get();
+                     final ValueSource structValueSource = getValueSource(getProgram(), getScope(), structMemberRef.getStruct(), currentStmt, stmtIt, currentBlock);
+                     if(structValueSource != null) {
+                        final ValueSource memberUnwinding = structValueSource.getMemberUnwinding(structMemberRef.getMemberName(), getProgram(), getScope(), currentStmt, currentBlock, stmtIt);
+                        RValue memberSimpleValue = memberUnwinding.getSimpleValue(getScope());
+                        getLog().append("Replacing struct member reference " + structMemberRef.toString(getProgram()) + " with member unwinding reference " + memberSimpleValue.toString(getProgram()));
+                        programValue.set(memberSimpleValue);
+                        modified.set(true);
+                        
+
                   }
                }
             });
@@ -210,10 +222,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
          boolean initialAssignment = assignment.isInitialAssignment();
          StatementSource source = assignment.getSource();
 
-         // Check if this is already a bulk assignment
-         if(rValue instanceof MemcpyValue || rValue instanceof MemsetValue)
-            return false;
-         if(rValue instanceof StructUnwoundPlaceholder)
+         // Check if this is already a bulk assignment - or an unwound placeholder
+         if(rValue instanceof MemcpyValue || rValue instanceof MemsetValue || rValue instanceof StructUnwoundPlaceholder)
             return false;
 
          ValueSource lValueSource = getValueSource(getProgram(), getScope(), lValue, assignment, stmtIt, currentBlock);
@@ -228,43 +238,6 @@ public class Pass1UnwindStructValues extends Pass1Base {
             }
             return true;
          }
-
-
-         // Check for struct unwinding
-         if(1==1) throw new InternalError("E!");
-         StructUnwinding lValueUnwinding = getStructMemberUnwinding(lValue, assignment, stmtIt, currentBlock);
-         if(lValueUnwinding == null)
-            return false;
-         if(lValueUnwinding == POSTPONE_UNWINDING)
-            return true;
-         if(rValue instanceof StructUnwoundPlaceholder)
-            return false;
-         SymbolType rValueType = SymbolTypeInference.inferType(getScope(), rValue);
-         if(rValueType.equals(lValueStructType)) {
-            StructUnwinding rValueUnwinding = getStructMemberUnwinding(rValue, assignment, stmtIt, currentBlock);
-            if(rValueUnwinding == null) {
-               throw new CompileError("Incompatible struct assignment " + assignment.toString(getProgram(), false), assignment);
-            }
-            if(rValueUnwinding == POSTPONE_UNWINDING)
-               return true;
-            List<RValue> lValueUnwoundPlaceholder = new ArrayList<>();
-            for(String memberName : lValueUnwinding.getMemberNames()) {
-               /*
-               RValueUnwinding lValueMemberUnwinding = lValueUnwinding.getMemberUnwinding(memberName, getScope());
-               RValueUnwinding rValueMemberUnwinding = rValueUnwinding.getMemberUnwinding(memberName, getScope());
-               unwindAssignment(lValueMemberUnwinding, rValueMemberUnwinding, lValueUnwoundPlaceholder, stmtIt, initialAssignment, source);
-
-                */
-            }
-            StructUnwoundPlaceholder unwoundPlaceholder = new StructUnwoundPlaceholder(lValueStructType, lValueUnwoundPlaceholder);
-            if(lValue instanceof VariableRef) {
-               assignment.setrValue2(unwoundPlaceholder);
-            } else {
-               stmtIt.remove();
-            }
-            return true;
-         }
-         throw new CompileError("Incompatible struct assignment " + assignment.toString(getProgram(), false), assignment);
       }
       return false;
    }
@@ -349,11 +322,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
       if(value instanceof StructMemberRef) {
          final RValue structValue = ((StructMemberRef) value).getStruct();
          final ValueSource structValueSource = getValueSource(program, programScope, structValue, currentStmt, stmtIt, currentBlock);
-         final ValueSource structMemberSource = structValueSource.getMemberUnwinding(((StructMemberRef) value).getMemberName(), program, programScope, currentStmt, currentBlock, stmtIt);
-         return structMemberSource;
+         return structValueSource.getMemberUnwinding(((StructMemberRef) value).getMemberName(), program, programScope, currentStmt, currentBlock, stmtIt);
       }
-
-
       return null;
    }
 

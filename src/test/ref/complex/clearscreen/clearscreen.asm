@@ -208,8 +208,8 @@ startProcessing: {
     .label spritePtr = $17
     // Busy-wait while finding an empty slot in the PROCESSING array
     .label freeIdx = 2
-    .label __35 = $e
-    .label __36 = $c
+    .label __34 = $e
+    .label __35 = $c
     ldx #$ff
   __b1:
     lda #0
@@ -241,19 +241,19 @@ startProcessing: {
     sta.z __0+1
     lda.z __0
     asl
-    sta.z __35
+    sta.z __34
     lda.z __0+1
     rol
-    sta.z __35+1
-    asl.z __35
-    rol.z __35+1
-    lda.z __36
+    sta.z __34+1
+    asl.z __34
+    rol.z __34+1
+    lda.z __35
     clc
-    adc.z __35
-    sta.z __36
-    lda.z __36+1
-    adc.z __35+1
-    sta.z __36+1
+    adc.z __34
+    sta.z __35
+    lda.z __35+1
+    adc.z __34+1
+    sta.z __35+1
     asl.z __1
     rol.z __1+1
     asl.z __1

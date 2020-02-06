@@ -52,7 +52,7 @@ public class ValueSourceVariable extends ValueSourceBase {
 
    @Override
    public LValue getBulkLValue(ProgramScope scope) {
-      if(getArraySpec()!=null) {
+      if(getArraySpec() != null) {
          return new PointerDereferenceSimple(variable.getRef());
       } else {
          ConstantSymbolPointer pointer = new ConstantSymbolPointer(variable.getRef());
@@ -71,18 +71,29 @@ public class ValueSourceVariable extends ValueSourceBase {
    public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ControlFlowBlock currentBlock, ListIterator<Statement> stmtIt) {
       if(variable.isStructClassic()) {
          StructDefinition structDefinition = ((SymbolTypeStruct) getSymbolType()).getStructDefinition(programScope);
-         final SymbolType memberType = structDefinition.getMember(memberName).getType();
-         final ArraySpec memberArraySpec = structDefinition.getMember(memberName).getArraySpec();
+         SymbolType memberType = structDefinition.getMember(memberName).getType();
+         ArraySpec memberArraySpec = structDefinition.getMember(memberName).getArraySpec();
          ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(programScope, structDefinition, memberName);
-         // Simple member value - unwind to value of member *((type*)&struct + OFFSET_MEMBER)
          ConstantSymbolPointer structPointer = new ConstantSymbolPointer(variable.getRef());
-         // Pointer to member type
-         ConstantCastValue structTypedPointer = new ConstantCastValue(new SymbolTypePointer(memberType), structPointer);
-         // Calculate member address  (type*)&struct + OFFSET_MEMBER
-         ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
-         // Unwind to *((type*)&struct + OFFSET_MEMBER)
-         PointerDereferenceSimple memberDeref = new PointerDereferenceSimple(memberPointer);
-         return new ValueSourcePointerDereferenceSimple(memberDeref, memberType, memberArraySpec);
+         if(memberArraySpec != null) {
+            // Pointer to member element type (elmtype*)&struct
+            SymbolType elementType = ((SymbolTypePointer) memberType).getElementType();
+            SymbolTypePointer pointerToElementType = new SymbolTypePointer(elementType);
+            ConstantCastValue structTypedPointer = new ConstantCastValue(pointerToElementType, structPointer);
+            // Calculate member address  (elmtype*)&struct + OFFSET_MEMBER
+            ConstantBinary memberArrayPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
+            // Unwind to (elmtype*)&struct + OFFSET_MEMBER
+            return new ValueSourceConstant(pointerToElementType, null, memberArrayPointer);
+         } else {
+            // Simple member value - unwind to value of member *((type*)&struct + OFFSET_MEMBER)
+            // Pointer to member type
+            ConstantCastValue structTypedPointer = new ConstantCastValue(new SymbolTypePointer(memberType), structPointer);
+            // Calculate member address  (type*)&struct + OFFSET_MEMBER
+            ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
+            // Unwind to *((type*)&struct + OFFSET_MEMBER)
+            PointerDereferenceSimple memberDeref = new PointerDereferenceSimple(memberPointer);
+            return new ValueSourcePointerDereferenceSimple(memberDeref, memberType, memberArraySpec);
+         }
       } else if(variable.isStructUnwind()) {
          StructVariableMemberUnwinding structVariableMemberUnwinding = program.getStructVariableMemberUnwinding();
          final StructVariableMemberUnwinding.VariableUnwinding variableUnwinding = structVariableMemberUnwinding.getVariableUnwinding(variable.getRef());

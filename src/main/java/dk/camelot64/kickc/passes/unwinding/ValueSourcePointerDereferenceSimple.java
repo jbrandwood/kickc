@@ -69,25 +69,51 @@ public class ValueSourcePointerDereferenceSimple extends ValueSourceBase {
       // Simple member value - unwind to value of member *((type*)&struct + OFFSET_MEMBER)
       final RValue structPointer = pointerDereference.getPointer();
       if(structPointer instanceof ConstantValue) {
-         // Pointer to member type
-         ConstantCastValue structTypedPointer = new ConstantCastValue(new SymbolTypePointer(memberType), (ConstantValue) structPointer);
-         // Calculate member address  (type*)&struct + OFFSET_MEMBER
-         ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
-         // Unwind to *((type*)&struct + OFFSET_MEMBER)
-         PointerDereferenceSimple memberDeref = new PointerDereferenceSimple(memberPointer);
-         return new ValueSourcePointerDereferenceSimple(memberDeref, memberType, memberArraySpec);
+         if(memberArraySpec!=null) {
+            SymbolType elementType = ((SymbolTypePointer) memberType).getElementType();
+            SymbolTypePointer pointerToElementType = new SymbolTypePointer(elementType);
+            // Pointer to member element type
+            ConstantCastValue structTypedPointer = new ConstantCastValue(pointerToElementType, (ConstantValue) structPointer);
+            // Calculate member address  (elmtype*)&struct + OFFSET_MEMBER
+            ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
+            // Unwind to *((type*)&struct + OFFSET_MEMBER)
+            return new ValueSourceConstant(pointerToElementType, null, memberPointer);
+         }  else {
+            // Pointer to member type
+            ConstantCastValue structTypedPointer = new ConstantCastValue(new SymbolTypePointer(memberType), (ConstantValue) structPointer);
+            // Calculate member address  (memberType*)&struct + OFFSET_MEMBER
+            ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
+            // Unwind to *((memberType*)&struct + OFFSET_MEMBER)
+            PointerDereferenceSimple memberDeref = new PointerDereferenceSimple(memberPointer);
+            return new ValueSourcePointerDereferenceSimple(memberDeref, memberType, null);
+         }
       } else {
-         Scope scope = programScope.getScope(currentBlock.getScope());
-         Variable memberAddress = scope.addVariableIntermediate();
-         memberAddress.setType(new SymbolTypePointer(memberType));
-         CastValue structTypedPointer = new CastValue(new SymbolTypePointer(memberType), structPointer);
-         // Add statement $1 = (memberType*)ptr_struct + OFFSET_MEMBER
-         stmtIt.previous();
-         stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
-         stmtIt.next();
-         // Unwind to *((memberType*)ptr_struct+OFFSET_MEMBER)
-         PointerDereferenceSimple memberDeref = new PointerDereferenceSimple(memberAddress.getRef());
-         return new ValueSourcePointerDereferenceSimple(memberDeref, memberType, memberArraySpec);
+         if(memberArraySpec!=null) {
+            SymbolType elementType = ((SymbolTypePointer) memberType).getElementType();
+            SymbolTypePointer pointerToElementType = new SymbolTypePointer(elementType);
+            Scope scope = programScope.getScope(currentBlock.getScope());
+            Variable memberAddress = scope.addVariableIntermediate();
+            memberAddress.setType(pointerToElementType);
+            CastValue elementTypedPointer = new CastValue(pointerToElementType, structPointer);
+            // Add statement $1 = (elmType*)ptr_struct + OFFSET_MEMBER
+            stmtIt.previous();
+            stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), elementTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
+            stmtIt.next();
+            // Unwind to *((elmType*)ptr_struct+OFFSET_MEMBER)
+            return new ValueSourceVariable(memberAddress);
+         }  else {
+            Scope scope = programScope.getScope(currentBlock.getScope());
+            Variable memberAddress = scope.addVariableIntermediate();
+            memberAddress.setType(new SymbolTypePointer(memberType));
+            CastValue structTypedPointer = new CastValue(new SymbolTypePointer(memberType), structPointer);
+            // Add statement $1 = (memberType*)ptr_struct + OFFSET_MEMBER
+            stmtIt.previous();
+            stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), structTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
+            stmtIt.next();
+            // Unwind to *((memberType*)ptr_struct+OFFSET_MEMBER)
+            PointerDereferenceSimple memberDeref = new PointerDereferenceSimple(memberAddress.getRef());
+            return new ValueSourcePointerDereferenceSimple(memberDeref, memberType, null);
+         }
       }
    }
 }

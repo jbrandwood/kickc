@@ -195,7 +195,6 @@ public class Compiler {
       new Pass1ConstantifyRValue(program).execute();
       new Pass1UnwindStructVariables(program).execute();
       new Pass1UnwindStructValues(program).execute();
-      new PassNStructPointerRewriting(program).execute();
 
       new PassNAddBooleanCasts(program).execute();
       new PassNAddTypeConversionAssignment(program, false).execute();
@@ -301,7 +300,6 @@ public class Compiler {
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
       optimizations.add(new PassNAddBooleanCasts(program));
-      optimizations.add(new PassNStructPointerRewriting(program));
       optimizations.add(new PassNStructUnwoundPlaceholderRemoval(program));
       optimizations.add(new PassNArrayElementAddressOfRewriting(program));
       optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program));

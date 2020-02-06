@@ -7,13 +7,13 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
+import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
 import java.io.File;
 import java.util.*;
@@ -600,7 +600,7 @@ public class Pass4CodeGeneration {
             }
          } else if(value instanceof StructZero) {
             final SymbolTypeStruct typeStruct = ((StructZero) value).getTypeStruct();
-            final ConstantRef structSize = OperatorSizeOf.getSizeOfConstantVar(getScope(), typeStruct);
+            final ConstantRef structSize = SizeOfConstants.getSizeOfConstantVar(getScope(), typeStruct);
             String totalSizeBytesAsm = AsmFormat.getAsmConstant(program, structSize, 99, scopeRef);
             int totalSizeBytes = typeStruct.getSizeBytes();
             dataChunk.addDataFilled(AsmDataNumeric.Type.BYTE, totalSizeBytesAsm, totalSizeBytes, "0", null);

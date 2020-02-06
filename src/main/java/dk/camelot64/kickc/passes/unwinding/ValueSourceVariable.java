@@ -14,7 +14,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
-import dk.camelot64.kickc.passes.PassNStructPointerRewriting;
+import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
 import java.util.ListIterator;
 
@@ -73,7 +73,7 @@ public class ValueSourceVariable extends ValueSourceBase {
          StructDefinition structDefinition = ((SymbolTypeStruct) getSymbolType()).getStructDefinition(programScope);
          SymbolType memberType = structDefinition.getMember(memberName).getType();
          ArraySpec memberArraySpec = structDefinition.getMember(memberName).getArraySpec();
-         ConstantRef memberOffsetConstant = PassNStructPointerRewriting.getMemberOffsetConstant(programScope, structDefinition, memberName);
+         ConstantRef memberOffsetConstant = SizeOfConstants.getStructMemberOffsetConstant(programScope, structDefinition, memberName);
          ConstantSymbolPointer structPointer = new ConstantSymbolPointer(variable.getRef());
          if(memberArraySpec != null) {
             // Pointer to member element type (elmtype*)&struct

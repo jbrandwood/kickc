@@ -1,11 +1,11 @@
 package dk.camelot64.kickc.passes.unwinding;
 
-import dk.camelot64.kickc.model.operators.OperatorSizeOf;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +36,7 @@ public abstract class ValueSourceBase implements ValueSource {
    }
 
    protected ConstantValue getByteSize(ProgramScope scope) {
-      return getArraySpec() != null ? getArraySpec().getArraySize() : OperatorSizeOf.getSizeOfConstantVar(scope, getSymbolType());
+      return getArraySpec() != null ? getArraySpec().getArraySize() : SizeOfConstants.getSizeOfConstantVar(scope, getSymbolType());
    }
 
    @Override

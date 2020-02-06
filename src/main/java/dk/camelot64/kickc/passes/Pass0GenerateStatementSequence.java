@@ -14,6 +14,7 @@ import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
+import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -1723,7 +1724,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(ctx.typeDecl() != null) {
          // sizeof(type) - add directly
          SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
-         return OperatorSizeOf.getSizeOfConstantVar(program.getScope(), type);
+         return SizeOfConstants.getSizeOfConstantVar(program.getScope(), type);
       } else {
          // sizeof(expression) - add a unary expression to be resolved later
          RValue child = (RValue) this.visit(ctx.expr());

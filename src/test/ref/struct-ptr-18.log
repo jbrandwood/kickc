@@ -9,7 +9,7 @@ Converted struct value to member variables (struct Point) print::p
 Converted procedure struct value parameter to member unwinding (void()) print((byte) print::p_x , (byte) print::p_y)
 Adding value bulk copy *((const struct Point*) points + (number~) main::$2) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Adding value bulk copy *((const struct Point*) points + (number~) main::$3) ← memcpy(*(&(const struct Point) $1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
-Converted procedure struct value parameter to member unwinding in call (void~) main::$0 ← call print *((byte*~) main::$5 + (byte~) main::$4) *((byte*~) main::$6 + (byte~) main::$4) 
+Converted procedure struct value parameter to member unwinding in call (void~) main::$0 ← call print *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$4) *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$4) 
 Replacing struct member reference (struct Point) print::p.x with member unwinding reference (byte) print::p_x
 Replacing struct member reference (struct Point) print::p.y with member unwinding reference (byte) print::p_y
 Culled Empty Block (label) main::@2
@@ -33,16 +33,14 @@ main::@1: scope:[main]  from main main::@3
   (byte) idx#12 ← phi( main/(byte) idx#14 main::@3/(byte) idx#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   (byte~) main::$4 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
-  (byte) print::p_x#0 ← *((byte*~) main::$5 + (byte~) main::$4)
-  (byte) print::p_y#0 ← *((byte*~) main::$6 + (byte~) main::$4)
+  (byte) print::p_x#0 ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$4)
+  (byte) print::p_y#0 ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$4)
   call print 
   to:main::@3
 main::@3: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
   (byte) idx#7 ← phi( main::@1/(byte) idx#5 )
   (byte) idx#1 ← (byte) idx#7
-  (byte*~) main::$5 ← (byte*)(const struct Point*) points + (const byte) OFFSET_STRUCT_POINT_X
-  (byte*~) main::$6 ← (byte*)(const struct Point*) points + (const byte) OFFSET_STRUCT_POINT_Y
   (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,1)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,1)
   if((bool~) main::$1) goto main::@1
@@ -112,8 +110,6 @@ SYMBOL TABLE SSA
 (number~) main::$2
 (number~) main::$3
 (byte~) main::$4
-(byte*~) main::$5
-(byte*~) main::$6
 (label) main::@1
 (label) main::@3
 (label) main::@return
@@ -160,26 +156,22 @@ Identical Phi Values (byte) idx#9 (byte) idx#12
 Identical Phi Values (byte) print::p_y#1 (byte) print::p_y#0
 Identical Phi Values (byte) idx#11 (byte) idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [18] if((byte) main::i#1!=rangelast(0,1)) goto main::@1
+Simple Condition (bool~) main::$1 [16] if((byte) main::i#1!=rangelast(0,1)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [2] (byte~) main::$2 ← (byte) 0 * (const byte) SIZEOF_STRUCT_POINT
 Constant right-side identified [4] (byte~) main::$3 ← (byte) 1 * (const byte) SIZEOF_STRUCT_POINT
-Constant right-side identified [14] (byte*~) main::$5 ← (byte*)(const struct Point*) points + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [15] (byte*~) main::$6 ← (byte*)(const struct Point*) points + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) idx#0 = 0
 Constant (const byte) main::$2 = 0*SIZEOF_STRUCT_POINT
 Constant (const byte) main::$3 = 1*SIZEOF_STRUCT_POINT
 Constant (const byte) main::i#0 = 0
-Constant (const byte*) main::$5 = (byte*)points+OFFSET_STRUCT_POINT_X
-Constant (const byte*) main::$6 = (byte*)points+OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [16] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [18] if(main::i#1!=rangelast(0,1)) goto main::@1 to (number) 2
+Resolved ranged next value [14] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [16] if(main::i#1!=rangelast(0,1)) goto main::@1 to (number) 2
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_STRUCT_POINT in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero (byte*)points in 
 Simplifying expression containing zero points in [3] *((const struct Point*) points + (const byte) main::$2) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+Simplifying expression containing zero (byte*)points in [9] (byte) print::p_x#0 ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$4)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$2
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
@@ -194,11 +186,9 @@ Rewriting multiplication to use shift [3] (byte~) main::$4 ← (byte) main::i#2 
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) idx#0
-Constant inlined main::$5 = (byte*)(const struct Point*) points
 Constant inlined main::i#0 = (byte) 0
-Constant inlined main::$6 = (byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y
-Constant inlined main::$3 = (byte) 1*(const byte) SIZEOF_STRUCT_POINT
 Constant inlined idx#0 = (byte) 0
+Constant inlined main::$3 = (byte) 1*(const byte) SIZEOF_STRUCT_POINT
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(points+1*SIZEOF_STRUCT_POINT)
 Successful SSA optimization Pass2ConstantAdditionElimination

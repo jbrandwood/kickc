@@ -97,7 +97,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
       if(lValueSource!=null && lValueSource.isUnwindable()) {
          ArrayList<RValue> unwoundMembers = new ArrayList<>();
          for(String memberName : lValueSource.getMemberNames(getScope())) {
-            final ValueSource memberUnwinding = lValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, currentBlock, stmtIt);
+            ValueSource memberUnwinding = lValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, currentBlock, stmtIt);
             unwoundMembers.add(memberUnwinding.getSimpleValue(getScope()));
          }
          ValueList unwoundLValue = new ValueList(unwoundMembers);
@@ -111,6 +111,18 @@ public class Pass1UnwindStructValues extends Pass1Base {
       boolean anyParameterUnwound = false;
       for(RValue parameter : call.getParameters()) {
          boolean unwound = false;
+         final ValueSource parameterSource = getValueSource(getProgram(), getScope(), parameter, call, stmtIt, currentBlock);
+         if(parameterSource != null && parameterSource.isUnwindable()) {
+            // Passing a struct variable - convert it to member variables
+            for(String memberName : parameterSource.getMemberNames(getScope())) {
+               ValueSource memberUnwinding = parameterSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, currentBlock, stmtIt);
+               unwoundParameters.add(memberUnwinding.getSimpleValue(getScope()));
+            }
+            unwound = true;
+            anyParameterUnwound = true;
+         }
+
+         /*
          StructUnwinding parameterUnwinding = getStructMemberUnwinding(parameter, call, stmtIt, currentBlock);
          if(parameterUnwinding != null && parameterUnwinding != POSTPONE_UNWINDING) {
             // Passing a struct variable - convert it to member variables
@@ -121,6 +133,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
             unwound = true;
             anyParameterUnwound = true;
          }
+         */
+
          if(!unwound) {
             unwoundParameters.add(parameter);
          }

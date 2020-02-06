@@ -70,18 +70,6 @@ public class Pass1UnwindStructValues extends Pass1Base {
       ProgramValueIterator.execute(
             getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
                if(programValue.get() instanceof StructMemberRef) {
-/*
-                  StructMemberRef structMemberRef = (StructMemberRef) programValue.get();
-                  if(structMemberRef.getStruct() instanceof VariableRef) {
-                     StructUnwinding memberVariables = getStructMemberUnwinding(structMemberRef.getStruct(), currentStmt, stmtIt, currentBlock);
-                     if(memberVariables != null && memberVariables != POSTPONE_UNWINDING) {
-                        RValueUnwinding memberUnwinding = memberVariables.getMemberUnwinding(structMemberRef.getMemberName(), getScope());
-                        RValue structMemberVariable = memberUnwinding.getUnwinding(getScope());
-                        getLog().append("Replacing struct member reference " + structMemberRef.toString(getProgram()) + " with member unwinding reference " + structMemberVariable.toString(getProgram()));
-                        programValue.set(structMemberVariable);
-                     }
-
- */
                      StructMemberRef structMemberRef = (StructMemberRef) programValue.get();
                      final ValueSource structValueSource = getValueSource(getProgram(), getScope(), structMemberRef.getStruct(), currentStmt, stmtIt, currentBlock);
                      if(structValueSource != null) {
@@ -90,8 +78,6 @@ public class Pass1UnwindStructValues extends Pass1Base {
                         getLog().append("Replacing struct member reference " + structMemberRef.toString(getProgram()) + " with member unwinding reference " + memberSimpleValue.toString(getProgram()));
                         programValue.set(memberSimpleValue);
                         modified.set(true);
-                        
-
                   }
                }
             });
@@ -106,12 +92,13 @@ public class Pass1UnwindStructValues extends Pass1Base {
    private boolean unwindCall(StatementCall call, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       // Unwind struct value return value
       boolean lvalUnwound = false;
-      StructUnwinding lValueUnwinding = getStructMemberUnwinding(call.getlValue(), call, stmtIt, currentBlock);
-      if(lValueUnwinding != null && lValueUnwinding != POSTPONE_UNWINDING) {
+
+      final ValueSource lValueSource = getValueSource(getProgram(), getScope(), call.getlValue(), call, stmtIt, currentBlock);
+      if(lValueSource!=null && lValueSource.isUnwindable()) {
          ArrayList<RValue> unwoundMembers = new ArrayList<>();
-         for(String memberName : lValueUnwinding.getMemberNames()) {
-            RValueUnwinding memberUnwinding = lValueUnwinding.getMemberUnwinding(memberName, getScope());
-            unwoundMembers.add(memberUnwinding.getUnwinding(getScope()));
+         for(String memberName : lValueSource.getMemberNames(getScope())) {
+            final ValueSource memberUnwinding = lValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, currentBlock, stmtIt);
+            unwoundMembers.add(memberUnwinding.getSimpleValue(getScope()));
          }
          ValueList unwoundLValue = new ValueList(unwoundMembers);
          call.setlValue(unwoundLValue);
@@ -295,6 +282,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @return The value source for copying. null if no value source can be created.
     */
    public static ValueSource getValueSource(Program program, ProgramScope programScope, Value value, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+      if(value==null)
+         return null;
       final SymbolType valueType = SymbolTypeInference.inferType(programScope, (RValue) value);
       if(valueType instanceof SymbolTypeStruct && value instanceof CastValue && ((CastValue) value).getValue() instanceof ValueList) {
          ValueList valueList = (ValueList) ((CastValue) value).getValue();

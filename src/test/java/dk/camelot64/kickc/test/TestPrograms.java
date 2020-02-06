@@ -976,12 +976,10 @@ public class TestPrograms {
    //   compileAndCompare("struct-ptr-29");
    //}
 
-   // TODO: Fix problem with stack-allocated structs that contain arrays!
-   // https://gitlab.com/camelot/kickc/issues/314
-   //@Test
-   //public void testStructPtr28() throws IOException, URISyntaxException {
-   //   compileAndCompare("struct-ptr-28");
-   //}
+   @Test
+   public void testStructPtr28() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-28");
+   }
 
    @Test
    public void testStructPtr26() throws IOException, URISyntaxException {

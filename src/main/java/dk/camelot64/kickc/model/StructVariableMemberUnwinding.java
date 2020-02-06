@@ -39,7 +39,6 @@ public class StructVariableMemberUnwinding {
       return structVariables.get(ref);
    }
 
-
    /** Information about how a single struct variable was unwound. */
    public static class VariableUnwinding {
 

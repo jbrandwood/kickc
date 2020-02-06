@@ -5,20 +5,18 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.AssignmentRValue;
 import dk.camelot64.kickc.model.values.LValue;
-import dk.camelot64.kickc.model.values.RValue;
 
 /**
  * Asserts that types match in all assignments and calculations
  */
-public class Pass2AssertTypeMatch extends Pass2SsaAssertion {
+public class PassNAssertTypeMatch extends Pass2SsaAssertion {
 
-   public Pass2AssertTypeMatch(Program program) {
+   public PassNAssertTypeMatch(Program program) {
       super(program);
    }
 

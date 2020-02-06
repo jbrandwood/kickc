@@ -59,8 +59,7 @@ public class ValueSourceStructValueList extends ValueSourceBase {
    public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       int memberIndex = getMemberNames(programScope).indexOf(memberName);
       final RValue memberValue = valueList.getList().get(memberIndex);
-      final ValueSource valueSource = ValueSourceFactory.getValueSource(memberValue, program, programScope, currentStmt, stmtIt, currentBlock);
-      return valueSource;
+      return ValueSourceFactory.getValueSource(memberValue, program, programScope, currentStmt, stmtIt, currentBlock);
    }
 
 }

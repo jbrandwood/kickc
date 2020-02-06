@@ -304,6 +304,10 @@ public class Variable implements Symbol {
       return kind;
    }
 
+   public void setKind(Kind kind) {
+      this.kind = kind;
+   }
+
    public boolean isKindConstant() {
       return Kind.CONSTANT.equals(getKind());
    }

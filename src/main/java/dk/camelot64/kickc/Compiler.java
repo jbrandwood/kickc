@@ -176,7 +176,7 @@ public class Compiler {
          getLog().append(program.getScope().toString(program, false));
       }
 
-      new Pass1AddressOfVolatile(program).execute();
+      new Pass1AddressOfHandling(program).execute();
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new PassNAddTypeConversionAssignment(program, false).execute();
@@ -190,7 +190,7 @@ public class Compiler {
       new Pass1PointerSizeofFix(program).execute(); // After this point in the code all pointer math is byte-based
       new PassNSizeOfSimplification(program).execute(); // Needed to eliminate sizeof() referencing pointer value variables
 
-      new Pass2AssertTypeMatch(program).check();
+      new PassNAssertTypeMatch(program).check();
 
       new Pass1ConstantifyRValue(program).execute();
       new Pass1UnwindStructVariables(program).execute();
@@ -262,7 +262,7 @@ public class Compiler {
       List<Pass2SsaAssertion> assertions = new ArrayList<>();
       //assertions.add(new Pass2AssertNoLValueObjectEquality(program));
       assertions.add(new PassNAssertTypeDeref(program));
-      assertions.add(new Pass2AssertTypeMatch(program));
+      assertions.add(new PassNAssertTypeMatch(program));
       assertions.add(new Pass2AssertSymbols(program));
       assertions.add(new Pass2AssertBlocks(program));
       assertions.add(new Pass2AssertNoCallParameters(program));

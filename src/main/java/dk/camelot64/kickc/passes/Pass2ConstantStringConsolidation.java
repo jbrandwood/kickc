@@ -105,9 +105,8 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
             modified = true;
          }
       }
-      if(getLog().isVerboseSSAOptimize()) {
+      if(modified) {
          getLog().append("Consolidated constant strings into " + rootConstant);
-
       }
       return modified;
    }

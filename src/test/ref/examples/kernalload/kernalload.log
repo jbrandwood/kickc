@@ -62,7 +62,7 @@ strlen::@return: scope:[strlen]  from strlen::@3
 (void()) main()
 main: scope:[main]  from @15
   (byte) loadFileToMemory::device#0 ← (number) 8
-  (byte*) loadFileToMemory::filename#0 ← (const string) main::filename
+  (byte*) loadFileToMemory::filename#0 ← (const byte*) main::filename
   (byte*) loadFileToMemory::address#0 ← (const byte*) LOAD_SPRITE
   call loadFileToMemory 
   (byte) loadFileToMemory::return#0 ← (byte) loadFileToMemory::return#2
@@ -283,7 +283,7 @@ SYMBOL TABLE SSA
 (label) main::@4
 (label) main::@5
 (label) main::@return
-(const string) main::filename[]  = (string) "SPRITE"
+(const byte*) main::filename[(byte) 7]  = (string) "SPRITE"
 (byte) main::status
 (byte) main::status#0
 (byte) main::status#1
@@ -470,15 +470,15 @@ Inlining constant with var siblings (const word) strlen::len#0
 Inlining constant with var siblings (const byte*) strlen::str#1
 Constant inlined main::toSpritePtr1_sprite#0 = (const byte*) LOAD_SPRITE
 Constant inlined load::address#0 = (const byte*) LOAD_SPRITE
-Constant inlined setnam::filename#0 = (const string) main::filename
+Constant inlined setnam::filename#0 = (const byte*) main::filename
 Constant inlined main::toSpritePtr1_$0 = (word)(const byte*) LOAD_SPRITE
-Constant inlined strlen::str#1 = (const string) main::filename
+Constant inlined strlen::str#1 = (const byte*) main::filename
 Constant inlined load::$0 = (byte) 0
 Constant inlined loadFileToMemory::address#0 = (const byte*) LOAD_SPRITE
 Constant inlined setlfs::device#0 = (const byte) loadFileToMemory::device#0
 Constant inlined main::toSpritePtr1_$1 = (word)(const byte*) LOAD_SPRITE/(byte) $40
 Constant inlined strlen::len#0 = (word) 0
-Constant inlined loadFileToMemory::filename#0 = (const string) main::filename
+Constant inlined loadFileToMemory::filename#0 = (const byte*) main::filename
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @15
@@ -625,7 +625,7 @@ setnam::@1: scope:[setnam]  from setnam
   [42] (word~) setnam::$0 ← (word) strlen::return#2
   [43] (byte~) setnam::$1 ← (byte)(word~) setnam::$0
   [44] *((const byte*) setnam::filename_len) ← (byte~) setnam::$1
-  [45] *((const byte**) setnam::filename_ptr) ← (const string) main::filename
+  [45] *((const byte**) setnam::filename_ptr) ← (const byte*) main::filename
   asm { ldafilename_len ldxfilename_ptr ldyfilename_ptr+1 jsr$ffbd  }
   to:setnam::@return
 setnam::@return: scope:[setnam]  from setnam::@1
@@ -638,7 +638,7 @@ strlen: scope:[strlen]  from setnam
   to:strlen::@1
 strlen::@1: scope:[strlen]  from strlen strlen::@2
   [49] (word) strlen::len#2 ← phi( strlen/(word) 0 strlen::@2/(word) strlen::len#1 )
-  [49] (byte*) strlen::str#2 ← phi( strlen/(const string) main::filename strlen::@2/(byte*) strlen::str#0 )
+  [49] (byte*) strlen::str#2 ← phi( strlen/(const byte*) main::filename strlen::@2/(byte*) strlen::str#0 )
   [50] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2
   to:strlen::@return
 strlen::@return: scope:[strlen]  from strlen::@1
@@ -988,7 +988,7 @@ setnam: {
     // [44] *((const byte*) setnam::filename_len) ← (byte~) setnam::$1 -- _deref_pbuc1=vbuz1 
     lda.z __1
     sta filename_len
-    // [45] *((const byte**) setnam::filename_ptr) ← (const string) main::filename -- _deref_pptc1=pbuc2 
+    // [45] *((const byte**) setnam::filename_ptr) ← (const byte*) main::filename -- _deref_pptc1=pbuc2 
     lda #<main.filename
     sta filename_ptr
     lda #>main.filename
@@ -1018,7 +1018,7 @@ strlen: {
     sta.z len
     lda #>0
     sta.z len+1
-    // [49] phi (byte*) strlen::str#2 = (const string) main::filename [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
+    // [49] phi (byte*) strlen::str#2 = (const byte*) main::filename [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
     lda #<main.filename
     sta.z str
     lda #>main.filename
@@ -1080,7 +1080,7 @@ Statement asm { ldxdeviceNum lda#1 ldy#0 jsr$ffba  } always clobbers reg byte a 
 Statement [41] (word) strlen::return#2 ← (word) strlen::len#2 [ strlen::return#2 ] ( main:2::loadFileToMemory:5::setnam:23 [ strlen::return#2 ] ) always clobbers reg byte a 
 Statement [42] (word~) setnam::$0 ← (word) strlen::return#2 [ setnam::$0 ] ( main:2::loadFileToMemory:5::setnam:23 [ setnam::$0 ] ) always clobbers reg byte a 
 Statement [43] (byte~) setnam::$1 ← (byte)(word~) setnam::$0 [ setnam::$1 ] ( main:2::loadFileToMemory:5::setnam:23 [ setnam::$1 ] ) always clobbers reg byte a 
-Statement [45] *((const byte**) setnam::filename_ptr) ← (const string) main::filename [ ] ( main:2::loadFileToMemory:5::setnam:23 [ ] ) always clobbers reg byte a 
+Statement [45] *((const byte**) setnam::filename_ptr) ← (const byte*) main::filename [ ] ( main:2::loadFileToMemory:5::setnam:23 [ ] ) always clobbers reg byte a 
 Statement asm { ldafilename_len ldxfilename_ptr ldyfilename_ptr+1 jsr$ffbd  } always clobbers reg byte a reg byte x reg byte y 
 Statement [50] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( main:2::loadFileToMemory:5::setnam:23::strlen:40 [ strlen::len#2 strlen::str#2 ] ) always clobbers reg byte a reg byte y 
 Statement [9] *((const byte*) BORDERCOL) ← (byte) 2 [ main::status#0 ] ( main:2 [ main::status#0 ] ) always clobbers reg byte a 
@@ -1098,7 +1098,7 @@ Statement asm { ldxdeviceNum lda#1 ldy#0 jsr$ffba  } always clobbers reg byte a 
 Statement [41] (word) strlen::return#2 ← (word) strlen::len#2 [ strlen::return#2 ] ( main:2::loadFileToMemory:5::setnam:23 [ strlen::return#2 ] ) always clobbers reg byte a 
 Statement [42] (word~) setnam::$0 ← (word) strlen::return#2 [ setnam::$0 ] ( main:2::loadFileToMemory:5::setnam:23 [ setnam::$0 ] ) always clobbers reg byte a 
 Statement [43] (byte~) setnam::$1 ← (byte)(word~) setnam::$0 [ setnam::$1 ] ( main:2::loadFileToMemory:5::setnam:23 [ setnam::$1 ] ) always clobbers reg byte a 
-Statement [45] *((const byte**) setnam::filename_ptr) ← (const string) main::filename [ ] ( main:2::loadFileToMemory:5::setnam:23 [ ] ) always clobbers reg byte a 
+Statement [45] *((const byte**) setnam::filename_ptr) ← (const byte*) main::filename [ ] ( main:2::loadFileToMemory:5::setnam:23 [ ] ) always clobbers reg byte a 
 Statement asm { ldafilename_len ldxfilename_ptr ldyfilename_ptr+1 jsr$ffbd  } always clobbers reg byte a reg byte x reg byte y 
 Statement [50] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( main:2::loadFileToMemory:5::setnam:23::strlen:40 [ strlen::len#2 strlen::str#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ strlen::str#2 strlen::str#0 ] : zp[2]:2 , 
@@ -1369,7 +1369,7 @@ setnam: {
     lda.z __0
     // [44] *((const byte*) setnam::filename_len) ← (byte~) setnam::$1 -- _deref_pbuc1=vbuaa 
     sta filename_len
-    // [45] *((const byte**) setnam::filename_ptr) ← (const string) main::filename -- _deref_pptc1=pbuc2 
+    // [45] *((const byte**) setnam::filename_ptr) ← (const byte*) main::filename -- _deref_pptc1=pbuc2 
     lda #<main.filename
     sta filename_ptr
     lda #>main.filename
@@ -1399,7 +1399,7 @@ strlen: {
     sta.z len
     lda #>0
     sta.z len+1
-    // [49] phi (byte*) strlen::str#2 = (const string) main::filename [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
+    // [49] phi (byte*) strlen::str#2 = (const byte*) main::filename [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
     lda #<main.filename
     sta.z str
     lda #>main.filename
@@ -1557,7 +1557,7 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@4
 (label) main::@return
-(const string) main::filename[]  = (string) "SPRITE"
+(const byte*) main::filename[(byte) 7]  = (string) "SPRITE"
 (byte) main::status
 (byte) main::status#0 reg byte x 2.0
 (label) main::toSpritePtr1
@@ -1826,7 +1826,7 @@ setnam: {
     // [44] *((const byte*) setnam::filename_len) ← (byte~) setnam::$1 -- _deref_pbuc1=vbuaa 
     sta filename_len
     // *filename_ptr = filename
-    // [45] *((const byte**) setnam::filename_ptr) ← (const string) main::filename -- _deref_pptc1=pbuc2 
+    // [45] *((const byte**) setnam::filename_ptr) ← (const byte*) main::filename -- _deref_pptc1=pbuc2 
     lda #<main.filename
     sta filename_ptr
     lda #>main.filename
@@ -1854,7 +1854,7 @@ strlen: {
     lda #<0
     sta.z len
     sta.z len+1
-    // [49] phi (byte*) strlen::str#2 = (const string) main::filename [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
+    // [49] phi (byte*) strlen::str#2 = (const byte*) main::filename [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
     lda #<main.filename
     sta.z str
     lda #>main.filename

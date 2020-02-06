@@ -11,7 +11,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) set_process_name::name#0 ← (const string) main::name
+  (byte*) set_process_name::name#0 ← (const byte*) main::name
   call set_process_name 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -55,7 +55,7 @@ SYMBOL TABLE SSA
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const string) main::name[]  = (string) "keyboard"
+(const byte*) main::name[(byte) 9]  = (string) "keyboard"
 (const byte*) process_name = (byte*)(number) $400
 (void()) set_process_name((byte*) set_process_name::name)
 (bool~) set_process_name::$0
@@ -95,7 +95,7 @@ De-inlining pointer[w] to *(pointer+w)   [9] *((const byte*) process_name + (sig
 De-inlining pointer[w] to *(pointer+w)   [9] *((const byte*) process_name + (signed word) set_process_name::j#2) ← *((byte*~) set_process_name::$1)
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Inlining constant with var siblings (const signed word) set_process_name::j#0
-Constant inlined set_process_name::name#0 = (const string) main::name
+Constant inlined set_process_name::name#0 = (const byte*) main::name
 Constant inlined set_process_name::j#0 = (signed word) 0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
@@ -153,7 +153,7 @@ set_process_name::@return: scope:[set_process_name]  from set_process_name::@1
   [10] return 
   to:@return
 set_process_name::@2: scope:[set_process_name]  from set_process_name::@1
-  [11] (byte*~) set_process_name::$1 ← (const string) main::name + (signed word) set_process_name::j#2
+  [11] (byte*~) set_process_name::$1 ← (const byte*) main::name + (signed word) set_process_name::j#2
   [12] (byte*~) set_process_name::$2 ← (const byte*) process_name + (signed word) set_process_name::j#2
   [13] *((byte*~) set_process_name::$2) ← *((byte*~) set_process_name::$1)
   [14] (signed word) set_process_name::j#1 ← ++ (signed word) set_process_name::j#2
@@ -255,7 +255,7 @@ set_process_name: {
     rts
     // set_process_name::@2
   __b2:
-    // [11] (byte*~) set_process_name::$1 ← (const string) main::name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [11] (byte*~) set_process_name::$1 ← (const byte*) main::name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<main.name
     clc
     adc.z j
@@ -290,7 +290,7 @@ set_process_name: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] if((signed word) set_process_name::j#2<(signed byte) $11) goto set_process_name::@2 [ set_process_name::j#2 ] ( main:2::set_process_name:5 [ set_process_name::j#2 ] ) always clobbers reg byte a 
-Statement [11] (byte*~) set_process_name::$1 ← (const string) main::name + (signed word) set_process_name::j#2 [ set_process_name::j#2 set_process_name::$1 ] ( main:2::set_process_name:5 [ set_process_name::j#2 set_process_name::$1 ] ) always clobbers reg byte a 
+Statement [11] (byte*~) set_process_name::$1 ← (const byte*) main::name + (signed word) set_process_name::j#2 [ set_process_name::j#2 set_process_name::$1 ] ( main:2::set_process_name:5 [ set_process_name::j#2 set_process_name::$1 ] ) always clobbers reg byte a 
 Statement [12] (byte*~) set_process_name::$2 ← (const byte*) process_name + (signed word) set_process_name::j#2 [ set_process_name::j#2 set_process_name::$1 set_process_name::$2 ] ( main:2::set_process_name:5 [ set_process_name::j#2 set_process_name::$1 set_process_name::$2 ] ) always clobbers reg byte a 
 Statement [13] *((byte*~) set_process_name::$2) ← *((byte*~) set_process_name::$1) [ set_process_name::j#2 ] ( main:2::set_process_name:5 [ set_process_name::j#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ set_process_name::j#2 set_process_name::j#1 ] : zp[2]:2 , 
@@ -378,7 +378,7 @@ set_process_name: {
     rts
     // set_process_name::@2
   __b2:
-    // [11] (byte*~) set_process_name::$1 ← (const string) main::name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [11] (byte*~) set_process_name::$1 ← (const byte*) main::name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<main.name
     clc
     adc.z j
@@ -446,7 +446,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const string) main::name[]  = (string) "keyboard"
+(const byte*) main::name[(byte) 9]  = (string) "keyboard"
 (const byte*) process_name = (byte*) 1024
 (void()) set_process_name((byte*) set_process_name::name)
 (byte*~) set_process_name::$1 zp[2]:4 11.0
@@ -526,7 +526,7 @@ set_process_name: {
     // set_process_name::@2
   __b2:
     // process_name[j]=name[j]
-    // [11] (byte*~) set_process_name::$1 ← (const string) main::name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [11] (byte*~) set_process_name::$1 ← (const byte*) main::name + (signed word) set_process_name::j#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<main.name
     clc
     adc.z j

@@ -33,8 +33,10 @@ public class Compiler {
    /** Disable the entire register uplift. This will create significantly less optimized ASM since registers are not utilized. */
    private boolean disableUplift = false;
 
-   /** Enable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it.
-    * Currently the optimization is flaky and results in NPE's and wrong values in some programs. */
+   /**
+    * Enable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it.
+    * Currently the optimization is flaky and results in NPE's and wrong values in some programs.
+    */
    private boolean enableLoopHeadConstant = false;
 
    /** File name of link script to use (from command line parameter). */
@@ -417,7 +419,8 @@ public class Compiler {
             boolean stepOptimized = true;
             while(stepOptimized) {
                stepOptimized = optimization.step();
-               ssaOptimized = pass2LogOptimization(ssaOptimized, optimization, stepOptimized);
+               if(stepOptimized) ssaOptimized = true;
+               pass2LogOptimization(optimization, stepOptimized);
             }
          }
       }
@@ -434,21 +437,20 @@ public class Compiler {
       for(PassStep optimization : optimizations) {
          pass2AssertSSA();
          boolean stepOptimized = optimization.step();
-         ssaOptimized = pass2LogOptimization(ssaOptimized, optimization, stepOptimized);
+         if(stepOptimized) ssaOptimized = true;
+         pass2LogOptimization(optimization, stepOptimized);
       }
       return ssaOptimized;
    }
 
-   private boolean pass2LogOptimization(boolean ssaOptimized, PassStep optimization, boolean stepOptimized) {
+   private void pass2LogOptimization(PassStep optimization, boolean stepOptimized) {
       if(stepOptimized) {
          getLog().append("Successful SSA optimization " + optimization.getClass().getSimpleName() + "");
-         ssaOptimized = true;
          if(getLog().isVerboseSSAOptimize()) {
             getLog().append("CONTROL FLOW GRAPH");
             getLog().append(program.getGraph().toString(program));
          }
       }
-      return ssaOptimized;
    }
 
    private void pass3Analysis() {
@@ -552,7 +554,7 @@ public class Compiler {
       new Pass4CodeGeneration(program, false, program.isWarnFragmentMissing()).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
-      getLog().append("Target platform is " + program.getTargetPlatform().getName() + " / " +program.getTargetCpu().getName().toUpperCase(Locale.ENGLISH));
+      getLog().append("Target platform is " + program.getTargetPlatform().getName() + " / " + program.getTargetCpu().getName().toUpperCase(Locale.ENGLISH));
       getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
 
       if(disableUplift) {

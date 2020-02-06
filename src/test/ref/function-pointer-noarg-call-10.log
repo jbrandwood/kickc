@@ -28,7 +28,7 @@ do10::@return: scope:[do10]  from do10::@1
 
 (void()) hello()
 hello: scope:[hello]  from
-  (byte*) print::msg#0 ← (const string) hello::msg
+  (byte*) print::msg#0 ← (const byte*) hello::msg
   call print 
   to:hello::@1
 hello::@1: scope:[hello]  from hello
@@ -39,7 +39,7 @@ hello::@return: scope:[hello]  from hello::@1
 
 (void()) world()
 world: scope:[world]  from
-  (byte*) print::msg#1 ← (const string) world::msg
+  (byte*) print::msg#1 ← (const byte*) world::msg
   call print 
   to:world::@1
 world::@1: scope:[world]  from world
@@ -113,7 +113,7 @@ SYMBOL TABLE SSA
 (void()) hello()
 (label) hello::@1
 (label) hello::@return
-(const string) hello::msg[]  = (string) "hello "
+(const byte*) hello::msg[(byte) 7]  = (string) "hello "
 (byte) idx loadstore
 (void()) main()
 (label) main::@1
@@ -135,7 +135,7 @@ SYMBOL TABLE SSA
 (void()) world()
 (label) world::@1
 (label) world::@return
-(const string) world::msg[]  = (string) "world "
+(const byte*) world::msg[(byte) 7]  = (string) "world "
 
 Adding number conversion cast (unumber) 0 in (bool~) print::$0 ← (number) 0 != *((byte*) print::msg#2 + (byte) print::i#1)
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -175,8 +175,8 @@ Constant inlined do10::i#0 = (byte) 0
 Constant inlined print::i#0 = (byte) 0
 Constant inlined do10::fn#1 = &(void()) world()
 Constant inlined do10::fn#0 = &(void()) hello()
-Constant inlined print::msg#1 = (const string) world::msg
-Constant inlined print::msg#0 = (const string) hello::msg
+Constant inlined print::msg#1 = (const byte*) world::msg
+Constant inlined print::msg#0 = (const byte*) hello::msg
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting do10::@3(between do10::@1 and do10::@1)
 Added new block during phi lifting print::@3(between print::@1 and print::@1)
@@ -269,7 +269,7 @@ world::@return: scope:[world]  from world
 
 (void()) print((byte*) print::msg)
 print: scope:[print]  from hello world
-  [19] (byte*) print::msg#3 ← phi( hello/(const string) hello::msg world/(const string) world::msg )
+  [19] (byte*) print::msg#3 ← phi( hello/(const byte*) hello::msg world/(const byte*) world::msg )
   to:print::@1
 print::@1: scope:[print]  from print print::@1
   [20] (byte) print::i#2 ← phi( print/(byte) 0 print::@1/(byte) print::i#1 )
@@ -430,7 +430,7 @@ world: {
     // [17] call print 
     // [19] phi from world to print [phi:world->print]
   print_from_world:
-    // [19] phi (byte*) print::msg#3 = (const string) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
+    // [19] phi (byte*) print::msg#3 = (const byte*) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg
@@ -486,7 +486,7 @@ hello: {
     // [27] call print 
     // [19] phi from hello to print [phi:hello->print]
   print_from_hello:
-    // [19] phi (byte*) print::msg#3 = (const string) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
+    // [19] phi (byte*) print::msg#3 = (const byte*) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg
@@ -645,7 +645,7 @@ world: {
     // [17] call print 
     // [19] phi from world to print [phi:world->print]
   print_from_world:
-    // [19] phi (byte*) print::msg#3 = (const string) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
+    // [19] phi (byte*) print::msg#3 = (const byte*) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg
@@ -697,7 +697,7 @@ hello: {
     // [27] call print 
     // [19] phi from hello to print [phi:hello->print]
   print_from_hello:
-    // [19] phi (byte*) print::msg#3 = (const string) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
+    // [19] phi (byte*) print::msg#3 = (const byte*) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg
@@ -774,7 +774,7 @@ FINAL SYMBOL TABLE
 (byte) do10::i#2 i zp[1]:4 11.0
 (void()) hello()
 (label) hello::@return
-(const string) hello::msg[]  = (string) "hello "
+(const byte*) hello::msg[(byte) 7]  = (string) "hello "
 (byte) idx loadstore zp[1]:7 5.0
 (void()) main()
 (label) main::@1
@@ -789,7 +789,7 @@ FINAL SYMBOL TABLE
 (byte*) print::msg#3 msg zp[2]:5 3.6666666666666665
 (void()) world()
 (label) world::@return
-(const string) world::msg[]  = (string) "world "
+(const byte*) world::msg[(byte) 7]  = (string) "world "
 
 zp[2]:2 [ do10::fn#3 ]
 zp[1]:4 [ do10::i#2 do10::i#1 ]
@@ -887,7 +887,7 @@ world: {
     // print("world ")
     // [17] call print 
     // [19] phi from world to print [phi:world->print]
-    // [19] phi (byte*) print::msg#3 = (const string) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
+    // [19] phi (byte*) print::msg#3 = (const byte*) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg
@@ -936,7 +936,7 @@ hello: {
     // print("hello ")
     // [27] call print 
     // [19] phi from hello to print [phi:hello->print]
-    // [19] phi (byte*) print::msg#3 = (const string) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
+    // [19] phi (byte*) print::msg#3 = (const byte*) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg

@@ -6,7 +6,6 @@ import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -91,7 +90,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       Collection<Variable> allConstants = getProgram().getScope().getAllConstants(true);
       for(Variable constant : allConstants) {
          if(constant.getRef().isIntermediate()) {
-            if(!(constant.getType().equals(SymbolType.STRING)) && !(constant.getInitValue() instanceof ConstantArray) && !(constant.getInitValue() instanceof ConstantStructValue) && !(constant.getInitValue() instanceof StructZero)) {
+            if(!(constant.getInitValue() instanceof ConstantString) && !(constant.getInitValue() instanceof ConstantArray) && !(constant.getInitValue() instanceof ConstantStructValue) && !(constant.getInitValue() instanceof StructZero)) {
                unnamed.put(constant.getConstantRef(), constant.getInitValue());
             }
          }
@@ -114,7 +113,8 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
             if(((ConstantRef) constantValue).isIntermediate()) {
                // The value is an intermediate constant - replace all uses of the intermediate with uses of the referrer instead.
                aliases.put((ConstantRef) constant.getInitValue(), constant.getConstantRef());
-               constant.setInitValue(programScope.getConstant((ConstantRef) constantValue).getInitValue());
+               final ConstantValue initValue = programScope.getConstant((ConstantRef) constantValue).getInitValue();
+               constant.setInitValue(initValue);
             } else {
                aliases.put(constant.getConstantRef(), constant.getInitValue());
             }

@@ -9,6 +9,8 @@ import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantString;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.Value;
@@ -74,7 +76,9 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
             name = nameHint + nameHintIdx++;
          }
       }
-      Variable strConst = Variable.createConstant(name, SymbolType.STRING, blockScope, new ArraySpec(), constantString, blockScope.getSegmentData());
+      final long stringLength = constantString.getStringLength();
+      final ConstantInteger arraySize = new ConstantInteger(stringLength, stringLength<256?SymbolType.BYTE : SymbolType.WORD);
+      Variable strConst = Variable.createConstant(name, new SymbolTypePointer(SymbolType.BYTE), blockScope, new ArraySpec(arraySize), constantString, blockScope.getSegmentData());
       blockScope.add(strConst);
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("Creating constant string variable for inline " + strConst.toString(getProgram()) + " \"" + constantString.getValue() + "\"");

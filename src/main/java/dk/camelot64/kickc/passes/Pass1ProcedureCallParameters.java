@@ -9,7 +9,6 @@ import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
-import dk.camelot64.kickc.passes.unwinding.RValueUnwinding;
 
 import java.util.*;
 
@@ -81,8 +80,8 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
             if(returnVarUnwinding!=null) {
                ArrayList<RValue> unwoundReturnVars = new ArrayList<>();
                for(String memberName : returnVarUnwinding.getMemberNames()) {
-                  RValueUnwinding memberUnwinding = returnVarUnwinding.getMemberUnwinding(memberName, getScope());
-                  unwoundReturnVars.add(memberUnwinding.getUnwinding(getScope()));
+                  final SymbolVariableRef memberUnwound = returnVarUnwinding.getMemberUnwound(memberName);
+                  unwoundReturnVars.add(memberUnwound);
                }
                procReturnVarRef = new ValueList(unwoundReturnVars);
             }

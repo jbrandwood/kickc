@@ -1,12 +1,6 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.symbols.ArraySpec;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.StructDefinition;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.values.*;
-import dk.camelot64.kickc.passes.unwinding.RValueUnwinding;
-import dk.camelot64.kickc.passes.unwinding.StructUnwinding;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -37,8 +31,8 @@ public class StructVariableMemberUnwinding {
     * @param ref The variable to add information for
     * @return The new information about the unwinding.
     */
-   public VariableUnwinding createVariableUnwinding(SymbolVariableRef ref, StructDefinition structDefinition) {
-      VariableUnwinding existing = structVariables.put(ref, new VariableUnwinding(structDefinition));
+   public VariableUnwinding createVariableUnwinding(SymbolVariableRef ref) {
+      VariableUnwinding existing = structVariables.put(ref, new VariableUnwinding());
       if(existing != null) {
          throw new InternalError("ERROR! Struct unwinding was already created once! " + ref.toString());
       }
@@ -47,15 +41,12 @@ public class StructVariableMemberUnwinding {
 
 
    /** Information about how a single struct variable was unwound. */
-   public static class VariableUnwinding implements StructUnwinding {
-
-      StructDefinition structDefinition;
+   public static class VariableUnwinding {
 
       /** Maps member names to the unwound variables. */
       Map<String, SymbolVariableRef> memberUnwinding;
 
-      public VariableUnwinding(StructDefinition structDefinition) {
-         this.structDefinition = structDefinition;
+      public VariableUnwinding() {
          memberUnwinding = new LinkedHashMap<>();
       }
 
@@ -70,42 +61,6 @@ public class StructVariableMemberUnwinding {
 
       public SymbolVariableRef getMemberUnwound(String memberName) {
          return memberUnwinding.get(memberName);
-      }
-
-      @Override
-      public RValueUnwinding getMemberUnwinding(String memberName, ProgramScope programScope) {
-         return new RValueUnwinding() {
-            @Override
-            public SymbolType getSymbolType() {
-               return structDefinition.getMember(memberName).getType();
-            }
-
-            @Override
-            public ArraySpec getArraySpec() {
-               return structDefinition.getMember(memberName).getArraySpec();
-            }
-
-            @Override
-            public RValue getUnwinding(ProgramScope programScope) {
-               return memberUnwinding.get(memberName);
-            }
-
-            @Override
-            public boolean isBulkCopyable() {
-               return getArraySpec()!=null;
-            }
-
-            @Override
-            public LValue getBulkLValue(ProgramScope scope) {
-               final RValue unwinding = getUnwinding(scope);
-               return new PointerDereferenceSimple(unwinding);
-            }
-
-            @Override
-            public RValue getBulkRValue(ProgramScope scope) {
-               throw new RuntimeException("TODO: Implement!");
-            }
-         };
       }
 
    }

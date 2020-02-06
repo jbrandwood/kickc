@@ -422,8 +422,6 @@ public class AsmFragmentInstanceSpecFactory {
          return "vdu";
       } else if(SymbolType.SDWORD.equals(type)) {
          return "vds";
-      } else if(SymbolType.STRING.equals(type)) {
-         return "pbu";
       } else if(SymbolType.BOOLEAN.equals(type)) {
          return "vbo";
       } else if(type instanceof SymbolTypeStruct) {

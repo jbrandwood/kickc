@@ -169,7 +169,7 @@ public class AsmFormat {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
-         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
+         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer) {
             return "<" + getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_AND, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
@@ -180,7 +180,7 @@ public class AsmFormat {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
             return getAsmConstant(program, new ConstantInteger(0l), outerPrecedence, codeScope);
-         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
+         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer) {
             return ">" + getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope);
@@ -195,7 +195,7 @@ public class AsmFormat {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long) 0xff)), outerPrecedence, codeScope);
-         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
+         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
          } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long) 0xffffffff)), outerPrecedence, codeScope);

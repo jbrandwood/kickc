@@ -40,8 +40,6 @@ public class OperatorMinus extends OperatorBinary {
          return new SymbolTypePointer(((SymbolTypePointer) type1).getElementType());
       } else if(type1 instanceof SymbolTypePointer && type2 instanceof SymbolTypePointer) {
          return SymbolType.WORD;
-      } else if(SymbolType.STRING.equals(type1) && SymbolType.isInteger(type2)) {
-         return new SymbolTypePointer(SymbolType.BYTE);
       }
       // Handle numeric types through proper promotion
       if(SymbolType.isInteger(type1) && SymbolType.isInteger(type2)) {

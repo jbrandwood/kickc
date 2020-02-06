@@ -28,7 +28,7 @@ public class SymbolTypeInference {
       } else if(rValue instanceof ConstantInteger) {
          return ((ConstantInteger) rValue).getType(symbols);
       } else if(rValue instanceof ConstantString) {
-         type = SymbolType.STRING;
+         type = new SymbolTypePointer(SymbolType.BYTE);
       } else if(rValue instanceof ConstantChar) {
          type = SymbolType.BYTE;
       } else if(rValue instanceof ConstantBool) {
@@ -48,8 +48,6 @@ public class SymbolTypeInference {
          SymbolType pointerType = inferType(symbols, ((PointerDereference) rValue).getPointer());
          if(pointerType instanceof SymbolTypePointer) {
             return ((SymbolTypePointer) pointerType).getElementType();
-         } else if(pointerType.equals(SymbolType.STRING)) {
-            return SymbolType.BYTE;
          } else {
             return SymbolType.VAR;
          }

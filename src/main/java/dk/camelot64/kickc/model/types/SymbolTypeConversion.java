@@ -224,10 +224,6 @@ public class SymbolTypeConversion {
          // R-value is still a number - constants are probably not done being identified & typed
          return true;
       }
-      if(SymbolType.STRING.equals(rValueType) && lValueType instanceof SymbolTypePointer && SymbolType.BYTE.equals(((SymbolTypePointer) lValueType).getElementType())) {
-         // String value can be assigned into a pointer
-         return true;
-      }
       if(lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer && assignmentTypeMatch(((SymbolTypePointer) lValueType).getElementType(), ((SymbolTypePointer) rValueType).getElementType())) {
             // Pointer types assigned from each other
             return true;
@@ -246,8 +242,6 @@ public class SymbolTypeConversion {
       if(lValueType.equals(rValueType))
          return false;
       else if(lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer && ((SymbolTypePointer) lValueType).getElementType().equals(((SymbolTypePointer) rValueType).getElementType()))
-         return false;
-      else if(lValueType instanceof SymbolTypePointer && SymbolType.STRING.equals(rValueType) && SymbolType.BYTE.equals(((SymbolTypePointer) lValueType).getElementType()))
          return false;
       else
          return true;

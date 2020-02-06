@@ -644,7 +644,16 @@ public class Pass4CodeGeneration {
             }
             dataChunk.addDataKickAsm(bytes, kickAsm.getKickAsmCode(), getEncoding(value));
             dataNumElements = bytes;
-         } else if(dataType.equals(SymbolType.STRING)) {
+         } else if(value instanceof ConstantString) {
+            ConstantString stringValue = (ConstantString) value;
+            String asmConstant = AsmFormat.getAsmConstant(program, stringValue, 99, scopeRef);
+            dataChunk.addDataString(asmConstant, getEncoding(stringValue));
+            if(stringValue.isZeroTerminated()) {
+               dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, "0", null);
+            }
+            dataNumElements = stringValue.getStringLength();
+            
+            /*
             try {
                ConstantLiteral literal = value.calculateLiteral(getScope());
                if(literal instanceof ConstantString) {
@@ -659,6 +668,7 @@ public class Pass4CodeGeneration {
             } catch(ConstantNotLiteral e) {
                // can't calculate literal value, so it is not data - just return
             }
+             */
          } else {
             // Assume we have a ConstantArrayList
             ConstantArrayList constantArrayList = (ConstantArrayList) value;

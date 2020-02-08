@@ -176,6 +176,13 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code globalDirectiveVarModel}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree

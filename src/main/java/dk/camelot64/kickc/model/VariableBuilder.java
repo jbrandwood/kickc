@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -44,6 +46,16 @@ public class VariableBuilder {
       this.arraySpec = arraySpec;
       this.directives = directives;
       this.dataSegment = dataSegment;
+   }
+
+   public static VariableBuilderConfig getDefaultConfig(CompileLog log) {
+      VariableBuilderConfig config = new VariableBuilderConfig();
+      config.addSetting("ssa_zp", log, null);
+      config.addSetting("array_ma_mem", log, null);
+      config.addSetting("global_ma_mem", log, null);
+      config.addSetting("local_struct_ssa_zp", log, null);
+      config.addSetting("global_struct_ma_mem", log, null);
+      return config;
    }
 
    /**
@@ -310,7 +322,6 @@ public class VariableBuilder {
     * @return Hard-coded register allocation. Null if not hard-coded.
     */
    public Registers.Register getRegister() {
-
       Directive.Address addressDirective = findDirective(Directive.Address.class);
       if(addressDirective != null) {
          Variable.MemoryArea memoryArea = (addressDirective.address < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;

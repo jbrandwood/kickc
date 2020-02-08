@@ -318,6 +318,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDirectiveConst(KickCParser.DirectiveConstContext ctx) { }
 	/**
 	 * {@inheritDoc}

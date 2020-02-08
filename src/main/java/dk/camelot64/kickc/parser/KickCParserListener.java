@@ -286,6 +286,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code globalDirectiveVarModel}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code globalDirectiveVarModel}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree

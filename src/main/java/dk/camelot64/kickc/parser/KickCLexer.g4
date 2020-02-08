@@ -88,6 +88,7 @@ FORM_SSA: '__ssa' ;
 FORM_MA: '__ma' ;
 CALLING: 'calling';
 CALLINGCONVENTION: '__stackcall' | '__phicall' ;
+VARMODEL: 'var_model';
 IF: 'if' ;
 ELSE: 'else' ;
 WHILE: 'while' ;

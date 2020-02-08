@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testVarModelUnknown() throws IOException, URISyntaxException {
+      assertError("varmodel-unknown", "Warning: Malformed var_model parameter");
+   }
+
+   @Test
    public void testMillforkPlasma() throws IOException, URISyntaxException {
       compileAndCompare("millfork-benchmarks/plasma-kc");
    }

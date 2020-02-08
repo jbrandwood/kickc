@@ -92,6 +92,7 @@ globalDirective
     | (PRAGMA DATASEG) PAR_BEGIN NAME PAR_END #globalDirectiveDataSeg
     | (PRAGMA ENCODING) PAR_BEGIN NAME PAR_END #globalDirectiveEncoding
     | (PRAGMA CALLING) PAR_BEGIN CALLINGCONVENTION PAR_END #globalDirectiveCalling
+    | (PRAGMA VARMODEL) PAR_BEGIN NAME ( COMMA NAME )* PAR_END #globalDirectiveVarModel
     ;
 
 directive

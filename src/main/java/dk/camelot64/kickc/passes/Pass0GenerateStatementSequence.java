@@ -48,6 +48,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private Stack<Scope> scopeStack;
    /** The memory area used by default for variables. */
    private Variable.MemoryArea defaultMemoryArea;
+   /** Configuration for the variable builder. */
+   private VariableBuilderConfig variableBuilderConfig;
 
    public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program) {
       this.cParser = cParser;
@@ -56,6 +58,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.sequence = program.getStatementSequence();
       this.scopeStack = new Stack<>();
       this.defaultMemoryArea = Variable.MemoryArea.ZEROPAGE_MEMORY;
+      this.variableBuilderConfig = VariableBuilder.getDefaultConfig(program.getLog());
       scopeStack.push(program.getScope());
    }
 
@@ -96,6 +99,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // The Parser / Lexer will automatically add the import file content here in the token stream
       //Path currentPath = file.toPath().getParent();
       //SourceLoader.loadAndParseFile(importFileName, currentPath, program);
+      return null;
+   }
+
+   @Override
+   public Object visitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx) {
+      for(TerminalNode varModel : ctx.NAME()) {
+         variableBuilderConfig.addSetting(varModel.getText(), program.getLog(), new StatementSource(ctx));
+      }
       return null;
    }
 

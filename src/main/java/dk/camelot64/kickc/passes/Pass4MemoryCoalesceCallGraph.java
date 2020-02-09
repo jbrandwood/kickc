@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.CallGraph;
-import dk.camelot64.kickc.model.LiveRangeEquivalenceClass;
-import dk.camelot64.kickc.model.LiveRangeEquivalenceClassSet;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 
@@ -54,6 +51,9 @@ public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
       List<LiveRangeEquivalenceClass> handledECs = new ArrayList<>();
       List<LiveRangeEquivalenceClass> allECs = new ArrayList<>(liveRangeEquivalenceClassSet.getEquivalenceClasses());
       for(LiveRangeEquivalenceClass thisEC : allECs) {
+         // Skip main-memory registers
+         if(Registers.RegisterType.MAIN_MEM.equals(thisEC.getRegister().getType()))
+            continue;
          // Find all calling scopes - since we want to avoid coalescing with variables in these
          Set<ScopeRef> allCallingScopes = new LinkedHashSet<>();
          for(ScopeRef ecScope : getEquivalenceClassScopes(thisEC)) {
@@ -62,6 +62,9 @@ public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
          // Go through the already handled equivalence classes - and try to coalesce with any that does not have variables from the calling scopes
          boolean coalesced = false;
          for(LiveRangeEquivalenceClass otherEC : handledECs) {
+            // Skip main-memory registers
+            if(Registers.RegisterType.MAIN_MEM.equals(otherEC.getRegister().getType()))
+               continue;
             // Skip if there is a scope overlap
             if(isScopeOverlap(otherEC, allCallingScopes))
                continue;

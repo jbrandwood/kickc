@@ -531,8 +531,9 @@ public class Pass4CodeGeneration {
                   setCurrentSegment(variable.getDataSegment(), asm);
                   // Add any comments
                   generateComments(asm, variable.getComments());
-                  if(!mainVar.getAsmName().equals(variable.getAsmName())) {
-                     asm.addLabelDecl(variable.getAsmName(), AsmFormat.getAsmConstant(program, new ConstantSymbolPointer(mainVar.getRef()), 99, scopeRef));
+                  final String mainAsmName = AsmFormat.getAsmConstant(program, new ConstantSymbolPointer(mainVar.getRef()), 99, scopeRef);
+                  if(!mainAsmName.equals(variable.getAsmName())) {
+                     asm.addLabelDecl(variable.getAsmName(), mainAsmName);
                   } else {
                      // Add any alignment
                      Integer declaredAlignment = variable.getMemoryAlignment();

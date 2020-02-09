@@ -4,9 +4,7 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.statements.StatementSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Configuration for the {@link VariableBuilder} specifying how different variables should be compiled.
@@ -62,13 +60,38 @@ public class VariableBuilderConfig {
       }
    }
 
+   /** Key of the settings map containing scope & type. */
+   public static class ScopeType {
+      public Scope scope;
+      public Type type;
+
+      public ScopeType(Scope scope, Type type) {
+         this.scope = scope;
+         this.type = type;
+      }
+
+      @Override
+      public boolean equals(Object o) {
+         if(this == o) return true;
+         if(o == null || getClass() != o.getClass()) return false;
+         ScopeType scopeType = (ScopeType) o;
+         return scope == scopeType.scope &&
+               type == scopeType.type;
+      }
+
+      @Override
+      public int hashCode() {
+         return Objects.hash(scope, type);
+      }
+   }
+
    /**
     * The settings
     */
-   private List<Setting> settings;
+   private Map<ScopeType, Setting> settings;
 
    VariableBuilderConfig() {
-      this.settings = new ArrayList<>();
+      this.settings = new HashMap<>();
    }
 
    public void addSetting(String pragmaParam, CompileLog log, StatementSource statementSource) {
@@ -81,7 +104,7 @@ public class VariableBuilderConfig {
          throw new CompileError("Warning: Malformed var_model parameter "+pragmaParam, statementSource);
       for(Scope scope : scopes) {
          for(Type type : types) {
-            settings.add(new Setting(scope, type, memoryArea, optimization));
+            settings.put(new ScopeType(scope, type), new Setting(scope, type, memoryArea, optimization));
          }
       }
    }
@@ -182,13 +205,31 @@ public class VariableBuilderConfig {
     * @return The memory area to use
     */
    public Setting getSetting(Scope scope, Type type) {
-      for(Setting setting : settings) {
-         if(setting.scope.equals(scope) && setting.type.equals(type)) {
-            // Found perfect match - return it
-            return setting;
-         }
-      }
-      return null;
+      return settings.get(new ScopeType(scope, type));
+   }
+
+   public static Scope getScope(boolean isScopeGlobal, boolean isScopeLocal, boolean isScopeParameter, boolean isScopeMember) {
+      if(isScopeGlobal)
+         return Scope.GLOBAL;
+      if(isScopeLocal)
+         return Scope.LOCAL;
+      if(isScopeParameter)
+         return Scope.PARAMETER;
+      if(isScopeMember)
+            return Scope.MEMBER;
+      throw new InternalError("Unknown scope!");
+   }
+
+   public static Type getType(boolean isTypeInteger, boolean isTypeArray, boolean isTypePointer, boolean isTypeStruct) {
+      if(isTypeInteger)
+         return Type.INTEGER;
+      if(isTypeArray)
+         return Type.ARRAY;
+      if(isTypePointer)
+         return Type.POINTER;
+      if(isTypeStruct)
+         return Type.STRUCT;
+      throw new InternalError("Unknown type!");
    }
 
 

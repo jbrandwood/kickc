@@ -276,7 +276,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) {
       this.visitDeclTypes(ctx.declTypes());
       String varName = ctx.NAME().getText();
-      VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, declVarType, null, declVarDirectives, currentDataSegment);
+      VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, declVarType, null, declVarDirectives, currentDataSegment, variableBuilderConfig);
       Variable param = varBuilder.build();
       exitDeclTypes();
       return param;
@@ -579,7 +579,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
          RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
          initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(declVarType, declArraySpec), program, statementSource);
-         VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, declVarType, declArraySpec, declVarDirectives, currentDataSegment);
+         VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, declVarType, declArraySpec, declVarDirectives, currentDataSegment, variableBuilderConfig);
          Variable variable = varBuilder.build();
          if(variable.isKindConstant() || (variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !declVarStructMember && variable.getRegister()==null)) {
                // Set constant value
@@ -645,7 +645,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       sequence.getStatements().remove(sequence.getStatements().size() - 1);
       // Add a constant variable
       Scope scope = getCurrentScope();
-      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, declVarType, declArraySpec, declVarDirectives, currentDataSegment);
+      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, declVarType, declArraySpec, declVarDirectives, currentDataSegment, variableBuilderConfig);
       Variable variable = varBuilder.build();
       // Set constant value
       variable.setInitValue(getConstInitValue(constantArrayKickAsm, null, statementSource));
@@ -1139,7 +1139,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       String varName = ctx.NAME().getText();
       Variable lValue;
       if(varType != null) {
-         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, null, declVarDirectives, currentDataSegment);
+         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, null, declVarDirectives, currentDataSegment, variableBuilderConfig);
          lValue = varBuilder.build();
       } else {
          lValue = getCurrentScope().getVariable(varName);

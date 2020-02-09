@@ -38,7 +38,10 @@ public class VariableBuilder {
    /** The data segment. */
    private String dataSegment;
 
-   public VariableBuilder(String varName, Scope scope, boolean isParameter, SymbolType type, ArraySpec arraySpec, List<Directive> directives, String dataSegment) {
+   /** Configuration of how to setup optimization/memory area for variables. */
+   private VariableBuilderConfig config;
+
+   public VariableBuilder(String varName, Scope scope, boolean isParameter, SymbolType type, ArraySpec arraySpec, List<Directive> directives, String dataSegment, VariableBuilderConfig config) {
       this.varName = varName;
       this.scope = scope;
       this.isParameter = isParameter;
@@ -46,14 +49,13 @@ public class VariableBuilder {
       this.arraySpec = arraySpec;
       this.directives = directives;
       this.dataSegment = dataSegment;
+      this.config = config;
    }
 
    public static VariableBuilderConfig getDefaultConfig(CompileLog log) {
       VariableBuilderConfig config = new VariableBuilderConfig();
       config.addSetting("ssa_zp", log, null);
       config.addSetting("array_ma_mem", log, null);
-      config.addSetting("global_ma_mem", log, null);
-      config.addSetting("local_struct_ssa_zp", log, null);
       config.addSetting("global_struct_ma_mem", log, null);
       return config;
    }
@@ -247,12 +249,15 @@ public class VariableBuilder {
       else if(isVolatile())
          // volatile variables must be load/store
          return false;
-      else if(isTypeStruct() && isScopeGlobal())
-         // global struct variables must be load/store
-         return false;
-      else
-         // All others are single-static-assignment (by default)
-         return true;
+      else {
+         VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeParameter(), isScopeMember());
+         VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct());
+         VariableBuilderConfig.Setting setting = config.getSetting(scope, type);
+         if(setting!=null && VariableBuilderConfig.Optimization.MA.equals(setting.optimization))
+            return false;
+         else
+            return true;
+      }
    }
 
    /**

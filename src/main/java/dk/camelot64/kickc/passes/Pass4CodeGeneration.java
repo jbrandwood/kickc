@@ -524,33 +524,35 @@ public class Pass4CodeGeneration {
                   throw new InternalError("Expected main memory allocation " + variable.toString(program));
                }
                Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
-               if(!registerMainMem.getVariableRef().equals(variable.getRef())) {
-                  continue;
-               }
+               final Variable mainVar = program.getScope().getVariable(registerMainMem.getVariableRef());
                if(registerMainMem.getAddress() == null) {
                   // Generate into the data segment
                   // Set segment
                   setCurrentSegment(variable.getDataSegment(), asm);
                   // Add any comments
                   generateComments(asm, variable.getComments());
-                  // Add any alignment
-                  Integer declaredAlignment = variable.getMemoryAlignment();
-                  if(declaredAlignment != null) {
-                     String alignment = AsmFormat.getAsmNumber(declaredAlignment);
-                     asm.addDataAlignment(alignment);
-                  }
-                  if(variable.getInitValue() != null) {
-                     // Variable has a constant init Value
-                     ConstantValue constantValue = variable.getInitValue();
-                     AsmDataChunk asmDataChunk = new AsmDataChunk();
-                     addChunkData(asmDataChunk, constantValue, variable.getType(), variable.getArraySpec(), scopeRef);
-                     asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
+                  if(!mainVar.getAsmName().equals(variable.getAsmName())) {
+                     asm.addLabelDecl(variable.getAsmName(), AsmFormat.getAsmConstant(program, new ConstantSymbolPointer(mainVar.getRef()), 99, scopeRef));
                   } else {
-                     // Zero-fill variable
-                     AsmDataChunk asmDataChunk = new AsmDataChunk();
-                     ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(variable.getType(), variable.getArraySpec()), null);
-                     addChunkData(asmDataChunk, zeroValue, variable.getType(), variable.getArraySpec(), scopeRef);
-                     asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
+                     // Add any alignment
+                     Integer declaredAlignment = variable.getMemoryAlignment();
+                     if(declaredAlignment != null) {
+                        String alignment = AsmFormat.getAsmNumber(declaredAlignment);
+                        asm.addDataAlignment(alignment);
+                     }
+                     if(variable.getInitValue() != null) {
+                        // Variable has a constant init Value
+                        ConstantValue constantValue = variable.getInitValue();
+                        AsmDataChunk asmDataChunk = new AsmDataChunk();
+                        addChunkData(asmDataChunk, constantValue, variable.getType(), variable.getArraySpec(), scopeRef);
+                        asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
+                     } else {
+                        // Zero-fill variable
+                        AsmDataChunk asmDataChunk = new AsmDataChunk();
+                        ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(variable.getType(), variable.getArraySpec()), null);
+                        addChunkData(asmDataChunk, zeroValue, variable.getType(), variable.getArraySpec(), scopeRef);
+                        asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
+                     }
                   }
                   added.add(variable.getAsmName());
                }

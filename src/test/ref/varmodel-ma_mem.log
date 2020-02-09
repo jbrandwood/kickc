@@ -106,7 +106,7 @@ Allocated mem[2] [ main::screen ]
 INITIAL ASM
 Target platform is c64basic / MOS6502X
   // File Comments
-// Test memory model multiple-assignment/main memory for all variables
+// Test memory model multiple-assignment/main memory for all variables (here  local variables)
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
@@ -132,6 +132,7 @@ main: {
     lda #0
     sta i
     jmp __b1
+  // A local counter
     // main::@1
   __b1:
     // [5] *((byte*) main::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
@@ -158,6 +159,7 @@ main: {
   __breturn:
     // [9] return 
     rts
+    // A local pointer 
     screen: .word $400
     i: .byte 0
 }
@@ -181,7 +183,7 @@ Uplifting [main] best 587 combination mem[1] [ main::i ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
-// Test memory model multiple-assignment/main memory for all variables
+// Test memory model multiple-assignment/main memory for all variables (here  local variables)
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
@@ -207,6 +209,7 @@ main: {
     lda #0
     sta i
     jmp __b1
+  // A local counter
     // main::@1
   __b1:
     // [5] *((byte*) main::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
@@ -233,6 +236,7 @@ main: {
   __breturn:
     // [9] return 
     rts
+    // A local pointer 
     screen: .word $400
     i: .byte 0
 }
@@ -276,7 +280,7 @@ FINAL ASSEMBLER
 Score: 542
 
   // File Comments
-// Test memory model multiple-assignment/main memory for all variables
+// Test memory model multiple-assignment/main memory for all variables (here  local variables)
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -294,6 +298,7 @@ main: {
     // [4] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
     lda #0
     sta i
+  // A local counter
     // main::@1
   __b1:
     // *(screen++) = 'a'
@@ -322,6 +327,7 @@ main: {
     // }
     // [9] return 
     rts
+    // A local pointer 
     screen: .word $400
     i: .byte 0
 }

@@ -1,10 +1,11 @@
-// Test memory model multiple-assignment/main memory for all variables
+// Test memory model multiple-assignment/main memory for all variables (here  local variables)
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
     lda #0
     sta i
+  // A local counter
   __b1:
     lda #'a'
     ldy screen
@@ -22,6 +23,7 @@ main: {
     cmp i
     bne __b1
     rts
+    // A local pointer 
     screen: .word $400
     i: .byte 0
 }

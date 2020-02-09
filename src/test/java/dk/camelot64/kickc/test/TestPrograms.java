@@ -38,6 +38,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testVarModelMaMem2() throws IOException, URISyntaxException {
+      compileAndCompare("varmodel-ma_mem-2");
+   }
+
+   @Test
+   public void testVarModelMaMem() throws IOException, URISyntaxException {
+      compileAndCompare("varmodel-ma_mem");
+   }
+
+   @Test
    public void testVarModelUnknown() throws IOException, URISyntaxException {
       assertError("varmodel-unknown", "Warning: Malformed var_model parameter");
    }

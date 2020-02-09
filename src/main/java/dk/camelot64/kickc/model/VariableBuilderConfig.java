@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.CompileLog;
-import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.statements.StatementSource;
 
 import java.util.*;
@@ -100,8 +99,8 @@ public class VariableBuilderConfig {
       List<Type> types = getTypes(paramElements);
       Optimization optimization = getOptimization(paramElements);
       MemoryArea memoryArea = getMemoryArea(paramElements);
-      if(memoryArea==null || optimization==null || paramElements.size()>0)
-         throw new CompileError("Warning: Malformed var_model parameter "+pragmaParam, statementSource);
+      if(memoryArea == null || optimization == null || paramElements.size() > 0)
+         throw new CompileError("Warning: Malformed var_model parameter " + pragmaParam, statementSource);
       for(Scope scope : scopes) {
          for(Type type : types) {
             settings.put(new ScopeType(scope, type), new Setting(scope, type, memoryArea, optimization));
@@ -216,7 +215,7 @@ public class VariableBuilderConfig {
       if(isScopeParameter)
          return Scope.PARAMETER;
       if(isScopeMember)
-            return Scope.MEMBER;
+         return Scope.MEMBER;
       throw new InternalError("Unknown scope!");
    }
 

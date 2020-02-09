@@ -1,0 +1,685 @@
+Culled Empty Block (label) @1
+Culled Empty Block (label) model_ma_mem::@2
+Culled Empty Block (label) @2
+Culled Empty Block (label) model_ssa_zp::@2
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@3
+
+(void()) main()
+main: scope:[main]  from @3
+  call model_ma_mem 
+  to:main::@1
+main::@1: scope:[main]  from main
+  call model_ssa_zp 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+
+(void()) model_ma_mem()
+model_ma_mem: scope:[model_ma_mem]  from main
+  (byte) model_ma_mem::i ← (byte) 0
+  to:model_ma_mem::@1
+model_ma_mem::@1: scope:[model_ma_mem]  from model_ma_mem model_ma_mem::@1
+  *((byte*) model_ma_mem::screen) ← (byte) 'a'
+  (byte*) model_ma_mem::screen ← ++ (byte*) model_ma_mem::screen
+  (byte) model_ma_mem::i ← (byte) model_ma_mem::i + rangenext(0,5)
+  (bool~) model_ma_mem::$0 ← (byte) model_ma_mem::i != rangelast(0,5)
+  if((bool~) model_ma_mem::$0) goto model_ma_mem::@1
+  to:model_ma_mem::@return
+model_ma_mem::@return: scope:[model_ma_mem]  from model_ma_mem::@1
+  return 
+  to:@return
+
+(void()) model_ssa_zp()
+model_ssa_zp: scope:[model_ssa_zp]  from main::@1
+  (byte*) model_ssa_zp::screen#0 ← (byte*)(number) $428
+  (byte) model_ssa_zp::i#0 ← (byte) 0
+  to:model_ssa_zp::@1
+model_ssa_zp::@1: scope:[model_ssa_zp]  from model_ssa_zp model_ssa_zp::@1
+  (byte) model_ssa_zp::i#2 ← phi( model_ssa_zp/(byte) model_ssa_zp::i#0 model_ssa_zp::@1/(byte) model_ssa_zp::i#1 )
+  (byte*) model_ssa_zp::screen#2 ← phi( model_ssa_zp/(byte*) model_ssa_zp::screen#0 model_ssa_zp::@1/(byte*) model_ssa_zp::screen#1 )
+  *((byte*) model_ssa_zp::screen#2) ← (byte) 'b'
+  (byte*) model_ssa_zp::screen#1 ← ++ (byte*) model_ssa_zp::screen#2
+  (byte) model_ssa_zp::i#1 ← (byte) model_ssa_zp::i#2 + rangenext(0,5)
+  (bool~) model_ssa_zp::$0 ← (byte) model_ssa_zp::i#1 != rangelast(0,5)
+  if((bool~) model_ssa_zp::$0) goto model_ssa_zp::@1
+  to:model_ssa_zp::@return
+model_ssa_zp::@return: scope:[model_ssa_zp]  from model_ssa_zp::@1
+  return 
+  to:@return
+@3: scope:[]  from @begin
+  call main 
+  to:@4
+@4: scope:[]  from @3
+  to:@end
+@end: scope:[]  from @4
+
+SYMBOL TABLE SSA
+(label) @3
+(label) @4
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(void()) model_ma_mem()
+(bool~) model_ma_mem::$0
+(label) model_ma_mem::@1
+(label) model_ma_mem::@return
+(byte) model_ma_mem::i loadstore
+(byte*) model_ma_mem::screen loadstore = (byte*)(number) $400
+(void()) model_ssa_zp()
+(bool~) model_ssa_zp::$0
+(label) model_ssa_zp::@1
+(label) model_ssa_zp::@return
+(byte) model_ssa_zp::i
+(byte) model_ssa_zp::i#0
+(byte) model_ssa_zp::i#1
+(byte) model_ssa_zp::i#2
+(byte*) model_ssa_zp::screen
+(byte*) model_ssa_zp::screen#0
+(byte*) model_ssa_zp::screen#1
+(byte*) model_ssa_zp::screen#2
+
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 1064
+Successful SSA optimization PassNCastSimplification
+Simple Condition (bool~) model_ma_mem::$0 [8] if((byte) model_ma_mem::i!=rangelast(0,5)) goto model_ma_mem::@1
+Simple Condition (bool~) model_ssa_zp::$0 [17] if((byte) model_ssa_zp::i#1!=rangelast(0,5)) goto model_ssa_zp::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte*) model_ssa_zp::screen#0 = (byte*) 1064
+Constant (const byte) model_ssa_zp::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Resolved ranged next value [6] model_ma_mem::i ← ++ model_ma_mem::i to ++
+Resolved ranged comparison value [8] if(model_ma_mem::i!=rangelast(0,5)) goto model_ma_mem::@1 to (number) 6
+Resolved ranged next value [15] model_ssa_zp::i#1 ← ++ model_ssa_zp::i#2 to ++
+Resolved ranged comparison value [17] if(model_ssa_zp::i#1!=rangelast(0,5)) goto model_ssa_zp::@1 to (number) 6
+Adding number conversion cast (unumber) 6 in if((byte) model_ma_mem::i!=(number) 6) goto model_ma_mem::@1
+Adding number conversion cast (unumber) 6 in if((byte) model_ssa_zp::i#1!=(number) 6) goto model_ssa_zp::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 6
+Simplifying constant integer cast 6
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) 6
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inlining constant with var siblings (const byte*) model_ssa_zp::screen#0
+Inlining constant with var siblings (const byte) model_ssa_zp::i#0
+Constant inlined model_ssa_zp::screen#0 = (byte*) 1064
+Constant inlined model_ssa_zp::i#0 = (byte) 0
+Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting model_ssa_zp::@3(between model_ssa_zp::@1 and model_ssa_zp::@1)
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @4
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of model_ssa_zp
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to model_ma_mem:6 model_ssa_zp:8 
+
+Created 2 initial phi equivalence classes
+Coalesced [18] model_ssa_zp::screen#3 ← model_ssa_zp::screen#1
+Coalesced [19] model_ssa_zp::i#3 ← model_ssa_zp::i#1
+Coalesced down to 2 phi equivalence classes
+Culled Empty Block (label) @4
+Culled Empty Block (label) main::@2
+Culled Empty Block (label) model_ssa_zp::@3
+Renumbering block @3 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of model_ssa_zp
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [4] phi()
+  [5] call model_ma_mem 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [6] phi()
+  [7] call model_ssa_zp 
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [8] return 
+  to:@return
+
+(void()) model_ssa_zp()
+model_ssa_zp: scope:[model_ssa_zp]  from main::@1
+  [9] phi()
+  to:model_ssa_zp::@1
+model_ssa_zp::@1: scope:[model_ssa_zp]  from model_ssa_zp model_ssa_zp::@1
+  [10] (byte) model_ssa_zp::i#2 ← phi( model_ssa_zp/(byte) 0 model_ssa_zp::@1/(byte) model_ssa_zp::i#1 )
+  [10] (byte*) model_ssa_zp::screen#2 ← phi( model_ssa_zp/(byte*) 1064 model_ssa_zp::@1/(byte*) model_ssa_zp::screen#1 )
+  [11] *((byte*) model_ssa_zp::screen#2) ← (byte) 'b'
+  [12] (byte*) model_ssa_zp::screen#1 ← ++ (byte*) model_ssa_zp::screen#2
+  [13] (byte) model_ssa_zp::i#1 ← ++ (byte) model_ssa_zp::i#2
+  [14] if((byte) model_ssa_zp::i#1!=(byte) 6) goto model_ssa_zp::@1
+  to:model_ssa_zp::@return
+model_ssa_zp::@return: scope:[model_ssa_zp]  from model_ssa_zp::@1
+  [15] return 
+  to:@return
+
+(void()) model_ma_mem()
+model_ma_mem: scope:[model_ma_mem]  from main
+  [16] (byte) model_ma_mem::i ← (byte) 0
+  to:model_ma_mem::@1
+model_ma_mem::@1: scope:[model_ma_mem]  from model_ma_mem model_ma_mem::@1
+  [17] *((byte*) model_ma_mem::screen) ← (byte) 'a'
+  [18] (byte*) model_ma_mem::screen ← ++ (byte*) model_ma_mem::screen
+  [19] (byte) model_ma_mem::i ← ++ (byte) model_ma_mem::i
+  [20] if((byte) model_ma_mem::i!=(byte) 6) goto model_ma_mem::@1
+  to:model_ma_mem::@return
+model_ma_mem::@return: scope:[model_ma_mem]  from model_ma_mem::@1
+  [21] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(void()) model_ma_mem()
+(byte) model_ma_mem::i loadstore 35.0
+(byte*) model_ma_mem::screen loadstore 4.714285714285714 = (byte*) 1024
+(void()) model_ssa_zp()
+(byte) model_ssa_zp::i
+(byte) model_ssa_zp::i#1 16.5
+(byte) model_ssa_zp::i#2 7.333333333333333
+(byte*) model_ssa_zp::screen
+(byte*) model_ssa_zp::screen#1 7.333333333333333
+(byte*) model_ssa_zp::screen#2 16.5
+
+Initial phi equivalence classes
+[ model_ssa_zp::screen#2 model_ssa_zp::screen#1 ]
+[ model_ssa_zp::i#2 model_ssa_zp::i#1 ]
+Added variable model_ma_mem::i to live range equivalence class [ model_ma_mem::i ]
+Added variable model_ma_mem::screen to live range equivalence class [ model_ma_mem::screen ]
+Complete equivalence classes
+[ model_ssa_zp::screen#2 model_ssa_zp::screen#1 ]
+[ model_ssa_zp::i#2 model_ssa_zp::i#1 ]
+[ model_ma_mem::i ]
+[ model_ma_mem::screen ]
+Allocated zp[2]:2 [ model_ssa_zp::screen#2 model_ssa_zp::screen#1 ]
+Allocated zp[1]:4 [ model_ssa_zp::i#2 model_ssa_zp::i#1 ]
+Allocated mem[1] [ model_ma_mem::i ]
+Allocated mem[2] [ model_ma_mem::screen ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test two different memory models
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from___b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [5] call model_ma_mem 
+    jsr model_ma_mem
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    jmp __b1
+    // main::@1
+  __b1:
+    // [7] call model_ssa_zp 
+    // [9] phi from main::@1 to model_ssa_zp [phi:main::@1->model_ssa_zp]
+  model_ssa_zp_from___b1:
+    jsr model_ssa_zp
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [8] return 
+    rts
+}
+  // model_ssa_zp
+model_ssa_zp: {
+    // A local pointer
+    .label screen = 2
+    .label i = 4
+    // [10] phi from model_ssa_zp to model_ssa_zp::@1 [phi:model_ssa_zp->model_ssa_zp::@1]
+  __b1_from_model_ssa_zp:
+    // [10] phi (byte) model_ssa_zp::i#2 = (byte) 0 [phi:model_ssa_zp->model_ssa_zp::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    // [10] phi (byte*) model_ssa_zp::screen#2 = (byte*) 1064 [phi:model_ssa_zp->model_ssa_zp::@1#1] -- pbuz1=pbuc1 
+    lda #<$428
+    sta.z screen
+    lda #>$428
+    sta.z screen+1
+    jmp __b1
+  // A local counter
+    // [10] phi from model_ssa_zp::@1 to model_ssa_zp::@1 [phi:model_ssa_zp::@1->model_ssa_zp::@1]
+  __b1_from___b1:
+    // [10] phi (byte) model_ssa_zp::i#2 = (byte) model_ssa_zp::i#1 [phi:model_ssa_zp::@1->model_ssa_zp::@1#0] -- register_copy 
+    // [10] phi (byte*) model_ssa_zp::screen#2 = (byte*) model_ssa_zp::screen#1 [phi:model_ssa_zp::@1->model_ssa_zp::@1#1] -- register_copy 
+    jmp __b1
+    // model_ssa_zp::@1
+  __b1:
+    // [11] *((byte*) model_ssa_zp::screen#2) ← (byte) 'b' -- _deref_pbuz1=vbuc1 
+    lda #'b'
+    ldy #0
+    sta (screen),y
+    // [12] (byte*) model_ssa_zp::screen#1 ← ++ (byte*) model_ssa_zp::screen#2 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // [13] (byte) model_ssa_zp::i#1 ← ++ (byte) model_ssa_zp::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [14] if((byte) model_ssa_zp::i#1!=(byte) 6) goto model_ssa_zp::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #6
+    cmp.z i
+    bne __b1_from___b1
+    jmp __breturn
+    // model_ssa_zp::@return
+  __breturn:
+    // [15] return 
+    rts
+}
+  // model_ma_mem
+model_ma_mem: {
+    // [16] (byte) model_ma_mem::i ← (byte) 0 -- vbum1=vbuc1 
+    lda #0
+    sta i
+    jmp __b1
+  // A local counter
+    // model_ma_mem::@1
+  __b1:
+    // [17] *((byte*) model_ma_mem::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
+    lda #'a'
+    ldy screen
+    sty.z $fe
+    ldy screen+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    // [18] (byte*) model_ma_mem::screen ← ++ (byte*) model_ma_mem::screen -- pbum1=_inc_pbum1 
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+    // [19] (byte) model_ma_mem::i ← ++ (byte) model_ma_mem::i -- vbum1=_inc_vbum1 
+    inc i
+    // [20] if((byte) model_ma_mem::i!=(byte) 6) goto model_ma_mem::@1 -- vbum1_neq_vbuc1_then_la1 
+    lda #6
+    cmp i
+    bne __b1
+    jmp __breturn
+    // model_ma_mem::@return
+  __breturn:
+    // [21] return 
+    rts
+    // A local pointer
+    screen: .word $400
+    i: .byte 0
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [11] *((byte*) model_ssa_zp::screen#2) ← (byte) 'b' [ model_ssa_zp::screen#2 model_ssa_zp::i#2 ] ( main:2::model_ssa_zp:7 [ model_ssa_zp::screen#2 model_ssa_zp::i#2 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ model_ssa_zp::i#2 model_ssa_zp::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:4 [ model_ssa_zp::i#2 model_ssa_zp::i#1 ]
+Statement [16] (byte) model_ma_mem::i ← (byte) 0 [ model_ma_mem::screen ] ( main:2::model_ma_mem:5 [ model_ma_mem::screen ] ) always clobbers reg byte a 
+Statement [17] *((byte*) model_ma_mem::screen) ← (byte) 'a' [ ] ( main:2::model_ma_mem:5 [ ] ) always clobbers reg byte a reg byte y 
+Statement [20] if((byte) model_ma_mem::i!=(byte) 6) goto model_ma_mem::@1 [ model_ma_mem::screen ] ( main:2::model_ma_mem:5 [ model_ma_mem::screen ] ) always clobbers reg byte a 
+Statement [11] *((byte*) model_ssa_zp::screen#2) ← (byte) 'b' [ model_ssa_zp::screen#2 model_ssa_zp::i#2 ] ( main:2::model_ssa_zp:7 [ model_ssa_zp::screen#2 model_ssa_zp::i#2 ] ) always clobbers reg byte a reg byte y 
+Statement [16] (byte) model_ma_mem::i ← (byte) 0 [ model_ma_mem::screen ] ( main:2::model_ma_mem:5 [ model_ma_mem::screen ] ) always clobbers reg byte a 
+Statement [17] *((byte*) model_ma_mem::screen) ← (byte) 'a' [ ] ( main:2::model_ma_mem:5 [ ] ) always clobbers reg byte a reg byte y 
+Statement [20] if((byte) model_ma_mem::i!=(byte) 6) goto model_ma_mem::@1 [ model_ma_mem::screen ] ( main:2::model_ma_mem:5 [ model_ma_mem::screen ] ) always clobbers reg byte a 
+Potential registers zp[2]:2 [ model_ssa_zp::screen#2 model_ssa_zp::screen#1 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ model_ssa_zp::i#2 model_ssa_zp::i#1 ] : zp[1]:4 , reg byte x , 
+Potential registers mem[1] [ model_ma_mem::i ] : mem[1] , 
+Potential registers mem[2] [ model_ma_mem::screen ] : mem[2] , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [model_ssa_zp] 23.83: zp[2]:2 [ model_ssa_zp::screen#2 model_ssa_zp::screen#1 ] 23.83: zp[1]:4 [ model_ssa_zp::i#2 model_ssa_zp::i#1 ] 
+Uplift Scope [model_ma_mem] 35: mem[1] [ model_ma_mem::i ] 4.71: mem[2] [ model_ma_mem::screen ] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [model_ssa_zp] best 1117 combination zp[2]:2 [ model_ssa_zp::screen#2 model_ssa_zp::screen#1 ] reg byte x [ model_ssa_zp::i#2 model_ssa_zp::i#1 ] 
+Uplifting [model_ma_mem] best 1117 combination mem[1] [ model_ma_mem::i ] mem[2] [ model_ma_mem::screen ] 
+Uplifting [main] best 1117 combination 
+Uplifting [] best 1117 combination 
+Attempting to uplift remaining variables inmem[1] [ model_ma_mem::i ]
+Uplifting [model_ma_mem] best 1117 combination mem[1] [ model_ma_mem::i ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test two different memory models
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from___b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [5] call model_ma_mem 
+    jsr model_ma_mem
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    jmp __b1
+    // main::@1
+  __b1:
+    // [7] call model_ssa_zp 
+    // [9] phi from main::@1 to model_ssa_zp [phi:main::@1->model_ssa_zp]
+  model_ssa_zp_from___b1:
+    jsr model_ssa_zp
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [8] return 
+    rts
+}
+  // model_ssa_zp
+model_ssa_zp: {
+    // A local pointer
+    .label screen = 2
+    // [10] phi from model_ssa_zp to model_ssa_zp::@1 [phi:model_ssa_zp->model_ssa_zp::@1]
+  __b1_from_model_ssa_zp:
+    // [10] phi (byte) model_ssa_zp::i#2 = (byte) 0 [phi:model_ssa_zp->model_ssa_zp::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [10] phi (byte*) model_ssa_zp::screen#2 = (byte*) 1064 [phi:model_ssa_zp->model_ssa_zp::@1#1] -- pbuz1=pbuc1 
+    lda #<$428
+    sta.z screen
+    lda #>$428
+    sta.z screen+1
+    jmp __b1
+  // A local counter
+    // [10] phi from model_ssa_zp::@1 to model_ssa_zp::@1 [phi:model_ssa_zp::@1->model_ssa_zp::@1]
+  __b1_from___b1:
+    // [10] phi (byte) model_ssa_zp::i#2 = (byte) model_ssa_zp::i#1 [phi:model_ssa_zp::@1->model_ssa_zp::@1#0] -- register_copy 
+    // [10] phi (byte*) model_ssa_zp::screen#2 = (byte*) model_ssa_zp::screen#1 [phi:model_ssa_zp::@1->model_ssa_zp::@1#1] -- register_copy 
+    jmp __b1
+    // model_ssa_zp::@1
+  __b1:
+    // [11] *((byte*) model_ssa_zp::screen#2) ← (byte) 'b' -- _deref_pbuz1=vbuc1 
+    lda #'b'
+    ldy #0
+    sta (screen),y
+    // [12] (byte*) model_ssa_zp::screen#1 ← ++ (byte*) model_ssa_zp::screen#2 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // [13] (byte) model_ssa_zp::i#1 ← ++ (byte) model_ssa_zp::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [14] if((byte) model_ssa_zp::i#1!=(byte) 6) goto model_ssa_zp::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #6
+    bne __b1_from___b1
+    jmp __breturn
+    // model_ssa_zp::@return
+  __breturn:
+    // [15] return 
+    rts
+}
+  // model_ma_mem
+model_ma_mem: {
+    // [16] (byte) model_ma_mem::i ← (byte) 0 -- vbum1=vbuc1 
+    lda #0
+    sta i
+    jmp __b1
+  // A local counter
+    // model_ma_mem::@1
+  __b1:
+    // [17] *((byte*) model_ma_mem::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
+    lda #'a'
+    ldy screen
+    sty.z $fe
+    ldy screen+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    // [18] (byte*) model_ma_mem::screen ← ++ (byte*) model_ma_mem::screen -- pbum1=_inc_pbum1 
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+    // [19] (byte) model_ma_mem::i ← ++ (byte) model_ma_mem::i -- vbum1=_inc_vbum1 
+    inc i
+    // [20] if((byte) model_ma_mem::i!=(byte) 6) goto model_ma_mem::@1 -- vbum1_neq_vbuc1_then_la1 
+    lda #6
+    cmp i
+    bne __b1
+    jmp __breturn
+    // model_ma_mem::@return
+  __breturn:
+    // [21] return 
+    rts
+    // A local pointer
+    screen: .word $400
+    i: .byte 0
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __bbegin with __b1
+Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Removing instruction __b1_from_main:
+Removing instruction model_ssa_zp_from___b1:
+Removing instruction __b1_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __bend:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b1_from_model_ssa_zp:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction jmp __b1
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()) main()
+(label) main::@1
+(label) main::@return
+(void()) model_ma_mem()
+(label) model_ma_mem::@1
+(label) model_ma_mem::@return
+(byte) model_ma_mem::i loadstore mem[1] 35.0
+(byte*) model_ma_mem::screen loadstore mem[2] 4.714285714285714 = (byte*) 1024
+(void()) model_ssa_zp()
+(label) model_ssa_zp::@1
+(label) model_ssa_zp::@return
+(byte) model_ssa_zp::i
+(byte) model_ssa_zp::i#1 reg byte x 16.5
+(byte) model_ssa_zp::i#2 reg byte x 7.333333333333333
+(byte*) model_ssa_zp::screen
+(byte*) model_ssa_zp::screen#1 screen zp[2]:2 7.333333333333333
+(byte*) model_ssa_zp::screen#2 screen zp[2]:2 16.5
+
+zp[2]:2 [ model_ssa_zp::screen#2 model_ssa_zp::screen#1 ]
+reg byte x [ model_ssa_zp::i#2 model_ssa_zp::i#1 ]
+mem[1] [ model_ma_mem::i ]
+mem[2] [ model_ma_mem::screen ]
+
+
+FINAL ASSEMBLER
+Score: 976
+
+  // File Comments
+// Test two different memory models
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // model_ma_mem()
+    // [5] call model_ma_mem 
+    jsr model_ma_mem
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // model_ssa_zp()
+    // [7] call model_ssa_zp 
+    // [9] phi from main::@1 to model_ssa_zp [phi:main::@1->model_ssa_zp]
+    jsr model_ssa_zp
+    // main::@return
+    // }
+    // [8] return 
+    rts
+}
+  // model_ssa_zp
+model_ssa_zp: {
+    // A local pointer
+    .label screen = 2
+    // [10] phi from model_ssa_zp to model_ssa_zp::@1 [phi:model_ssa_zp->model_ssa_zp::@1]
+    // [10] phi (byte) model_ssa_zp::i#2 = (byte) 0 [phi:model_ssa_zp->model_ssa_zp::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [10] phi (byte*) model_ssa_zp::screen#2 = (byte*) 1064 [phi:model_ssa_zp->model_ssa_zp::@1#1] -- pbuz1=pbuc1 
+    lda #<$428
+    sta.z screen
+    lda #>$428
+    sta.z screen+1
+  // A local counter
+    // [10] phi from model_ssa_zp::@1 to model_ssa_zp::@1 [phi:model_ssa_zp::@1->model_ssa_zp::@1]
+    // [10] phi (byte) model_ssa_zp::i#2 = (byte) model_ssa_zp::i#1 [phi:model_ssa_zp::@1->model_ssa_zp::@1#0] -- register_copy 
+    // [10] phi (byte*) model_ssa_zp::screen#2 = (byte*) model_ssa_zp::screen#1 [phi:model_ssa_zp::@1->model_ssa_zp::@1#1] -- register_copy 
+    // model_ssa_zp::@1
+  __b1:
+    // *(screen++) = 'b'
+    // [11] *((byte*) model_ssa_zp::screen#2) ← (byte) 'b' -- _deref_pbuz1=vbuc1 
+    lda #'b'
+    ldy #0
+    sta (screen),y
+    // *(screen++) = 'b';
+    // [12] (byte*) model_ssa_zp::screen#1 ← ++ (byte*) model_ssa_zp::screen#2 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // for( char i: 0..5 )
+    // [13] (byte) model_ssa_zp::i#1 ← ++ (byte) model_ssa_zp::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [14] if((byte) model_ssa_zp::i#1!=(byte) 6) goto model_ssa_zp::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #6
+    bne __b1
+    // model_ssa_zp::@return
+    // }
+    // [15] return 
+    rts
+}
+  // model_ma_mem
+model_ma_mem: {
+    // for( char i: 0..5 )
+    // [16] (byte) model_ma_mem::i ← (byte) 0 -- vbum1=vbuc1 
+    lda #0
+    sta i
+  // A local counter
+    // model_ma_mem::@1
+  __b1:
+    // *(screen++) = 'a'
+    // [17] *((byte*) model_ma_mem::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
+    lda #'a'
+    ldy screen
+    sty.z $fe
+    ldy screen+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    // *(screen++) = 'a';
+    // [18] (byte*) model_ma_mem::screen ← ++ (byte*) model_ma_mem::screen -- pbum1=_inc_pbum1 
+    inc screen
+    bne !+
+    inc screen+1
+  !:
+    // for( char i: 0..5 )
+    // [19] (byte) model_ma_mem::i ← ++ (byte) model_ma_mem::i -- vbum1=_inc_vbum1 
+    inc i
+    // [20] if((byte) model_ma_mem::i!=(byte) 6) goto model_ma_mem::@1 -- vbum1_neq_vbuc1_then_la1 
+    lda #6
+    cmp i
+    bne __b1
+    // model_ma_mem::@return
+    // }
+    // [21] return 
+    rts
+    // A local pointer
+    screen: .word $400
+    i: .byte 0
+}
+  // File Data
+

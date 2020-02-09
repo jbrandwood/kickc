@@ -104,6 +104,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx) {
+      this.variableBuilderConfig = VariableBuilder.getDefaultConfig(program.getLog());
       for(TerminalNode varModel : ctx.NAME()) {
          variableBuilderConfig.addSetting(varModel.getText(), program.getLog(), new StatementSource(ctx));
       }

@@ -295,12 +295,15 @@ public class VariableBuilder {
          return (addressDirective.address < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;
       else if(!isConstant() && isOptimize())
          return Variable.MemoryArea.ZEROPAGE_MEMORY;
-      else if(isArray())
-         return Variable.MemoryArea.MAIN_MEMORY;
-      else if(isTypeStruct() && isScopeGlobal())
-         return Variable.MemoryArea.MAIN_MEMORY;
-      else
-         return Variable.MemoryArea.ZEROPAGE_MEMORY;
+      else {
+         VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeParameter(), isScopeMember());
+         VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct());
+         VariableBuilderConfig.Setting setting = config.getSetting(scope, type);
+         if(setting!=null && VariableBuilderConfig.MemoryArea.MEM.equals(setting.memoryArea))
+            return Variable.MemoryArea.MAIN_MEMORY;
+         else
+            return Variable.MemoryArea.ZEROPAGE_MEMORY;
+      }
    }
 
    /**
